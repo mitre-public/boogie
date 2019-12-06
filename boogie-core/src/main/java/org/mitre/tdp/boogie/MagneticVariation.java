@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.util.Declinations;
 
 public interface MagneticVariation {
@@ -9,7 +11,7 @@ public interface MagneticVariation {
    * been taken historically or etc. Typically when available this is what is preferentially used in
    * automated systems such as aircraft FMS's, etc.
    */
-  float published();
+  Optional<Float> published();
 
   /**
    * The modeled value for variation typically based on the WMM (World Magnetic Model) published by

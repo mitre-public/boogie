@@ -1,10 +1,13 @@
 package org.mitre.tdp.boogie.models;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Infrastructure;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.NavigationSource;
+import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 
 public interface Procedure<F extends Fix, L extends Leg<F>, T extends Transition<F, L>> extends Infrastructure {
@@ -14,7 +17,26 @@ public interface Procedure<F extends Fix, L extends Leg<F>, T extends Transition
    */
   Collection<T> transitions();
 
+  /**
+   * Returns the list of viable paths through the procedure between the provided
+   */
+  List<List<L>> pathsBetween(F start, F end);
+
+  @Override
+  default String identifier() {
+    return transitions().iterator().next().procedure();
+  }
+
   default String airport() {
     return transitions().iterator().next().airport();
+  }
+
+  @Override
+  default NavigationSource source() {
+    return transitions().iterator().next().source();
+  }
+
+  default ProcedureType type() {
+    return transitions().iterator().next().procedureType();
   }
 }

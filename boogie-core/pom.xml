@@ -23,6 +23,12 @@
       <artifactId>guava</artifactId>
       <version>23.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.mitre.caasd</groupId>
+      <artifactId>caasd-test</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

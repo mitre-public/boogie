@@ -10,7 +10,6 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.NavigationSource;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.utils.Iterators;
 
@@ -33,16 +32,6 @@ public class ProcedureGraph<F extends Fix, L extends Leg<F>, T extends Transitio
   private ProcedureGraph(Collection<T> transitions) {
     super(DefaultEdge.class);
     this.transitions = transitions;
-  }
-
-  @Override
-  public String identifier() {
-    return transitions.iterator().next().procedure();
-  }
-
-  @Override
-  public NavigationSource source() {
-    return transitions.iterator().next().source();
   }
 
   @Override

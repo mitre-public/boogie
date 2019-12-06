@@ -69,11 +69,19 @@ public interface Leg<F extends Fix> {
    */
   Double verticalAngle();
 
-  /**
-   * If the {@link LegType} requires a specified target altitude (e.g. {@link LegType#CA}
-   * this should return that value.
-   */
-  Double targetAltitude();
+//  /**
+//   * If the {@link LegType} requires a specified target altitude (e.g. {@link LegType#CA}
+//   * this should return that value.
+//   */
+//  Double targetAltitude();
+//
+//  Double targetAltitude2();
+//
+//
+//
+//  Double targetSpeed();
+//
+
 
   /**
    * If the leg contains a turn this indicates the direction of the turn or both if

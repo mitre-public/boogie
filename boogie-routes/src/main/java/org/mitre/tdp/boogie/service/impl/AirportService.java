@@ -3,17 +3,16 @@ package org.mitre.tdp.boogie.service.impl;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Runway;
 
-public final class AirportService<R extends Runway, A extends Airport<R>> extends SimpleService<A> {
+public final class AirportService extends SimpleService<Airport> {
 
-  private AirportService(Multimap<String, A> map) {
+  private AirportService(Multimap<String, Airport> map) {
     super(map);
   }
 
-  public static <R extends Runway, A extends Airport<R>> AirportService<R, A> with(Iterable<A> airports) {
-    Multimap<String, A> byId = new HashMultimap<>();
+  public static AirportService with(Iterable<? extends Airport> airports) {
+    Multimap<String, Airport> byId = new HashMultimap<>();
     airports.forEach(a -> byId.put(a.identifier(), a));
-    return new AirportService<>(byId);
+    return new AirportService(byId);
   }
 }

@@ -1,0 +1,53 @@
+package org.mitre.tdp.boogie.util;
+
+
+import org.junit.Test;
+import org.mitre.caasd.commons.LatLong;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mitre.tdp.boogie.util.CoordinateParser.convertDegrees;
+import static org.mitre.tdp.boogie.util.CoordinateParser.parse;
+
+public class TestCoordinateParser {
+
+  @Test
+  public void testParse() {
+    String loc = "1500S/12000W";
+    LatLong res = parse(loc);
+
+    assertEquals(res.latitude(), -15.0, 0.0001);
+    assertEquals(res.longitude(), -120.0, 0.0001);
+
+    loc = "3000N/09000E";
+    res = parse(loc);
+
+    assertEquals(res.latitude(), 30.0, 0.0001);
+    assertEquals(res.longitude(), 90.0, 0.0001);
+
+    loc = "3030N/12045E";
+    res = parse(loc);
+
+    assertEquals(res.latitude(), 30.5, 0.0001);
+    assertEquals(res.longitude(), 120.75, 0.0001);
+  }
+
+  @Test
+  public void testParseDecimalDegrees() {
+    assertTrue(Math.abs(convertDegrees("273932.9118W") + 76.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("273932.9118E") - 76.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("155193.5075N") - 43.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("155193.5075S") + 43.0) < 1.0);
+  }
+
+  @Test
+  public void testParseDegreesMinutesSeconds() {
+    assertTrue(Math.abs(convertDegrees("107-28-00.1E") - 107.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("107-28-00.1W") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("107-28-00.01W") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("107-28-00.001W") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("107-28-00.1W  ") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("36-12-00.0N") - 36.0) < 1.0);
+    assertTrue(Math.abs(convertDegrees("36-12-00.0S") + 36.0) < 1.0);
+  }
+}
