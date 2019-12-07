@@ -11,7 +11,7 @@ public final class AirwayService extends SimpleService<Airway> {
   }
 
   public static AirwayService with(Iterable<? extends Airway> fixes) {
-    Multimap<String, Airway> byId = new HashMultimap<>();
+    Multimap<String, Airway> byId = HashMultimap.create();
     fixes.forEach(a -> byId.put(a.identifier(), a));
     return new AirwayService(byId);
   }

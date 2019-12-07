@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.models;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.common.base.Preconditions;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
@@ -37,6 +38,11 @@ public class ProcedureGraph<F extends Fix, L extends Leg<F>, T extends Transitio
   @Override
   public Collection<T> transitions() {
     return transitions;
+  }
+
+  @Override
+  public List<List<L>> pathsBetween(F start, F end) {
+    return null;
   }
 
   /**

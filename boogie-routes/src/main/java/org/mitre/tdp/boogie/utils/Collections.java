@@ -7,6 +7,10 @@ import java.util.stream.Collectors;
 
 public class Collections {
 
+  public static <U, V> Collection<V> transform(Collection<U> col, Function<U, V> transform) {
+    return col.stream().map(transform).collect(Collectors.toList());
+  }
+
   public static <U> Collection<U> filter(Collection<U> iterable, Predicate<U> filter) {
     return iterable.stream().filter(filter).collect(Collectors.toList());
   }

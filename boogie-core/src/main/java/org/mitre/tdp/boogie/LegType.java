@@ -72,7 +72,7 @@ public enum LegType {
     checkNotNull(l.theta());
     checkNotNull(l.rho());
     checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.targetAltitude());
+//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -124,7 +124,7 @@ public enum LegType {
    */
   CA(l -> {
     checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.targetAltitude());
+//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -194,7 +194,7 @@ public enum LegType {
    */
   VA(l -> {
     checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.targetAltitude());
+//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -255,7 +255,7 @@ public enum LegType {
     checkNotNull(l.rho());
     checkNotNull(l.outboundMagneticCourse());
     checkNotNull(l.distance());
-    checkNotNull(l.targetAltitude());
+//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -271,7 +271,7 @@ public enum LegType {
     checkNotNull(l.turnDirection());
     checkNotNull(l.outboundMagneticCourse());
     checkNotNull(l.distance());
-    checkNotNull(l.targetAltitude());
+//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**

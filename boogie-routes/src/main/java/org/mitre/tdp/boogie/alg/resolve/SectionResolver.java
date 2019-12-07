@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.alg.InflateRoutes;
+import org.mitre.tdp.boogie.alg.ExpandRoutes;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.element.AirwayElement;
@@ -25,7 +25,7 @@ import org.mitre.tdp.boogie.alg.resolve.element.TailoredElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.models.Procedure;
+import org.mitre.tdp.boogie.models.ProcedureGraph;
 
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.matches;
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
@@ -45,9 +45,9 @@ public class SectionResolver implements Serializable {
    * The route inflation object containing the configured infrastructure elements
    * to use in the expansion.
    */
-  private InflateRoutes inflator;
+  private ExpandRoutes inflator;
 
-  private SectionResolver(InflateRoutes inflator) {
+  private SectionResolver(ExpandRoutes inflator) {
     this.inflator = inflator;
   }
 
@@ -144,7 +144,7 @@ public class SectionResolver implements Serializable {
    * Attempts to find a a procedure who's identifier matches the section.
    */
   List<ResolvedElement<?>> procedure(String section) {
-    Collection<Procedure> procedures = inflator.procedureService()
+    Collection<ProcedureGraph> procedures = inflator.procedureService()
         .allMatchingIdentifiers(section);
     // Procedure objects dont handle multi-source, have to group by here
     return procedures.stream()
@@ -172,7 +172,7 @@ public class SectionResolver implements Serializable {
     return match ? LatLonElement.from(section) : null;
   }
 
-  public static SectionResolver with(InflateRoutes routes) {
+  public static SectionResolver with(ExpandRoutes routes) {
     return new SectionResolver(routes);
   }
 }

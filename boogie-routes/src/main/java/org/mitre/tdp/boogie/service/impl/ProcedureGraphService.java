@@ -7,35 +7,33 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.models.ProcedureGraph;
 import org.mitre.tdp.boogie.service.LookupService;
 
-public final class ProcedureGraphService<F extends Fix, L extends Leg<F>, T extends Transition<F, L>> implements LookupService<ProcedureGraph<F, L, T>> {
+public final class ProcedureGraphService implements LookupService<ProcedureGraph> {
 
-  private final Multimap<String, ProcedureGraph<F, L, T>> byIdentifier;
+  private final Multimap<String, ProcedureGraph> byIdentifier;
 
-  private ProcedureGraphService(Multimap<String, ProcedureGraph<F, L, T>> map) {
+  private ProcedureGraphService(Multimap<String, ProcedureGraph> map) {
     this.byIdentifier = map;
   }
 
   @Override
-  public Collection<ProcedureGraph<F, L, T>> allMatchingIdentifiers(String identifier) {
+  public Collection<ProcedureGraph> allMatchingIdentifiers(String identifier) {
     return byIdentifier.get(identifier);
   }
 
-  public static <F extends Fix, L extends Leg<F>, T extends Transition<F, L>> ProcedureGraphService<F, L, T> with(Collection<T> transitions) {
-    Map<String, List<T>> procedures = transitions.stream()
+  public static ProcedureGraphService with(Collection<? extends Transition> transitions) {
+    Map<String, List<Transition>> procedures = transitions.stream()
         .collect(Collectors.groupingBy(t -> t.procedure() + t.airport() + t.source().name()));
 
-    Multimap<String, ProcedureGraph<F, L, T>> byId = new HashMultimap<>();
+    Multimap<String, ProcedureGraph> byId = HashMultimap.create();
     procedures.values().forEach(ts -> {
-      ProcedureGraph<F, L, T> graph = ProcedureGraph.from(ts);
+      ProcedureGraph graph = ProcedureGraph.from(ts);
       byId.put(graph.identifier(), graph);
     });
 
-    return new ProcedureGraphService<>(byId);
+    return new ProcedureGraphService(byId);
   }
 }

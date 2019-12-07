@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.models.LinkedLeg;
+import org.mitre.tdp.boogie.models.LinkedLegs;
+import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
 
 public class AirportElement extends ResolvedElement<Airport> {
   public AirportElement(Airport ref) {
@@ -13,8 +14,9 @@ public class AirportElement extends ResolvedElement<Airport> {
   }
 
   @Override
-  public List<LinkedLeg> legs() {
+  public List<LinkedLegs> legs() {
     SimpleTFLeg<Airport> leg = SimpleTFLeg.from(reference());
-    return Collections.singletonList(new LinkedLeg(leg, leg));
+    SectionSplitLeg splitLeg = new SectionSplitLeg(leg);
+    return Collections.singletonList(new LinkedLegs(splitLeg, splitLeg));
   }
 }

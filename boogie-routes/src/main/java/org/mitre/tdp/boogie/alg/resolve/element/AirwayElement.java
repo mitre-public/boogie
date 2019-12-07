@@ -6,7 +6,8 @@ import java.util.List;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.models.LinkedLeg;
+import org.mitre.tdp.boogie.models.LinkedLegs;
+import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 public class AirwayElement extends ResolvedElement<Airway> {
@@ -16,11 +17,13 @@ public class AirwayElement extends ResolvedElement<Airway> {
   }
 
   @Override
-  public List<LinkedLeg> legs() {
-    List<LinkedLeg> legs = new ArrayList<>();
+  public List<LinkedLegs> legs() {
+    List<LinkedLegs> legs = new ArrayList<>();
     Iterators.pairwise(reference().legs(), (Leg l1, Leg l2) -> {
-      legs.add(new LinkedLeg(l1, l2));
-      legs.add(new LinkedLeg(l2, l1));
+      SectionSplitLeg ssl1 = new SectionSplitLeg(l1);
+      SectionSplitLeg ssl2 = new SectionSplitLeg(l2);
+      legs.add(new LinkedLegs(ssl1, ssl2));
+      legs.add(new LinkedLegs(ssl2, ssl1));
     });
     return legs;
   }

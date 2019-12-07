@@ -11,7 +11,7 @@ public final class AirportService extends SimpleService<Airport> {
   }
 
   public static AirportService with(Iterable<? extends Airport> airports) {
-    Multimap<String, Airport> byId = new HashMultimap<>();
+    Multimap<String, Airport> byId = HashMultimap.create();
     airports.forEach(a -> byId.put(a.identifier(), a));
     return new AirportService(byId);
   }

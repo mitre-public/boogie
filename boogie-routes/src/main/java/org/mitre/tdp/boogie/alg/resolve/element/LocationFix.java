@@ -1,11 +1,13 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
+import java.util.Optional;
+
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.NavigationSource;
 
-class LocationFix implements Fix {
+final class LocationFix implements Fix {
 
   private final String identifier;
   private final LatLong location;
@@ -33,7 +35,17 @@ class LocationFix implements Fix {
 
   @Override
   public MagneticVariation magneticVariation() {
-    throw new UnsupportedOperationException("No magvar associated with a raw latLon element.");
+    return new MagneticVariation() {
+      @Override
+      public Optional<Float> published() {
+        return Optional.empty();
+      }
+
+      @Override
+      public float modeled() {
+        return 0.0f;
+      }
+    };
   }
 
   @Override

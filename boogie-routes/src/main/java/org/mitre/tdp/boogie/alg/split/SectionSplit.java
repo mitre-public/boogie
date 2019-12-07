@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.split;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -70,5 +71,22 @@ public class SectionSplit {
   public SectionSplit setWildcards(String wildcards) {
     this.wildcards = wildcards;
     return this;
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof SectionSplit) {
+      SectionSplit osplit = (SectionSplit) that;
+      return Objects.equals(value, osplit.value)
+          && Objects.equals(etaEet, osplit.etaEet)
+          && Objects.equals(index, osplit.index)
+          && Objects.equals(wildcards, osplit.wildcards);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(value, etaEet, index, wildcards);
   }
 }

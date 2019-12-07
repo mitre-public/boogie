@@ -15,7 +15,7 @@ import org.mitre.tdp.boogie.TurnDirection;
  * 2) Direct to LatLon locations
  * 3) Direct to airport
  */
-public final class SimpleTFLeg<F extends Fix> implements Leg<F> {
+final class SimpleTFLeg<F extends Fix> implements Leg<F> {
 
   private final F path_terminator;
 

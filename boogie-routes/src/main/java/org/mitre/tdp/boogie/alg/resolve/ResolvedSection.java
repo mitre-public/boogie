@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.models.LinkedLeg;
+import org.mitre.tdp.boogie.models.LinkedLegs;
 
 /**
  * Wrapper class for a section containing context flags from the filed route string itself
@@ -22,7 +21,7 @@ public class ResolvedSection {
    * The split section with wildcards and etc associated with this collection of route
    * elements.
    */
-  private SectionSplit split;
+  private SectionSplit sectionSplit;
   /**
    * List of resolved infrastructure elements.
    *
@@ -36,13 +35,13 @@ public class ResolvedSection {
   private boolean direct;
 
   public ResolvedSection(SectionSplit split) {
-    this.split = split;
+    this.sectionSplit = split;
     this.elements = new ArrayList<>();
     this.direct = false;
   }
 
   public SectionSplit sectionSplit() {
-    return split;
+    return sectionSplit;
   }
 
   public boolean direct() {
@@ -66,7 +65,13 @@ public class ResolvedSection {
     return this;
   }
 
-  public Set<LinkedLeg> allLegs() {
-    return elements.stream().flatMap(e -> e.legs().stream()).collect(Collectors.toSet());
+  public Set<LinkedLegs> allLegs() {
+    return elements.stream()
+        // tag the generated legs with the section information on the way out
+        .flatMap(e -> e.legs().stream().peek(leg -> {
+          leg.source().setSectionSplit(sectionSplit());
+          leg.target().setSectionSplit(sectionSplit());
+        }))
+        .collect(Collectors.toSet());
   }
 }

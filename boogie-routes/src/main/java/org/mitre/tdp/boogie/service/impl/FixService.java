@@ -11,7 +11,7 @@ public final class FixService extends SimpleService<Fix> {
   }
 
   public static FixService with(Iterable<? extends Fix> fixes) {
-    Multimap<String, Fix> byId = new HashMultimap<>();
+    Multimap<String, Fix> byId = HashMultimap.create();
     fixes.forEach(f -> byId.put(f.identifier(), f));
     return new FixService(byId);
   }
