@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.models.ProcedureGraph;
+import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.service.LookupService;
 
 public final class ProcedureGraphService implements LookupService<ProcedureGraph> {

@@ -24,4 +24,10 @@ public class LinkedLegs {
   public SectionSplitLeg target() {
     return target;
   }
+
+  public Double linkWeight() {
+    return source.sectionSplit().equals(target.sectionSplit())
+        || !source.leg().type().concrete() || !target.leg().type().concrete()
+        ? 0.0 : source.leg().pathTerminator().distanceInNmTo(target.leg().pathTerminator());
+  }
 }

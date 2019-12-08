@@ -19,8 +19,6 @@ import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
-import org.mitre.tdp.boogie.models.Procedure;
-import org.mitre.tdp.boogie.models.ProcedureGraph;
 import org.mitre.tdp.boogie.service.LookupService;
 import org.mitre.tdp.boogie.service.impl.AirportService;
 import org.mitre.tdp.boogie.service.impl.AirwayService;

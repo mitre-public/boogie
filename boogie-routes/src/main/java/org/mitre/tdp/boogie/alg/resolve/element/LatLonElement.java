@@ -5,10 +5,11 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.SectionHeuristics;
-import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.util.CoordinateParser;
+
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.latLon;
 
 public class LatLonElement extends ResolvedElement<LocationFix> {
 
@@ -24,7 +25,7 @@ public class LatLonElement extends ResolvedElement<LocationFix> {
   }
 
   public static LatLonElement from(String location) {
-    Preconditions.checkArgument(SectionHeuristics.matches(location, SectionHeuristics.latLon()));
+    Preconditions.checkArgument(location.matches(latLon().pattern()));
     LocationFix floc = new LocationFix(location, CoordinateParser.parse(location));
     return new LatLonElement(floc);
   }

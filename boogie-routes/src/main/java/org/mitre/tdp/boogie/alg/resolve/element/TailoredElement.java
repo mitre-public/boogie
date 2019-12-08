@@ -7,18 +7,21 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.models.LinkedLegs;
 
 public class TailoredElement extends ResolvedElement<Fix> {
 
-  public TailoredElement(Fix ref) {
+  private final String tailored;
+
+  public TailoredElement(String tailored, Fix ref) {
     super(ElementType.TAILORED, ref);
+    this.tailored = tailored;
   }
 
   @Override
   public List<LinkedLegs> legs() {
-    Pair<Double, Double> bearingDistance = bearingDistance(reference().identifier());
+    Pair<Double, Double> bearingDistance = bearingDistance(tailored);
 
     double course = convertToTrue(bearingDistance.first());
     double distance = bearingDistance.second();

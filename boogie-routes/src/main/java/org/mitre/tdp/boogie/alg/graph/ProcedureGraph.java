@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.models;
+package org.mitre.tdp.boogie.alg.graph;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;

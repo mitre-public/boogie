@@ -15,6 +15,7 @@ import com.google.common.collect.Iterables;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.ExpandRoutes;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
+import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.element.AirwayElement;
 import org.mitre.tdp.boogie.alg.resolve.element.FixElement;
@@ -25,9 +26,7 @@ import org.mitre.tdp.boogie.alg.resolve.element.TailoredElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.models.ProcedureGraph;
 
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.matches;
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
 
 /**
@@ -128,7 +127,7 @@ public class SectionResolver implements Serializable {
   List<ResolvedElement<?>> fix(String section) {
     // check to see if the parsed section is a tailored waypoint reference
     // if so extract the course/distance suffix from the fix identifier
-    String s = matches(section, tailored())
+    String s = section.matches(tailored().pattern())
         ? section.substring(0, section.length() - 6)
         : section;
 
@@ -136,7 +135,7 @@ public class SectionResolver implements Serializable {
         .allMatchingIdentifiers(s).stream()
         .map(fix -> section.equals(s)
             ? new FixElement(fix)
-            : new TailoredElement(fix))
+            : new TailoredElement(section, fix))
         .collect(Collectors.toList());
   }
 
@@ -168,7 +167,7 @@ public class SectionResolver implements Serializable {
    * Attempts to parse the section identifier as a Lat/Lon coordinate.
    */
   ResolvedElement<?> latLon(String section) {
-    boolean match = matches(section, SectionHeuristics.latLon());
+    boolean match = section.matches(SectionHeuristics.latLon().pattern());
     return match ? LatLonElement.from(section) : null;
   }
 

@@ -1,11 +1,16 @@
 package org.mitre.tdp.boogie.utils;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Collections {
+
+  public static <U, V> List<V> transform(List<U> col, Function<U, V> transform) {
+    return col.stream().map(transform).collect(Collectors.toList());
+  }
 
   public static <U, V> Collection<V> transform(Collection<U> col, Function<U, V> transform) {
     return col.stream().map(transform).collect(Collectors.toList());
