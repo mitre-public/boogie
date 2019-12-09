@@ -19,7 +19,7 @@ public class LatLonElement extends ResolvedElement<LocationFix> {
 
   @Override
   public List<LinkedLegs> legs() {
-    SimpleTFLeg<LocationFix> leg = SimpleTFLeg.from(reference());
+    SimpleIFLeg<LocationFix> leg = SimpleIFLeg.from(reference());
     SectionSplitLeg sleg = new SectionSplitLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }

@@ -29,14 +29,9 @@ public interface Transition<F extends Fix, L extends Leg<F>> extends Infrastruct
   ProcedureType procedureType();
 
   /**
-   * Returns whether the implementing transition refers to the common portion of a SID/STAR.
+   * Returns what kind of transition is being referred to. {@link TransitionType}
    */
-  boolean isCommonPortion();
-
-  /**
-   * Returns whether the implementing transition refers to the enroute
-   */
-  boolean isEnrouteTransition();
+  TransitionType transitionType();
 
   /**
    * Returns the legs which make up the transition.

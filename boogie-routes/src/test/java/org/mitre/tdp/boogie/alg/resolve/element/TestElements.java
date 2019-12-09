@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,10 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.NavigationSource;
+import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 
 import static org.junit.Assert.assertEquals;
@@ -51,13 +55,21 @@ public class TestElements {
     assertEquals(linked.source().leg().type(), LegType.TF);
   }
 
-  private Leg tf(String name, double lat, double lon) {
+  private Leg TF(String name, double lat, double lon) {
+    return leg(name, lat, lon, LegType.TF);
+  }
+
+  private Leg IF(String name, double lat, double lon) {
+    return leg(name, lat, lon, LegType.IF);
+  }
+
+  private Leg leg(String name, double lat, double lon, LegType type) {
     Fix term = mock(Fix.class);
     when(term.identifier()).thenReturn(name);
     when(term.latLong()).thenReturn(LatLong.of(lat, lon));
 
     Leg leg = mock(Leg.class);
-    when(leg.type()).thenReturn(LegType.TF);
+    when(leg.type()).thenReturn(type);
     when(leg.pathTerminator()).thenReturn(term);
 
     return leg;
@@ -65,10 +77,10 @@ public class TestElements {
 
   @Test
   public void testAirwayElement() {
-    Leg l1 = tf("YYT", 0.0, 0.0);
-    Leg l2 = tf("YYZ", 0.0, 1.0);
-    Leg l3 = tf("ZZT", 0.0, 2.0);
-    Leg l4 = tf("ZZY", 0.0, 3.0);
+    Leg l1 = TF("YYT", 0.0, 0.0);
+    Leg l2 = TF("YYZ", 0.0, 1.0);
+    Leg l3 = TF("ZZT", 0.0, 2.0);
+    Leg l4 = TF("ZZY", 0.0, 3.0);
 
     Airway airway = mock(Airway.class);
 
@@ -160,12 +172,70 @@ public class TestElements {
 
   @Test
   public void testProcedureElementSingleTransition() {
+    Leg l1 = IF("ZZV", 0.0, 0.0);
+    Leg l2 = TF("ZZY", 0.0, 1.0);
+    Leg l3 = TF("ZZZ", 0.0, 2.0);
+
     Transition transition = mock(Transition.class);
+    when(transition.transitionType()).thenReturn(TransitionType.COMMON);
+    when(transition.legs()).thenReturn(Arrays.asList(l1, l2, l3));
+    when(transition.procedure()).thenReturn("GNDLF1");
+    when(transition.procedureType()).thenReturn(ProcedureType.STAR);
+
+    ProcedureGraph pg = ProcedureGraph.from(Collections.singletonList(transition));
+
+    ProcedureElement element = new ProcedureElement(pg);
+
+    assertEquals(2, element.legs().size());
+
+    List<LinkedLegs> linked = element.legs();
+
+    LinkedLegs ll1 = linked.get(0);
+    LinkedLegs ll2 = linked.get(1);
+
+    assertEquals(ll1.source().leg().pathTerminator().identifier(), "ZZV");
+    assertEquals(ll1.target().leg().pathTerminator().identifier(), "ZZY");
+    assertEquals(ll2.source().leg(), ll1.target().leg());
+    assertEquals(ll2.target().leg().pathTerminator().identifier(), "ZZZ");
   }
 
+  private Transition transition(String pname, ProcedureType ptype, List<Leg> legs) {
+    Transition transition = mock(Transition.class);
+
+    when(transition.legs()).thenReturn(legs);
+    when(transition.procedure()).thenReturn(pname);
+    when(transition.procedureType()).thenReturn(ptype);
+    when(transition.transitionType()).thenReturn(TransitionType.COMMON);
+
+    return transition;
+  }
+
+  // This is really about checking the linking of the various transitions to each-other in a sane way
   @Test
   public void testProcedureElementMultiTransition() {
+    Leg l1_1 = IF("AAA", 0.0, 0.0);
+    Leg l1_2 = TF("BBB", 0.0, 0.1);
+    Transition ab = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
+    Leg l2_1 = IF("BBB", 0.0, 0.2);
+    Leg l2_2 = TF("CCC", 0.0, 0.3);
+    Transition bc = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
+
+    Leg l3_1 = IF("CCC", 0.0, 0.4);
+    Leg l3_2 = TF("DDD", 0.0, 0.5);
+    Transition cd = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+
+    Leg l4_1 = IF("CCC", 0.0, 0.4);
+    Leg l4_2 = TF("EEE", 0.0, 0.5);
+    Transition ce = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+
+    ProcedureGraph pg = ProcedureGraph.from(Arrays.asList(ab, bc, cd, ce));
+
+    ProcedureElement element = new ProcedureElement(pg);
+
+    List<LinkedLegs> linked = element.legs();
+
+    assertEquals(7, linked.size());
   }
 
   @Test

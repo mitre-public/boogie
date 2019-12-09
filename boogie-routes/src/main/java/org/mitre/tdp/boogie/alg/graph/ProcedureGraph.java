@@ -1,9 +1,12 @@
 package org.mitre.tdp.boogie.alg.graph;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import org.jgrapht.GraphPath;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.interfaces.LowestCommonAncestorAlgorithm;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
@@ -13,6 +16,8 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.models.Procedure;
+import org.mitre.tdp.boogie.service.impl.NameLocationService;
+import org.mitre.tdp.boogie.utils.Collections;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;
@@ -27,37 +32,75 @@ import static org.mitre.tdp.boogie.utils.Collections.allMatch;
  * {@link AllDirectedPaths}
  * {@link LowestCommonAncestorAlgorithm}
  */
-public class ProcedureGraph<F extends Fix, L extends Leg<F>, T extends Transition<F, L>> extends SimpleDirectedGraph<L, DefaultEdge> implements Procedure<F, L, T> {
+public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implements Procedure {
 
-  private final Collection<T> transitions;
+  private final Collection<Transition> transitions;
+  private final NameLocationService<Leg> nls;
 
-  private ProcedureGraph(Collection<T> transitions) {
+  private transient AllDirectedPaths<Leg, DefaultEdge> allPaths;
+
+  private ProcedureGraph(Collection<Transition> transitions, NameLocationService<Leg> nls) {
     super(DefaultEdge.class);
     this.transitions = transitions;
+    this.nls = nls;
   }
 
   @Override
-  public Collection<T> transitions() {
+  public Collection<Transition> transitions() {
     return transitions;
   }
 
+  /**
+   * Returns the leg of the preferred type which best matches the specified fix. This lookup is done
+   * both by name as well as geospatially if the fix identifier doesn't exist in the procedure.
+   */
+  private Leg bestLegMatch(Fix fix) {
+    Collection<Leg> nameMatches = nls.matches(fix.identifier());
+    return nameMatches.stream()
+        .min(Comparator.comparing(Leg::type))
+        .orElse(nls.nearest(fix.latLong()));
+  }
+
   @Override
-  public List<List<L>> pathsBetween(F start, F end) {
-    return null;
+  public List<List<Leg>> pathsBetween(Fix entry, Fix exit) {
+    if (allPaths == null) {
+      allPaths = new AllDirectedPaths<>(this);
+    }
+    List<GraphPath<Leg, DefaultEdge>> gpaths =
+        allPaths.getAllPaths(
+            bestLegMatch(entry),
+            bestLegMatch(exit),
+            false,
+            100);
+    return Collections.transform(gpaths, GraphPath::getVertexList);
   }
 
   /**
    * Constructs a procedure graph object from the collection of transitions associated with a particular procedure.
    */
-  public static <F extends Fix, L extends Leg<F>, T extends Transition<F, L>> ProcedureGraph<F, L, T> from(Collection<T> transitions) {
+  public static ProcedureGraph from(Collection<Transition> transitions) {
     Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
     Preconditions.checkArgument(allMatch(transitions, Transition::airport));
     Preconditions.checkArgument(allMatch(transitions, Transition::source));
 
-    ProcedureGraph<F, L, T> procedure = new ProcedureGraph<>(transitions);
+    // find the terminators of the concrete leg types (these exist as actual fixes)
+    Collection<Leg> concrete = transitions.stream()
+        .map((Transition t) -> (List<Leg>) t.legs())
+        .flatMap(Collection::stream)
+        .filter((Leg leg) -> leg.type().concrete())
+        .collect(Collectors.toSet());
+
+    NameLocationService nls = NameLocationService.from(
+        concrete,
+        (Leg leg) -> leg.pathTerminator().identifier(),
+        (Leg leg) -> leg.pathTerminator().latLong());
+
+    ProcedureGraph procedure = new ProcedureGraph(transitions, nls);
+
+    // insert each of the transitions individually
     transitions.forEach(transition -> Iterators.pairwise(
         transition.legs(),
-        (prev, curr) -> {
+        (Leg prev, Leg curr) -> {
           procedure.addVertex(prev);
           procedure.addVertex(curr);
           procedure.addEdge(prev, curr);
