@@ -17,9 +17,9 @@
   </parent>
 
   <scm>
-    <connection>scm:git:ssh://git@mustache.mitre.org:7999/aria/aria.git</connection>
+    <connection>ssh://git@mustache.mitre.org:7999/~acramer/boogie.git</connection>
     <developerConnection>scm:git:ssh://git@mustache.mitre.org:7999/ttfs/ttfs.git</developerConnection>
-    <url>https://mustache.mitre.org/projects/ARIA/repos/aria</url>
+    <url>https://mustache.mitre.org/users/acramer/repos/boogie</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -34,7 +34,6 @@
   <modules>
     <module>boogie-core</module>
     <module>boogie-routes</module>
-    <module>boogie-deploy</module>
   </modules>
 
   <dependencyManagement>
