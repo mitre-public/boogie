@@ -23,6 +23,8 @@ import org.mitre.tdp.boogie.models.LinkedLegs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mitre.tdp.boogie.ObjectMocks.IF;
+import static org.mitre.tdp.boogie.ObjectMocks.TF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,26 +55,6 @@ public class TestElements {
 
     assertEquals(linked.source().leg().type(), LegType.TF);
     assertEquals(linked.source().leg().type(), LegType.TF);
-  }
-
-  private Leg TF(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.TF);
-  }
-
-  private Leg IF(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.IF);
-  }
-
-  private Leg leg(String name, double lat, double lon, LegType type) {
-    Fix term = mock(Fix.class);
-    when(term.identifier()).thenReturn(name);
-    when(term.latLong()).thenReturn(LatLong.of(lat, lon));
-
-    Leg leg = mock(Leg.class);
-    when(leg.type()).thenReturn(type);
-    when(leg.pathTerminator()).thenReturn(term);
-
-    return leg;
   }
 
   @Test
@@ -199,13 +181,13 @@ public class TestElements {
     assertEquals(ll2.target().leg().pathTerminator().identifier(), "ZZZ");
   }
 
-  private Transition transition(String pname, ProcedureType ptype, List<Leg> legs) {
+  private Transition transition(String pname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
     Transition transition = mock(Transition.class);
 
     when(transition.legs()).thenReturn(legs);
     when(transition.procedure()).thenReturn(pname);
     when(transition.procedureType()).thenReturn(ptype);
-    when(transition.transitionType()).thenReturn(TransitionType.COMMON);
+    when(transition.transitionType()).thenReturn(ttype);
 
     return transition;
   }
@@ -215,19 +197,19 @@ public class TestElements {
   public void testProcedureElementMultiTransition() {
     Leg l1_1 = IF("AAA", 0.0, 0.0);
     Leg l1_2 = TF("BBB", 0.0, 0.1);
-    Transition ab = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    Transition ab = transition("ALPHA1", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
     Leg l2_1 = IF("BBB", 0.0, 0.2);
     Leg l2_2 = TF("CCC", 0.0, 0.3);
-    Transition bc = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
+    Transition bc = transition("ALPHA1", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
 
     Leg l3_1 = IF("CCC", 0.0, 0.4);
     Leg l3_2 = TF("DDD", 0.0, 0.5);
-    Transition cd = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    Transition cd = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = IF("CCC", 0.0, 0.4);
     Leg l4_2 = TF("EEE", 0.0, 0.5);
-    Transition ce = transition("ALPHA1", ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    Transition ce = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
     ProcedureGraph pg = ProcedureGraph.from(Arrays.asList(ab, bc, cd, ce));
 

@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.alg.graph;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,15 +13,20 @@ import org.jgrapht.alg.interfaces.LowestCommonAncestorAlgorithm;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.impl.NameLocationService;
+import org.mitre.tdp.boogie.util.Combinatorics;
 import org.mitre.tdp.boogie.utils.Collections;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mitre.tdp.boogie.utils.Collections.transform;
+import static org.mitre.tdp.boogie.utils.Iterators.checkMatchCount;
+import static org.mitre.tdp.boogie.utils.Iterators.fastslow;
 
 /**
  * Representation of the procedure built from its collection of transitions as a graph object.
@@ -106,6 +112,23 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
           procedure.addEdge(prev, curr);
         }
     ));
+
+    TransitionTriple triple = TransitionTriple.from(transitions);
+
+    if (checkMatchCount(triple.listOrdered(), c -> !c.isEmpty())) {
+      fastslow(triple.listOrdered(), c -> !c.isEmpty(), (l1, l2, skip) -> {
+        // these should all have concrete fixes as path terminators
+        List<Leg> terminals = transform(l1, t -> ((List<Leg>) t.legs()).get(t.legs().size() - 1));
+        List<Leg> initials = transform(l2, t -> ((List<Leg>) t.legs()).get(0));
+
+        Iterator<Pair<Leg, Leg>> paired = Combinatorics.cartesianProduct(terminals, initials);
+        paired.forEachRemaining(pair -> {
+          if (pair.first().pathTerminator().identifier().equals(pair.second().pathTerminator().identifier())) {
+            procedure.addEdge(pair.first(), pair.second());
+          }
+        });
+      });
+    }
 
     return procedure;
   }

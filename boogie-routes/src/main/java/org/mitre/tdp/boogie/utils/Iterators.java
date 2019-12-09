@@ -39,6 +39,14 @@ public class Iterators {
   }
 
   /**
+   * Returns whether the given predicate has enough matches in the list (>=2) to
+   * perform the {@link Iterators#fastslow2(List, Predicate, TriConsumer)} operation.
+   */
+  public static <T> boolean checkMatchCount(List<T> list, Predicate<T> match) {
+    return Collections.filter(list, match).size() >= 2;
+  }
+
+  /**
    * Fast/Slow iterator for list of elements. When both the fast and slow
    * iterators have a match the the consumer is called on the pair along
    * with the list of skipped elements between the fast and slow iterators.
@@ -47,7 +55,7 @@ public class Iterators {
    * match the supplied predicate to avoid silently never calling the consumer.
    */
   public static <T> void fastslow2(List<T> list, Predicate<T> match, TriConsumer<T, T, List<T>> consumer) {
-    Preconditions.checkArgument(Collections.filter(list, match).size() >= 2);
+    Preconditions.checkArgument(checkMatchCount(list, match));
     int n = list.size();
     int l = 0;
     int h = 1;

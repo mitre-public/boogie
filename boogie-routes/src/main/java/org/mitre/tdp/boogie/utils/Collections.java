@@ -27,4 +27,8 @@ public class Collections {
   public static <U, V> boolean allMatch(Collection<U> iterable, Function<U, V> ext, V value) {
     return iterable.stream().allMatch(u -> ext.apply(u).equals(value));
   }
+
+  public static <U, V> boolean noneMatch(Collection<U> iterable, Function<U, V> ext, V value) {
+    return iterable.stream().noneMatch(u -> ext.apply(u).equals(value));
+  }
 }
