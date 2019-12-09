@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.mitre.caasd.commons.LatLong;
@@ -19,12 +18,14 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
+import org.mitre.tdp.boogie.alg.graph.TestProcedureGraph;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mitre.tdp.boogie.ObjectMocks.IF;
 import static org.mitre.tdp.boogie.ObjectMocks.TF;
+import static org.mitre.tdp.boogie.ObjectMocks.magneticVariation;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,8 +54,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "KATL");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "KATL");
 
-    assertEquals(linked.source().leg().type(), LegType.TF);
-    assertEquals(linked.source().leg().type(), LegType.TF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
   }
 
   @Test
@@ -129,8 +130,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "SHERL");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "SHERL");
 
-    assertEquals(linked.source().leg().type(), LegType.TF);
-    assertEquals(linked.source().leg().type(), LegType.TF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
   }
 
   @Test
@@ -148,8 +149,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "5300N/14000W");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "5300N/14000W");
 
-    assertEquals(linked.source().leg().type(), LegType.TF);
-    assertEquals(linked.source().leg().type(), LegType.TF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
   }
 
   @Test
@@ -181,48 +182,32 @@ public class TestElements {
     assertEquals(ll2.target().leg().pathTerminator().identifier(), "ZZZ");
   }
 
-  private Transition transition(String pname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
-    Transition transition = mock(Transition.class);
-
-    when(transition.legs()).thenReturn(legs);
-    when(transition.procedure()).thenReturn(pname);
-    when(transition.procedureType()).thenReturn(ptype);
-    when(transition.transitionType()).thenReturn(ttype);
-
-    return transition;
+  private boolean legMatches(List<LinkedLegs> legs, String sourceName, LegType sourceType, String targetName, LegType targetType) {
+    return legs.stream()
+        .filter(ll -> ll.source().leg().pathTerminator() != null)
+        .filter(ll -> ll.target().leg().pathTerminator() != null)
+        .filter(ll -> ll.source().leg().pathTerminator().identifier().equals(sourceName) && ll.target().leg().pathTerminator().identifier().equals(targetName))
+        .filter(ll -> ll.source().leg().type().equals(sourceType) && ll.target().leg().type().equals(targetType))
+        .findFirst()
+        .isPresent();
   }
 
   // This is really about checking the linking of the various transitions to each-other in a sane way
   @Test
   public void testProcedureElementMultiTransition() {
-    Leg l1_1 = IF("AAA", 0.0, 0.0);
-    Leg l1_2 = TF("BBB", 0.0, 0.1);
-    Transition ab = transition("ALPHA1", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
-
-    Leg l2_1 = IF("BBB", 0.0, 0.2);
-    Leg l2_2 = TF("CCC", 0.0, 0.3);
-    Transition bc = transition("ALPHA1", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
-
-    Leg l3_1 = IF("CCC", 0.0, 0.4);
-    Leg l3_2 = TF("DDD", 0.0, 0.5);
-    Transition cd = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
-
-    Leg l4_1 = IF("CCC", 0.0, 0.4);
-    Leg l4_2 = TF("EEE", 0.0, 0.5);
-    Transition ce = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
-
-    ProcedureGraph pg = ProcedureGraph.from(Arrays.asList(ab, bc, cd, ce));
+    ProcedureGraph pg = TestProcedureGraph.nominalGraph();
 
     ProcedureElement element = new ProcedureElement(pg);
 
     List<LinkedLegs> linked = element.legs();
 
-    assertEquals(7, linked.size());
-  }
+    assertEquals(pg.edgeSet().size(), linked.size());
 
-  @Test
-  public void testProcedureElementDisconnected() {
-
+    assertTrue(legMatches(linked, "AAA", LegType.IF, "BBB", LegType.TF));
+    assertTrue(legMatches(linked, "BBB", LegType.IF, "CCC", LegType.TF));
+    assertTrue(legMatches(linked, "CCC", LegType.TF, "CCC", LegType.IF));
+    assertTrue(legMatches(linked, "CCC", LegType.IF, "DDD", LegType.TF));
+    assertTrue(legMatches(linked, "CCC", LegType.IF, "EEE", LegType.TF));
   }
 
   @Test
@@ -241,17 +226,9 @@ public class TestElements {
 
     when(fix.identifier()).thenReturn("HTO");
     when(fix.latLong()).thenReturn(LatLong.of(0.0, 0.0));
-    when(fix.magneticVariation()).thenReturn(new MagneticVariation() {
-      @Override
-      public Optional<Float> published() {
-        return Optional.of(-10.0f);
-      }
 
-      @Override
-      public float modeled() {
-        return -9.0f;
-      }
-    });
+    MagneticVariation magneticVariation = magneticVariation(-10.0f, -9.0f);
+    when(fix.magneticVariation()).thenReturn(magneticVariation);
 
     TailoredElement element = new TailoredElement(tailoredId, fix);
 
@@ -269,7 +246,7 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "HTO");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "HTO");
 
-    assertEquals(linked.source().leg().type(), LegType.TF);
-    assertEquals(linked.source().leg().type(), LegType.TF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), LegType.IF);
   }
 }

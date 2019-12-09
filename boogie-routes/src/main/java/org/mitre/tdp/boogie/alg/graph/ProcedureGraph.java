@@ -104,19 +104,27 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     ProcedureGraph procedure = new ProcedureGraph(transitions, nls);
 
     // insert each of the transitions individually
-    transitions.forEach(transition -> Iterators.pairwise(
-        transition.legs(),
-        (Leg prev, Leg curr) -> {
-          procedure.addVertex(prev);
-          procedure.addVertex(curr);
-          procedure.addEdge(prev, curr);
-        }
-    ));
+    transitions.forEach(transition -> {
+      if (transition.legs().size() == 1) {
+        Leg leg = (Leg) transition.legs().get(0);
+        procedure.addVertex(leg);
+      } else {
+        Iterators.pairwise(
+            transition.legs(),
+            (Leg prev, Leg curr) -> {
+              procedure.addVertex(prev);
+              procedure.addVertex(curr);
+              procedure.addEdge(prev, curr);
+            });
+      }
+    });
 
+    // zip together all of the connecting transitions
     TransitionTriple triple = TransitionTriple.from(transitions);
 
     if (checkMatchCount(triple.listOrdered(), c -> !c.isEmpty())) {
       fastslow(triple.listOrdered(), c -> !c.isEmpty(), (l1, l2, skip) -> {
+
         // these should all have concrete fixes as path terminators
         List<Leg> terminals = transform(l1, t -> ((List<Leg>) t.legs()).get(t.legs().size() - 1));
         List<Leg> initials = transform(l2, t -> ((List<Leg>) t.legs()).get(0));
