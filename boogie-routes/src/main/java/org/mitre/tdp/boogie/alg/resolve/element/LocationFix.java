@@ -49,7 +49,7 @@ final class LocationFix implements Fix {
   }
 
   @Override
-  public float elevation() {
-    return 0.0f;
+  public Optional<Float> elevation() {
+    return Optional.empty();
   }
 }

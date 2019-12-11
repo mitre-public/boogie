@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * Represents the cleaned and tagged portion of a route string between two `.`s.
@@ -88,5 +89,10 @@ public class SectionSplit {
   @Override
   public int hashCode() {
     return Objects.hash(value, etaEet, index, wildcards);
+  }
+
+  @Override
+  public String toString() {
+    return ReflectionToStringBuilder.toString(this);
   }
 }

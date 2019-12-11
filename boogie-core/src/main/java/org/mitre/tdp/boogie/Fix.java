@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie;
 
+import java.util.Optional;
+
 import org.mitre.caasd.commons.HasPosition;
 
 public interface Fix extends HasPosition, Infrastructure {
@@ -12,5 +14,5 @@ public interface Fix extends HasPosition, Infrastructure {
   /**
    * The elevation in feet of the fix (if a navaid).
    */
-  float elevation();
+  Optional<Float> elevation();
 }

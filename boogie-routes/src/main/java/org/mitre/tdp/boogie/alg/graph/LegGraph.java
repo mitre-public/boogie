@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg.graph;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,15 +40,25 @@ public class LegGraph extends SimpleDirectedWeightedGraph<SectionSplitLeg, Defau
   }
 
   @Override
-  public boolean addEdge(SectionSplitLeg l1, SectionSplitLeg l2, DefaultWeightedEdge edge) {
-    boolean inserted = super.addEdge(l1, l2, edge);
+  public DefaultWeightedEdge addEdge(SectionSplitLeg l1, SectionSplitLeg l2) {
+    DefaultWeightedEdge edge = super.addEdge(l1, l2);
     updateMinMax(l1, l2);
-    return inserted;
+    return edge;
   }
 
   private void updateMinMax(SectionSplitLeg l1, SectionSplitLeg l2) {
     this.maxdex = Math.max(maxdex, Math.max(l1.sectionSplit().index(), l2.sectionSplit().index()));
     this.mindex = Math.min(mindex, Math.min(l1.sectionSplit().index(), l2.sectionSplit().index()));
+  }
+
+  /**
+   * Derived path comparator. Compare first by weight, and then break ties by using the overall path length
+   * preferring longer (more fully expanded paths).
+   */
+  private Comparator<GraphPath<SectionSplitLeg, DefaultWeightedEdge>> pathComparator() {
+    Comparator<GraphPath<SectionSplitLeg, DefaultWeightedEdge>> weight = Comparator.comparing(GraphPath::getWeight);
+    Comparator<GraphPath<SectionSplitLeg, DefaultWeightedEdge>> length = Comparator.comparing(GraphPath::getLength);
+    return weight.thenComparing(length);
   }
 
   /**
@@ -67,7 +78,6 @@ public class LegGraph extends SimpleDirectedWeightedGraph<SectionSplitLeg, Defau
     Iterator<Pair<SectionSplitLeg, SectionSplitLeg>> iter = Combinatorics.cartesianProduct(slegs, elegs);
 
     GraphPath<SectionSplitLeg, DefaultWeightedEdge> shortest = null;
-    double min = Double.MAX_VALUE;
 
     while (iter.hasNext()) {
       Pair<SectionSplitLeg, SectionSplitLeg> pair = iter.next();
@@ -83,11 +93,8 @@ public class LegGraph extends SimpleDirectedWeightedGraph<SectionSplitLeg, Defau
         throw e;
       }
 
-      double weight = path.getWeight();
-
-      if (weight < min) {
+      if (shortest == null || pathComparator().compare(path, shortest) < 0) {
         shortest = path;
-        min = weight;
       }
     }
 

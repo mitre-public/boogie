@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.models;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
+import static org.mitre.tdp.boogie.utils.Nulls.nonNullEquals;
+
 public class LinkedLegs {
   private final SectionSplitLeg source;
   private final SectionSplitLeg target;
@@ -26,8 +28,10 @@ public class LinkedLegs {
   }
 
   public Double linkWeight() {
-    return source.sectionSplit().equals(target.sectionSplit())
-        || !source.leg().type().concrete() || !target.leg().type().concrete()
-        ? 0.0 : source.leg().pathTerminator().distanceInNmTo(target.leg().pathTerminator());
+    return nonNullEquals(source.sectionSplit(), target.sectionSplit())
+        || source.leg().pathTerminator() == null
+        || target.leg().pathTerminator() == null
+        ? 0.0
+        : source.leg().pathTerminator().latLong().distanceInNM(target.leg().pathTerminator().latLong());
   }
 }

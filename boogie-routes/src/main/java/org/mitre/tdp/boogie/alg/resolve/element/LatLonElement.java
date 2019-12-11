@@ -18,7 +18,7 @@ public class LatLonElement extends ResolvedElement<LocationFix> {
   }
 
   @Override
-  public List<LinkedLegs> legs() {
+  public List<LinkedLegs> buildLegs() {
     SimpleIFLeg<LocationFix> leg = SimpleIFLeg.from(reference());
     SectionSplitLeg sleg = new SectionSplitLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));

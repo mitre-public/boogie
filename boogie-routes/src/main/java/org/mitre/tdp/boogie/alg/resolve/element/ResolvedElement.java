@@ -11,6 +11,8 @@ public abstract class ResolvedElement<I extends Infrastructure> {
   final ElementType type;
   final I reference;
 
+  transient List<LinkedLegs> legs;
+
   ResolvedElement(ElementType t, I ref) {
     this.type = t;
     this.reference = ref;
@@ -24,9 +26,16 @@ public abstract class ResolvedElement<I extends Infrastructure> {
     return reference;
   }
 
+  protected abstract List<LinkedLegs> buildLegs();
+
   /**
    * Converts the internal template element into a collection of legs which
    * can be used in the section graph.
    */
-  public abstract List<LinkedLegs> legs();
+  public List<LinkedLegs> legs() {
+    if (legs == null) {
+      this.legs = buildLegs();
+    }
+    return legs;
+  }
 }

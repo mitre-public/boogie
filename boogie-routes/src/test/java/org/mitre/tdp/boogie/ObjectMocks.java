@@ -17,6 +17,8 @@ public class ObjectMocks {
     Fix fix = mock(Fix.class);
     when(fix.identifier()).thenReturn(name);
     when(fix.latLong()).thenReturn(LatLong.of(lat, lon));
+//    when(fix.hashCode()).thenReturn(Objects.hash(name, lat, lon));
+    when(fix.toString()).thenReturn("Name: " + name);
     return fix;
   }
 
@@ -28,12 +30,19 @@ public class ObjectMocks {
     return leg(name, lat, lon, LegType.IF);
   }
 
+  public static Leg CA() {
+    Leg leg = mock(Leg.class);
+    when(leg.type()).thenReturn(LegType.CA);
+    return leg;
+  }
 
   public static Leg leg(String name, double lat, double lon, LegType type) {
     Fix term = fix(name, lat, lon);
     Leg leg = mock(Leg.class);
     when(leg.type()).thenReturn(type);
     when(leg.pathTerminator()).thenReturn(term);
+
+    when(leg.toString()).thenReturn("Path Terminator: " + name);
     return leg;
   }
 

@@ -15,7 +15,7 @@ public class FixElement extends ResolvedElement<Fix> {
   }
 
   @Override
-  public List<LinkedLegs> legs() {
+  public List<LinkedLegs> buildLegs() {
     SimpleIFLeg<Fix> leg = SimpleIFLeg.from(reference());
     SectionSplitLeg sleg = new SectionSplitLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));

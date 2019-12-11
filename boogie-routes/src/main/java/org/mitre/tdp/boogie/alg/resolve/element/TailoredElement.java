@@ -20,7 +20,7 @@ public class TailoredElement extends ResolvedElement<Fix> {
   }
 
   @Override
-  public List<LinkedLegs> legs() {
+  public List<LinkedLegs> buildLegs() {
     Pair<Double, Double> bearingDistance = bearingDistance(tailored);
 
     double course = convertToTrue(bearingDistance.first());

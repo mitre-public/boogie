@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
 import org.mitre.caasd.commons.LatLong;
@@ -20,12 +22,14 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.graph.TestProcedureGraph;
 import org.mitre.tdp.boogie.models.LinkedLegs;
+import org.mitre.tdp.boogie.utils.Iterators;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mitre.tdp.boogie.ObjectMocks.IF;
 import static org.mitre.tdp.boogie.ObjectMocks.TF;
 import static org.mitre.tdp.boogie.ObjectMocks.magneticVariation;
+import static org.mitre.tdp.boogie.utils.Collections.allMatch;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,8 +62,7 @@ public class TestElements {
     assertEquals(linked.source().leg().type(), LegType.IF);
   }
 
-  @Test
-  public void testAirwayElement() {
+  private static Airway singleAirway() {
     Leg l1 = TF("YYT", 0.0, 0.0);
     Leg l2 = TF("YYZ", 0.0, 1.0);
     Leg l3 = TF("ZZT", 0.0, 2.0);
@@ -71,6 +74,12 @@ public class TestElements {
 
     when(airway.legs()).thenReturn(Arrays.asList(l1, l2, l3, l4));
     when(airway.identifier()).thenReturn(airwayId);
+    return airway;
+  }
+
+  @Test
+  public void testAirwayElement() {
+    Airway airway = singleAirway();
 
     AirwayElement element = new AirwayElement(airway);
 
@@ -105,6 +114,35 @@ public class TestElements {
     assertEquals(ll3_1.target(), ll3_2.source());
     assertEquals(ll3_1.source().leg().pathTerminator().identifier(), "ZZT");
     assertEquals(ll3_1.target().leg().pathTerminator().identifier(), "ZZY");
+  }
+
+  @Test
+  public void testAirwayElementSubsequentLegLinkReferences() {
+    Airway airway = singleAirway();
+
+    AirwayElement element = new AirwayElement(airway);
+
+    List<LinkedLegs> linked = element.legs();
+
+    List<LinkedLegs> forward = IntStream.range(0, linked.size() / 2)
+        .map(i -> 2 * i)
+        .mapToObj(linked::get)
+        .collect(Collectors.toList());
+
+    Iterators.pairwise(forward, (ll1, ll2) -> {
+      assertEquals("The target of the previous leg should be identical to the source of the next.", ll1.target(), ll2.source());
+      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.target().hashCode(), ll2.source().hashCode());
+    });
+
+    List<LinkedLegs> backwards = IntStream.range(0, linked.size() / 2)
+        .map(i -> (2 * i) + 1)
+        .mapToObj(linked::get)
+        .collect(Collectors.toList());
+
+    Iterators.pairwise(backwards, (ll1, ll2) -> {
+      assertEquals("The target of the previous leg should be identical to the source of the next.", ll1.source(), ll2.target());
+      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.source().hashCode(), ll2.target().hashCode());
+    });
   }
 
   @Test
@@ -153,8 +191,7 @@ public class TestElements {
     assertEquals(linked.source().leg().type(), LegType.IF);
   }
 
-  @Test
-  public void testProcedureElementSingleTransition() {
+  private static ProcedureGraph singleTransitionProcedureGraph() {
     Leg l1 = IF("ZZV", 0.0, 0.0);
     Leg l2 = TF("ZZY", 0.0, 1.0);
     Leg l3 = TF("ZZZ", 0.0, 2.0);
@@ -165,13 +202,20 @@ public class TestElements {
     when(transition.procedure()).thenReturn("GNDLF1");
     when(transition.procedureType()).thenReturn(ProcedureType.STAR);
 
-    ProcedureGraph pg = ProcedureGraph.from(Collections.singletonList(transition));
+    return ProcedureGraph.from(Collections.singletonList(transition));
+  }
+
+  @Test
+  public void testProcedureElementSingleTransitionLegIdentifiersAndWeights() {
+    ProcedureGraph pg = singleTransitionProcedureGraph();
 
     ProcedureElement element = new ProcedureElement(pg);
 
     assertEquals(2, element.legs().size());
 
     List<LinkedLegs> linked = element.legs();
+
+    assertTrue(allMatch(linked, leg -> leg.linkWeight() == 0.0d));
 
     LinkedLegs ll1 = linked.get(0);
     LinkedLegs ll2 = linked.get(1);
@@ -180,6 +224,20 @@ public class TestElements {
     assertEquals(ll1.target().leg().pathTerminator().identifier(), "ZZY");
     assertEquals(ll2.source().leg(), ll1.target().leg());
     assertEquals(ll2.target().leg().pathTerminator().identifier(), "ZZZ");
+  }
+
+  @Test
+  public void testProcedureElementSubsequentLegLinkReferences() {
+    ProcedureGraph pg = singleTransitionProcedureGraph();
+
+    ProcedureElement element = new ProcedureElement(pg);
+
+    List<LinkedLegs> linked = element.legs();
+
+    Iterators.pairwise(linked, (ll1, ll2) -> {
+      assertEquals("The target of the previous leg should be identical to the source of the next.", ll1.target(), ll2.source());
+      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.hashCode(), ll2.hashCode());
+    });
   }
 
   private boolean legMatches(List<LinkedLegs> legs, String sourceName, LegType sourceType, String targetName, LegType targetType) {

@@ -45,9 +45,9 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
 
   private transient AllDirectedPaths<Leg, DefaultEdge> allPaths;
 
-  private ProcedureGraph(Collection<Transition> transitions, NameLocationService<Leg> nls) {
+  private ProcedureGraph(Collection<? extends Transition> transitions, NameLocationService<Leg> nls) {
     super(DefaultEdge.class);
-    this.transitions = transitions;
+    this.transitions = (Collection<Transition>) transitions;
     this.nls = nls;
   }
 
@@ -84,22 +84,23 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
   /**
    * Constructs a procedure graph object from the collection of transitions associated with a particular procedure.
    */
-  public static ProcedureGraph from(Collection<Transition> transitions) {
+  public static ProcedureGraph from(Collection<? extends Transition> transitions) {
     Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
     Preconditions.checkArgument(allMatch(transitions, Transition::airport));
     Preconditions.checkArgument(allMatch(transitions, Transition::source));
 
     // find the terminators of the concrete leg types (these exist as actual fixes)
-    Collection<Leg> concrete = transitions.stream()
-        .map((Transition t) -> (List<Leg>) t.legs())
+    Collection<Leg<?>> concrete = transitions.stream()
+        .map((Transition t) -> (Transition<?, ?>) t)
+        .map(Transition::legs)
         .flatMap(Collection::stream)
         .filter((Leg leg) -> leg.type().concrete())
         .collect(Collectors.toSet());
 
     NameLocationService nls = NameLocationService.from(
         concrete,
-        (Leg leg) -> leg.pathTerminator().identifier(),
-        (Leg leg) -> leg.pathTerminator().latLong());
+        leg -> leg.pathTerminator().identifier(),
+        leg -> leg.pathTerminator().latLong());
 
     ProcedureGraph procedure = new ProcedureGraph(transitions, nls);
 
@@ -131,6 +132,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
 
         Iterator<Pair<Leg, Leg>> paired = Combinatorics.cartesianProduct(terminals, initials);
         paired.forEachRemaining(pair -> {
+
           if (pair.first().pathTerminator().identifier().equals(pair.second().pathTerminator().identifier())) {
             procedure.addEdge(pair.first(), pair.second());
           }

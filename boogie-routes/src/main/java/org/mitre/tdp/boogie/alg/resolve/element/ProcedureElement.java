@@ -17,7 +17,7 @@ public class ProcedureElement extends ResolvedElement<Procedure> {
   }
 
   @Override
-  public List<LinkedLegs> legs() {
+  public List<LinkedLegs> buildLegs() {
     List<LinkedLegs> legs = new ArrayList<>();
 
     ProcedureGraph graph = ProcedureGraph.from(reference.transitions());

@@ -65,13 +65,13 @@ public class ResolvedSection {
     return this;
   }
 
-  public Set<LinkedLegs> allLegs() {
+  public List<LinkedLegs> allLegs() {
     return elements.stream()
         // tag the generated legs with the section information on the way out
         .flatMap(e -> e.legs().stream().peek(leg -> {
           leg.source().setSectionSplit(sectionSplit());
           leg.target().setSectionSplit(sectionSplit());
         }))
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
   }
 }

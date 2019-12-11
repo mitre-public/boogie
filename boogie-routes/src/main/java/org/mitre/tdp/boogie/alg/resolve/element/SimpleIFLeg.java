@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
@@ -29,13 +31,13 @@ final class SimpleIFLeg<F extends Fix> implements Leg<F> {
   }
 
   @Override
-  public F recommendedNavaid() {
-    return null;
+  public Optional<F> recommendedNavaid() {
+    return Optional.empty();
   }
 
   @Override
-  public F centerFix() {
-    return null;
+  public Optional<F> centerFix() {
+    return Optional.empty();
   }
 
   @Override
@@ -44,53 +46,53 @@ final class SimpleIFLeg<F extends Fix> implements Leg<F> {
   }
 
   @Override
-  public Double inboundMagneticCourse() {
-    return null;
+  public Optional<Double> inboundMagneticCourse() {
+    return Optional.empty();
   }
 
   @Override
-  public Double outboundMagneticCourse() {
-    return null;
+  public Optional<Double> outboundMagneticCourse() {
+    return Optional.empty();
   }
 
   @Override
-  public Double rho() {
-    return null;
+  public Optional<Double> rho() {
+    return Optional.empty();
   }
 
   @Override
-  public Double theta() {
-    return null;
+  public Optional<Double> theta() {
+    return Optional.empty();
   }
 
   @Override
-  public Double rnp() {
-    return null;
+  public Optional<Double> rnp() {
+    return Optional.empty();
   }
 
   @Override
-  public Double distance() {
-    return null;
+  public Optional<Double> distance() {
+    return Optional.empty();
   }
 
   @Override
-  public Double verticalAngle() {
-    return null;
+  public Optional<Double> verticalAngle() {
+    return Optional.empty();
   }
 //
 //  @Override
 //  public Double targetAltitude() {
-//    return null;
+//    return Optional.empty();
 //  }
 
   @Override
-  public TurnDirection turnDirection() {
-    return null;
+  public Optional<TurnDirection> turnDirection() {
+    return Optional.empty();
   }
 
   @Override
-  public Boolean overfly() {
-    return false;
+  public Optional<Boolean> overfly() {
+    return Optional.empty();
   }
 
   public static <F extends Fix> SimpleIFLeg<F> from(F fix) {

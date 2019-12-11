@@ -17,14 +17,16 @@ public class AirwayElement extends ResolvedElement<Airway> {
   }
 
   @Override
-  public List<LinkedLegs> legs() {
+  public List<LinkedLegs> buildLegs() {
     List<LinkedLegs> legs = new ArrayList<>();
+
     Iterators.pairwise(reference().legs(), (Leg l1, Leg l2) -> {
       SectionSplitLeg ssl1 = new SectionSplitLeg(l1);
       SectionSplitLeg ssl2 = new SectionSplitLeg(l2);
       legs.add(new LinkedLegs(ssl1, ssl2));
       legs.add(new LinkedLegs(ssl2, ssl1));
     });
+
     return legs;
   }
 }
