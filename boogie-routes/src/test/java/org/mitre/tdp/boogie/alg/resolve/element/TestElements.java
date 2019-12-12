@@ -236,7 +236,7 @@ public class TestElements {
 
     Iterators.pairwise(linked, (ll1, ll2) -> {
       assertEquals("The target of the previous leg should be identical to the source of the next.", ll1.target(), ll2.source());
-      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.hashCode(), ll2.hashCode());
+      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.target().hashCode(), ll2.source().hashCode());
     });
   }
 

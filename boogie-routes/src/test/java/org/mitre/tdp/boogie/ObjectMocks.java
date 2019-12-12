@@ -30,9 +30,37 @@ public class ObjectMocks {
     return leg(name, lat, lon, LegType.IF);
   }
 
+  public static Leg DF(String name, double lat, double lon) {
+    return leg(name, lat, lon, LegType.DF);
+  }
+
+  public static Leg CF(String name, double lat, double lon) {
+    return leg(name, lat, lon, LegType.CF);
+  }
+
+  public static Leg FM(String name, double lat, double lon) {
+    return leg(name, lat, lon, LegType.FM);
+  }
+
   public static Leg CA() {
+    return nonConcreteLeg(LegType.CA);
+  }
+
+  public static Leg VA() {
+    return nonConcreteLeg(LegType.VA);
+  }
+
+  public static Leg VI() {
+    return nonConcreteLeg(LegType.VI);
+  }
+
+  public static Leg VM() {
+    return nonConcreteLeg(LegType.VM);
+  }
+
+  public static Leg nonConcreteLeg(LegType type) {
     Leg leg = mock(Leg.class);
-    when(leg.type()).thenReturn(LegType.CA);
+    when(leg.type()).thenReturn(type);
     return leg;
   }
 
@@ -47,14 +75,20 @@ public class ObjectMocks {
   }
 
   public static Transition transition(String pname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
+    return transition(null, pname, "FOO", ttype, ptype, legs);
+  }
+
+  public static Transition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
     Transition transition = mock(Transition.class);
 
+    when(transition.identifier()).thenReturn(tname);
+    when(transition.airport()).thenReturn(aname);
     when(transition.legs()).thenReturn(legs);
     when(transition.procedure()).thenReturn(pname);
     when(transition.procedureType()).thenReturn(ptype);
     when(transition.transitionType()).thenReturn(ttype);
     when(transition.source()).thenReturn(NavigationSource.FUSED);
-    when(transition.airport()).thenReturn("FOO");
+    when(transition.toString()).thenReturn("Transition: " + (tname == null ? "common" : tname) + " Procedure: " + pname);
 
     return transition;
   }

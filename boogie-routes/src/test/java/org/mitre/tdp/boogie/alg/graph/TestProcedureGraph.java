@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.graph.DefaultEdge;
 import org.junit.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
@@ -12,6 +13,8 @@ import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.data.CONNR5;
+import org.mitre.tdp.boogie.data.HOBTT2;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -156,5 +159,47 @@ public class TestProcedureGraph {
   public void testSplitGraphPathBetweenTransitions() {
     ProcedureGraph pg = splitGraph();
     assertTrue(pg.pathsBetween(getLeg(pg, "CCC").pathTerminator(), getLeg(pg, "FFF").pathTerminator()).isEmpty());
+  }
+
+  @Test
+  public void testHOBTT2Connections() {
+    HOBTT2 hobtt2 = HOBTT2.build();
+    ProcedureGraph pg = ProcedureGraph.from(hobtt2.transitions());
+
+    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
+    assertTrue("Constructed graph is not connected.", ci.isConnected());
+
+    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("YURII", "RW28")));
+  }
+
+  @Test
+  public void testCONNR5Connections() {
+    CONNR5 connr5 = CONNR5.build();
+    ProcedureGraph pg = ProcedureGraph.from(connr5.transitions());
+
+    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
+    assertTrue(ci.isConnected());
+
+    assertTrue("Single VI leg reference as path start failed.", ci.pathExists((Leg) connr5.get("RW17L").legs().get(0), connr5.get("DBL", "")));
+    assertTrue("Multiple non-concrete leg as path start failed.", ci.pathExists((Leg) connr5.get("RW08").legs().get(0), connr5.get("DBL", "")));
+    assertTrue("VI into CF leg chain start failure.", ci.pathExists((Leg) connr5.get("RW16L").legs().get(0), connr5.get("DBL", "")));
   }
 }

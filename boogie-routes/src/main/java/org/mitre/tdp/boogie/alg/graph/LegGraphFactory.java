@@ -54,13 +54,12 @@ public class LegGraphFactory {
       Leg<?> src2 = ll2.source().leg();
 
       if (tgt1.type().concrete() && src2.type().concrete() && !tgt1.equals(src2)) {
-        DefaultWeightedEdge edge = graph.addEdge(ll1.target(), ll2.source());
 
         LatLong lltgt = tgt1.pathTerminator().latLong();
         LatLong llsrc = src2.pathTerminator().latLong();
         double distance = lltgt.distanceInNM(llsrc);
 
-        graph.setEdgeWeight(edge, distance);
+        setEdgeWeight(distance, ll1.target(), ll2.source(), graph);
       }
     });
   }
@@ -77,13 +76,17 @@ public class LegGraphFactory {
 
     if (!ssl1.equals(ssl2)) {
       double weight = linked.linkWeight();
-      if (graph.containsEdge(ssl1, ssl2)) {
-        DefaultWeightedEdge edge = graph.getEdge(ssl1, ssl2);
-        setContainedEdgeWeight(weight, edge, graph);
-      } else {
-        DefaultWeightedEdge edge = graph.addEdge(ssl1, ssl2);
-        graph.setEdgeWeight(edge, weight);
-      }
+      setEdgeWeight(weight, ssl1, ssl2, graph);
+    }
+  }
+
+  private static void setEdgeWeight(double weight, SectionSplitLeg source, SectionSplitLeg target, LegGraph graph) {
+    if (graph.containsEdge(source, target)) {
+      DefaultWeightedEdge edge = graph.getEdge(source, target);
+      setContainedEdgeWeight(weight, edge, graph);
+    } else {
+      DefaultWeightedEdge edge = graph.addEdge(source, target);
+      graph.setEdgeWeight(edge, weight);
     }
   }
 
