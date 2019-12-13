@@ -34,6 +34,7 @@
   <modules>
     <module>boogie-core</module>
     <module>boogie-routes</module>
+    <module>boogie-trajectory</module>
   </modules>
 
   <dependencyManagement>

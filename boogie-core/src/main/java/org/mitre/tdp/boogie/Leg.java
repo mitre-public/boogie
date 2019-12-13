@@ -76,19 +76,15 @@ public interface Leg<F extends Fix> {
    */
   Optional<Double> verticalAngle();
 
-//  /**
-//   * If the {@link LegType} requires a specified target altitude (e.g. {@link LegType#CA}
-//   * this should return that value.
-//   */
-//  Double targetAltitude();
-//
-//  Double targetAltitude2();
-//
-//
-//
-//  Double targetSpeed();
-//
+  /**
+   * The speed constraint at the {@link Leg#pathTerminator()}.
+   */
+  Optional<Constraint> speedConstraint();
 
+  /**
+   * The altitude constraint at the {@link Leg#pathTerminator()}.
+   */
+  Optional<Constraint> altitudeConstraint();
 
   /**
    * If the leg contains a turn this indicates the direction of the turn or both if
