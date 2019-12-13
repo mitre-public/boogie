@@ -4,10 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Leg;
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.Wildcard;
+import org.mitre.tdp.boogie.data.Airports;
+import org.mitre.tdp.boogie.data.Airways;
 import org.mitre.tdp.boogie.data.CONNR5;
 import org.mitre.tdp.boogie.data.HOBTT2;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
@@ -15,9 +17,8 @@ import org.mitre.tdp.boogie.models.ExpandedRoute;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.mitre.tdp.boogie.ObjectMocks.IF;
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
-import static org.mitre.tdp.boogie.ObjectMocks.airway;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mitre.tdp.boogie.ObjectMocks.fix;
 import static org.mitre.tdp.boogie.data.Airports.KATL;
 import static org.mitre.tdp.boogie.data.Airports.KDEN;
@@ -196,51 +197,295 @@ public class TestExpandRoutes {
     assertEquals(2, legs.size());
   }
 
-  private static ExpandRoutes fafExpander() {
-    Leg l1 = IF("BNDRR", 0.0, 0.0);
-    Leg l2 = TF("RNZ", 0.0, 1.0);
-    Leg l3 = TF("PDR", 0.0, 2.0);
-    Leg l4 = TF("GNRLY", 0.0, 3.0);
+  @Test
+  public void testFAF() {
+    String route = "JMACK.J121.KALDA";
 
-    Airway j121 = airway("J121", Arrays.asList(l1, l2, l3, l4));
-    return ExpandRoutes.with(
-        Arrays.asList(l2.pathTerminator(), l3.pathTerminator()),
-        singletonList(j121),
+    ExpandRoutes expander = ExpandRoutes.with(
+        Arrays.asList(
+            fix("JMACK", 33.98850277777778, -78.96658333333333),
+            fix("KALDA", 37.84195833333334, -75.62648333333333)),
+        singletonList(Airways.J121()),
         emptyList(),
         emptyList());
+
+    ExpandedRoute expandedRoute = expander.expand(route);
+
+    List<SectionSplitLeg> legs = expandedRoute.legs();
+
+    SectionSplitLeg leg;
+
+    leg = legs.get(0);
+    assertEquals("JMACK", leg.sectionSplit().value());
+    assertEquals("JMACK", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(1);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("JMACK", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(2);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(3);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("ISO", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(4);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("WEAVR", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(5);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("ORF", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(6);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("SAWED", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(7);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("KALDA", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(8);
+    assertEquals("KALDA", leg.sectionSplit().value());
+    assertEquals("KALDA", leg.leg().pathTerminator().identifier());
   }
 
   @Test
-  public void testFAF() {
-    String route = "RNZ.J121.PDR";
+  public void testFAFReverse() {
+    String route = "KALDA.J121.JMACK";
 
-    ExpandRoutes expander = fafExpander();
+    ExpandRoutes expander = ExpandRoutes.with(
+        Arrays.asList(
+            fix("JMACK", 33.98850277777778, -78.96658333333333),
+            fix("KALDA", 37.84195833333334, -75.62648333333333)),
+        singletonList(Airways.J121()),
+        emptyList(),
+        emptyList());
 
     ExpandedRoute expandedRoute = expander.expand(route);
+
+    List<SectionSplitLeg> legs = expandedRoute.legs();
+
+    SectionSplitLeg leg;
+
+    leg = legs.get(8);
+    assertEquals("JMACK", leg.sectionSplit().value());
+    assertEquals("JMACK", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(7);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("JMACK", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(6);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(5);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("ISO", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(4);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("WEAVR", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(3);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("ORF", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(2);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("SAWED", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(1);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("KALDA", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(0);
+    assertEquals("KALDA", leg.sectionSplit().value());
+    assertEquals("KALDA", leg.leg().pathTerminator().identifier());
   }
 
   @Test
   public void testFWFWFRepeatedAirway() {
-    String route = "YYZ.J121.AAA.J121.BBB";
+    String route = "MILIE.J121.BARTL.J121.ORF";
+
+    ExpandRoutes expander = ExpandRoutes.with(
+        Arrays.asList(
+            fix("MILIE", 31.328622222222222, -81.17371944444444),
+            fix("BARTL", 34.303177777777776, -78.65149444444445),
+            fix("ORF", 36.89190555555555, -76.20032777777779)),
+        singletonList(Airways.J121()),
+        emptyList(),
+        emptyList());
+
+    ExpandedRoute expandedRoute = expander.expand(route);
+
+    List<SectionSplitLeg> legs = expandedRoute.legs();
+
+    SectionSplitLeg leg;
+
+    leg = legs.get(0);
+    assertEquals("MILIE", leg.sectionSplit().value());
+    assertEquals("MILIE", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(1);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("MILIE", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(2);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("CHS", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(3);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("JMACK", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(4);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(5);
+    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(6);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(7);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("ISO", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(8);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("WEAVR", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(9);
+    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("ORF", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(10);
+    assertEquals("ORF", leg.sectionSplit().value());
+    assertEquals("ORF", leg.leg().pathTerminator().identifier());
   }
 
   @Test
   public void testFLF() {
-    String route = "WAYCO.5300N/14000W..YYZ";
+    String route = "MILIE..5300N/14000W..BARTL";
+
+    ExpandRoutes expander = ExpandRoutes.with(
+        Arrays.asList(
+            fix("MILIE", 31.328622222222222, -81.17371944444444),
+            fix("BARTL", 34.303177777777776, -78.65149444444445)),
+        emptyList(),
+        emptyList(),
+        emptyList());
+
+    ExpandedRoute expandedRoute = expander.expand(route);
+
+    List<SectionSplitLeg> legs = expandedRoute.legs();
+
+    SectionSplitLeg leg;
+
+    leg = legs.get(0);
+    assertEquals("MILIE", leg.sectionSplit().value());
+    assertEquals("MILIE", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(1);
+    assertEquals("5300N/14000W", leg.sectionSplit().value());
+    assertEquals("5300N/14000W", leg.leg().pathTerminator().identifier());
+    assertEquals(LatLong.of(53.0, -140.0), leg.leg().pathTerminator().latLong());
+
+    leg = legs.get(2);
+    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 
   @Test
   public void testALF() {
-    String route = "KDEN./.2200N/12000W..YYZ";
+    String route = "KDEN./.2200N/12000W..BARTL";
+
+    ExpandRoutes expander = ExpandRoutes.with(
+        singletonList(fix("BARTL", 34.303177777777776, -78.65149444444445)),
+        emptyList(),
+        singletonList(Airports.KDEN()),
+        emptyList());
+
+    ExpandedRoute expandedRoute = expander.expand(route);
+
+    List<SectionSplitLeg> legs = expandedRoute.legs();
+
+    SectionSplitLeg leg;
+
+    leg = legs.get(0);
+    assertEquals("KDEN", leg.sectionSplit().value());
+    assertEquals("KDEN", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(1);
+    assertEquals("2200N/12000W", leg.sectionSplit().value());
+    assertTrue(Wildcard.TAILORED.test(leg.sectionSplit().wildcards()));
+    assertEquals("2200N/12000W", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(2);
+    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 
   @Test
   public void testATF() {
-    String route = "KDEN./.JIMMY031018..YYZ";
+    String route = "KDEN./.BARTL031018..BARTL";
+
+    Fix bartl = fix("BARTL", 34.303177777777776, -78.65149444444445);
+
+    ExpandRoutes expander = ExpandRoutes.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
+
+    ExpandedRoute expandedRoute = expander.expand(route);
+
+    List<SectionSplitLeg> legs = expandedRoute.legs();
+
+    SectionSplitLeg leg;
+
+    leg = legs.get(0);
+    assertEquals("KDEN", leg.sectionSplit().value());
+    assertEquals("KDEN", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(1);
+    assertEquals("BARTL031018", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+    assertNotEquals(bartl.latLong(), leg.leg().pathTerminator().latLong());
+
+    leg = legs.get(2);
+    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 
   @Test
   public void testFTF() {
-    String route = "YYZ..JIMMY125045..HTM";
+    String route = "BARTL..BARTL125045..BARTL";
+
+    Fix bartl = fix("BARTL", 34.303177777777776, -78.65149444444445);
+
+    ExpandRoutes expander = ExpandRoutes.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
+
+    ExpandedRoute expandedRoute = expander.expand(route);
+
+    List<SectionSplitLeg> legs = expandedRoute.legs();
+
+    SectionSplitLeg leg;
+
+    leg = legs.get(0);
+    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+
+    leg = legs.get(1);
+    assertEquals("BARTL125045", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+    assertNotEquals(bartl.latLong(), leg.leg().pathTerminator().latLong());
+
+    leg = legs.get(2);
+    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 }
