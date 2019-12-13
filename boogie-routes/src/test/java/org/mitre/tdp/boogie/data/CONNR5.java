@@ -62,7 +62,7 @@ public class CONNR5 {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW17L", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW17L", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VI, GOROC, YORVT, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
   }
 
@@ -70,7 +70,7 @@ public class CONNR5 {
     Leg VA = VA();
     Leg VM = VM();
     Leg CONNR = DF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW08", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW08", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VA, VM, CONNR));
   }
 
@@ -84,7 +84,7 @@ public class CONNR5 {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW16R", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW16R", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
   }
 
@@ -105,7 +105,7 @@ public class CONNR5 {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW25", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW25", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VA, WRIPS, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
   }
 
@@ -120,7 +120,7 @@ public class CONNR5 {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW17R", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW17R", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VI, GOROC, YORVT, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
   }
 
@@ -133,7 +133,7 @@ public class CONNR5 {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW34B", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW34B", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VA, YOBUB, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
   }
 
@@ -146,7 +146,7 @@ public class CONNR5 {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW35B", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW35B", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VA, YOBUB, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
   }
 
@@ -160,7 +160,7 @@ public class CONNR5 {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW16L", "CONNR5", "KDEN", TransitionType.APPROACH, ProcedureType.SID,
+    return transition("RW16L", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
   }
 }

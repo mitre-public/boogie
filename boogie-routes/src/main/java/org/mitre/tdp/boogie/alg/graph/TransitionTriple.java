@@ -96,7 +96,7 @@ class TransitionTriple {
    * {@link TransitionType} for later use.
    */
   public static TransitionTriple from(Collection<? extends Transition> transitions) {
-    Preconditions.checkArgument(noneMatch(transitions, Transition::transitionType, TransitionType.RUNWAY));
+    Preconditions.checkArgument(noneMatch(transitions, Transition::transitionType, TransitionType.APPROACH));
     Preconditions.checkArgument(noneMatch(transitions, Transition::procedureType, ProcedureType.APPROACH));
     Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
     Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
@@ -108,6 +108,6 @@ class TransitionTriple {
         transitions.iterator().next().procedureType(),
         byType.getOrDefault(TransitionType.ENROUTE, Collections.emptyList()),
         byType.getOrDefault(TransitionType.COMMON, Collections.emptyList()),
-        byType.getOrDefault(TransitionType.APPROACH, Collections.emptyList()));
+        byType.getOrDefault(TransitionType.RUNWAY, Collections.emptyList()));
   }
 }

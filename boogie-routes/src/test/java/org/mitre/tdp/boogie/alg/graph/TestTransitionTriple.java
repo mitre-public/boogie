@@ -27,7 +27,7 @@ public class TestTransitionTriple {
   @Test
   public void testTripleStarOrdering() {
     List<Transition> transitions = Arrays.asList(
-        transition(TransitionType.APPROACH, ProcedureType.STAR),
+        transition(TransitionType.RUNWAY, ProcedureType.STAR),
         transition(TransitionType.COMMON, ProcedureType.STAR),
         transition(TransitionType.ENROUTE, ProcedureType.STAR));
 
@@ -42,13 +42,13 @@ public class TestTransitionTriple {
 
     assertTrue(grouped.get(0).stream().allMatch(t -> t.transitionType().equals(TransitionType.ENROUTE)));
     assertTrue(grouped.get(1).stream().allMatch(t -> t.transitionType().equals(TransitionType.COMMON)));
-    assertTrue(grouped.get(2).stream().allMatch(t -> t.transitionType().equals(TransitionType.APPROACH)));
+    assertTrue(grouped.get(2).stream().allMatch(t -> t.transitionType().equals(TransitionType.RUNWAY)));
   }
 
   @Test
   public void testTripleSidOrdering() {
     List<Transition> transitions = Arrays.asList(
-        transition(TransitionType.APPROACH, ProcedureType.SID),
+        transition(TransitionType.RUNWAY, ProcedureType.SID),
         transition(TransitionType.COMMON, ProcedureType.SID),
         transition(TransitionType.ENROUTE, ProcedureType.SID));
 
@@ -61,12 +61,12 @@ public class TestTransitionTriple {
 
     assertTrue(grouped.get(2).stream().allMatch(t -> t.transitionType().equals(TransitionType.ENROUTE)));
     assertTrue(grouped.get(1).stream().allMatch(t -> t.transitionType().equals(TransitionType.COMMON)));
-    assertTrue(grouped.get(0).stream().allMatch(t -> t.transitionType().equals(TransitionType.APPROACH)));
+    assertTrue(grouped.get(0).stream().allMatch(t -> t.transitionType().equals(TransitionType.RUNWAY)));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testFailOnRunwayTransitions() {
-    TransitionTriple.from(Collections.singletonList(transition(TransitionType.RUNWAY, ProcedureType.SID)));
+    TransitionTriple.from(Collections.singletonList(transition(TransitionType.APPROACH, ProcedureType.SID)));
   }
 
   @Test(expected = IllegalArgumentException.class)

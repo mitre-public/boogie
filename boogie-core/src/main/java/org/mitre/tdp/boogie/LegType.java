@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 
 import com.google.common.base.Preconditions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -43,11 +44,11 @@ public enum LegType {
    */
   CF(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.rho());
-    checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.distance());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.rho().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
+    checkArgument(l.distance().isPresent());
     return true;
   }),
   /**
@@ -68,10 +69,10 @@ public enum LegType {
    */
   FA(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.rho());
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.rho().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
 //    checkNotNull(l.targetAltitude());
     return true;
   }),
@@ -83,10 +84,10 @@ public enum LegType {
    */
   FC(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.rho());
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.rho().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -97,10 +98,10 @@ public enum LegType {
    */
   FD(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.rho());
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.rho().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -111,10 +112,10 @@ public enum LegType {
    */
   FM(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.rho());
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.rho().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -123,7 +124,7 @@ public enum LegType {
    * Defines a course to specific altitude at an unspecified location.
    */
   CA(l -> {
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.outboundMagneticCourse().isPresent());
 //    checkNotNull(l.targetAltitude());
     return true;
   }),
@@ -134,9 +135,9 @@ public enum LegType {
    * an existing navaid.
    */
   CD(l -> {
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.distance());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
+    checkArgument(l.distance().isPresent());
     return true;
   }),
   /**
@@ -145,7 +146,7 @@ public enum LegType {
    * Defines a specified course to a subsequent leg.
    */
   CI(l -> {
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -154,9 +155,9 @@ public enum LegType {
    * Defines a course to a specified radial from a VOR navaid.
    */
   CR(l -> {
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -167,9 +168,9 @@ public enum LegType {
    */
   RF(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.turnDirection());
-    checkNotNull(l.distance());
-    checkNotNull(l.centerFix());
+    checkArgument(l.turnDirection().isPresent());
+    checkArgument(l.distance().isPresent());
+    checkArgument(l.centerFix().isPresent());
     return true;
   }),
   /**
@@ -180,10 +181,10 @@ public enum LegType {
    */
   AF(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.turnDirection());
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.rho());
+    checkArgument(l.turnDirection().isPresent());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.rho().isPresent());
     return true;
   }),
   /**
@@ -193,7 +194,7 @@ public enum LegType {
    * position.
    */
   VA(l -> {
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.outboundMagneticCourse().isPresent());
 //    checkNotNull(l.targetAltitude());
     return true;
   }),
@@ -204,9 +205,9 @@ public enum LegType {
    * a DME navaid.
    */
   VD(l -> {
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.distance());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
+    checkArgument(l.distance().isPresent());
     return true;
   }),
   /**
@@ -215,7 +216,7 @@ public enum LegType {
    * Defines a heading to intercept the subsequent leg at an unspecified position.
    */
   VI(l -> {
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -224,7 +225,7 @@ public enum LegType {
    * Defines a specified heading until a manual termination.
    */
   VM(l -> {
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -233,9 +234,9 @@ public enum LegType {
    * Defines a heading to specified radial from a VOR navaid.
    */
   VR(l -> {
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.outboundMagneticCourse());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
     return true;
   }),
   /**
@@ -249,12 +250,12 @@ public enum LegType {
    */
   PI(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.turnDirection());
-    checkNotNull(l.recommendedNavaid());
-    checkNotNull(l.theta());
-    checkNotNull(l.rho());
-    checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.distance());
+    checkArgument(l.turnDirection().isPresent());
+    checkArgument(l.recommendedNavaid().isPresent());
+    checkArgument(l.theta().isPresent());
+    checkArgument(l.rho().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
+    checkArgument(l.distance().isPresent());
 //    checkNotNull(l.targetAltitude());
     return true;
   }),
@@ -268,9 +269,9 @@ public enum LegType {
    */
   HA(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.turnDirection());
-    checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.distance());
+    checkArgument(l.turnDirection().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
+    checkArgument(l.distance().isPresent());
 //    checkNotNull(l.targetAltitude());
     return true;
   }),
@@ -284,9 +285,9 @@ public enum LegType {
    */
   HF(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.turnDirection());
-    checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.distance());
+    checkArgument(l.turnDirection().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
+    checkArgument(l.distance().isPresent());
     return true;
   }),
   /**
@@ -299,9 +300,9 @@ public enum LegType {
    */
   HM(l -> {
     checkNotNull(l.pathTerminator());
-    checkNotNull(l.turnDirection());
-    checkNotNull(l.outboundMagneticCourse());
-    checkNotNull(l.distance());
+    checkArgument(l.turnDirection().isPresent());
+    checkArgument(l.outboundMagneticCourse().isPresent());
+    checkArgument(l.distance().isPresent());
     return true;
   });
 

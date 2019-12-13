@@ -165,7 +165,7 @@ public class HOBTT2 {
     Leg KYMMY = TF("KYMMY", 33.73308055555556, -84.13879722222222);
     Leg KEAVY = TF("KEAVY", 33.733183333333336, -84.038875);
     Leg KEAVY2 = FM("KEAVY", 33.733183333333336, -84.038875);
-    return transition("RW26B", "HOBTT2", "KATL", TransitionType.APPROACH, ProcedureType.STAR,
+    return transition("RW26B", "HOBTT2", "KATL", TransitionType.RUNWAY, ProcedureType.STAR,
         Arrays.asList(ENSLL, RAIIN, KLOWD, SWEPT, KYMMY, KEAVY, KEAVY2));
   }
 
@@ -177,7 +177,7 @@ public class HOBTT2 {
     Leg HITTT = TF("HITTT", 33.537025, -84.13477777777778);
     Leg YURII = TF("YURII", 33.53713055555556, -84.03544166666667);
     Leg YURII2 = FM("YURII", 33.53713055555556, -84.03544166666667);
-    return transition("RW27B", "HOBTT2", "KATL", TransitionType.APPROACH, ProcedureType.STAR,
+    return transition("RW27B", "HOBTT2", "KATL", TransitionType.RUNWAY, ProcedureType.STAR,
         Arrays.asList(ENSLL, EAGYL, SHURT, FOGER, HITTT, YURII, YURII2));
   }
 
@@ -189,7 +189,7 @@ public class HOBTT2 {
     Leg HITTT = TF("HITTT", 33.537025, -84.13477777777778);
     Leg YURII = TF("YURII", 33.53713055555556, -84.03544166666667);
     Leg YURII2 = FM("YURII", 33.53713055555556, -84.03544166666667);
-    return transition("RW28", "HOBTT2", "KATL", TransitionType.APPROACH, ProcedureType.STAR,
+    return transition("RW28", "HOBTT2", "KATL", TransitionType.RUNWAY, ProcedureType.STAR,
         Arrays.asList(ENSLL, EAGYL, SHURT, FOGER, HITTT, YURII, YURII2));
   }
 }

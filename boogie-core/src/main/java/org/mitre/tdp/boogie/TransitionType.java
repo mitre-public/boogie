@@ -23,9 +23,9 @@ public enum TransitionType {
    * airport. For SIDs typically this is a sequence of CA and VI type legs, for STARs this is really
    * to get the aircraft to its preferred {@link ProcedureType#APPROACH} for its target runway.
    */
-  APPROACH,
+  RUNWAY,
   /**
    * Catchall for the transitions within a particular approach procedure.
    */
-  RUNWAY
+  APPROACH
 }

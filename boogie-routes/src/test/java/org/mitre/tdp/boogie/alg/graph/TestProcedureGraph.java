@@ -63,11 +63,11 @@ public class TestProcedureGraph {
 
     Leg l3_1 = IF("CCC", 0.0, 0.4);
     Leg l3_2 = TF("DDD", 0.0, 0.5);
-    Transition cd = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    Transition cd = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = IF("CCC", 0.0, 0.4);
     Leg l4_2 = TF("EEE", 0.0, 0.5);
-    Transition ce = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    Transition ce = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
     return ProcedureGraph.from(Arrays.asList(ab, bc, cd, ce));
   }
@@ -133,11 +133,11 @@ public class TestProcedureGraph {
   public static ProcedureGraph splitGraph() {
     Leg l3_1 = IF("CCC", 0.0, 0.4);
     Leg l3_2 = TF("DDD", 0.0, 0.5);
-    Transition cd = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    Transition cd = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = IF("EEE", 0.0, 0.4);
     Leg l4_2 = TF("FFF", 0.0, 0.5);
-    Transition ef = transition("ALPHA1", TransitionType.APPROACH, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    Transition ef = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
     return ProcedureGraph.from(Arrays.asList(cd, ef));
   }
