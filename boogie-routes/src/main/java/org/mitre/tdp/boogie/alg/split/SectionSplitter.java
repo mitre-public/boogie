@@ -41,12 +41,17 @@ public class SectionSplitter {
           // special case for tailored, we want this to be a wildcard
           // but we need this to work with Lat/Lon vals and preserve
           // the forward slash
-          if (clean.equals("/")){
+          if (clean.equals("/")) {
             clean = "";
             wildcards += "/";
           }
 
-          return new SectionSplit(clean, etaEet, i, wildcards);
+          return new SectionSplit.Builder()
+              .setValue(clean)
+              .setEtaEet(etaEet)
+              .setIndex(i)
+              .setWildcards(wildcards)
+              .build();
         })
         .collect(Collectors.toList());
   }

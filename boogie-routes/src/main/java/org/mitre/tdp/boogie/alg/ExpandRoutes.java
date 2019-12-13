@@ -11,9 +11,12 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
+import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
 import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
@@ -37,6 +40,10 @@ import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
  * 2) {@link SectionResolver} to associate split sections of the route with infrastructure
  * (e.g. procedures, waypoints, etc.)
  *
+ * 2.5) (Optional) Allows configuration of a {@link ApproachPredictor} object which will
+ * modify the resolved output of step 2 with an additional section of candidate approach
+ * procedures.
+ *
  * 3) {@link LegGraph} to determine the path the flight most likely took through
  * the resolved infrastructure elements (e.g. resolving references to navaids that
  * appear with the same name in multiple ICAO regions)
@@ -56,11 +63,15 @@ public final class ExpandRoutes {
   private final LookupService<Airport> airportService;
   private final ProcedureGraphService procedureService;
 
+  private ApproachPredictor approachPredictor;
+
   private ExpandRoutes(LookupService<Fix> fs, LookupService<Airway> ws, LookupService<Airport> as, ProcedureGraphService ps) {
     this.fixService = fs;
     this.airwayService = ws;
     this.airportService = as;
     this.procedureService = ps;
+
+    this.approachPredictor = new NoApproachPredictor();
   }
 
   public LookupService<Fix> fixService() {
@@ -79,6 +90,17 @@ public final class ExpandRoutes {
     return procedureService;
   }
 
+  public ApproachPredictor approachPredictor() {
+    return approachPredictor;
+  }
+
+  /**
+   * Configures the internal {@link ApproachPredictor} to be the one provided.
+   */
+  public void setApproachPredictor(@Nonnull ApproachPredictor predictor) {
+    this.approachPredictor = predictor;
+  }
+
   public ExpandedRoute expand(@Nonnull String route) {
     Preconditions.checkArgument(!route.isEmpty());
 
@@ -86,6 +108,12 @@ public final class ExpandRoutes {
 
     SectionResolver resolver = SectionResolver.with(this);
     ResolvedRoute resolved = resolver.resolve(splits);
+
+    ResolvedSection approach = approachPredictor.predictAndCheck(
+        resolved.sectionAt(resolved.sectionCount() - 2),
+        resolved.sectionAt(resolved.sectionCount() - 1));
+
+    resolved.insert(approach);
 
     LegGraph graph = LegGraphFactory.build(resolved);
     GraphPath<SectionSplitLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();

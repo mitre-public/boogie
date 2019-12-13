@@ -14,6 +14,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.impl.NameLocationService;
@@ -80,6 +81,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
    */
   public static ProcedureGraph from(Collection<? extends Transition> transitions) {
     Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
+    Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
     Preconditions.checkArgument(allMatch(transitions, Transition::airport));
     Preconditions.checkArgument(allMatch(transitions, Transition::source));
 
@@ -114,7 +116,9 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
       }
     });
 
-    TransitionTriple.from(transitions).zipAndInsert(procedure);
+    if (!procedure.type().equals(ProcedureType.APPROACH)) {
+      TransitionTriple.from(transitions).zipAndInsert(procedure);
+    }
     return procedure;
   }
 }

@@ -25,7 +25,15 @@ public enum TransitionType {
    */
   RUNWAY,
   /**
-   * Catchall for the transitions within a particular approach procedure.
+   * Common type for all approach procedure transitions.
    */
-  APPROACH
+  APPROACH,
+  /**
+   * If there are tags for missed approach transitions as part of the {@link ProcedureType#APPROACH} use
+   * this tag can be used and they will be zipped on the ends of the primary approach transitions.
+   *
+   * If missed approaches aren't a concern then just tag these as APPROACH, there is generally little
+   * affect on the algorithms results.
+   */
+  MISSED
 }

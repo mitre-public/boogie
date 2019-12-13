@@ -110,7 +110,7 @@ public class SectionResolver implements Serializable {
     List<ResolvedElement<?>> filtered = StreamSupport.stream(elements.spliterator(), false)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
-    return section.addElements(filtered);
+    return section.setElements(filtered);
   }
 
   List<ResolvedElement<?>> airport(String section) {

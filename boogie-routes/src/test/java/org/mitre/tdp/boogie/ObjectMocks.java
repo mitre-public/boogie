@@ -54,6 +54,10 @@ public class ObjectMocks {
     return leg(name, lat, lon, LegType.FM);
   }
 
+  public static Leg HM(String name, double lat, double lon) {
+    return leg(name, lat, lon, LegType.HM);
+  }
+
   public static Leg CA() {
     return nonConcreteLeg(LegType.CA);
   }

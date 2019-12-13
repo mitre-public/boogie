@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.alg.resolve;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
@@ -44,11 +43,16 @@ public class ResolvedSection {
     return sectionSplit;
   }
 
+  public ResolvedSection setSectionSplit(SectionSplit split) {
+    this.sectionSplit = split;
+    return this;
+  }
+
   public boolean direct() {
     return direct;
   }
 
-  ResolvedSection labelDirect() {
+  public ResolvedSection labelDirect() {
     this.direct = true;
     return this;
   }
@@ -57,7 +61,7 @@ public class ResolvedSection {
     return elements;
   }
 
-  ResolvedSection addElements(List<ResolvedElement<?>> eles) {
+  public ResolvedSection setElements(List<ResolvedElement<?>> eles) {
     this.elements = eles;
     Comparator<ResolvedElement> compSrc = Comparator.comparing(ele -> ele.reference().source());
     Comparator<ResolvedElement> compType = Comparator.comparing(ResolvedElement::type);

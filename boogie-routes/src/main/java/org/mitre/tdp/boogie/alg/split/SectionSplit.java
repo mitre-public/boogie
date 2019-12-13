@@ -1,9 +1,7 @@
 package org.mitre.tdp.boogie.alg.split;
 
-import java.time.Duration;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
@@ -37,11 +35,11 @@ public class SectionSplit {
    */
   private String wildcards;
 
-  SectionSplit(String val, String tau, int idx, String wildcards) {
-    this.value = val;
-    this.etaEet = tau;
-    this.index = idx;
-    this.wildcards = wildcards;
+  private SectionSplit(Builder bldr) {
+    this.value = bldr.value;
+    this.etaEet = bldr.etaEet;
+    this.index = bldr.index;
+    this.wildcards = bldr.wildcards;
   }
 
   public String value() {
@@ -52,15 +50,6 @@ public class SectionSplit {
     return etaEet;
   }
 
-  public Duration etaEetDuration() {
-    if (StringUtils.isNumeric(etaEet)) {
-      long hh = Long.parseLong(etaEet.substring(0, 2));
-      long mm = Long.parseLong(etaEet.substring(2, 4));
-      return Duration.ofHours(hh).plus(Duration.ofMinutes(mm));
-    }
-    return null;
-  }
-
   public int index() {
     return index;
   }
@@ -69,9 +58,16 @@ public class SectionSplit {
     return wildcards;
   }
 
-  public SectionSplit setWildcards(String wildcards) {
-    this.wildcards = wildcards;
-    return this;
+  public void setWildcards(String cards) {
+    this.wildcards = cards;
+  }
+
+  public Builder builder() {
+    return new Builder()
+        .setValue(value)
+        .setEtaEet(etaEet)
+        .setIndex(index)
+        .setWildcards(wildcards);
   }
 
   @Override
@@ -94,5 +90,36 @@ public class SectionSplit {
   @Override
   public String toString() {
     return ReflectionToStringBuilder.toString(this);
+  }
+
+  public static class Builder {
+    private String value;
+    private String etaEet;
+    private int index;
+    private String wildcards;
+
+    public Builder setValue(String val) {
+      this.value = val;
+      return this;
+    }
+
+    public Builder setEtaEet(String etaEet) {
+      this.etaEet = etaEet;
+      return this;
+    }
+
+    public Builder setIndex(int index) {
+      this.index = index;
+      return this;
+    }
+
+    public Builder setWildcards(String wildcards) {
+      this.wildcards = wildcards;
+      return this;
+    }
+
+    public SectionSplit build() {
+      return new SectionSplit(this);
+    }
   }
 }
