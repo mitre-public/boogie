@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.Constraint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
@@ -79,11 +80,16 @@ final class SimpleIFLeg<F extends Fix> implements Leg<F> {
   public Optional<Double> verticalAngle() {
     return Optional.empty();
   }
-//
-//  @Override
-//  public Double targetAltitude() {
-//    return Optional.empty();
-//  }
+
+  @Override
+  public Optional<Constraint> speedConstraint() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Constraint> altitudeConstraint() {
+    return Optional.empty();
+  }
 
   @Override
   public Optional<TurnDirection> turnDirection() {
