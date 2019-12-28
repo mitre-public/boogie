@@ -35,6 +35,7 @@
     <module>boogie-core</module>
     <module>boogie-routes</module>
     <module>boogie-trajectory</module>
+    <module>boogie-conformance</module>
   </modules>
 
   <dependencyManagement>
@@ -51,7 +52,7 @@
       <dependency>
         <groupId>org.mitre.caasd</groupId>
         <artifactId>commons</artifactId>
-        <version>0.0.23</version>
+        <version>0.0.24</version>
       </dependency>
 
       <dependency>

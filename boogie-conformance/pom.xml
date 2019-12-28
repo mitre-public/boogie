@@ -2,6 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>boogie-conformance</artifactId>
+
   <parent>
     <artifactId>boogie-parent</artifactId>
     <groupId>org.mitre.tdp</groupId>
@@ -9,19 +11,17 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>boogie-core</artifactId>
-
   <dependencies>
     <dependency>
-      <groupId>org.mitre.caasd</groupId>
-      <artifactId>commons</artifactId>
-      <version>0.0.24</version>
+      <groupId>org.mitre.tdp</groupId>
+      <artifactId>boogie-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>23.0</version>
+      <groupId>org.jblas</groupId>
+      <artifactId>jblas</artifactId>
+      <version>1.2.4</version>
     </dependency>
 
     <dependency>
@@ -30,5 +30,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 </project>
