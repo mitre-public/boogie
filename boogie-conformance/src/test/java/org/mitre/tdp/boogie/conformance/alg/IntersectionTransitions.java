@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg;
+package org.mitre.tdp.boogie.conformance.alg;
 
 
 import java.util.ArrayList;

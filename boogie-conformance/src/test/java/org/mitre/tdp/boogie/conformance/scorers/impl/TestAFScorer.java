@@ -1,0 +1,224 @@
+package org.mitre.tdp.boogie.conformance.scorers.impl;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.TurnDirection;
+import org.mitre.tdp.boogie.conformance.ConformablePoint;
+import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mitre.tdp.boogie.conformance.MockObjects.magneticVariation;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+//@ExtendWith(MockitoExtension.class)
+public class TestAFScorer {
+
+  @Test
+  public void testFailOnMissingTheta() {
+    Leg TF = TF();
+    Leg AF = AF();
+    when(AF.theta()).thenReturn(empty());
+
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    when(legs.from()).thenReturn(TF);
+    when(legs.to()).thenReturn(AF);
+
+    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+  }
+
+  @Test
+  public void testFailOnMissingRho() {
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    Leg TF = TF();
+    Leg AF = AF();
+    when(AF.rho()).thenReturn(empty());
+
+    when(legs.from()).thenReturn(TF);
+    when(legs.to()).thenReturn(AF);
+
+    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+  }
+
+  @Test
+  public void testFailOnMissingOutboundCourse() {
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    Leg TF = TF();
+    Leg AF = AF();
+    when(AF.outboundMagneticCourse()).thenReturn(empty());
+
+    when(legs.from()).thenReturn(TF);
+    when(legs.to()).thenReturn(AF);
+
+    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+  }
+
+  @Test
+  public void testFailOnMissingRecommendedNavaid() {
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    Leg TF = TF();
+    Leg AF = AF();
+    when(AF.recommendedNavaid()).thenReturn(empty());
+
+    when(legs.from()).thenReturn(TF);
+    when(legs.to()).thenReturn(AF);
+
+    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+  }
+
+  @Test
+  public void testAFPastTerminatorScore() {
+    AFScorer scorer = scorer();
+
+    ConformablePoint point = mock(ConformablePoint.class);
+
+    Leg AF = AF();
+
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    double projCourse = localVariation.magneticToTrue(AF.theta().get()) + 10.0;
+
+    LatLong loc = AF.recommendedNavaid().get().projectionInDegrees(projCourse, AF.rho().get()).latLong();
+    when(point.latLong()).thenReturn(loc);
+
+    double score = scorer.score(point);
+    assertEquals(0.0, score, 0.01, "Points past the end of the path terminator radial should have a 0.0 score.");
+  }
+
+  @Test
+  public void testAFPreBoundaryRadialScore() {
+    AFScorer scorer = scorer();
+
+    ConformablePoint point = mock(ConformablePoint.class);
+
+    Leg AF = AF();
+
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    double projCourse = localVariation.magneticToTrue(AF.outboundMagneticCourse().get()) - 10.0;
+
+    LatLong loc = AF.recommendedNavaid().get().projectionInDegrees(projCourse, AF.rho().get()).latLong();
+    when(point.latLong()).thenReturn(loc);
+
+    double score = scorer.score(point);
+    assertEquals(0.0, score, 0.01, "Points prior to the boundary radial should have a 0.0 score.");
+  }
+
+  @Test
+  public void testAFMagneticConversionMovesCourseToOutsideRadialsScore(){
+    AFScorer scorer = scorer();
+
+    ConformablePoint point = mock(ConformablePoint.class);
+
+    Leg AF = AF();
+
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    double projCourse = localVariation.magneticToTrue(AF.outboundMagneticCourse().get()) - 10.0;
+  }
+
+  @Test
+  public void testAFInBoundaryOnArcScoreHigh() {
+    AFScorer scorer = scorer();
+
+    ConformablePoint point = mock(ConformablePoint.class);
+    Leg AF = AF();
+
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
+
+    LatLong loc = AF.recommendedNavaid().get()
+        .projectionInDegrees(halfTrueCourse, AF.rho().get()).latLong();
+    when(point.latLong()).thenReturn(loc);
+
+    double score = scorer.score(point);
+    assertEquals(0.95d, score, 0.02, "Points directly on the defined arc should get a high score.");
+  }
+
+  @Test
+  public void testAFInBoundaryOffset1NMScoreModerate() {
+    AFScorer scorer = scorer();
+
+    ConformablePoint point = mock(ConformablePoint.class);
+    Leg AF = AF();
+
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
+
+    LatLong loc = AF.recommendedNavaid().get()
+        .projectionInDegrees(halfTrueCourse, AF.rho().get() - 1.0).latLong();
+    when(point.latLong()).thenReturn(loc);
+
+    double score = scorer.score(point);
+    assertEquals(0.5d, score, 0.01, "Point only off by ~a mile should get a moderate score.");
+  }
+
+  @Test
+  public void testAFInBoundaryOffset2NMScoreLow() {
+    AFScorer scorer = scorer();
+
+    ConformablePoint point = mock(ConformablePoint.class);
+    Leg AF = AF();
+
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
+
+    LatLong loc = AF.recommendedNavaid().get()
+        .projectionInDegrees(halfTrueCourse, AF.rho().get() + 2.0).latLong();
+    when(point.latLong()).thenReturn(loc);
+
+    double score = scorer.score(point);
+    assertEquals(0.03d, score, 0.01, "Point offset 2.0nm should get a low score.");
+  }
+
+  private ConformablePoint dummyPoint() {
+    return mock(ConformablePoint.class);
+  }
+
+  private Leg TF() {
+    return mock(Leg.class);
+  }
+
+  private Leg AF() {
+    Fix navaid = mock(Fix.class);
+
+    LatLong ll = LatLong.of(42.479575000000004, -122.91293333333334);
+    when(navaid.latLong()).thenReturn(ll);
+    when(navaid.courseInDegrees(any())).thenCallRealMethod();
+    when(navaid.distanceInNmTo(any())).thenCallRealMethod();
+    when(navaid.projectionInDegrees(any(), any())).thenCallRealMethod();
+
+    MagneticVariation var = magneticVariation(19.0f, 14.513932612651612f);
+    when(var.magneticToTrue(any())).thenCallRealMethod();
+    when(var.trueToMagnetic(any())).thenCallRealMethod();
+    when(navaid.magneticVariation()).thenReturn(var);
+
+    Leg AF = mock(Leg.class);
+    when(AF.type()).thenReturn(LegType.AF);
+    when(AF.recommendedNavaid()).thenReturn((Optional) of(navaid));
+    when(AF.outboundMagneticCourse()).thenReturn(of(98.0));
+    when(AF.theta()).thenReturn(of(138.0));
+    when(AF.rho()).thenReturn(of(15.0));
+    when(AF.turnDirection()).thenReturn(of(TurnDirection.RIGHT));
+
+    return AF;
+  }
+
+  private AFScorer scorer() {
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    Leg TF = TF();
+    Leg AF = AF();
+    when(legs.from()).thenReturn(TF);
+    when(legs.to()).thenReturn(AF);
+    return new AFScorer(legs);
+  }
+}

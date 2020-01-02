@@ -15,7 +15,7 @@ public class AirportElement extends ResolvedElement<Airport> {
 
   @Override
   public List<LinkedLegs> buildLegs() {
-    SimpleIFLeg<Airport> leg = SimpleIFLeg.from(reference());
+    SimpleIFLeg leg = SimpleIFLeg.from(reference());
     SectionSplitLeg splitLeg = new SectionSplitLeg(leg);
     return Collections.singletonList(new LinkedLegs(splitLeg, splitLeg));
   }

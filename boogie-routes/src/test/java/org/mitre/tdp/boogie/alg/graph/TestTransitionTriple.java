@@ -4,14 +4,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -64,13 +65,17 @@ public class TestTransitionTriple {
     assertTrue(grouped.get(0).stream().allMatch(t -> t.transitionType().equals(TransitionType.RUNWAY)));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testFailOnRunwayTransitions() {
-    TransitionTriple.from(Collections.singletonList(transition(TransitionType.APPROACH, ProcedureType.SID)));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> TransitionTriple.from(Collections.singletonList(transition(TransitionType.APPROACH, ProcedureType.SID))));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testFailOnApproachProcedures() {
-    TransitionTriple.from(Collections.singletonList(transition(TransitionType.ENROUTE, ProcedureType.APPROACH)));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> TransitionTriple.from(Collections.singletonList(transition(TransitionType.ENROUTE, ProcedureType.APPROACH))));
   }
 }

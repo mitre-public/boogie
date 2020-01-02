@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airport;
@@ -24,11 +24,11 @@ import org.mitre.tdp.boogie.alg.graph.TestProcedureGraph;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.utils.Iterators;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mitre.tdp.boogie.ObjectMocks.IF;
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
-import static org.mitre.tdp.boogie.ObjectMocks.magneticVariation;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -72,7 +72,7 @@ public class TestElements {
 
     String airwayId = "J121";
 
-    when(airway.legs()).thenReturn(Arrays.asList(l1, l2, l3, l4));
+    when(airway.legs()).thenReturn((List) Arrays.asList(l1, l2, l3, l4));
     when(airway.identifier()).thenReturn(airwayId);
     return airway;
   }
@@ -130,8 +130,8 @@ public class TestElements {
         .collect(Collectors.toList());
 
     Iterators.pairwise(forward, (ll1, ll2) -> {
-      assertEquals("The target of the previous leg should be identical to the source of the next.", ll1.target(), ll2.source());
-      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.target().hashCode(), ll2.source().hashCode());
+      assertEquals(ll1.target(), ll2.source(), "The target of the previous leg should be identical to the source of the next.");
+      assertEquals(ll1.target().hashCode(), ll2.source().hashCode(), "The target of the previous leg should have the same hashCode as the source of the next");
     });
 
     List<LinkedLegs> backwards = IntStream.range(0, linked.size() / 2)
@@ -140,8 +140,8 @@ public class TestElements {
         .collect(Collectors.toList());
 
     Iterators.pairwise(backwards, (ll1, ll2) -> {
-      assertEquals("The target of the previous leg should be identical to the source of the next.", ll1.source(), ll2.target());
-      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.source().hashCode(), ll2.target().hashCode());
+      assertEquals(ll1.source(), ll2.target(), "The target of the previous leg should be identical to the source of the next.");
+      assertEquals(ll1.source().hashCode(), ll2.target().hashCode(), "The target of the previous leg should have the same hashCode as the source of the next");
     });
   }
 
@@ -198,7 +198,7 @@ public class TestElements {
 
     Transition transition = mock(Transition.class);
     when(transition.transitionType()).thenReturn(TransitionType.COMMON);
-    when(transition.legs()).thenReturn(Arrays.asList(l1, l2, l3));
+    when(transition.legs()).thenReturn((List) Arrays.asList(l1, l2, l3));
     when(transition.procedure()).thenReturn("GNDLF1");
     when(transition.procedureType()).thenReturn(ProcedureType.STAR);
 
@@ -235,8 +235,8 @@ public class TestElements {
     List<LinkedLegs> linked = element.legs();
 
     Iterators.pairwise(linked, (ll1, ll2) -> {
-      assertEquals("The target of the previous leg should be identical to the source of the next.", ll1.target(), ll2.source());
-      assertEquals("The target of the previous leg should have the same hashCode as the source of the next", ll1.target().hashCode(), ll2.source().hashCode());
+      assertEquals(ll1.target(), ll2.source(), "The target of the previous leg should be identical to the source of the next.");
+      assertEquals(ll1.target().hashCode(), ll2.source().hashCode(), "The target of the previous leg should have the same hashCode as the source of the next");
     });
   }
 

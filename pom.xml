@@ -29,6 +29,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <junit.version>5.5.2</junit.version>
+    <hamcrest.version>1.3</hamcrest.version>
+    <mockito.version>3.2.4</mockito.version>
+    <mockito.junit.version>3.1.0</mockito.junit.version>
   </properties>
 
   <modules>
@@ -40,19 +44,10 @@
 
   <dependencyManagement>
     <dependencies>
-
-      <!-- Includes, junit, hamcrest, mockito, and annotations. -->
-      <dependency>
-        <groupId>org.mitre.caasd</groupId>
-        <artifactId>caasd-test</artifactId>
-        <version>2.0</version>
-        <scope>test</scope>
-      </dependency>
-
       <dependency>
         <groupId>org.mitre.caasd</groupId>
         <artifactId>commons</artifactId>
-        <version>0.0.24</version>
+        <version>0.0.26-SNAPSHOT</version>
       </dependency>
 
       <dependency>
@@ -61,6 +56,24 @@
         <version>23.0</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${mockito.junit.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

@@ -29,7 +29,7 @@ public class TailoredElement extends ResolvedElement<Fix> {
     LatLong projectedLocation = reference().latLong().projectionInDegrees(course, distance);
     LocationFix asFix = new LocationFix(reference().identifier(), projectedLocation);
 
-    SimpleIFLeg<LocationFix> leg = SimpleIFLeg.from(asFix);
+    SimpleIFLeg leg = SimpleIFLeg.from(asFix);
     SectionSplitLeg sleg = new SectionSplitLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }

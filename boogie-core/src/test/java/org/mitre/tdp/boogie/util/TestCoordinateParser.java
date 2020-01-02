@@ -1,11 +1,11 @@
 package org.mitre.tdp.boogie.util;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.util.CoordinateParser.convertDegrees;
 import static org.mitre.tdp.boogie.util.CoordinateParser.parse;
 

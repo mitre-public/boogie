@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.alg.approach;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.alg.ExpandRoutes;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +51,7 @@ public class TestApproachPredictor {
     ResolvedSection s2 = newSection("", 5, emptyList());
 
     ResolvedSection checked = predictor.predictAndCheck(s1, s2);
-    assertEquals("Bad element types not filtered.", 0, checked.elements().size());
+    assertEquals(0, checked.elements().size(), "Bad element types not filtered.");
   }
 
   @Test
@@ -74,8 +74,8 @@ public class TestApproachPredictor {
     ResolvedSection s2 = newSection("", 5, emptyList());
 
     ResolvedSection checked = predictor.predictAndCheck(s1, s2);
-    assertEquals("Element should not have been filtered, index should have been adjusted.", 1, checked.elements().size());
-    assertEquals("Index not adjusted correctly for checked element.", 5, checked.sectionSplit().index());
-    assertEquals("Index not adjusted correctly for parameter element.", 6, s2.sectionSplit().index());
+    assertEquals(1, checked.elements().size(), "Element should not have been filtered, index should have been adjusted.");
+    assertEquals(5, checked.sectionSplit().index(), "Index not adjusted correctly for checked element.");
+    assertEquals(6, s2.sectionSplit().index(), "Index not adjusted correctly for parameter element.");
   }
 }

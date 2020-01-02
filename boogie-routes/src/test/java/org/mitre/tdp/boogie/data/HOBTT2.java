@@ -12,10 +12,10 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.mitre.tdp.boogie.ObjectMocks.FM;
-import static org.mitre.tdp.boogie.ObjectMocks.IF;
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
-import static org.mitre.tdp.boogie.ObjectMocks.transition;
+import static org.mitre.tdp.boogie.MockObjects.FM;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.transition;
 
 /**
  * A mocked copy of the HOBTT2 Procedure at KATL from cycle 1913 for use in testing.
@@ -29,8 +29,8 @@ public class HOBTT2 {
   }
 
   public Leg get(String fname, String tname) {
-    Transition<?, ?> transition = get(tname);
-    return transition.legs().stream().filter(l -> ((Leg) l).pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
   }
 
   public Transition get(String tname) {

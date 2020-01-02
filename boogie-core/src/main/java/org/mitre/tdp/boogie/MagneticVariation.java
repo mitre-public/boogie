@@ -18,4 +18,12 @@ public interface MagneticVariation {
    * NOAA and provided in {@link Declinations}.
    */
   float modeled();
+
+  default Double magneticToTrue(Double course) {
+    return published().isPresent() ? course + published().get() : course + modeled();
+  }
+
+  default Double trueToMagnetic(Double course) {
+    return published().isPresent() ? course - published().get() : course - modeled();
+  }
 }

@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg;
+package org.mitre.tdp.boogie.conformance.alg;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,14 +10,13 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import org.apache.commons.math3.util.FastMath;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammer;
 import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerState;
 import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestDynamicProgrammer {
 

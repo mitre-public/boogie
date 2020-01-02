@@ -10,17 +10,17 @@ import org.mitre.tdp.boogie.NavigationSource;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 
-public interface Procedure<F extends Fix, L extends Leg<F>, T extends Transition<F, L>> extends Infrastructure {
+public interface Procedure extends Infrastructure {
 
   /**
    * Collection of all the transitions referenced by the procedure.
    */
-  Collection<T> transitions();
+  Collection<? extends Transition> transitions();
 
   /**
    * Returns the list of viable paths through the procedure between the provided
    */
-  List<List<L>> pathsBetween(F start, F end);
+  List<List<Leg>> pathsBetween(Fix start, Fix end);
 
   @Override
   default String identifier() {

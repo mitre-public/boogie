@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
@@ -22,15 +22,15 @@ import org.mitre.tdp.boogie.models.LinkedLegs;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mitre.tdp.boogie.ObjectMocks.IF;
-import static org.mitre.tdp.boogie.ObjectMocks.airport;
-import static org.mitre.tdp.boogie.ObjectMocks.airway;
-import static org.mitre.tdp.boogie.ObjectMocks.fix;
-import static org.mitre.tdp.boogie.ObjectMocks.magneticVariation;
-import static org.mitre.tdp.boogie.ObjectMocks.transition;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.airport;
+import static org.mitre.tdp.boogie.MockObjects.airway;
+import static org.mitre.tdp.boogie.MockObjects.fix;
+import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
+import static org.mitre.tdp.boogie.MockObjects.transition;
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;
 import static org.mockito.Mockito.when;
 

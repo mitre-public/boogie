@@ -6,7 +6,7 @@ import java.util.List;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mitre.tdp.boogie.ObjectMocks.IF;
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
-import static org.mitre.tdp.boogie.ObjectMocks.airport;
-import static org.mitre.tdp.boogie.ObjectMocks.transition;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.airport;
+import static org.mitre.tdp.boogie.MockObjects.transition;
 
 public class TestLegGraph {
 
@@ -64,9 +64,9 @@ public class TestLegGraph {
     ConnectivityInspector<SectionSplitLeg, DefaultWeightedEdge> conn = new ConnectivityInspector<>(graph);
 
     String msg = "Check hashing and object references for insert into graph.";
-    assertTrue(msg, conn.isConnected());
-    assertEquals(msg, 1, conn.connectedSets().size());
-    assertEquals(msg, 6, conn.connectedSets().get(0).size());
+    assertTrue(conn.isConnected(), msg);
+    assertEquals(1, conn.connectedSets().size(), msg);
+    assertEquals(6, conn.connectedSets().get(0).size(), msg);
   }
 
   @Test
@@ -79,9 +79,9 @@ public class TestLegGraph {
     List<SectionSplitLeg> legs = path.getVertexList();
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
-    assertEquals("Incorrect initial section. " + message, "KIND", legs.get(0).sectionSplit().value());
-    assertEquals("Incorrect initial leg terminator. " + message, "KIND", legs.get(0).leg().pathTerminator().identifier());
-    assertEquals("Incorrect initial leg type. " + message, LegType.IF, legs.get(0).leg().type());
+    assertEquals("KIND", legs.get(0).sectionSplit().value(), "Incorrect initial section. " + message);
+    assertEquals("KIND", legs.get(0).leg().pathTerminator().identifier(), "Incorrect initial leg terminator. " + message);
+    assertEquals(LegType.IF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message);
 
     assertEquals("BLSTR1", legs.get(1).sectionSplit().value());
     assertEquals("BNDRR", legs.get(1).leg().pathTerminator().identifier());
@@ -95,10 +95,10 @@ public class TestLegGraph {
     assertEquals("BLSTR1", legs.get(4).sectionSplit().value());
     assertEquals("VNY", legs.get(4).leg().pathTerminator().identifier());
 
-    assertEquals("Incorrect final section. " + message, "VNY", legs.get(5).sectionSplit().value());
-    assertEquals("Incorrect final leg terminator. " + message, "VNY", legs.get(5).leg().pathTerminator().identifier());
-    assertEquals("Incorrect final leg type. " + message, LegType.IF, legs.get(0).leg().type());
+    assertEquals("VNY", legs.get(5).sectionSplit().value(), "Incorrect final section. " + message);
+    assertEquals("VNY", legs.get(5).leg().pathTerminator().identifier(), "Incorrect final leg terminator. " + message);
+    assertEquals(LegType.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
 
-    assertEquals("Incorrect resolved shortest path weight. Check leg weight functions.", 60.007, path.getWeight(), 0.01);
+    assertEquals(60.007, path.getWeight(), 0.01, "Incorrect resolved shortest path weight. Check leg weight functions.");
   }
 }

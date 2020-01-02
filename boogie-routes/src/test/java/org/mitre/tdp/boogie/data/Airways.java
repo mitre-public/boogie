@@ -5,8 +5,8 @@ import java.util.Arrays;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Leg;
 
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
-import static org.mitre.tdp.boogie.ObjectMocks.airway;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.airway;
 
 /**
  * A mocked copy of the J121 airway over the US for use in unit testing.

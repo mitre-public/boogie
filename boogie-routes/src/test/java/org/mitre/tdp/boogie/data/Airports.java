@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.data;
 
 import org.mitre.tdp.boogie.Airport;
 
-import static org.mitre.tdp.boogie.ObjectMocks.airport;
+import static org.mitre.tdp.boogie.MockObjects.airport;
 
 /**
  * Collection of mock airport objects and their actual locations for use in testing.

@@ -3,9 +3,9 @@ package org.mitre.tdp.boogie.util;
 import java.time.Instant;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Collection of magnetic declination regression tests for the {@link Declinations}

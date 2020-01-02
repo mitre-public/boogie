@@ -108,7 +108,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
      * distance from the end of the leg.
      */
     private double transitionScore(L l1, L l2) {
-      return l1.scorer().transitionScore(l1, l2);
+      return l1.scorer().transitionScore(l2);
     }
 
     private List<Scored<L>> conformed() {

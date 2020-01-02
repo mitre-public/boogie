@@ -7,9 +7,9 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 public class SectionSplitLeg {
   private SectionSplit sectionSplit;
-  private Leg<?> leg;
+  private Leg leg;
 
-  public SectionSplitLeg(Leg<?> leg) {
+  public SectionSplitLeg(Leg leg) {
     this.leg = leg;
   }
 
@@ -22,7 +22,7 @@ public class SectionSplitLeg {
     return this;
   }
 
-  public Leg<?> leg() {
+  public Leg leg() {
     return leg;
   }
 

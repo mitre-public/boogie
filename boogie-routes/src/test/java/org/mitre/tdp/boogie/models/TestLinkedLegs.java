@@ -1,14 +1,13 @@
-package org.mitre.tdp.boogie.model;
+package org.mitre.tdp.boogie.models;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.models.LinkedLegs;
 
-import static org.junit.Assert.assertEquals;
-import static org.mitre.tdp.boogie.ObjectMocks.CA;
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mitre.tdp.boogie.MockObjects.CA;
+import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,7 +32,7 @@ public class TestLinkedLegs {
     when(ssl2.sectionSplit()).thenReturn(ss1);
 
     LinkedLegs ll = new LinkedLegs(ssl1, ssl2);
-    assertEquals("Same section fixes should be zero weight.", 0.0, ll.linkWeight(), 0.1);
+    assertEquals(0.0, ll.linkWeight(), 0.1, "Same section fixes should be zero weight.");
   }
 
   @Test
@@ -58,8 +57,7 @@ public class TestLinkedLegs {
     when(ssl2.sectionSplit()).thenReturn(ss2);
 
     LinkedLegs ll = new LinkedLegs(ssl1, ssl2);
-    assertEquals("Different section link weight should be non-zero where concrete fixes present (we can compute a distance).",
-        60.007, ll.linkWeight(), 0.1);
+    assertEquals(60.007, ll.linkWeight(), 0.1, "Different section link weight should be non-zero where concrete fixes present (we can compute a distance).");
   }
 
   @Test
@@ -84,7 +82,6 @@ public class TestLinkedLegs {
     when(ssl2.sectionSplit()).thenReturn(ss2);
 
     LinkedLegs ll = new LinkedLegs(ssl1, ssl2);
-    assertEquals("Different sections where non-concrete legs are linked we default weight to zero (can't compute distance).",
-        0.0, ll.linkWeight(), 0.0);
+    assertEquals(LinkedLegs.MATCH_WEIGHT, ll.linkWeight(), 0.0, "Different sections where non-concrete legs are linked we default weight to zero (can't compute distance).");
   }
 }

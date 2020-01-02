@@ -86,8 +86,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     Preconditions.checkArgument(allMatch(transitions, Transition::source));
 
     // find the terminators of the concrete leg types (these exist as actual fixes)
-    Collection<Leg<?>> concrete = transitions.stream()
-        .map((Transition t) -> (Transition<?, ?>) t)
+    Collection<Leg> concrete = transitions.stream()
         .map(Transition::legs)
         .flatMap(Collection::stream)
         .filter((Leg leg) -> leg.type().concrete())
@@ -108,7 +107,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
       } else {
         Iterators.pairwise(
             transition.legs(),
-            (Leg prev, Leg curr) -> {
+            (prev, curr) -> {
               procedure.addVertex(prev);
               procedure.addVertex(curr);
               procedure.addEdge(prev, curr);

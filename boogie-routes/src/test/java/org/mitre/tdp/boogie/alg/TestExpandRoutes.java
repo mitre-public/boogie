@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.alg;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
@@ -16,10 +16,10 @@ import org.mitre.tdp.boogie.models.ExpandedRoute;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mitre.tdp.boogie.ObjectMocks.fix;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.fix;
 import static org.mitre.tdp.boogie.data.Airports.KATL;
 import static org.mitre.tdp.boogie.data.Airports.KDEN;
 
@@ -56,55 +56,69 @@ public class TestExpandRoutes {
 
     SectionSplitLeg leg;
 
-    leg = legs.get(0);
+    int i = 0;
+
+    leg = legs.get(i);
     assertEquals("KDEN", leg.sectionSplit().value());
     assertEquals("KDEN", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(1);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("GOROC", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(2);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("HURDL", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(3);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("HAWPE", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(4);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("TUNNN", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(5);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("TAVRN", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(6);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("VONNN", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(7);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("TEEBO", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(8);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("CONNR", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(9);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("CONNR", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(10);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("BULDG", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(11);
+    leg = legs.get(i);
     assertEquals("CONNR5", leg.sectionSplit().value());
     assertEquals("DBL", leg.leg().pathTerminator().identifier());
+    i++;
 
-    leg = legs.get(12);
+    leg = legs.get(i);
     assertEquals("DBL", leg.sectionSplit().value());
     assertEquals("DBL", leg.leg().pathTerminator().identifier());
 

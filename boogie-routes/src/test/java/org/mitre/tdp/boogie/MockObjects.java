@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ import static org.mockito.Mockito.when;
 /**
  * Class containing helper code for generating mock objects.
  */
-public class ObjectMocks {
+public class MockObjects {
 
   public static Fix fix(String name, double lat, double lon) {
     Fix fix = mock(Fix.class);
@@ -94,12 +95,12 @@ public class ObjectMocks {
     return transition(null, pname, "FOO", ttype, ptype, legs);
   }
 
-  public static Transition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
+  public static Transition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<? extends Leg> legs) {
     Transition transition = mock(Transition.class);
 
     when(transition.identifier()).thenReturn(tname);
     when(transition.airport()).thenReturn(aname);
-    when(transition.legs()).thenReturn(legs);
+    when(transition.legs()).thenReturn((List) legs);
     when(transition.procedure()).thenReturn(pname);
     when(transition.procedureType()).thenReturn(ptype);
     when(transition.transitionType()).thenReturn(ttype);
@@ -123,10 +124,10 @@ public class ObjectMocks {
     return airport;
   }
 
-  public static Airway airway(String name, List<Leg> legs) {
+  public static Airway airway(String name, List<? extends Leg> legs) {
     Airway airway = mock(Airway.class);
     when(airway.identifier()).thenReturn(name);
-    when(airway.legs()).thenReturn(legs);
+    when(airway.legs()).thenReturn((List) legs);
     return airway;
   }
 }

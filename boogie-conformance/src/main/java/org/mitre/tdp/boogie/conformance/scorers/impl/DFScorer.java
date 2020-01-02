@@ -7,7 +7,7 @@ import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 /**
- * This is the default conformance scorer for {@link LegType#RF} legs.
+ * This is the default conformance scorer for {@link LegType#DF} legs.
  */
 class DFScorer implements LegScorer {
 

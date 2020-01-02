@@ -10,7 +10,7 @@ import java.util.Optional;
  * The exceptions to this are the pathTerminator since it is widely used (although it may
  * also be nullable for certain leg types) and the legType which is required.
  */
-public interface Leg<F extends Fix> {
+public interface Leg {
 
   /**
    * The path terminator for the leg if said leg ends in a concrete fix.
@@ -19,7 +19,7 @@ public interface Leg<F extends Fix> {
    * e.g. for a CA (course-to-altitude) leg this will be null since the termination
    * point is at a (altitude) constraint rather than a position.
    */
-  F pathTerminator();
+  Fix pathTerminator();
 
   /**
    * If the leg requires a navaid to be flown correctly this field will contain
@@ -28,13 +28,13 @@ public interface Leg<F extends Fix> {
    * e.g. for a FA (fix to altitude) this will be the fix the outbound course will
    * be with reference to for climbing to the target altitude.
    */
-  Optional<F> recommendedNavaid();
+  Optional<? extends Fix> recommendedNavaid();
 
   /**
    * For leg types which define arcs as a constant radius turn between fixes this
    * will contain the information about the center of that turn.
    */
-  Optional<F> centerFix();
+  Optional<? extends Fix> centerFix();
 
   /**
    * The {@link LegType} of the leg. It indicates how the leg is to be flown.

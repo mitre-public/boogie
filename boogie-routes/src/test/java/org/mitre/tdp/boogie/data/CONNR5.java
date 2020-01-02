@@ -12,14 +12,14 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.mitre.tdp.boogie.ObjectMocks.CF;
-import static org.mitre.tdp.boogie.ObjectMocks.DF;
-import static org.mitre.tdp.boogie.ObjectMocks.IF;
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
-import static org.mitre.tdp.boogie.ObjectMocks.VA;
-import static org.mitre.tdp.boogie.ObjectMocks.VI;
-import static org.mitre.tdp.boogie.ObjectMocks.VM;
-import static org.mitre.tdp.boogie.ObjectMocks.transition;
+import static org.mitre.tdp.boogie.MockObjects.CF;
+import static org.mitre.tdp.boogie.MockObjects.DF;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.VA;
+import static org.mitre.tdp.boogie.MockObjects.VI;
+import static org.mitre.tdp.boogie.MockObjects.VM;
+import static org.mitre.tdp.boogie.MockObjects.transition;
 
 /**
  * RNAV Departure SID out of Denver from cycle 1910 for use in testing.
@@ -33,8 +33,8 @@ public class CONNR5 {
   }
 
   public Leg get(String fname, String tname) {
-    Transition<?, ?> transition = get(tname);
-    return transition.legs().stream().filter(l -> ((Leg) l).pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
   }
 
   public Transition get(String tname) {

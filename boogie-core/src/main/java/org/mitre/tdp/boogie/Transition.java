@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  * code for both fusing transitions across data sources as well as in things like route parsing
  * and other analytics.
  */
-public interface Transition<F extends Fix, L extends Leg<F>> extends Infrastructure {
+public interface Transition extends Infrastructure {
   /**
    * The string name of the associated airport.
    */
@@ -36,12 +36,12 @@ public interface Transition<F extends Fix, L extends Leg<F>> extends Infrastruct
   /**
    * Returns the legs which make up the transition.
    */
-  List<L> legs();
+  List<? extends Leg> legs();
 
   /**
    * Returns the collection of all concrete leg types.
    */
-  default List<L> concreteLegs() {
+  default List<? extends Leg> concreteLegs() {
     return legs().stream().filter(leg -> LegType.CONCRETE.test(leg.type())).collect(Collectors.toList());
   }
 }

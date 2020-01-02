@@ -6,7 +6,7 @@ import java.util.stream.IntStream;
 
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultEdge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
@@ -17,12 +17,12 @@ import org.mitre.tdp.boogie.data.CONNR5;
 import org.mitre.tdp.boogie.data.HOBTT2;
 
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mitre.tdp.boogie.ObjectMocks.IF;
-import static org.mitre.tdp.boogie.ObjectMocks.TF;
-import static org.mitre.tdp.boogie.ObjectMocks.transition;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.transition;
 
 public class TestProcedureGraph {
 
@@ -167,7 +167,7 @@ public class TestProcedureGraph {
     ProcedureGraph pg = ProcedureGraph.from(hobtt2.transitions());
 
     ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
-    assertTrue("Constructed graph is not connected.", ci.isConnected());
+    assertTrue(ci.isConnected(), "Constructed graph is not connected.");
 
     assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("KEAVY", "RW26B")));
     assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("YURII", "RW27B")));
@@ -198,8 +198,8 @@ public class TestProcedureGraph {
     ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
     assertTrue(ci.isConnected());
 
-    assertTrue("Single VI leg reference as path start failed.", ci.pathExists((Leg) connr5.get("RW17L").legs().get(0), connr5.get("DBL", "")));
-    assertTrue("Multiple non-concrete leg as path start failed.", ci.pathExists((Leg) connr5.get("RW08").legs().get(0), connr5.get("DBL", "")));
-    assertTrue("VI into CF leg chain start failure.", ci.pathExists((Leg) connr5.get("RW16L").legs().get(0), connr5.get("DBL", "")));
+    assertTrue(ci.pathExists((Leg) connr5.get("RW17L").legs().get(0), connr5.get("DBL", "")), "Single VI leg reference as path start failed.");
+    assertTrue(ci.pathExists((Leg) connr5.get("RW08").legs().get(0), connr5.get("DBL", "")), "Multiple non-concrete leg as path start failed.");
+    assertTrue(ci.pathExists((Leg) connr5.get("RW16L").legs().get(0), connr5.get("DBL", "")), "VI into CF leg chain start failure.");
   }
 }

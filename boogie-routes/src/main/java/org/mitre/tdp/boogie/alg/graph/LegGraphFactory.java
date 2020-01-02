@@ -50,8 +50,8 @@ public class LegGraphFactory {
       insert(ll1, graph);
       insert(ll2, graph);
 
-      Leg<?> tgt1 = ll1.target().leg();
-      Leg<?> src2 = ll2.source().leg();
+      Leg tgt1 = ll1.target().leg();
+      Leg src2 = ll2.source().leg();
 
       if (tgt1.type().concrete() && src2.type().concrete() && !tgt1.equals(src2)) {
 
