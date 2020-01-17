@@ -47,6 +47,11 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
+  public Integer sequenceNumber(){
+    return 0;
+  }
+
+  @Override
   public Optional<Double> inboundMagneticCourse() {
     return Optional.empty();
   }

@@ -16,4 +16,8 @@ public class Nulls {
   public static <T> boolean nonNullEquals(T u, T v) {
     return u != null && u.equals(v);
   }
+
+  public static <T> T ifNullThat(T u, T that) {
+    return u == null ? that : u;
+  }
 }

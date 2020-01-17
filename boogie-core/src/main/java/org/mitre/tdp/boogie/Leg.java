@@ -42,6 +42,15 @@ public interface Leg {
   LegType type();
 
   /**
+   * The sequence number of the leg. This represents the position of the leg in the
+   * procedure/airway which references it.
+   *
+   * Sorting legs by sequence number within an airway or procedure should produce the
+   * full path as intended by the procedure designer.
+   */
+  Integer sequenceNumber();
+
+  /**
    * The inbound magnetic course to one of the listed fixes in the leg description.
    */
   Optional<Double> inboundMagneticCourse();
@@ -79,12 +88,12 @@ public interface Leg {
   /**
    * The speed constraint at the {@link Leg#pathTerminator()}.
    */
-  Optional<Constraint> speedConstraint();
+  Optional<? extends Constraint> speedConstraint();
 
   /**
    * The altitude constraint at the {@link Leg#pathTerminator()}.
    */
-  Optional<Constraint> altitudeConstraint();
+  Optional<? extends Constraint> altitudeConstraint();
 
   /**
    * If the leg contains a turn this indicates the direction of the turn or both if

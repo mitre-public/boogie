@@ -26,7 +26,7 @@ public class TailoredElement extends ResolvedElement<Fix> {
     double course = convertToTrue(bearingDistance.first());
     double distance = bearingDistance.second();
 
-    LatLong projectedLocation = reference().latLong().projectionInDegrees(course, distance);
+    LatLong projectedLocation = reference().latLong().projectOut(course, distance);
     LocationFix asFix = new LocationFix(reference().identifier(), projectedLocation);
 
     SimpleIFLeg leg = SimpleIFLeg.from(asFix);

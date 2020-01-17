@@ -30,10 +30,7 @@ public class CoordinateParser {
     return LatLong.of(sign(lat) * latDeg, sign(lon) * lonDeg);
   }
 
-  /*
-   * Convert coordinates of the form "xx.xxxd" where d is a direction (i.e., N, S, E, or W)
-   * */
-  /*
+  /**
    * Convert coordinates of the form "DD-MM-SS.XXXd" or "SS.XXX" where
    *    DD are degrees
    *    MM are minutes
@@ -42,7 +39,7 @@ public class CoordinateParser {
    *
    * Conversion will FAIL if input is decimal degrees because it will be interpreted as degree seconds.
    * The use case for this comes from parsing NFDC runway coordinates.
-   * */
+   */
   public static Double convertDegrees(String s) {
     s = s.trim();
     if (s.contains("-")) {
@@ -62,14 +59,16 @@ public class CoordinateParser {
 
   /**
    * Reformat coordinate to work with the CoordinateParser
-   * @param s a coordinate of the form ddmmssnn[NSEW]
-   * @return a coordinate of the form dd-mm-ss.nn[NSEW]
+   * @param s a coordinate of the form ddmmssnn[NS] || dddmmssnn[EW]
+   * @return a coordinate of the form dd-mm-ss.nn[NS] || ddd-mm-ss.nn[EW]
    */
   public static String reformatLatCoordinate(String s) {
-    return s.substring(0, 2) + "-" + s.substring(2, 4) + "-" + s.substring(4, 6) + "." + s.substring(6, s.length());
+    Preconditions.checkArgument(!(s.endsWith("E") || s.endsWith("W")));
+    return s.substring(0, 2) + "-" + s.substring(2, 4) + "-" + s.substring(4, 6) + "." + s.substring(6);
   }
 
   public static String reformatLonCoordinate(String s) {
-    return s.substring(0, 3) + "-" + s.substring(3, 5) + "-" + s.substring(5, 7) + "." + s.substring(7, s.length());
+    Preconditions.checkArgument(!(s.endsWith("N") || s.endsWith("S")));
+    return s.substring(0, 3) + "-" + s.substring(3, 5) + "-" + s.substring(5, 7) + "." + s.substring(7);
   }
 }

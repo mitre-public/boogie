@@ -1,10 +1,18 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
+import java.util.function.Function;
+
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.Scorable;
 import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
+
+import static org.apache.commons.math3.util.FastMath.abs;
+import static org.mitre.caasd.commons.Spherical.angleDifference;
+import static org.mitre.tdp.boogie.conformance.scorers.impl.MissingRequiredFieldException.supplier;
+import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simpleLogistic;
 
 /**
  * This is the default conformance scorer for {@link LegType#DF} legs.
@@ -19,7 +27,19 @@ class DFScorer implements LegScorer {
 
   @Override
   public double score(ConformablePoint that) {
-    return 0;
+    Function<Double, Double> courseWeight = simpleLogistic(5.0, 15.0);
+    Function<Double, Double> distanceWeight = simpleLogistic(15.0, 40.0);
+
+    Fix pathTerminator = legs.to().pathTerminator();
+
+    double distance = that.distanceInNmTo(pathTerminator);
+    double courseBetween = that.courseInDegrees(pathTerminator);
+
+    double angleDiff = angleDifference(that.trueCourse().orElseThrow(supplier("Point Course")), courseBetween);
+    double wcrs = courseWeight.apply(abs(angleDiff));
+    double wdst = distanceWeight.apply(distance);
+
+    return wcrs * wdst;
   }
 
   @Override

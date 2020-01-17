@@ -10,5 +10,5 @@ public interface Constraint {
   /**
    * Returns the type of altitude constraint.
    */
-  ConstraintType type();
+  ConstraintBehavior behavior();
 }

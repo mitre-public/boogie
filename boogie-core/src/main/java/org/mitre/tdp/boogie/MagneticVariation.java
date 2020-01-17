@@ -19,10 +19,18 @@ public interface MagneticVariation {
    */
   float modeled();
 
+  /**
+   * Converts the input magnetic course to a true course using the published local variation if provided
+   * otherwise defaulting to the modeled value.
+   */
   default Double magneticToTrue(Double course) {
     return published().isPresent() ? course + published().get() : course + modeled();
   }
 
+  /**
+   * Converts the input true course to a magnetic course using the published local variation if provided
+   * otherwise defaulting to the modeled value.
+   */
   default Double trueToMagnetic(Double course) {
     return published().isPresent() ? course - published().get() : course - modeled();
   }

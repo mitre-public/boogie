@@ -6,7 +6,6 @@ import org.mitre.tdp.boogie.Infrastructure;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 
-
 public abstract class ResolvedElement<I extends Infrastructure> {
   final ElementType type;
   final I reference;

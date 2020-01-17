@@ -27,8 +27,8 @@ import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
  * Since it is a maximizer it is looking to find the set of assignments of particular inputs
  * to the provided scorable objects such that over time the overall score is maximized.
  *
- * While the {@link DynamicProgrammer} can perform both maximization and minimization problems
- * of either direction can often be rephrased to look similar to one or the other, as such for
+ * While the {@link DynamicProgrammer} can perform both maximization and minimization problems in
+ * either direction often one can be rephrased to look similar to one or the other, as such for
  * simplicity in this class we assume a maximization problem.
  *
  * Given this is a maximization it's worth noting that this means the best assignments at any

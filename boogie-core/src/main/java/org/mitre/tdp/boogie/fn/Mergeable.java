@@ -6,7 +6,8 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 /**
- * Interface for representing left-mergeable data.
+ * A merge is an object which knows how to combine two objects of the same type into a
+ * composite object containing features from both inputs.
  */
 public interface Mergeable<T extends Mergeable<T>> {
 

@@ -31,7 +31,7 @@ class AFScorer implements LegScorer {
 
   @Override
   public double score(ConformablePoint that) {
-    Function<Double, Double> wfn = simpleLogistic(1.0, 0.1);
+    Function<Double, Double> wfn = simpleLogistic(1.0, 2.0);
 
     Fix navaid = legs.to().recommendedNavaid().orElseThrow(supplier("Recommended Navaid"));
     double radius = legs.to().rho().orElseThrow(supplier("Rho"));

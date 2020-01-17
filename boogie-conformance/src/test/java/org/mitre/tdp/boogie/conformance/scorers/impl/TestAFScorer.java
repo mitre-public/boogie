@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.conformance.scorers.impl;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -12,7 +11,6 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -89,7 +87,7 @@ public class TestAFScorer {
     MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
     double projCourse = localVariation.magneticToTrue(AF.theta().get()) + 10.0;
 
-    LatLong loc = AF.recommendedNavaid().get().projectionInDegrees(projCourse, AF.rho().get()).latLong();
+    LatLong loc = AF.recommendedNavaid().get().projectOut(projCourse, AF.rho().get()).latLong();
     when(point.latLong()).thenReturn(loc);
 
     double score = scorer.score(point);
@@ -107,7 +105,7 @@ public class TestAFScorer {
     MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
     double projCourse = localVariation.magneticToTrue(AF.outboundMagneticCourse().get()) - 10.0;
 
-    LatLong loc = AF.recommendedNavaid().get().projectionInDegrees(projCourse, AF.rho().get()).latLong();
+    LatLong loc = AF.recommendedNavaid().get().projectOut(projCourse, AF.rho().get()).latLong();
     when(point.latLong()).thenReturn(loc);
 
     double score = scorer.score(point);
@@ -115,7 +113,7 @@ public class TestAFScorer {
   }
 
   @Test
-  public void testAFMagneticConversionMovesCourseToOutsideRadialsScore(){
+  public void testAFMagneticConversionMovesCourseToOutsideRadialsScore() {
     AFScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
@@ -137,7 +135,7 @@ public class TestAFScorer {
     double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
 
     LatLong loc = AF.recommendedNavaid().get()
-        .projectionInDegrees(halfTrueCourse, AF.rho().get()).latLong();
+        .projectOut(halfTrueCourse, AF.rho().get()).latLong();
     when(point.latLong()).thenReturn(loc);
 
     double score = scorer.score(point);
@@ -155,7 +153,7 @@ public class TestAFScorer {
     double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
 
     LatLong loc = AF.recommendedNavaid().get()
-        .projectionInDegrees(halfTrueCourse, AF.rho().get() - 1.0).latLong();
+        .projectOut(halfTrueCourse, AF.rho().get() - 1.0).latLong();
     when(point.latLong()).thenReturn(loc);
 
     double score = scorer.score(point);
@@ -172,12 +170,11 @@ public class TestAFScorer {
     MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
     double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
 
-    LatLong loc = AF.recommendedNavaid().get()
-        .projectionInDegrees(halfTrueCourse, AF.rho().get() + 2.0).latLong();
+    LatLong loc = AF.recommendedNavaid().get().projectOut(halfTrueCourse, AF.rho().get() + 2.0).latLong();
     when(point.latLong()).thenReturn(loc);
 
     double score = scorer.score(point);
-    assertEquals(0.03d, score, 0.01, "Point offset 2.0nm should get a low score.");
+    assertEquals(0.05d, score, 0.01, "Point offset 2.0nm should get a low score.");
   }
 
   private ConformablePoint dummyPoint() {
@@ -193,9 +190,11 @@ public class TestAFScorer {
 
     LatLong ll = LatLong.of(42.479575000000004, -122.91293333333334);
     when(navaid.latLong()).thenReturn(ll);
+    when(navaid.latitude()).thenCallRealMethod();
+    when(navaid.longitude()).thenCallRealMethod();
     when(navaid.courseInDegrees(any())).thenCallRealMethod();
     when(navaid.distanceInNmTo(any())).thenCallRealMethod();
-    when(navaid.projectionInDegrees(any(), any())).thenCallRealMethod();
+    when(navaid.projectOut(any(), any())).thenCallRealMethod();
 
     MagneticVariation var = magneticVariation(19.0f, 14.513932612651612f);
     when(var.magneticToTrue(any())).thenCallRealMethod();
