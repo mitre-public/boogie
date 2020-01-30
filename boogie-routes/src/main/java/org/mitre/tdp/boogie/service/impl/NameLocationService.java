@@ -1,13 +1,16 @@
 package org.mitre.tdp.boogie.service.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.collect.MetricTree;
+import org.mitre.caasd.commons.collect.SearchResult;
 
 /**
  * Service object for indexing the parameterized data type by both the name of the parameter
@@ -29,6 +32,10 @@ public class NameLocationService<T> {
 
   public T nearest(LatLong loc) {
     return locationMap.getClosest(loc).value();
+  }
+
+  public List<T> allWithinRange(LatLong loc, double radius) {
+    return locationMap.getAllWithinRange(loc, radius).stream().map(SearchResult::value).collect(Collectors.toList());
   }
 
   public static <T> NameLocationService<T> from(Collection<T> objs, Function<T, String> nameFn, Function<T, LatLong> locFn) {
