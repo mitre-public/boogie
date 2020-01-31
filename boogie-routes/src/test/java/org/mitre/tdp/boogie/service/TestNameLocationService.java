@@ -50,14 +50,14 @@ public class TestNameLocationService {
   public void testNameLookupFindsTwoMatchesFor_C() {
     NameLocationService<Fix> nls = abccService();
     Collection<Fix> matches = nls.matches("C");
-    assertEquals(1, matches.size());
+    assertEquals(2, matches.size());
   }
 
   @Test
   public void testNameLookupFindsNoMatchFor_D() {
     NameLocationService<Fix> nls = abccService();
     Collection<Fix> matches = nls.matches("D");
-    assertEquals(1, matches.size());
+    assertEquals(0, matches.size());
   }
 
   private NameLocationService<Fix> abcService() {
