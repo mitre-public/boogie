@@ -32,6 +32,8 @@ public class TestDFScorer {
 
     LatLong loc = DF().pathTerminator().projectOut(0.0, 15.0).latLong();
     when(point.latLong()).thenReturn(loc);
+    when(point.latitude()).thenCallRealMethod();
+    when(point.longitude()).thenCallRealMethod();
     when(point.trueCourse()).thenReturn(Optional.of(180.0));
 
     when(point.courseInDegrees(any())).thenCallRealMethod();
@@ -54,6 +56,8 @@ public class TestDFScorer {
 
     LatLong ll = LatLong.of(44.120897222222226, -123.22283055555556);
     when(navaid.latLong()).thenReturn(ll);
+    when(navaid.latitude()).thenCallRealMethod();
+    when(navaid.longitude()).thenCallRealMethod();
     when(navaid.courseInDegrees(any())).thenCallRealMethod();
     when(navaid.distanceInNmTo(any())).thenCallRealMethod();
     when(navaid.projectOut(any(), any())).thenCallRealMethod();

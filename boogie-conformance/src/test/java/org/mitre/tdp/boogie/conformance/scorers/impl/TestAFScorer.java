@@ -137,6 +137,8 @@ public class TestAFScorer {
     LatLong loc = AF.recommendedNavaid().get()
         .projectOut(halfTrueCourse, AF.rho().get()).latLong();
     when(point.latLong()).thenReturn(loc);
+    when(point.latitude()).thenCallRealMethod();
+    when(point.longitude()).thenCallRealMethod();
 
     double score = scorer.score(point);
     assertEquals(0.95d, score, 0.02, "Points directly on the defined arc should get a high score.");
@@ -155,6 +157,8 @@ public class TestAFScorer {
     LatLong loc = AF.recommendedNavaid().get()
         .projectOut(halfTrueCourse, AF.rho().get() - 1.0).latLong();
     when(point.latLong()).thenReturn(loc);
+    when(point.latitude()).thenCallRealMethod();
+    when(point.longitude()).thenCallRealMethod();
 
     double score = scorer.score(point);
     assertEquals(0.5d, score, 0.01, "Point only off by ~a mile should get a moderate score.");
@@ -172,6 +176,8 @@ public class TestAFScorer {
 
     LatLong loc = AF.recommendedNavaid().get().projectOut(halfTrueCourse, AF.rho().get() + 2.0).latLong();
     when(point.latLong()).thenReturn(loc);
+    when(point.latitude()).thenCallRealMethod();
+    when(point.longitude()).thenCallRealMethod();
 
     double score = scorer.score(point);
     assertEquals(0.05d, score, 0.01, "Point offset 2.0nm should get a low score.");
