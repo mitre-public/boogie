@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.alg.ExpandRoutes;
+import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
@@ -44,9 +44,9 @@ public class SectionResolver implements Serializable {
    * The route inflation object containing the configured infrastructure elements
    * to use in the expansion.
    */
-  private ExpandRoutes inflator;
+  private RouteExpander inflator;
 
-  private SectionResolver(ExpandRoutes inflator) {
+  private SectionResolver(RouteExpander inflator) {
     this.inflator = inflator;
   }
 
@@ -171,7 +171,7 @@ public class SectionResolver implements Serializable {
     return match ? LatLonElement.from(section) : null;
   }
 
-  public static SectionResolver with(ExpandRoutes routes) {
+  public static SectionResolver with(RouteExpander routes) {
     return new SectionResolver(routes);
   }
 }

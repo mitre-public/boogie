@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.alg.approach;
 
 import java.util.List;
 
-import org.mitre.tdp.boogie.alg.ExpandRoutes;
+import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
@@ -16,9 +16,9 @@ import static org.mitre.tdp.boogie.utils.Collections.filter;
 public interface ApproachPredictor {
 
   /**
-   * Provides access to a configured {@link ExpandRoutes} object for internal use.
+   * Provides access to a configured {@link RouteExpander} object for internal use.
    */
-  void configure(ExpandRoutes expander);
+  void configure(RouteExpander expander);
 
   /**
    * Takes the last two resolved sections of the route string and attempts to resolve an in-between

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.alg.ExpandRoutes;
+import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
@@ -44,7 +44,7 @@ public class TestAllApproachPredictor {
     AllApproachPredictor predictor = new AllApproachPredictor();
 
     Airport kden = KDEN();
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         emptyList(),
         emptyList(),
         singletonList(kden),

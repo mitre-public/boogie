@@ -38,13 +38,13 @@ import static org.mitre.tdp.boogie.data.Airports.KDEN;
  * e.g. TestAPF would indicated a test for Airport.Procedure.Fix one of the more common
  * composite route elements.
  */
-public class TestExpandRoutes {
+public class TestRouteExpander {
 
   @Test
   public void testAPF() {
     String route = "KDEN.CONNR5.DBL";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         singletonList(fix("DBL", 39.439344444444444, -106.89468055555557)),
         emptyList(),
         singletonList(KDEN()),
@@ -129,7 +129,7 @@ public class TestExpandRoutes {
   public void testFPA() {
     String route = "DRSDN.HOBTT2.KATL";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
@@ -188,7 +188,7 @@ public class TestExpandRoutes {
   public void testFPA_NoProcedureMatch() {
     String route = "DRSDN.HOBTT3.KATL";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
@@ -215,7 +215,7 @@ public class TestExpandRoutes {
   public void testFAF() {
     String route = "JMACK.J121.KALDA";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         Arrays.asList(
             fix("JMACK", 33.98850277777778, -78.96658333333333),
             fix("KALDA", 37.84195833333334, -75.62648333333333)),
@@ -270,7 +270,7 @@ public class TestExpandRoutes {
   public void testFAFReverse() {
     String route = "KALDA.J121.JMACK";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         Arrays.asList(
             fix("JMACK", 33.98850277777778, -78.96658333333333),
             fix("KALDA", 37.84195833333334, -75.62648333333333)),
@@ -325,7 +325,7 @@ public class TestExpandRoutes {
   public void testFWFWFRepeatedAirway() {
     String route = "MILIE.J121.BARTL.J121.ORF";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         Arrays.asList(
             fix("MILIE", 31.328622222222222, -81.17371944444444),
             fix("BARTL", 34.303177777777776, -78.65149444444445),
@@ -389,7 +389,7 @@ public class TestExpandRoutes {
   public void testFLF() {
     String route = "MILIE..5300N/14000W..BARTL";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         Arrays.asList(
             fix("MILIE", 31.328622222222222, -81.17371944444444),
             fix("BARTL", 34.303177777777776, -78.65149444444445)),
@@ -421,7 +421,7 @@ public class TestExpandRoutes {
   public void testALF() {
     String route = "KDEN./.2200N/12000W..BARTL";
 
-    ExpandRoutes expander = ExpandRoutes.with(
+    RouteExpander expander = RouteExpander.with(
         singletonList(fix("BARTL", 34.303177777777776, -78.65149444444445)),
         emptyList(),
         singletonList(Airports.KDEN()),
@@ -453,7 +453,7 @@ public class TestExpandRoutes {
 
     Fix bartl = fix("BARTL", 34.303177777777776, -78.65149444444445);
 
-    ExpandRoutes expander = ExpandRoutes.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
+    RouteExpander expander = RouteExpander.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
@@ -481,7 +481,7 @@ public class TestExpandRoutes {
 
     Fix bartl = fix("BARTL", 34.303177777777776, -78.65149444444445);
 
-    ExpandRoutes expander = ExpandRoutes.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
+    RouteExpander expander = RouteExpander.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
 
     ExpandedRoute expandedRoute = expander.expand(route);
 

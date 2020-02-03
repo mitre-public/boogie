@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.alg.ExpandRoutes;
+import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
@@ -27,10 +27,10 @@ import static org.mitre.tdp.boogie.utils.Collections.transform;
  */
 public class AllApproachPredictor implements ApproachPredictor {
 
-  private ExpandRoutes expander;
+  private RouteExpander expander;
 
   @Override
-  public void configure(ExpandRoutes expander) {
+  public void configure(RouteExpander expander) {
     this.expander = expander;
   }
 
@@ -47,7 +47,7 @@ public class AllApproachPredictor implements ApproachPredictor {
   }
 
   /**
-   * Queries the {@link ExpandRoutes#procedureService()} for the collection of all approach procedures into
+   * Queries the {@link RouteExpander#procedureService()} for the collection of all approach procedures into
    * the resolved airport element.
    */
   private List<ResolvedElement<?>> approachProceduresAtAirport(ResolvedElement<?> element) {

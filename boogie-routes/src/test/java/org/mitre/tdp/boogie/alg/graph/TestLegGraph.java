@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.alg.ExpandRoutes;
+import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
@@ -35,7 +35,7 @@ public class TestLegGraph {
 
   private static final Logger LOG = LoggerFactory.getLogger(TestLegGraph.class);
 
-  private static ExpandRoutes apfExpander() {
+  private static RouteExpander apfExpander() {
     Airport kind = airport("KIND", 1.0, 0.0);
 
     Leg l1 = IF("BNDRR", 0.0, 0.0);
@@ -44,10 +44,10 @@ public class TestLegGraph {
     Leg l4 = TF("VNY", 0.0, 3.0);
 
     Transition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
-    return ExpandRoutes.with(singletonList(l4.pathTerminator()), emptyList(), singletonList(kind), singletonList(t));
+    return RouteExpander.with(singletonList(l4.pathTerminator()), emptyList(), singletonList(kind), singletonList(t));
   }
 
-  private static LegGraph getGraph(String route, ExpandRoutes expander) {
+  private static LegGraph getGraph(String route, RouteExpander expander) {
     List<SectionSplit> splits = SectionSplitter.splits(route);
 
     SectionResolver resolver = SectionResolver.with(expander);

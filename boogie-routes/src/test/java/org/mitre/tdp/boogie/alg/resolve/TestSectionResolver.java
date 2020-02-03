@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.alg.ExpandRoutes;
+import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
@@ -44,7 +44,7 @@ public class TestSectionResolver {
   public void testSingleFixResolution() {
     Fix fix = fix("JIMMY", 0.0, 0.0);
 
-    ExpandRoutes expander = ExpandRoutes.with(singletonList(fix), emptyList(), emptyList(), emptyList());
+    RouteExpander expander = RouteExpander.with(singletonList(fix), emptyList(), emptyList(), emptyList());
     SectionResolver resolver = SectionResolver.with(expander);
 
     ResolvedRoute route = resolver.resolve(splits("JIMMY"));
@@ -62,7 +62,7 @@ public class TestSectionResolver {
   public void testSingleAirportResolution() {
     Airport airport = airport("JIMMY", 0.0, 0.0);
 
-    ExpandRoutes expander = ExpandRoutes.with(emptyList(), emptyList(), singletonList(airport), emptyList());
+    RouteExpander expander = RouteExpander.with(emptyList(), emptyList(), singletonList(airport), emptyList());
     SectionResolver resolver = SectionResolver.with(expander);
 
     ResolvedRoute route = resolver.resolve(splits("JIMMY"));
@@ -80,7 +80,7 @@ public class TestSectionResolver {
   public void testSingleAirwayResolution() {
     Airway airway = airway("JIMMY", emptyList());
 
-    ExpandRoutes expander = ExpandRoutes.with(emptyList(), singletonList(airway), emptyList(), emptyList());
+    RouteExpander expander = RouteExpander.with(emptyList(), singletonList(airway), emptyList(), emptyList());
     SectionResolver resolver = SectionResolver.with(expander);
 
     ResolvedRoute route = resolver.resolve(splits("JIMMY"));
@@ -99,7 +99,7 @@ public class TestSectionResolver {
     Leg l = IF("FOO", 0.0, 0.0);
     Transition transition = transition("JIMMY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
-    ExpandRoutes expander = ExpandRoutes.with(emptyList(), emptyList(), emptyList(), singletonList(transition));
+    RouteExpander expander = RouteExpander.with(emptyList(), emptyList(), emptyList(), singletonList(transition));
     SectionResolver resolver = SectionResolver.with(expander);
 
     ResolvedRoute route = resolver.resolve(splits("JIMMY"));
@@ -115,7 +115,7 @@ public class TestSectionResolver {
 
   @Test
   public void testSingleLatLonResolution() {
-    ExpandRoutes expander = ExpandRoutes.with(emptyList(), emptyList(), emptyList(), emptyList());
+    RouteExpander expander = RouteExpander.with(emptyList(), emptyList(), emptyList(), emptyList());
     SectionResolver resolver = SectionResolver.with(expander);
 
     ResolvedRoute route = resolver.resolve(splits("5300N/14000W"));
@@ -136,7 +136,7 @@ public class TestSectionResolver {
     MagneticVariation variation = magneticVariation(10.0f, 10.0f);
     when(fix.magneticVariation()).thenReturn(variation);
 
-    ExpandRoutes expander = ExpandRoutes.with(singletonList(fix), emptyList(), emptyList(), emptyList());
+    RouteExpander expander = RouteExpander.with(singletonList(fix), emptyList(), emptyList(), emptyList());
     SectionResolver resolver = SectionResolver.with(expander);
 
     ResolvedRoute route = resolver.resolve(splits("JIMMY111018"));
@@ -155,7 +155,7 @@ public class TestSectionResolver {
 
   private String route0 = "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/0054";
 
-  private ExpandRoutes expanderForRoute0() {
+  private RouteExpander expanderForRoute0() {
     Leg ifSherl = IF("SHERL", 0.0, 0.0);
     Leg ifBrigs = IF("BRIGS", 0.0, 0.0);
 
@@ -167,7 +167,7 @@ public class TestSectionResolver {
     Airway j122 = airway("J122", emptyList());
     Fix sherl = fix("SHERL", 0.0, 0.0);
     Fix brigs = fix("BRIGS", 0.0, 0.0);
-    return ExpandRoutes.with(
+    return RouteExpander.with(
         Arrays.asList(sherl, brigs),
         Arrays.asList(j121, j122),
         Arrays.asList(kbdl, kphl),
@@ -187,7 +187,7 @@ public class TestSectionResolver {
 
   @Test
   public void testFullResolveRoute0() {
-    ExpandRoutes expander = expanderForRoute0();
+    RouteExpander expander = expanderForRoute0();
 
     SectionResolver resolver = SectionResolver.with(expander);
 

@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.alg.approach;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.alg.ExpandRoutes;
+import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
@@ -37,7 +37,7 @@ public class TestApproachPredictor {
 
     ApproachPredictor predictor = new ApproachPredictor() {
       @Override
-      public void configure(ExpandRoutes expander) {
+      public void configure(RouteExpander expander) {
 
       }
 
@@ -60,7 +60,7 @@ public class TestApproachPredictor {
 
     ApproachPredictor predictor = new ApproachPredictor() {
       @Override
-      public void configure(ExpandRoutes expander) {
+      public void configure(RouteExpander expander) {
 
       }
 
