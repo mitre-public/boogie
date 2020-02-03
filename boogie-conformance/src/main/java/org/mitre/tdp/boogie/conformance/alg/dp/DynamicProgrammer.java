@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.dp;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -126,7 +127,9 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
       transitions = ts.stream()
           .map(t -> {
             DynamicProgrammerTransition<STAGE, STATE> trans = (DynamicProgrammerTransition<STAGE, STATE>) t;
-            return trans.getTransitionProbability().equals(0.0d) ? null : candidateTransition(trans, fromStage, toStage, fromState);
+            return BigDecimal.valueOf(trans.getTransitionProbability()).equals(BigDecimal.valueOf(0.0d))
+                ? null
+                : candidateTransition(trans, fromStage, toStage, fromState);
           })
           .filter(Objects::nonNull)
           .collect(Collectors.toList());

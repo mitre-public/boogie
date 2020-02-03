@@ -25,10 +25,10 @@ import static org.mitre.tdp.boogie.utils.Collections.allMatch;
 
 /**
  * Representation of the procedure built from its collection of transitions as a graph object.
- *
+ * <p>
  * Using jgrapht as the engine we leverage a whole host of common graph algorithms on the procedure
  * treating it as a directed graph. For the route expansion use case the most important are:
- *
+ * <p>
  * {@link ConnectivityInspector}
  * {@link AllDirectedPaths}
  * {@link LowestCommonAncestorAlgorithm}
@@ -38,7 +38,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
   private final Collection<Transition> transitions;
   private final NameLocationService<Leg> nls;
 
-  private transient AllDirectedPaths<Leg, DefaultEdge> allPaths;
+  private AllDirectedPaths<Leg, DefaultEdge> allPaths;
 
   private ProcedureGraph(Collection<? extends Transition> transitions, NameLocationService<Leg> nls) {
     super(DefaultEdge.class);
@@ -89,7 +89,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     Collection<Leg> concrete = transitions.stream()
         .map(Transition::legs)
         .flatMap(Collection::stream)
-        .filter((Leg leg) -> leg.type().isConcrete())
+        .filter(leg -> leg.type().isConcrete())
         .collect(Collectors.toSet());
 
     NameLocationService nls = NameLocationService.from(

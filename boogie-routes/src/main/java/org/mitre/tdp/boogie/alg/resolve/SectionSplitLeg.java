@@ -33,11 +33,14 @@ public class SectionSplitLeg {
 
   @Override
   public boolean equals(Object that) {
-    if (!SectionSplitLeg.class.isAssignableFrom(that.getClass())) {
+    if (that == null) {
       return false;
     }
-    SectionSplitLeg ssl = (SectionSplitLeg) that;
-    return Objects.equals(sectionSplit, ssl.sectionSplit())
-        && Objects.equals(leg, ssl.leg());
+    if (that instanceof SectionSplitLeg) {
+      SectionSplitLeg ssl = (SectionSplitLeg) that;
+      return Objects.equals(sectionSplit, ssl.sectionSplit())
+          && Objects.equals(leg, ssl.leg());
+    }
+    return false;
   }
 }

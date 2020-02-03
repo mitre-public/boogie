@@ -89,7 +89,6 @@ public class LegGraph extends SimpleDirectedWeightedGraph<SectionSplitLeg, Defau
       try {
         path = dijkstra.getPath(start, end);
       } catch (NegativeCycleDetectedException e) {
-        e.printStackTrace();
         throw e;
       }
 

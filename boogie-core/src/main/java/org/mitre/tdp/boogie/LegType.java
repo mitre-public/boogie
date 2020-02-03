@@ -328,9 +328,9 @@ public enum LegType {
   /**
    * Concrete leg types are those that end with a specified fix identifier.
    */
-  public static Predicate<LegType> CONCRETE_TYPES = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF).contains(leg);
+  public static final Predicate<LegType> CONCRETE_TYPES = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF).contains(leg);
 
-  public static Predicate<LegType> ARC_TYPES = leg -> Arrays.asList(AF, RF).contains(leg);
+  public static final Predicate<LegType> ARC_TYPES = leg -> Arrays.asList(AF, RF).contains(leg);
 
   public static boolean typesAreConcrete(LegType... types) {
     return Arrays.stream(types).allMatch(CONCRETE_TYPES);

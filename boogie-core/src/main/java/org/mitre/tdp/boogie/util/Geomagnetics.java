@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -54,14 +55,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- *
+ * <p>
  * Last updated on May 26, 2015</p><p>
  * <b>NOTE: </b>Comment out the logger references, and put back in the System.out.println
  * statements if not using log4j in your application. Checks are not made on the method inputs
  * to ensure they are within a valid range.</p><p>
- *
+ * <p>
  * Verified by a JUnit test using the test values distributed with the 2015 update.</p><p>
- *
+ * <p>
  * This is a class to generate the magnetic declination,
  * magnetic field strength and inclination for any point
  * on the earth.  The true bearing = magnetic bearing + declination.
@@ -72,16 +73,16 @@ import org.slf4j.LoggerFactory;
  * must be in the same directory that the application is run from. <br>
  * <b>NOTE:</b> If the WMM.COF file is missing, the internal fit coefficients
  * for 2015 will be used.
- *
+ * <p>
  * Using the correct date, the declination is accurate to about 0.5 degrees.</p><p>
- *
+ * <p>
  * This is the LANL D-3 version of the GeoMagnetic calculator from
  * the NOAA National Data Center at http://www.ngdc.noaa.gov/seg/segd.shtml.</p><p>
- *
+ * <p>
  * Adapted by John St. Ledger, Los Alamos National Laboratory
  * June 25, 1999</p><p>
- *
- *
+ * <p>
+ * <p>
  * Version 2 Comments:  The world magnetic model is updated every 5 years.
  * The data for 2000 uses the same algorithm to calculate the magnetic
  * field variables.  The only change is in the spherical harmonic coefficients
@@ -90,13 +91,14 @@ import org.slf4j.LoggerFactory;
  * constructor for StreamTokenizer was replaced, and the error messages in the catch
  * clause were changed.  Methods to get the field strength and inclination
  * were added.</p><p>
- *
+ * <p>
  * Found out some interesting information about the altitude. The altitude entered
  * for the calculations is the height above the WGS84 spheroid, not height MSL. Using
  * MSL height means that the altitude could be in error by as much as 200 meters.
  * This should not be significant for our applications.</p>
  *
  * <p><b>NOTE:</b> This class is not thread safe.</p>
+ *
  * @version 5.7 May 26, 2015
  * <p>Martin Frassl discovered a major bug in the code. I thought that X was in the East direction. It is not. The X axis
  * is in the North direction. This is now fixed so that getNorthIntensity and getEastIntensity return the correct values.
@@ -143,9 +145,9 @@ import org.slf4j.LoggerFactory;
  * <p>WMM-2000 is a National Imagery and Mapping Agency (NIMA) standard
  * product. It is covered under NIMA Military Specification:
  * MIL-W-89500 (1993).
- *
+ * <p>
  * For information on the use and applicability of this product contact</p>
- *
+ * <p>
  * DIRECTOR<br>
  * NATIONAL IMAGERY AND MAPPING AGENCY/HEADQUARTERS<br>
  * ATTN: CODE P33<br>
@@ -155,7 +157,7 @@ import org.slf4j.LoggerFactory;
  *
  *
  * <p>The FORTRAN version of GEOMAG PROGRAMMED BY:</p>
- *
+ * <p>
  * JOHN M. QUINN  7/19/90<br>
  * FLEET PRODUCTS DIVISION, CODE N342<br>
  * NAVAL OCEANOGRAPHIC OFFICE (NAVOCEANO)<br>
@@ -166,7 +168,7 @@ import org.slf4j.LoggerFactory;
  * FAX:  (601) 688-5521<br>
  *
  * <p>NOW AT:</p>
- *
+ * <p>
  * GEOMAGNETICS GROUP<br>
  * U. S. GEOLOGICAL SURVEY   MS 966<br>
  * FEDERAL CENTER<br>
@@ -334,6 +336,10 @@ public class Geomagnetics {
     //read model data from file and initialize the GeoMag routine
     this.coeffs = coeffs;
     initModel();
+  }
+
+  public boolean doubleEquals(double d1, double d2) {
+    return BigDecimal.valueOf(d1).equals(BigDecimal.valueOf(d2));
   }
 
   /**
@@ -549,12 +555,12 @@ public class Geomagnetics {
    * THE ENTIRE 5-YEAR LIFE OF THE MODEL AT THE EARTH's
    * SURFACE.  THE OTHER COMPONENT ERRORS OVER LAND ARE
    * MORE DIFFICULT TO ESTIMATE AND SO ARE NOT GIVEN.</p><p>
-   *
+   * <p>
    * THE ACCURACY AT ANY GIVEN TIME OF ALL FOUR
    * GEOMAGNETIC PARAMETERS DEPENDS ON THE GEOMAGNETIC
    * LATITUDE.  THE ERRORS ARE LEAST AT THE EQUATOR AND
    * GREATEST AT THE MAGNETIC POLES.</p><p>
-   *
+   * <p>
    * IT IS VERY IMPORTANT TO NOTE THAT A DEGREE AND
    * ORDER 12 MODEL, SUCH AS WMM-2010 DESCRIBES ONLY
    * THE LONG WAVELENGTH SPATIAL MAGNETIC FLUCTUATIONS
@@ -574,7 +580,7 @@ public class Geomagnetics {
    * FIELD FROM MODEL valueS.  IN ARCTIC AND ANTARCTIC
    * REGIONS, AS WELL AS IN EQUATORIAL REGIONS, DEVIATIONS
    * FROM MODEL valueS ARE BOTH FREQUENT AND PERSISTENT.</p><p>
-   *
+   * <p>
    * IF THE REQUIRED DECLINATION ACCURACY IS MORE
    * STRINGENT THAN THE WMM SERIES OF MODELS PROVIDE, THEN
    * THE USER IS ADVISED TO REQUEST SPECIAL (REGIONAL OR
@@ -582,14 +588,15 @@ public class Geomagnetics {
    * THE USGS, WHICH OPERATES THE US GEOMAGNETIC
    * OBSERVATORIES.  REQUESTS OF THIS NATURE SHOULD
    * BE MADE THROUGH NIMA AT THE ADDRESS ABOVE.</p><p>
-   *
-   *
-   *
+   * <p>
+   * <p>
+   * <p>
    * NOTE:  THIS VERSION OF GEOMAG USES THE WMM-2010 GEOMAGNETIC
    * MODEL REFERENCED TO THE WGS-84 GRAVITY MODEL ELLIPSOID</p>
-   * @param fLat The latitude in decimal degrees.
-   * @param fLon The longitude in decimal degrees.
-   * @param year The date as a decimal year.
+   *
+   * @param fLat     The latitude in decimal degrees.
+   * @param fLon     The longitude in decimal degrees.
+   * @param year     The date as a decimal year.
    * @param altitude The altitude in kilometers.
    */
   private void calcGeoMag(double fLat, double fLon, double year, double altitude) {
@@ -625,7 +632,7 @@ public class Geomagnetics {
     cp[1] = crlon;
 
     // CONVERT FROM GEODETIC COORDS. TO SPHERICAL COORDS.
-    if (alt != oalt || glat != olat) {
+    if (!doubleEquals(alt, oalt) || !doubleEquals(glat, olat)) {
       double q = Math.sqrt(a2 - c2 * srlat2);
       double q1 = alt * q;
       double q2 = ((q1 + a2) / (q1 + b2)) * ((q1 + a2) / (q1 + b2));
@@ -637,7 +644,7 @@ public class Geomagnetics {
       ca = (alt + d) / r;
       sa = c2 * crlat * srlat / (r * d);
     }
-    if (glon != olon) {
+    if (!doubleEquals(glon, olon)) {
       for (int m = 2; m <= maxord; m++) {
         sp[m] = sp[1] * cp[m - 1] + cp[1] * sp[m - 1];
         cp[m] = cp[1] * cp[m - 1] - sp[1] * sp[m - 1];
@@ -653,7 +660,7 @@ public class Geomagnetics {
 
         //COMPUTE UNNORMALIZED ASSOCIATED LEGENDRE POLYNOMIALS
         //AND DERIVATIVES VIA RECURSION RELATIONS
-        if (alt != oalt || glat != olat) {
+        if (!doubleEquals(alt, oalt) || !doubleEquals(glat, olat)) {
           if (n == m) {
             snorm[n + m * 13] = st * snorm[n - 1 + (m - 1) * 13];
             dp[m][n] = st * dp[m - 1][n - 1] + ct * snorm[n - 1 + (m - 1) * 13];
@@ -676,7 +683,7 @@ public class Geomagnetics {
 
         //TIME ADJUST THE GAUSS COEFFICIENTS
 
-        if (time != otime) {
+        if (!doubleEquals(time, otime)) {
           tc[m][n] = c[m][n] + dt * cd[m][n];
 
           if (m != 0) {
@@ -701,7 +708,7 @@ public class Geomagnetics {
 
         //SPECIAL CASE:  NORTH/SOUTH GEOGRAPHIC POLES
 
-        if (st == 0.0 && m == 1) {
+        if (doubleEquals(st, 0.0d) && m == 1) {
           if (n == 1) {
             pp[n] = pp[n - 1];
           } else {
@@ -715,7 +722,7 @@ public class Geomagnetics {
 
     }        //for(n...)
 
-    if (st == 0.0) {
+    if (doubleEquals(st, 0.0d)) {
       bp = bpp;
     } else {
       bp /= st;
@@ -773,6 +780,7 @@ public class Geomagnetics {
 
   }
 
+
   /**
    * Returns the declination from the Department of
    * Defense geomagnetic model and data, in degrees.  The
@@ -780,8 +788,9 @@ public class Geomagnetics {
    * altitude are the defaults, of half way through the valid
    * 5 year period, and 0 elevation.
    * (True heading + variation = magnetic heading.)
+   *
    * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
+   * @param dlat  Latitude in decimal degrees.
    * @return The declination in degrees.
    */
   public double getDeclination(double dlat, double dlong) {
@@ -794,9 +803,10 @@ public class Geomagnetics {
    * Defense geomagnetic model and data, in degrees.  The
    * magnetic heading + declination = true heading.
    * (True heading + variation = magnetic heading.)
-   * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
-   * @param year The date as a decimial year.
+   *
+   * @param dlong    Longitude in decimal degrees.
+   * @param dlat     Latitude in decimal degrees.
+   * @param year     The date as a decimial year.
    * @param altitude The altitude in kilometers.
    * @return The declination in degrees.
    */
@@ -811,8 +821,9 @@ public class Geomagnetics {
    * in nano Tesla. The date and
    * altitude are the defaults, of half way through the valid
    * 5 year period, and 0 elevation.
+   *
    * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
+   * @param dlat  Latitude in decimal degrees.
    * @return Magnetic field strength in nano Tesla.
    */
   public double getIntensity(double dlat, double dlong) {
@@ -824,9 +835,10 @@ public class Geomagnetics {
    * Returns the magnetic field intensity from the
    * Department of Defense geomagnetic model and data
    * in nano Tesla.
-   * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
-   * @param year Date of the calculation in decimal years.
+   *
+   * @param dlong    Longitude in decimal degrees.
+   * @param dlat     Latitude in decimal degrees.
+   * @param year     Date of the calculation in decimal years.
    * @param altitude Altitude of the calculation in kilometers.
    * @return Magnetic field strength in nano Tesla.
    */
@@ -841,8 +853,9 @@ public class Geomagnetics {
    * in nano Tesla. The date and
    * altitude are the defaults, of half way through the valid
    * 5 year period, and 0 elevation.
+   *
    * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
+   * @param dlat  Latitude in decimal degrees.
    * @return The horizontal magnetic field strength in nano Tesla.
    */
   public double getHorizontalIntensity(double dlat, double dlong) {
@@ -854,9 +867,10 @@ public class Geomagnetics {
    * Returns the horizontal magnetic field intensity from the
    * Department of Defense geomagnetic model and data
    * in nano Tesla.
-   * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
-   * @param year Date of the calculation in decimal years.
+   *
+   * @param dlong    Longitude in decimal degrees.
+   * @param dlat     Latitude in decimal degrees.
+   * @param year     Date of the calculation in decimal years.
    * @param altitude Altitude of the calculation in kilometers.
    * @return The horizontal magnetic field strength in nano Tesla.
    */
@@ -871,8 +885,9 @@ public class Geomagnetics {
    * in nano Tesla. The date and
    * altitude are the defaults, of half way through the valid
    * 5 year period, and 0 elevation.
+   *
    * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
+   * @param dlat  Latitude in decimal degrees.
    * @return The vertical magnetic field strength in nano Tesla.
    */
   public double getVerticalIntensity(double dlat, double dlong) {
@@ -884,9 +899,10 @@ public class Geomagnetics {
    * Returns the vertical magnetic field intensity from the
    * Department of Defense geomagnetic model and data
    * in nano Tesla.
-   * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
-   * @param year Date of the calculation in decimal years.
+   *
+   * @param dlong    Longitude in decimal degrees.
+   * @param dlat     Latitude in decimal degrees.
+   * @param year     Date of the calculation in decimal years.
    * @param altitude Altitude of the calculation in kilometers.
    * @return The vertical magnetic field strength in nano Tesla.
    */
@@ -901,8 +917,9 @@ public class Geomagnetics {
    * in nano Tesla. The date and
    * altitude are the defaults, of half way through the valid
    * 5 year period, and 0 elevation.
+   *
    * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
+   * @param dlat  Latitude in decimal degrees.
    * @return The northerly component of the magnetic field strength in nano Tesla.
    */
   public double getNorthIntensity(double dlat, double dlong) {
@@ -914,9 +931,10 @@ public class Geomagnetics {
    * Returns the northerly magnetic field intensity from the
    * Department of Defense geomagnetic model and data
    * in nano Tesla.
-   * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
-   * @param year Date of the calculation in decimal years.
+   *
+   * @param dlong    Longitude in decimal degrees.
+   * @param dlat     Latitude in decimal degrees.
+   * @param year     Date of the calculation in decimal years.
    * @param altitude Altitude of the calculation in kilometers.
    * @return The northerly component of the magnetic field strength in nano Tesla.
    */
@@ -931,8 +949,9 @@ public class Geomagnetics {
    * in nano Tesla. The date and
    * altitude are the defaults, of half way through the valid
    * 5 year period, and 0 elevation.
+   *
    * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
+   * @param dlat  Latitude in decimal degrees.
    * @return The easterly component of the magnetic field strength in nano Tesla.
    */
   public double getEastIntensity(double dlat, double dlong) {
@@ -944,9 +963,10 @@ public class Geomagnetics {
    * Returns the easterly magnetic field intensity from the
    * Department of Defense geomagnetic model and data
    * in nano Tesla.
-   * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
-   * @param year Date of the calculation in decimal years.
+   *
+   * @param dlong    Longitude in decimal degrees.
+   * @param dlat     Latitude in decimal degrees.
+   * @param year     Date of the calculation in decimal years.
    * @param altitude Altitude of the calculation in kilometers.
    * @return The easterly component of the magnetic field strength in nano Tesla.
    */
@@ -961,8 +981,9 @@ public class Geomagnetics {
    * in degrees.  The date and
    * altitude are the defaults, of half way through the valid
    * 5 year period, and 0 elevation.
+   *
    * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
+   * @param dlat  Latitude in decimal degrees.
    * @return The magnetic field dip angle, in degrees.
    */
   public double getDipAngle(double dlat, double dlong) {
@@ -974,9 +995,10 @@ public class Geomagnetics {
    * Returns the magnetic field dip angle from the
    * Department of Defense geomagnetic model and data,
    * in degrees.
-   * @param dlong Longitude in decimal degrees.
-   * @param dlat Latitude in decimal degrees.
-   * @param year Date of the calculation in decimal years.
+   *
+   * @param dlong    Longitude in decimal degrees.
+   * @param dlat     Latitude in decimal degrees.
+   * @param year     Date of the calculation in decimal years.
    * @param altitude Altitude of the calculation in kilometers.
    * @return The magnetic field dip angle, in degrees.
    */
@@ -989,7 +1011,7 @@ public class Geomagnetics {
    * This method sets the input data to the internal fit coefficents.
    * If there is an exception reading the input file WMM.COF, these values
    * are used.
-   *
+   * <p>
    * NOTE:  This method is not tested by the JUnit test, unless the WMM.COF file
    * is missing.
    */
@@ -1030,12 +1052,13 @@ public class Geomagnetics {
    * Given a Gregorian Calendar object, this returns the decimal year
    * value for the calendar, accurate to the day of the input calendar.
    * The hours, minutes, and seconds of the date are ignored.</p><p>
-   *
+   * <p>
    * If the input Gregorian Calendar is new GregorianCalendar(2012, 6, 1), all of
    * the first of July is counted, and this returns 2012.5. (183 days out of 366)</p><p>
-   *
+   * <p>
    * If the input Gregorian Calendar is new GregorianCalendar(2010, 0, 0), the first
    * of January is not counted, and this returns 2010.0</p><p>
+   *
    * @param cal Has the date (year, month, and day of the month)
    * @return The date in decimal years
    */

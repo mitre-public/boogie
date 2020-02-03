@@ -18,6 +18,10 @@ import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
 public class LegGraphFactory {
 
+  private LegGraphFactory() {
+    throw new IllegalStateException("Cannot access static utility class.");
+  }
+
   /**
    * Converts the resolved route and all of its contained sections into legs with edges between them and inserts
    * them into an {@link LegGraph}.
@@ -71,8 +75,8 @@ public class LegGraphFactory {
     SectionSplitLeg ssl1 = linked.source();
     SectionSplitLeg ssl2 = linked.target();
 
-    boolean added1 = graph.addVertex(ssl1);
-    boolean added2 = graph.addVertex(ssl2);
+    graph.addVertex(ssl1);
+    graph.addVertex(ssl2);
 
     if (!ssl1.equals(ssl2)) {
       double weight = linked.linkWeight();
