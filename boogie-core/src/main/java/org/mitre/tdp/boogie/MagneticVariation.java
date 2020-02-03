@@ -24,7 +24,10 @@ public interface MagneticVariation {
    * otherwise defaulting to the modeled value.
    */
   default Double magneticToTrue(Double course) {
-    return published().isPresent() ? course + published().get() : course + modeled();
+    if (published().isPresent()) {
+      return course + published().get();
+    }
+    return course + modeled();
   }
 
   /**
@@ -32,6 +35,9 @@ public interface MagneticVariation {
    * otherwise defaulting to the modeled value.
    */
   default Double trueToMagnetic(Double course) {
-    return published().isPresent() ? course - published().get() : course - modeled();
+    if (published().isPresent()) {
+      return course - published().get();
+    }
+    return course - modeled();
   }
 }

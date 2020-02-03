@@ -23,21 +23,21 @@ import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
 /**
  * The time-based score maximizer takes is built around a collection of {@link Scorable} objects
  * but leverages time as the index by which to move through the dynamic programming problem.
- *
+ * <p>
  * Since it is a maximizer it is looking to find the set of assignments of particular inputs
  * to the provided scorable objects such that over time the overall score is maximized.
- *
+ * <p>
  * While the {@link DynamicProgrammer} can perform both maximization and minimization problems in
  * either direction often one can be rephrased to look similar to one or the other, as such for
  * simplicity in this class we assume a maximization problem.
- *
+ * <p>
  * Given this is a maximization it's worth noting that this means the best assignments at any
  * given time should be rewarded with a higher score, while transitions with the most likelyhood
  * should be given a larger factor as well.
- *
+ * <p>
  * Note - When coming up with state and transition scores it's generally best practice to stick
  * to either using percentages everywhere or raw values everywhere.
- *
+ * <p>
  * E.g. for scoring logic based primarily on distances (e.g. point-leg conformance) either use
  * the raw distances everywhere or use the probability of the object being appropriately assigned
  * to the given leg given its distance away.
@@ -60,7 +60,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
   /**
    * Returns the list of legs from the {@link TimeBasedScoreMaximizer#legs()} which together minimize the
    * total cross track error between the points and the available legs.
-   *
+   * <p>
    * The returned {@link Scored}s should have both scores as well as start and end
    * times for conformance that have been populated by the output of the dynamic programmers
    * assignments.
@@ -73,11 +73,11 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
 
   /**
    * The conformer does the real meat of the work, running the dynamic programmer.
-   *
+   * <p>
    * Here the problem is set up to the dynamic programmer. The stages are the increments
    * of time as done WRT the input points while the available states are determined by
    * the legs available for conformance.
-   *
+   * <p>
    * I.e. each leg corresponds a potential state and the weight of the state is based on
    * the cross track distance between the track and the state at that point in time.
    */
@@ -155,7 +155,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
 
     /**
      * The dynamic programmer states map to available legs for conformance.
-     *
+     * <p>
      * The state object itself carries functionality around the leg index
      * (i.e. hashCode).
      */
@@ -192,7 +192,13 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
 
       @Override
       public boolean equals(Object other) {
-        return State.class.isAssignableFrom(other.getClass()) && leg().equals(((State) other).leg());
+        if (other == null) {
+          return false;
+        }
+        if (State.class.isAssignableFrom(other.getClass())) {
+          return leg().equals(((State) other).leg());
+        }
+        return false;
       }
 
       @Override
