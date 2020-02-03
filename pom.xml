@@ -38,7 +38,6 @@
   <modules>
     <module>boogie-core</module>
     <module>boogie-routes</module>
-    <module>boogie-trajectory</module>
     <module>boogie-conformance</module>
   </modules>
 

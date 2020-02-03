@@ -89,7 +89,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     Collection<Leg> concrete = transitions.stream()
         .map(Transition::legs)
         .flatMap(Collection::stream)
-        .filter((Leg leg) -> leg.type().concrete())
+        .filter((Leg leg) -> leg.type().isConcrete())
         .collect(Collectors.toSet());
 
     NameLocationService nls = NameLocationService.from(

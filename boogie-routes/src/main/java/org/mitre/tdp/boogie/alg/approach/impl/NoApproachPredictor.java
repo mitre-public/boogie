@@ -11,6 +11,7 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 public class NoApproachPredictor implements ApproachPredictor {
   @Override
   public void configure(RouteExpander expander) {
+    // no cached infrastructure information is needed when not predicting an approach procedure
   }
 
   @Override

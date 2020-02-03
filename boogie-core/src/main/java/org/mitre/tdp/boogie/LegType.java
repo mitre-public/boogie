@@ -312,12 +312,12 @@ public enum LegType {
     this.valid = v;
   }
 
-  public boolean concrete() {
-    return concrete(this);
+  public boolean isConcrete() {
+    return typesAreConcrete(this);
   }
 
-  public boolean arc() {
-    return arc(this);
+  public boolean isArc() {
+    return typesAreArcs(this);
   }
 
   public boolean valid(Leg leg) {
@@ -328,15 +328,15 @@ public enum LegType {
   /**
    * Concrete leg types are those that end with a specified fix identifier.
    */
-  public static Predicate<LegType> CONCRETE = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF).contains(leg);
+  public static Predicate<LegType> CONCRETE_TYPES = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF).contains(leg);
 
-  public static Predicate<LegType> ARC = leg -> Arrays.asList(AF, RF).contains(leg);
+  public static Predicate<LegType> ARC_TYPES = leg -> Arrays.asList(AF, RF).contains(leg);
 
-  public static boolean concrete(LegType... types) {
-    return Arrays.stream(types).allMatch(CONCRETE);
+  public static boolean typesAreConcrete(LegType... types) {
+    return Arrays.stream(types).allMatch(CONCRETE_TYPES);
   }
 
-  public static boolean arc(LegType... types) {
-    return Arrays.stream(types).allMatch(ARC);
+  public static boolean typesAreArcs(LegType... types) {
+    return Arrays.stream(types).allMatch(ARC_TYPES);
   }
 }

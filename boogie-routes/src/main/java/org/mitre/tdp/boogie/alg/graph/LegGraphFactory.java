@@ -53,7 +53,7 @@ public class LegGraphFactory {
       Leg tgt1 = ll1.target().leg();
       Leg src2 = ll2.source().leg();
 
-      if (tgt1.type().concrete() && src2.type().concrete() && !tgt1.equals(src2)) {
+      if (tgt1.type().isConcrete() && src2.type().isConcrete() && !tgt1.equals(src2)) {
 
         LatLong lltgt = tgt1.pathTerminator().latLong();
         LatLong llsrc = src2.pathTerminator().latLong();

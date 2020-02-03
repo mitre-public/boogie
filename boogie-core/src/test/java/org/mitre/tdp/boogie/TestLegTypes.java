@@ -14,7 +14,7 @@ public class TestLegTypes {
   public void testConcreteLegTypes() {
     List<LegType> concrete = Arrays.asList(LegType.IF, LegType.TF, LegType.RF, LegType.CF, LegType.DF, LegType.AF);
 
-    assertTrue(concrete.stream().allMatch(type -> type.concrete()));
-    assertTrue(Stream.of(LegType.values()).filter(type -> !concrete.contains(type)).noneMatch(type -> type.concrete()));
+    assertTrue(concrete.stream().allMatch(type -> type.isConcrete()));
+    assertTrue(Stream.of(LegType.values()).filter(type -> !concrete.contains(type)).noneMatch(type -> type.isConcrete()));
   }
 }
