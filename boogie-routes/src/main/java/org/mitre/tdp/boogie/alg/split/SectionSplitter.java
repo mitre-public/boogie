@@ -17,6 +17,10 @@ import java.util.stream.IntStream;
  */
 public class SectionSplitter {
 
+  private SectionSplitter(){
+    throw new IllegalStateException("Utility class");
+  }
+
   static Pattern etaEet() {
     return Pattern.compile("/[0-9]{4}$");
   }
@@ -41,7 +45,7 @@ public class SectionSplitter {
           // special case for tailored, we want this to be a wildcard
           // but we need this to work with Lat/Lon vals and preserve
           // the forward slash
-          if (clean.equals("/")) {
+          if ("/".equals(clean)) {
             clean = "";
             wildcards += "/";
           }

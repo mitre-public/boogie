@@ -1,15 +1,14 @@
 package org.mitre.tdp.boogie.conformance;
 
-import java.io.Serializable;
-
+import org.mitre.tdp.boogie.conformance.alg.TimeBasedScoreMaximizer;
 
 /**
- * The hybrid input and output object for the {@link Conformance} class.
- *
+ * The hybrid input and output object for the {@link TimeBasedScoreMaximizer} class.
+ * <p>
  * The scored class decorates a {@link Scorable} object for input into
  * conformance, but also provides a mutable locations for the
  */
-public class Scored<S extends Scorable> implements Serializable, Scorable {
+public class Scored<S extends Scorable> implements Scorable {
   /**
    * The internal {@link Scorable} object.
    */
@@ -23,23 +22,16 @@ public class Scored<S extends Scorable> implements Serializable, Scorable {
   /**
    * Return the set of scores associated with the object after having been passed
    * through the conformance algorithm.
-   *
+   * <p>
    * In that context these scores represent the times at which the wrapped object was
    * the optimal choice as well as the along/cross track scores at that point.
    */
-  private Scores scores;
-
-  @Deprecated
-  public Scored() {
-    this.scorable = null;
-    this.index = 0;
-    this.scores = null;
-  }
+  private Scores associatedScores;
 
   public Scored(S base) {
     this.scorable = base;
     this.index = 0;
-    this.scores = null;
+    this.associatedScores = null;
   }
 
   public S scorable() {
@@ -55,17 +47,17 @@ public class Scored<S extends Scorable> implements Serializable, Scorable {
     return this;
   }
 
-  public Scores scores() {
-    return scores;
+  public Scores associatedScores() {
+    return associatedScores;
   }
 
-  public Scored<S> setScores(Scores scores) {
-    this.scores = scores;
+  public Scored<S> setAssociatedScores(Scores associatedScores) {
+    this.associatedScores = associatedScores;
     return this;
   }
 
   public boolean scored() {
-    return scores != null;
+    return associatedScores != null;
   }
 
   @Override

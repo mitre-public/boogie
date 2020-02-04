@@ -20,15 +20,15 @@ import org.mitre.tdp.boogie.TurnDirection;
  */
 final class SimpleIFLeg implements Leg {
 
-  private final Fix path_terminator;
+  private final Fix pathTerminator;
 
   private SimpleIFLeg(Fix term) {
-    this.path_terminator = term;
+    this.pathTerminator = term;
   }
 
   @Override
   public Fix pathTerminator() {
-    return path_terminator;
+    return pathTerminator;
   }
 
   @Override

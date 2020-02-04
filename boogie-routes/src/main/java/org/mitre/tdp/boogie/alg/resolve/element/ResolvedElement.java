@@ -10,7 +10,7 @@ public abstract class ResolvedElement<I extends Infrastructure> {
   final ElementType type;
   final I reference;
 
-  transient List<LinkedLegs> legs;
+  List<LinkedLegs> legs;
 
   ResolvedElement(ElementType t, I ref) {
     this.type = t;

@@ -73,7 +73,6 @@ public enum LegType {
     checkArgument(l.theta().isPresent());
     checkArgument(l.rho().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -125,7 +124,6 @@ public enum LegType {
    */
   CA(l -> {
     checkArgument(l.outboundMagneticCourse().isPresent());
-//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -195,7 +193,6 @@ public enum LegType {
    */
   VA(l -> {
     checkArgument(l.outboundMagneticCourse().isPresent());
-//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -256,7 +253,6 @@ public enum LegType {
     checkArgument(l.rho().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
     checkArgument(l.distance().isPresent());
-//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -272,7 +268,6 @@ public enum LegType {
     checkArgument(l.turnDirection().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
     checkArgument(l.distance().isPresent());
-//    checkNotNull(l.targetAltitude());
     return true;
   }),
   /**
@@ -306,6 +301,13 @@ public enum LegType {
     return true;
   });
 
+  /**
+   * Concrete leg types are those that end with a specified fix identifier.
+   */
+  public static final Predicate<LegType> CONCRETETYPES = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF).contains(leg);
+
+  public static final Predicate<LegType> ARCTYPES = leg -> Arrays.asList(AF, RF).contains(leg);
+
   private final Predicate<Leg> valid;
 
   LegType(Predicate<Leg> v) {
@@ -325,18 +327,11 @@ public enum LegType {
     return valid.test(leg);
   }
 
-  /**
-   * Concrete leg types are those that end with a specified fix identifier.
-   */
-  public static final Predicate<LegType> CONCRETE_TYPES = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF).contains(leg);
-
-  public static final Predicate<LegType> ARC_TYPES = leg -> Arrays.asList(AF, RF).contains(leg);
-
   public static boolean typesAreConcrete(LegType... types) {
-    return Arrays.stream(types).allMatch(CONCRETE_TYPES);
+    return Arrays.stream(types).allMatch(CONCRETETYPES);
   }
 
   public static boolean typesAreArcs(LegType... types) {
-    return Arrays.stream(types).allMatch(ARC_TYPES);
+    return Arrays.stream(types).allMatch(ARCTYPES);
   }
 }

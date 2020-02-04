@@ -35,10 +35,10 @@ import static org.mitre.tdp.boogie.utils.Collections.allMatch;
  */
 public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implements Procedure {
 
-  private final Collection<Transition> transitions;
-  private final NameLocationService<Leg> nls;
+  private final transient Collection<Transition> transitions;
+  private final transient NameLocationService<Leg> nls;
 
-  private AllDirectedPaths<Leg, DefaultEdge> allPaths;
+  private transient AllDirectedPaths<Leg, DefaultEdge> allPaths;
 
   private ProcedureGraph(Collection<? extends Transition> transitions, NameLocationService<Leg> nls) {
     super(DefaultEdge.class);
@@ -102,7 +102,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     // insert each of the transitions individually
     transitions.forEach(transition -> {
       if (transition.legs().size() == 1) {
-        Leg leg = (Leg) transition.legs().get(0);
+        Leg leg = transition.legs().get(0);
         procedure.addVertex(leg);
       } else {
         Iterators.pairwise(

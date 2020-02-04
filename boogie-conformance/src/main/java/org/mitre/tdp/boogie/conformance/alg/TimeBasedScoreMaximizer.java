@@ -119,10 +119,10 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
 
       NavigableMap<Long, DynamicProgrammer.ScoredState<State>> path = algorithm.optimalPath();
 
-      Map<State, List<Map.Entry<Long, DynamicProgrammer.ScoredState<State>>>> states = path.entrySet().stream()
+      Map<State, List<Map.Entry<Long, DynamicProgrammer.ScoredState<State>>>> scoredStates = path.entrySet().stream()
           .collect(Collectors.groupingBy(e -> e.getValue().state()));
 
-      return states.entrySet().stream()
+      return scoredStates.entrySet().stream()
           .map(e -> {
             State s = e.getKey();
             List<Long> ts = new ArrayList<>();
@@ -141,13 +141,13 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
               ctd.add(scores.scores().get(row, col));
             });
 
-            Scores scores = new Scores.Builder()
+            Scores associatedScores = new Scores.Builder()
                 .setCumulative(cm)
                 .setScores(ctd)
                 .setTimes(ts)
                 .build();
 
-            return ts.isEmpty() ? null : new Scored<>(s.leg()).setScores(scores);
+            return ts.isEmpty() ? null : new Scored<>(s.leg()).setAssociatedScores(associatedScores);
           })
           .filter(Objects::nonNull)
           .collect(Collectors.toList());
@@ -195,7 +195,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
         if (other == null) {
           return false;
         }
-        if (State.class.isAssignableFrom(other.getClass())) {
+        if (this.getClass() == other.getClass()) {
           return leg().equals(((State) other).leg());
         }
         return false;

@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,12 +33,12 @@ import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
  * {@link SectionSplitter} and assigning to them matching infrastructure elements
  * returning a collection of {@link ResolvedSection}s which can be handed
  * off to the {@link LegGraph} for additional analysis.
- *
+ * <p>
  * This will match the provided route section split/id to any and all elements
  * sharing a common identifier. The graph solution handles the resolution of
  * these multiple options into a single path.
  */
-public class SectionResolver implements Serializable {
+public class SectionResolver {
   /**
    * The route inflation object containing the configured infrastructure elements
    * to use in the expansion.
@@ -63,7 +62,7 @@ public class SectionResolver implements Serializable {
    * Resolves all of the {@link SectionSplit}s against the infrastructure information
    * returning for each section a set of possible infrastructure elements it might have
    * been referring to.
-   *
+   * <p>
    * See {@link ResolvedSection}.
    */
   public ResolvedRoute resolve(List<SectionSplit> splits) {
