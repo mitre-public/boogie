@@ -28,15 +28,10 @@ public class ResolvedSection {
    * could possible be referring to.
    */
   private List<ResolvedElement<?>> elements;
-  /**
-   * Whether the element was flown to direct.
-   */
-  private boolean direct;
 
   public ResolvedSection(SectionSplit split) {
     this.sectionSplit = split;
     this.elements = new ArrayList<>();
-    this.direct = false;
   }
 
   public SectionSplit sectionSplit() {
@@ -45,15 +40,6 @@ public class ResolvedSection {
 
   public ResolvedSection setSectionSplit(SectionSplit split) {
     this.sectionSplit = split;
-    return this;
-  }
-
-  public boolean direct() {
-    return direct;
-  }
-
-  public ResolvedSection labelDirect() {
-    this.direct = true;
     return this;
   }
 
