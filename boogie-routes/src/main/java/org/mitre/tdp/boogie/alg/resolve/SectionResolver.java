@@ -85,9 +85,7 @@ public class SectionResolver {
           }
 
           // previous section input is empty and this isn't a tailored waypoint this is a direct
-          sections.add(Strings.isNullOrEmpty(p.value()) && Wildcard.TAILORED.negate().test(section.sectionSplit().wildcards())
-              ? section.labelDirect()
-              : section);
+          sections.add(section);
         });
     return new ResolvedRoute(sections);
   }
