@@ -10,7 +10,7 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.utils.Iterators;
 
@@ -72,8 +72,8 @@ public class LegGraphFactory {
    * Inserts the converted legs from within the {@link ResolvedSection} into the {@link LegGraph} for reference later.
    */
   private static void insert(LinkedLegs linked, LegGraph graph) {
-    SectionSplitLeg ssl1 = linked.source();
-    SectionSplitLeg ssl2 = linked.target();
+    GraphableLeg ssl1 = linked.source();
+    GraphableLeg ssl2 = linked.target();
 
     graph.addVertex(ssl1);
     graph.addVertex(ssl2);
@@ -84,7 +84,7 @@ public class LegGraphFactory {
     }
   }
 
-  private static void setEdgeWeight(double weight, SectionSplitLeg source, SectionSplitLeg target, LegGraph graph) {
+  private static void setEdgeWeight(double weight, GraphableLeg source, GraphableLeg target, LegGraph graph) {
     if (graph.containsEdge(source, target)) {
       DefaultWeightedEdge edge = graph.getEdge(source, target);
       setContainedEdgeWeight(weight, edge, graph);

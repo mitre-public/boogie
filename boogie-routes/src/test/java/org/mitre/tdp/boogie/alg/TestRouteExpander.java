@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.data.Airports;
 import org.mitre.tdp.boogie.data.Airways;
@@ -52,74 +52,74 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     int i = 0;
 
     leg = legs.get(i);
-    assertEquals("KDEN", leg.sectionSplit().value());
+    assertEquals("KDEN", leg.split().value());
     assertEquals("KDEN", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("GOROC", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("HURDL", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("HAWPE", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("TUNNN", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("TAVRN", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("VONNN", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("TEEBO", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("CONNR", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("CONNR", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("BULDG", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("CONNR5", leg.sectionSplit().value());
+    assertEquals("CONNR5", leg.split().value());
     assertEquals("DBL", leg.leg().pathTerminator().identifier());
     i++;
 
     leg = legs.get(i);
-    assertEquals("DBL", leg.sectionSplit().value());
+    assertEquals("DBL", leg.split().value());
     assertEquals("DBL", leg.leg().pathTerminator().identifier());
 
     assertEquals(13, legs.size());
@@ -137,48 +137,48 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("DRSDN", leg.sectionSplit().value());
+    assertEquals("DRSDN", leg.split().value());
     assertEquals("DRSDN", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("DRSDN", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(2);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("SMAWG", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(3);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("HOBTT", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(4);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("HOBTT", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(5);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("ENSLL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(6);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("ENSLL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(7);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("RAIIN", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(8);
-    assertEquals("HOBTT2", leg.sectionSplit().value());
+    assertEquals("HOBTT2", leg.split().value());
     assertEquals("KLOWD", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(9);
-    assertEquals("KATL", leg.sectionSplit().value());
+    assertEquals("KATL", leg.split().value());
     assertEquals("KATL", leg.leg().pathTerminator().identifier());
 
     assertEquals(10, legs.size());
@@ -196,16 +196,16 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("DRSDN", leg.sectionSplit().value());
+    assertEquals("DRSDN", leg.split().value());
     assertEquals("DRSDN", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("KATL", leg.sectionSplit().value());
+    assertEquals("KATL", leg.split().value());
     assertEquals("KATL", leg.leg().pathTerminator().identifier());
 
     assertEquals(2, legs.size());
@@ -225,44 +225,44 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("JMACK", leg.sectionSplit().value());
+    assertEquals("JMACK", leg.split().value());
     assertEquals("JMACK", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("JMACK", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(2);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(3);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("ISO", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(4);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("WEAVR", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(5);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("ORF", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(6);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("SAWED", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(7);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("KALDA", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(8);
-    assertEquals("KALDA", leg.sectionSplit().value());
+    assertEquals("KALDA", leg.split().value());
     assertEquals("KALDA", leg.leg().pathTerminator().identifier());
   }
 
@@ -280,44 +280,44 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(8);
-    assertEquals("JMACK", leg.sectionSplit().value());
+    assertEquals("JMACK", leg.split().value());
     assertEquals("JMACK", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(7);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("JMACK", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(6);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(5);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("ISO", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(4);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("WEAVR", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(3);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("ORF", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(2);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("SAWED", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("KALDA", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(0);
-    assertEquals("KALDA", leg.sectionSplit().value());
+    assertEquals("KALDA", leg.split().value());
     assertEquals("KALDA", leg.leg().pathTerminator().identifier());
   }
 
@@ -336,52 +336,52 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("MILIE", leg.sectionSplit().value());
+    assertEquals("MILIE", leg.split().value());
     assertEquals("MILIE", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("MILIE", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(2);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("CHS", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(3);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("JMACK", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(4);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(5);
-    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(6);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(7);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("ISO", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(8);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("WEAVR", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(9);
-    assertEquals("J121", leg.sectionSplit().value());
+    assertEquals("J121", leg.split().value());
     assertEquals("ORF", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(10);
-    assertEquals("ORF", leg.sectionSplit().value());
+    assertEquals("ORF", leg.split().value());
     assertEquals("ORF", leg.leg().pathTerminator().identifier());
   }
 
@@ -399,21 +399,21 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("MILIE", leg.sectionSplit().value());
+    assertEquals("MILIE", leg.split().value());
     assertEquals("MILIE", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("5300N/14000W", leg.sectionSplit().value());
+    assertEquals("5300N/14000W", leg.split().value());
     assertEquals("5300N/14000W", leg.leg().pathTerminator().identifier());
     assertEquals(LatLong.of(53.0, -140.0), leg.leg().pathTerminator().latLong());
 
     leg = legs.get(2);
-    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 
@@ -429,21 +429,21 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("KDEN", leg.sectionSplit().value());
+    assertEquals("KDEN", leg.split().value());
     assertEquals("KDEN", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("2200N/12000W", leg.sectionSplit().value());
-    assertTrue(Wildcard.TAILORED.test(leg.sectionSplit().wildcards()));
+    assertEquals("2200N/12000W", leg.split().value());
+    assertTrue(Wildcard.TAILORED.test(leg.split().wildcards()));
     assertEquals("2200N/12000W", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(2);
-    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 
@@ -457,21 +457,21 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("KDEN", leg.sectionSplit().value());
+    assertEquals("KDEN", leg.split().value());
     assertEquals("KDEN", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("BARTL031018", leg.sectionSplit().value());
+    assertEquals("BARTL031018", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
     assertNotEquals(bartl.latLong(), leg.leg().pathTerminator().latLong());
 
     leg = legs.get(2);
-    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 
@@ -485,21 +485,21 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<SectionSplitLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.legs();
 
-    SectionSplitLeg leg;
+    GraphableLeg leg;
 
     leg = legs.get(0);
-    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
 
     leg = legs.get(1);
-    assertEquals("BARTL125045", leg.sectionSplit().value());
+    assertEquals("BARTL125045", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
     assertNotEquals(bartl.latLong(), leg.leg().pathTerminator().latLong());
 
     leg = legs.get(2);
-    assertEquals("BARTL", leg.sectionSplit().value());
+    assertEquals("BARTL", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
   }
 }

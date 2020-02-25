@@ -7,7 +7,7 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 
 public class TailoredElement extends ResolvedElement<Fix> {
@@ -30,7 +30,7 @@ public class TailoredElement extends ResolvedElement<Fix> {
     LocationFix asFix = new LocationFix(reference().identifier(), projectedLocation);
 
     SimpleIFLeg leg = SimpleIFLeg.from(asFix);
-    SectionSplitLeg sleg = new SectionSplitLeg(leg);
+    GraphableLeg sleg = new GraphableLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }
 

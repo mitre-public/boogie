@@ -20,7 +20,7 @@ import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
@@ -104,7 +104,7 @@ public interface RouteExpander extends Serializable {
     resolved.insert(approach);
 
     LegGraph graph = LegGraphFactory.build(resolved);
-    GraphPath<SectionSplitLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
+    GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
     return new ExpandedRoute(route, shortestPath.getVertexList());
   }

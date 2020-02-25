@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Infrastructure;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
@@ -33,7 +34,11 @@ public abstract class ResolvedElement<I extends Infrastructure> {
    */
   public List<LinkedLegs> legs() {
     if (legs == null) {
-      this.legs = buildLegs();
+      this.legs = buildLegs().stream()
+          .peek(leg -> {
+            leg.source().setSourceElement(this);
+            leg.target().setSourceElement(this);
+          }).collect(Collectors.toList());
     }
     return legs;
   }

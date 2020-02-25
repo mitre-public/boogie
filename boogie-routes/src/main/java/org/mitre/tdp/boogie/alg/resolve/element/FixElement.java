@@ -6,7 +6,7 @@ import java.util.List;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.models.LinkedLegs;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 
 public class FixElement extends ResolvedElement<Fix> {
 
@@ -17,7 +17,7 @@ public class FixElement extends ResolvedElement<Fix> {
   @Override
   public List<LinkedLegs> buildLegs() {
     SimpleIFLeg leg = SimpleIFLeg.from(reference());
-    SectionSplitLeg sleg = new SectionSplitLeg(leg);
+    GraphableLeg sleg = new GraphableLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }
 }

@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.models;
 
 import java.util.List;
 
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 
 /**
  * Final output container for the expanded route information.
@@ -13,9 +13,9 @@ import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
 public final class ExpandedRoute {
 
   private final String route;
-  private final List<SectionSplitLeg> legs;
+  private final List<GraphableLeg> legs;
 
-  public ExpandedRoute(String route, List<SectionSplitLeg> legs) {
+  public ExpandedRoute(String route, List<GraphableLeg> legs) {
     this.route = route;
     this.legs = legs;
   }
@@ -24,7 +24,7 @@ public final class ExpandedRoute {
     return route;
   }
 
-  public List<SectionSplitLeg> legs() {
+  public List<GraphableLeg> legs() {
     return legs;
   }
 }

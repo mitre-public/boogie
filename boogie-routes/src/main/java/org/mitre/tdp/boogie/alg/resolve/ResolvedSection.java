@@ -59,8 +59,8 @@ public class ResolvedSection {
     return elements.stream()
         // tag the generated legs with the section information on the way out
         .flatMap(e -> e.legs().stream().peek(leg -> {
-          leg.source().setSectionSplit(sectionSplit());
-          leg.target().setSectionSplit(sectionSplit());
+          leg.source().setSplit(sectionSplit());
+          leg.target().setSplit(sectionSplit());
         }))
         .collect(Collectors.toList());
   }

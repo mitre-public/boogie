@@ -6,7 +6,7 @@ import java.util.List;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.models.Procedure;
 
@@ -25,8 +25,8 @@ public class ProcedureElement extends ResolvedElement<Procedure> {
     graph.edgeSet().forEach(edge -> {
       Leg source = graph.getEdgeSource(edge);
       Leg target = graph.getEdgeTarget(edge);
-      SectionSplitLeg ssl1 = new SectionSplitLeg(source);
-      SectionSplitLeg ssl2 = new SectionSplitLeg(target);
+      GraphableLeg ssl1 = new GraphableLeg(source);
+      GraphableLeg ssl2 = new GraphableLeg(target);
       legs.add(new LinkedLegs(ssl1, ssl2));
     });
     return legs;

@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class TestLegGraph {
     String route = "KIND.BLSTR1.VNY";
     LegGraph graph = getGraph(route, apfExpander());
 
-    ConnectivityInspector<SectionSplitLeg, DefaultWeightedEdge> conn = new ConnectivityInspector<>(graph);
+    ConnectivityInspector<GraphableLeg, DefaultWeightedEdge> conn = new ConnectivityInspector<>(graph);
 
     String msg = "Check hashing and object references for insert into graph.";
     assertTrue(conn.isConnected(), msg);
@@ -74,28 +74,28 @@ public class TestLegGraph {
     String route = "KIND.BLSTR1.VNY";
     LegGraph graph = getGraph(route, apfExpander());
 
-    GraphPath<SectionSplitLeg, DefaultWeightedEdge> path = graph.shortestPath();
+    GraphPath<GraphableLeg, DefaultWeightedEdge> path = graph.shortestPath();
 
-    List<SectionSplitLeg> legs = path.getVertexList();
+    List<GraphableLeg> legs = path.getVertexList();
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
-    assertEquals("KIND", legs.get(0).sectionSplit().value(), "Incorrect initial section. " + message);
+    assertEquals("KIND", legs.get(0).split().value(), "Incorrect initial section. " + message);
     assertEquals("KIND", legs.get(0).leg().pathTerminator().identifier(), "Incorrect initial leg terminator. " + message);
     assertEquals(LegType.IF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message);
 
-    assertEquals("BLSTR1", legs.get(1).sectionSplit().value());
+    assertEquals("BLSTR1", legs.get(1).split().value());
     assertEquals("BNDRR", legs.get(1).leg().pathTerminator().identifier());
 
-    assertEquals("BLSTR1", legs.get(2).sectionSplit().value());
+    assertEquals("BLSTR1", legs.get(2).split().value());
     assertEquals("HRRDR", legs.get(2).leg().pathTerminator().identifier());
 
-    assertEquals("BLSTR1", legs.get(3).sectionSplit().value());
+    assertEquals("BLSTR1", legs.get(3).split().value());
     assertEquals("GRRDR", legs.get(3).leg().pathTerminator().identifier());
 
-    assertEquals("BLSTR1", legs.get(4).sectionSplit().value());
+    assertEquals("BLSTR1", legs.get(4).split().value());
     assertEquals("VNY", legs.get(4).leg().pathTerminator().identifier());
 
-    assertEquals("VNY", legs.get(5).sectionSplit().value(), "Incorrect final section. " + message);
+    assertEquals("VNY", legs.get(5).split().value(), "Incorrect final section. " + message);
     assertEquals("VNY", legs.get(5).leg().pathTerminator().identifier(), "Incorrect final leg terminator. " + message);
     assertEquals(LegType.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
 

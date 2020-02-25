@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.models;
 
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 
 import static org.mitre.tdp.boogie.utils.Nulls.nonNullEquals;
 
@@ -12,24 +12,24 @@ public class LinkedLegs {
    */
   static final double MATCH_WEIGHT = 0.00001;
 
-  private final SectionSplitLeg source;
-  private final SectionSplitLeg target;
+  private final GraphableLeg source;
+  private final GraphableLeg target;
 
-  public LinkedLegs(SectionSplitLeg s, SectionSplitLeg t) {
+  public LinkedLegs(GraphableLeg s, GraphableLeg t) {
     this.source = s;
     this.target = t;
   }
 
-  public SectionSplitLeg source() {
+  public GraphableLeg source() {
     return source;
   }
 
-  public SectionSplitLeg target() {
+  public GraphableLeg target() {
     return target;
   }
 
   public Double linkWeight() {
-    return nonNullEquals(source.sectionSplit(), target.sectionSplit())
+    return nonNullEquals(source.split(), target.split())
         || source.leg().pathTerminator() == null
         || target.leg().pathTerminator() == null
         ? MATCH_WEIGHT

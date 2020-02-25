@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.SectionSplitLeg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.util.CoordinateParser;
 
@@ -20,7 +20,7 @@ public class LatLonElement extends ResolvedElement<LocationFix> {
   @Override
   public List<LinkedLegs> buildLegs() {
     SimpleIFLeg leg = SimpleIFLeg.from(reference());
-    SectionSplitLeg sleg = new SectionSplitLeg(leg);
+    GraphableLeg sleg = new GraphableLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }
 
