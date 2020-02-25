@@ -10,12 +10,13 @@ import com.google.common.collect.Multimap;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.service.LookupService;
+import org.mitre.tdp.boogie.service.ProcedureService;
 
 /**
  * Service providing procedure lookup both by the procedure identifier (e.g. CSTL6, WYNDE8)
  * as well as by the airport they service (e.g. KATL, KORD).
  */
-public final class ProcedureGraphService implements LookupService<ProcedureGraph> {
+public final class ProcedureGraphService implements ProcedureService {
 
   private final Multimap<String, ProcedureGraph> byIdentifier;
   private final Multimap<String, ProcedureGraph> byAirport;
@@ -30,6 +31,7 @@ public final class ProcedureGraphService implements LookupService<ProcedureGraph
     return byIdentifier.get(identifier);
   }
 
+  @Override
   public Collection<ProcedureGraph> allMatchingAirport(String airport) {
     return byAirport.get(airport);
   }

@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -24,6 +25,7 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
 import org.mitre.tdp.boogie.service.LookupService;
+import org.mitre.tdp.boogie.service.ProcedureService;
 import org.mitre.tdp.boogie.service.impl.AirportService;
 import org.mitre.tdp.boogie.service.impl.AirwayService;
 import org.mitre.tdp.boogie.service.impl.FixService;
@@ -57,7 +59,7 @@ import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
  * route string to infrastructure name standardization may be necessary on the user side
  * to get a more complete set of expansions.
  */
-public interface RouteExpander {
+public interface RouteExpander extends Serializable {
 
   /**
    * Returns a configured service for {@link Fix} objects.
@@ -77,7 +79,7 @@ public interface RouteExpander {
   /**
    * Returns a configured service for {@link ProcedureGraph} objects.
    */
-  ProcedureGraphService procedureService();
+  ProcedureService procedureService();
 
   default ApproachPredictor approachPredictor() {
     return new NoApproachPredictor();
@@ -88,7 +90,7 @@ public interface RouteExpander {
    * provided services.
    */
   default ExpandedRoute expand(@Nonnull String route) {
-    Preconditions.checkArgument(!route.isEmpty());
+    Preconditions.checkArgument(!route.isEmpty(), "Route cannot be empty.");
 
     List<SectionSplit> splits = SectionSplitter.splits(route);
 
@@ -108,6 +110,37 @@ public interface RouteExpander {
   }
 
   /**
+   * Builds a new instance of the route expander with the given lookup services.
+   */
+  static RouteExpander with(
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      ProcedureService procedureService) {
+    return new RouteExpander() {
+      @Override
+      public LookupService<Fix> fixService() {
+        return fixService;
+      }
+
+      @Override
+      public LookupService<Airway> airwayService() {
+        return airwayService;
+      }
+
+      @Override
+      public LookupService<Airport> airportService() {
+        return airportService;
+      }
+
+      @Override
+      public ProcedureService procedureService() {
+        return procedureService;
+      }
+    };
+  }
+
+  /**
    * Builds a default implementation of the RouteExpander with no configured approach prediction.
    */
   static RouteExpander with(Collection<? extends Fix> fixes, Collection<? extends Airway> airways, Collection<? extends Airport> airports, Collection<? extends Transition> transitions) {
@@ -115,27 +148,6 @@ public interface RouteExpander {
     AirwayService ws = AirwayService.with(airways);
     AirportService as = AirportService.with(airports);
     ProcedureGraphService ps = ProcedureGraphService.with(transitions);
-    return new RouteExpander() {
-
-      @Override
-      public LookupService<Fix> fixService() {
-        return fs;
-      }
-
-      @Override
-      public LookupService<Airway> airwayService() {
-        return ws;
-      }
-
-      @Override
-      public LookupService<Airport> airportService() {
-        return as;
-      }
-
-      @Override
-      public ProcedureGraphService procedureService() {
-        return ps;
-      }
-    };
+    return with(fs, ws, as, ps);
   }
 }

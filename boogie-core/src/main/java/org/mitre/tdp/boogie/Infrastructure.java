@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie;
 
+import java.io.Serializable;
+
 /**
  * Base interface for all infrastructure elements.
  * <p>
@@ -7,7 +9,7 @@ package org.mitre.tdp.boogie;
  * region, type, and source determine a unique object, at least within any given update cycle (given
  * most infrastructure resources are republished cyclically e.g. NFDC, CIFP, JEPPESEN, etc.).
  */
-public interface Infrastructure {
+public interface Infrastructure extends Serializable {
 
   /**
    * The string name of the infrastructure elemtn. Typically these should be relatively standard across

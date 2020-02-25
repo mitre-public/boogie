@@ -7,6 +7,7 @@ import org.mitre.tdp.boogie.Infrastructure;
 /**
  * Interface for querying infrastructure elements by their given {@link Infrastructure#identifier()}.
  */
+@FunctionalInterface
 public interface LookupService<I extends Infrastructure> {
 
   /**
