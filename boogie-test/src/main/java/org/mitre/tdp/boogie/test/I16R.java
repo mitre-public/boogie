@@ -1,5 +1,4 @@
-package org.mitre.tdp.boogie.data;
-
+package org.mitre.tdp.boogie.test;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -12,13 +11,13 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.mitre.tdp.boogie.MockObjects.CA;
-import static org.mitre.tdp.boogie.MockObjects.CF;
-import static org.mitre.tdp.boogie.MockObjects.HM;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.TF;
-import static org.mitre.tdp.boogie.MockObjects.VI;
-import static org.mitre.tdp.boogie.MockObjects.transition;
+import static org.mitre.tdp.boogie.test.MockObjects.CA;
+import static org.mitre.tdp.boogie.test.MockObjects.CF;
+import static org.mitre.tdp.boogie.test.MockObjects.HM;
+import static org.mitre.tdp.boogie.test.MockObjects.IF;
+import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.test.MockObjects.VI;
+import static org.mitre.tdp.boogie.test.MockObjects.transition;
 
 /**
  * Mock of I16R approach procedure for runway 16R at KDEN.
@@ -98,3 +97,4 @@ public class I16R {
         Arrays.asList(MERYN, JETSN, KDEN, CA, VI, BREWS, BREWS2));
   }
 }
+

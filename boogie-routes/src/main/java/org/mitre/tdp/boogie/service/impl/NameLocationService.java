@@ -38,7 +38,7 @@ public class NameLocationService<T> {
     return locationMap.getAllWithinRange(loc, radius).stream().map(SearchResult::value).collect(Collectors.toList());
   }
 
-  public static <T> NameLocationService<T> from(Collection<T> objs, Function<T, String> nameFn, Function<T, LatLong> locFn) {
+  public static <T> NameLocationService<T> from(Iterable<T> objs, Function<T, String> nameFn, Function<T, LatLong> locFn) {
     Preconditions.checkNotNull(nameFn);
     Preconditions.checkNotNull(locFn);
 

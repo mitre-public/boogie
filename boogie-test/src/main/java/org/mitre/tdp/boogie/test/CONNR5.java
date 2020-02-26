@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.data;
+package org.mitre.tdp.boogie.test;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,14 +12,14 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.mitre.tdp.boogie.MockObjects.CF;
-import static org.mitre.tdp.boogie.MockObjects.DF;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.TF;
-import static org.mitre.tdp.boogie.MockObjects.VA;
-import static org.mitre.tdp.boogie.MockObjects.VI;
-import static org.mitre.tdp.boogie.MockObjects.VM;
-import static org.mitre.tdp.boogie.MockObjects.transition;
+import static org.mitre.tdp.boogie.test.MockObjects.CF;
+import static org.mitre.tdp.boogie.test.MockObjects.DF;
+import static org.mitre.tdp.boogie.test.MockObjects.IF;
+import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.test.MockObjects.VA;
+import static org.mitre.tdp.boogie.test.MockObjects.VI;
+import static org.mitre.tdp.boogie.test.MockObjects.VM;
+import static org.mitre.tdp.boogie.test.MockObjects.transition;
 
 /**
  * RNAV Departure SID out of Denver from cycle 1910 for use in testing.

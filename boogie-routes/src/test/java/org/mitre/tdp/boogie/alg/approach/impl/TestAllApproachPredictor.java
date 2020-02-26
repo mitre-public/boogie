@@ -11,15 +11,15 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.data.CONNR5;
-import org.mitre.tdp.boogie.data.HOBTT2;
-import org.mitre.tdp.boogie.data.I16R;
+import org.mitre.tdp.boogie.test.CONNR5;
+import org.mitre.tdp.boogie.test.HOBTT2;
+import org.mitre.tdp.boogie.test.I16R;
 
 import static com.google.common.collect.Streams.concat;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mitre.tdp.boogie.data.Airports.KDEN;
+import static org.mitre.tdp.boogie.test.Airports.KDEN;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

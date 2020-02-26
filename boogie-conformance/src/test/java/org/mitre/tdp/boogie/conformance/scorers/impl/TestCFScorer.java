@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
 
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mitre.tdp.boogie.conformance.MockObjects.magneticVariation;
+import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

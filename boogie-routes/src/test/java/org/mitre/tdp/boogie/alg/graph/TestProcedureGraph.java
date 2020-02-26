@@ -13,8 +13,8 @@ import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.data.CONNR5;
-import org.mitre.tdp.boogie.data.HOBTT2;
+import org.mitre.tdp.boogie.test.CONNR5;
+import org.mitre.tdp.boogie.test.HOBTT2;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;

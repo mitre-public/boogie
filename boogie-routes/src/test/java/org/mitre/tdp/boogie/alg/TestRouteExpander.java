@@ -8,10 +8,10 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.data.Airports;
-import org.mitre.tdp.boogie.data.Airways;
-import org.mitre.tdp.boogie.data.CONNR5;
-import org.mitre.tdp.boogie.data.HOBTT2;
+import org.mitre.tdp.boogie.test.Airports;
+import org.mitre.tdp.boogie.test.Airways;
+import org.mitre.tdp.boogie.test.CONNR5;
+import org.mitre.tdp.boogie.test.HOBTT2;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
 
 import static java.util.Collections.emptyList;
@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.MockObjects.fix;
-import static org.mitre.tdp.boogie.data.Airports.KATL;
-import static org.mitre.tdp.boogie.data.Airports.KDEN;
+import static org.mitre.tdp.boogie.test.Airports.KATL;
+import static org.mitre.tdp.boogie.test.Airports.KDEN;
 
 /**
  * Route inflation tests (the full package) used to test specific component expansions.
