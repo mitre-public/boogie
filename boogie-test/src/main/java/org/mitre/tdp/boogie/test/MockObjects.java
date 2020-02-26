@@ -31,6 +31,8 @@ public class MockObjects {
     Fix fix = mock(Fix.class);
     when(fix.identifier()).thenReturn(name);
     when(fix.latLong()).thenReturn(LatLong.of(lat, lon));
+    when(fix.latitude()).thenCallRealMethod();
+    when(fix.longitude()).thenCallRealMethod();
     when(fix.magneticVariation()).thenReturn(new MagneticVariation() {
       @Override
       public Optional<Float> published() {

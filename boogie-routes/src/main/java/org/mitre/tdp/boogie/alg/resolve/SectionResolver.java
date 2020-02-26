@@ -24,7 +24,7 @@ import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.element.TailoredElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
-import org.mitre.tdp.boogie.alg.split.Wildcard;
+import org.mitre.tdp.boogie.service.LookupService;
 
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
 
@@ -38,23 +38,21 @@ import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
  * sharing a common identifier. The graph solution handles the resolution of
  * these multiple options into a single path.
  */
-public class SectionResolver {
+@FunctionalInterface
+public interface SectionResolver {
+
   /**
    * The route inflation object containing the configured infrastructure elements
    * to use in the expansion.
    */
-  private RouteExpander inflator;
-
-  private SectionResolver(RouteExpander inflator) {
-    this.inflator = inflator;
-  }
+  RouteExpander inflator();
 
   /**
    * The two empty split values cases are tailored waypoints and direct to
    * waypoints, in either case we want to push the wildcards from the blank
    * section onto the next.
    */
-  private boolean pushWildcards(SectionSplit split) {
+  default boolean pushWildcards(SectionSplit split) {
     return Strings.isNullOrEmpty(split.value());
   }
 
@@ -65,7 +63,7 @@ public class SectionResolver {
    * <p>
    * See {@link ResolvedSection}.
    */
-  public ResolvedRoute resolve(List<SectionSplit> splits) {
+  default ResolvedRoute resolve(List<SectionSplit> splits) {
     List<ResolvedSection> sections = new ArrayList<>();
     sections.add(resolve(splits.get(0)));
     IntStream.range(1, splits.size())
@@ -94,9 +92,17 @@ public class SectionResolver {
    * Returns a {@link ResolvedSection} containing all of the possible infrastructure
    * elements
    */
-  ResolvedSection resolve(SectionSplit split) {
+  default ResolvedSection resolve(SectionSplit split) {
     String id = split.value();
     ResolvedSection section = new ResolvedSection(split);
+    return section.setElements(resolve(id));
+  }
+
+  /**
+   * Resolves the provided identifier to a collection of {@link ResolvedElement}s based on the
+   * various {@link LookupService}s configured in the referenced {@link RouteExpander}.
+   */
+  default List<ResolvedElement<?>> resolve(String id) {
     Iterable<ResolvedElement<?>> elements = Iterables.concat(
         airport(id),
         fix(id),
@@ -104,14 +110,13 @@ public class SectionResolver {
         airway(id),
         Collections.singletonList(latLon(id)));
 
-    List<ResolvedElement<?>> filtered = StreamSupport.stream(elements.spliterator(), false)
+    return StreamSupport.stream(elements.spliterator(), false)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
-    return section.setElements(filtered);
   }
 
-  List<ResolvedElement<?>> airport(String section) {
-    return inflator.airportService()
+  default List<ResolvedElement<?>> airport(String section) {
+    return inflator().airportService()
         .allMatchingIdentifiers(section)
         .stream()
         .map(AirportElement::new)
@@ -121,14 +126,14 @@ public class SectionResolver {
   /**
    * Attempts to find a fix which matches the id of the section.
    */
-  List<ResolvedElement<?>> fix(String section) {
+  default List<ResolvedElement<?>> fix(String section) {
     // check to see if the parsed section is a tailored waypoint reference
     // if so extract the course/distance suffix from the fix identifier
     String s = section.matches(tailored().pattern())
         ? section.substring(0, section.length() - 6)
         : section;
 
-    return inflator.fixService()
+    return inflator().fixService()
         .allMatchingIdentifiers(s).stream()
         .map(fix -> section.equals(s)
             ? new FixElement(fix)
@@ -139,8 +144,8 @@ public class SectionResolver {
   /**
    * Attempts to find a a procedure who's identifier matches the section.
    */
-  List<ResolvedElement<?>> procedure(String section) {
-    Collection<ProcedureGraph> procedures = inflator.procedureService()
+  default List<ResolvedElement<?>> procedure(String section) {
+    Collection<ProcedureGraph> procedures = inflator().procedureService()
         .allMatchingIdentifiers(section);
     // Procedure objects dont handle multi-source, have to group by here
     return procedures.stream()
@@ -153,8 +158,8 @@ public class SectionResolver {
   /**
    * Attempts to find and airway matching the section.
    */
-  List<ResolvedElement<?>> airway(String section) {
-    return inflator.airwayService().allMatchingIdentifiers(section)
+  default List<ResolvedElement<?>> airway(String section) {
+    return inflator().airwayService().allMatchingIdentifiers(section)
         .stream()
         .map(AirwayElement::new)
         .collect(Collectors.toList());
@@ -163,12 +168,12 @@ public class SectionResolver {
   /**
    * Attempts to parse the section identifier as a Lat/Lon coordinate.
    */
-  ResolvedElement<?> latLon(String section) {
+  default ResolvedElement<?> latLon(String section) {
     boolean match = section.matches(SectionHeuristics.latLon().pattern());
     return match ? LatLonElement.from(section) : null;
   }
 
-  public static SectionResolver with(RouteExpander routes) {
-    return new SectionResolver(routes);
+  static SectionResolver with(RouteExpander routes) {
+    return () -> routes;
   }
 }

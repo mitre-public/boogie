@@ -17,10 +17,10 @@ import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
 import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
@@ -81,8 +81,25 @@ public interface RouteExpander extends Serializable {
    */
   ProcedureService procedureService();
 
+  /**
+   * The {@link ApproachPredictor} to use in route resolution.
+   */
   default ApproachPredictor approachPredictor() {
     return new NoApproachPredictor();
+  }
+
+  /**
+   * The {@link SectionResolver} to use for matching section splits to infrastructure elements.
+   */
+  default SectionResolver sectionResolver() {
+    return SectionResolver.with(this);
+  }
+
+  /**
+   * The {@link SectionSplitter} to use in splitting the route string into {@link SectionSplit}.
+   */
+  default SectionSplitter sectionSplitter() {
+    return SectionSplitter.instance();
   }
 
   /**
@@ -92,10 +109,9 @@ public interface RouteExpander extends Serializable {
   default ExpandedRoute expand(@Nonnull String route) {
     Preconditions.checkArgument(!route.isEmpty(), "Route cannot be empty.");
 
-    List<SectionSplit> splits = SectionSplitter.splits(route);
+    List<SectionSplit> splits = sectionSplitter().splits(route);
 
-    SectionResolver resolver = SectionResolver.with(this);
-    ResolvedRoute resolved = resolver.resolve(splits);
+    ResolvedRoute resolved = sectionResolver().resolve(splits);
 
     ResolvedSection approach = approachPredictor().predictAndCheck(
         resolved.sectionAt(resolved.sectionCount() - 2),

@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 public class TestSectionResolver {
 
   private List<SectionSplit> splits(String name) {
-    return SectionSplitter.splits(name);
+    return SectionSplitter.instance().splits(name);
   }
 
   @Test

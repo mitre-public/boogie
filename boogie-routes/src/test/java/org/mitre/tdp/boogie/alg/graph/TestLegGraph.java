@@ -48,7 +48,7 @@ public class TestLegGraph {
   }
 
   private static LegGraph getGraph(String route, RouteExpander expander) {
-    List<SectionSplit> splits = SectionSplitter.splits(route);
+    List<SectionSplit> splits = SectionSplitter.instance().splits(route);
 
     SectionResolver resolver = SectionResolver.with(expander);
     ResolvedRoute resolved = resolver.resolve(splits);

@@ -1,18 +1,19 @@
 package org.mitre.tdp.boogie.alg.split;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * Represents the cleaned and tagged portion of a route string between two `.`s.
- *
+ * <p>
  * e.g. WYNDE8 in FLT.WYNDE8.KORD.
  */
-public class SectionSplit {
+public class SectionSplit implements Comparable<SectionSplit> {
   /**
    * The alphanumeric string section value.
-   *
+   * <p>
    * e.g. CTSL6, J121, etc.
    */
   private final String value;
@@ -23,14 +24,14 @@ public class SectionSplit {
   private final String etaEet;
   /**
    * The index of the split in the original route string.
-   *
+   * <p>
    * Determined by String.split("\\.")
    */
   private final int index;
   /**
    * Concatenated string of any non-alphanumeric values associated with the split
    * string section.
-   *
+   * <p>
    * e.g. "*+"
    */
   private String wildcards;
@@ -90,6 +91,11 @@ public class SectionSplit {
   @Override
   public String toString() {
     return ReflectionToStringBuilder.toString(this);
+  }
+
+  @Override
+  public int compareTo(SectionSplit that) {
+    return Comparator.comparingInt(SectionSplit::index).compare(this, that);
   }
 
   public static class Builder {
