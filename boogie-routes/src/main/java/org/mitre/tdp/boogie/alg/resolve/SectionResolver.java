@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.google.common.base.Strings;
@@ -96,6 +97,10 @@ public interface SectionResolver {
     String id = split.value();
     ResolvedSection section = new ResolvedSection(split);
     return section.setElements(resolve(id));
+  }
+
+  default List<ResolvedElement<?>> resolve(String... ids) {
+    return Stream.of(ids).map(this::resolve).flatMap(Collection::stream).collect(Collectors.toList());
   }
 
   /**

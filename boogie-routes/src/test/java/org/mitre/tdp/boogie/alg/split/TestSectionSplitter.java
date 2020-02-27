@@ -19,7 +19,7 @@ public class TestSectionSplitter {
 
   @Test
   public void testRoute0_0() {
-    List<SectionSplit> splits = SectionSplitter.instance().splits(ROUTE0.get(0));
+    List<SectionSplit> splits = SectionSplitter.newInstance().splits(ROUTE0.get(0));
 
     assertEquals(splits.get(0).value(), "KBDL");
     assertEquals(splits.get(1).value(), "CSTL6");
@@ -31,7 +31,7 @@ public class TestSectionSplitter {
 
   @Test
   public void testRoute0_1() {
-    List<SectionSplit> splits = SectionSplitter.instance().splits(ROUTE0.get(2));
+    List<SectionSplit> splits = SectionSplitter.newInstance().splits(ROUTE0.get(2));
 
     assertEquals(splits.get(0).value(), "KBDL");
     assertEquals(splits.get(1).value(), "");
@@ -47,7 +47,7 @@ public class TestSectionSplitter {
 
   @Test
   public void testRoute1_0() {
-    List<SectionSplit> splits = SectionSplitter.instance().splits(ROUTE1.get(0));
+    List<SectionSplit> splits = SectionSplitter.newInstance().splits(ROUTE1.get(0));
 
     assertEquals(splits.get(0).value(), "KDCA");
     assertEquals(splits.get(1).value(), "");
@@ -62,7 +62,7 @@ public class TestSectionSplitter {
 
   @Test
   public void testRoute2_0() {
-    List<SectionSplit> splits = SectionSplitter.instance().splits(ROUTE2.get(0));
+    List<SectionSplit> splits = SectionSplitter.newInstance().splits(ROUTE2.get(0));
 
     assertEquals(splits.get(0).value(), "KFRG");
     assertTrue(Wildcard.PLUS.test(splits.get(2).wildcards()));
@@ -77,7 +77,7 @@ public class TestSectionSplitter {
 
   @Test
   public void testRoute3_0() {
-    List<SectionSplit> splits = SectionSplitter.instance().splits(ROUTE3.get(0));
+    List<SectionSplit> splits = SectionSplitter.newInstance().splits(ROUTE3.get(0));
 
     SectionSplit ll = splits.get(2);
 
