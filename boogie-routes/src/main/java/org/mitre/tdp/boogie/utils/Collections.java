@@ -48,6 +48,9 @@ public class Collections {
 
   /**
    * Zips together a pair of iterables on an extracted key.
+   * <p>
+   * Note if a particular key shows up multiple times in one of the iterables the first instance of that key
+   * is kept and all others are ignored.
    */
   public static <K, V> Map<K, Pair<V, V>> zipByKey(Iterable<V> col1, Iterable<V> col2, Function<V, K> keyFn) {
     Map<K, Pair<V, V>> zipMap = new HashMap<>();
@@ -66,13 +69,13 @@ public class Collections {
 
         // check merge-able pair
         if ((cv.first() != null && pair.first() != null) || (cv.second() != null && pair.second() != null)) {
-          throw new RuntimeException("Repeat value of key: " + key + " in iterables.");
-        }
-
-        if (p1 == null) {
-          zipMap.put(key, Pair.of(cv.first(), p2));
+          // if we see a duplicate of a given key from one iterable we skip it - see docs.
         } else {
-          zipMap.put(key, Pair.of(p1, cv.second()));
+          if (p1 == null) {
+            zipMap.put(key, Pair.of(cv.first(), p2));
+          } else {
+            zipMap.put(key, Pair.of(p1, cv.second()));
+          }
         }
       } else {
         zipMap.put(key, pair);
