@@ -1,11 +1,13 @@
 package org.mitre.tdp.boogie.alg.graph;
 
+import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.interfaces.LowestCommonAncestorAlgorithm;
@@ -21,7 +23,7 @@ import org.mitre.tdp.boogie.service.impl.NameLocationService;
 import org.mitre.tdp.boogie.utils.Collections;
 import org.mitre.tdp.boogie.utils.Iterators;
 
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import com.google.common.base.Preconditions;
 
 /**
  * Representation of the procedure built from its collection of transitions as a graph object.
@@ -76,6 +78,16 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     return Collections.transform(gpaths, GraphPath::getVertexList);
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(transitions.toArray());
+  }
+
+  @Override
+  public String toString() {
+    return identifier() + airport() + type().name() + source().name();
+  }
+
   /**
    * Constructs a procedure graph object from the collection of transitions associated with a particular procedure.
    */
@@ -101,7 +113,9 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
 
     // insert each of the transitions individually
     transitions.forEach(transition -> {
-      if (transition.legs().size() == 1) {
+      if (transition.legs().size() == 0) {
+        // no LEGS
+      } else if (transition.legs().size() == 1) {
         Leg leg = transition.legs().get(0);
         procedure.addVertex(leg);
       } else {
