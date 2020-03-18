@@ -79,6 +79,11 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
   }
 
   @Override
+  public boolean equals(Object that) {
+    return that instanceof ProcedureGraph && hashCode() == that.hashCode();
+  }
+
+  @Override
   public int hashCode() {
     return Objects.hash(transitions.toArray());
   }
