@@ -5,7 +5,7 @@
   <groupId>org.mitre.tdp</groupId>
   <artifactId>boogie-parent</artifactId>
   <name>boogie-parent</name>
-  <version>0.0.6-SNAPSHOT</version>
+  <version>0.0.6</version>
   <packaging>pom</packaging>
   <description>Boogie parent pom</description>
 
