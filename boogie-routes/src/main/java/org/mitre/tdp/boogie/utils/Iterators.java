@@ -6,8 +6,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-import com.google.common.base.Preconditions;
 import org.mitre.tdp.boogie.fn.TriConsumer;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Collection of methods for executing common iteration patterns.
@@ -26,6 +27,11 @@ public class Iterators {
     Preconditions.checkArgument(list.size() >= 2);
     IntStream.range(1, list.size())
         .forEach(i -> consumer.accept(list.get(i - 1), list.get(i)));
+  }
+
+  /**  */
+  public static <T> void triples(List<T> list, TriConsumer<T, T, T> consumer) {
+
   }
 
   /**

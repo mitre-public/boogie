@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,17 +16,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestDFScorer {
+public class TestDfIfScorer {
 
   @Test
   public void testFailPointWithNoCourse() {
-    DFScorer scorer = scorer();
+    DfIfScorer scorer = scorer();
     assertThrows(MissingRequiredFieldException.class, () -> scorer.score(dummyPoint()));
   }
 
   @Test
   public void test15nmOnCourseScore() {
-    DFScorer scorer = scorer();
+    DfIfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -69,12 +69,12 @@ public class TestDFScorer {
     return DF;
   }
 
-  private DFScorer scorer() {
+  private DfIfScorer scorer() {
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
     Leg VA = VA();
     Leg DF = DF();
-    when(legs.from()).thenReturn(VA);
-    when(legs.to()).thenReturn(DF);
-    return new DFScorer(legs);
+    when(legs.previous()).thenReturn(Optional.of(VA));
+    when(legs.current()).thenReturn(DF);
+    return new DfIfScorer(legs);
   }
 }

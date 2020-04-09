@@ -5,8 +5,7 @@ import java.util.function.Function;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.Scorable;
-import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 import static org.apache.commons.math3.util.FastMath.abs;
@@ -17,12 +16,17 @@ import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simp
 /**
  * This is the default conformance scorer for {@link LegType#DF} legs.
  */
-class DFScorer implements LegScorer {
+class DfIfScorer implements LegScorer {
 
   private final ConsecutiveLegs legs;
 
-  DFScorer(ConsecutiveLegs legs) {
+  DfIfScorer(ConsecutiveLegs legs) {
     this.legs = legs;
+  }
+
+  @Override
+  public ConsecutiveLegs scorerLeg() {
+    return legs;
   }
 
   @Override
@@ -30,7 +34,7 @@ class DFScorer implements LegScorer {
     Function<Double, Double> courseWeight = simpleLogistic(5.0, 15.0);
     Function<Double, Double> distanceWeight = simpleLogistic(15.0, 40.0);
 
-    Fix pathTerminator = legs.to().pathTerminator();
+    Fix pathTerminator = scorerLeg().current().pathTerminator();
 
     double distance = that.distanceInNmTo(pathTerminator);
     double courseBetween = that.courseInDegrees(pathTerminator);
@@ -40,10 +44,5 @@ class DFScorer implements LegScorer {
     double wdst = distanceWeight.apply(distance);
 
     return wcrs * wdst;
-  }
-
-  @Override
-  public double transitionScore(Scorable<ConformablePoint> l2) {
-    return 0;
   }
 }

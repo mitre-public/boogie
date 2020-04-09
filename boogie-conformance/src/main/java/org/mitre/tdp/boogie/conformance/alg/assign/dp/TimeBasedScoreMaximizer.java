@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance.alg;
+package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,14 +11,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.google.common.collect.Lists;
 import org.mitre.caasd.commons.HasTime;
 import org.mitre.tdp.boogie.conformance.Scorable;
 import org.mitre.tdp.boogie.conformance.Scored;
 import org.mitre.tdp.boogie.conformance.Scores;
-import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammer;
-import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerState;
-import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
+
+import com.google.common.collect.Lists;
 
 /**
  * The time-based score maximizer takes is built around a collection of {@link Scorable} objects
@@ -42,7 +40,7 @@ import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
  * the raw distances everywhere or use the probability of the object being appropriately assigned
  * to the given leg given its distance away.
  */
-public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
+public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H, L>> {
 
   /**
    * The set of legs to evaluate conformance against.
@@ -65,7 +63,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
    * times for conformance that have been populated by the output of the dynamic programmers
    * assignments.
    */
-  public List<Scored<L>> score(List<H> pts) {
+  public List<Scored<H, L>> score(List<H> pts) {
     ScoreSet distances = ScoreSet.between(legs(), pts);
     Conformer conformer = new Conformer(distances);
     return conformer.conformed();
@@ -111,7 +109,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
       return l1.scorer().transitionScore(l2);
     }
 
-    private List<Scored<L>> conformed() {
+    private List<Scored<H, L>> conformed() {
       DynamicProgrammer<Long, State> algorithm = new DynamicProgrammer<>(
           Arrays.stream(scores.times()).boxed().collect(Collectors.toList()),
           states,
@@ -147,7 +145,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
                 .setTimes(ts)
                 .build();
 
-            return ts.isEmpty() ? null : new Scored<>(s.leg()).setAssociatedScores(associatedScores);
+            return ts.isEmpty() ? null : new Scored<H, L>(s.leg()).setAssociatedScores(associatedScores);
           })
           .filter(Objects::nonNull)
           .collect(Collectors.toList());
@@ -234,7 +232,7 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
     }
   }
 
-  public static <H extends HasTime, L extends Scorable<H>> TimeBasedScoreMaximizer<H, L> to(List<L> legs) {
+  public static <H extends HasTime, L extends Scorable<H, L>> TimeBasedScoreMaximizer<H, L> to(List<L> legs) {
     return new TimeBasedScoreMaximizer<>(legs);
   }
 }

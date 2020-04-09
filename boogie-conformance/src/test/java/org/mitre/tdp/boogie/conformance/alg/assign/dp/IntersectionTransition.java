@@ -1,7 +1,7 @@
-package org.mitre.tdp.boogie.conformance.alg;
+package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
-import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerState;
-import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerState;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerTransition;
 
 public class IntersectionTransition implements DynamicProgrammerTransition {
 

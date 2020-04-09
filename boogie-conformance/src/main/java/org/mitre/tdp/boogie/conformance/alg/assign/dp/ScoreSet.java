@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance.alg;
+package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -7,7 +7,7 @@ import org.jblas.DoubleMatrix;
 import org.mitre.caasd.commons.HasTime;
 import org.mitre.tdp.boogie.conformance.Scorable;
 
-class ScoreSet {
+public class ScoreSet {
   private long[] times;
   private DoubleMatrix scores;
 
@@ -24,15 +24,15 @@ class ScoreSet {
     return scores;
   }
 
-  public static <H extends HasTime, L extends Scorable<H>> ScoreSet between(List<L> scorables, List<H> pts) {
-    ScoreConsumer<H> consumer = new ScoreConsumer<>(pts.size(), scorables.size());
+  public static <H extends HasTime, L extends Scorable<H, L>> ScoreSet between(List<L> scorables, List<H> pts) {
+    ScoreConsumer<H, L> consumer = new ScoreConsumer<>(pts.size(), scorables.size());
     IntStream.range(0, pts.size())
         .forEach(r -> IntStream.range(0, scorables.size())
             .forEach(c -> consumer.accept(scorables.get(c), pts.get(r), r, c)));
     return new ScoreSet(consumer.taus, consumer.scores);
   }
 
-  private static class ScoreConsumer<H extends HasTime> {
+  private static class ScoreConsumer<H extends HasTime, S extends Scorable<H, S>> {
 
     private long[] taus;
     private DoubleMatrix scores;
@@ -42,7 +42,7 @@ class ScoreSet {
       this.scores = DoubleMatrix.zeros(r, c);
     }
 
-    private void accept(Scorable<H> l, H p, int r, int c) {
+    private void accept(Scorable<H, S> l, H p, int r, int c) {
       double cross = l.scorer().score(p);
       long tau = p.time().toEpochMilli();
 

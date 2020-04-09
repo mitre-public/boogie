@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestCFScorer {
+public class TestCfScorer {
 
 //  @Test
 //  public void testFailOnMissingTheta() {
@@ -66,10 +66,10 @@ public class TestCFScorer {
     when(CF.outboundMagneticCourse()).thenReturn(empty());
 
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
-    when(legs.from()).thenReturn(VI);
-    when(legs.to()).thenReturn(CF);
+    when(legs.previous()).thenReturn(Optional.of(VI));
+    when(legs.current()).thenReturn(CF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new CFScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
   }
 
   @Test
@@ -79,15 +79,15 @@ public class TestCFScorer {
     when(CF.recommendedNavaid()).thenReturn(empty());
 
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
-    when(legs.from()).thenReturn(VI);
-    when(legs.to()).thenReturn(CF);
+    when(legs.previous()).thenReturn(Optional.of(VI));
+    when(legs.current()).thenReturn(CF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new CFScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
   }
 
   @Test
   public void testScoreWellCorrelatedCourses() {
-    CFScorer scorer = scorer();
+    CfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -127,12 +127,12 @@ public class TestCFScorer {
     return CF;
   }
 
-  private CFScorer scorer() {
+  private CfScorer scorer() {
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
     Leg TF = VI();
     Leg CF = CF();
-    when(legs.from()).thenReturn(TF);
-    when(legs.to()).thenReturn(CF);
-    return new CFScorer(legs);
+    when(legs.previous()).thenReturn(Optional.of(TF));
+    when(legs.current()).thenReturn(CF);
+    return new CfScorer(legs);
   }
 }

@@ -1,11 +1,9 @@
-package org.mitre.tdp.boogie.conformance.alg;
+package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
 
 public class IntersectionTransitions {
 

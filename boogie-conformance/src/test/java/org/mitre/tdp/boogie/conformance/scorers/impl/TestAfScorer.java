@@ -1,5 +1,14 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -10,19 +19,9 @@ import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-//@ExtendWith(MockitoExtension.class)
-public class TestAFScorer {
+public class TestAfScorer {
 
   @Test
   public void testFailOnMissingTheta() {
@@ -31,10 +30,10 @@ public class TestAFScorer {
     when(AF.theta()).thenReturn(empty());
 
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
-    when(legs.from()).thenReturn(TF);
-    when(legs.to()).thenReturn(AF);
+    when(legs.previous()).thenReturn(Optional.of(TF));
+    when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
   }
 
   @Test
@@ -44,10 +43,10 @@ public class TestAFScorer {
     Leg AF = AF();
     when(AF.rho()).thenReturn(empty());
 
-    when(legs.from()).thenReturn(TF);
-    when(legs.to()).thenReturn(AF);
+    when(legs.previous()).thenReturn(Optional.of(TF));
+    when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
   }
 
   @Test
@@ -57,10 +56,10 @@ public class TestAFScorer {
     Leg AF = AF();
     when(AF.outboundMagneticCourse()).thenReturn(empty());
 
-    when(legs.from()).thenReturn(TF);
-    when(legs.to()).thenReturn(AF);
+    when(legs.previous()).thenReturn(Optional.of(TF));
+    when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
   }
 
   @Test
@@ -70,15 +69,15 @@ public class TestAFScorer {
     Leg AF = AF();
     when(AF.recommendedNavaid()).thenReturn(empty());
 
-    when(legs.from()).thenReturn(TF);
-    when(legs.to()).thenReturn(AF);
+    when(legs.previous()).thenReturn(Optional.of(TF));
+    when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AFScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
   }
 
   @Test
   public void testAFPastTerminatorScore() {
-    AFScorer scorer = scorer();
+    AfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -96,7 +95,7 @@ public class TestAFScorer {
 
   @Test
   public void testAFPreBoundaryRadialScore() {
-    AFScorer scorer = scorer();
+    AfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -114,7 +113,7 @@ public class TestAFScorer {
 
   @Test
   public void testAFMagneticConversionMovesCourseToOutsideRadialsScore() {
-    AFScorer scorer = scorer();
+    AfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -126,7 +125,7 @@ public class TestAFScorer {
 
   @Test
   public void testAFInBoundaryOnArcScoreHigh() {
-    AFScorer scorer = scorer();
+    AfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
@@ -146,7 +145,7 @@ public class TestAFScorer {
 
   @Test
   public void testAFInBoundaryOffset1NMScoreModerate() {
-    AFScorer scorer = scorer();
+    AfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
@@ -166,7 +165,7 @@ public class TestAFScorer {
 
   @Test
   public void testAFInBoundaryOffset2NMScoreLow() {
-    AFScorer scorer = scorer();
+    AfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
@@ -218,12 +217,12 @@ public class TestAFScorer {
     return AF;
   }
 
-  private AFScorer scorer() {
+  private AfScorer scorer() {
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
     Leg TF = TF();
     Leg AF = AF();
-    when(legs.from()).thenReturn(TF);
-    when(legs.to()).thenReturn(AF);
-    return new AFScorer(legs);
+    when(legs.previous()).thenReturn(Optional.of(TF));
+    when(legs.current()).thenReturn(AF);
+    return new AfScorer(legs);
   }
 }

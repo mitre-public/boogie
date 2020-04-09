@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance.alg.dp;
+package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
 import java.math.BigDecimal;
 import java.util.Collection;

@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.Scorable;
+import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 /**
@@ -9,13 +9,20 @@ import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
  * score, but also allows one to always transition to it if necessary.
  */
 public class DefaultScorer implements LegScorer {
-  @Override
-  public double score(ConformablePoint that) {
-    return 0.0;
+
+  private final ConsecutiveLegs legs;
+
+  public DefaultScorer(ConsecutiveLegs legs) {
+    this.legs = legs;
   }
 
   @Override
-  public double transitionScore(Scorable<ConformablePoint> l2) {
-    return 1.0;
+  public ConsecutiveLegs scorerLeg() {
+    return legs;
+  }
+
+  @Override
+  public double score(ConformablePoint that) {
+    return 0.0;
   }
 }

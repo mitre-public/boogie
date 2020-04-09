@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance.alg.dp;
+package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
 public interface DynamicProgrammerTransition<T, S extends DynamicProgrammerState<T>> {
 
