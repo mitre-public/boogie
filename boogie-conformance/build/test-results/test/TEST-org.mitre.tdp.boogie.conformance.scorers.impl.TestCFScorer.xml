@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.mitre.tdp.boogie.conformance.scorers.impl.TestCFScorer" tests="3" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:30" hostname="MM252527-PC" time="0.026">
-  <properties/>
-  <testcase name="testFailOnMissingOutboundMagneticCourse()" classname="org.mitre.tdp.boogie.conformance.scorers.impl.TestCFScorer" time="0.018"/>
-  <testcase name="testScoreWellCorrelatedCourses()" classname="org.mitre.tdp.boogie.conformance.scorers.impl.TestCFScorer" time="0.003"/>
-  <testcase name="testFailOnMissingRecommendedNavaid()" classname="org.mitre.tdp.boogie.conformance.scorers.impl.TestCFScorer" time="0.004"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

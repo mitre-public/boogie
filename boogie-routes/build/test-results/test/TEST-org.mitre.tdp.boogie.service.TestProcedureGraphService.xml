@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.mitre.tdp.boogie.service.TestProcedureGraphService" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:30" hostname="MM252527-PC" time="0.042">
-  <properties/>
-  <testcase name="testProcedureGraphServiceAllowsTransitionsWithSameNameAndAirportButDifferentSID_STAR_type()" classname="org.mitre.tdp.boogie.service.TestProcedureGraphService" time="0.042"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

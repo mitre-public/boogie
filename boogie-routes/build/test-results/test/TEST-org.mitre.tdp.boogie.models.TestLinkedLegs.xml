@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.mitre.tdp.boogie.models.TestLinkedLegs" tests="3" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:30" hostname="MM252527-PC" time="0.573">
-  <properties/>
-  <testcase name="testDifferentSectionLinkWeightNonConcrete()" classname="org.mitre.tdp.boogie.models.TestLinkedLegs" time="0.559"/>
-  <testcase name="testSameSectionLinkWeight()" classname="org.mitre.tdp.boogie.models.TestLinkedLegs" time="0.003"/>
-  <testcase name="testDifferentSectionLinkWeightConcrete()" classname="org.mitre.tdp.boogie.models.TestLinkedLegs" time="0.009"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
