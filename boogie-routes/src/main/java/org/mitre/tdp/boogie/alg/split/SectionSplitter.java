@@ -56,7 +56,7 @@ public interface SectionSplitter {
         .collect(Collectors.toList());
   }
 
-  static SectionSplitter instance() {
+  static SectionSplitter newInstance() {
     return new SectionSplitter() {};
   }
 }

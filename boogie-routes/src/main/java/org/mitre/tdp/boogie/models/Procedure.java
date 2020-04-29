@@ -18,7 +18,7 @@ public interface Procedure extends Infrastructure {
   Collection<? extends Transition> transitions();
 
   /**
-   * Returns the list of viable paths through the procedure between the provided
+   * Returns the list of viable paths through the procedure between the provided.
    */
   List<List<Leg>> pathsBetween(Fix start, Fix end);
 

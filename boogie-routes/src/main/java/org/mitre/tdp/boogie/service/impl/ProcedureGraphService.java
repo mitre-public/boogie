@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
-import org.mitre.tdp.boogie.service.LookupService;
 import org.mitre.tdp.boogie.service.ProcedureService;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Service providing procedure lookup both by the procedure identifier (e.g. CSTL6, WYNDE8)
@@ -38,7 +38,11 @@ public final class ProcedureGraphService implements ProcedureService {
 
   public static ProcedureGraphService with(Collection<? extends Transition> transitions) {
     Map<String, List<Transition>> procedures = transitions.stream()
-        .collect(Collectors.groupingBy(t -> t.procedure() + t.airport() + t.source().name()));
+        .collect(Collectors.groupingBy(t ->
+            t.procedure()
+                + t.airport()
+                + t.procedureType().name()
+                + t.source().name()));
 
     Multimap<String, ProcedureGraph> byId = HashMultimap.create();
     Multimap<String, ProcedureGraph> byApt = HashMultimap.create();

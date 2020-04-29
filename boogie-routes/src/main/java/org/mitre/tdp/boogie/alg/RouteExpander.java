@@ -99,7 +99,7 @@ public interface RouteExpander extends Serializable {
    * The {@link SectionSplitter} to use in splitting the route string into {@link SectionSplit}.
    */
   default SectionSplitter sectionSplitter() {
-    return SectionSplitter.instance();
+    return SectionSplitter.newInstance();
   }
 
   /**
