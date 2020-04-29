@@ -1,8 +1,9 @@
 package org.mitre.tdp.boogie.service.impl;
 
+import org.mitre.tdp.boogie.Fix;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.mitre.tdp.boogie.Fix;
 
 public final class FixService extends SimpleService<Fix> {
 

@@ -7,10 +7,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.mitre.tdp.boogie.conformance.Scorable;
 import org.mitre.tdp.boogie.conformance.Scored;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 /**
  * Wrapper class for convenience access to a collection {@link Scorable}s.
@@ -34,6 +35,20 @@ public class Scorables<L extends Scorable> {
     this.index = o;
   }
 
+  public static <L extends Scorable> Scorables<L> of(List<Scored<L>> legs) {
+    BiMap<Integer, Integer> biMap = HashBiMap.create();
+    Map<Integer, Scored<L>> map = new HashMap<>();
+
+    IntStream.range(0, legs.size())
+        .forEach(i -> {
+          Scored<L> leg = legs.get(i);
+          int hash = leg.hashCode();
+          biMap.put(i, hash);
+          map.put(hash, leg);
+        });
+    return new Scorables<>(map, biMap);
+  }
+
   public Map<Integer, Scored<L>> legs() {
     return legs;
   }
@@ -53,19 +68,5 @@ public class Scorables<L extends Scorable> {
         // dereference legs
         .map(legs::get)
         .collect(Collectors.toList());
-  }
-
-  public static <L extends Scorable> Scorables<L> of(List<Scored<L>> legs) {
-    BiMap<Integer, Integer> biMap = HashBiMap.create();
-    Map<Integer, Scored<L>> map = new HashMap<>();
-
-    IntStream.range(0, legs.size())
-        .forEach(i -> {
-          Scored<L> leg = legs.get(i);
-          int hash = leg.hashCode();
-          biMap.put(i, hash);
-          map.put(hash, leg);
-        });
-    return new Scorables<>(map, biMap);
   }
 }

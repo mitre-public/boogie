@@ -1,10 +1,10 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestWeightFunctions {
 
@@ -18,8 +18,8 @@ class TestWeightFunctions {
   }
 
   @Test
-  public void testLogisticScoringHiLo(){
-    Function<Double, Double>fn = WeightFunctions.simpleLogistic(1.0, 2.0);
+  public void testLogisticScoringHiLo() {
+    Function<Double, Double> fn = WeightFunctions.simpleLogistic(1.0, 2.0);
 
     assertEquals(0.05, fn.apply(2.0), 0.01);
     assertEquals(0.5, fn.apply(1.0), 0.01);

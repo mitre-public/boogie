@@ -1,12 +1,12 @@
 package org.mitre.tdp.boogie.test;
 
+import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.test.MockObjects.airway;
+
 import java.util.Arrays;
 
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Leg;
-
-import static org.mitre.tdp.boogie.test.MockObjects.TF;
-import static org.mitre.tdp.boogie.test.MockObjects.airway;
 
 /**
  * A mocked copy of the J121 airway over the US for use in unit testing.

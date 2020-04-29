@@ -26,6 +26,10 @@ public interface SectionSplitter {
     return matcher.find() ? matcher.group(0).replace("/", "") : null;
   }
 
+  static SectionSplitter newInstance() {
+    return new SectionSplitter() {};
+  }
+
   default List<SectionSplit> splits(String route) {
     String[] splits = route.split("\\.");
     return IntStream.range(0, splits.length)
@@ -54,9 +58,5 @@ public interface SectionSplitter {
               .build();
         })
         .collect(Collectors.toList());
-  }
-
-  static SectionSplitter newInstance() {
-    return new SectionSplitter() {};
   }
 }

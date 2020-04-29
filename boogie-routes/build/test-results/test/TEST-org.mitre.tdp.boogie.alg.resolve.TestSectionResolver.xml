@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" tests="7" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:31" hostname="MM252527-PC" time="0.096">
+  <properties/>
+  <testcase name="testSingleAirwayResolution()" classname="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" time="0.022"/>
+  <testcase name="testSingleAirportResolution()" classname="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" time="0.024"/>
+  <testcase name="testFullResolveRoute0()" classname="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" time="0.027"/>
+  <testcase name="testSingleLatLonResolution()" classname="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" time="0.001"/>
+  <testcase name="testSingleProcedureResolution()" classname="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" time="0.003"/>
+  <testcase name="testSingleTailoredResolution()" classname="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" time="0.014"/>
+  <testcase name="testSingleFixResolution()" classname="org.mitre.tdp.boogie.alg.resolve.TestSectionResolver" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

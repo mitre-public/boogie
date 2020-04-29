@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.mitre.tdp.boogie.alg.resolve.element.TestElements" tests="10" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:31" hostname="MM252527-PC" time="0.062">
+  <properties/>
+  <testcase name="testProcedureElementMultiTransition()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.037"/>
+  <testcase name="testProcedureElementSubsequentLegLinkReferences()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.006"/>
+  <testcase name="testAirwayElementSubsequentLegLinkReferences()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.005"/>
+  <testcase name="testFixElement()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.0"/>
+  <testcase name="testBearingDistanceTailored()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.0"/>
+  <testcase name="testAirportElement()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.001"/>
+  <testcase name="testTailoredElement()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.0"/>
+  <testcase name="testLatLonElement()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.0"/>
+  <testcase name="testAirwayElement()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.004"/>
+  <testcase name="testProcedureElementSingleTransitionLegIdentifiersAndWeights()" classname="org.mitre.tdp.boogie.alg.resolve.element.TestElements" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

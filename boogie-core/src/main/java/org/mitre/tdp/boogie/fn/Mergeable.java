@@ -11,10 +11,6 @@ import com.google.common.base.Preconditions;
  */
 public interface Mergeable<T extends Mergeable<T>> {
 
-  boolean mergeable(T obj);
-
-  T mergeLeft(T obj);
-
   /**
    * Takes a collection of {@link Mergeable}s and allows one to add new elements
    * to a running collection of objects. If the a new object which doesn't meet the
@@ -53,10 +49,14 @@ public interface Mergeable<T extends Mergeable<T>> {
 
   /**
    * For a pair of {@link Mergeable} data objects this method returns either the left
-   * if the right is null, the right if the left is null or the output of
+   * if the right is null, the right if the left is null or the output of.
    */
   static <T extends Mergeable<T>> T nullableMerge(T m1, T m2) {
     Preconditions.checkArgument(nullMergeable(m1, m2));
     return null == m1 ? m2 : null == m2 ? m1 : m1.mergeLeft(m2);
   }
+
+  boolean mergeable(T obj);
+
+  T mergeLeft(T obj);
 }

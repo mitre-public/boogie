@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.mitre.tdp.boogie.alg.graph.TestTransitionTriple" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:31" hostname="MM252527-PC" time="0.007">
+  <properties/>
+  <testcase name="testTripleStarOrdering()" classname="org.mitre.tdp.boogie.alg.graph.TestTransitionTriple" time="0.002"/>
+  <testcase name="testFailOnRunwayTransitions()" classname="org.mitre.tdp.boogie.alg.graph.TestTransitionTriple" time="0.001"/>
+  <testcase name="testFailOnApproachProcedures()" classname="org.mitre.tdp.boogie.alg.graph.TestTransitionTriple" time="0.001"/>
+  <testcase name="testTripleSidOrdering()" classname="org.mitre.tdp.boogie.alg.graph.TestTransitionTriple" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

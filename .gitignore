@@ -32,3 +32,4 @@ goal.txt
 _SUCCESS
 *LocalRunner.java*
 *MikeLocalRunner.java*
+.gradle/

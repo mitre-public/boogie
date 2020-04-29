@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.conformance.alg.dp;
 
 import java.util.List;
 
-public interface DynamicProgrammerState<T>  {
+public interface DynamicProgrammerState<T> {
 
   double getValue(T stage);
 

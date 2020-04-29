@@ -16,20 +16,20 @@ class ScoreSet {
     this.scores = scores;
   }
 
-  public long[] times() {
-    return times;
-  }
-
-  public DoubleMatrix scores() {
-    return scores;
-  }
-
   public static <H extends HasTime, L extends Scorable<H>> ScoreSet between(List<L> scorables, List<H> pts) {
     ScoreConsumer<H> consumer = new ScoreConsumer<>(pts.size(), scorables.size());
     IntStream.range(0, pts.size())
         .forEach(r -> IntStream.range(0, scorables.size())
             .forEach(c -> consumer.accept(scorables.get(c), pts.get(r), r, c)));
     return new ScoreSet(consumer.taus, consumer.scores);
+  }
+
+  public long[] times() {
+    return times;
+  }
+
+  public DoubleMatrix scores() {
+    return scores;
   }
 
   private static class ScoreConsumer<H extends HasTime> {

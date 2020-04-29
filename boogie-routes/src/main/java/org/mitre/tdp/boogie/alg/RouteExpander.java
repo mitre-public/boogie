@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Preconditions;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.mitre.tdp.boogie.Airport;
@@ -30,6 +29,8 @@ import org.mitre.tdp.boogie.service.impl.AirportService;
 import org.mitre.tdp.boogie.service.impl.AirwayService;
 import org.mitre.tdp.boogie.service.impl.FixService;
 import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
+
+import com.google.common.base.Preconditions;
 
 /**
  * The core route inflation algorithm in TDP. This class is configured with a single
@@ -60,6 +61,48 @@ import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
  * to get a more complete set of expansions.
  */
 public interface RouteExpander extends Serializable {
+
+  /**
+   * Builds a new instance of the route expander with the given lookup services.
+   */
+  static RouteExpander with(
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      ProcedureService procedureService) {
+    return new RouteExpander() {
+      @Override
+      public LookupService<Fix> fixService() {
+        return fixService;
+      }
+
+      @Override
+      public LookupService<Airway> airwayService() {
+        return airwayService;
+      }
+
+      @Override
+      public LookupService<Airport> airportService() {
+        return airportService;
+      }
+
+      @Override
+      public ProcedureService procedureService() {
+        return procedureService;
+      }
+    };
+  }
+
+  /**
+   * Builds a default implementation of the RouteExpander with no configured approach prediction.
+   */
+  static RouteExpander with(Collection<? extends Fix> fixes, Collection<? extends Airway> airways, Collection<? extends Airport> airports, Collection<? extends Transition> transitions) {
+    FixService fs = FixService.with(fixes);
+    AirwayService ws = AirwayService.with(airways);
+    AirportService as = AirportService.with(airports);
+    ProcedureGraphService ps = ProcedureGraphService.with(transitions);
+    return with(fs, ws, as, ps);
+  }
 
   /**
    * Returns a configured service for {@link Fix} objects.
@@ -123,47 +166,5 @@ public interface RouteExpander extends Serializable {
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
     return new ExpandedRoute(route, shortestPath.getVertexList());
-  }
-
-  /**
-   * Builds a new instance of the route expander with the given lookup services.
-   */
-  static RouteExpander with(
-      LookupService<Fix> fixService,
-      LookupService<Airway> airwayService,
-      LookupService<Airport> airportService,
-      ProcedureService procedureService) {
-    return new RouteExpander() {
-      @Override
-      public LookupService<Fix> fixService() {
-        return fixService;
-      }
-
-      @Override
-      public LookupService<Airway> airwayService() {
-        return airwayService;
-      }
-
-      @Override
-      public LookupService<Airport> airportService() {
-        return airportService;
-      }
-
-      @Override
-      public ProcedureService procedureService() {
-        return procedureService;
-      }
-    };
-  }
-
-  /**
-   * Builds a default implementation of the RouteExpander with no configured approach prediction.
-   */
-  static RouteExpander with(Collection<? extends Fix> fixes, Collection<? extends Airway> airways, Collection<? extends Airport> airports, Collection<? extends Transition> transitions) {
-    FixService fs = FixService.with(fixes);
-    AirwayService ws = AirwayService.with(airways);
-    AirportService as = AirportService.with(airports);
-    ProcedureGraphService ps = ProcedureGraphService.with(transitions);
-    return with(fs, ws, as, ps);
   }
 }

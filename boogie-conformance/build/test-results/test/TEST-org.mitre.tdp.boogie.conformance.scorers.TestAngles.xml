@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.mitre.tdp.boogie.conformance.scorers.TestAngles" tests="5" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:30" hostname="MM252527-PC" time="0.005">
+  <properties/>
+  <testcase name="testLeftAngleBetween()" classname="org.mitre.tdp.boogie.conformance.scorers.TestAngles" time="0.001"/>
+  <testcase name="testLeftWrappedAngleBetween()" classname="org.mitre.tdp.boogie.conformance.scorers.TestAngles" time="0.0"/>
+  <testcase name="testRightAngleBetween()" classname="org.mitre.tdp.boogie.conformance.scorers.TestAngles" time="0.0"/>
+  <testcase name="testRightWrappedAngleBetween()" classname="org.mitre.tdp.boogie.conformance.scorers.TestAngles" time="0.0"/>
+  <testcase name="testEitherAngleBetween()" classname="org.mitre.tdp.boogie.conformance.scorers.TestAngles" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

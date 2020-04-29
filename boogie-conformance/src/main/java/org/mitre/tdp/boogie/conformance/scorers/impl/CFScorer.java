@@ -1,5 +1,10 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
+import static org.apache.commons.math3.util.FastMath.abs;
+import static org.mitre.caasd.commons.Spherical.angleDifference;
+import static org.mitre.tdp.boogie.conformance.scorers.impl.MissingRequiredFieldException.supplier;
+import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simpleLogistic;
+
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.Fix;
@@ -9,11 +14,6 @@ import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.Scorable;
 import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
-
-import static org.apache.commons.math3.util.FastMath.abs;
-import static org.mitre.caasd.commons.Spherical.angleDifference;
-import static org.mitre.tdp.boogie.conformance.scorers.impl.MissingRequiredFieldException.supplier;
-import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simpleLogistic;
 
 /**
  * This is the default conformance scorer for {@link LegType#CF} legs.

@@ -1,4 +1,13 @@
 package org.mitre.tdp.boogie.test;
+
+import static org.mitre.tdp.boogie.test.MockObjects.CA;
+import static org.mitre.tdp.boogie.test.MockObjects.CF;
+import static org.mitre.tdp.boogie.test.MockObjects.HM;
+import static org.mitre.tdp.boogie.test.MockObjects.IF;
+import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.test.MockObjects.VI;
+import static org.mitre.tdp.boogie.test.MockObjects.transition;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -11,14 +20,6 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.mitre.tdp.boogie.test.MockObjects.CA;
-import static org.mitre.tdp.boogie.test.MockObjects.CF;
-import static org.mitre.tdp.boogie.test.MockObjects.HM;
-import static org.mitre.tdp.boogie.test.MockObjects.IF;
-import static org.mitre.tdp.boogie.test.MockObjects.TF;
-import static org.mitre.tdp.boogie.test.MockObjects.VI;
-import static org.mitre.tdp.boogie.test.MockObjects.transition;
-
 /**
  * Mock of I16R approach procedure for runway 16R at KDEN.
  */
@@ -28,19 +29,6 @@ public class I16R {
 
   private I16R(Map<String, Transition> transitions) {
     this.transitions = transitions;
-  }
-
-  public Leg get(String fname, String tname) {
-    Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
-  }
-
-  public Transition get(String tname) {
-    return this.transitions.get(tname);
-  }
-
-  public Collection<Transition> transitions() {
-    return transitions.values();
   }
 
   public static I16R build() {
@@ -95,6 +83,19 @@ public class I16R {
     Leg BREWS2 = HM("BREWS", 39.65445833333333, -105.18080277777779);
     return transition("", "I16R", "KDEN", TransitionType.APPROACH, ProcedureType.APPROACH,
         Arrays.asList(MERYN, JETSN, KDEN, CA, VI, BREWS, BREWS2));
+  }
+
+  public Leg get(String fname, String tname) {
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+  }
+
+  public Transition get(String tname) {
+    return this.transitions.get(tname);
+  }
+
+  public Collection<Transition> transitions() {
+    return transitions.values();
   }
 }
 

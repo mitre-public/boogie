@@ -26,6 +26,10 @@ final class SimpleIFLeg implements Leg {
     this.pathTerminator = term;
   }
 
+  public static SimpleIFLeg from(Fix fix) {
+    return new SimpleIFLeg(fix);
+  }
+
   @Override
   public Fix pathTerminator() {
     return pathTerminator;
@@ -47,7 +51,7 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
-  public Integer sequenceNumber(){
+  public Integer sequenceNumber() {
     return 0;
   }
 
@@ -104,9 +108,5 @@ final class SimpleIFLeg implements Leg {
   @Override
   public Optional<Boolean> overfly() {
     return Optional.empty();
-  }
-
-  public static SimpleIFLeg from(Fix fix) {
-    return new SimpleIFLeg(fix);
   }
 }

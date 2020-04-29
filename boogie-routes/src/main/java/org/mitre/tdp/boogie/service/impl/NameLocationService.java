@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.collect.MetricTree;
 import org.mitre.caasd.commons.collect.SearchResult;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Service object for indexing the parameterized data type by both the name of the parameter
@@ -26,18 +27,6 @@ public class NameLocationService<T> {
     this.locationMap = lm;
   }
 
-  public Collection<T> matches(String name) {
-    return nameMap.get(name);
-  }
-
-  public T nearest(LatLong loc) {
-    return locationMap.getClosest(loc).value();
-  }
-
-  public List<T> allWithinRange(LatLong loc, double radius) {
-    return locationMap.getAllWithinRange(loc, radius).stream().map(SearchResult::value).collect(Collectors.toList());
-  }
-
   public static <T> NameLocationService<T> from(Iterable<T> objs, Function<T, String> nameFn, Function<T, LatLong> locFn) {
     Preconditions.checkNotNull(nameFn);
     Preconditions.checkNotNull(locFn);
@@ -51,5 +40,17 @@ public class NameLocationService<T> {
     });
 
     return new NameLocationService<>(nm, lm);
+  }
+
+  public Collection<T> matches(String name) {
+    return nameMap.get(name);
+  }
+
+  public T nearest(LatLong loc) {
+    return locationMap.getClosest(loc).value();
+  }
+
+  public List<T> allWithinRange(LatLong loc, double radius) {
+    return locationMap.getAllWithinRange(loc, radius).stream().map(SearchResult::value).collect(Collectors.toList());
   }
 }

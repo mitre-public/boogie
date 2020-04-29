@@ -1,8 +1,9 @@
 package org.mitre.tdp.boogie.service.impl;
 
+import org.mitre.tdp.boogie.Airport;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.mitre.tdp.boogie.Airport;
 
 public final class AirportService extends SimpleService<Airport> {
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.mitre.tdp.boogie.service.TestNameLocationService" tests="8" skipped="0" failures="0" errors="0" timestamp="2020-04-29T01:21:31" hostname="MM252527-PC" time="0.038">
+  <properties/>
+  <testcase name="testNameLookupFindsTwoMatchesFor_C()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.004"/>
+  <testcase name="testNearestFixToItselfIsItself()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.004"/>
+  <testcase name="testNameLookupFindsSingleMatchFor_A()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.003"/>
+  <testcase name="testNameLookupFindsSingleMatchFor_B()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.002"/>
+  <testcase name="testNearestFixTo0_Neg15Is_C()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.008"/>
+  <testcase name="testNameLookupFindsNoMatchFor_D()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.002"/>
+  <testcase name="testNearestFixTo0_0Is_A()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.002"/>
+  <testcase name="testAllFixesWithin5_5nmIs6Fixes()" classname="org.mitre.tdp.boogie.service.TestNameLocationService" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

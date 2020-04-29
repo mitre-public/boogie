@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.google.common.collect.Lists;
 import org.mitre.caasd.commons.HasTime;
 import org.mitre.tdp.boogie.conformance.Scorable;
 import org.mitre.tdp.boogie.conformance.Scored;
@@ -19,6 +18,8 @@ import org.mitre.tdp.boogie.conformance.Scores;
 import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammer;
 import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerState;
 import org.mitre.tdp.boogie.conformance.alg.dp.DynamicProgrammerTransition;
+
+import com.google.common.collect.Lists;
 
 /**
  * The time-based score maximizer takes is built around a collection of {@link Scorable} objects
@@ -51,6 +52,10 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
 
   private TimeBasedScoreMaximizer(List<L> legs) {
     this.legs = legs;
+  }
+
+  public static <H extends HasTime, L extends Scorable<H>> TimeBasedScoreMaximizer<H, L> to(List<L> legs) {
+    return new TimeBasedScoreMaximizer<>(legs);
   }
 
   public List<L> legs() {
@@ -232,9 +237,5 @@ public class TimeBasedScoreMaximizer<H extends HasTime, L extends Scorable<H>> {
         return prob;
       }
     }
-  }
-
-  public static <H extends HasTime, L extends Scorable<H>> TimeBasedScoreMaximizer<H, L> to(List<L> legs) {
-    return new TimeBasedScoreMaximizer<>(legs);
   }
 }

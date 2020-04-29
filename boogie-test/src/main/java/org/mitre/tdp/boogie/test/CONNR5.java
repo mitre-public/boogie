@@ -1,5 +1,14 @@
 package org.mitre.tdp.boogie.test;
 
+import static org.mitre.tdp.boogie.test.MockObjects.CF;
+import static org.mitre.tdp.boogie.test.MockObjects.DF;
+import static org.mitre.tdp.boogie.test.MockObjects.IF;
+import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.test.MockObjects.VA;
+import static org.mitre.tdp.boogie.test.MockObjects.VI;
+import static org.mitre.tdp.boogie.test.MockObjects.VM;
+import static org.mitre.tdp.boogie.test.MockObjects.transition;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -12,15 +21,6 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.mitre.tdp.boogie.test.MockObjects.CF;
-import static org.mitre.tdp.boogie.test.MockObjects.DF;
-import static org.mitre.tdp.boogie.test.MockObjects.IF;
-import static org.mitre.tdp.boogie.test.MockObjects.TF;
-import static org.mitre.tdp.boogie.test.MockObjects.VA;
-import static org.mitre.tdp.boogie.test.MockObjects.VI;
-import static org.mitre.tdp.boogie.test.MockObjects.VM;
-import static org.mitre.tdp.boogie.test.MockObjects.transition;
-
 /**
  * RNAV Departure SID out of Denver from cycle 1910 for use in testing.
  */
@@ -30,19 +30,6 @@ public class CONNR5 {
 
   private CONNR5(Map<String, Transition> transitions) {
     this.transitions = transitions;
-  }
-
-  public Leg get(String fname, String tname) {
-    Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
-  }
-
-  public Transition get(String tname) {
-    return this.transitions.get(tname);
-  }
-
-  public Collection<Transition> transitions() {
-    return transitions.values();
   }
 
   public static CONNR5 build() {
@@ -162,5 +149,18 @@ public class CONNR5 {
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
     return transition("RW16L", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+  }
+
+  public Leg get(String fname, String tname) {
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+  }
+
+  public Transition get(String tname) {
+    return this.transitions.get(tname);
+  }
+
+  public Collection<Transition> transitions() {
+    return transitions.values();
   }
 }
