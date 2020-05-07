@@ -4,12 +4,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.mitre.caasd.commons.HasTime;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.Scored;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
@@ -29,37 +31,27 @@ import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
  * <p>Typically this should be used when comparing the track against a smaller scoped set of legs (due to the intensity
  * of the {@link DynamicProgrammer} computation).
  */
-public interface MaximalTotalScoreAssigner extends LegAssigner {
-
-  @Override
-  default ConsecutiveLegs assignmentFor(ConformablePoint conformablePoint) {
-    return assignmentFor(conformablePoint.time());
-  }
-
-  ConsecutiveLegs assignmentFor(Instant time);
+public interface MaximalTotalScoreAssigner extends PrecomputedAssigner {
 
   /**
    * Pre-computes the collection of leg assignments based off of the Dynamic programmer's minimization of the total error
    * in CTD between the points and the collection of available legs.
    */
-  static MaximalTotalScoreAssigner computeAssignments(
-      Collection<ConformablePoint> points,
-      Collection<ConsecutiveLegs> legs) {
+  @Override
+  default Map<ConformablePoint, ConsecutiveLegs> assignments(Collection<ConformablePoint> allPoints, Collection<ConsecutiveLegs> allLegs) {
+    HashMap<ConformablePoint, ConsecutiveLegs> assignments = new HashMap<>();
 
-    HashMap<Instant, ConsecutiveLegs> assignments = new HashMap<>();
+    NavigableMap<Instant, ConformablePoint> pointsByTime = allPoints.stream()
+        .collect(Collectors.toMap(ConformablePoint::time, Function.identity(), (a, b) -> {throw new RuntimeException("WEW");}, TreeMap::new));
 
-    List<ConformablePoint> orderedPoints = points.stream()
-        .sorted(Comparator.comparing(HasTime::time))
-        .collect(Collectors.toList());
-
-    List<ConsecutiveLegs> legList = new ArrayList<>(legs);
+    List<ConsecutiveLegs> legList = new ArrayList<>(allLegs);
 
     TimeBasedScoreMaximizer<ConformablePoint, ConsecutiveLegs> maximizer = TimeBasedScoreMaximizer.to(legList);
-    List<Scored<ConformablePoint, ConsecutiveLegs>> scored = maximizer.score(orderedPoints);
+    List<Scored<ConformablePoint, ConsecutiveLegs>> scored = maximizer.score(new ArrayList<>(pointsByTime.values()));
 
     scored.forEach(sc -> Arrays.stream(sc.associatedScores().times())
-        .forEach(time -> assignments.put(Instant.ofEpochMilli(time), sc.scorable())));
+        .forEach(time -> assignments.put(pointsByTime.get(Instant.ofEpochMilli(time)), sc.scorable())));
 
-    return assignments::get;
+    return assignments;
   }
 }

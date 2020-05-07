@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
+import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.fn.TriConsumer;
 
 import com.google.common.base.Preconditions;
@@ -29,7 +30,17 @@ public class Iterators {
         .forEach(i -> consumer.accept(list.get(i - 1), list.get(i)));
   }
 
-  /**  */
+  /**
+   * Iterates through the provided {@link HashedLinkedSequence} in a pairwise fashion.
+   */
+  public static <T> void pairwise(HashedLinkedSequence<T> sequence, BiConsumer<T, T> consumer) {
+    Preconditions.checkArgument(sequence.size() >= 1);
+    sequence.stream().skip(1).forEach(entry -> consumer.accept(sequence.getElementBefore(entry), entry));
+  }
+
+  /**
+   *
+   */
   public static <T> void triples(List<T> list, TriConsumer<T, T, T> consumer) {
 
   }

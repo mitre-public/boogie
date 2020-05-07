@@ -1,19 +1,5 @@
 package org.mitre.tdp.boogie.alg;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.test.Airports;
-import org.mitre.tdp.boogie.test.Airways;
-import org.mitre.tdp.boogie.test.CONNR5;
-import org.mitre.tdp.boogie.test.HOBTT2;
-import org.mitre.tdp.boogie.models.ExpandedRoute;
-
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +8,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.MockObjects.fix;
 import static org.mitre.tdp.boogie.test.Airports.KATL;
 import static org.mitre.tdp.boogie.test.Airports.KDEN;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
+import org.mitre.tdp.boogie.alg.split.Wildcard;
+import org.mitre.tdp.boogie.models.ExpandedRoute;
+import org.mitre.tdp.boogie.test.Airports;
+import org.mitre.tdp.boogie.test.Airways;
+import org.mitre.tdp.boogie.test.CONNR5;
+import org.mitre.tdp.boogie.test.HOBTT2;
 
 /**
  * Route inflation tests (the full package) used to test specific component expansions.

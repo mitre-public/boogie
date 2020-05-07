@@ -19,9 +19,8 @@ import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
  * directly implement it.
  *
  * <p>These algorithms can be wrapped in the {@link PrecomputedEvaluatorWrapper} class which will serve
- * their results as a typical {@link ConformanceEvaluator}.
+ * their results as a common {@link ConformanceEvaluator}.
  */
-@FunctionalInterface
 public interface PrecomputedEvaluator {
 
   /**

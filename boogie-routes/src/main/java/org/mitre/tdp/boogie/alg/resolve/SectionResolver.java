@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,8 +12,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
@@ -27,20 +27,25 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.service.LookupService;
 
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 /**
  * The SectionResolver serves the purpose of taking the sections output by the
  * {@link SectionSplitter} and assigning to them matching infrastructure elements
  * returning a collection of {@link ResolvedSection}s which can be handed
  * off to the {@link LegGraph} for additional analysis.
- * <p>
- * This will match the provided route section split/id to any and all elements
+ *
+ * <p>This will match the provided route section split/id to any and all elements
  * sharing a common identifier. The graph solution handles the resolution of
  * these multiple options into a single path.
  */
 @FunctionalInterface
 public interface SectionResolver {
+
+  static SectionResolver with(RouteExpander routes) {
+    return () -> routes;
+  }
 
   /**
    * The route inflation object containing the configured infrastructure elements
@@ -61,8 +66,8 @@ public interface SectionResolver {
    * Resolves all of the {@link SectionSplit}s against the infrastructure information
    * returning for each section a set of possible infrastructure elements it might have
    * been referring to.
-   * <p>
-   * See {@link ResolvedSection}.
+   *
+   * <p>See {@link ResolvedSection}.
    */
   default ResolvedRoute resolve(List<SectionSplit> splits) {
     List<ResolvedSection> sections = new ArrayList<>();
@@ -176,9 +181,5 @@ public interface SectionResolver {
   default ResolvedElement<?> latLon(String section) {
     boolean match = section.matches(SectionHeuristics.latLon().pattern());
     return match ? LatLonElement.from(section) : null;
-  }
-
-  static SectionResolver with(RouteExpander routes) {
-    return () -> routes;
   }
 }

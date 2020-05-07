@@ -10,6 +10,9 @@ public class SimpleConsecutiveLegs implements ConsecutiveLegs {
   private final Leg current;
   private final Leg next;
 
+  /**
+   * Generates a new simple tuple of {@link ConsecutiveLegs}.
+   */
   public SimpleConsecutiveLegs(Leg p, Leg c, Leg n) {
     this.previous = p;
     this.current = c;

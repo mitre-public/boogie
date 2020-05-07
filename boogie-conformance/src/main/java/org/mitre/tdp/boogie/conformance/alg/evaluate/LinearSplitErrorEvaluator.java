@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
+import static org.mitre.tdp.boogie.conformance.alg.evaluate.ConformanceEvaluator.offTrackDistance;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
   }
 
   /**
-   * Returns whether the given
+   * Returns whether the given speed/distance pair is level and offset from the assigned leg.
    */
   default boolean isLevelAndNotOffset(Pair<Speed, Distance> pair) {
     Speed slope = pair.first();
@@ -70,7 +72,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
     List<Long> times = new ArrayList<>();
     List<Double> crossTrackDistances = new ArrayList<>();
 
-    conformingPairs.forEach(pair -> ConformanceEvaluator.offTrackDistance(pair.first(), pair.second())
+    conformingPairs.forEach(pair -> offTrackDistance(pair.first(), pair.second())
         .ifPresent(distance -> {
           times.add(pair.first().time().toEpochMilli());
           crossTrackDistances.add(distance.inNauticalMiles());

@@ -14,6 +14,9 @@ import org.mitre.tdp.boogie.utils.Iterators;
 
 public class ConsecutiveLegFactory {
 
+  /**
+   * Builds a new collection of {@link ConsecutiveLegs} from an input ordered sequence of legs.
+   */
   public static <L extends Leg> List<ConsecutiveLegs> fromLegSequence(List<L> legs) {
     if (legs.isEmpty()) {
       return Collections.emptyList();

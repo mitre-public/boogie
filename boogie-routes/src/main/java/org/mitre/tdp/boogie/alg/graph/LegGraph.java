@@ -12,8 +12,8 @@ import org.jgrapht.alg.shortestpath.NegativeCycleDetectedException;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
 import org.mitre.tdp.boogie.util.Combinatorics;
 

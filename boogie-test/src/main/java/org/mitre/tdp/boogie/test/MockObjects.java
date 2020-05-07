@@ -1,7 +1,9 @@
 package org.mitre.tdp.boogie.test;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +19,6 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.util.Declinations;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 /**

@@ -27,10 +27,9 @@ import com.google.common.base.Preconditions;
 
 /**
  * Representation of the procedure built from its collection of transitions as a graph object.
- * <p>
- * Using jgrapht as the engine we leverage a whole host of common graph algorithms on the procedure
+ *
+ * <p>Using jgrapht as the engine we leverage a whole host of common graph algorithms on the procedure
  * treating it as a directed graph. For the route expansion use case the most important are:
- * <p>
  * {@link ConnectivityInspector}
  * {@link AllDirectedPaths}
  * {@link LowestCommonAncestorAlgorithm}
@@ -46,51 +45,6 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     super(DefaultEdge.class);
     this.transitions = (Collection<Transition>) transitions;
     this.nls = nls;
-  }
-
-  @Override
-  public Collection<Transition> transitions() {
-    return transitions;
-  }
-
-  /**
-   * Returns the leg of the preferred type which best matches the specified fix. This lookup is done
-   * both by name as well as geospatially if the fix identifier doesn't exist in the procedure.
-   */
-  private Leg bestLegMatch(Fix fix) {
-    Collection<Leg> nameMatches = nls.matches(fix.identifier());
-    return nameMatches.stream()
-        .min(Comparator.comparing(Leg::type))
-        .orElse(nls.nearest(fix.latLong()));
-  }
-
-  @Override
-  public List<List<Leg>> pathsBetween(Fix entry, Fix exit) {
-    if (allPaths == null) {
-      allPaths = new AllDirectedPaths<>(this);
-    }
-    List<GraphPath<Leg, DefaultEdge>> gpaths =
-        allPaths.getAllPaths(
-            bestLegMatch(entry),
-            bestLegMatch(exit),
-            false,
-            100);
-    return Collections.transform(gpaths, GraphPath::getVertexList);
-  }
-
-  @Override
-  public boolean equals(Object that) {
-    return that instanceof ProcedureGraph && hashCode() == that.hashCode();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(transitions.toArray());
-  }
-
-  @Override
-  public String toString() {
-    return identifier() + airport() + type().name() + source().name();
   }
 
   /**
@@ -138,5 +92,50 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
       TransitionTriple.from(transitions).zipAndInsert(procedure);
     }
     return procedure;
+  }
+
+  @Override
+  public Collection<Transition> transitions() {
+    return transitions;
+  }
+
+  /**
+   * Returns the leg of the preferred type which best matches the specified fix. This lookup is done
+   * both by name as well as geospatially if the fix identifier doesn't exist in the procedure.
+   */
+  private Leg bestLegMatch(Fix fix) {
+    Collection<Leg> nameMatches = nls.matches(fix.identifier());
+    return nameMatches.stream()
+        .min(Comparator.comparing(Leg::type))
+        .orElse(nls.nearest(fix.latLong()));
+  }
+
+  @Override
+  public List<List<Leg>> pathsBetween(Fix entry, Fix exit) {
+    if (allPaths == null) {
+      allPaths = new AllDirectedPaths<>(this);
+    }
+    List<GraphPath<Leg, DefaultEdge>> gpaths =
+        allPaths.getAllPaths(
+            bestLegMatch(entry),
+            bestLegMatch(exit),
+            false,
+            100);
+    return Collections.transform(gpaths, GraphPath::getVertexList);
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    return that instanceof ProcedureGraph && hashCode() == that.hashCode();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(transitions.toArray());
+  }
+
+  @Override
+  public String toString() {
+    return identifier() + airport() + type().name() + source().name();
   }
 }

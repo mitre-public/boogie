@@ -1,13 +1,13 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static org.mitre.tdp.boogie.utils.Collections.sort;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
-
-import static org.mitre.tdp.boogie.utils.Collections.sort;
 
 /**
  * A collection of {@link ResolvedSection}s tied to all of the splits in the filed route string.

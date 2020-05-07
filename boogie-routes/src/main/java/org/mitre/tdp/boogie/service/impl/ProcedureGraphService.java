@@ -26,16 +26,6 @@ public final class ProcedureGraphService implements ProcedureService {
     this.byAirport = apt;
   }
 
-  @Override
-  public Collection<ProcedureGraph> allMatchingIdentifiers(String identifier) {
-    return byIdentifier.get(identifier);
-  }
-
-  @Override
-  public Collection<ProcedureGraph> allMatchingAirport(String airport) {
-    return byAirport.get(airport);
-  }
-
   public static ProcedureGraphService with(Collection<? extends Transition> transitions) {
     Map<String, List<Transition>> procedures = transitions.stream()
         .collect(Collectors.groupingBy(t ->
@@ -54,5 +44,15 @@ public final class ProcedureGraphService implements ProcedureService {
     });
 
     return new ProcedureGraphService(byId, byApt);
+  }
+
+  @Override
+  public Collection<ProcedureGraph> allMatchingIdentifiers(String identifier) {
+    return byIdentifier.get(identifier);
+  }
+
+  @Override
+  public Collection<ProcedureGraph> allMatchingAirport(String airport) {
+    return byAirport.get(airport);
   }
 }

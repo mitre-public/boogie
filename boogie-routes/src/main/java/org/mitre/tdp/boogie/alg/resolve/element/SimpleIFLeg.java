@@ -12,8 +12,7 @@ import org.mitre.tdp.boogie.TurnDirection;
  * Simple class for a simple TF leg within the framework. We use these standard implementations
  * for connecting things to individual infrastructure elements in a leg-like way.
  *
- * Elements connected by these are things like:
- *
+ * <p>Elements connected by these are things like:
  * 1) Direct to fixes
  * 2) Direct to LatLon locations
  * 3) Direct to airport
@@ -24,6 +23,10 @@ final class SimpleIFLeg implements Leg {
 
   private SimpleIFLeg(Fix term) {
     this.pathTerminator = term;
+  }
+
+  public static SimpleIFLeg from(Fix fix) {
+    return new SimpleIFLeg(fix);
   }
 
   @Override
@@ -47,7 +50,7 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
-  public Integer sequenceNumber(){
+  public Integer sequenceNumber() {
     return 0;
   }
 
@@ -104,9 +107,5 @@ final class SimpleIFLeg implements Leg {
   @Override
   public Optional<Boolean> overfly() {
     return Optional.empty();
-  }
-
-  public static SimpleIFLeg from(Fix fix) {
-    return new SimpleIFLeg(fix);
   }
 }

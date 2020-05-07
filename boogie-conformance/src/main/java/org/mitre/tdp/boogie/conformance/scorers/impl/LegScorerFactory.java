@@ -5,6 +5,9 @@ import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 public class LegScorerFactory {
 
+  /**
+   * Returns a {@link LegScorer} based on the type of the {@link ConsecutiveLegs#current()}.
+   */
   public static LegScorer forLegs(ConsecutiveLegs legs) {
     switch (legs.current().type()) {
       case TF:

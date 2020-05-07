@@ -19,6 +19,16 @@ public class TailoredElement extends ResolvedElement<Fix> {
     this.tailored = tailored;
   }
 
+  /**
+   * Extracts the course and distance from the tailored waypoint definition.
+   */
+  static Pair<Double, Double> bearingDistance(String tailored) {
+    int n = tailored.length();
+    Double crs = Double.parseDouble(tailored.substring(n - 6, n - 3));
+    Double dist = Double.parseDouble(tailored.substring(n - 3, n));
+    return Pair.of(crs, dist);
+  }
+
   @Override
   public List<LinkedLegs> buildLegs() {
     Pair<Double, Double> bearingDistance = bearingDistance(tailored);
@@ -42,15 +52,5 @@ public class TailoredElement extends ResolvedElement<Fix> {
     double magvar = reference.magneticVariation().published()
         .orElse(reference.magneticVariation().modeled());
     return bearing + magvar;
-  }
-
-  /**
-   * Extracts the course and distance from the tailored waypoint definition.
-   */
-  static Pair<Double, Double> bearingDistance(String tailored) {
-    int n = tailored.length();
-    Double crs = Double.parseDouble(tailored.substring(n - 6, n - 3));
-    Double dist = Double.parseDouble(tailored.substring(n - 3, n));
-    return Pair.of(crs, dist);
   }
 }

@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 public interface LegAssigner {
 
   /**
-   * Returns the legs the aircraft is most likely on at the given point.
+   * Returns the legs the aircraft is most likely flying at the given point.
    */
   ConsecutiveLegs assignmentFor(ConformablePoint conformablePoint);
 }

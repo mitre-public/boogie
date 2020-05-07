@@ -1,9 +1,9 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
-import java.util.function.Function;
-
 import static org.apache.commons.math3.util.FastMath.exp;
 import static org.apache.commons.math3.util.FastMath.log;
+
+import java.util.function.Function;
 
 public class WeightFunctions {
 

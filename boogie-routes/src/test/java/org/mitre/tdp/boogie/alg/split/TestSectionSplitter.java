@@ -1,13 +1,13 @@
 package org.mitre.tdp.boogie.alg.split;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class TestSectionSplitter {
@@ -16,6 +16,9 @@ public class TestSectionSplitter {
       "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/0054",
       "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/1814",
       "KBDL./.HTO354018..CCC..MANTA.J121.BRIGS.JIIMS2.KPHL/1814");
+  private List<String> ROUTE1 = Collections.singletonList("KDCA./.WALCE..KGSO*");
+  private List<String> ROUTE2 = Collections.singletonList("KFRG..+RBV.J230.SAAME.J6.+BWG*..KMEM");
+  private List<String> ROUTE3 = Collections.singletonList("KMSO./.*4222N/10726W..WOOKY.TSHNR2.KDEN");
 
   @Test
   public void testRoute0_0() {
@@ -43,8 +46,6 @@ public class TestSectionSplitter {
     assertTrue(Wildcard.TAILORED.test("+*/"));
   }
 
-  private List<String> ROUTE1 = Collections.singletonList("KDCA./.WALCE..KGSO*");
-
   @Test
   public void testRoute1_0() {
     List<SectionSplit> splits = SectionSplitter.newInstance().splits(ROUTE1.get(0));
@@ -58,8 +59,6 @@ public class TestSectionSplitter {
     assertTrue(Wildcard.SUPPRESSED.test(splits.get(4).wildcards()));
   }
 
-  private List<String> ROUTE2 = Collections.singletonList("KFRG..+RBV.J230.SAAME.J6.+BWG*..KMEM");
-
   @Test
   public void testRoute2_0() {
     List<SectionSplit> splits = SectionSplitter.newInstance().splits(ROUTE2.get(0));
@@ -72,8 +71,6 @@ public class TestSectionSplitter {
     assertTrue(Wildcard.PLUS.test(splits.get(6).wildcards()));
     assertTrue(Wildcard.SUPPRESSED.test(splits.get(6).wildcards()));
   }
-
-  private List<String> ROUTE3 = Collections.singletonList("KMSO./.*4222N/10726W..WOOKY.TSHNR2.KDEN");
 
   @Test
   public void testRoute3_0() {

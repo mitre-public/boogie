@@ -13,7 +13,7 @@ public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
   private final PrecomputedEvaluator evaluator;
   private final NavigableMap<Instant, Boolean> conformanceTimes;
 
-  private PrecomputedEvaluatorWrapper(
+  public PrecomputedEvaluatorWrapper(
       PrecomputedEvaluator evaluator,
       NavigableMap<Instant, Boolean> conformanceTimes) {
     this.evaluator = evaluator;
@@ -29,6 +29,9 @@ public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
     return conformanceTimes.lowerEntry(point.time()).getValue();
   }
 
+  /**
+   * Wraps the given {@link PrecomputedEvaluator} as a {@link ConformanceEvaluator} for use in conformance estimation.
+   */
   public PrecomputedEvaluatorWrapper wrapWithContext(
       PrecomputedEvaluator evaluator,
       List<Pair<ConformablePoint, ConsecutiveLegs>> pairs) {

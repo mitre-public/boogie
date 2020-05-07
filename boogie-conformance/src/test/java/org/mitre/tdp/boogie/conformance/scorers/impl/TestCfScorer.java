@@ -1,5 +1,12 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
+import static java.util.Optional.empty;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -11,53 +18,46 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 
-import static java.util.Optional.empty;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class TestCfScorer {
 
-//  @Test
-//  public void testFailOnMissingTheta() {
-//    Leg VI = VI();
-//    Leg CF = CF();
-//    when(CF.theta()).thenReturn(empty());
-//
-//    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
-//    when(legs.from()).thenReturn(VI);
-//    when(legs.to()).thenReturn(CF);
-//
-//    assertThrows(MissingRequiredFieldException.class, () -> new CFScorer(legs).score(dummyPoint()));
-//  }
-//
-//  @Test
-//  public void testFailOnMissingRho() {
-//    Leg VI = VI();
-//    Leg CF = CF();
-//    when(CF.rho()).thenReturn(empty());
-//
-//    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
-//    when(legs.from()).thenReturn(VI);
-//    when(legs.to()).thenReturn(CF);
-//
-//    assertThrows(MissingRequiredFieldException.class, () -> new CFScorer(legs).score(dummyPoint()));
-//  }
-//
-//  @Test
-//  public void testFailOnMissingDistance() {
-//    Leg VI = VI();
-//    Leg CF = CF();
-//    when(CF.distance()).thenReturn(empty());
-//
-//    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
-//    when(legs.from()).thenReturn(VI);
-//    when(legs.to()).thenReturn(CF);
-//
-//    assertThrows(MissingRequiredFieldException.class, () -> new CFScorer(legs).score(dummyPoint()));
-//  }
+  @Test
+  public void testFailOnMissingTheta() {
+    Leg VI = VI();
+    Leg CF = CF();
+    when(CF.theta()).thenReturn(empty());
+
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    when(legs.previous()).thenReturn(Optional.of(VI));
+    when(legs.current()).thenReturn(CF);
+
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+  }
+
+  @Test
+  public void testFailOnMissingRho() {
+    Leg VI = VI();
+    Leg CF = CF();
+    when(CF.rho()).thenReturn(empty());
+
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    when(legs.previous()).thenReturn(Optional.of(VI));
+    when(legs.current()).thenReturn(CF);
+
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+  }
+
+  @Test
+  public void testFailOnMissingDistance() {
+    Leg VI = VI();
+    Leg CF = CF();
+    when(CF.distance()).thenReturn(empty());
+
+    ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
+    when(legs.previous()).thenReturn(Optional.of(VI));
+    when(legs.current()).thenReturn(CF);
+
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+  }
 
   @Test
   public void testFailOnMissingOutboundMagneticCourse() {

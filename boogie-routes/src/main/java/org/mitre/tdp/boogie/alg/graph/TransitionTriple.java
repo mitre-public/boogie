@@ -1,5 +1,11 @@
 package org.mitre.tdp.boogie.alg.graph;
 
+import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mitre.tdp.boogie.utils.Collections.noneMatch;
+import static org.mitre.tdp.boogie.utils.Collections.transform;
+import static org.mitre.tdp.boogie.utils.Iterators.checkMatchCount;
+import static org.mitre.tdp.boogie.utils.Iterators.fastslow;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -16,11 +21,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
-import static org.mitre.tdp.boogie.utils.Collections.noneMatch;
-import static org.mitre.tdp.boogie.utils.Collections.transform;
-import static org.mitre.tdp.boogie.utils.Iterators.checkMatchCount;
-import static org.mitre.tdp.boogie.utils.Iterators.fastslow;
+import com.google.common.base.Preconditions;
 
 /**
  * Convenience class for handling transitions grouped by their {@link TransitionType}.
@@ -37,6 +38,26 @@ class TransitionTriple {
     this.enroute = e;
     this.common = c;
     this.approach = a;
+  }
+
+  /**
+   * Takes a collection of transitions all associated with the same procedure and splits them by
+   * {@link TransitionType} for later use.
+   */
+  public static TransitionTriple from(Collection<? extends Transition> transitions) {
+    Preconditions.checkArgument(noneMatch(transitions, Transition::transitionType, TransitionType.APPROACH));
+    Preconditions.checkArgument(noneMatch(transitions, Transition::procedureType, ProcedureType.APPROACH));
+    Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
+    Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
+
+    Map<TransitionType, List<Transition>> byType = transitions.stream()
+        .collect(Collectors.groupingBy(Transition::transitionType));
+
+    return new TransitionTriple(
+        transitions.iterator().next().procedureType(),
+        byType.getOrDefault(TransitionType.ENROUTE, Collections.emptyList()),
+        byType.getOrDefault(TransitionType.COMMON, Collections.emptyList()),
+        byType.getOrDefault(TransitionType.RUNWAY, Collections.emptyList()));
   }
 
   public ProcedureType procedureType() {
@@ -65,7 +86,7 @@ class TransitionTriple {
    * Takes two collections of transitions assumed to be of following types and zips them together
    * along their endpoints.
    *
-   * e.g. List<ENROUTE> -> List<COMMON>
+   * <p>e.g. List<ENROUTE> -> List<COMMON>
    */
   private void zipAndInsert(List<Transition> previous, List<Transition> next, ProcedureGraph graph) {
     // these should all have concrete fixes as path terminators
@@ -89,25 +110,5 @@ class TransitionTriple {
     if (checkMatchCount(listOrdered(), c -> !c.isEmpty())) {
       fastslow(listOrdered(), c -> !c.isEmpty(), (l1, l2, skip) -> zipAndInsert(l1, l2, graph));
     }
-  }
-
-  /**
-   * Takes a collection of transitions all associated with the same procedure and splits them by
-   * {@link TransitionType} for later use.
-   */
-  public static TransitionTriple from(Collection<? extends Transition> transitions) {
-    Preconditions.checkArgument(noneMatch(transitions, Transition::transitionType, TransitionType.APPROACH));
-    Preconditions.checkArgument(noneMatch(transitions, Transition::procedureType, ProcedureType.APPROACH));
-    Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
-    Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
-
-    Map<TransitionType, List<Transition>> byType = transitions.stream()
-        .collect(Collectors.groupingBy(Transition::transitionType));
-
-    return new TransitionTriple(
-        transitions.iterator().next().procedureType(),
-        byType.getOrDefault(TransitionType.ENROUTE, Collections.emptyList()),
-        byType.getOrDefault(TransitionType.COMMON, Collections.emptyList()),
-        byType.getOrDefault(TransitionType.RUNWAY, Collections.emptyList()));
   }
 }

@@ -24,6 +24,9 @@ public class ScoreSet {
     return scores;
   }
 
+  /**
+   * Builds a new scoreset between the given collection of scorable objects and points.
+   */
   public static <H extends HasTime, L extends Scorable<H, L>> ScoreSet between(List<L> scorables, List<H> pts) {
     ScoreConsumer<H, L> consumer = new ScoreConsumer<>(pts.size(), scorables.size());
     IntStream.range(0, pts.size())

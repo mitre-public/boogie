@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mitre.tdp.boogie.util.Combinatorics.pairwiseCombos;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,9 +11,6 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mitre.tdp.boogie.util.Combinatorics.pairwiseCombos;
 
 public class TestCombinatorics {
 

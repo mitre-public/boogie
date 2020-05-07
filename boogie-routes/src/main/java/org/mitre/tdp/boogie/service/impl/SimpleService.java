@@ -2,9 +2,10 @@ package org.mitre.tdp.boogie.service.impl;
 
 import java.util.Collection;
 
-import com.google.common.collect.Multimap;
 import org.mitre.tdp.boogie.Infrastructure;
 import org.mitre.tdp.boogie.service.LookupService;
+
+import com.google.common.collect.Multimap;
 
 public abstract class SimpleService<I extends Infrastructure> implements LookupService<I> {
 

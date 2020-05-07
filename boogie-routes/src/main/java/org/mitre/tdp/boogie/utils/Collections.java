@@ -9,8 +9,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Iterables;
 import org.mitre.caasd.commons.Pair;
+
+import com.google.common.collect.Iterables;
 
 public class Collections {
 

@@ -24,7 +24,7 @@ public class ResolvedSection {
   /**
    * List of resolved infrastructure elements.
    *
-   * This is the superset of all potential elements the filed section of the route string
+   * <p>This is the superset of all potential elements the filed section of the route string
    * could possible be referring to.
    */
   private List<ResolvedElement<?>> elements;

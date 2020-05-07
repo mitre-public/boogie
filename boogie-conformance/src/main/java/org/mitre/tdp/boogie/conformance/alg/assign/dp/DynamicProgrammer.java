@@ -23,63 +23,68 @@ import com.google.common.primitives.Doubles;
 /**
  * An implementation of a DynamicProgrammer for min/max optimization.
  */
-public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE extends DynamicProgrammerState<STAGE>> {
+public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State extends DynamicProgrammerState<Stage>> {
 
   private final Optimization optimization;
   // we want a consistent ordering so this is deterministic when the end states have ties
-  private final LinkedHashMap<STATE, OptimizedState> states;
-  private final NavigableSet<STAGE> stages;
+  private final LinkedHashMap<State, OptimizedState> states;
+  private final NavigableSet<Stage> stages;
 
-  public DynamicProgrammer(Collection<STAGE> stages, Collection<STATE> states, Optimization optimize) {
+  /**
+   * Creates a new dynamic programmer with the given stages, states, and optimization function.
+   */
+  public DynamicProgrammer(Collection<Stage> stages, Collection<State> states, Optimization optimize) {
     this.optimization = optimize;
     this.states = states.stream()
         .collect(Collectors.toMap(
             Function.identity(),
             OptimizedState::new,
-            (a, b) -> {throw new RuntimeException();},
+            (a, b) -> {
+              throw new RuntimeException();
+            },
             LinkedHashMap::new));
     this.stages = new TreeSet<>(stages);
   }
 
   private void initialize() {
     states.forEach((state, optimals) -> {
-      STAGE stage = stages.first();
+      Stage stage = stages.first();
       optimals.put(stage, new OptimalTransition(state.getValue(stage), state, null, stage, null));
     });
   }
 
-  public Map<STATE, OptimizedState> optimizedStates() {
+  public Map<State, OptimizedState> optimizedStates() {
     checkComputeOptimals();
     return states;
   }
 
-  public NavigableMap<STAGE, ScoredState<STATE>> optimalPath() {
+  public NavigableMap<Stage, ScoredState<State>> optimalPath() {
     return optimalPath(stages.first(), stages.last());
   }
 
   /**
    * Return the optimal path between the start and end stages.
    */
-  private NavigableMap<STAGE, ScoredState<STATE>> optimalPath(STAGE start, STAGE end) {
+  private NavigableMap<Stage, ScoredState<State>> optimalPath(Stage start, Stage end) {
     checkComputeOptimals();
     Comparator<Double> comp = optimization.comparator();
 
     // grab the optimal state at the target stage
     // note - there can be ties here, hard to say what the best option is
     // but using a linked hash map above at least makes it deterministic
-    Map.Entry<STATE, OptimizedState> endState = states.entrySet().stream()
+    Map.Entry<State, OptimizedState> endState = states.entrySet().stream()
         .min((e1, e2) -> comp.compare(
             e1.getValue().get(end).score(),
             e2.getValue().get(end).score()))
         .orElseThrow(RuntimeException::new);
 
-    NavigableMap<STAGE, ScoredState<STATE>> path = new TreeMap<>();
+    NavigableMap<Stage, ScoredState<State>> path = new TreeMap<>();
     path.put(end, new ScoredState<>(endState.getValue().get(end).score, endState.getKey()));
 
     // walk backwards through the elements to the start stage saving the
     // optimal state at each
-    STAGE cstage = end;
-    STATE cstate = endState.getKey();
+    Stage cstage = end;
+    State cstate = endState.getKey();
     while (!cstage.equals(start)) {
       OptimizedState copt = states.get(cstate);
       OptimalTransition transition = copt.get(cstage);
@@ -97,7 +102,7 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
     }
   }
 
-  DynamicProgrammer<STAGE, STATE> computeOptimalStates() {
+  DynamicProgrammer<Stage, State> computeOptimalStates() {
     initialize();
 
     stages.tailSet(stages.first(), false)
@@ -110,8 +115,8 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
    * generates the collection of possible valid transitions from that state
    * to other available states at the provided stage.
    */
-  private void optimalTransition(STAGE toStage, STATE fromState) {
-    STAGE fromStage = stages.lower(toStage);
+  private void optimalTransition(Stage toStage, State fromState) {
+    Stage fromStage = stages.lower(toStage);
     List<OptimalTransition> transitions;
     if (null == fromStage) {
       transitions = Collections.singletonList(new OptimalTransition(
@@ -126,7 +131,7 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
       // stream over the possible transitions and find the optimal one
       transitions = ts.stream()
           .map(t -> {
-            DynamicProgrammerTransition<STAGE, STATE> trans = (DynamicProgrammerTransition<STAGE, STATE>) t;
+            DynamicProgrammerTransition<Stage, State> trans = (DynamicProgrammerTransition<Stage, State>) t;
             return BigDecimal.valueOf(trans.getTransitionProbability()).equals(BigDecimal.valueOf(0.0d))
                 ? null
                 : candidateTransition(trans, fromStage, toStage, fromState);
@@ -142,7 +147,7 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
    * Builds a candidate optimal transition between fromState and toState at
    * between the fromStage and toStage.
    */
-  private OptimalTransition candidateTransition(DynamicProgrammerTransition<STAGE, STATE> transitionTo, STAGE fromStage, STAGE toStage, STATE fromState) {
+  private OptimalTransition candidateTransition(DynamicProgrammerTransition<Stage, State> transitionTo, Stage fromStage, Stage toStage, State fromState) {
     // extract the transition score from the raw transition probability
     double transitionScore = optimization.transitionScore(transitionTo.getTransitionProbability());
     double toStateValue = transitionTo.getTransition().getValue(toStage);
@@ -158,89 +163,22 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
     return new OptimalTransition(cumScore, transitionTo.getTransition(), fromState, toStage, fromStage);
   }
 
-  class OptimizedState {
-    private final STATE state;
-    private final HashMap<STAGE, OptimalTransition> scores;
-
-    OptimizedState(STATE state) {
-      this.state = state;
-      this.scores = new HashMap<>();
-    }
-
-    public STATE state() {
-      return state;
-    }
-
-    private boolean empty() {
-      return this.scores.isEmpty();
-    }
-
-    public OptimalTransition get(STAGE stage) {
-      return scores.get(stage);
-    }
-
-    public OptimizedState put(STAGE stage, OptimalTransition transition) {
-      scores.put(stage, transition);
-      return this;
-    }
-
-    public OptimizedState putIfOptimal(STAGE stage, OptimalTransition transition) {
-      OptimalTransition ctrans = scores.get(stage);
-      if (null == ctrans) {
-        scores.put(stage, transition);
-      } else {
-        // smart
-        Comparator<OptimalTransition> comp = optimization.comparator();
-        if (comp.compare(ctrans, transition) > 0) {
-          scores.put(stage, transition);
-        }
-      }
-      return this;
-    }
+  public enum Direction {
+    FORWARD,
+    BACKWARD
   }
 
-  /**
-   * Each optimal transition represents the optimal score for a given state at the listed stage.
-   * It also contains a pointer to the source state that produced the optimal score.
-   */
-  class OptimalTransition implements Comparable<OptimalTransition> {
-    private final double score;
-    private final STATE toState;
-    private final STAGE toStage;
-    private final STATE fromState;
-    private final STAGE fromStage;
+  public enum Optimization {
+    MAXIMIZE,
+    MINIMIZE;
 
-    OptimalTransition(double s, STATE tstate, STATE fstate, STAGE tostage, STAGE fromstage) {
-      this.score = s;
-      this.toState = tstate;
-      this.fromState = fstate;
-      this.toStage = tostage;
-      this.fromStage = fromstage;
+    public double transitionScore(double raw) {
+      Preconditions.checkArgument(raw <= 1.0 && raw >= 0.0, "Score must be in the interval [0,1]: " + raw);
+      return raw;
     }
 
-    public double score() {
-      return score;
-    }
-
-    public STATE toState() {
-      return toState;
-    }
-
-    public STATE fromState() {
-      return fromState;
-    }
-
-    public STAGE toStage() {
-      return toStage;
-    }
-
-    public STAGE fromStage() {
-      return fromStage;
-    }
-
-    @Override
-    public int compareTo(OptimalTransition transition) {
-      return Double.compare(score, transition.score);
+    public <T extends Comparable<? super T>> Comparator<T> comparator() {
+      return this.equals(MAXIMIZE) ? Comparator.reverseOrder() : Comparator.naturalOrder();
     }
   }
 
@@ -267,22 +205,89 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
     }
   }
 
-  public enum Direction {
-    FORWARD,
-    BACKWARD
-  }
+  class OptimizedState {
+    private final State state;
+    private final HashMap<Stage, OptimalTransition> scores;
 
-  public enum Optimization {
-    MAXIMIZE,
-    MINIMIZE;
-
-    public double transitionScore(double raw) {
-      Preconditions.checkArgument(raw <= 1.0 && raw >= 0.0, "Score must be in the interval [0,1]: " + raw);
-      return raw;
+    OptimizedState(State state) {
+      this.state = state;
+      this.scores = new HashMap<>();
     }
 
-    public <T extends Comparable<? super T>> Comparator<T> comparator() {
-      return this.equals(MAXIMIZE) ? Comparator.reverseOrder() : Comparator.naturalOrder();
+    public State state() {
+      return state;
+    }
+
+    private boolean empty() {
+      return this.scores.isEmpty();
+    }
+
+    public OptimalTransition get(Stage stage) {
+      return scores.get(stage);
+    }
+
+    public OptimizedState put(Stage stage, OptimalTransition transition) {
+      scores.put(stage, transition);
+      return this;
+    }
+
+    public OptimizedState putIfOptimal(Stage stage, OptimalTransition transition) {
+      OptimalTransition ctrans = scores.get(stage);
+      if (null == ctrans) {
+        scores.put(stage, transition);
+      } else {
+        // smart
+        Comparator<OptimalTransition> comp = optimization.comparator();
+        if (comp.compare(ctrans, transition) > 0) {
+          scores.put(stage, transition);
+        }
+      }
+      return this;
+    }
+  }
+
+  /**
+   * Each optimal transition represents the optimal score for a given state at the listed stage.
+   * It also contains a pointer to the source state that produced the optimal score.
+   */
+  class OptimalTransition implements Comparable<OptimalTransition> {
+    private final double score;
+    private final State toState;
+    private final Stage toStage;
+    private final State fromState;
+    private final Stage fromStage;
+
+    OptimalTransition(double s, State tstate, State fstate, Stage tostage, Stage fromstage) {
+      this.score = s;
+      this.toState = tstate;
+      this.fromState = fstate;
+      this.toStage = tostage;
+      this.fromStage = fromstage;
+    }
+
+    public double score() {
+      return score;
+    }
+
+    public State toState() {
+      return toState;
+    }
+
+    public State fromState() {
+      return fromState;
+    }
+
+    public Stage toStage() {
+      return toStage;
+    }
+
+    public Stage fromStage() {
+      return fromStage;
+    }
+
+    @Override
+    public int compareTo(OptimalTransition transition) {
+      return Double.compare(score, transition.score);
     }
   }
 }

@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,9 +10,6 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.utils.Iterators;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 public class TestIterators {

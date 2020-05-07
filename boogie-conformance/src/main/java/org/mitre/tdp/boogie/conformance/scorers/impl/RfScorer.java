@@ -54,8 +54,6 @@ class RfScorer implements OffTrackScorer {
     double pointTrueCourse = point.trueCourse().orElseThrow(supplier("Point Course"));
     double pointMagCourse = magneticVariation.trueToMagnetic(pointTrueCourse);
 
-
-
     return Distance.ofNauticalMiles(0.0);
   }
 }

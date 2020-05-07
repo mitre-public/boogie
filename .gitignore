@@ -16,19 +16,20 @@ REDUCE
 COMBINE
 *.jar
 .project
-node_modules
-Play*
-play*
 *.crc
 .clover/
 dependency-reduced-pom.xml
 .nrepl-port
 .gorilla-port
 *.pyc
-sandbox-files
 .editorconfig
 archetype.properties
 goal.txt
 _SUCCESS
-*LocalRunner.java*
-*MikeLocalRunner.java*
+logs
+*/docker/dist
+ ### Gradle ###
+.gradle
+**/build/
+ # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle/wrapper/gradle-wrapper.jar

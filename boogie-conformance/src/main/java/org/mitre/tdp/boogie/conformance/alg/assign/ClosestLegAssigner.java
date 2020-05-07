@@ -7,10 +7,13 @@ import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 
 /**
- * A simple {@link LegAssigner} which assigns the
+ * A simple {@link LegAssigner} which assigns the point to the closes available leg.
  */
 public interface ClosestLegAssigner extends LegAssigner {
 
+  /**
+   * Returns the {@link MetricTree} structure containing the legs to assign the procedure to.
+   */
   MetricTree<LatLong, ConsecutiveLegs> legIndex();
 
   @Override

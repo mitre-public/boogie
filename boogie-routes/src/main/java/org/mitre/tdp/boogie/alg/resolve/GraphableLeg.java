@@ -11,8 +11,8 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
  * This class represents a graph node as a {@link SectionSplit} as extracted from the top level route
  * string, a top level resolved infrastructure element associated with that split {@link ResolvedElement}
  * and a leg indicating both what the fix is as well as an indication of how to fly to it.
- * <p>
- * e.g. For airways the expanded legs are {@link LegType#TF} while for ..FIX.. elements the leg type is
+ *
+ * <p>e.g. For airways the expanded legs are {@link LegType#TF} while for ..FIX.. elements the leg type is
  * indicated as {@link LegType#IF} while for procedures they are as declared in the procedure definition.
  */
 public class GraphableLeg {

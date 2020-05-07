@@ -49,6 +49,9 @@ public interface LegScorer extends Scorer<ConformablePoint, ConsecutiveLegs> {
     return Distance.ofNauticalMiles(100.0);
   }
 
+  /**
+   * Returns the endpoint distance adjusted score between the wrapped legs and the provided legs.
+   */
   default double endpointDistanceScore(ConsecutiveLegs consecutiveLegs) {
     Optional<Fix> thisOptFix = Optional.ofNullable(scorerLeg().current().pathTerminator());
     Optional<Fix> thatOptFix = Optional.ofNullable(consecutiveLegs.current().pathTerminator());

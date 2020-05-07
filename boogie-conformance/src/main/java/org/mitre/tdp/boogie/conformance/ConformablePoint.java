@@ -10,8 +10,9 @@ import org.mitre.tdp.boogie.LegType;
  * The top level interface for points which we can evaluate conformance against across the
  * various {@link LegType}s.
  *
- * Not all features are required to be populated to measure conformance to any particular
- * type of leg, but in the absence of their presence
+ * <p>Not all features are required to be populated to measure conformance to any particular
+ * type of leg, but all conformable leg types will check for the existence of their required
+ * fields.
  */
 public interface ConformablePoint extends HasPosition, HasTime {
   /**

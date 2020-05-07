@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.fn.Partitioner;
 /**
  * Splits a collection of {@link ConformablePoint}s into navigable subsets base on:
  *
- * 1) The {@link LegAssigner} which assigns each point to the best possible candidate leg
+ * <p>1) The {@link LegAssigner} which assigns each point to the best possible candidate leg.
  * 2) The {@link ConformanceEvaluator} which evaluates the conformance of the aircraft to its' assigned legs.
  */
 public interface ConformanceSplitter {
@@ -27,10 +27,11 @@ public interface ConformanceSplitter {
   ConformanceEvaluator conformanceEvaluator();
 
   /**
-   *
+   * Generates a list of lists splitting conforming/non-conforming sections of points.
    */
   default List<List<ConformablePoint>> splits(List<? extends ConformablePoint> points) {
-    return points.stream().collect(Partitioner.listByPredicate(this::conforming));
+    return points.stream()
+        .collect(Partitioner.listByPredicate(this::conforming));
   }
 
   default boolean conforming(ConformablePoint point) {
@@ -38,6 +39,9 @@ public interface ConformanceSplitter {
     return conformanceEvaluator().conforming(point, consecutiveLegs);
   }
 
+  /**
+   * Creates a new conformance splitter based on the given leg assigner and conformance evaluator.
+   */
   static ConformanceSplitter with(LegAssigner assigner, ConformanceEvaluator evaluator) {
     return new ConformanceSplitter() {
       @Override
