@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.NavigableMap;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
  * This is an interface for {@link ConformanceEvaluator}s we don't want to have to run multiple times

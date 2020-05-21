@@ -1,10 +1,8 @@
 package org.mitre.tdp.boogie.conformance.alg.assemble;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.mitre.tdp.boogie.Infrastructure;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.Leg;
 
 /**
  * Converts a collection of infrastructure elements into a collection of {@link ConsecutiveLegs}.
@@ -12,5 +10,8 @@ import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 @FunctionalInterface
 public interface ConsecutiveLegAssembler {
 
-  List<ConsecutiveLegs> assemble(Collection<Infrastructure> infrastructure);
+  /**
+   * Assembles a collection of consecutive legs from the input infrastructure data.
+   */
+  List<? extends ConsecutiveLegs> assemble(List<? extends Leg> legs, boolean biDirectional);
 }

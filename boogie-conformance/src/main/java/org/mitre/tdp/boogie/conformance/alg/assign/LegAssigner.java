@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
  * A {@link LegAssigner} takes a conformable point and returns a {@link ConsecutiveLegs} representing

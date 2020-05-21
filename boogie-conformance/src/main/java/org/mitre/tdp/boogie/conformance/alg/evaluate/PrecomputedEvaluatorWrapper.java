@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.NavigableMap;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
 
@@ -32,7 +32,7 @@ public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
   /**
    * Wraps the given {@link PrecomputedEvaluator} as a {@link ConformanceEvaluator} for use in conformance estimation.
    */
-  public PrecomputedEvaluatorWrapper wrapWithContext(
+  public PrecomputedEvaluatorWrapper wrapAndPrecompute(
       PrecomputedEvaluator evaluator,
       List<Pair<ConformablePoint, ConsecutiveLegs>> pairs) {
 

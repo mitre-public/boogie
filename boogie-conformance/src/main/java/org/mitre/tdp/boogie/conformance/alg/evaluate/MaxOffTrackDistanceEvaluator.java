@@ -3,9 +3,9 @@ package org.mitre.tdp.boogie.conformance.alg.evaluate;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.Distance;
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assign.LegAssigner;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
  * The max off track distance evaluator considers an aircraft to be non-conforming when it is outside

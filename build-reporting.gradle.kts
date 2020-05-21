@@ -1,0 +1,77 @@
+subprojects {
+    apply(plugin = "java-library")
+    apply(plugin = "jacoco")
+}
+
+
+
+buildscript {
+    repositories {
+        //use our proxied Gradle Plugin Portal (https://plugins.gradle.org/) to find this plugin
+        maven(url = "https://dali.mitre.org/nexus/content/repositories/proxy-gradle-plugin-portal/")
+    }
+    dependencies {
+        val sonarqubePluginVersion = "2.7.1"//matches caasd-sonar version
+        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion")
+    }
+}
+
+val jacocoAggregateXmlReportFile = "$buildDir/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+
+/**
+ * https://docs.gradle.org/6.4-rc-1/samples/sample_jvm_multi_project_with_code_coverage.html
+ * task to gather code coverage from multiple subprojects
+ * NOTE: the `JacocoReport` tasks do *not* depend on the `test` task by default. Meaning you have to ensure
+ * that `test` (or other tasks generating code coverage) run before generating the report.
+ */
+tasks.register<JacocoReport>("codeCoverageReport") {
+
+    // If a subproject applies the 'jacoco' plugin, add its result into the aggregate report
+    subprojects {
+        val subproject = this
+        dependsOn(subproject.tasks.named("testSmall"))
+        dependsOn(subproject.tasks.named("testLarge"))
+        dependsOn(subproject.tasks.named("testGiant"))
+        dependsOn(subproject.tasks.named("testIntegration"))
+        subproject.plugins.withType<JacocoPlugin>().configureEach {
+            subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.configureEach {
+
+                var javaPlugin = subproject.convention.getPlugin(JavaPluginConvention::class.java)
+                var mainSourceSet = javaPlugin.sourceSets["main"]
+
+                sourceSets(mainSourceSet)
+                val testTask = this
+                var testSourceSet = javaPlugin.sourceSets["test"]
+                if (!testSourceSet.allJava.isEmpty) {
+                    logger.lifecycle("including ${subproject.name}: ${testTask.name} in full report")
+                    executionData(testTask)
+                } else {
+                    //logger.lifecycle("excluding ${subproject.name}: ${testTask.name} in full report")
+                }
+            }
+        }
+    }
+    reports {
+        // xml is usually used to integrate code coverage with other tools like SonarQube, Coveralls or Codecov
+        xml.isEnabled = true
+        // HTML reports can be used to see code coverage without any external tools
+        html.isEnabled = true
+    }
+}
+
+/**
+ * configure the sonarqube extension to allow us to publish code reports to caasd-sonar
+ */
+//since not in main build script, need to apply plugin via fully qualified classname, rather than plugin-id
+apply<org.sonarqube.gradle.SonarQubePlugin>()    //apply("org.sonarqube")
+configure<org.sonarqube.gradle.SonarQubeExtension> {
+    properties {
+        properties(mapOf(
+            "sonar.coverage.jacoco.xmlReportPaths" to jacocoAggregateXmlReportFile,
+            "sonar.projectKey" to "tdp",
+            "sonar.projectName" to "TDP",
+            "sonar.host.url" to "https://caasd-sonar.mitre.org/sonar",
+            "sonar.login" to "81f2f4421267bc509e0627ab0fa97e2d6a8885ad"
+        ))
+    }
+}

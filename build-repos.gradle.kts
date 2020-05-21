@@ -3,7 +3,7 @@
  *******************************/
 allprojects {
     repositories {
-        // mavenLocal() //ONLY turn this on temporarily to pull locally-build projects you've deployed to your .m2 repo which aren't yet on to dali
+        mavenLocal() //ONLY turn this on temporarily to pull locally-build projects you've deployed to your .m2 repo which aren't yet on to dali
         maven {
             name = "mitre-caasd-releases"//match repo name in ~/.m2/settings.xml
             url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-releases/")

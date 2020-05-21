@@ -43,13 +43,13 @@ public interface ApproachPredictor {
   }
 
   /**
-   * Checks that the resolved section contains elements tagged as {@link ElementType#PROCEDURE}
-   * filtering any non-procedure elements.
+   * Checks that the resolved section contains elements tagged as {@link ElementType#APPROACH}
+   * filtering any non-approach elements (i.e. you cant assign a STAR with the approach predictor).
    */
   default void checkResolvedElementTypes(ResolvedSection resolvedSection) {
     List<ResolvedElement<?>> allowedElements = filter(
         resolvedSection.elements(),
-        element -> element.type().equals(ElementType.PROCEDURE));
+        element -> element.type().equals(ElementType.APPROACH));
     resolvedSection.setElements(allowedElements);
   }
 

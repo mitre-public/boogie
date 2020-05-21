@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance;
+package org.mitre.tdp.boogie;
 
 import java.util.Optional;
 

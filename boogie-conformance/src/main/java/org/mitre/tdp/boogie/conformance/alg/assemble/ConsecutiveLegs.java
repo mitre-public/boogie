@@ -1,10 +1,10 @@
-package org.mitre.tdp.boogie.conformance.model;
+package org.mitre.tdp.boogie.conformance.alg.assemble;
 
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.Scorable;
 import org.mitre.tdp.boogie.conformance.Scorer;
 import org.mitre.tdp.boogie.conformance.scorers.impl.LegScorerFactory;
@@ -41,5 +41,19 @@ public interface ConsecutiveLegs extends Scorable<ConformablePoint, ConsecutiveL
   @Override
   default Scorer<ConformablePoint, ConsecutiveLegs> scorer() {
     return LegScorerFactory.forLegs(this);
+  }
+
+  /**
+   * Returns the source object for the ConsecutiveLegs if set via {@link #setSourceObject(Object)};
+   */
+  default Optional<Object> getSourceObject() {
+    return Optional.empty();
+  }
+
+  /**
+   * Sets the source object for the consecutive legs if configured.
+   */
+  default ConsecutiveLegs setSourceObject(Object source) {
+    return this;
   }
 }

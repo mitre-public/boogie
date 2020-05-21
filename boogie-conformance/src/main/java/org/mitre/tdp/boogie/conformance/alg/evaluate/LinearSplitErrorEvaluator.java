@@ -14,8 +14,8 @@ import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.caasd.commons.Speed;
 import org.mitre.caasd.commons.math.PiecewiseLinearSplitter;
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 import com.google.common.collect.Maps;
@@ -46,6 +46,9 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
     return Speed.of(10.0, Speed.Unit.KNOTS);
   }
 
+  /**
+   * Returns the mapping of {time, conforming?} based on the computed linear split change points.
+   */
   @Override
   default NavigableMap<Instant, Boolean> conformanceTimes(List<Pair<ConformablePoint, ConsecutiveLegs>> conformingPairs) {
     NavigableMap<Instant, Pair<Speed, Distance>> piecewiseSlopes = getPiecewiseSplits(conformingPairs);

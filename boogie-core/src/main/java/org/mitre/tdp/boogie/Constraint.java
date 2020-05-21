@@ -1,14 +1,11 @@
 package org.mitre.tdp.boogie;
 
-public interface Constraint {
+import java.util.function.Predicate;
 
-  /**
-   * The target value of the constraint.
-   */
-  Double value();
-
-  /**
-   * Returns the type of altitude constraint.
-   */
-  ConstraintBehavior behavior();
+/**
+ * Indicates a constraint at some given fix - this may be a speed or altitude constraint and may come in a variety
+ * of forms (at_or_above, at_or_below, between, etc.) depending on the type of procedure its declared on.
+ */
+@FunctionalInterface
+public interface Constraint extends Predicate<ConformablePoint> {
 }

@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.conformance.scorers.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.mitre.caasd.commons.Distance;
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 /**

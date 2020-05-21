@@ -11,8 +11,8 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
  * This is the default conformance scorer for {@link LegType#RF} legs.

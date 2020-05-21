@@ -2,10 +2,10 @@ package org.mitre.tdp.boogie.conformance.alg;
 
 import java.util.List;
 
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assign.LegAssigner;
 import org.mitre.tdp.boogie.conformance.alg.evaluate.ConformanceEvaluator;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.fn.Partitioner;
 
 /**

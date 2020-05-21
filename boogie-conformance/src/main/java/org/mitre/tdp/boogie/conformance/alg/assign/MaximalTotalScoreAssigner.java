@@ -12,11 +12,11 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.mitre.tdp.boogie.conformance.ConformablePoint;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.Scored;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.TimeBasedScoreMaximizer;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 /**
@@ -38,7 +38,7 @@ public interface MaximalTotalScoreAssigner extends PrecomputedAssigner {
    * in CTD between the points and the collection of available legs.
    */
   @Override
-  default Map<ConformablePoint, ConsecutiveLegs> assignments(Collection<ConformablePoint> allPoints, Collection<ConsecutiveLegs> allLegs) {
+  default Map<ConformablePoint, ConsecutiveLegs> assignments(Collection<? extends ConformablePoint> allPoints, Collection<? extends ConsecutiveLegs> allLegs) {
     HashMap<ConformablePoint, ConsecutiveLegs> assignments = new HashMap<>();
 
     NavigableMap<Instant, ConformablePoint> pointsByTime = allPoints.stream()

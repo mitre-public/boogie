@@ -8,8 +8,6 @@ import java.util.List;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
-import org.mitre.tdp.boogie.conformance.model.SimpleConsecutiveLegs;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 public class ConsecutiveLegFactory {
@@ -21,14 +19,14 @@ public class ConsecutiveLegFactory {
     if (legs.isEmpty()) {
       return Collections.emptyList();
     } else if (legs.size() == 1) {
-      return Collections.singletonList(new SimpleConsecutiveLegs(null, legs.get(0), null));
+      return Collections.singletonList(new LegTriple(null, legs.get(0), null));
     } else if (legs.size() == 2) {
       return Arrays.asList(
-          new SimpleConsecutiveLegs(null, legs.get(0), legs.get(1)),
-          new SimpleConsecutiveLegs(legs.get(0), legs.get(1), null));
+          new LegTriple(null, legs.get(0), legs.get(1)),
+          new LegTriple(legs.get(0), legs.get(1), null));
     } else {
       List<ConsecutiveLegs> consecutiveLegs = new ArrayList<>();
-      Iterators.triples(legs, (l1, l2, l3) -> consecutiveLegs.add(new SimpleConsecutiveLegs(l1, l2, l3)));
+      Iterators.triples(legs, (l1, l2, l3) -> consecutiveLegs.add(new LegTriple(l1, l2, l3)));
       return consecutiveLegs;
     }
   }

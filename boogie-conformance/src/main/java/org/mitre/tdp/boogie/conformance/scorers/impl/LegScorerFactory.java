@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
-import org.mitre.tdp.boogie.conformance.model.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 public class LegScorerFactory {
