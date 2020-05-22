@@ -12,9 +12,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
@@ -96,7 +98,19 @@ class TransitionTriple {
     Iterator<Pair<Leg, Leg>> paired = Combinatorics.cartesianProduct(terminals, initials);
     paired.forEachRemaining(pair -> {
 
-      if (pair.first().pathTerminator().identifier().equals(pair.second().pathTerminator().identifier())) {
+      // occasionally transition will end/start with non-concrete leg types (no associated fix) we can't
+      // zip these together but we can pass them through without failing
+      String firstIdentifier = Optional.ofNullable(pair.first())
+          .map(Leg::pathTerminator)
+          .map(Fix::identifier)
+          .orElse(null);
+
+      String secondIdentifier = Optional.ofNullable(pair.second())
+          .map(Leg::pathTerminator)
+          .map(Fix::identifier)
+          .orElse(null);
+
+      if (firstIdentifier != null && firstIdentifier.equals(secondIdentifier)) {
         graph.addEdge(pair.first(), pair.second());
       }
     });
