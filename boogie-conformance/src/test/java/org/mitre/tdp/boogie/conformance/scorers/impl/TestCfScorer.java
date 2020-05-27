@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
@@ -117,7 +117,7 @@ public class TestCfScorer {
     when(navaid.magneticVariation()).thenReturn(var);
 
     Leg CF = mock(Leg.class);
-    when(CF.type()).thenReturn(LegType.CF);
+    when(CF.type()).thenReturn(PathTerm.CF);
     when(CF.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
     when(CF.outboundMagneticCourse()).thenReturn(Optional.of(199.4));
     when(CF.theta()).thenReturn(Optional.of(13.7));

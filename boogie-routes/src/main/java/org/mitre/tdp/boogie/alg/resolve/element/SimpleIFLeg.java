@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.mitre.tdp.boogie.Constraint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
 
 /**
@@ -45,8 +45,8 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
-  public LegType type() {
-    return LegType.IF;
+  public PathTerm type() {
+    return PathTerm.IF;
   }
 
   @Override

@@ -42,6 +42,6 @@ public interface Transition extends Infrastructure {
    * Returns the collection of all concrete leg types.
    */
   default List<? extends Leg> concreteLegs() {
-    return legs().stream().filter(leg -> LegType.CONCRETETYPES.test(leg.type())).collect(Collectors.toList());
+    return legs().stream().filter(leg -> PathTerm.CONCRETETYPES.test(leg.type())).collect(Collectors.toList());
   }
 }

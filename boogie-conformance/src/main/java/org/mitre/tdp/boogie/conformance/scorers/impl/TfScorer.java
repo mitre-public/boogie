@@ -10,12 +10,12 @@ import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
- * This is the default conformance evaluator for {@link LegType#TF} legs.
+ * This is the default conformance evaluator for {@link PathTerm#TF} legs.
  */
 class TfScorer implements OffTrackScorer {
 

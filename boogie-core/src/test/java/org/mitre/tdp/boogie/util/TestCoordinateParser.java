@@ -4,7 +4,7 @@ package org.mitre.tdp.boogie.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.util.CoordinateParser.convertDegrees;
+import static org.mitre.tdp.boogie.util.CoordinateParser.convertToDegrees;
 import static org.mitre.tdp.boogie.util.CoordinateParser.parse;
 import static org.mitre.tdp.boogie.util.CoordinateParser.reformatLatCoordinate;
 import static org.mitre.tdp.boogie.util.CoordinateParser.reformatLonCoordinate;
@@ -40,21 +40,21 @@ public class TestCoordinateParser {
 
   @Test
   public void testParseDecimalDegrees() {
-    assertTrue(Math.abs(convertDegrees("273932.9118W") + 76.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("273932.9118E") - 76.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("155193.5075N") - 43.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("155193.5075S") + 43.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("273932.9118W") + 76.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("273932.9118E") - 76.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("155193.5075N") - 43.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("155193.5075S") + 43.0) < 1.0);
   }
 
   @Test
   public void testParseDegreesMinutesSeconds() {
-    assertTrue(Math.abs(convertDegrees("107-28-00.1E") - 107.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("107-28-00.1W") + 107.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("107-28-00.01W") + 107.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("107-28-00.001W") + 107.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("107-28-00.1W  ") + 107.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("36-12-00.0N") - 36.0) < 1.0);
-    assertTrue(Math.abs(convertDegrees("36-12-00.0S") + 36.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("107-28-00.1E") - 107.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("107-28-00.1W") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("107-28-00.01W") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("107-28-00.001W") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("107-28-00.1W  ") + 107.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("36-12-00.0N") - 36.0) < 1.0);
+    assertTrue(Math.abs(convertToDegrees("36-12-00.0S") + 36.0) < 1.0);
   }
 
   @Test

@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.alg.resolve;
 import java.util.Objects;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
@@ -12,8 +12,8 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
  * string, a top level resolved infrastructure element associated with that split {@link ResolvedElement}
  * and a leg indicating both what the fix is as well as an indication of how to fly to it.
  *
- * <p>e.g. For airways the expanded legs are {@link LegType#TF} while for ..FIX.. elements the leg type is
- * indicated as {@link LegType#IF} while for procedures they are as declared in the procedure definition.
+ * <p>e.g. For airways the expanded legs are {@link PathTerm#TF} while for ..FIX.. elements the leg type is
+ * indicated as {@link PathTerm#IF} while for procedures they are as declared in the procedure definition.
  */
 public class GraphableLeg {
   /**

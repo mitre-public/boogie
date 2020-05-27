@@ -7,15 +7,15 @@ import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simp
 
 import java.util.function.Function;
 
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.LegType;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 /**
- * This is the default conformance scorer for {@link LegType#CF} legs.
+ * This is the default conformance scorer for {@link PathTerm#CF} legs.
  */
 public class CfScorer implements LegScorer {
 
@@ -41,7 +41,13 @@ public class CfScorer implements LegScorer {
 
     // convert the true course to the point to a magnetic one for comparison against the boundary/fix radials
     MagneticVariation localVariation = navaid.magneticVariation();
-    double pointCourse = localVariation.trueToMagnetic(that.trueCourse().orElseThrow(supplier("Point Course")));
-    return wfn.apply(abs(angleDifference(pointCourse, courseToFix)));
+
+    if (localVariation == null) {
+      throw new RuntimeException("No magvar for navaid: " + navaid);
+    }
+
+    double trueCourse = that.trueCourse().orElseThrow(supplier("Point Course"));
+    double magneticCourse = localVariation.trueToMagnetic(trueCourse);
+    return wfn.apply(abs(angleDifference(magneticCourse, courseToFix)));
   }
 }

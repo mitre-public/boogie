@@ -1,0 +1,21 @@
+package org.mitre.tdp.boogie.v18.field;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.FieldSpecParseException;
+import org.mitre.tdp.boogie.v18.spec.field.RecordType;
+
+public class TestRecordType {
+
+  @Test
+  public void testParseGoodRecordType() {
+    assertEquals(RecordType.T, RecordType.SPEC.parse("T"));
+  }
+
+  @Test
+  public void testThrowsParseExceptionOnBadRecordType() {
+    assertThrows(FieldSpecParseException.class, () -> RecordType.SPEC.parse("A"));
+  }
+}

@@ -37,9 +37,9 @@ public interface Leg {
   Optional<? extends Fix> centerFix();
 
   /**
-   * The {@link LegType} of the leg. It indicates how the leg is to be flown.
+   * The {@link PathTerm} of the leg. It indicates how the leg is to be flown.
    */
-  LegType type();
+  PathTerm type();
 
   /**
    * The sequence number of the leg. This represents the position of the leg in the

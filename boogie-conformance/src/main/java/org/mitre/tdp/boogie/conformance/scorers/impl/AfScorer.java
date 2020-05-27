@@ -9,7 +9,7 @@ import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simp
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.ConformablePoint;
@@ -17,14 +17,14 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 /**
- * This is the default conformance scorer for {@link LegType#AF} legs.
+ * This is the default conformance scorer for {@link PathTerm#AF} legs.
  */
 class AfScorer implements LegScorer {
 
   private final ConsecutiveLegs legs;
 
   AfScorer(ConsecutiveLegs legs) {
-    checkArgument(legs.current().type().equals(LegType.AF), "Incorrect to leg in AF leg scorer.");
+    checkArgument(legs.current().type().equals(PathTerm.AF), "Incorrect to leg in AF leg scorer.");
     this.legs = legs;
   }
 

@@ -8,13 +8,13 @@ import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simp
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 
 /**
- * This is the default conformance scorer for {@link LegType#DF} legs.
+ * This is the default conformance scorer for {@link PathTerm#DF} legs.
  */
 class DfIfScorer implements LegScorer {
 

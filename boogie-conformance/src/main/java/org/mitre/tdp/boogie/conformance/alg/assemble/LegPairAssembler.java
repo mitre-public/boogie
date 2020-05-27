@@ -29,7 +29,7 @@ public interface LegPairAssembler extends ConsecutiveLegAssembler {
    */
   @Override
   default List<LegPair> assemble(List<? extends Leg> legs, boolean biDirectional) {
-    if (legs.size() < 2) {
+    if (legs.stream().filter(this::includeLeg).count() < 2) {
       return Collections.emptyList();
     }
 

@@ -8,14 +8,14 @@ import java.util.Optional;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
- * This is the default conformance scorer for {@link LegType#RF} legs.
+ * This is the default conformance scorer for {@link PathTerm#RF} legs.
  */
 class RfScorer implements OffTrackScorer {
 

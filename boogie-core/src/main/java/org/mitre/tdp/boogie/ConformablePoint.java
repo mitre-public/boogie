@@ -4,11 +4,10 @@ import java.util.Optional;
 
 import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.HasTime;
-import org.mitre.tdp.boogie.LegType;
 
 /**
  * The top level interface for points which we can evaluate conformance against across the
- * various {@link LegType}s.
+ * various {@link PathTerm}s.
  *
  * <p>Not all features are required to be populated to measure conformance to any particular
  * type of leg, but all conformable leg types will check for the existence of their required

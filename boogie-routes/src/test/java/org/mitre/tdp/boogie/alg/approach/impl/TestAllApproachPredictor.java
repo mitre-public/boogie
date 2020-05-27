@@ -51,7 +51,7 @@ public class TestAllApproachPredictor {
         concat(CONNR5.build().transitions().stream(), HOBTT2.build().transitions().stream(), I16R.build().transitions().stream()).collect(Collectors.toList()));
     predictor.configure(expander);
 
-    ResolvedSection s1 = newSection("JIMMY1", 6, singletonList(resolvedElement(ElementType.PROCEDURE)));
+    ResolvedSection s1 = newSection("JIMMY1", 6, singletonList(resolvedElement(ElementType.STAR)));
     ResolvedSection s2 = newSection("KDEN", 6, singletonList(new AirportElement(kden)));
 
     ResolvedSection section = predictor.predictCandidateApproaches(s1, s2);

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
@@ -68,7 +68,7 @@ public class TestDfIfScorer {
     when(navaid.projectOut(any(), any())).thenCallRealMethod();
 
     Leg DF = mock(Leg.class);
-    when(DF.type()).thenReturn(LegType.DF);
+    when(DF.type()).thenReturn(PathTerm.DF);
     when(DF.pathTerminator()).thenReturn(navaid);
 
     return DF;

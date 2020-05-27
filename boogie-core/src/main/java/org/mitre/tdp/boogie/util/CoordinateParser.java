@@ -41,7 +41,7 @@ public class CoordinateParser {
    * <p>Conversion will FAIL if input is decimal degrees because it will be interpreted as degree seconds.
    * The use case for this comes from parsing NFDC runway coordinates.
    */
-  public static Double convertDegrees(String s) {
+  public static Double convertToDegrees(String s) {
     s = s.trim();
     if (s.contains("-")) {
       // degrees-minutes-seconds

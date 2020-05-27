@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.ConformablePoint;
@@ -207,7 +207,7 @@ public class TestAfScorer {
     when(navaid.magneticVariation()).thenReturn(var);
 
     Leg AF = mock(Leg.class);
-    when(AF.type()).thenReturn(LegType.AF);
+    when(AF.type()).thenReturn(PathTerm.AF);
     when(AF.recommendedNavaid()).thenReturn((Optional) of(navaid));
     when(AF.outboundMagneticCourse()).thenReturn(of(98.0));
     when(AF.theta()).thenReturn(of(138.0));
