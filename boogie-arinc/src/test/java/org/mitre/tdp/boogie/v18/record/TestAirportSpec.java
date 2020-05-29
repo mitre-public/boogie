@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.v18.spec.record.AirportSpec;
 
 public class TestAirportSpec {
 
-  public static String _01GE = "SUSAP 01GEK7A        110000025N N32402800W082461600W006000375250      1800018000PR00Y NAR    WRIGHTSVILLE/THE FARM         818881902";
+  public static final String _01GE = "SUSAP 01GEK7A        110000025N N32402800W082461600W006000375250      1800018000PR00Y NAR    WRIGHTSVILLE/THE FARM         818881902";
 
   @Test
   public void testSpecMatches_01GE() {
@@ -43,7 +43,7 @@ public class TestAirportSpec {
     assertEquals(32.67444444444444d, record.getRequiredField("latitude"));
     assertEquals(-82.77111111111111d, record.getRequiredField("longitude"));
     assertEquals(-6.0d, record.getRequiredField("magneticVariation"));
-    assertEquals(375.0d, record.getRequiredField("elevation"));
+    assertEquals(375.0d, record.getRequiredField("airportElevation"));
     assertEquals(Integer.valueOf(250), record.getRequiredField("speedLimit"));
     assertFalse(record.getOptionalField("recommendedNavaid").isPresent());
     assertFalse(record.getOptionalField("recommendedNavaidIcaoRegion").isPresent());
@@ -85,7 +85,7 @@ public class TestAirportSpec {
     assertEquals(57.223955555555555d, record.getRequiredField("latitude"));
     assertEquals(-111.41893611111112d, record.getRequiredField("longitude"));
     assertEquals(14.0d, record.getRequiredField("magneticVariation"));
-    assertEquals(1048.0d, record.getRequiredField("elevation"));
+    assertEquals(1048.0d, record.getRequiredField("airportElevation"));
     assertEquals(Integer.valueOf(250), record.getRequiredField("speedLimit"));
     assertFalse(record.getOptionalField("recommendedNavaid").isPresent());
     assertFalse(record.getOptionalField("recommendedNavaidIcaoRegion").isPresent());
@@ -100,5 +100,45 @@ public class TestAirportSpec {
     assertEquals("1813", record.getRequiredField("cycle"));
   }
 
-  public static final String JFK = "SUSAP KJFKK6AJFK     110000145Y N40382374W073464329W013000013250JFK K61800018000CR00Y NAR    NEW YORK/JOHN F KENNEDY INTL";
+  public static final String KJFK = "SUSAP KJFKK6AJFK     110000145Y N40382374W073464329W013000013250JFK K61800018000CR00Y NAR    NEW YORK/JOHN F KENNEDY INTL  145992003";
+
+  @Test
+  public void testSpecMatches_KJFK() {
+    assertTrue(new AirportSpec().matchesRecord(KJFK));
+  }
+
+  @Test
+  public void testParseAirport_KJFK() {
+    ArincRecord record = ArincVersion.V18.parse(KJFK);
+    assertNotNull(record);
+
+    assertEquals(RecordType.S, record.getRequiredField("recordType"));
+    assertEquals(CustomerAreaCode.USA, record.getRequiredField("customerAreaCode"));
+    assertEquals(SectionCode.P, record.getRequiredField("sectionCode"));
+    assertEquals("KJFK", record.getRequiredField("airportIdentifier"));
+    assertEquals("K6", record.getRequiredField("icaoRegion"));
+    assertEquals("A", record.getRequiredField("subSectionCode"));
+    assertEquals("JFK", record.getRequiredField("iataDesignator"));
+    assertEquals("1", record.getRequiredField("continuationRecordNumber"));
+    assertEquals(10000.0d, record.getRequiredField("speedLimitAltitude"));
+    assertEquals(Integer.valueOf(14500), record.getRequiredField("longestRunway"));
+    assertEquals(true, record.getRequiredField("ifrCapability"));
+    assertFalse(record.getOptionalField("longestRunwaySurfaceCode").isPresent());
+    assertEquals(40.63992777777778d, record.getRequiredField("latitude"));
+    assertEquals(-73.77869166666666d, record.getRequiredField("longitude"));
+    assertEquals(-13.0d, record.getRequiredField("magneticVariation"));
+    assertEquals(13.0d, record.getRequiredField("airportElevation"));
+    assertEquals(Integer.valueOf(250), record.getRequiredField("speedLimit"));
+    assertEquals("JFK", record.getRequiredField("recommendedNavaid"));
+    assertEquals("K6", record.getRequiredField("recommendedNavaidIcaoRegion"));
+    assertEquals(18000.0d, record.getRequiredField("transitionAltitude"));
+    assertEquals(18000.0d, record.getRequiredField("transitionLevel"));
+    assertEquals(PublicMilitaryIndicator.C, record.getRequiredField("publicMilitaryIndicator"));
+    assertEquals(true, record.getRequiredField("dayTimeIndicator"));
+    assertFalse(record.getOptionalField("magneticTrueIndicator").isPresent());
+    assertEquals("NAR", record.getRequiredField("datumCode"));
+    assertEquals("NEW YORK/JOHN F KENNEDY INTL", record.getRequiredField("airportName"));
+    assertEquals(Integer.valueOf(14599), record.getRequiredField("fileRecordNumber"));
+    assertEquals("2003", record.getRequiredField("cycle"));
+  }
 }

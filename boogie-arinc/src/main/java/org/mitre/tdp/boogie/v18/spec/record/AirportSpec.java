@@ -65,7 +65,7 @@ public class AirportSpec implements RecordSpec {
         newField(new Latitude()),
         newField(new Longitude()),
         newField(new MagneticVariation()),
-        newField("elevation", new AirportHeliportElevation()),
+        newField("airportElevation", new AirportHeliportElevation()),
         newField(new SpeedLimit()),
         newField(new RecommendedNavaid()),
         newField("recommendedNavaidIcaoRegion", new IcaoRegion()),

@@ -39,13 +39,6 @@ public class Iterators {
   }
 
   /**
-   *
-   */
-  public static <T> void triples(List<T> list, TriConsumer<T, T, T> consumer) {
-
-  }
-
-  /**
    * Takes a list of elements, a predicate, and a TriConsumer and iterates
    * through the list providing to the consumer the first and last elements
    * which matched the predicate and a boolean indicating whether there were
