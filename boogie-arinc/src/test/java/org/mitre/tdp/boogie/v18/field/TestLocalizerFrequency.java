@@ -11,11 +11,11 @@ public class TestLocalizerFrequency {
 
   @Test
   public void testParseValidFrequency() {
-    assertEquals(110.3, new LocalizerFrequency().parse("11030"));
+    assertEquals(110.3, new LocalizerFrequency().parseValue("11030"));
   }
 
   @Test
   public void testParseExceptionOnInvalidFrequency() {
-    assertThrows(FieldSpecParseException.class, () -> new LocalizerFrequency().parse("110AB"));
+    assertThrows(FieldSpecParseException.class, () -> new LocalizerFrequency().parseValue("110AB"));
   }
 }

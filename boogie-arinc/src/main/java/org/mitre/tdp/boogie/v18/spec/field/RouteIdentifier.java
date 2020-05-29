@@ -1,18 +1,14 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
-import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
+import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
 @FunctionalInterface
-public interface RouteIdentifier extends FieldSpec<String> {
+public interface RouteIdentifier extends FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   default String fieldCode() {
     return "5.8";
-  }
-
-  @Override
-  default String parse(String fieldString) {
-    return fieldString;
   }
 
   static RouteIdentifier enroute() {

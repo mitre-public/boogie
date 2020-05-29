@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
 /**
@@ -8,7 +9,7 @@ import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
  *
  * e.g. K1, K7, PA, MM, EG, UT
  */
-public class IcaoRegionCode implements FreeFormString {
+public class IcaoRegion implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 2;

@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
 /**
@@ -7,7 +8,7 @@ import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
  * which the record is an element. For Airport and Heliport Approach Routes, “Route Type” includes a “primary route type,” and
  * up to two “route type qualifiers.”
  */
-public class RouteType implements FreeFormString {
+public class RouteType implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

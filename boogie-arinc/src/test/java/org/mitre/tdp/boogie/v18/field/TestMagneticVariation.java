@@ -11,16 +11,16 @@ public class TestMagneticVariation {
 
   @Test
   public void testEastValidVariationIsPositive() {
-    assertEquals(14.0, new MagneticVariation().parse("E0140"));
+    assertEquals(14.0, new MagneticVariation().parseValue("E0140"));
   }
 
   @Test
   public void testWestValidVariationIsNegative() {
-    assertEquals(-14.0, new MagneticVariation().parse("W0140"));
+    assertEquals(-14.0, new MagneticVariation().parseValue("W0140"));
   }
 
   @Test
   public void testTrueVariationThrowsParseException() {
-    assertThrows(FieldSpecParseException.class, () -> new MagneticVariation().parse("T0140"));
+    assertThrows(FieldSpecParseException.class, () -> new MagneticVariation().parseValue("T0140"));
   }
 }

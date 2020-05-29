@@ -24,7 +24,7 @@ public class BlankSpec implements FieldSpec<Void> {
   }
 
   @Override
-  public Void parse(String field) {
+  public Void parseValue(String fieldValue) {
     throw new UnsupportedOperationException("Unable to parse a string empty field.");
   }
 

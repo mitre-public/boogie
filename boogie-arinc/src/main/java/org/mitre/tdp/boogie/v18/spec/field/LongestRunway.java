@@ -20,7 +20,7 @@ public class LongestRunway implements NumericInteger {
    * The longest available runway at the airport in feet.
    */
   @Override
-  public Integer parse(String fieldString) {
-    return NumericInteger.super.parse(fieldString) * 100;
+  public Integer parseValue(String fieldValue) {
+    return NumericInteger.super.parseValue(fieldValue) * 100;
   }
 }

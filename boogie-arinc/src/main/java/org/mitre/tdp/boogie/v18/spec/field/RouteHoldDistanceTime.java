@@ -6,6 +6,7 @@ import java.time.Duration;
 
 import org.mitre.tdp.boogie.FieldSpec;
 import org.mitre.tdp.boogie.utils.ArincStrings;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * In Enroute Airways, “Route Distance From” is the distance in nautical miles from the waypoint identified in the records “Fix Ident”
@@ -13,7 +14,7 @@ import org.mitre.tdp.boogie.utils.ArincStrings;
  * track distances/excursion distances/DME distances. The actual content is dependent on the Path and Termination. For more information
  * on the content, refer to Table Three, Leg Data Fields, in Attachment 5 of this document.
  */
-public class RouteHoldDistanceTime implements FieldSpec<String> {
+public class RouteHoldDistanceTime implements FieldSpec<String>, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 4;
@@ -25,8 +26,8 @@ public class RouteHoldDistanceTime implements FieldSpec<String> {
   }
 
   @Override
-  public String parse(String fieldString) {
-    return fieldString;
+  public String parseValue(String fieldValue) {
+    return fieldValue;
   }
 
   /**

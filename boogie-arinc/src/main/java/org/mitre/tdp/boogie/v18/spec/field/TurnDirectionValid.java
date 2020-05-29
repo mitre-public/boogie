@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
 import static org.mitre.tdp.boogie.utils.ArincStrings.isBlank;
-import static org.mitre.tdp.boogie.utils.ArincStrings.toEnumValue;
+import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.FieldSpec;
 
@@ -9,11 +9,7 @@ import org.mitre.tdp.boogie.FieldSpec;
  * This field is used in conjunction with Turn direction to indicate that a turn is required prior to capturing the
  * path defined in a terminal procedure.
  */
-public enum TurnDirectionValid implements FieldSpec<TurnDirectionValid> {
-  SPEC,
-  Y,
-  N;
-
+public class TurnDirectionValid implements FieldSpec<Boolean> {
   @Override
   public int fieldLength() {
     return 1;
@@ -25,7 +21,8 @@ public enum TurnDirectionValid implements FieldSpec<TurnDirectionValid> {
   }
 
   @Override
-  public TurnDirectionValid parse(String fieldString) {
-    return isBlank.test(fieldString) ? N : toEnumValue(fieldString, TurnDirectionValid.class);
+  public Boolean parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, isBlank.test(fieldValue) || fieldValue.equalsIgnoreCase("Y"));
+    return fieldValue.equalsIgnoreCase("Y");
   }
 }

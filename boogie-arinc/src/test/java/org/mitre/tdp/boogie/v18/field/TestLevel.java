@@ -11,11 +11,11 @@ public class TestLevel {
 
   @Test
   public void testLevelSuccessOnValidString() {
-    assertEquals(Level.B, Level.SPEC.parse("B"));
+    assertEquals(Level.B, Level.SPEC.parseValue("B"));
   }
 
   @Test
   public void testThrowsExceptionWhenUnknownCode() {
-    assertThrows(FieldSpecParseException.class, () -> Level.SPEC.parse("K"));
+    assertThrows(FieldSpecParseException.class, () -> Level.SPEC.parseValue("K"));
   }
 }

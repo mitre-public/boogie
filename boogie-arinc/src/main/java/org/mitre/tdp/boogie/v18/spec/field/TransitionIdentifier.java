@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
 /**
@@ -7,7 +8,8 @@ import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
  * the terminal area and vice versa, and from the terminal area to the approach or from the runway or helipad to the
  * terminal area.
  */
-public class TransitionIdentifier implements FreeFormString {
+public class TransitionIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+
   @Override
   public int fieldLength() {
     return 5;

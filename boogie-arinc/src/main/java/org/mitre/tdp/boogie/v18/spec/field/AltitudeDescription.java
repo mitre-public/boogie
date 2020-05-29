@@ -5,14 +5,16 @@ import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 import java.util.Arrays;
 import java.util.List;
 
-import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
+import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
 /**
  * The “Altitude Description” field will designate whether a waypoint should be crossed “at,” “at or above,” “at or below” or “at or above to at
  * or below” specified altitudes. The field is also used to designate recommended altitudes and cases where two distinct altitudes are provided
  * at a single fix.
  */
-public class AltitudeDescription implements FieldSpec<String> {
+public class AltitudeDescription implements FreeFormString, FilterTrimEmptyInput<String> {
+
   @Override
   public int fieldLength() {
     return 1;
@@ -24,9 +26,9 @@ public class AltitudeDescription implements FieldSpec<String> {
   }
 
   @Override
-  public String parse(String fieldString) {
-    checkSpec(this, fieldString, allowedValues().contains(fieldString));
-    return fieldString;
+  public String parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, allowedValues().contains(fieldValue));
+    return FreeFormString.super.parseValue(fieldValue);
   }
 
   /**

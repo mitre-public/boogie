@@ -1,8 +1,9 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
-public class ApproachIdentifier implements FreeFormString {
+public class ApproachIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 6;

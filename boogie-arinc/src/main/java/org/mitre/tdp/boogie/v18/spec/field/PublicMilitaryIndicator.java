@@ -3,12 +3,13 @@ package org.mitre.tdp.boogie.v18.spec.field;
 import static org.mitre.tdp.boogie.utils.ArincStrings.toEnumValue;
 
 import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * Airports can be classified into three categories, airports open to the general public, military airports, and airport closed to the public.
  * This field permits these airports to be categorized by their use.
  */
-public enum PublicMilitaryIndicator implements FieldSpec<PublicMilitaryIndicator> {
+public enum PublicMilitaryIndicator implements FieldSpec<PublicMilitaryIndicator>, FilterTrimEmptyInput<PublicMilitaryIndicator> {
   SPEC,
   /**
    * Civil
@@ -34,7 +35,7 @@ public enum PublicMilitaryIndicator implements FieldSpec<PublicMilitaryIndicator
   }
 
   @Override
-  public PublicMilitaryIndicator parse(String fieldString) {
-    return toEnumValue(fieldString, PublicMilitaryIndicator.class);
+  public PublicMilitaryIndicator parseValue(String fieldValue) {
+    return toEnumValue(fieldValue, PublicMilitaryIndicator.class);
   }
 }

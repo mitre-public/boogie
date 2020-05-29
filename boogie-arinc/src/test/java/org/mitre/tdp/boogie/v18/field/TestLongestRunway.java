@@ -11,11 +11,11 @@ public class TestLongestRunway {
 
   @Test
   public void testParseValidLength() {
-    assertEquals(40 * 100, new LongestRunway().parse("040"));
+    assertEquals(40 * 100, new LongestRunway().parseValue("040"));
   }
 
   @Test
   public void testParseExceptionInvalidLength() {
-    assertThrows(FieldSpecParseException.class, () -> new LongestRunway().parse("04A"));
+    assertThrows(FieldSpecParseException.class, () -> new LongestRunway().parseValue("04A"));
   }
 }

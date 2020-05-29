@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
 /**
@@ -7,7 +8,7 @@ import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
  * that point (Navaid or Waypoint) on which the MSA is predicated. When used on Terminal Procedure Records incorporating an “RF” Path and
  * Termination, the field represents the point (Terminal Waypoint) which defines the center of the arc flight path.
  */
-public class CenterFix implements FreeFormString {
+public class CenterFix implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 5;

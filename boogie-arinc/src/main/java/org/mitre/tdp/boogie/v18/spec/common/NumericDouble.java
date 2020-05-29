@@ -5,10 +5,17 @@ import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.FieldSpec;
 
-public interface NumericDouble extends FieldSpec<Float> {
+public interface NumericDouble extends FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+
+  default boolean validValue(String fieldValue) {
+    return (fieldValue.startsWith("+") && isNumeric(fieldValue.substring(1)))
+        || (fieldValue.startsWith("-") && isNumeric(fieldValue.substring(1)))
+        || isNumeric(fieldValue);
+  }
+
   @Override
-  default Float parse(String fieldString) {
-    checkSpec(this, fieldString, (fieldString.startsWith("-") && isNumeric(fieldString.substring(1))) || isNumeric(fieldString));
-    return Float.parseFloat(fieldString);
+  default Double parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, validValue(fieldValue));
+    return Double.parseDouble(fieldValue);
   }
 }

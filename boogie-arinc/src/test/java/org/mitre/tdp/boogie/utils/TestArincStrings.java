@@ -58,8 +58,8 @@ public class TestArincStrings {
     }
 
     @Override
-    public Dummy parse(String fieldString) {
-      return toEnumValue(fieldString, Dummy.class);
+    public Dummy parseValue(String fieldValue) {
+      return toEnumValue(fieldValue, Dummy.class);
     }
   }
 

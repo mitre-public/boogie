@@ -11,9 +11,16 @@ import org.mitre.tdp.boogie.v18.spec.common.NumericInteger;
  * record in the sequence.
  */
 public class SequenceNumber implements NumericInteger {
+
+  private final int characters;
+
+  public SequenceNumber(int characters) {
+    this.characters = characters;
+  }
+
   @Override
   public int fieldLength() {
-    return 3;
+    return characters;
   }
 
   @Override

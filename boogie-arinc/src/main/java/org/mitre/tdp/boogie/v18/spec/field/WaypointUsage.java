@@ -23,10 +23,10 @@ public class WaypointUsage implements FieldSpec<String> {
   }
 
   @Override
-  public String parse(String fieldString) {
-    checkSpec(this, fieldString, fieldString.startsWith("R") || isBlank.test(fieldString.substring(0, 1)));
-    checkSpec(this, fieldString, allowedColumn2().contains(fieldString.substring(1, 2)));
-    return fieldString;
+  public String parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, fieldValue.startsWith("R") || isBlank.test(fieldValue.substring(0, 1)));
+    checkSpec(this, fieldValue, allowedColumn2().contains(fieldValue.substring(1, 2)));
+    return fieldValue;
   }
 
   public List<String> allowedColumn2() {

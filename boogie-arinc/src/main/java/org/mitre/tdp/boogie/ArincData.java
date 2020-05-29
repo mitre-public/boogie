@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 
 public class ArincData implements ArincRecord {
@@ -41,7 +42,7 @@ public class ArincData implements ArincRecord {
   }
 
   @Override
-  public <T> T getParsedField(ArincField<T> spec) {
+  public <T> Optional<T> getOptionalField(ArincField<T> spec) {
     String specField = getRawField(spec.fieldName());
     return spec.fieldSpec().parse(specField);
   }
@@ -55,12 +56,13 @@ public class ArincData implements ArincRecord {
     while (i < spec.recordFields().size()) {
       ArincField<?> field = spec.recordFields().get(i);
       fieldMap.put(field.fieldName(), field);
-      dataMap.put(field.fieldName(), rawRecord.substring(offset, field.fieldSpec().fieldLength()));
+      String value = rawRecord.substring(offset, offset + field.fieldSpec().fieldLength());
+      dataMap.put(field.fieldName(), value);
       i++;
       offset += field.fieldSpec().fieldLength();
     }
 
-    checkArgument(offset == spec.recordLength(), "Final offset not equals to length of record.");
+    checkArgument(offset == spec.recordLength(), "Final offset not equals to length of record. " + offset + " vs " + spec.recordLength());
     return this;
   }
 }

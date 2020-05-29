@@ -11,26 +11,26 @@ public class TestWaypointUsage {
 
   @Test
   public void testPassOnValidColumn12() {
-    assertEquals("RB", new WaypointUsage().parse("RB"));
+    assertEquals("RB", new WaypointUsage().parseValue("RB"));
   }
 
   @Test
   public void testPassOnBlankColumn1() {
-    assertEquals(" B", new WaypointUsage().parse(" B"));
+    assertEquals(" B", new WaypointUsage().parseValue(" B"));
   }
 
   @Test
   public void testPassOnBlankColumn2() {
-    assertEquals("R ", new WaypointUsage().parse("R "));
+    assertEquals("R ", new WaypointUsage().parseValue("R "));
   }
 
   @Test
   public void testParseExceptionOnNonRColumn1() {
-    assertThrows(FieldSpecParseException.class, () -> new WaypointUsage().parse("QB"));
+    assertThrows(FieldSpecParseException.class, () -> new WaypointUsage().parseValue("QB"));
   }
 
   @Test
   public void testParseExceptionOnInvalidColumn2() {
-    assertThrows(FieldSpecParseException.class, () -> new WaypointUsage().parse("RA"));
+    assertThrows(FieldSpecParseException.class, () -> new WaypointUsage().parseValue("RA"));
   }
 }

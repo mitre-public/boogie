@@ -5,13 +5,14 @@ import static org.mitre.tdp.boogie.utils.ArincStrings.toEnumValue;
 import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * The “Navaid Class” field provides information in coded format on the type of navaid, the use-able range or assigned
  * output power of the navaid, information carried on the navaid signal and collocation of navaids in both an electronic
  * and aeronautical sense. The field is made up of five columns of codes that define this information.
  */
-public class NavaidClass implements FieldSpec<String> {
+public class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {
@@ -24,13 +25,13 @@ public class NavaidClass implements FieldSpec<String> {
   }
 
   @Override
-  public String parse(String fieldString) {
-    checkSpec(this, fieldString, () -> Type1.SPEC.parse(fieldString));
-    checkSpec(this, fieldString, () -> Type2.SPEC.parse(fieldString));
-    checkSpec(this, fieldString, () -> RangePower.SPEC.parse(fieldString));
-    checkSpec(this, fieldString, () -> AdditionalInfo.SPEC.parse(fieldString));
-    checkSpec(this, fieldString, () -> Collocation.SPEC.parse(fieldString));
-    return fieldString;
+  public String parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, () -> Type1.SPEC.parse(fieldValue));
+    checkSpec(this, fieldValue, () -> Type2.SPEC.parse(fieldValue));
+    checkSpec(this, fieldValue, () -> RangePower.SPEC.parse(fieldValue));
+    checkSpec(this, fieldValue, () -> AdditionalInfo.SPEC.parse(fieldValue));
+    checkSpec(this, fieldValue, () -> Collocation.SPEC.parse(fieldValue));
+    return fieldValue;
   }
 
   public enum Type1 implements FieldSpec<Type1> {
@@ -47,8 +48,8 @@ public class NavaidClass implements FieldSpec<String> {
     }
 
     @Override
-    public Type1 parse(String fieldString) {
-      return toEnumValue(fieldString.substring(0, 1), Type1.class);
+    public Type1 parseValue(String fieldValue) {
+      return toEnumValue(fieldValue.substring(0, 1), Type1.class);
     }
   }
 
@@ -66,8 +67,8 @@ public class NavaidClass implements FieldSpec<String> {
     }
 
     @Override
-    public Type2 parse(String fieldString) {
-      return toEnumValue(fieldString.substring(1, 2), Type2.class);
+    public Type2 parseValue(String fieldValue) {
+      return toEnumValue(fieldValue.substring(1, 2), Type2.class);
     }
   }
 
@@ -85,8 +86,8 @@ public class NavaidClass implements FieldSpec<String> {
     }
 
     @Override
-    public RangePower parse(String fieldString) {
-      String subs = fieldString.substring(2, 3);
+    public RangePower parseValue(String fieldValue) {
+      String subs = fieldValue.substring(2, 3);
       return isBlank.test(subs) ? RangePower.BLANK : toEnumValue(subs, RangePower.class);
     }
   }
@@ -105,8 +106,8 @@ public class NavaidClass implements FieldSpec<String> {
     }
 
     @Override
-    public AdditionalInfo parse(String fieldString) {
-      String subs = fieldString.substring(3, 4);
+    public AdditionalInfo parseValue(String fieldValue) {
+      String subs = fieldValue.substring(3, 4);
       return isBlank.test(subs) ? AdditionalInfo.BLANK : toEnumValue(subs, AdditionalInfo.class);
     }
   }
@@ -125,8 +126,8 @@ public class NavaidClass implements FieldSpec<String> {
     }
 
     @Override
-    public Collocation parse(String fieldString) {
-      String subs = fieldString.substring(4);
+    public Collocation parseValue(String fieldValue) {
+      String subs = fieldValue.substring(4);
       return isBlank.test(subs) ? Collocation.BLANK : toEnumValue(subs, Collocation.class);
     }
   }

@@ -11,16 +11,16 @@ public class TestRunwayMagneticBearing {
 
   @Test
   public void testParseValidBearing() {
-    assertEquals(123.5f, new RunwayMagneticBearing().parse("1235"));
+    assertEquals(123.5f, new RunwayMagneticBearing().parseValue("1235"));
   }
 
   @Test
   public void testParseExceptionInvalidBearing() {
-    assertThrows(FieldSpecParseException.class, () -> new RunwayMagneticBearing().parse("123A"));
+    assertThrows(FieldSpecParseException.class, () -> new RunwayMagneticBearing().parseValue("123A"));
   }
 
   @Test
   public void testParseTrueCourseBearingException() {
-    assertThrows(FieldSpecParseException.class, () -> new RunwayMagneticBearing().parse("123T"));
+    assertThrows(FieldSpecParseException.class, () -> new RunwayMagneticBearing().parseValue("123T"));
   }
 }

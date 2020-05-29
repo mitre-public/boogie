@@ -11,11 +11,11 @@ public class TestLocalizerBearing {
 
   @Test
   public void testParseValidBearing() {
-    assertEquals(257.0, new LocalizerBearing().parse("2570"));
+    assertEquals(257.0, new LocalizerBearing().parseValue("2570"));
   }
 
   @Test
   public void testExceptionOnTrueBearing() {
-    assertThrows(FieldSpecParseException.class, () -> new LocalizerBearing().parse("347T"));
+    assertThrows(FieldSpecParseException.class, () -> new LocalizerBearing().parseValue("347T"));
   }
 }

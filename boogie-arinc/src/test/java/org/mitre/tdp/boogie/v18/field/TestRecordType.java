@@ -11,11 +11,11 @@ public class TestRecordType {
 
   @Test
   public void testParseGoodRecordType() {
-    assertEquals(RecordType.T, RecordType.SPEC.parse("T"));
+    assertEquals(RecordType.T, RecordType.SPEC.parseValue("T"));
   }
 
   @Test
   public void testThrowsParseExceptionOnBadRecordType() {
-    assertThrows(FieldSpecParseException.class, () -> RecordType.SPEC.parse("A"));
+    assertThrows(FieldSpecParseException.class, () -> RecordType.SPEC.parseValue("A"));
   }
 }

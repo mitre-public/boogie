@@ -11,11 +11,11 @@ public class TestSectionCode {
 
   @Test
   public void testValidSectionCode() {
-    assertEquals(SectionCode.A, SectionCode.SPEC.parse("A"));
+    assertEquals(SectionCode.A, SectionCode.SPEC.parseValue("A"));
   }
 
   @Test
   public void testParseExceptionOnInvalidCode() {
-    assertThrows(FieldSpecParseException.class, () -> SectionCode.SPEC.parse("Q"));
+    assertThrows(FieldSpecParseException.class, () -> SectionCode.SPEC.parseValue("Q"));
   }
 }

@@ -1,9 +1,9 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
-import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
+import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
-public enum SubSectionCode implements FieldSpec<SubSectionCode> {
-  SPEC;
+public class SubSectionCode implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {
@@ -13,10 +13,5 @@ public enum SubSectionCode implements FieldSpec<SubSectionCode> {
   @Override
   public String fieldCode() {
     return "5.5";
-  }
-
-  @Override
-  public SubSectionCode parse(String fieldString) {
-    return SubSectionCode.valueOf(fieldString);
   }
 }

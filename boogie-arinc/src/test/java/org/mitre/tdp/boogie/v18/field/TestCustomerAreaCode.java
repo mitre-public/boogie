@@ -13,16 +13,16 @@ public class TestCustomerAreaCode {
 
   @Test
   public void testParseValidCustomerAreaCode() {
-    assertEquals(CustomerAreaCode.USA, CustomerAreaCode.SPEC.parse("USA"));
+    assertEquals(CustomerAreaCode.USA, CustomerAreaCode.SPEC.parseValue("USA"));
   }
 
   @Test
   public void testThrowsParseExceptionOnBadCode() {
-    assertThrows(FieldSpecParseException.class, () -> CustomerAreaCode.SPEC.parse("NTX"));
+    assertThrows(FieldSpecParseException.class, () -> CustomerAreaCode.SPEC.parseValue("NTX"));
   }
 
   @Test
   public void testParsesAllValidCustomerAreaCodes() {
-    Arrays.stream(CustomerAreaCode.values()).filter(code -> !code.equals(CustomerAreaCode.SPEC)).forEach(code -> CustomerAreaCode.SPEC.parse(code.name()));
+    Arrays.stream(CustomerAreaCode.values()).filter(code -> !code.equals(CustomerAreaCode.SPEC)).forEach(code -> CustomerAreaCode.SPEC.parseValue(code.name()));
   }
 }

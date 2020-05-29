@@ -4,13 +4,14 @@ import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.FieldSpec;
 import org.mitre.tdp.boogie.utils.ArincStrings;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * “Outbound Magnetic Course” is the published outbound magnetic course from the waypoint identified in the record’s
  * “Fix Ident” field. In addition, this field is used for Course/Heading/Radials on SID/STAR Approach Records through
  * requirements of the Path Terminator and coding rules contained in Attachment 5 of this specification.
  */
-public class OutboundMagneticCourse implements FieldSpec<Double> {
+public class OutboundMagneticCourse implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;
@@ -22,9 +23,9 @@ public class OutboundMagneticCourse implements FieldSpec<Double> {
   }
 
   @Override
-  public Double parse(String fieldString) {
-    checkSpec(this, fieldString, !isTrueCourse(fieldString));
-    return ArincStrings.parseDoubleWithTenths(fieldString);
+  public Double parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, !isTrueCourse(fieldValue));
+    return ArincStrings.parseDoubleWithTenths(fieldValue);
   }
 
   /**

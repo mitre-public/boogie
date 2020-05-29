@@ -4,11 +4,12 @@ import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.FieldSpec;
 import org.mitre.tdp.boogie.utils.ArincStrings;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * The “Localizer Bearing” field defines the magnetic bearing of the localizer course of the ILS facility/GLS approach described in the record.
  */
-public class LocalizerBearing implements FieldSpec<Double> {
+public class LocalizerBearing implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;
@@ -20,8 +21,8 @@ public class LocalizerBearing implements FieldSpec<Double> {
   }
 
   @Override
-  public Double parse(String fieldString) {
-    checkSpec(this, fieldString, !fieldString.endsWith("T"));
-    return ArincStrings.parseDoubleWithTenths(fieldString);
+  public Double parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, !fieldValue.endsWith("T"));
+    return ArincStrings.parseDoubleWithTenths(fieldValue);
   }
 }

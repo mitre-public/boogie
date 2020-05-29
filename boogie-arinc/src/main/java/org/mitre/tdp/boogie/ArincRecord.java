@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie;
 
 
+import java.util.Optional;
+
 /**
  * An {@link ArincRecord} is an extension of a record spec which contains extracted field information
  * from a raw arinc record served via a map-like interface.
@@ -28,18 +30,27 @@ public interface ArincRecord {
   String getRawField(String fieldName);
 
   /**
-   * Type unsafe method for getting the target parsed field from the spec.
+   * Type safe method for getting the target parsed field from the spec.
    */
-  default <T> T getParsedField(String fieldName) {
-    String rawField = getRawField(fieldName);
-    ArincField<T> field = fieldForName(fieldName);
-    return field.fieldSpec().parse(rawField);
+  <T> Optional<T> getOptionalField(ArincField<T> spec);
+
+  default <T> T getRequiredField(ArincField<T> field) {
+    Optional<T> opt = getOptionalField(field);
+    return opt.orElseThrow(() -> new MissingRequiredFieldException(field.fieldName()));
   }
 
   /**
-   * Type safe method for getting the target parsed field from the spec.
+   * Type unsafe method for getting the target parsed field from the spec.
    */
-  <T> T getParsedField(ArincField<T> spec);
+  default <T> Optional<T> getOptionalField(String fieldName) {
+    ArincField<T> field = fieldForName(fieldName);
+    return getOptionalField(field);
+  }
+
+  default <T> T getRequiredField(String fieldName) {
+    Optional<T> opt = getOptionalField(fieldName);
+    return opt.orElseThrow(() -> new MissingRequiredFieldException(fieldName));
+  }
 
   /**
    * Returns the given record with the contents of the {@link #rawRecord()} parsed against the given spec.

@@ -29,9 +29,14 @@ public class MinimumAltitude implements AltitudeFlightLevel {
    * Attempts to parse the given raw string of the {@link MinimumAltitude} as a double altitude in feet.
    */
   @Override
-  public Float parse(String fieldString) {
-    checkSpec(this, fieldString, !specialAltitudeCodes().contains(fieldString));
-    return AltitudeFlightLevel.super.parse(fieldString);
+  public Double parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, !specialAltitudeCodes().contains(fieldValue));
+    return AltitudeFlightLevel.super.parseValue(fieldValue);
+  }
+
+  @Override
+  public boolean filterInput(String fieldString) {
+    return AltitudeFlightLevel.super.filterInput(fieldString) || specialAltitudeCodes().contains(fieldString);
   }
 
   /**

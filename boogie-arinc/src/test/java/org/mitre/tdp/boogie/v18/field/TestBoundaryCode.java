@@ -13,7 +13,7 @@ public class TestBoundaryCode {
 
   @Test
   public void testParseValidBoundaryCode() {
-    assertEquals(BoundaryCode.USA, BoundaryCode.SPEC.parse("U"));
+    assertEquals(BoundaryCode.USA, BoundaryCode.SPEC.parseValue("U"));
   }
 
   @Test
@@ -23,6 +23,6 @@ public class TestBoundaryCode {
 
   @Test
   public void testParsesAllValidBoundaryCodes() {
-    Arrays.stream(BoundaryCode.values()).filter(code -> !code.equals(BoundaryCode.SPEC)).forEach(code -> assertEquals(code, BoundaryCode.SPEC.parse(code.boundaryCode())));
+    Arrays.stream(BoundaryCode.values()).filter(code -> !code.equals(BoundaryCode.SPEC)).forEach(code -> assertEquals(code, BoundaryCode.SPEC.parseValue(code.boundaryCode())));
   }
 }

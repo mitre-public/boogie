@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
 
 /**
@@ -7,7 +8,7 @@ import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
  * the fix is identified. This includes Waypoint Identifiers, VHF NA V AID Identifiers, NDB NA V AID identifier,
  * Airport Identifiers, and Runway Identifiers.
  */
-public class FixIdentifier implements FreeFormString {
+public class FixIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 5;

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * An {@link ArincField} decorates an named instance of a {@link FieldSpec} within a record.
  *
@@ -21,8 +23,16 @@ public interface ArincField<T> {
   /**
    * Generates a new instance of an ARINC field with the provided field spec.
    */
-  static <T> Impl<T> newInstance(String fieldName, FieldSpec<T> fieldSpec) {
+  static <T> Impl<T> newField(String fieldName, FieldSpec<T> fieldSpec) {
+    checkArgument(!(fieldSpec instanceof Enum) || ((Enum) fieldSpec).name().equals("SPEC"), "Enum-based FieldSpecs must use reserved SPEC value for spec parsing.");
     return new Impl<>(fieldName, fieldSpec);
+  }
+
+  /**
+   * Generates a new instance of an ARINC field with the provided {@link FieldSpec#fieldName()}.
+   */
+  static <T> Impl<T> newField(FieldSpec<T> fieldSpec) {
+    return newField(fieldSpec.fieldName(), fieldSpec);
   }
 
   /**

@@ -17,16 +17,16 @@ public class TestInboundMagneticCourse {
 
   @Test
   public void testParseValidInboundMagneticCourse() {
-    assertEquals(27.6, new InboundMagneticCourse().parse("0276"));
+    assertEquals(27.6, new InboundMagneticCourse().parseValue("0276"));
   }
 
   @Test
   public void testThrowsSpecExceptionOnTrueCourse() {
-    assertThrows(FieldSpecParseException.class, () -> new InboundMagneticCourse().parse("123T"));
+    assertThrows(FieldSpecParseException.class, () -> new InboundMagneticCourse().parseValue("123T"));
   }
 
   @Test
   public void testParseValidInboundMagneticCourseNoPad() {
-    assertEquals(123.7, new InboundMagneticCourse().parse("1237"));
+    assertEquals(123.7, new InboundMagneticCourse().parseValue("1237"));
   }
 }

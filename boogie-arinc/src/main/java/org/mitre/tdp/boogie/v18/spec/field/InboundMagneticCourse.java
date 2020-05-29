@@ -4,12 +4,13 @@ import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.FieldSpec;
 import org.mitre.tdp.boogie.utils.ArincStrings;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * “Inbound Magnetic Course” is the published inbound magnetic course to the waypoint in the “Fix Ident” field of the
  * records in which it is employed.
  */
-public class InboundMagneticCourse implements FieldSpec<Double> {
+public class InboundMagneticCourse implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;
@@ -21,9 +22,9 @@ public class InboundMagneticCourse implements FieldSpec<Double> {
   }
 
   @Override
-  public Double parse(String fieldString) {
-    checkSpec(this, fieldString, !isTrueCourse(fieldString));
-    return ArincStrings.parseDoubleWithTenths(fieldString);
+  public Double parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, !isTrueCourse(fieldValue));
+    return ArincStrings.parseDoubleWithTenths(fieldValue);
   }
 
   /**

@@ -1,23 +1,75 @@
 package org.mitre.tdp.boogie.v18.spec.record;
 
+import static org.mitre.tdp.boogie.ArincField.newField;
+
+import java.util.Arrays;
 import java.util.List;
 
 import org.mitre.tdp.boogie.ArincField;
 import org.mitre.tdp.boogie.RecordSpec;
+import org.mitre.tdp.boogie.v18.spec.field.AirportHeliportIdentifier;
+import org.mitre.tdp.boogie.v18.spec.field.BlankSpec;
+import org.mitre.tdp.boogie.v18.spec.field.ContinuationRecordNumber;
+import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.v18.spec.field.Cycle;
+import org.mitre.tdp.boogie.v18.spec.field.FileRecordNumber;
+import org.mitre.tdp.boogie.v18.spec.field.FixIdentifier;
+import org.mitre.tdp.boogie.v18.spec.field.IcaoRegion;
+import org.mitre.tdp.boogie.v18.spec.field.Latitude;
+import org.mitre.tdp.boogie.v18.spec.field.Longitude;
+import org.mitre.tdp.boogie.v18.spec.field.MagneticVariation;
+import org.mitre.tdp.boogie.v18.spec.field.RecordType;
+import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
+import org.mitre.tdp.boogie.v18.spec.field.SubSectionCode;
+import org.mitre.tdp.boogie.v18.spec.field.WaypointDescription;
+import org.mitre.tdp.boogie.v18.spec.field.WaypointNameDescription;
+import org.mitre.tdp.boogie.v18.spec.field.WaypointUsage;
 
+/**
+ * Specification for Terminal/Enroute waypoint records in ARINC.
+ */
 public class WaypointSpec implements RecordSpec {
+
   @Override
   public int recordLength() {
-    return 0;
+    return 132;
   }
 
   @Override
   public List<ArincField<?>> recordFields() {
-    return null;
+    return Arrays.asList(
+        newField(RecordType.SPEC),
+        newField(CustomerAreaCode.SPEC),
+        newField(SectionCode.SPEC),
+        newField(new SubSectionCode()),
+        newField("airportIdentifier", new AirportHeliportIdentifier()),
+        newField("airportIcaoRegion", new IcaoRegion()),
+        newField("airportSubsectionCode", new SubSectionCode()),
+        newField(new FixIdentifier()),
+        newField("blank1", new BlankSpec(1)),
+        newField(new IcaoRegion()),
+        newField(new ContinuationRecordNumber()),
+        newField("blank2", new BlankSpec(4)),
+        newField(new WaypointDescription()),
+        newField(new WaypointUsage()),
+        newField("blank3", new BlankSpec(1)),
+        newField(new Latitude()),
+        newField(new Longitude()),
+        newField("blank4", new BlankSpec(23)),
+        newField(new MagneticVariation()),
+        newField("waypointElevationXX", new BlankSpec(5)),
+        newField("datumCode", new BlankSpec(3)),
+        newField("blank5", new BlankSpec(8)),
+        newField("nameIndicator", new BlankSpec(3)), // 5.196
+        newField(new WaypointNameDescription()),
+        newField(new FileRecordNumber()),
+        newField(new Cycle()));
   }
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return false;
+    String s = arincRecord.substring(4, 6);
+    return s.equals("EA") || s.equals("PC");
+
   }
 }

@@ -15,6 +15,13 @@ public interface ArincParser {
   ArincSpec arincSpec();
 
   /**
+   * Returns true if the given record matches a known {@link RecordSpec} within the provided {@link #arincSpec()}.
+   */
+  default boolean matchesKnownRecordSpec(String arincRecord) {
+    return arincSpec().recordSpecs().stream().anyMatch(rspec -> rspec.matchesRecord(arincRecord));
+  }
+
+  /**
    * Parses the input raw record against the given {@link #arincSpec()}.
    */
   default ArincRecord parse(String rawRecord) {

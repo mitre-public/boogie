@@ -12,18 +12,18 @@ public class TestAltitudeDescription {
   @Test
   public void testThrowsExceptionWhenValueNotAllowed() {
     AltitudeDescription spec = new AltitudeDescription();
-    assertThrows(FieldSpecParseException.class, () -> spec.parse("_"));
+    assertThrows(FieldSpecParseException.class, () -> spec.parseValue("_"));
   }
 
   @Test
   public void testParsesNormallyWhenValueAllowed() {
     AltitudeDescription spec = new AltitudeDescription();
-    assertEquals("+", spec.parse("+"));
+    assertEquals("+", spec.parseValue("+"));
   }
 
   @Test
   public void testAllowsAllAllowedValues() {
     AltitudeDescription spec = new AltitudeDescription();
-    spec.allowedValues().forEach(value -> assertEquals(value, spec.parse(value)));
+    spec.allowedValues().forEach(value -> assertEquals(value, spec.parseValue(value)));
   }
 }

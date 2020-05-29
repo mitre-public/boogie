@@ -7,17 +7,17 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.FieldSpecParseException;
-import org.mitre.tdp.boogie.v18.spec.field.CycleDate;
+import org.mitre.tdp.boogie.v18.spec.field.Cycle;
 
-public class TestCycleDate {
+public class TestCycle {
 
   @Test
   public void testParseAsStartDate() {
-    assertEquals(Instant.parse("2019-01-03T00:00:00.00Z"), new CycleDate().asStartDate("1901"));
+    assertEquals(Instant.parse("2019-01-03T00:00:00.00Z"), new Cycle().asStartDate("1901"));
   }
 
   @Test
   public void testParseExceptionNonNumericCycle() {
-    assertThrows(FieldSpecParseException.class, () -> new CycleDate().parse("A001"));
+    assertThrows(FieldSpecParseException.class, () -> new Cycle().parseValue("A001"));
   }
 }

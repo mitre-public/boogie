@@ -11,16 +11,16 @@ public class TestRnp {
 
   @Test
   public void testParseValidRnp() {
-    assertEquals(10.0f, new Rnp().parse("100"));
+    assertEquals(10.0f, new Rnp().parseValue("100"));
   }
 
   @Test
   public void testParseValidRnpWithNegativeExponent() {
-    assertEquals(0.001, new Rnp().parse("013"));
+    assertEquals(0.001, new Rnp().parseValue("013"));
   }
 
   @Test
   public void testParseExceptionInvalidValue() {
-    assertThrows(FieldSpecParseException.class, () -> new Rnp().parse("A01"));
+    assertThrows(FieldSpecParseException.class, () -> new Rnp().parseValue("A01"));
   }
 }

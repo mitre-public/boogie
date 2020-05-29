@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.v18.spec.field;
 import static org.mitre.tdp.boogie.utils.ArincStrings.toEnumValue;
 
 import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * The “Magnetic/True Indicator” field is used to indicate if the “Course From” and “Course To” fields of the Cruise Table record and the “Sector Bearing”
@@ -10,7 +11,7 @@ import org.mitre.tdp.boogie.FieldSpec;
  * that airport are included in the data base with a reference to either Magnetic North or True North. The field is blank in Airport Record when the data
  * base contains a mix of magnetic and true information for the airport.
  */
-public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator> {
+public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator>, FilterTrimEmptyInput<MagneticTrueIndicator> {
   SPEC,
   M,
   T;
@@ -26,7 +27,8 @@ public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator> {
   }
 
   @Override
-  public MagneticTrueIndicator parse(String fieldString) {
-    return toEnumValue(fieldString, MagneticTrueIndicator.class);
+  public MagneticTrueIndicator parseValue(String fieldValue) {
+    return toEnumValue(fieldValue, MagneticTrueIndicator.class);
   }
+
 }

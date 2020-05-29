@@ -11,11 +11,11 @@ public class TestTurnDirection {
 
   @Test
   public void testTurnDirectionValidValue() {
-    assertEquals(TurnDirection.R, TurnDirection.SPEC.parse("R"));
+    assertEquals(TurnDirection.R, TurnDirection.SPEC.parseValue("R"));
   }
 
   @Test
   public void testInvalidTurnDirectionThrowsException() {
-    assertThrows(FieldSpecParseException.class, () -> TurnDirection.SPEC.parse("D"));
+    assertThrows(FieldSpecParseException.class, () -> TurnDirection.SPEC.parseValue("D"));
   }
 }

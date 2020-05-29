@@ -3,11 +3,12 @@ package org.mitre.tdp.boogie.v18.spec.field;
 import static org.mitre.tdp.boogie.utils.ArincStrings.toEnumValue;
 
 import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * The spec for an instance of the customer area code spec.
  */
-public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode> {
+public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode>, FilterTrimEmptyInput<CustomerAreaCode> {
   SPEC(null),
   /**
    * United States of America.
@@ -67,8 +68,8 @@ public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode> {
   }
 
   @Override
-  public CustomerAreaCode parse(String fieldString) {
-    return toEnumValue(fieldString, CustomerAreaCode.class);
+  public CustomerAreaCode parseValue(String fieldValue) {
+    return toEnumValue(fieldValue, CustomerAreaCode.class);
   }
 
   public String boundaryCode() {

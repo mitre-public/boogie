@@ -10,16 +10,16 @@ public class TestLongitude {
 
   @Test
   public void testParseValidLongitude() {
-    assertEquals(104.7522055, new Longitude().parse("E104450794"), 0.000001);
+    assertEquals(104.7522055, new Longitude().parseValue("E104450794"), 0.000001);
   }
 
   @Test
   public void testParseValidSouthernLongitude() {
-    assertEquals(-104.7522055, new Longitude().parse("W104450794"), 0.000001);
+    assertEquals(-104.7522055, new Longitude().parseValue("W104450794"), 0.000001);
   }
 
   @Test
   public void testExceptionOnInvalidLongitude() {
-    assertThrows(NumberFormatException.class, () -> new Longitude().parse("WA04450794"));
+    assertThrows(NumberFormatException.class, () -> new Longitude().parseValue("WA04450794"));
   }
 }

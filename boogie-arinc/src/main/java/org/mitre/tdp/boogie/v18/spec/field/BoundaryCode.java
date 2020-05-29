@@ -4,8 +4,9 @@ import java.util.Arrays;
 
 import org.mitre.tdp.boogie.FieldSpec;
 import org.mitre.tdp.boogie.FieldSpecParseException;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
-public enum BoundaryCode implements FieldSpec<BoundaryCode> {
+public enum BoundaryCode implements FieldSpec<BoundaryCode>, FilterTrimEmptyInput<BoundaryCode> {
   /**
    * Intended to use to parse other boundary codes.
    *
@@ -74,11 +75,11 @@ public enum BoundaryCode implements FieldSpec<BoundaryCode> {
   }
 
   @Override
-  public BoundaryCode parse(String fieldString) {
+  public BoundaryCode parseValue(String fieldValue) {
     return Arrays.stream(BoundaryCode.values())
         .filter(boundaryCode -> !boundaryCode.equals(SPEC))
-        .filter(boundaryCode -> boundaryCode.boundaryCode.equals(fieldString))
+        .filter(boundaryCode -> boundaryCode.boundaryCode.equals(fieldValue))
         .findFirst()
-        .orElseThrow(() -> new FieldSpecParseException(this, fieldString));
+        .orElseThrow(() -> new FieldSpecParseException(this, fieldValue));
   }
 }

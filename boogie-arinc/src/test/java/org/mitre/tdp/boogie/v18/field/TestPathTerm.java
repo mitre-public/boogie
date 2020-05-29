@@ -11,11 +11,11 @@ public class TestPathTerm {
 
   @Test
   public void testParseGoodPathTerminator() {
-    assertEquals(PathTerm.AF, new org.mitre.tdp.boogie.v18.spec.field.PathTerm().parse("AF"));
+    assertEquals(PathTerm.AF, new org.mitre.tdp.boogie.v18.spec.field.PathTerm().parseValue("AF"));
   }
 
   @Test
   public void testParseExceptionOnBadPathTerminator() {
-    assertThrows(FieldSpecParseException.class, () -> new org.mitre.tdp.boogie.v18.spec.field.PathTerm().parse("RA"));
+    assertThrows(FieldSpecParseException.class, () -> new org.mitre.tdp.boogie.v18.spec.field.PathTerm().parseValue("RA"));
   }
 }

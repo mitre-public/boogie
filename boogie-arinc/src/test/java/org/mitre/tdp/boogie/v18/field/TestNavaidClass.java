@@ -11,46 +11,46 @@ public class TestNavaidClass {
 
   @Test
   public void testRangePowerParsesBlank() {
-    assertEquals(NavaidClass.RangePower.BLANK, NavaidClass.RangePower.SPEC.parse("AA BB"));
+    assertEquals(NavaidClass.RangePower.BLANK, NavaidClass.RangePower.SPEC.parseValue("AA BB"));
   }
 
   @Test
   public void testAdditionalInfoParsesBlank() {
-    assertEquals(NavaidClass.AdditionalInfo.BLANK, NavaidClass.AdditionalInfo.SPEC.parse("AAA B"));
+    assertEquals(NavaidClass.AdditionalInfo.BLANK, NavaidClass.AdditionalInfo.SPEC.parseValue("AAA B"));
   }
 
   @Test
   public void testCollocationParsesBlank() {
-    assertEquals(NavaidClass.Collocation.BLANK, NavaidClass.Collocation.SPEC.parse("AAAB "));
+    assertEquals(NavaidClass.Collocation.BLANK, NavaidClass.Collocation.SPEC.parseValue("AAAB "));
   }
 
   @Test
   public void testNavaidClassParsesAppropriatelyWithValidCodes() {
-    assertEquals("VDTDN", new NavaidClass().parse("VDTDN"));
+    assertEquals("VDTDN", new NavaidClass().parseValue("VDTDN"));
   }
 
   @Test
   public void testNavaidClassThrowsExceptionOnBadType1() {
-    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parse("ADTDN"));
+    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parseValue("ADTDN"));
   }
 
   @Test
   public void testNavaidClassThrowsExceptionOnBadType2() {
-    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parse("VATDN"));
+    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parseValue("VATDN"));
   }
 
   @Test
   public void testNavaidClassThrowsExceptionOnBadRangePower() {
-    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parse("VDADN"));
+    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parseValue("VDADN"));
   }
 
   @Test
   public void testNavaidClassThrowsExceptionOnBadAdditionalInfo() {
-    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parse("VDTQN"));
+    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parseValue("VDTQN"));
   }
 
   @Test
   public void testNavaidClassThrowsExceptionOnBadCollocation() {
-    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parse("VDTDC"));
+    assertThrows(FieldSpecParseException.class, () -> new NavaidClass().parseValue("VDTDC"));
   }
 }

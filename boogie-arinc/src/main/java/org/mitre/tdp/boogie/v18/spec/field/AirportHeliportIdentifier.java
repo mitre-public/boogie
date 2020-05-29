@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
 import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
  * The content of this field is derived from official government sources. It will be the four character
@@ -8,7 +9,7 @@ import org.mitre.tdp.boogie.v18.spec.common.FreeFormString;
  * four character Domestic Identifier when published and no ICAO Location Identifier is available for the
  * airport or heliport
  */
-public class AirportHeliportIdentifier implements FreeFormString {
+public class AirportHeliportIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

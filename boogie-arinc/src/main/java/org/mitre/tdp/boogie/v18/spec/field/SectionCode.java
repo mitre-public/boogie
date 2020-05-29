@@ -3,8 +3,9 @@ package org.mitre.tdp.boogie.v18.spec.field;
 import static org.mitre.tdp.boogie.utils.ArincStrings.toEnumValue;
 
 import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
-public enum SectionCode implements FieldSpec<SectionCode> {
+public enum SectionCode implements FieldSpec<SectionCode>, FilterTrimEmptyInput<SectionCode> {
   SPEC,
   /**
    * Grid MORA.
@@ -50,7 +51,7 @@ public enum SectionCode implements FieldSpec<SectionCode> {
   }
 
   @Override
-  public SectionCode parse(String fieldString) {
-    return toEnumValue(fieldString, SectionCode.class);
+  public SectionCode parseValue(String fieldValue) {
+    return toEnumValue(fieldValue, SectionCode.class);
   }
 }

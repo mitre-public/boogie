@@ -8,11 +8,11 @@ import org.mitre.tdp.boogie.v18.spec.common.NumericDouble;
 public class AirportHeliportElevation implements NumericDouble {
   @Override
   public int fieldLength() {
-    return 0;
+    return 5;
   }
 
   @Override
   public String fieldCode() {
-    return null;
+    return "5.55";
   }
 }
