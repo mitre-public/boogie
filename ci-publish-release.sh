@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script releases the new stable CDA artifacts. You need to provide the maven credentials:
 #
-# ./ci-prepare-release.sh -PmavenUser=username -PmavenPassword=pass
+# ./ci-publish-release.sh -PmavenUser=username -PmavenPassword=pass
 #
 # Tthis script will:
 # 1. Ensure you're on a clean working copy of git
