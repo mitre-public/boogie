@@ -13,7 +13,7 @@ import org.mitre.caasd.commons.TimeWindow;
  * n, m,      gnm,      hnm,       dgnm,      dhnm
  */
 public enum GeomagneticCoefficients {
-  WMM2010(new String[]{"    2010.0            WMM-2010        11/20/2009",
+  WMM2010(new String[] {"    2010.0            WMM-2010        11/20/2009",
       "  1  0  -29496.6       0.0       11.6        0.0",
       "  1  1   -1586.3    4944.4       16.5      -25.9",
       "  2  0   -2396.6       0.0      -12.1        0.0",
@@ -107,7 +107,7 @@ public enum GeomagneticCoefficients {
       new TimeWindow(
           Instant.parse("2010-01-01T00:00:00.00Z"),
           Instant.parse("2015-01-01T00:00:00.00Z"))),
-  WMM2015(new String[]{"    2015.0            WMM-2015        12/15/2014",
+  WMM2015(new String[] {"    2015.0            WMM-2015        12/15/2014",
       "  1  0  -29438.5       0.0       10.7        0.0",
       "  1  1   -1501.1    4796.2       17.9      -26.8",
       "  2  0   -2445.3       0.0       -8.6        0.0",
@@ -210,15 +210,15 @@ public enum GeomagneticCoefficients {
     this.effective_interval = effItv;
   }
 
+  public static GeomagneticCoefficients coefficientsAtTime(Instant tau) {
+    return Arrays.stream(values()).filter(v -> v.effectiveInterval().contains(tau)).findFirst().orElseThrow(RuntimeException::new);
+  }
+
   public String[] rawCoefficients() {
     return rawCoeffs;
   }
 
   public TimeWindow effectiveInterval() {
     return effective_interval;
-  }
-
-  public static GeomagneticCoefficients coefficientsAtTime(Instant tau) {
-    return Arrays.stream(values()).filter(v -> v.effectiveInterval().contains(tau)).findFirst().orElseThrow(RuntimeException::new);
   }
 }

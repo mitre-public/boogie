@@ -1,5 +1,13 @@
 package org.mitre.tdp.boogie.alg.graph;
 
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.transition;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -16,15 +24,39 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.test.CONNR5;
 import org.mitre.tdp.boogie.test.HOBTT2;
 
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.TF;
-import static org.mitre.tdp.boogie.MockObjects.transition;
-
 public class TestProcedureGraph {
+
+  public static ProcedureGraph nominalGraph() {
+    Leg l1_1 = IF("AAA", 0.0, 0.0);
+    Leg l1_2 = TF("BBB", 0.0, 0.1);
+    Transition ab = transition("ALPHA1", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+
+    Leg l2_1 = IF("BBB", 0.0, 0.2);
+    Leg l2_2 = TF("CCC", 0.0, 0.4);
+    Transition bc = transition("ALPHA1", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
+
+    Leg l3_1 = IF("CCC", 0.0, 0.4);
+    Leg l3_2 = TF("DDD", 0.0, 0.5);
+    Transition cd = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+
+    Leg l4_1 = IF("CCC", 0.0, 0.4);
+    Leg l4_2 = TF("EEE", 0.0, 0.5);
+    Transition ce = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+
+    return ProcedureGraph.from(Arrays.asList(ab, bc, cd, ce));
+  }
+
+  public static ProcedureGraph splitGraph() {
+    Leg l3_1 = IF("CCC", 0.0, 0.4);
+    Leg l3_2 = TF("DDD", 0.0, 0.5);
+    Transition cd = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+
+    Leg l4_1 = IF("EEE", 0.0, 0.4);
+    Leg l4_2 = TF("FFF", 0.0, 0.5);
+    Transition ef = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+
+    return ProcedureGraph.from(Arrays.asList(cd, ef));
+  }
 
   private boolean matchesSequence(List<Leg> legs, List<Pair<String, LegType>> path) {
     return IntStream.range(0, legs.size()).filter(i -> {
@@ -50,26 +82,6 @@ public class TestProcedureGraph {
 
     assertTrue(graph.edgeSet().isEmpty());
     assertEquals(1, graph.vertexSet().size());
-  }
-
-  public static ProcedureGraph nominalGraph() {
-    Leg l1_1 = IF("AAA", 0.0, 0.0);
-    Leg l1_2 = TF("BBB", 0.0, 0.1);
-    Transition ab = transition("ALPHA1", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
-
-    Leg l2_1 = IF("BBB", 0.0, 0.2);
-    Leg l2_2 = TF("CCC", 0.0, 0.4);
-    Transition bc = transition("ALPHA1", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
-
-    Leg l3_1 = IF("CCC", 0.0, 0.4);
-    Leg l3_2 = TF("DDD", 0.0, 0.5);
-    Transition cd = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
-
-    Leg l4_1 = IF("CCC", 0.0, 0.4);
-    Leg l4_2 = TF("EEE", 0.0, 0.5);
-    Transition ce = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
-
-    return ProcedureGraph.from(Arrays.asList(ab, bc, cd, ce));
   }
 
   @Test
@@ -128,18 +140,6 @@ public class TestProcedureGraph {
         getLeg(pg, "AAA").pathTerminator());
 
     assertEquals(0, paths.size());
-  }
-
-  public static ProcedureGraph splitGraph() {
-    Leg l3_1 = IF("CCC", 0.0, 0.4);
-    Leg l3_2 = TF("DDD", 0.0, 0.5);
-    Transition cd = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
-
-    Leg l4_1 = IF("EEE", 0.0, 0.4);
-    Leg l4_2 = TF("FFF", 0.0, 0.5);
-    Transition ef = transition("ALPHA1", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
-
-    return ProcedureGraph.from(Arrays.asList(cd, ef));
   }
 
   @Test

@@ -1,5 +1,10 @@
 package org.mitre.tdp.boogie.test;
 
+import static org.mitre.tdp.boogie.test.MockObjects.FM;
+import static org.mitre.tdp.boogie.test.MockObjects.IF;
+import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.test.MockObjects.transition;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -12,11 +17,6 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-import static org.mitre.tdp.boogie.test.MockObjects.FM;
-import static org.mitre.tdp.boogie.test.MockObjects.IF;
-import static org.mitre.tdp.boogie.test.MockObjects.TF;
-import static org.mitre.tdp.boogie.test.MockObjects.transition;
-
 /**
  * A mocked copy of the HOBTT2 Procedure at KATL from cycle 1913 for use in testing.
  */
@@ -26,19 +26,6 @@ public class HOBTT2 {
 
   private HOBTT2(Map<String, Transition> transitions) {
     this.transitions = transitions;
-  }
-
-  public Leg get(String fname, String tname) {
-    Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
-  }
-
-  public Transition get(String tname) {
-    return this.transitions.get(tname);
-  }
-
-  public Collection<Transition> transitions() {
-    return transitions.values();
   }
 
   public static HOBTT2 build() {
@@ -191,5 +178,18 @@ public class HOBTT2 {
     Leg YURII2 = FM("YURII", 33.53713055555556, -84.03544166666667);
     return transition("RW28", "HOBTT2", "KATL", TransitionType.RUNWAY, ProcedureType.STAR,
         Arrays.asList(ENSLL, EAGYL, SHURT, FOGER, HITTT, YURII, YURII2));
+  }
+
+  public Leg get(String fname, String tname) {
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+  }
+
+  public Transition get(String tname) {
+    return this.transitions.get(tname);
+  }
+
+  public Collection<Transition> transitions() {
+    return transitions.values();
   }
 }

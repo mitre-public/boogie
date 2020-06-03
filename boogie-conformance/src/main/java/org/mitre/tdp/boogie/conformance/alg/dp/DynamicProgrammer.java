@@ -158,6 +158,48 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
     return new OptimalTransition(cumScore, transitionTo.getTransition(), fromState, toStage, fromStage);
   }
 
+  public enum Direction {
+    FORWARD,
+    BACKWARD
+  }
+
+  public enum Optimization {
+    MAXIMIZE,
+    MINIMIZE;
+
+    public double transitionScore(double raw) {
+      Preconditions.checkArgument(raw <= 1.0 && raw >= 0.0, "Score must be in the interval [0,1]: " + raw);
+      return raw;
+    }
+
+    public <T extends Comparable<? super T>> Comparator<T> comparator() {
+      return this.equals(MAXIMIZE) ? Comparator.reverseOrder() : Comparator.naturalOrder();
+    }
+  }
+
+  public static class ScoredState<STATE> implements Comparable<ScoredState> {
+    private final double score;
+    private final STATE state;
+
+    ScoredState(double sc, STATE st) {
+      this.score = sc;
+      this.state = st;
+    }
+
+    public double score() {
+      return score;
+    }
+
+    public STATE state() {
+      return state;
+    }
+
+    @Override
+    public int compareTo(ScoredState s) {
+      return Doubles.compare(score, s.score());
+    }
+  }
+
   class OptimizedState {
     private final STATE state;
     private final HashMap<STAGE, OptimalTransition> scores;
@@ -241,48 +283,6 @@ public class DynamicProgrammer<STAGE extends Comparable<? super STAGE>, STATE ex
     @Override
     public int compareTo(OptimalTransition transition) {
       return Double.compare(score, transition.score);
-    }
-  }
-
-  public static class ScoredState<STATE> implements Comparable<ScoredState> {
-    private final double score;
-    private final STATE state;
-
-    ScoredState(double sc, STATE st) {
-      this.score = sc;
-      this.state = st;
-    }
-
-    public double score() {
-      return score;
-    }
-
-    public STATE state() {
-      return state;
-    }
-
-    @Override
-    public int compareTo(ScoredState s) {
-      return Doubles.compare(score, s.score());
-    }
-  }
-
-  public enum Direction {
-    FORWARD,
-    BACKWARD
-  }
-
-  public enum Optimization {
-    MAXIMIZE,
-    MINIMIZE;
-
-    public double transitionScore(double raw) {
-      Preconditions.checkArgument(raw <= 1.0 && raw >= 0.0, "Score must be in the interval [0,1]: " + raw);
-      return raw;
-    }
-
-    public <T extends Comparable<? super T>> Comparator<T> comparator() {
-      return this.equals(MAXIMIZE) ? Comparator.reverseOrder() : Comparator.naturalOrder();
     }
   }
 }

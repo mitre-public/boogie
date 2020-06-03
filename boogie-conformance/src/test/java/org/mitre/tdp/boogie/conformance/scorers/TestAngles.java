@@ -1,11 +1,11 @@
 package org.mitre.tdp.boogie.conformance.scorers;
 
-import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.TurnDirection;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.conformance.scorers.Angles.between;
+
+import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.TurnDirection;
 
 public class TestAngles {
 

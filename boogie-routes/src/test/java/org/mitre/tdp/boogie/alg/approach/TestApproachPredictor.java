@@ -1,5 +1,11 @@
 package org.mitre.tdp.boogie.alg.approach;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -8,12 +14,6 @@ import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TestApproachPredictor {
 

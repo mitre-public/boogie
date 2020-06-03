@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.mitre.caasd.commons.Pair;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.mitre.caasd.commons.Pair;
 
 public class Combinatorics {
 
@@ -28,7 +29,7 @@ public class Combinatorics {
     // commons math 3 method - scrape out for now - BOO - SPARK
     // iter = CombinatoricsUtils.combinationsIterator(collList.size(), 2);
     if (collList.size() == 2) {
-      iter = new SingletonIterator(new int[]{0, 1});
+      iter = new SingletonIterator(new int[] {0, 1});
     } else if (collList.size() > 2) {
       iter = new LexicographicIterator(collList.size(), 2);
     } else {

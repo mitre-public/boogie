@@ -1,8 +1,8 @@
 package org.mitre.tdp.boogie.models;
 
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-
 import static org.mitre.tdp.boogie.utils.Nulls.nonNullEquals;
+
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 
 public class LinkedLegs {
   /**

@@ -6,8 +6,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-import com.google.common.base.Preconditions;
 import org.mitre.tdp.boogie.fn.TriConsumer;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Collection of methods for executing common iteration patterns.

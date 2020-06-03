@@ -1,12 +1,12 @@
 package org.mitre.tdp.boogie;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Arrays;
 import java.util.function.Predicate;
 
 import com.google.common.base.Preconditions;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Aka Path Terminator.
@@ -314,6 +314,14 @@ public enum LegType {
     this.valid = v;
   }
 
+  public static boolean typesAreConcrete(LegType... types) {
+    return Arrays.stream(types).allMatch(CONCRETETYPES);
+  }
+
+  public static boolean typesAreArcs(LegType... types) {
+    return Arrays.stream(types).allMatch(ARCTYPES);
+  }
+
   public boolean isConcrete() {
     return typesAreConcrete(this);
   }
@@ -325,13 +333,5 @@ public enum LegType {
   public boolean valid(Leg leg) {
     Preconditions.checkArgument(leg.type().equals(this));
     return valid.test(leg);
-  }
-
-  public static boolean typesAreConcrete(LegType... types) {
-    return Arrays.stream(types).allMatch(CONCRETETYPES);
-  }
-
-  public static boolean typesAreArcs(LegType... types) {
-    return Arrays.stream(types).allMatch(ARCTYPES);
   }
 }

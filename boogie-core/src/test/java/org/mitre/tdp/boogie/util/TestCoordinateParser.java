@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.util;
 
 
-import org.junit.jupiter.api.Test;
-import org.mitre.caasd.commons.LatLong;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,7 +9,13 @@ import static org.mitre.tdp.boogie.util.CoordinateParser.parse;
 import static org.mitre.tdp.boogie.util.CoordinateParser.reformatLatCoordinate;
 import static org.mitre.tdp.boogie.util.CoordinateParser.reformatLonCoordinate;
 
+import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.LatLong;
+
 public class TestCoordinateParser {
+
+  private static String lat = "30453010N";
+  private static String lon = "125453010E";
 
   @Test
   public void testParse() {
@@ -54,17 +57,14 @@ public class TestCoordinateParser {
     assertTrue(Math.abs(convertDegrees("36-12-00.0S") + 36.0) < 1.0);
   }
 
-  private static String lat = "30453010N";
-  private static String lon = "125453010E";
-
   @Test
-  public void testReformatLatCoordinate(){
+  public void testReformatLatCoordinate() {
     assertEquals("30-45-30.10N", reformatLatCoordinate(lat));
     assertThrows(IllegalArgumentException.class, () -> reformatLatCoordinate(lon));
   }
 
   @Test
-  public void testReformatLonCoordinate(){
+  public void testReformatLonCoordinate() {
     assertEquals("125-45-30.10E", reformatLonCoordinate(lon));
     assertThrows(IllegalArgumentException.class, () -> reformatLonCoordinate(lat));
   }

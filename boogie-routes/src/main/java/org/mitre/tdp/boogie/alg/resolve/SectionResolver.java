@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,8 +12,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.graph.LegGraph;
@@ -27,7 +27,8 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.service.LookupService;
 
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 /**
  * The SectionResolver serves the purpose of taking the sections output by the
@@ -41,6 +42,10 @@ import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
  */
 @FunctionalInterface
 public interface SectionResolver {
+
+  static SectionResolver with(RouteExpander routes) {
+    return () -> routes;
+  }
 
   /**
    * The route inflation object containing the configured infrastructure elements
@@ -176,9 +181,5 @@ public interface SectionResolver {
   default ResolvedElement<?> latLon(String section) {
     boolean match = section.matches(SectionHeuristics.latLon().pattern());
     return match ? LatLonElement.from(section) : null;
-  }
-
-  static SectionResolver with(RouteExpander routes) {
-    return () -> routes;
   }
 }

@@ -42,6 +42,26 @@ class TransitionTriple {
     this.approach = a;
   }
 
+  /**
+   * Takes a collection of transitions all associated with the same procedure and splits them by
+   * {@link TransitionType} for later use.
+   */
+  public static TransitionTriple from(Collection<? extends Transition> transitions) {
+    Preconditions.checkArgument(noneMatch(transitions, Transition::transitionType, TransitionType.APPROACH));
+    Preconditions.checkArgument(noneMatch(transitions, Transition::procedureType, ProcedureType.APPROACH));
+    Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
+    Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
+
+    Map<TransitionType, List<Transition>> byType = transitions.stream()
+        .collect(Collectors.groupingBy(Transition::transitionType));
+
+    return new TransitionTriple(
+        transitions.iterator().next().procedureType(),
+        byType.getOrDefault(TransitionType.ENROUTE, Collections.emptyList()),
+        byType.getOrDefault(TransitionType.COMMON, Collections.emptyList()),
+        byType.getOrDefault(TransitionType.RUNWAY, Collections.emptyList()));
+  }
+
   public ProcedureType procedureType() {
     return procedureType;
   }
@@ -104,25 +124,5 @@ class TransitionTriple {
     if (checkMatchCount(listOrdered(), c -> !c.isEmpty())) {
       fastslow(listOrdered(), c -> !c.isEmpty(), (l1, l2, skip) -> zipAndInsert(l1, l2, graph));
     }
-  }
-
-  /**
-   * Takes a collection of transitions all associated with the same procedure and splits them by
-   * {@link TransitionType} for later use.
-   */
-  public static TransitionTriple from(Collection<? extends Transition> transitions) {
-    Preconditions.checkArgument(noneMatch(transitions, Transition::transitionType, TransitionType.APPROACH));
-    Preconditions.checkArgument(noneMatch(transitions, Transition::procedureType, ProcedureType.APPROACH));
-    Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
-    Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
-
-    Map<TransitionType, List<Transition>> byType = transitions.stream()
-        .collect(Collectors.groupingBy(Transition::transitionType));
-
-    return new TransitionTriple(
-        transitions.iterator().next().procedureType(),
-        byType.getOrDefault(TransitionType.ENROUTE, Collections.emptyList()),
-        byType.getOrDefault(TransitionType.COMMON, Collections.emptyList()),
-        byType.getOrDefault(TransitionType.RUNWAY, Collections.emptyList()));
   }
 }

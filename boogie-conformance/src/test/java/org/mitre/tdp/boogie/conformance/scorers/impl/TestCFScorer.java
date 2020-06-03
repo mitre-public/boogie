@@ -1,5 +1,12 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
+import static java.util.Optional.empty;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -10,13 +17,6 @@ import org.mitre.tdp.boogie.LegType;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.scorers.ConsecutiveLegs;
-
-import static java.util.Optional.empty;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TestCFScorer {
 

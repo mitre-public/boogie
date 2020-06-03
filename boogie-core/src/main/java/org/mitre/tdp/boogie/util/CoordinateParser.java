@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie.util;
 
-import com.google.common.base.Preconditions;
 import org.mitre.caasd.commons.LatLong;
+
+import com.google.common.base.Preconditions;
 
 public class CoordinateParser {
 
@@ -32,12 +33,12 @@ public class CoordinateParser {
 
   /**
    * Convert coordinates of the form "DD-MM-SS.XXXd" or "SS.XXX" where
-   *    DD are degrees
-   *    MM are minutes
-   *    SS.XXX are seconds and decimal seconds
-   *    d is a direction (i.e., N, S, E, or W)
+   * DD are degrees
+   * MM are minutes
+   * SS.XXX are seconds and decimal seconds
+   * d is a direction (i.e., N, S, E, or W)
    *
-   * Conversion will FAIL if input is decimal degrees because it will be interpreted as degree seconds.
+   * <p>Conversion will FAIL if input is decimal degrees because it will be interpreted as degree seconds.
    * The use case for this comes from parsing NFDC runway coordinates.
    */
   public static Double convertDegrees(String s) {

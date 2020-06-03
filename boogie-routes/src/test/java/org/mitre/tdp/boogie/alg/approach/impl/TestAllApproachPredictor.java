@@ -1,5 +1,13 @@
 package org.mitre.tdp.boogie.alg.approach.impl;
 
+import static com.google.common.collect.Streams.concat;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mitre.tdp.boogie.test.Airports.KDEN;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,14 +22,6 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.test.CONNR5;
 import org.mitre.tdp.boogie.test.HOBTT2;
 import org.mitre.tdp.boogie.test.I16R;
-
-import static com.google.common.collect.Streams.concat;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mitre.tdp.boogie.test.Airports.KDEN;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TestAllApproachPredictor {
 

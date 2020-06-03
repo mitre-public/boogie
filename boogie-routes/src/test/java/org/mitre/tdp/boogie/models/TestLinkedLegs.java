@@ -1,15 +1,15 @@
 package org.mitre.tdp.boogie.models;
 
-import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mitre.tdp.boogie.MockObjects.CA;
 import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
+import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 public class TestLinkedLegs {
 

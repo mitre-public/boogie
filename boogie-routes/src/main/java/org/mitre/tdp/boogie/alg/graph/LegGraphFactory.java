@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.alg.graph;
 
+import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,13 +10,11 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.utils.Iterators;
-
-import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
 public class LegGraphFactory {
 

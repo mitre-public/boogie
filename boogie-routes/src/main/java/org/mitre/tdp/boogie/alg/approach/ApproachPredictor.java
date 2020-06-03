@@ -1,13 +1,13 @@
 package org.mitre.tdp.boogie.alg.approach;
 
+import static org.mitre.tdp.boogie.utils.Collections.filter;
+
 import java.util.List;
 
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
-
-import static org.mitre.tdp.boogie.utils.Collections.filter;
 
 /**
  * The job of an approach predictor is to, given the context of the last and second to last sections

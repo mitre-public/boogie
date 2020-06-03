@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.alg.approach.impl;
 
+import static org.mitre.tdp.boogie.utils.Collections.filter;
+import static org.mitre.tdp.boogie.utils.Collections.transform;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +18,6 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-
-import static org.mitre.tdp.boogie.utils.Collections.filter;
-import static org.mitre.tdp.boogie.utils.Collections.transform;
 
 /**
  * "Predicts" all of the available approach procedures at the airport.

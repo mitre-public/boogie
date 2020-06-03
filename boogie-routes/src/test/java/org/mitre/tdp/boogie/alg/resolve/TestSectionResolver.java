@@ -1,5 +1,19 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.airport;
+import static org.mitre.tdp.boogie.MockObjects.airway;
+import static org.mitre.tdp.boogie.MockObjects.fix;
+import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
+import static org.mitre.tdp.boogie.MockObjects.transition;
+import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -20,21 +34,9 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.airport;
-import static org.mitre.tdp.boogie.MockObjects.airway;
-import static org.mitre.tdp.boogie.MockObjects.fix;
-import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
-import static org.mitre.tdp.boogie.MockObjects.transition;
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
-import static org.mockito.Mockito.when;
-
 public class TestSectionResolver {
+
+  private String route0 = "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/0054";
 
   private List<SectionSplit> splits(String name) {
     return SectionSplitter.newInstance().splits(name);
@@ -152,8 +154,6 @@ public class TestSectionResolver {
     LinkedLegs legs = element.legs().get(0);
     assertNotEquals(LatLong.of(0.0, 0.0), legs.source().leg().pathTerminator().latLong());
   }
-
-  private String route0 = "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/0054";
 
   private RouteExpander expanderForRoute0() {
     Leg ifSherl = IF("SHERL", 0.0, 0.0);

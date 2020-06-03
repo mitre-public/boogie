@@ -1,5 +1,14 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
+import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,16 +33,36 @@ import org.mitre.tdp.boogie.alg.graph.TestProcedureGraph;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.utils.Iterators;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.TF;
-import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class TestElements {
+
+  private static Airway singleAirway() {
+    Leg l1 = TF("YYT", 0.0, 0.0);
+    Leg l2 = TF("YYZ", 0.0, 1.0);
+    Leg l3 = TF("ZZT", 0.0, 2.0);
+    Leg l4 = TF("ZZY", 0.0, 3.0);
+
+    Airway airway = mock(Airway.class);
+
+    String airwayId = "J121";
+
+    when(airway.legs()).thenReturn((List) Arrays.asList(l1, l2, l3, l4));
+    when(airway.identifier()).thenReturn(airwayId);
+    return airway;
+  }
+
+  private static ProcedureGraph singleTransitionProcedureGraph() {
+    Leg l1 = IF("ZZV", 0.0, 0.0);
+    Leg l2 = TF("ZZY", 0.0, 1.0);
+    Leg l3 = TF("ZZZ", 0.0, 2.0);
+
+    Transition transition = mock(Transition.class);
+    when(transition.transitionType()).thenReturn(TransitionType.COMMON);
+    when(transition.legs()).thenReturn((List) Arrays.asList(l1, l2, l3));
+    when(transition.procedure()).thenReturn("GNDLF1");
+    when(transition.procedureType()).thenReturn(ProcedureType.STAR);
+
+    return ProcedureGraph.from(Collections.singletonList(transition));
+  }
 
   @Test
   public void testAirportElement() {
@@ -60,21 +89,6 @@ public class TestElements {
 
     assertEquals(linked.source().leg().type(), LegType.IF);
     assertEquals(linked.source().leg().type(), LegType.IF);
-  }
-
-  private static Airway singleAirway() {
-    Leg l1 = TF("YYT", 0.0, 0.0);
-    Leg l2 = TF("YYZ", 0.0, 1.0);
-    Leg l3 = TF("ZZT", 0.0, 2.0);
-    Leg l4 = TF("ZZY", 0.0, 3.0);
-
-    Airway airway = mock(Airway.class);
-
-    String airwayId = "J121";
-
-    when(airway.legs()).thenReturn((List) Arrays.asList(l1, l2, l3, l4));
-    when(airway.identifier()).thenReturn(airwayId);
-    return airway;
   }
 
   @Test
@@ -189,20 +203,6 @@ public class TestElements {
 
     assertEquals(linked.source().leg().type(), LegType.IF);
     assertEquals(linked.source().leg().type(), LegType.IF);
-  }
-
-  private static ProcedureGraph singleTransitionProcedureGraph() {
-    Leg l1 = IF("ZZV", 0.0, 0.0);
-    Leg l2 = TF("ZZY", 0.0, 1.0);
-    Leg l3 = TF("ZZZ", 0.0, 2.0);
-
-    Transition transition = mock(Transition.class);
-    when(transition.transitionType()).thenReturn(TransitionType.COMMON);
-    when(transition.legs()).thenReturn((List) Arrays.asList(l1, l2, l3));
-    when(transition.procedure()).thenReturn("GNDLF1");
-    when(transition.procedureType()).thenReturn(ProcedureType.STAR);
-
-    return ProcedureGraph.from(Collections.singletonList(transition));
   }
 
   @Test
