@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie;
 
+/**
+ * Interface for classes which can operate as a container for leg information relevant to conformance.
+ */
 public interface LegType {
 
   /**

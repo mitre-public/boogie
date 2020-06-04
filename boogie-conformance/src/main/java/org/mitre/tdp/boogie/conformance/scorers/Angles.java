@@ -25,11 +25,4 @@ public class Angles {
     }
     return direction.equals(TurnDirection.EITHER);
   }
-
-  /**
-   * Between for tangential angles.
-   */
-  public static boolean between2(double a1, double b1, double b2, TurnDirection direction) {
-    return false;
-  }
 }

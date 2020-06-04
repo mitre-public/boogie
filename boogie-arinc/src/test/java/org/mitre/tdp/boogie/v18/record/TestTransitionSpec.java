@@ -56,6 +56,8 @@ public class TestTransitionSpec {
     assertEquals(6.0d, record.getRequiredField("rho"));
     assertFalse(record.getOptionalField("outboundMagneticCourse").isPresent());
     assertFalse(record.getOptionalField("routeHoldDistanceTime").isPresent());
+    assertEquals("D", record.getRequiredField("recommendedNavaidSectionCode"));
+    assertFalse(record.getOptionalField("recommendedNavaidSubSectionCode").isPresent());
     assertFalse(record.getOptionalField("altitudeDescription").isPresent());
     assertEquals(3000.0d, record.getRequiredField("minAltitude1"));
     assertFalse(record.getOptionalField("minAltitude2").isPresent());

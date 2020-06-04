@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 
 @FunctionalInterface
-public interface ArincWaypoint {
+public interface ArincNdbNavaid {
 
   ArincRecord arincRecord();
 
@@ -36,12 +36,8 @@ public interface ArincWaypoint {
     return arincRecord().getOptionalField("airportIcaoRegion");
   }
 
-  default Optional<String> airportSubSectionCode() {
-    return arincRecord().getOptionalField("airportSubSectionCode");
-  }
-
-  default String fixIdentifier() {
-    return arincRecord().getRequiredField("fixIdentifier");
+  default String ndbIdentifier() {
+    return arincRecord().getRequiredField("vorNdbIdentifier");
   }
 
   default String icaoRegion() {
@@ -52,12 +48,12 @@ public interface ArincWaypoint {
     return arincRecord().getRequiredField("continuationRecordNumber");
   }
 
-  default Optional<String> waypointType() {
-    return arincRecord().getOptionalField("waypointType");
+  default Optional<Double> ndbFrequency() {
+    return arincRecord().getOptionalField("vorNdbFrequency");
   }
 
-  default Optional<String> waypointUsage() {
-    return arincRecord().getOptionalField("waypointUsage");
+  default Optional<String> navaidClass() {
+    return arincRecord().getOptionalField("navaidClass");
   }
 
   default Double latitude() {
@@ -68,20 +64,16 @@ public interface ArincWaypoint {
     return arincRecord().getRequiredField("longitude");
   }
 
-  default Optional<Double> magneticVariation() {
-    return arincRecord().getOptionalField("magneticVariation");
+  default Double magneticVariation() {
+    return arincRecord().getRequiredField("magneticVariation");
   }
 
   default Optional<String> datumCode() {
     return arincRecord().getOptionalField("datumCode");
   }
 
-  default Optional<String> nameFormat() {
-    return arincRecord().getOptionalField("nameFormat");
-  }
-
-  default Optional<String> waypointNameDescription() {
-    return arincRecord().getOptionalField("waypointNameDescription");
+  default Optional<String> ndbNavaidName() {
+    return arincRecord().getOptionalField("ndbNavaidName");
   }
 
   default Integer fileRecordNumber() {
@@ -92,7 +84,7 @@ public interface ArincWaypoint {
     return arincRecord().getRequiredField("cycle");
   }
 
-  static ArincWaypoint wrap(ArincRecord arincRecord) {
-    return () -> arincRecord;
+  static ArincNdbNavaid wrap(ArincRecord record) {
+    return () -> record;
   }
 }
