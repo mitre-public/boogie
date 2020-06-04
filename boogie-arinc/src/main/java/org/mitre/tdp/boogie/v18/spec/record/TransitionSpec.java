@@ -83,7 +83,7 @@ public class TransitionSpec implements RecordSpec {
         newField(new OutboundMagneticCourse()),
         newField(new RouteHoldDistanceTime()),
         newField("recommendedNavaidSectionCode", SectionCode.SPEC),
-        newField("recommendedNavaidSubsectionCode", new SubSectionCode()),
+        newField("recommendedNavaidSubSectionCode", new SubSectionCode()),
         newField("blank3", new BlankSpec(2)),
         newField(new AltitudeDescription()),
         newField("atc", new BlankSpec(1)), // 5.81
