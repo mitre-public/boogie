@@ -29,6 +29,8 @@ plugins {
 //    }
 //}
 
+val mockitoVersion by extra("3.2.4")
+
 /**
  * import repo configs
  */
@@ -55,7 +57,6 @@ subprojects {
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:$junitVersion")
         "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
-        val mockitoVersion = "2.21.0"
         "testImplementation"("org.mockito:mockito-core:$mockitoVersion")
     }
     /* TESTING  */
@@ -81,23 +82,12 @@ subprojects {
     tasks.register<Test>("testSmall") {
         group = "verification"
         description = "Runs SMALL (or untagged) tests only."
-        useJUnitPlatform { excludeTags("CLUSTER", "LARGE") }
+        useJUnitPlatform { excludeTags("CLUSTER", "LARGE", "IGNORE") }
         filter {
             excludeTestsMatching("IT*")
             isFailOnNoMatchingTests = false//allow modules to not have any tests
         }
         failFast = true
-    }
-    /** test task to run ONLY medium and large unit tests  */
-    tasks.register<Test>("testLarge") {
-        group = "verification"
-        description = "Runs LARGE (and MEDIUM) tagged tests only."
-        useJUnitPlatform {
-            includeTags("LARGE")
-        }
-        failFast = true
-        jvmArgs = testLargeJvmargs.split(" ")
-        maxHeapSize = testLargeHeapMax
     }
 
     /**
