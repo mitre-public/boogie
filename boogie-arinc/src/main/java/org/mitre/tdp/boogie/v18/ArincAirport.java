@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.v18;
 
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.ArincRecord;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.LongestRunwaySurfaceCode;
@@ -10,9 +9,10 @@ import org.mitre.tdp.boogie.v18.spec.field.MagneticTrueIndicator;
 import org.mitre.tdp.boogie.v18.spec.field.PublicMilitaryIndicator;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
+import org.mitre.tdp.boogie.v18.spec.record.AirportSpec;
 
 /**
- * Interface for an {@link Airport} which decorates a parsed {@link ArincRecord}.
+ * Typed interface for retrieving record field and type information from {@link ArincRecord}s parsed via the {@link AirportSpec}.
  */
 @FunctionalInterface
 public interface ArincAirport {

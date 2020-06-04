@@ -7,11 +7,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Responsible for splitting the input route string into a sequence of elements
- * matchable to infrastructure elements based on ID.
+ * Responsible for splitting the input route string into a sequence of elements matchable to infrastructure elements based on ID.
  * <p>
- * Also performs cleaning to strip attached wildcard characters ("*", "+", etc.)
- * and sequences "/0219" from the ID.
+ * Also performs cleaning to strip attached wildcard characters ("*", "+", etc.) and sequences "/0219" from the ID.
  * <p>
  * Returns a list of {@link SectionSplit}s for use downstream.
  */
@@ -30,6 +28,9 @@ public interface SectionSplitter {
     return new SectionSplitter() {};
   }
 
+  /**
+   * Takes as an argument a route string and returns the split sections of the route mapping to specific infrastructure elements.
+   */
   default List<SectionSplit> splits(String route) {
     String[] splits = route.split("\\.");
     return IntStream.range(0, splits.length)
