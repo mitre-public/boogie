@@ -56,7 +56,7 @@ public class TestApproachPredictor {
 
   @Test
   public void testSectionIndexModification() {
-    ResolvedSection returnSection = newSection("", 7, singletonList(resolvedElement(ElementType.PROCEDURE)));
+    ResolvedSection returnSection = newSection("", 7, singletonList(resolvedElement(ElementType.APPROACH)));
 
     ApproachPredictor predictor = new ApproachPredictor() {
       @Override

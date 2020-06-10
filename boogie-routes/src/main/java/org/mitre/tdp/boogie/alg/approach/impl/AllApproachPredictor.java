@@ -22,7 +22,7 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 /**
  * "Predicts" all of the available approach procedures at the airport.
  *
- * When used this will read into the final {@link LegGraph} all of the procedures at the given airport resolving
+ * <p>When used this will read into the final {@link LegGraph} all of the procedures at the given airport resolving
  * which to fly via the shortest path algorithm.
  */
 public class AllApproachPredictor implements ApproachPredictor {

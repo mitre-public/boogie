@@ -22,7 +22,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.NavigationSource;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -87,8 +87,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "KATL");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "KATL");
 
-    assertEquals(linked.source().leg().type(), LegType.IF);
-    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
   }
 
   @Test
@@ -100,8 +100,8 @@ public class TestElements {
     assertEquals(element.legs().size(), 6);
 
     assertTrue(element.legs().stream().allMatch(l ->
-        l.source().leg().type().equals(LegType.TF)
-            && l.target().leg().type().equals(LegType.TF)));
+        l.source().leg().type().equals(PathTerm.TF)
+            && l.target().leg().type().equals(PathTerm.TF)));
 
     List<LinkedLegs> linked = element.legs();
 
@@ -182,8 +182,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "SHERL");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "SHERL");
 
-    assertEquals(linked.source().leg().type(), LegType.IF);
-    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
   }
 
   @Test
@@ -201,8 +201,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "5300N/14000W");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "5300N/14000W");
 
-    assertEquals(linked.source().leg().type(), LegType.IF);
-    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
   }
 
   @Test
@@ -240,7 +240,7 @@ public class TestElements {
     });
   }
 
-  private boolean legMatches(List<LinkedLegs> legs, String sourceName, LegType sourceType, String targetName, LegType targetType) {
+  private boolean legMatches(List<LinkedLegs> legs, String sourceName, PathTerm sourceType, String targetName, PathTerm targetType) {
     return legs.stream()
         .filter(ll -> ll.source().leg().pathTerminator() != null)
         .filter(ll -> ll.target().leg().pathTerminator() != null)
@@ -261,11 +261,11 @@ public class TestElements {
 
     assertEquals(pg.edgeSet().size(), linked.size());
 
-    assertTrue(legMatches(linked, "AAA", LegType.IF, "BBB", LegType.TF));
-    assertTrue(legMatches(linked, "BBB", LegType.IF, "CCC", LegType.TF));
-    assertTrue(legMatches(linked, "CCC", LegType.TF, "CCC", LegType.IF));
-    assertTrue(legMatches(linked, "CCC", LegType.IF, "DDD", LegType.TF));
-    assertTrue(legMatches(linked, "CCC", LegType.IF, "EEE", LegType.TF));
+    assertTrue(legMatches(linked, "AAA", PathTerm.IF, "BBB", PathTerm.TF));
+    assertTrue(legMatches(linked, "BBB", PathTerm.IF, "CCC", PathTerm.TF));
+    assertTrue(legMatches(linked, "CCC", PathTerm.TF, "CCC", PathTerm.IF));
+    assertTrue(legMatches(linked, "CCC", PathTerm.IF, "DDD", PathTerm.TF));
+    assertTrue(legMatches(linked, "CCC", PathTerm.IF, "EEE", PathTerm.TF));
   }
 
   @Test
@@ -304,7 +304,7 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "HTO");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "HTO");
 
-    assertEquals(linked.source().leg().type(), LegType.IF);
-    assertEquals(linked.source().leg().type(), LegType.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.IF);
   }
 }

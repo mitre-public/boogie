@@ -4,12 +4,12 @@ import java.util.regex.Pattern;
 
 /**
  * A set of static heuristic rules for identifying section types by name.
- * <p>
- * Each of these patterns matches only identifiers of that particular infrastructure element type
+ *
+ * <p>Each of these patterns matches only identifiers of that particular infrastructure element type
  * and is guaranteed not to overlap with another. However note that not all of these heuristics
  * are complete in terms of coverage.
- * <p>
- * The two that do cover all cases are the latLon and the tailored heuristics.
+ *
+ * <p>The two that do cover all cases are the latLon and the tailored heuristics.
  */
 public class SectionHeuristics {
 

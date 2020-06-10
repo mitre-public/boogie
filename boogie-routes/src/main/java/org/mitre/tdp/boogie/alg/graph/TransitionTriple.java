@@ -88,7 +88,7 @@ class TransitionTriple {
    * Takes two collections of transitions assumed to be of following types and zips them together
    * along their endpoints.
    *
-   * e.g. List<ENROUTE> -> List<COMMON>
+   * <p>e.g. List<ENROUTE> -> List<COMMON>
    */
   private void zipAndInsert(List<Transition> previous, List<Transition> next, ProcedureGraph graph) {
     // these should all have concrete fixes as path terminators

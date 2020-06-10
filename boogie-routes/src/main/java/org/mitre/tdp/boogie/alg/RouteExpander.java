@@ -36,26 +36,26 @@ import com.google.common.base.Preconditions;
  * The core route inflation algorithm in TDP. This class is configured with a single
  * cycle of procedure data assumed to be overlapping with the date associated with
  * the provided route string.
- * <p>
- * The algorithm leverages the component algorithms present in order:
- * <p>
- * 1) {@link SectionSplitter} to split the provided route string into its components
- * <p>
- * 2) {@link SectionResolver} to associate split sections of the route with infrastructure
+ *
+ * <p>The algorithm leverages the component algorithms present in order:
+ *
+ * <p>1) {@link SectionSplitter} to split the provided route string into its components
+ *
+ * <p>2) {@link SectionResolver} to associate split sections of the route with infrastructure
  * (e.g. procedures, waypoints, etc.)
- * <p>
- * 2.5) (Optional) Allows configuration of a {@link ApproachPredictor} object which will
+ *
+ * <p>2.5) (Optional) Allows configuration of a {@link ApproachPredictor} object which will
  * modify the resolved output of step 2 with an additional section of candidate approach
  * procedures.
- * <p>
- * 3) {@link LegGraph} to determine the path the flight most likely took through
+ *
+ * <p>3) {@link LegGraph} to determine the path the flight most likely took through
  * the resolved infrastructure elements (e.g. resolving references to navaids that
  * appear with the same name in multiple ICAO regions)
- * <p>
- * The class then finishes by publishing the output to the {@link ExpandedRoute}
+ *
+ * <p>The class then finishes by publishing the output to the {@link ExpandedRoute}
  * object which may then be tagged with more source specific information.
- * <p>
- * Note - This class does not try to do things like re-name or re-map route element names
+ *
+ * <p>Note - This class does not try to do things like re-name or re-map route element names
  * that may be in error (e.g. filing GOLEM.GNDLF1.ATL instead of KATL) so some upstream
  * route string to infrastructure name standardization may be necessary on the user side
  * to get a more complete set of expansions.

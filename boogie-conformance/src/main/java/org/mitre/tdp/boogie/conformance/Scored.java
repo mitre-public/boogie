@@ -1,14 +1,14 @@
 package org.mitre.tdp.boogie.conformance;
 
-import org.mitre.tdp.boogie.conformance.alg.TimeBasedScoreMaximizer;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.TimeBasedScoreMaximizer;
 
 /**
  * The hybrid input and output object for the {@link TimeBasedScoreMaximizer} class.
- * <p>
- * The scored class decorates a {@link Scorable} object for input into
+ *
+ * <p>The scored class decorates a {@link Scorable} object for input into
  * conformance, but also provides a mutable locations for the
  */
-public class Scored<S extends Scorable> implements Scorable {
+public class Scored<U, S extends Scorable<U, S>> implements Scorable<U, S> {
   /**
    * The internal {@link Scorable} object.
    */
@@ -22,12 +22,15 @@ public class Scored<S extends Scorable> implements Scorable {
   /**
    * Return the set of scores associated with the object after having been passed
    * through the conformance algorithm.
-   * <p>
-   * In that context these scores represent the times at which the wrapped object was
+   *
+   * <p>In that context these scores represent the times at which the wrapped object was
    * the optimal choice as well as the along/cross track scores at that point.
    */
   private Scores associatedScores;
 
+  /**
+   * Wraps the given scorable object as a scored object.
+   */
   public Scored(S base) {
     this.scorable = base;
     this.index = 0;
@@ -42,7 +45,7 @@ public class Scored<S extends Scorable> implements Scorable {
     return index;
   }
 
-  public Scored<S> setIndex(int idx) {
+  public Scored<U, S> setIndex(int idx) {
     this.index = idx;
     return this;
   }
@@ -51,7 +54,7 @@ public class Scored<S extends Scorable> implements Scorable {
     return associatedScores;
   }
 
-  public Scored<S> setAssociatedScores(Scores associatedScores) {
+  public Scored<U, S> setAssociatedScores(Scores associatedScores) {
     this.associatedScores = associatedScores;
     return this;
   }
@@ -61,7 +64,7 @@ public class Scored<S extends Scorable> implements Scorable {
   }
 
   @Override
-  public Scorer scorer() {
+  public Scorer<U, S> scorer() {
     return scorable().scorer();
   }
 

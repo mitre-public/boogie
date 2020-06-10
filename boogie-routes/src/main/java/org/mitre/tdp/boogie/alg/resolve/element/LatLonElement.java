@@ -18,6 +18,9 @@ public class LatLonElement extends ResolvedElement<LocationFix> {
     super(ElementType.LATLON, ref);
   }
 
+  /**
+   * Generates a new LatLonElement from the given string location.
+   */
   public static LatLonElement from(String location) {
     Preconditions.checkArgument(location.matches(latLon().pattern()));
     LocationFix floc = new LocationFix(location, CoordinateParser.parse(location));

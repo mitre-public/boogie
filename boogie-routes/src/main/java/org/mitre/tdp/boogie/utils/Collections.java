@@ -27,7 +27,7 @@ public class Collections {
     return col.stream().map(transform).collect(Collectors.toList());
   }
 
-  public static <U, V> Collection<V> transform(Collection<U> col, Function<U, V> transform) {
+  public static <U, V> List<V> transform(Collection<U> col, Function<U, V> transform) {
     return col.stream().map(transform).collect(Collectors.toList());
   }
 

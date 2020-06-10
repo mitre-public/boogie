@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
@@ -13,7 +14,23 @@ import org.mitre.tdp.boogie.models.Procedure;
 public class ProcedureElement extends ResolvedElement<Procedure> {
 
   public ProcedureElement(Procedure ref) {
-    super(ElementType.PROCEDURE, ref);
+    super(elementTypeFor(ref.type()), ref);
+  }
+
+  /**
+   * The {@link ProcedureType} -> {@link ElementType} mapping for resolved procedures.
+   */
+  public static ElementType elementTypeFor(ProcedureType ref) {
+    switch (ref) {
+      case SID:
+        return ElementType.SID;
+      case STAR:
+        return ElementType.STAR;
+      case APPROACH:
+        return ElementType.APPROACH;
+      default:
+        throw new UnsupportedOperationException("Unknown procedure type: " + ref);
+    }
   }
 
   @Override

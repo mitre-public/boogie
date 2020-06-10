@@ -17,7 +17,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -58,10 +58,10 @@ public class TestProcedureGraph {
     return ProcedureGraph.from(Arrays.asList(cd, ef));
   }
 
-  private boolean matchesSequence(List<Leg> legs, List<Pair<String, LegType>> path) {
+  private boolean matchesSequence(List<Leg> legs, List<Pair<String, PathTerm>> path) {
     return IntStream.range(0, legs.size()).filter(i -> {
       Leg leg = legs.get(i);
-      Pair<String, LegType> pair = path.get(i);
+      Pair<String, PathTerm> pair = path.get(i);
       return leg.type().equals(pair.second()) && leg.pathTerminator().identifier().equals(pair.first());
     }).count() == legs.size();
   }
@@ -101,12 +101,12 @@ public class TestProcedureGraph {
 
     List<Leg> path = paths.get(0);
     matchesSequence(path, Arrays.asList(
-        Pair.of("AAA", LegType.IF),
-        Pair.of("BBB", LegType.TF),
-        Pair.of("BBB", LegType.IF),
-        Pair.of("CCC", LegType.TF),
-        Pair.of("CCC", LegType.IF),
-        Pair.of("EEE", LegType.TF)
+        Pair.of("AAA", PathTerm.IF),
+        Pair.of("BBB", PathTerm.TF),
+        Pair.of("BBB", PathTerm.IF),
+        Pair.of("CCC", PathTerm.TF),
+        Pair.of("CCC", PathTerm.IF),
+        Pair.of("EEE", PathTerm.TF)
     ));
   }
 
@@ -122,12 +122,12 @@ public class TestProcedureGraph {
 
     List<Leg> path = paths.get(0);
     matchesSequence(path, Arrays.asList(
-        Pair.of("AAA", LegType.IF),
-        Pair.of("BBB", LegType.TF),
-        Pair.of("BBB", LegType.IF),
-        Pair.of("CCC", LegType.TF),
-        Pair.of("CCC", LegType.IF),
-        Pair.of("DDD", LegType.TF)
+        Pair.of("AAA", PathTerm.IF),
+        Pair.of("BBB", PathTerm.TF),
+        Pair.of("BBB", PathTerm.IF),
+        Pair.of("CCC", PathTerm.TF),
+        Pair.of("CCC", PathTerm.IF),
+        Pair.of("DDD", PathTerm.TF)
     ));
   }
 

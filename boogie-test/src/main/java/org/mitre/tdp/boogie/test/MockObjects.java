@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.LegType;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.NavigationSource;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -48,52 +48,52 @@ public class MockObjects {
   }
 
   public static Leg TF(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.TF);
+    return leg(name, lat, lon, PathTerm.TF);
   }
 
   public static Leg IF(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.IF);
+    return leg(name, lat, lon, PathTerm.IF);
   }
 
   public static Leg DF(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.DF);
+    return leg(name, lat, lon, PathTerm.DF);
   }
 
   public static Leg CF(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.CF);
+    return leg(name, lat, lon, PathTerm.CF);
   }
 
   public static Leg FM(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.FM);
+    return leg(name, lat, lon, PathTerm.FM);
   }
 
   public static Leg HM(String name, double lat, double lon) {
-    return leg(name, lat, lon, LegType.HM);
+    return leg(name, lat, lon, PathTerm.HM);
   }
 
   public static Leg CA() {
-    return nonConcreteLeg(LegType.CA);
+    return nonConcreteLeg(PathTerm.CA);
   }
 
   public static Leg VA() {
-    return nonConcreteLeg(LegType.VA);
+    return nonConcreteLeg(PathTerm.VA);
   }
 
   public static Leg VI() {
-    return nonConcreteLeg(LegType.VI);
+    return nonConcreteLeg(PathTerm.VI);
   }
 
   public static Leg VM() {
-    return nonConcreteLeg(LegType.VM);
+    return nonConcreteLeg(PathTerm.VM);
   }
 
-  public static Leg nonConcreteLeg(LegType type) {
+  public static Leg nonConcreteLeg(PathTerm type) {
     Leg leg = mock(Leg.class);
     when(leg.type()).thenReturn(type);
     return leg;
   }
 
-  public static Leg leg(String name, double lat, double lon, LegType type) {
+  public static Leg leg(String name, double lat, double lon, PathTerm type) {
     Fix term = fix(name, lat, lon);
     Leg leg = mock(Leg.class);
     when(leg.type()).thenReturn(type);

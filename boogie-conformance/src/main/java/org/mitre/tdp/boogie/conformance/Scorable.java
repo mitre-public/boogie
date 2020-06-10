@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.conformance;
 
 @FunctionalInterface
-public interface Scorable<U> {
+public interface Scorable<U, S extends Scorable<U, S>> {
 
-  Scorer<U> scorer();
+  Scorer<U, S> scorer();
 }

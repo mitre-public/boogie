@@ -112,7 +112,7 @@ public class TestSectionResolver {
 
     ResolvedElement element = section.elements().get(0);
     assertEquals("JIMMY", element.reference().identifier());
-    assertEquals(ElementType.PROCEDURE, element.type());
+    assertEquals(ElementType.SID, element.type());
   }
 
   @Test
@@ -199,11 +199,11 @@ public class TestSectionResolver {
 
     assertTrue(matchesOrder(sections, Arrays.asList(
         ElementType.AIRPORT,
-        ElementType.PROCEDURE,
+        ElementType.SID,
         ElementType.FIX,
         ElementType.AIRWAY,
         ElementType.FIX,
-        ElementType.PROCEDURE,
+        ElementType.STAR,
         ElementType.AIRPORT)));
   }
 }

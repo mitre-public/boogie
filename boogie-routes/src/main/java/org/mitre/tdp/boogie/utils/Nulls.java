@@ -5,10 +5,6 @@ package org.mitre.tdp.boogie.utils;
  */
 public class Nulls {
 
-  public static String blankIfNull(String s) {
-    return null == s || s.isEmpty() ? " " : s;
-  }
-
   public static <T> boolean nullOrEquals(T u, T v) {
     return null == u || null == v || u.equals(v);
   }

@@ -35,8 +35,8 @@ import com.google.common.collect.Iterables;
  * {@link SectionSplitter} and assigning to them matching infrastructure elements
  * returning a collection of {@link ResolvedSection}s which can be handed
  * off to the {@link LegGraph} for additional analysis.
- * <p>
- * This will match the provided route section split/id to any and all elements
+ *
+ * <p>This will match the provided route section split/id to any and all elements
  * sharing a common identifier. The graph solution handles the resolution of
  * these multiple options into a single path.
  */
@@ -66,8 +66,8 @@ public interface SectionResolver {
    * Resolves all of the {@link SectionSplit}s against the infrastructure information
    * returning for each section a set of possible infrastructure elements it might have
    * been referring to.
-   * <p>
-   * See {@link ResolvedSection}.
+   *
+   * <p>See {@link ResolvedSection}.
    */
   default ResolvedRoute resolve(List<SectionSplit> splits) {
     List<ResolvedSection> sections = new ArrayList<>();
