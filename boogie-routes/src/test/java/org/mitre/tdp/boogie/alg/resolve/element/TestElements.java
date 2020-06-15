@@ -73,7 +73,7 @@ public class TestElements {
 
     when(airport.latLong()).thenReturn(airportLocation);
     when(airport.identifier()).thenReturn(airportId);
-    when(airport.source()).thenReturn(NavigationSource.CIFP);
+    when(airport.navigationSource()).thenReturn(NavigationSource.CIFP);
 
     AirportElement element = new AirportElement(airport);
 
@@ -168,7 +168,7 @@ public class TestElements {
 
     when(fix.latLong()).thenReturn(fixLocation);
     when(fix.identifier()).thenReturn(fixId);
-    when(fix.source()).thenReturn(NavigationSource.CIFP);
+    when(fix.navigationSource()).thenReturn(NavigationSource.CIFP);
 
     FixElement element = new FixElement(fix);
 

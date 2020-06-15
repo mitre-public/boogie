@@ -119,7 +119,7 @@ public interface ArincAirport {
     return arincRecord().getOptionalField("datumCode");
   }
 
-  default String airportName() {
+  default String airportFullName() {
     return arincRecord().getRequiredField("airportName");
   }
 

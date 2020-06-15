@@ -54,7 +54,7 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
     Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
     Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
     Preconditions.checkArgument(allMatch(transitions, Transition::airport));
-    Preconditions.checkArgument(allMatch(transitions, Transition::source));
+    Preconditions.checkArgument(allMatch(transitions, Transition::navigationSource));
 
     // find the terminators of the concrete leg types (these exist as actual fixes)
     Collection<Leg> concrete = transitions.stream()
@@ -136,6 +136,6 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
 
   @Override
   public String toString() {
-    return identifier() + airport() + type().name() + source().name();
+    return identifier() + airport() + type().name() + navigationSource().name();
   }
 }

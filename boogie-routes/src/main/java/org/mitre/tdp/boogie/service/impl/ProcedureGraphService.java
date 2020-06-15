@@ -32,7 +32,7 @@ public final class ProcedureGraphService implements ProcedureService {
             t.procedure()
                 + t.airport()
                 + t.procedureType().name()
-                + t.source().name()));
+                + t.navigationSource().name()));
 
     Multimap<String, ProcedureGraph> byId = HashMultimap.create();
     Multimap<String, ProcedureGraph> byApt = HashMultimap.create();

@@ -32,8 +32,8 @@ public interface Procedure extends Infrastructure {
   }
 
   @Override
-  default NavigationSource source() {
-    return transitions().iterator().next().source();
+  default NavigationSource navigationSource() {
+    return transitions().iterator().next().navigationSource();
   }
 
   default ProcedureType type() {

@@ -44,7 +44,7 @@ public class TestArincAirport {
     assertEquals(true, airport.dayTimeIndicator().get());
     assertFalse(airport.magneticTrueIndicator().isPresent());
     assertEquals("NAR", airport.datumCode().get());
-    assertEquals("NEW YORK/JOHN F KENNEDY INTL", airport.airportName());
+    assertEquals("NEW YORK/JOHN F KENNEDY INTL", airport.airportFullName());
     assertEquals(Integer.valueOf(14599), airport.fileRecordNumber());
     assertEquals("2003", airport.cycle());
   }
