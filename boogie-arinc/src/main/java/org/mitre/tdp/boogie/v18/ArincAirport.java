@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.v18;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
+import org.mitre.tdp.boogie.util.Declinations;
+import org.mitre.tdp.boogie.utils.AiracCycle;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.LongestRunwaySurfaceCode;
 import org.mitre.tdp.boogie.v18.spec.field.MagneticTrueIndicator;
@@ -107,8 +109,8 @@ public interface ArincAirport {
     return arincRecord().getOptionalField("publicMilitaryIndicator");
   }
 
-  default Optional<Boolean> dayTimeIndicator() {
-    return arincRecord().getOptionalField("dayTimeIndicator");
+  default Optional<Boolean> daylightTimeIndicator() {
+    return arincRecord().getOptionalField("daylightTimeIndicator");
   }
 
   default Optional<MagneticTrueIndicator> magneticTrueIndicator() {
@@ -120,7 +122,7 @@ public interface ArincAirport {
   }
 
   default String airportFullName() {
-    return arincRecord().getRequiredField("airportName");
+    return arincRecord().getRequiredField("airportFullName");
   }
 
   default Integer fileRecordNumber() {

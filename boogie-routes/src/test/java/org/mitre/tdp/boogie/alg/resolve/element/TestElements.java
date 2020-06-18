@@ -2,9 +2,9 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.TF;
-import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
+import static org.mitre.tdp.boogie.test.MockObjects.IF;
+import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,9 +22,8 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.NavigationSource;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -73,7 +72,7 @@ public class TestElements {
 
     when(airport.latLong()).thenReturn(airportLocation);
     when(airport.identifier()).thenReturn(airportId);
-    when(airport.navigationSource()).thenReturn(NavigationSource.CIFP);
+    when(airport.navigationSource()).thenReturn(() -> "CIFP");
 
     AirportElement element = new AirportElement(airport);
 
@@ -168,7 +167,7 @@ public class TestElements {
 
     when(fix.latLong()).thenReturn(fixLocation);
     when(fix.identifier()).thenReturn(fixId);
-    when(fix.navigationSource()).thenReturn(NavigationSource.CIFP);
+    when(fix.navigationSource()).thenReturn(() -> "CIFP");
 
     FixElement element = new FixElement(fix);
 

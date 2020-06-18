@@ -49,7 +49,7 @@ public class ResolvedSection {
 
   public ResolvedSection setElements(List<ResolvedElement<?>> eles) {
     this.elements = eles;
-    Comparator<ResolvedElement> compSrc = Comparator.comparing(ele -> ele.reference().navigationSource());
+    Comparator<ResolvedElement> compSrc = Comparator.comparing(ele -> ele.reference().navigationSource().name());
     Comparator<ResolvedElement> compType = Comparator.comparing(ResolvedElement::type);
     this.elements.sort(compSrc.thenComparing(compType));
     return this;

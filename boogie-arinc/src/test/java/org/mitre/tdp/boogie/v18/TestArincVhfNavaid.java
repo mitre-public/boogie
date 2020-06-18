@@ -32,7 +32,7 @@ public class TestArincVhfNavaid {
     assertEquals("ABQ", navaid.dmeIdentifier().get());
     assertEquals(35.043794444444444d, navaid.dmeLatitude().get());
     assertEquals(-106.8163111111111d, navaid.dmeLongitude().get());
-    assertEquals("E0130", navaid.stationDeclination().get());
+    assertEquals(13.0d, navaid.stationDeclination().get());
     assertEquals(5749.0d, navaid.dmeElevation().get());
     assertEquals(Integer.valueOf(2), navaid.figureOfMerit().get());
     assertFalse(navaid.ilsDmeBias().isPresent());

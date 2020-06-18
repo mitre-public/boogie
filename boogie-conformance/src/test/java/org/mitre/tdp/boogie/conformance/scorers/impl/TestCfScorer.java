@@ -50,7 +50,7 @@ public class TestCfScorer {
   public void testFailOnMissingDistance() {
     Leg VI = VI();
     Leg CF = CF();
-    when(CF.distance()).thenReturn(empty());
+    when(CF.routeDistance()).thenReturn(empty());
 
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
     when(legs.previous()).thenReturn(Optional.of(VI));
@@ -122,7 +122,7 @@ public class TestCfScorer {
     when(CF.outboundMagneticCourse()).thenReturn(Optional.of(199.4));
     when(CF.theta()).thenReturn(Optional.of(13.7));
     when(CF.rho()).thenReturn(Optional.of(137.2));
-    when(CF.distance()).thenReturn(Optional.of(2.7));
+    when(CF.routeDistance()).thenReturn(Optional.of(2.7));
 
     return CF;
   }

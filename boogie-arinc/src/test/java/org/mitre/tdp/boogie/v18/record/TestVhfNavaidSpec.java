@@ -43,7 +43,7 @@ public class TestVhfNavaidSpec {
     assertFalse(record.getOptionalField("dmeIdentifier").isPresent());
     assertEquals(64.73813888888888d, record.getRequiredField("dmeLatitude"));
     assertEquals(-156.77715d, record.getRequiredField("dmeLongitude"));
-    assertEquals("E0170", record.getRequiredField("stationDeclination"));
+    assertEquals(17.0d, record.getRequiredField("stationDeclination"));
     assertEquals(150.0d, record.getRequiredField("dmeElevation"));
     assertEquals(Integer.valueOf(2), record.getRequiredField("figureOfMerit"));
     assertFalse(record.getOptionalField("ilsDmeBias").isPresent());
@@ -81,7 +81,7 @@ public class TestVhfNavaidSpec {
     assertEquals("ABQ", record.getRequiredField("dmeIdentifier"));
     assertEquals(35.043794444444444d, record.getRequiredField("dmeLatitude"));
     assertEquals(-106.8163111111111d, record.getRequiredField("dmeLongitude"));
-    assertEquals("E0130", record.getRequiredField("stationDeclination"));
+    assertEquals(13.0d, record.getRequiredField("stationDeclination"));
     assertEquals(5749.0d, record.getRequiredField("dmeElevation"));
     assertEquals(Integer.valueOf(2), record.getRequiredField("figureOfMerit"));
     assertFalse(record.getOptionalField("ilsDmeBias").isPresent());

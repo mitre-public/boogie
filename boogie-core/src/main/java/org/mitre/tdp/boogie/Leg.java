@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie;
 
+import java.time.Duration;
 import java.util.Optional;
 
 /**
@@ -76,9 +77,14 @@ public interface Leg {
   Optional<Double> rnp();
 
   /**
-   * The required distance of flight if required by the leg.
+   * The along route distance of flight if required by the leg.
    */
-  Optional<Double> distance();
+  Optional<Double> routeDistance();
+
+  /**
+   * If the {@link #type()} indicates a hold this is the duration of that hold.
+   */
+  Optional<Duration> holdTime();
 
   /**
    * The vertical angle identifies the vertical navigation path for the procedure.

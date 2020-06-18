@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -10,17 +11,27 @@ import org.mitre.tdp.boogie.v18.spec.field.StationDeclination;
 public class TestStationDeclination {
 
   @Test
-  public void testParseValidStartCodes() {
-    assertEquals("E1000", new StationDeclination().parseValue("E1000"));
+  public void testEastValidVariationIsPositive() {
+    assertEquals(14.0, new StationDeclination().parseValue("E0140"));
   }
 
   @Test
-  public void testParseExceptionOnBadStartCode() {
-    assertThrows(FieldSpecParseException.class, () -> new StationDeclination().parseValue("Q"));
+  public void testWestValidVariationIsNegative() {
+    assertEquals(-14.0, new StationDeclination().parseValue("W0140"));
   }
 
   @Test
-  public void testParseExceptionOfBadNumericValue() {
-    assertThrows(FieldSpecParseException.class, () -> new StationDeclination().parseValue("W0A2"));
+  public void testTrueVariationsAreSkipped() {
+    assertFalse(new StationDeclination().parse("T0140").isPresent());
+  }
+
+  @Test
+  public void testGridVariationsAreSkipped() {
+    assertFalse(new StationDeclination().parse("G0140").isPresent());
+  }
+
+  @Test
+  public void testTrueVariationThrowsParseException() {
+    assertThrows(FieldSpecParseException.class, () -> new StationDeclination().parseValue("T0140"));
   }
 }

@@ -44,7 +44,8 @@ public class TestArincAirway {
     assertFalse(airway.theta().isPresent());
     assertFalse(airway.rho().isPresent());
     assertEquals(59.4d, airway.outboundMagneticCourse().get());
-    assertEquals("2285", airway.routeDistance().get());
+    assertEquals("2285", airway.routeHoldDistanceTime().get());
+    assertEquals(228.5, airway.routeDistance().get());
     assertEquals(59.0d, airway.inboundMagneticCourse().get());
     assertEquals(18000.0d, airway.minAltitude1().get());
     assertFalse(airway.minAltitude2().isPresent());

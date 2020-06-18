@@ -48,7 +48,7 @@ public enum PathTerm implements LegType {
     checkArgument(l.theta().isPresent());
     checkArgument(l.rho().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     return true;
   }),
   /**
@@ -135,7 +135,7 @@ public enum PathTerm implements LegType {
   CD(l -> {
     checkArgument(l.recommendedNavaid().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     return true;
   }),
   /**
@@ -167,7 +167,7 @@ public enum PathTerm implements LegType {
   RF(l -> {
     checkNotNull(l.pathTerminator());
     checkArgument(l.turnDirection().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     checkArgument(l.centerFix().isPresent());
     return true;
   }),
@@ -204,7 +204,7 @@ public enum PathTerm implements LegType {
   VD(l -> {
     checkArgument(l.recommendedNavaid().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     return true;
   }),
   /**
@@ -252,7 +252,7 @@ public enum PathTerm implements LegType {
     checkArgument(l.theta().isPresent());
     checkArgument(l.rho().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     return true;
   }),
   /**
@@ -267,7 +267,7 @@ public enum PathTerm implements LegType {
     checkNotNull(l.pathTerminator());
     checkArgument(l.turnDirection().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     return true;
   }),
   /**
@@ -282,7 +282,7 @@ public enum PathTerm implements LegType {
     checkNotNull(l.pathTerminator());
     checkArgument(l.turnDirection().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     return true;
   }),
   /**
@@ -297,7 +297,7 @@ public enum PathTerm implements LegType {
     checkNotNull(l.pathTerminator());
     checkArgument(l.turnDirection().isPresent());
     checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.distance().isPresent());
+    checkArgument(l.routeDistance().isPresent());
     return true;
   });
 

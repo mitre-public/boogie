@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.v18;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
@@ -7,6 +8,7 @@ import org.mitre.tdp.boogie.v18.spec.field.BoundaryCode;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.Level;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
+import org.mitre.tdp.boogie.v18.spec.field.RouteHoldDistanceTime;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 import org.mitre.tdp.boogie.v18.spec.record.AirwaySpec;
 
@@ -86,6 +88,10 @@ public interface ArincAirway {
     return arincRecord().getOptionalField("directionRestriction");
   }
 
+  default Optional<String> cruiseTableIndicator() {
+    return arincRecord().getOptionalField("cruiseTableIndicator");
+  }
+
   default Optional<Boolean> euIndicator() {
     return arincRecord().getOptionalField("euIndicator");
   }
@@ -114,8 +120,16 @@ public interface ArincAirway {
     return arincRecord().getOptionalField("outboundMagneticCourse");
   }
 
-  default Optional<String> routeDistance() {
-    return arincRecord().getOptionalField("routeDistance");
+  default Optional<String> routeHoldDistanceTime() {
+    return arincRecord().getOptionalField("routeHoldDistanceTime");
+  }
+
+  default Optional<Duration> holdTime() {
+    return routeHoldDistanceTime().map(s -> new RouteHoldDistanceTime().asDuration(s));
+  }
+
+  default Optional<Double> routeDistance() {
+    return routeHoldDistanceTime().map(s -> new RouteHoldDistanceTime().asDistanceInNm(s));
   }
 
   default Optional<Double> inboundMagneticCourse() {

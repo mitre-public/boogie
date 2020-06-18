@@ -56,10 +56,17 @@ public interface ArincVhfNavaid {
     return arincRecord().getOptionalField("navaidClass");
   }
 
+  /**
+   * Note not all navaid records will provide the latitude of the record in the actual latitude field - for a subset of collocated DMEs
+   * this field is null and the latitude is instead in the dmeLatitude field.
+   */
   default Double latitude() {
     return arincRecord().getRequiredField("latitude");
   }
 
+  /**
+   * See the doc on {@link #latitude()}.
+   */
   default Double longitude() {
     return arincRecord().getRequiredField("longitude");
   }
@@ -76,7 +83,7 @@ public interface ArincVhfNavaid {
     return arincRecord().getOptionalField("dmeLongitude");
   }
 
-  default Optional<String> stationDeclination() {
+  default Optional<Double> stationDeclination() {
     return arincRecord().getOptionalField("stationDeclination");
   }
 

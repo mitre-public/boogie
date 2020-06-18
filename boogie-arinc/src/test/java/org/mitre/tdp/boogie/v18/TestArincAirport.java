@@ -41,7 +41,7 @@ public class TestArincAirport {
     assertEquals(18000.0d, airport.transitionAltitude().get());
     assertEquals(18000.0d, airport.transitionLevel().get());
     assertEquals(PublicMilitaryIndicator.C, airport.publicMilitaryIndicator().get());
-    assertEquals(true, airport.dayTimeIndicator().get());
+    assertEquals(true, airport.daylightTimeIndicator().get());
     assertFalse(airport.magneticTrueIndicator().isPresent());
     assertEquals("NAR", airport.datumCode().get());
     assertEquals("NEW YORK/JOHN F KENNEDY INTL", airport.airportFullName());

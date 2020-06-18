@@ -24,7 +24,7 @@ final class LocationFix implements Fix {
 
   @Override
   public NavigationSource navigationSource() {
-    return NavigationSource.FUSED;
+    return () -> "ANONYMOUS";
   }
 
   @Override

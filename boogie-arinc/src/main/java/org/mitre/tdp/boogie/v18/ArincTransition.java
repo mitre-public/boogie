@@ -7,6 +7,7 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
+import org.mitre.tdp.boogie.v18.spec.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.v18.spec.field.TurnDirection;
 
 @FunctionalInterface
@@ -174,9 +175,9 @@ public interface ArincTransition {
     return arincRecord().getOptionalField("centerFixSubSectionCode");
   }
 
-//  default Optional<String> speedLimitDescription(){
-//
-//  }
+  default Optional<SpeedLimitDescription> speedLimitDescription() {
+    return arincRecord().getOptionalField("speedLimitDescription");
+  }
 
   default Integer fileRecordNumber() {
     return arincRecord().getRequiredField("fileRecordNumber");

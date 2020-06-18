@@ -53,7 +53,7 @@ public class TestProcedureGraphService {
 
       @Override
       public NavigationSource navigationSource() {
-        return NavigationSource.FUSED;
+        return () -> "TEST";
       }
     };
   }

@@ -5,12 +5,19 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.HashMap;
 import java.util.Optional;
 
-
+/**
+ * Generic container object used for ARINC record data.
+ */
 public class ArincData implements ArincRecord {
 
   private final String rawRecord;
   private final HashMap<String, ArincField<?>> fieldMap = new HashMap<>();
   private final HashMap<String, String> dataMap = new HashMap<>();
+
+  /**
+   * The spec which was used to parse the raw record into the {@link #fieldMap} and {@link #dataMap}s respectively.
+   */
+  private RecordSpec parseSpec;
 
   public ArincData(String rawRecord) {
     this.rawRecord = rawRecord;
@@ -19,6 +26,16 @@ public class ArincData implements ArincRecord {
   @Override
   public String rawRecord() {
     return rawRecord;
+  }
+
+  @Override
+  public RecordSpec parseSpec() {
+    return parseSpec;
+  }
+
+  @Override
+  public boolean isParsed() {
+    return parseSpec != null;
   }
 
   @Override
@@ -63,6 +80,7 @@ public class ArincData implements ArincRecord {
     }
 
     checkArgument(offset == spec.recordLength(), "Final offset not equals to length of record. " + offset + " vs " + spec.recordLength());
+    this.parseSpec = spec;
     return this;
   }
 }
