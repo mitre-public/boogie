@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
+import org.mitre.tdp.boogie.ArincRecordDecorator;
 import org.mitre.tdp.boogie.v18.spec.field.BoundaryCode;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.Level;
@@ -19,8 +20,9 @@ import org.mitre.tdp.boogie.v18.spec.record.AirwaySpec;
  * as required by the limitations of their input ARINC data source.
  */
 @FunctionalInterface
-public interface ArincAirway {
+public interface ArincAirway extends ArincRecordDecorator {
 
+  @Override
   ArincRecord arincRecord();
 
   default Optional<RecordType> recordType() {

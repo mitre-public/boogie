@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
+import org.mitre.tdp.boogie.ArincRecordDecorator;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
@@ -13,8 +14,9 @@ import org.mitre.tdp.boogie.v18.spec.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.v18.spec.field.TurnDirection;
 
 @FunctionalInterface
-public interface ArincTransition {
+public interface ArincTransition extends ArincRecordDecorator {
 
+  @Override
   ArincRecord arincRecord();
 
   default Optional<RecordType> recordType() {

@@ -3,13 +3,15 @@ package org.mitre.tdp.boogie.v18;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
+import org.mitre.tdp.boogie.ArincRecordDecorator;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 
 @FunctionalInterface
-public interface ArincVhfNavaid {
+public interface ArincVhfNavaid extends ArincRecordDecorator {
 
+  @Override
   ArincRecord arincRecord();
 
   default Optional<RecordType> recordType() {

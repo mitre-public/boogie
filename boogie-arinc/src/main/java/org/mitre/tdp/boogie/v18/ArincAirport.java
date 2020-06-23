@@ -3,8 +3,7 @@ package org.mitre.tdp.boogie.v18;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
-import org.mitre.tdp.boogie.util.Declinations;
-import org.mitre.tdp.boogie.utils.AiracCycle;
+import org.mitre.tdp.boogie.ArincRecordDecorator;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.LongestRunwaySurfaceCode;
 import org.mitre.tdp.boogie.v18.spec.field.MagneticTrueIndicator;
@@ -17,8 +16,9 @@ import org.mitre.tdp.boogie.v18.spec.record.AirportSpec;
  * Typed interface for retrieving record field and type information from {@link ArincRecord}s parsed via the {@link AirportSpec}.
  */
 @FunctionalInterface
-public interface ArincAirport {
+public interface ArincAirport extends ArincRecordDecorator {
 
+  @Override
   ArincRecord arincRecord();
 
   default Optional<RecordType> recordType() {
