@@ -24,6 +24,11 @@ public class MagneticVariation implements FieldSpec<Double>, FilterTrimEmptyInpu
   }
 
   @Override
+  public boolean filterInput(String rawInput) {
+    return FilterTrimEmptyInput.super.filterInput(rawInput) || rawInput.startsWith("T");
+  }
+
+  @Override
   public Double parseValue(String fieldValue) {
     checkSpec(this, fieldValue, !fieldValue.startsWith("T"));
     return sign(fieldValue.substring(0, 1)) * ArincStrings.parseDoubleWithTenths(fieldValue.substring(1));

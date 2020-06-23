@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.Constraint;
@@ -55,11 +56,6 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
-  public Optional<Double> inboundMagneticCourse() {
-    return Optional.empty();
-  }
-
-  @Override
   public Optional<Double> outboundMagneticCourse() {
     return Optional.empty();
   }
@@ -80,7 +76,12 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
-  public Optional<Double> distance() {
+  public Optional<Double> routeDistance() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Duration> holdTime() {
     return Optional.empty();
   }
 

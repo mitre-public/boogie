@@ -50,10 +50,10 @@ public class TestAirportSpec {
     assertEquals(18000.0d, record.getRequiredField("transitionAltitude"));
     assertEquals(18000.0d, record.getRequiredField("transitionLevel"));
     assertEquals(PublicMilitaryIndicator.P, record.getRequiredField("publicMilitaryIndicator"));
-    assertEquals(true, record.getRequiredField("dayTimeIndicator"));
+    assertEquals(true, record.getRequiredField("daylightTimeIndicator"));
     assertFalse(record.getOptionalField("magneticTrueIndicator").isPresent());
     assertEquals("NAR", record.getRequiredField("datumCode"));
-    assertEquals("WRIGHTSVILLE/THE FARM", record.getRequiredField("airportName"));
+    assertEquals("WRIGHTSVILLE/THE FARM", record.getRequiredField("airportFullName"));
     assertEquals(Integer.valueOf(81888), record.getRequiredField("fileRecordNumber"));
     assertEquals("1902", record.getRequiredField("cycle"));
   }
@@ -92,10 +92,10 @@ public class TestAirportSpec {
     assertEquals(18000.0d, record.getRequiredField("transitionAltitude"));
     assertEquals(18000.0d, record.getRequiredField("transitionLevel"));
     assertFalse(record.getOptionalField("publicMilitaryIndicator").isPresent());
-    assertFalse(record.getOptionalField("dayTimeIndicator").isPresent());
+    assertFalse(record.getOptionalField("daylightTimeIndicator").isPresent());
     assertFalse(record.getOptionalField("magneticTrueIndicator").isPresent());
     assertFalse(record.getOptionalField("datumCode").isPresent());
-    assertEquals("ALBIAN", record.getRequiredField("airportName"));
+    assertEquals("ALBIAN", record.getRequiredField("airportFullName"));
     assertEquals(Integer.valueOf(28), record.getRequiredField("fileRecordNumber"));
     assertEquals("1813", record.getRequiredField("cycle"));
   }
@@ -134,10 +134,10 @@ public class TestAirportSpec {
     assertEquals(18000.0d, record.getRequiredField("transitionAltitude"));
     assertEquals(18000.0d, record.getRequiredField("transitionLevel"));
     assertEquals(PublicMilitaryIndicator.C, record.getRequiredField("publicMilitaryIndicator"));
-    assertEquals(true, record.getRequiredField("dayTimeIndicator"));
+    assertEquals(true, record.getRequiredField("daylightTimeIndicator"));
     assertFalse(record.getOptionalField("magneticTrueIndicator").isPresent());
     assertEquals("NAR", record.getRequiredField("datumCode"));
-    assertEquals("NEW YORK/JOHN F KENNEDY INTL", record.getRequiredField("airportName"));
+    assertEquals("NEW YORK/JOHN F KENNEDY INTL", record.getRequiredField("airportFullName"));
     assertEquals(Integer.valueOf(14599), record.getRequiredField("fileRecordNumber"));
     assertEquals("2003", record.getRequiredField("cycle"));
   }

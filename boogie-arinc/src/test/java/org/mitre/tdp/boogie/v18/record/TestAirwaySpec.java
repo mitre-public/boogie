@@ -40,7 +40,7 @@ public class TestAirwaySpec {
     assertEquals(SectionCode.D, record.getRequiredField("fixSectionCode"));
     assertEquals("B", record.getRequiredField("fixSubSectionCode"));
     assertEquals("0", record.getRequiredField("continuationRecordNumber"));
-    assertEquals("N   ", record.getRequiredField("fixDescription"));
+    assertEquals("N   ", record.getRequiredField("waypointDescription"));
     assertFalse(record.getOptionalField("boundaryCode").isPresent());
     assertEquals("O", record.getRequiredField("routeType"));
     assertFalse(record.getOptionalField("level").isPresent());
@@ -53,7 +53,7 @@ public class TestAirwaySpec {
     assertFalse(record.getOptionalField("theta").isPresent());
     assertFalse(record.getOptionalField("rho").isPresent());
     assertEquals(222.5, record.getRequiredField("outboundMagneticCourse"));
-    assertEquals("0425", record.getRequiredField("routeDistance"));
+    assertEquals("0425", record.getRequiredField("routeHoldDistanceTime"));
     assertFalse(record.getOptionalField("inboundMagneticCourse").isPresent());
     assertFalse(record.getOptionalField("minAltitude1").isPresent());
     assertFalse(record.getOptionalField("minAltitude2").isPresent());
@@ -87,7 +87,7 @@ public class TestAirwaySpec {
     assertEquals(SectionCode.D, record.getRequiredField("fixSectionCode"));
     assertEquals("B", record.getRequiredField("fixSubSectionCode"));
     assertEquals("0", record.getRequiredField("continuationRecordNumber"));
-    assertEquals("E C ", record.getRequiredField("fixDescription"));
+    assertEquals("E C ", record.getRequiredField("waypointDescription"));
     assertFalse(record.getOptionalField("boundaryCode").isPresent());
     assertFalse(record.getOptionalField("routeType").isPresent());
     assertFalse(record.getOptionalField("level").isPresent());
@@ -100,7 +100,7 @@ public class TestAirwaySpec {
     assertFalse(record.getOptionalField("theta").isPresent());
     assertFalse(record.getOptionalField("rho").isPresent());
     assertFalse(record.getOptionalField("outboundMagneticCourse").isPresent());
-    assertFalse(record.getOptionalField("routeDistance").isPresent());
+    assertFalse(record.getOptionalField("routeHoldDistanceTime").isPresent());
     assertFalse(record.getOptionalField("inboundMagneticCourse").isPresent());
     assertFalse(record.getOptionalField("minAltitude1").isPresent());
     assertFalse(record.getOptionalField("minAltitude2").isPresent());
@@ -134,7 +134,7 @@ public class TestAirwaySpec {
     assertEquals(SectionCode.E, record.getRequiredField("fixSectionCode"));
     assertEquals("A", record.getRequiredField("fixSubSectionCode"));
     assertEquals("0", record.getRequiredField("continuationRecordNumber"));
-    assertEquals("E C ", record.getRequiredField("fixDescription"));
+    assertEquals("E C ", record.getRequiredField("waypointDescription"));
     assertFalse(record.getOptionalField("boundaryCode").isPresent());
     assertEquals("O", record.getRequiredField("routeType"));
     assertEquals(Level.H, record.getRequiredField("level"));
@@ -147,7 +147,7 @@ public class TestAirwaySpec {
     assertFalse(record.getOptionalField("theta").isPresent());
     assertFalse(record.getOptionalField("rho").isPresent());
     assertEquals(59.4d, record.getRequiredField("outboundMagneticCourse"));
-    assertEquals("2285", record.getRequiredField("routeDistance"));
+    assertEquals("2285", record.getRequiredField("routeHoldDistanceTime"));
     assertEquals(59.0d, record.getRequiredField("inboundMagneticCourse"));
     assertEquals(18000.0d, record.getRequiredField("minAltitude1"));
     assertFalse(record.getOptionalField("minAltitude2").isPresent());

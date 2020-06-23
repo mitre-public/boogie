@@ -3,45 +3,47 @@ package org.mitre.tdp.boogie.v18;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
+import org.mitre.tdp.boogie.ArincRecordDecorator;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 
 @FunctionalInterface
-public interface ArincRunway {
+public interface ArincRunway extends ArincRecordDecorator {
 
+  @Override
   ArincRecord arincRecord();
 
-  default RecordType recordType() {
-    return arincRecord().getRequiredField("recordType");
+  default Optional<RecordType> recordType() {
+    return arincRecord().getOptionalField("recordType");
   }
 
-  default CustomerAreaCode customerAreaCode() {
-    return arincRecord().getRequiredField("customerAreaCode");
+  default Optional<CustomerAreaCode> customerAreaCode() {
+    return arincRecord().getOptionalField("customerAreaCode");
   }
 
-  default SectionCode sectionCode() {
-    return arincRecord().getRequiredField("sectionCode");
+  default Optional<SectionCode> sectionCode() {
+    return arincRecord().getOptionalField("sectionCode");
   }
 
-  default String airportIdentifier() {
-    return arincRecord().getRequiredField("airportIdentifier");
+  default Optional<String> airportIdentifier() {
+    return arincRecord().getOptionalField("airportIdentifier");
   }
 
-  default String airportIcaoRegion() {
-    return arincRecord().getRequiredField("airportIcaoRegion");
+  default Optional<String> airportIcaoRegion() {
+    return arincRecord().getOptionalField("airportIcaoRegion");
   }
 
-  default String subSectionCode() {
-    return arincRecord().getRequiredField("subSectionCode");
+  default Optional<String> subSectionCode() {
+    return arincRecord().getOptionalField("subSectionCode");
   }
 
-  default String runwayIdentifier() {
-    return arincRecord().getRequiredField("runwayIdentifier");
+  default Optional<String> runwayIdentifier() {
+    return arincRecord().getOptionalField("runwayIdentifier");
   }
 
-  default String continuationRecordNumber() {
-    return arincRecord().getRequiredField("continuationRecordNumber");
+  default Optional<String> continuationRecordNumber() {
+    return arincRecord().getOptionalField("continuationRecordNumber");
   }
 
   default Optional<Integer> runwayLength() {
@@ -52,12 +54,12 @@ public interface ArincRunway {
     return arincRecord().getOptionalField("runwayMagneticBearing");
   }
 
-  default Double latitude() {
-    return arincRecord().getRequiredField("latitude");
+  default Optional<Double> latitude() {
+    return arincRecord().getOptionalField("latitude");
   }
 
-  default Double longitude() {
-    return arincRecord().getRequiredField("longitude");
+  default Optional<Double> longitude() {
+    return arincRecord().getOptionalField("longitude");
   }
 
   default Optional<Double> runwayGradient() {
@@ -104,12 +106,12 @@ public interface ArincRunway {
     return arincRecord().getOptionalField("runwayDescription");
   }
 
-  default Integer fileRecordNumber() {
-    return arincRecord().getRequiredField("fileRecordNumber");
+  default Optional<Integer> fileRecordNumber() {
+    return arincRecord().getOptionalField("fileRecordNumber");
   }
 
-  default String cycle() {
-    return arincRecord().getRequiredField("cycle");
+  default Optional<String> cycle() {
+    return arincRecord().getOptionalField("cycle");
   }
 
   static ArincRunway wrap(ArincRecord record) {

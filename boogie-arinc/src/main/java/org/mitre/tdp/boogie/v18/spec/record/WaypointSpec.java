@@ -72,6 +72,5 @@ public class WaypointSpec implements RecordSpec {
   public boolean matchesRecord(String arincRecord) {
     String s = arincRecord.substring(4, 6);
     return s.equals("EA") || s.equals("PC");
-
   }
 }

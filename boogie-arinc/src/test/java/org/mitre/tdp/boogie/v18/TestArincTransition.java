@@ -17,25 +17,25 @@ public class TestArincTransition {
   public void testFieldAccess() {
     ArincTransition transition = ArincTransition.wrap(ArincVersion.V18.parse(TF));
 
-    assertEquals(RecordType.S, transition.recordType());
-    assertEquals(CustomerAreaCode.USA, transition.customerAreaCode());
-    assertEquals(SectionCode.P, transition.sectionCode());
-    assertEquals("KJFK", transition.airportIdentifier());
-    assertEquals("K6", transition.airportIcaoRegion());
-    assertEquals("F", transition.subSectionCode());
-    assertEquals("L22R", transition.sidStarIdentifier());
-    assertEquals("L", transition.routeType());
+    assertEquals(RecordType.S, transition.recordType().get());
+    assertEquals(CustomerAreaCode.USA, transition.customerAreaCode().get());
+    assertEquals(SectionCode.P, transition.sectionCode().get());
+    assertEquals("KJFK", transition.airportIdentifier().get());
+    assertEquals("K6", transition.airportIcaoRegion().get());
+    assertEquals("F", transition.subSectionCode().get());
+    assertEquals("L22R", transition.sidStarIdentifier().get());
+    assertEquals("L", transition.routeType().get());
     assertFalse(transition.transitionIdentifier().isPresent());
-    assertEquals(Integer.valueOf(20), transition.sequenceNumber());
+    assertEquals(Integer.valueOf(20), transition.sequenceNumber().get());
     assertEquals("MATTR", transition.fixIdentifier().get());
     assertEquals("K6", transition.fixIcaoRegion().get());
     assertEquals(SectionCode.E, transition.fixSectionCode().get());
     assertEquals("A", transition.fixSubSectionCode().get());
-    assertEquals("0", transition.continuationRecordNumber());
+    assertEquals("0", transition.continuationRecordNumber().get());
     assertEquals("E  F", transition.waypointDescription().get());
     assertFalse(transition.turnDirection().isPresent());
     assertFalse(transition.rnp().isPresent());
-    assertEquals(PathTerm.TF, transition.pathTerm());
+    assertEquals(PathTerm.TF, transition.pathTerm().get());
     assertEquals(false, transition.turnDirectionValid().get());
     assertEquals("IJOC", transition.recommendedNavaid().get());
     assertEquals("K6", transition.recommendedNavaidIcaoRegion().get());
@@ -54,8 +54,9 @@ public class TestArincTransition {
     assertFalse(transition.centerFixIcaoRegion().isPresent());
     assertFalse(transition.centerFixSectionCode().isPresent());
     assertFalse(transition.centerFixSubSectionCode().isPresent());
-
-    assertEquals(Integer.valueOf(15338), transition.fileRecordNumber());
-    assertEquals("2004", transition.cycle());
+    assertEquals("N", transition.routeTypeQualifier1().get());
+    assertEquals("S", transition.routeTypeQualifier2().get());
+    assertEquals(Integer.valueOf(15338), transition.fileRecordNumber().get());
+    assertEquals("2004", transition.cycle().get());
   }
 }

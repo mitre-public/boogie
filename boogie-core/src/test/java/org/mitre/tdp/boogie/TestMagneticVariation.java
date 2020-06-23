@@ -15,8 +15,8 @@ public class TestMagneticVariation {
   public void testMagneticToTruePublished() {
     MagneticVariation localVariation = mock(MagneticVariation.class);
 
-    when(localVariation.published()).thenReturn(Optional.of(7.0f));
-    when(localVariation.modeled()).thenReturn(10.0f);
+    when(localVariation.published()).thenReturn(Optional.of(7.0d));
+    when(localVariation.modeled()).thenReturn(10.0d);
     when(localVariation.magneticToTrue(anyDouble())).thenCallRealMethod();
 
     assertEquals(12.0d, localVariation.magneticToTrue(5.0));
@@ -27,7 +27,7 @@ public class TestMagneticVariation {
     MagneticVariation localVariation = mock(MagneticVariation.class);
 
     when(localVariation.published()).thenReturn(Optional.empty());
-    when(localVariation.modeled()).thenReturn(10.0f);
+    when(localVariation.modeled()).thenReturn(10.0d);
     when(localVariation.magneticToTrue(anyDouble())).thenCallRealMethod();
 
     assertEquals(12.0d, localVariation.magneticToTrue(2.0));
@@ -37,8 +37,8 @@ public class TestMagneticVariation {
   public void testTrueToMagneticPublished() {
     MagneticVariation localVariation = mock(MagneticVariation.class);
 
-    when(localVariation.published()).thenReturn(Optional.of(7.0f));
-    when(localVariation.modeled()).thenReturn(10.0f);
+    when(localVariation.published()).thenReturn(Optional.of(7.0d));
+    when(localVariation.modeled()).thenReturn(10.0d);
     when(localVariation.trueToMagnetic(anyDouble())).thenCallRealMethod();
 
     assertEquals(12.0d, localVariation.trueToMagnetic(19.0));
@@ -49,7 +49,7 @@ public class TestMagneticVariation {
     MagneticVariation localVariation = mock(MagneticVariation.class);
 
     when(localVariation.published()).thenReturn(Optional.empty());
-    when(localVariation.modeled()).thenReturn(10.0f);
+    when(localVariation.modeled()).thenReturn(10.0d);
     when(localVariation.trueToMagnetic(anyDouble())).thenCallRealMethod();
 
     assertEquals(12.0d, localVariation.trueToMagnetic(22.0));

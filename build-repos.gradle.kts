@@ -80,8 +80,8 @@ subprojects {
                         url.set("https://www.mitre.org")
                     }
                     scm {
-                        connection.set("scm:git:ssh://git@mustache.mitre.org:7999/ttfs/ttfs.git")
-                        developerConnection.set("scm:git:ssh://git@mustache.mitre.org:7999/ttfs/ttfs.git")
+                        connection.set("scm:git:ssh://git@mustache.mitre.org:7999/~acramer/boogie.git")
+                        developerConnection.set("scm:git:ssh://git@mustache.mitre.org:7999/~acramer/boogie.git")
                         url.set("https://mustache.mitre.org/Users/acramer/repos/boogie")
                         tag.set("HEAD")
                     }

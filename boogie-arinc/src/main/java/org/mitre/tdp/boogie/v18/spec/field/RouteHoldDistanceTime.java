@@ -1,8 +1,7 @@
 package org.mitre.tdp.boogie.v18.spec.field;
 
-import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
-
 import java.time.Duration;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.FieldSpec;
 import org.mitre.tdp.boogie.utils.ArincStrings;
@@ -34,19 +33,23 @@ public class RouteHoldDistanceTime implements FieldSpec<String>, FilterTrimEmpty
    * Utility method for parsing the given {@link RouteHoldDistanceTime} field as a {@link Duration} when the given string is the time
    * version of the field (preceded by a 'T').
    */
-  public Duration asDuration(String fieldString) {
-    checkSpec(this, fieldString, fieldString.startsWith("T"));
-    String pre = fieldString.substring(1, 3);
-    String post = fieldString.substring(3);
-    long postLong = (Long.parseLong(post) * 60) / 10;
-    return Duration.ofSeconds(Long.parseLong(pre) * 60 + postLong);
+  public Optional<Duration> asDuration(String fieldString) {
+    return Optional.of(fieldString)
+        .filter(fs -> fs.startsWith("T"))
+        .map(fs -> {
+          String pre = fs.substring(1, 3);
+          String post = fs.substring(3);
+          long postLong = (Long.parseLong(post) * 60) / 10;
+          return Duration.ofSeconds(Long.parseLong(pre) * 60 + postLong);
+        });
   }
 
   /**
    * Utility method for parsing the given field string as a double distance in nm.
    */
-  public Double asDistanceInNm(String fieldString) {
-    checkSpec(this, fieldString, !fieldString.startsWith("T"));
-    return ArincStrings.parseDoubleWithTenths(fieldString);
+  public Optional<Double> asDistanceInNm(String fieldString) {
+    return Optional.of(fieldString)
+        .filter(fs -> !fs.startsWith("T"))
+        .map(ArincStrings::parseDoubleWithTenths);
   }
 }

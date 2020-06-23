@@ -12,9 +12,8 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.NavigationSource;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -34,12 +33,12 @@ public class MockObjects {
     when(fix.longitude()).thenCallRealMethod();
     when(fix.magneticVariation()).thenReturn(new MagneticVariation() {
       @Override
-      public Optional<Float> published() {
+      public Optional<Double> published() {
         return Optional.empty();
       }
 
       @Override
-      public float modeled() {
+      public double modeled() {
         return (float) Declinations.declination(lat, lon, Optional.empty(), Instant.parse("2019-01-01T00:00:00.00Z"));
       }
     });
@@ -116,13 +115,13 @@ public class MockObjects {
     when(transition.procedure()).thenReturn(pname);
     when(transition.procedureType()).thenReturn(ptype);
     when(transition.transitionType()).thenReturn(ttype);
-    when(transition.source()).thenReturn(NavigationSource.FUSED);
+    when(transition.navigationSource()).thenReturn(() -> "MOCK");
     when(transition.toString()).thenReturn("Transition: " + (tname == null ? "common" : tname) + " Procedure: " + pname);
 
     return transition;
   }
 
-  public static MagneticVariation magneticVariation(float published, float modeled) {
+  public static MagneticVariation magneticVariation(double published, double modeled) {
     MagneticVariation variation = mock(MagneticVariation.class);
     when(variation.published()).thenReturn(Optional.of(published));
     when(variation.modeled()).thenReturn(modeled);

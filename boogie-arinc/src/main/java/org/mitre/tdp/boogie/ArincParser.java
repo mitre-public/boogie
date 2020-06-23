@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Optional;
+
 /**
  * Interface for any object which can function as a parser for ARINC format navigational data.
  */
@@ -25,14 +27,23 @@ public interface ArincParser {
    * Parses the input raw record against the given {@link #arincSpec()}.
    */
   default ArincRecord parse(String rawRecord) {
-    RecordSpec recordSpec = arincSpec().recordSpecs().stream()
-        .filter(rspec -> rspec.matchesRecord(rawRecord))
-        .findFirst()
-        .orElseThrow(() -> new UnknownRecordException(arincSpec(), rawRecord));
+    return tryParse(rawRecord).orElseThrow(() -> new UnknownRecordException(arincSpec(), rawRecord));
+  }
 
-    checkArgument(recordSpec.recordLength() == rawRecord.length(),
-        "Matched spec length doesn't match record length. Actual length " + rawRecord.length() + ", Expected length " + recordSpec.recordLength());
-    return recordSpec.createParsedRecord(rawRecord);
+  /**
+   * Attempts to parse the input record against the known {@link #arincSpec()}, of the parser. If no matching spec
+   * is found this method returns {@link Optional#empty()}.
+   */
+  default Optional<ArincRecord> tryParse(String rawRecord) {
+    Optional<RecordSpec> recordSpec = arincSpec().recordSpecs().stream()
+        .filter(rspec -> rspec.matchesRecord(rawRecord))
+        .findFirst();
+
+    return recordSpec.map(spec -> {
+      checkArgument(spec.recordLength() == rawRecord.length(),
+          "Matched spec length doesn't match record length. Actual length " + rawRecord.length() + ", Expected length " + spec.recordLength());
+      return spec.createParsedRecord(rawRecord);
+    });
   }
 
   /**

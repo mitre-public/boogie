@@ -14,5 +14,5 @@ public interface Fix extends HasPosition, Infrastructure {
   /**
    * The elevation in feet of the fix (if a navaid).
    */
-  Optional<Float> elevation();
+  Optional<Double> elevation();
 }

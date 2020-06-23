@@ -5,12 +5,12 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.airport;
-import static org.mitre.tdp.boogie.MockObjects.airway;
-import static org.mitre.tdp.boogie.MockObjects.fix;
-import static org.mitre.tdp.boogie.MockObjects.magneticVariation;
-import static org.mitre.tdp.boogie.MockObjects.transition;
+import static org.mitre.tdp.boogie.test.MockObjects.IF;
+import static org.mitre.tdp.boogie.test.MockObjects.airport;
+import static org.mitre.tdp.boogie.test.MockObjects.airway;
+import static org.mitre.tdp.boogie.test.MockObjects.fix;
+import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
+import static org.mitre.tdp.boogie.test.MockObjects.transition;
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;
 import static org.mockito.Mockito.when;
 

@@ -27,10 +27,12 @@ import org.mitre.tdp.boogie.v18.spec.field.Rho;
 import org.mitre.tdp.boogie.v18.spec.field.Rnp;
 import org.mitre.tdp.boogie.v18.spec.field.RouteHoldDistanceTime;
 import org.mitre.tdp.boogie.v18.spec.field.RouteType;
+import org.mitre.tdp.boogie.v18.spec.field.RouteTypeQualifier;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.SequenceNumber;
 import org.mitre.tdp.boogie.v18.spec.field.SidStarIdentifier;
 import org.mitre.tdp.boogie.v18.spec.field.SpeedLimit;
+import org.mitre.tdp.boogie.v18.spec.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.v18.spec.field.SubSectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.Theta;
 import org.mitre.tdp.boogie.v18.spec.field.TransitionAltitude;
@@ -98,9 +100,9 @@ public class TransitionSpec implements RecordSpec {
         newField("centerFixSectionCode", SectionCode.SPEC),
         newField("centerFixSubSectionCode", new SubSectionCode()),
         newField("unk", new BlankSpec(1)), // 5.222
-        newField("speedLimitDesc", new BlankSpec(1)), // 5.261
-        newField("routeQualifier1", new BlankSpec(1)),
-        newField("routeQualifier2", new BlankSpec(1)),
+        newField(SpeedLimitDescription.SPEC),
+        newField("routeQualifier1", new RouteTypeQualifier()),
+        newField("routeQualifier2", new RouteTypeQualifier()),
         newField("blank4", new BlankSpec(3)),
         newField(new FileRecordNumber()),
         newField(new Cycle()));

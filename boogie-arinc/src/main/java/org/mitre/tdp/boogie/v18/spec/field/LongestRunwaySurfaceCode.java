@@ -12,19 +12,19 @@ import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 public enum LongestRunwaySurfaceCode implements FieldSpec<LongestRunwaySurfaceCode>, FilterTrimEmptyInput<LongestRunwaySurfaceCode> {
   SPEC,
   /**
-   * Hard Surface, for example, asphalt or concrete
+   * Hard Surface, for example, asphalt or concrete.
    */
   H,
   /**
-   * Soft Surface, for example, gravel, grass or soil
+   * Soft Surface, for example, gravel, grass or soil.
    */
   S,
   /**
-   * Water
+   * Water.
    */
   W,
   /**
-   * Undefined, surface material not provided in source
+   * Undefined, surface material not provided in source.
    */
   U;
 

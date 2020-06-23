@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.v18.spec.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.Cycle;
 import org.mitre.tdp.boogie.v18.spec.field.DatumCode;
-import org.mitre.tdp.boogie.v18.spec.field.DayTimeIndicator;
+import org.mitre.tdp.boogie.v18.spec.field.DaylightTimeIndicator;
 import org.mitre.tdp.boogie.v18.spec.field.FileRecordNumber;
 import org.mitre.tdp.boogie.v18.spec.field.IataDesignator;
 import org.mitre.tdp.boogie.v18.spec.field.IcaoRegion;
@@ -73,11 +73,11 @@ public class AirportSpec implements RecordSpec {
         newField("transitionLevel", new TransitionAltitude()),
         newField(PublicMilitaryIndicator.SPEC),
         newField("timezone", new BlankSpec(3)), // 5.178
-        newField(new DayTimeIndicator()),
+        newField(new DaylightTimeIndicator()),
         newField(MagneticTrueIndicator.SPEC),
         newField(new DatumCode()),
         newField("reserved2", new BlankSpec(4)),
-        newField("airportName", new NameField()), // 5.71
+        newField("airportFullName", new NameField()),
         newField(new FileRecordNumber()),
         newField(new Cycle()));
   }

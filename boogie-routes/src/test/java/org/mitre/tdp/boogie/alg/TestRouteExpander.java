@@ -5,9 +5,9 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.MockObjects.fix;
 import static org.mitre.tdp.boogie.test.Airports.KATL;
 import static org.mitre.tdp.boogie.test.Airports.KDEN;
+import static org.mitre.tdp.boogie.test.MockObjects.fix;
 
 import java.util.Arrays;
 import java.util.List;

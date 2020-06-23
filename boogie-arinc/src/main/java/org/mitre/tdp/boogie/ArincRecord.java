@@ -15,6 +15,18 @@ public interface ArincRecord {
   String rawRecord();
 
   /**
+   * The {@link RecordSpec} used to parse this particular {@link ArincRecord} or null if it hasn't been
+   * parsed yet - in which case users may call {@link #parseWithSpec(RecordSpec)}.
+   */
+  RecordSpec parseSpec();
+
+  /**
+   * Returns whether the parsing process has been run on the given {@link ArincRecord} and consumers can
+   * expect the getter methods to return appropriate fields, etc.
+   */
+  boolean isParsed();
+
+  /**
    * Adds the given fieldName, fieldValue pair to the ARINC record.
    */
   void put(ArincField<?> field, String value);

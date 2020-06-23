@@ -23,8 +23,8 @@ final class LocationFix implements Fix {
   }
 
   @Override
-  public NavigationSource source() {
-    return NavigationSource.FUSED;
+  public NavigationSource navigationSource() {
+    return () -> "ANONYMOUS";
   }
 
   @Override
@@ -37,19 +37,19 @@ final class LocationFix implements Fix {
   public MagneticVariation magneticVariation() {
     return new MagneticVariation() {
       @Override
-      public Optional<Float> published() {
+      public Optional<Double> published() {
         return Optional.empty();
       }
 
       @Override
-      public float modeled() {
-        return 0.0f;
+      public double modeled() {
+        return 0.0d;
       }
     };
   }
 
   @Override
-  public Optional<Float> elevation() {
+  public Optional<Double> elevation() {
     return Optional.empty();
   }
 }

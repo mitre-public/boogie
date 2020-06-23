@@ -3,29 +3,31 @@ package org.mitre.tdp.boogie.v18;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
+import org.mitre.tdp.boogie.ArincRecordDecorator;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 
 @FunctionalInterface
-public interface ArincWaypoint {
+public interface ArincWaypoint extends ArincRecordDecorator {
 
+  @Override
   ArincRecord arincRecord();
 
-  default RecordType recordType() {
-    return arincRecord().getRequiredField("recordType");
+  default Optional<RecordType> recordType() {
+    return arincRecord().getOptionalField("recordType");
   }
 
-  default CustomerAreaCode customerAreaCode() {
-    return arincRecord().getRequiredField("customerAreaCode");
+  default Optional<CustomerAreaCode> customerAreaCode() {
+    return arincRecord().getOptionalField("customerAreaCode");
   }
 
-  default SectionCode sectionCode() {
-    return arincRecord().getRequiredField("sectionCode");
+  default Optional<SectionCode> sectionCode() {
+    return arincRecord().getOptionalField("sectionCode");
   }
 
-  default String subSectionCode() {
-    return arincRecord().getRequiredField("subSectionCode");
+  default Optional<String> subSectionCode() {
+    return arincRecord().getOptionalField("subSectionCode");
   }
 
   default Optional<String> airportIdentifier() {
@@ -40,16 +42,16 @@ public interface ArincWaypoint {
     return arincRecord().getOptionalField("airportSubSectionCode");
   }
 
-  default String fixIdentifier() {
-    return arincRecord().getRequiredField("fixIdentifier");
+  default Optional<String> fixIdentifier() {
+    return arincRecord().getOptionalField("fixIdentifier");
   }
 
-  default String icaoRegion() {
-    return arincRecord().getRequiredField("icaoRegion");
+  default Optional<String> icaoRegion() {
+    return arincRecord().getOptionalField("icaoRegion");
   }
 
-  default String continuationRecordNumber() {
-    return arincRecord().getRequiredField("continuationRecordNumber");
+  default Optional<String> continuationRecordNumber() {
+    return arincRecord().getOptionalField("continuationRecordNumber");
   }
 
   default Optional<String> waypointType() {
@@ -60,12 +62,12 @@ public interface ArincWaypoint {
     return arincRecord().getOptionalField("waypointUsage");
   }
 
-  default Double latitude() {
-    return arincRecord().getRequiredField("latitude");
+  default Optional<Double> latitude() {
+    return arincRecord().getOptionalField("latitude");
   }
 
-  default Double longitude() {
-    return arincRecord().getRequiredField("longitude");
+  default Optional<Double> longitude() {
+    return arincRecord().getOptionalField("longitude");
   }
 
   default Optional<Double> magneticVariation() {
@@ -84,12 +86,12 @@ public interface ArincWaypoint {
     return arincRecord().getOptionalField("waypointNameDescription");
   }
 
-  default Integer fileRecordNumber() {
-    return arincRecord().getRequiredField("fileRecordNumber");
+  default Optional<Integer> fileRecordNumber() {
+    return arincRecord().getOptionalField("fileRecordNumber");
   }
 
-  default String cycle() {
-    return arincRecord().getRequiredField("cycle");
+  default Optional<String> cycle() {
+    return arincRecord().getOptionalField("cycle");
   }
 
   static ArincWaypoint wrap(ArincRecord arincRecord) {

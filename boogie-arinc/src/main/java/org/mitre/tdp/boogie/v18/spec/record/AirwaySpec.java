@@ -10,6 +10,7 @@ import org.mitre.tdp.boogie.RecordSpec;
 import org.mitre.tdp.boogie.v18.spec.field.BlankSpec;
 import org.mitre.tdp.boogie.v18.spec.field.BoundaryCode;
 import org.mitre.tdp.boogie.v18.spec.field.ContinuationRecordNumber;
+import org.mitre.tdp.boogie.v18.spec.field.CruiseTableIndicator;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.Cycle;
 import org.mitre.tdp.boogie.v18.spec.field.DirectionRestriction;
@@ -64,12 +65,12 @@ public class AirwaySpec implements RecordSpec {
         newField("fixSectionCode", SectionCode.SPEC),
         newField("fixSubSectionCode", new SubSectionCode()),
         newField("continuationRecordNumber", new ContinuationRecordNumber()),
-        newField("fixDescription", new WaypointDescription()),
+        newField(new WaypointDescription()),
         newField("boundaryCode", BoundaryCode.SPEC),
         newField("routeType", new RouteType()),
         newField("level", Level.SPEC),
         newField(new DirectionRestriction()),
-        newField("tcIndicator", new BlankSpec(2)), // 5.134 - Cruise Table Indicator
+        newField(new CruiseTableIndicator()),
         newField(new EuIndicator()),
         newField("recommendedNavaid", new RecommendedNavaid()),
         newField("recommendedNavaidIcaoRegion", new IcaoRegion()),
@@ -78,7 +79,7 @@ public class AirwaySpec implements RecordSpec {
         newField("theta", new Theta()),
         newField("rho", new Rho()),
         newField("outboundMagneticCourse", new OutboundMagneticCourse()),
-        newField("routeDistance", new RouteHoldDistanceTime()),
+        newField( new RouteHoldDistanceTime()),
         newField("inboundMagneticCourse", new InboundMagneticCourse()),
         newField("blank4", new BlankSpec(1)),
         newField("minAltitude1", new MinimumAltitude()),
