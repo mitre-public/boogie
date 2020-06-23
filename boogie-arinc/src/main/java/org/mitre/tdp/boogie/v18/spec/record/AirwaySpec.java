@@ -65,7 +65,7 @@ public class AirwaySpec implements RecordSpec {
         newField("fixSectionCode", SectionCode.SPEC),
         newField("fixSubSectionCode", new SubSectionCode()),
         newField("continuationRecordNumber", new ContinuationRecordNumber()),
-        newField("fixDescription", new WaypointDescription()),
+        newField(new WaypointDescription()),
         newField("boundaryCode", BoundaryCode.SPEC),
         newField("routeType", new RouteType()),
         newField("level", Level.SPEC),

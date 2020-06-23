@@ -15,23 +15,23 @@ public class TestArincNdbNavaid {
   public void testFieldAccess() {
     ArincNdbNavaid navaid = ArincNdbNavaid.wrap(ArincVersion.V18.parse(navaid1));
 
-    assertEquals(RecordType.S, navaid.recordType());
-    assertEquals(CustomerAreaCode.EEU, navaid.customerAreaCode());
-    assertEquals(SectionCode.P, navaid.sectionCode());
-    assertEquals("N", navaid.subSectionCode());
+    assertEquals(RecordType.S, navaid.recordType().get());
+    assertEquals(CustomerAreaCode.EEU, navaid.customerAreaCode().get());
+    assertEquals(SectionCode.P, navaid.sectionCode().get());
+    assertEquals("N", navaid.subSectionCode().get());
     assertEquals("UUOL", navaid.airportIdentifier().get());
     assertEquals("UU", navaid.airportIcaoRegion().get());
-    assertEquals("D", navaid.ndbIdentifier());
-    assertEquals("UU", navaid.icaoRegion());
-    assertEquals("1", navaid.continuationRecordNumber());
+    assertEquals("D", navaid.ndbIdentifier().get());
+    assertEquals("UU", navaid.icaoRegion().get());
+    assertEquals("1", navaid.continuationRecordNumber().get());
     assertEquals(400.0d, navaid.ndbFrequency().get());
     assertEquals("HMLW ", navaid.navaidClass().get());
-    assertEquals(52.72094444444445d, navaid.latitude());
-    assertEquals(39.52708333333333d, navaid.longitude());
-    assertEquals(10.0d, navaid.magneticVariation());
+    assertEquals(52.72094444444445d, navaid.latitude().get());
+    assertEquals(39.52708333333333d, navaid.longitude().get());
+    assertEquals(10.0d, navaid.magneticVariation().get());
     assertEquals("RPE", navaid.datumCode().get());
     assertEquals("LIPETSK LMM RW15", navaid.ndbNavaidName().get());
-    assertEquals(Integer.valueOf(35303), navaid.fileRecordNumber());
-    assertEquals("2003", navaid.cycle());
+    assertEquals(Integer.valueOf(35303), navaid.fileRecordNumber().get());
+    assertEquals("2003", navaid.cycle().get());
   }
 }

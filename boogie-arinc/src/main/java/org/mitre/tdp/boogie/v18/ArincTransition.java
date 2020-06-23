@@ -1,11 +1,13 @@
 package org.mitre.tdp.boogie.v18;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ArincRecord;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
+import org.mitre.tdp.boogie.v18.spec.field.RouteHoldDistanceTime;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.v18.spec.field.TurnDirection;
@@ -15,44 +17,44 @@ public interface ArincTransition {
 
   ArincRecord arincRecord();
 
-  default RecordType recordType() {
-    return arincRecord().getRequiredField("recordType");
+  default Optional<RecordType> recordType() {
+    return arincRecord().getOptionalField("recordType");
   }
 
-  default CustomerAreaCode customerAreaCode() {
-    return arincRecord().getRequiredField("customerAreaCode");
+  default Optional<CustomerAreaCode> customerAreaCode() {
+    return arincRecord().getOptionalField("customerAreaCode");
   }
 
-  default SectionCode sectionCode() {
-    return arincRecord().getRequiredField("sectionCode");
+  default Optional<SectionCode> sectionCode() {
+    return arincRecord().getOptionalField("sectionCode");
   }
 
-  default String airportIdentifier() {
-    return arincRecord().getRequiredField("airportIdentifier");
+  default Optional<String> airportIdentifier() {
+    return arincRecord().getOptionalField("airportIdentifier");
   }
 
-  default String airportIcaoRegion() {
-    return arincRecord().getRequiredField("airportIcaoRegion");
+  default Optional<String> airportIcaoRegion() {
+    return arincRecord().getOptionalField("airportIcaoRegion");
   }
 
-  default String subSectionCode() {
-    return arincRecord().getRequiredField("subSectionCode");
+  default Optional<String> subSectionCode() {
+    return arincRecord().getOptionalField("subSectionCode");
   }
 
-  default String sidStarIdentifier() {
-    return arincRecord().getRequiredField("sidStarIdentifier");
+  default Optional<String> sidStarIdentifier() {
+    return arincRecord().getOptionalField("sidStarIdentifier");
   }
 
-  default String routeType() {
-    return arincRecord().getRequiredField("routeType");
+  default Optional<String> routeType() {
+    return arincRecord().getOptionalField("routeType");
   }
 
   default Optional<String> transitionIdentifier() {
     return arincRecord().getOptionalField("transitionIdentifier");
   }
 
-  default Integer sequenceNumber() {
-    return arincRecord().getRequiredField("sequenceNumber");
+  default Optional<Integer> sequenceNumber() {
+    return arincRecord().getOptionalField("sequenceNumber");
   }
 
   default Optional<String> fixIdentifier() {
@@ -71,8 +73,8 @@ public interface ArincTransition {
     return arincRecord().getOptionalField("fixSubSectionCode");
   }
 
-  default String continuationRecordNumber() {
-    return arincRecord().getRequiredField("continuationRecordNumber");
+  default Optional<String> continuationRecordNumber() {
+    return arincRecord().getOptionalField("continuationRecordNumber");
   }
 
   default Optional<String> waypointDescription() {
@@ -87,8 +89,8 @@ public interface ArincTransition {
     return arincRecord().getOptionalField("rnp");
   }
 
-  default PathTerm pathTerm() {
-    return arincRecord().getRequiredField("pathTerm");
+  default Optional<PathTerm> pathTerm() {
+    return arincRecord().getOptionalField("pathTerm");
   }
 
   default Optional<Boolean> turnDirectionValid() {
@@ -123,7 +125,15 @@ public interface ArincTransition {
     return arincRecord().getOptionalField("routeHoldDistanceTime");
   }
 
-  default Optional<String> recommendedNavaidSectionCode() {
+  default Optional<Duration> holdTime() {
+    return routeHoldDistanceTime().flatMap(s -> new RouteHoldDistanceTime().asDuration(s));
+  }
+
+  default Optional<Double> routeDistance() {
+    return routeHoldDistanceTime().flatMap(s -> new RouteHoldDistanceTime().asDistanceInNm(s));
+  }
+
+  default Optional<SectionCode> recommendedNavaidSectionCode() {
     return arincRecord().getOptionalField("recommendedNavaidSectionCode");
   }
 
@@ -167,7 +177,7 @@ public interface ArincTransition {
     return arincRecord().getOptionalField("centerFixIcaoRegion");
   }
 
-  default Optional<String> centerFixSectionCode() {
+  default Optional<SectionCode> centerFixSectionCode() {
     return arincRecord().getOptionalField("centerFixSectionCode");
   }
 
@@ -179,12 +189,20 @@ public interface ArincTransition {
     return arincRecord().getOptionalField("speedLimitDescription");
   }
 
-  default Integer fileRecordNumber() {
-    return arincRecord().getRequiredField("fileRecordNumber");
+  default Optional<String> routeTypeQualifier1() {
+    return arincRecord().getOptionalField("routeQualifier1");
   }
 
-  default String cycle() {
-    return arincRecord().getRequiredField("cycle");
+  default Optional<String> routeTypeQualifier2() {
+    return arincRecord().getOptionalField("routeQualifier2");
+  }
+
+  default Optional<Integer> fileRecordNumber() {
+    return arincRecord().getOptionalField("fileRecordNumber");
+  }
+
+  default Optional<String> cycle() {
+    return arincRecord().getOptionalField("cycle");
   }
 
   static ArincTransition wrap(ArincRecord record) {

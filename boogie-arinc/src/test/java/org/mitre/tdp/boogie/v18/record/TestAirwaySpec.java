@@ -40,7 +40,7 @@ public class TestAirwaySpec {
     assertEquals(SectionCode.D, record.getRequiredField("fixSectionCode"));
     assertEquals("B", record.getRequiredField("fixSubSectionCode"));
     assertEquals("0", record.getRequiredField("continuationRecordNumber"));
-    assertEquals("N   ", record.getRequiredField("fixDescription"));
+    assertEquals("N   ", record.getRequiredField("waypointDescription"));
     assertFalse(record.getOptionalField("boundaryCode").isPresent());
     assertEquals("O", record.getRequiredField("routeType"));
     assertFalse(record.getOptionalField("level").isPresent());
@@ -87,7 +87,7 @@ public class TestAirwaySpec {
     assertEquals(SectionCode.D, record.getRequiredField("fixSectionCode"));
     assertEquals("B", record.getRequiredField("fixSubSectionCode"));
     assertEquals("0", record.getRequiredField("continuationRecordNumber"));
-    assertEquals("E C ", record.getRequiredField("fixDescription"));
+    assertEquals("E C ", record.getRequiredField("waypointDescription"));
     assertFalse(record.getOptionalField("boundaryCode").isPresent());
     assertFalse(record.getOptionalField("routeType").isPresent());
     assertFalse(record.getOptionalField("level").isPresent());
@@ -134,7 +134,7 @@ public class TestAirwaySpec {
     assertEquals(SectionCode.E, record.getRequiredField("fixSectionCode"));
     assertEquals("A", record.getRequiredField("fixSubSectionCode"));
     assertEquals("0", record.getRequiredField("continuationRecordNumber"));
-    assertEquals("E C ", record.getRequiredField("fixDescription"));
+    assertEquals("E C ", record.getRequiredField("waypointDescription"));
     assertFalse(record.getOptionalField("boundaryCode").isPresent());
     assertEquals("O", record.getRequiredField("routeType"));
     assertEquals(Level.H, record.getRequiredField("level"));

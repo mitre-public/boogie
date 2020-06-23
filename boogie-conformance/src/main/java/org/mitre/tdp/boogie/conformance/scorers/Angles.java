@@ -11,18 +11,18 @@ public class Angles {
    * Between for radial angles.
    */
   public static boolean between(double a1, double b1, double b2, TurnDirection direction) {
-    if (direction.equals(TurnDirection.RIGHT) && b1 > b2) {
+    if (direction.isRight() && !direction.isLeft() && b1 > b2) {
       return (a1 > b1 && a1 < 360.0) || (a1 > 0.0 && a1 < b2);
     }
-    if (direction.equals(TurnDirection.LEFT) && b2 > b1) {
+    if (direction.isLeft() && !direction.isRight() && b2 > b1) {
       return (a1 > b2 && a1 < 360.0) || (a1 > 0.0 && a1 < b1);
     }
-    if (direction.equals(TurnDirection.RIGHT)) {
+    if (direction.isRight() && !direction.isLeft()) {
       return a1 > b1 && a1 < b2;
     }
-    if (direction.equals(TurnDirection.LEFT)) {
+    if (direction.isLeft() && !direction.isRight()) {
       return a1 < b1 && a1 > b2;
     }
-    return direction.equals(TurnDirection.EITHER);
+    return true;
   }
 }

@@ -19,20 +19,20 @@ public class TestArincAirport {
     ArincAirport airport = ArincAirport.wrap(ArincVersion.V18.parse(TestAirportSpec.KJFK));
     assertNotNull(airport);
 
-    assertEquals(RecordType.S, airport.recordType());
-    assertEquals(CustomerAreaCode.USA, airport.customerAreaCode());
-    assertEquals(SectionCode.P, airport.sectionCode());
-    assertEquals("KJFK", airport.airportIdentifier());
-    assertEquals("K6", airport.airportIcaoRegion());
-    assertEquals("A", airport.subSectionCode());
+    assertEquals(RecordType.S, airport.recordType().get());
+    assertEquals(CustomerAreaCode.USA, airport.customerAreaCode().get());
+    assertEquals(SectionCode.P, airport.sectionCode().get());
+    assertEquals("KJFK", airport.airportIdentifier().get());
+    assertEquals("K6", airport.airportIcaoRegion().get());
+    assertEquals("A", airport.subSectionCode().get());
     assertEquals("JFK", airport.iataDesignator().get());
-    assertEquals("1", airport.continuationRecordNumber());
+    assertEquals("1", airport.continuationRecordNumber().get());
     assertEquals(10000.0d, airport.speedLimitAltitude().get());
     assertEquals(Integer.valueOf(14500), airport.longestRunway().get());
     assertEquals(true, airport.ifrCapability().get());
     assertFalse(airport.longestRunwaySurfaceCode().isPresent());
-    assertEquals(40.63992777777778d, airport.latitude());
-    assertEquals(-73.77869166666666d, airport.longitude());
+    assertEquals(40.63992777777778d, airport.latitude().get());
+    assertEquals(-73.77869166666666d, airport.longitude().get());
     assertEquals(-13.0d, airport.magneticVariation().get());
     assertEquals(13.0d, airport.airportElevation().get());
     assertEquals(Integer.valueOf(250), airport.speedLimit().get());
@@ -44,8 +44,8 @@ public class TestArincAirport {
     assertEquals(true, airport.daylightTimeIndicator().get());
     assertFalse(airport.magneticTrueIndicator().isPresent());
     assertEquals("NAR", airport.datumCode().get());
-    assertEquals("NEW YORK/JOHN F KENNEDY INTL", airport.airportFullName());
-    assertEquals(Integer.valueOf(14599), airport.fileRecordNumber());
-    assertEquals("2003", airport.cycle());
+    assertEquals("NEW YORK/JOHN F KENNEDY INTL", airport.airportFullName().get());
+    assertEquals(Integer.valueOf(14599), airport.fileRecordNumber().get());
+    assertEquals("2003", airport.cycle().get());
   }
 }

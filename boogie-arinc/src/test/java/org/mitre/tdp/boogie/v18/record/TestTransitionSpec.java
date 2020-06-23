@@ -12,7 +12,6 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
-import org.mitre.tdp.boogie.v18.spec.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.v18.spec.field.TurnDirection;
 import org.mitre.tdp.boogie.v18.spec.record.TransitionSpec;
 
@@ -69,7 +68,8 @@ public class TestTransitionSpec {
     assertFalse(record.getOptionalField("centerFixIcaoRegion").isPresent());
     assertFalse(record.getOptionalField("centerFixSectionCode").isPresent());
     assertFalse(record.getOptionalField("centerFixSubSectionCode").isPresent());
-
+    assertEquals("D", record.getOptionalField("routeQualifier1").get());
+    assertEquals("S", record.getOptionalField("routeQualifier2").get());
     assertEquals(Integer.valueOf(15493), record.getRequiredField("fileRecordNumber"));
     assertEquals("2004", record.getRequiredField("cycle"));
   }
@@ -123,7 +123,8 @@ public class TestTransitionSpec {
     assertFalse(record.getOptionalField("centerFixIcaoRegion").isPresent());
     assertFalse(record.getOptionalField("centerFixSectionCode").isPresent());
     assertFalse(record.getOptionalField("centerFixSubSectionCode").isPresent());
-
+    assertEquals("N", record.getOptionalField("routeQualifier1").get());
+    assertEquals("S", record.getOptionalField("routeQualifier2").get());
     assertEquals(Integer.valueOf(15338), record.getRequiredField("fileRecordNumber"));
     assertEquals("2004", record.getRequiredField("cycle"));
   }

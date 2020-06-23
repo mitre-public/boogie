@@ -52,12 +52,9 @@ public interface Leg {
   Integer sequenceNumber();
 
   /**
-   * The inbound magnetic course to one of the listed fixes in the leg description.
-   */
-  Optional<Double> inboundMagneticCourse();
-
-  /**
-   * The outbound magnetic course to one of the listed fixes in the leg description.
+   * The magnetic course to fly on the current leg - when considering triples of legs this
+   * is referred to as the outbound magnetic course. The inbound magnetic course is taken to
+   * be the outbound magnetic course of the previous leg.
    */
   Optional<Double> outboundMagneticCourse();
 
@@ -105,7 +102,7 @@ public interface Leg {
    * If the leg contains a turn this indicates the direction of the turn or both if
    * either is viable.
    */
-  Optional<TurnDirection> turnDirection();
+  Optional<? extends TurnDirection> turnDirection();
 
   /**
    * Indicates whether the leg should be overflown at the path terminator.

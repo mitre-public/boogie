@@ -21,36 +21,36 @@ public interface ArincAirport {
 
   ArincRecord arincRecord();
 
-  default RecordType recordType() {
-    return arincRecord().getRequiredField("recordType");
+  default Optional<RecordType> recordType() {
+    return arincRecord().getOptionalField("recordType");
   }
 
-  default CustomerAreaCode customerAreaCode() {
-    return arincRecord().getRequiredField("customerAreaCode");
+  default Optional<CustomerAreaCode> customerAreaCode() {
+    return arincRecord().getOptionalField("customerAreaCode");
   }
 
-  default SectionCode sectionCode() {
-    return arincRecord().getRequiredField("sectionCode");
+  default Optional<SectionCode> sectionCode() {
+    return arincRecord().getOptionalField("sectionCode");
   }
 
-  default String airportIdentifier() {
-    return arincRecord().getRequiredField("airportIdentifier");
+  default Optional<String> airportIdentifier() {
+    return arincRecord().getOptionalField("airportIdentifier");
   }
 
-  default String airportIcaoRegion() {
-    return arincRecord().getRequiredField("icaoRegion");
+  default Optional<String> airportIcaoRegion() {
+    return arincRecord().getOptionalField("icaoRegion");
   }
 
-  default String subSectionCode() {
-    return arincRecord().getRequiredField("subSectionCode");
+  default Optional<String> subSectionCode() {
+    return arincRecord().getOptionalField("subSectionCode");
   }
 
   default Optional<String> iataDesignator() {
     return arincRecord().getOptionalField("iataDesignator");
   }
 
-  default String continuationRecordNumber() {
-    return arincRecord().getRequiredField("continuationRecordNumber");
+  default Optional<String> continuationRecordNumber() {
+    return arincRecord().getOptionalField("continuationRecordNumber");
   }
 
   default Optional<Double> speedLimitAltitude() {
@@ -69,12 +69,12 @@ public interface ArincAirport {
     return arincRecord().getOptionalField("longestRunwaySurfaceCode");
   }
 
-  default Double latitude() {
-    return arincRecord().getRequiredField("latitude");
+  default Optional<Double> latitude() {
+    return arincRecord().getOptionalField("latitude");
   }
 
-  default Double longitude() {
-    return arincRecord().getRequiredField("longitude");
+  default Optional<Double> longitude() {
+    return arincRecord().getOptionalField("longitude");
   }
 
   default Optional<Double> magneticVariation() {
@@ -121,16 +121,16 @@ public interface ArincAirport {
     return arincRecord().getOptionalField("datumCode");
   }
 
-  default String airportFullName() {
-    return arincRecord().getRequiredField("airportFullName");
+  default Optional<String> airportFullName() {
+    return arincRecord().getOptionalField("airportFullName");
   }
 
-  default Integer fileRecordNumber() {
-    return arincRecord().getRequiredField("fileRecordNumber");
+  default Optional<Integer> fileRecordNumber() {
+    return arincRecord().getOptionalField("fileRecordNumber");
   }
 
-  default String cycle() {
-    return arincRecord().getRequiredField("cycle");
+  default Optional<String> cycle() {
+    return arincRecord().getOptionalField("cycle");
   }
 
   /**

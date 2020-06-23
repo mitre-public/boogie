@@ -6,12 +6,12 @@ import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simp
 import java.util.Optional;
 
 import org.mitre.caasd.commons.Distance;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
@@ -42,11 +42,9 @@ class RfScorer implements OffTrackScorer {
 
     TurnDirection turnDirection = scorerLeg().current().turnDirection().orElseThrow(supplier("Turn Direction"));
 
-    double inboundTangentialTrack = scorerLeg().current().inboundMagneticCourse()
-        .orElse(scorerLeg().previous(Leg::outboundMagneticCourse).orElseThrow(supplier("Inbound Tangential Course")));
+    double inboundTangentialTrack = scorerLeg().previous(Leg::outboundMagneticCourse).orElseThrow(supplier("Inbound Tangential Course"));
 
-    double outboundTangentialTrack = scorerLeg().current().outboundMagneticCourse()
-        .orElse(scorerLeg().next(Leg::inboundMagneticCourse).orElseThrow(supplier("Outbound Tangential Course")));
+    double outboundTangentialTrack = scorerLeg().current().outboundMagneticCourse().orElseThrow(supplier("Outbound Tangential Course"));
 
     // TODO - figure out if this should preferentially be the magvar of the recommended navaid - since its actually published (in theory)
     MagneticVariation magneticVariation = scorerLeg().current().pathTerminator().magneticVariation();

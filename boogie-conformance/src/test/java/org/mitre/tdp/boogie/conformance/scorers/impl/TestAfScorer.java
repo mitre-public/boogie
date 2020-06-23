@@ -13,12 +13,12 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 public class TestAfScorer {
@@ -206,13 +206,19 @@ public class TestAfScorer {
     when(var.trueToMagnetic(any())).thenCallRealMethod();
     when(navaid.magneticVariation()).thenReturn(var);
 
+    TurnDirection td = mock(TurnDirection.class);
+    when(td.isRight()).thenReturn(true);
+    when(td.isLeft()).thenReturn(false);
+
+    Optional<TurnDirection> otd = of(td);
+
     Leg AF = mock(Leg.class);
     when(AF.type()).thenReturn(PathTerm.AF);
     when(AF.recommendedNavaid()).thenReturn((Optional) of(navaid));
     when(AF.outboundMagneticCourse()).thenReturn(of(98.0));
     when(AF.theta()).thenReturn(of(138.0));
     when(AF.rho()).thenReturn(of(15.0));
-    when(AF.turnDirection()).thenReturn(of(TurnDirection.RIGHT));
+    when(AF.turnDirection()).thenReturn((Optional) otd);
 
     return AF;
   }

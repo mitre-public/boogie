@@ -56,11 +56,6 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
-  public Optional<Double> inboundMagneticCourse() {
-    return Optional.empty();
-  }
-
-  @Override
   public Optional<Double> outboundMagneticCourse() {
     return Optional.empty();
   }

@@ -14,70 +14,73 @@ import org.mitre.tdp.boogie.v18.spec.record.AirwaySpec;
 
 /**
  * Typed interface for retrieving record field and type information from {@link ArincRecord}s parsed via the {@link AirwaySpec}.
+ *
+ * Note this returns all fields as optionals - this allows users to handle expected/unexpected nulls on typed returns more gracefully
+ * as required by the limitations of their input ARINC data source.
  */
 @FunctionalInterface
 public interface ArincAirway {
 
   ArincRecord arincRecord();
 
-  default RecordType recordType() {
-    return arincRecord().getRequiredField("recordType");
+  default Optional<RecordType> recordType() {
+    return arincRecord().getOptionalField("recordType");
   }
 
-  default CustomerAreaCode customerAreaCode() {
-    return arincRecord().getRequiredField("customerAreaCode");
+  default Optional<CustomerAreaCode> customerAreaCode() {
+    return arincRecord().getOptionalField("customerAreaCode");
   }
 
-  default SectionCode sectionCode() {
-    return arincRecord().getRequiredField("sectionCode");
+  default Optional<SectionCode> sectionCode() {
+    return arincRecord().getOptionalField("sectionCode");
   }
 
-  default String subSectionCode() {
-    return arincRecord().getRequiredField("subSectionCode");
+  default Optional<String> subSectionCode() {
+    return arincRecord().getOptionalField("subSectionCode");
   }
 
-  default String routeIdentifier() {
-    return arincRecord().getRequiredField("routeIdentifier");
+  default Optional<String> routeIdentifier() {
+    return arincRecord().getOptionalField("routeIdentifier");
   }
 
   default Optional<String> sixthCharacter() {
     return arincRecord().getOptionalField("sixthCharacter");
   }
 
-  default Integer sequenceNumber() {
-    return arincRecord().getRequiredField("sequenceNumber");
+  default Optional<Integer> sequenceNumber() {
+    return arincRecord().getOptionalField("sequenceNumber");
   }
 
-  default String fixIdentifier() {
-    return arincRecord().getRequiredField("fixIdentifier");
+  default Optional<String> fixIdentifier() {
+    return arincRecord().getOptionalField("fixIdentifier");
   }
 
-  default String fixIcaoRegion() {
-    return arincRecord().getRequiredField("fixIcaoRegion");
+  default Optional<String> fixIcaoRegion() {
+    return arincRecord().getOptionalField("fixIcaoRegion");
   }
 
-  default SectionCode fixSectionCode() {
-    return arincRecord().getRequiredField("fixSectionCode");
+  default Optional<SectionCode> fixSectionCode() {
+    return arincRecord().getOptionalField("fixSectionCode");
   }
 
-  default String fixSubSectionCode() {
-    return arincRecord().getRequiredField("fixSubSectionCode");
+  default Optional<String> fixSubSectionCode() {
+    return arincRecord().getOptionalField("fixSubSectionCode");
   }
 
-  default String continuationRecordNumber() {
-    return arincRecord().getRequiredField("continuationRecordNumber");
+  default Optional<String> continuationRecordNumber() {
+    return arincRecord().getOptionalField("continuationRecordNumber");
   }
 
-  default Optional<String> fixDescription() {
-    return arincRecord().getOptionalField("fixDescription");
+  default Optional<String> waypointDescription() {
+    return arincRecord().getOptionalField("waypointDescription");
   }
 
   default Optional<BoundaryCode> boundaryCode() {
     return arincRecord().getOptionalField("boundaryCode");
   }
 
-  default String routeType() {
-    return arincRecord().getRequiredField("routeType");
+  default Optional<String> routeType() {
+    return arincRecord().getOptionalField("routeType");
   }
 
   default Optional<Level> level() {
@@ -125,11 +128,11 @@ public interface ArincAirway {
   }
 
   default Optional<Duration> holdTime() {
-    return routeHoldDistanceTime().map(s -> new RouteHoldDistanceTime().asDuration(s));
+    return routeHoldDistanceTime().flatMap(s -> new RouteHoldDistanceTime().asDuration(s));
   }
 
   default Optional<Double> routeDistance() {
-    return routeHoldDistanceTime().map(s -> new RouteHoldDistanceTime().asDistanceInNm(s));
+    return routeHoldDistanceTime().flatMap(s -> new RouteHoldDistanceTime().asDistanceInNm(s));
   }
 
   default Optional<Double> inboundMagneticCourse() {
@@ -152,12 +155,12 @@ public interface ArincAirway {
     return arincRecord().getOptionalField("fixedRadiusTransitionIndicator");
   }
 
-  default Integer fileRecordNumber() {
-    return arincRecord().getRequiredField("fileRecordNumber");
+  default Optional<Integer> fileRecordNumber() {
+    return arincRecord().getOptionalField("fileRecordNumber");
   }
 
-  default String cycle() {
-    return arincRecord().getRequiredField("cycle");
+  default Optional<String> cycle() {
+    return arincRecord().getOptionalField("cycle");
   }
 
   /**
