@@ -15,6 +15,11 @@ public class TestVerticalAngle {
   }
 
   @Test
+  public void testParsesZeroVerticalAngle() {
+    assertEquals(0.0d, new VerticalAngle().parseValue(" 000"));
+  }
+
+  @Test
   public void testParseExceptionAngleTooHigh() {
     assertThrows(FieldSpecParseException.class, () -> new VerticalAngle().parseValue("-1045"));
   }
@@ -22,10 +27,5 @@ public class TestVerticalAngle {
   @Test
   public void testParseExceptionBadAngle() {
     assertThrows(FieldSpecParseException.class, () -> new VerticalAngle().parseValue("-12A"));
-  }
-
-  @Test
-  public void testParseExceptionNonNegativeAngle() {
-    assertThrows(FieldSpecParseException.class, () -> new VerticalAngle().parseValue("905"));
   }
 }

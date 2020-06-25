@@ -34,7 +34,7 @@ public class WaypointDescription implements FieldSpec<String>, FilterTrimEmptyIn
   }
 
   enum Column1 implements FieldSpec<Column1> {
-    SPEC, A, E, F, G, H, N, P, T, V;
+    SPEC, A, E, F, G, H, N, P, R, T, V;
 
     @Override
     public int fieldLength() {
@@ -82,7 +82,7 @@ public class WaypointDescription implements FieldSpec<String>, FilterTrimEmptyIn
   }
 
   enum Column3 implements FieldSpec<Column3>, FilterTrimEmptyInput<Column3> {
-    SPEC, A, B, C, G, M, P, S;
+    SPEC, A, B, C, G, M, P, R, S;
 
     @Override
     public int fieldLength() {
@@ -106,7 +106,7 @@ public class WaypointDescription implements FieldSpec<String>, FilterTrimEmptyIn
   }
 
   enum Column4 implements FieldSpec<Column4>, FilterTrimEmptyInput<Column4> {
-    SPEC, A, B, C, D, E, F, H, I, M;
+    SPEC, A, B, C, D, E, F, G, H, I, M, N;
 
     @Override
     public int fieldLength() {
