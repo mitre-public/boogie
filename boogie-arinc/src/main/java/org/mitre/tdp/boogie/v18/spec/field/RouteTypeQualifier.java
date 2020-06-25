@@ -34,6 +34,6 @@ public class RouteTypeQualifier implements FreeFormString, FilterTrimEmptyInput<
    * The collection of allowed route type qualifier codes.
    */
   public static HashSet<String> allowedCodes() {
-    return newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "R", "T", "U", "V", "W");
+    return newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "P", "R", "T", "U", "V", "W");
   }
 }
