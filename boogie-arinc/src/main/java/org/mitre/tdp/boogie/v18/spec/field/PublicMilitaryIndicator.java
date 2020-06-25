@@ -22,7 +22,11 @@ public enum PublicMilitaryIndicator implements FieldSpec<PublicMilitaryIndicator
   /**
    * Private
    */
-  P;
+  P,
+  /**
+   * Join operations.
+   */
+  J;
 
   @Override
   public int fieldLength() {
