@@ -24,6 +24,6 @@ public class Theta implements NumericDouble {
   @Override
   public Double parseValue(String fieldValue) {
     checkSpec(this, fieldValue, validValue(fieldValue));
-    return ArincStrings.parseDoubleWithTenths(fieldValue);
+    return ArincStrings.parseDoubleWithTenths(fieldValue.trim());
   }
 }

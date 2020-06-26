@@ -10,12 +10,12 @@ public interface NumericDouble extends FieldSpec<Double>, FilterTrimEmptyInput<D
   default boolean validValue(String fieldValue) {
     return (fieldValue.startsWith("+") && isNumeric(fieldValue.substring(1)))
         || (fieldValue.startsWith("-") && isNumeric(fieldValue.substring(1)))
-        || isNumeric(fieldValue);
+        || isNumeric(fieldValue.trim());
   }
 
   @Override
   default Double parseValue(String fieldValue) {
     checkSpec(this, fieldValue, validValue(fieldValue));
-    return Double.parseDouble(fieldValue);
+    return Double.parseDouble(fieldValue.trim());
   }
 }
