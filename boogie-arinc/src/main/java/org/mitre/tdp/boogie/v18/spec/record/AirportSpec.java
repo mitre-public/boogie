@@ -39,14 +39,11 @@ import org.mitre.tdp.boogie.v18.spec.field.TransitionAltitude;
  * Record specification for ARINC airport records.
  */
 public class AirportSpec implements RecordSpec {
-  @Override
-  public int recordLength() {
-    return 132;
-  }
 
-  @Override
-  public List<ArincField<?>> recordFields() {
-    return Arrays.asList(
+  private List<ArincField<?>> recordFields;
+
+  public AirportSpec() {
+    this.recordFields = Arrays.asList(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),
@@ -80,6 +77,16 @@ public class AirportSpec implements RecordSpec {
         newField("airportFullName", new NameField()),
         newField(new FileRecordNumber()),
         newField(new Cycle()));
+  }
+
+  @Override
+  public int recordLength() {
+    return 132;
+  }
+
+  @Override
+  public List<ArincField<?>> recordFields() {
+    return recordFields;
   }
 
   @Override

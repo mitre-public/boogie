@@ -32,14 +32,10 @@ import org.mitre.tdp.boogie.v18.spec.field.WaypointUsage;
  */
 public class WaypointSpec implements RecordSpec {
 
-  @Override
-  public int recordLength() {
-    return 132;
-  }
+  private List<ArincField<?>> recordFields;
 
-  @Override
-  public List<ArincField<?>> recordFields() {
-    return Arrays.asList(
+  public WaypointSpec() {
+    this.recordFields = Arrays.asList(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),
@@ -66,6 +62,16 @@ public class WaypointSpec implements RecordSpec {
         newField(new WaypointNameDescription()),
         newField(new FileRecordNumber()),
         newField(new Cycle()));
+  }
+
+  @Override
+  public int recordLength() {
+    return 132;
+  }
+
+  @Override
+  public List<ArincField<?>> recordFields() {
+    return recordFields;
   }
 
   @Override

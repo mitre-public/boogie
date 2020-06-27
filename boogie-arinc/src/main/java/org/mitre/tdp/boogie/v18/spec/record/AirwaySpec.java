@@ -43,14 +43,10 @@ import org.mitre.tdp.boogie.v18.spec.field.WaypointDescription;
  */
 public class AirwaySpec implements RecordSpec {
 
-  @Override
-  public int recordLength() {
-    return 132;
-  }
+  private List<ArincField<?>> recordFields;
 
-  @Override
-  public List<ArincField<?>> recordFields() {
-    return Arrays.asList(
+  public AirwaySpec() {
+    this.recordFields = Arrays.asList(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),
@@ -79,7 +75,7 @@ public class AirwaySpec implements RecordSpec {
         newField("theta", new Theta()),
         newField("rho", new Rho()),
         newField("outboundMagneticCourse", new OutboundMagneticCourse()),
-        newField( new RouteHoldDistanceTime()),
+        newField(new RouteHoldDistanceTime()),
         newField("inboundMagneticCourse", new InboundMagneticCourse()),
         newField("blank4", new BlankSpec(1)),
         newField("minAltitude1", new MinimumAltitude()),
@@ -89,6 +85,16 @@ public class AirwaySpec implements RecordSpec {
         newField("reserved", new BlankSpec(22)),
         newField("fileRecordNumber", new FileRecordNumber()),
         newField("cycle", new Cycle()));
+  }
+
+  @Override
+  public int recordLength() {
+    return 132;
+  }
+
+  @Override
+  public List<ArincField<?>> recordFields() {
+    return recordFields;
   }
 
   @Override

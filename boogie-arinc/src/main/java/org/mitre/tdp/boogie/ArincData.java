@@ -79,7 +79,10 @@ public class ArincData implements ArincRecord {
       offset += field.fieldSpec().fieldLength();
     }
 
-    checkArgument(offset == spec.recordLength(), "Final offset not equals to length of record. " + offset + " vs " + spec.recordLength());
+    checkArgument(offset == spec.recordLength(), "Final offset not equals to length of record. "
+        .concat(Integer.toString(offset))
+        .concat(" vs ")
+        .concat(Integer.toString(spec.recordLength())));
     this.parseSpec = spec;
     return this;
   }

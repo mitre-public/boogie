@@ -36,14 +36,10 @@ import org.mitre.tdp.boogie.v18.spec.field.VorNdbIdentifier;
  */
 public class VhfNavaidSpec implements RecordSpec {
 
-  @Override
-  public int recordLength() {
-    return 132;
-  }
+  private List<ArincField<?>> recordFields;
 
-  @Override
-  public List<ArincField<?>> recordFields() {
-    return Arrays.asList(
+  public VhfNavaidSpec() {
+    this.recordFields = Arrays.asList(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),
@@ -71,6 +67,16 @@ public class VhfNavaidSpec implements RecordSpec {
         newField("vhfNavaidName", new NameField()),
         newField(new FileRecordNumber()),
         newField(new Cycle()));
+  }
+
+  @Override
+  public int recordLength() {
+    return 132;
+  }
+
+  @Override
+  public List<ArincField<?>> recordFields() {
+    return recordFields;
   }
 
   @Override
