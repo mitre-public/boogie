@@ -16,7 +16,6 @@ buildscript {
     }
 }
 
-val jacocoAggregateXmlReportFile = "$buildDir/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
 
 /**
  * https://docs.gradle.org/6.4-rc-1/samples/sample_jvm_multi_project_with_code_coverage.html
@@ -29,10 +28,7 @@ tasks.register<JacocoReport>("codeCoverageReport") {
     // If a subproject applies the 'jacoco' plugin, add its result into the aggregate report
     subprojects {
         val subproject = this
-        dependsOn(subproject.tasks.named("testSmall"))
-        dependsOn(subproject.tasks.named("testLarge"))
-        dependsOn(subproject.tasks.named("testGiant"))
-        dependsOn(subproject.tasks.named("testIntegration"))
+        dependsOn(subproject.tasks.named("test"))
         subproject.plugins.withType<JacocoPlugin>().configureEach {
             subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.configureEach {
 
@@ -40,9 +36,12 @@ tasks.register<JacocoReport>("codeCoverageReport") {
                 var mainSourceSet = javaPlugin.sourceSets["main"]
 
                 sourceSets(mainSourceSet)
+
                 val testTask = this
                 var testSourceSet = javaPlugin.sourceSets["test"]
-                if (!testSourceSet.allJava.isEmpty) {
+                var execFileName = "${subproject.buildDir}/jacoco/${testTask.name}.exec"
+
+                if (!testSourceSet.allJava.isEmpty && File(execFileName).exists()) {
                     logger.lifecycle("including ${subproject.name}: ${testTask.name} in full report")
                     executionData(testTask)
                 } else {
@@ -58,6 +57,7 @@ tasks.register<JacocoReport>("codeCoverageReport") {
         html.isEnabled = true
     }
 }
+val jacocoAggregateXmlReportFile = "$buildDir/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
 
 /**
  * configure the sonarqube extension to allow us to publish code reports to caasd-sonar
@@ -67,11 +67,11 @@ apply<org.sonarqube.gradle.SonarQubePlugin>()    //apply("org.sonarqube")
 configure<org.sonarqube.gradle.SonarQubeExtension> {
     properties {
         properties(mapOf(
-            "sonar.coverage.jacoco.xmlReportPaths" to jacocoAggregateXmlReportFile,
-            "sonar.projectKey" to "tdp",
-            "sonar.projectName" to "TDP",
-            "sonar.host.url" to "https://caasd-sonar.mitre.org/sonar",
-            "sonar.login" to "81f2f4421267bc509e0627ab0fa97e2d6a8885ad"
+                "sonar.coverage.jacoco.xmlReportPaths" to jacocoAggregateXmlReportFile,
+                "sonar.projectKey" to "boogie",
+                "sonar.projectName" to "boogie",
+                "sonar.host.url" to "https://caasd-sonar.mitre.org/sonar",
+                "sonar.login" to "81f2f4421267bc509e0627ab0fa97e2d6a8885ad"
         ))
     }
 }

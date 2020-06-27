@@ -1,28 +1,29 @@
-/* *****************************
- * configure dependency repos  *
- *******************************/
 allprojects {
     repositories {
-//        mavenLocal() //ONLY turn this on temporarily to pull locally-build projects you've deployed to your .m2 repo which aren't yet on to dali
+        // only uncomment to test a build that depends on locally installed maven artifacts
+//        mavenLocal()
         maven {
-            name = "mitre-caasd-releases"//match repo name in ~/.m2/settings.xml
-            url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-releases/")
+            name = "dali-mirror"
+            url = uri("https://dali.mitre.org/nexus/content/groups/mirror")
+            content {
+                excludeGroup("org.jacoco")// dali's: mirror/org/jacoco doesn't have all the agent jar's, just runtime which breaks the build
+            }
+        }
+        maven {
+            name = "dali-proxied-repositories"
+            url = uri("https://dali.mitre.org/nexus/content/groups/proxied-repositories")
         }
         maven {
             name = "dali-external"
             url = uri("https://dali.mitre.org/nexus/content/groups/external")
         }
         maven {
+            name = "mitre-caasd-releases"
+            url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-releases/")
+        }
+        maven {
             name = "dali-mitre-caasd-releases"
             url = uri("https://dali.mitre.org/nexus/content/groups/mitre-caasd")
-        }
-        maven {
-            name = "dali-jetty-hadoop"
-            url = uri("https://dali.mitre.org/nexus/content/repositories/atlassian/")
-        }
-        maven {
-            name = "dali-proxied-repositories"
-            url = uri("https://dali.mitre.org/nexus/content/groups/proxied-repositories")
         }
         maven {
             name = "dali-hortonworks-releases"
@@ -32,23 +33,15 @@ allprojects {
             name = "dali-jetty-hadoop"
             url = uri("https://repo.hortonworks.com/content/repositories/jetty-hadoop")
         }
-
         maven {
-            name = "repo1"
-            url = uri("https://repo1.maven.org/maven2/")
+            name = "dali-jetty-hadoop"
+            url = uri("https://dali.mitre.org/nexus/content/repositories/atlassian/")
         }
         maven {
-            name = "dali-mirror"
-            url = uri("https://dali.mitre.org/nexus/content/groups/mirror")
-        }
-
-        maven {
-            name = "confluent"
-            url = uri("http://magritte.mitre.org/nexus/content/repositories/confluent/")
+            name = "dynamodb-local"
+            url = uri("https://s3-us-west-2.amazonaws.com/dynamodb-local/release")
         }
     }
-
-
 }
 
 /* *******************************

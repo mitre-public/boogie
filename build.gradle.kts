@@ -1,40 +1,42 @@
 plugins {
+    `java-platform`
+    jacoco
     id("com.adarshr.test-logger") version "2.0.0" apply false
-    id("org.sonarqube") version "2.7.1"
     id("com.bmuschko.clover") version "2.2.5"
-    // checkstyle
+    id("net.researchgate.release") version "2.8.1" // used to emulate mvn release: https://github.com/researchgate/gradle-release
 }
 
+val gradleScriptsDir = "./gradle-scripts/"
 
-///**
-// * code coverage and reporting configuration
-// */
-//if (project.hasProperty("clover")) {
-//    allprojects {
-//        apply(plugin = "com.bmuschko.clover")
-//        dependencies {
-//            clover("org.openclover:clover:4.3.1")
-//        }
-//    }
-//}
-
-//if (project.hasProperty("sonar")) {
-//    val sonarReportPath = "$buildDir/reports/clover/clover.xml"
-//    allprojects {
-//        sonarqube {
-//            properties {
-//                property("sonar.clover.reportPath", sonarReportPath)
-//            }
-//        }
-//    }
-//}
+/**
+ * code coverage and reporting configuration
+ */
+if (project.hasProperty("clover")) {
+    allprojects {
+        apply(plugin = "com.bmuschko.clover")
+        dependencies {
+            clover("org.openclover:clover:4.3.1")
+        }
+    }
+}
 
 val mockitoVersion by extra("3.2.4")
 
-/**
- * import repo configs
- */
-apply(from = "build-repos.gradle.kts")
+/* import/apply our repo and dependencies declared in other scripts for modularity */
+apply(from = "${gradleScriptsDir}build-repos.gradle.kts")
+
+/* documentation tasks */
+apply(from = "${gradleScriptsDir}build-docs.gradle.kts")
+
+//only apply jacoco/sonar reporting settings if explicitly running
+if (project.hasProperty("reporting")) {
+    apply(from = "${gradleScriptsDir}build-reporting.gradle.kts")
+}
+
+release {
+    preTagCommitMessage = "[Gradle] Bump to stable version "
+    newVersionCommitMessage = "[Gradle] Bump to version "
+}
 
 subprojects {
     apply(plugin = "java-library")
@@ -59,30 +61,13 @@ subprojects {
 
         "testImplementation"("org.mockito:mockito-core:$mockitoVersion")
     }
-    /* TESTING  */
-    val testLargeJvmargs: String by project
-    val testLargeHeapMax: String by project
 
     /** configure main test task to ignore desired tags and integration tests by default */
     tasks.named<Test>("test") {
         group = "verification"
         description = "Runs all unit tests"
-        useJUnitPlatform { excludeTags("CLUSTER", "IGNORE") }
-        filter {
-            excludeTestsMatching("IT*")
-            isFailOnNoMatchingTests = false//allow modules to not have any tests
-        }
-        failFast = true
-        jvmArgs = testLargeJvmargs.split(" ")
-        maxHeapSize = testLargeHeapMax
 
-    }
-
-    /** test task to run ONLY small unit tests */
-    tasks.register<Test>("testSmall") {
-        group = "verification"
-        description = "Runs SMALL (or untagged) tests only."
-        useJUnitPlatform { excludeTags("CLUSTER", "LARGE", "IGNORE") }
+        useJUnitPlatform { }
         filter {
             excludeTestsMatching("IT*")
             isFailOnNoMatchingTests = false//allow modules to not have any tests
