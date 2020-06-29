@@ -33,6 +33,14 @@ if (project.hasProperty("reporting")) {
     apply(from = "${gradleScriptsDir}build-reporting.gradle.kts")
 }
 
+/**
+ * create a ~/.gradle/gradle.properties file which defines mavenUser and mavenPassword (copy from ~/.m2/settings.xml
+ * @see: https://github.com/gradle/gradle/issues/1236
+ */
+//TODO investigate using https://github.com/etiennestuder/gradle-credentials-plugin
+val mavenUser: String? by project
+val mavenPassword: String? by project
+
 release {
     preTagCommitMessage = "[Gradle] Bump to stable version "
     newVersionCommitMessage = "[Gradle] Bump to version "
