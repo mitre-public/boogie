@@ -39,7 +39,7 @@ public class WaypointSpec implements RecordSpec {
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),
-        newField(new SubSectionCode()),
+        newField("enrouteSubSectionCode", new SubSectionCode()),
         newField("airportIdentifier", new AirportHeliportIdentifier()),
         newField("airportIcaoRegion", new IcaoRegion()),
         newField("terminalSubSectionCode", new SubSectionCode()),

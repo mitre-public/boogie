@@ -27,7 +27,7 @@ public interface ArincWaypoint extends ArincRecordDecorator {
   }
 
   default Optional<String> enrouteSubSectionCode() {
-    return arincRecord().getOptionalField("subSectionCode");
+    return arincRecord().getOptionalField("enrouteSubSectionCode");
   }
 
   default Optional<String> airportIdentifier() {

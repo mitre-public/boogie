@@ -30,7 +30,7 @@ public class TestWaypointSpec {
     assertEquals(RecordType.S, arincRecord.getRequiredField("recordType"));
     assertEquals(CustomerAreaCode.SAM, arincRecord.getRequiredField("customerAreaCode"));
     assertEquals(SectionCode.E, arincRecord.getRequiredField("sectionCode"));
-    assertEquals("A", arincRecord.getRequiredField("subSectionCode"));
+    assertEquals("A", arincRecord.getRequiredField("enrouteSubSectionCode"));
     assertEquals("ENRT", arincRecord.getRequiredField("airportIdentifier"));
     assertFalse(arincRecord.getOptionalField("airportIcaoRegion").isPresent());
     assertEquals("UMGOS", arincRecord.getRequiredField("fixIdentifier"));
@@ -63,7 +63,7 @@ public class TestWaypointSpec {
     assertEquals(RecordType.S, arincRecord.getRequiredField("recordType"));
     assertEquals(CustomerAreaCode.USA, arincRecord.getRequiredField("customerAreaCode"));
     assertEquals(SectionCode.P, arincRecord.getRequiredField("sectionCode"));
-    assertFalse(arincRecord.getOptionalField("subSectionCode").isPresent());
+    assertFalse(arincRecord.getOptionalField("enrouteSubSectionCode").isPresent());
     assertEquals("KFMH", arincRecord.getRequiredField("airportIdentifier"));
     assertEquals("K6", arincRecord.getRequiredField("airportIcaoRegion"));
     assertEquals("C", arincRecord.getRequiredField("terminalSubSectionCode"));
