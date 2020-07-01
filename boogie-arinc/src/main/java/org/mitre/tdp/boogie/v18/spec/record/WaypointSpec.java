@@ -42,7 +42,7 @@ public class WaypointSpec implements RecordSpec {
         newField(new SubSectionCode()),
         newField("airportIdentifier", new AirportHeliportIdentifier()),
         newField("airportIcaoRegion", new IcaoRegion()),
-        newField("airportSubsectionCode", new SubSectionCode()),
+        newField("terminalSubSectionCode", new SubSectionCode()),
         newField(new FixIdentifier()),
         newField("blank1", new BlankSpec(1)),
         newField(new IcaoRegion()),
@@ -76,7 +76,9 @@ public class WaypointSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    String s = arincRecord.substring(4, 6);
-    return s.equals("EA") || s.equals("PC");
+    // enroute waypoint section subsection are in a different location than the terminal ones
+    String enroute = arincRecord.substring(4, 6);
+    String terminal = arincRecord.substring(4, 5).concat(arincRecord.substring(12, 13));
+    return enroute.equals("EA") || terminal.equals("PC");
   }
 }
