@@ -26,8 +26,8 @@ public interface ArincWaypoint extends ArincRecordDecorator {
     return arincRecord().getOptionalField("sectionCode");
   }
 
-  default Optional<String> subSectionCode() {
-    return arincRecord().getOptionalField("subSectionCode");
+  default Optional<String> enrouteSubSectionCode() {
+    return arincRecord().getOptionalField("enrouteSubSectionCode");
   }
 
   default Optional<String> airportIdentifier() {
@@ -38,8 +38,8 @@ public interface ArincWaypoint extends ArincRecordDecorator {
     return arincRecord().getOptionalField("airportIcaoRegion");
   }
 
-  default Optional<String> airportSubSectionCode() {
-    return arincRecord().getOptionalField("airportSubSectionCode");
+  default Optional<String> terminalSubSectionCode() {
+    return arincRecord().getOptionalField("terminalSubSectionCode");
   }
 
   default Optional<String> fixIdentifier() {

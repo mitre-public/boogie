@@ -2,7 +2,8 @@ package org.mitre.tdp.boogie.v18;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mitre.tdp.boogie.v18.record.TestWaypointSpec.waypoint1;
+import static org.mitre.tdp.boogie.v18.record.TestWaypointSpec.enrouteWaypoint;
+import static org.mitre.tdp.boogie.v18.record.TestWaypointSpec.terminalWaypoint;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.ArincVersion;
@@ -13,13 +14,13 @@ import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
 public class TestArincWaypoint {
 
   @Test
-  public void testFieldAccess() {
-    ArincWaypoint waypoint = ArincWaypoint.wrap(ArincVersion.V18.parse(waypoint1));
+  public void testEnrouteFieldAccess() {
+    ArincWaypoint waypoint = ArincWaypoint.wrap(ArincVersion.V18.parse(enrouteWaypoint));
 
     assertEquals(RecordType.S, waypoint.recordType().get());
     assertEquals(CustomerAreaCode.SAM, waypoint.customerAreaCode().get());
     assertEquals(SectionCode.E, waypoint.sectionCode().get());
-    assertEquals("A", waypoint.subSectionCode().get());
+    assertEquals("A", waypoint.enrouteSubSectionCode().get());
     assertEquals("ENRT", waypoint.airportIdentifier().get());
     assertFalse(waypoint.airportIcaoRegion().isPresent());
     assertEquals("UMGOS", waypoint.fixIdentifier().get());
@@ -35,5 +36,31 @@ public class TestArincWaypoint {
     assertEquals("UMGOS", waypoint.waypointNameDescription().get());
     assertEquals(Integer.valueOf(20914), waypoint.fileRecordNumber().get());
     assertEquals("2003", waypoint.cycle().get());
+  }
+
+  @Test
+  public void tesTerminaltFieldAccess() {
+    ArincWaypoint waypoint = ArincWaypoint.wrap(ArincVersion.V18.parse(terminalWaypoint));
+
+    assertEquals(RecordType.S, waypoint.recordType().get());
+    assertEquals(CustomerAreaCode.USA, waypoint.customerAreaCode().get());
+    assertEquals(SectionCode.P, waypoint.sectionCode().get());
+    assertFalse(waypoint.enrouteSubSectionCode().isPresent());
+    assertEquals("KFMH", waypoint.airportIdentifier().get());
+    assertEquals("K6", waypoint.airportIcaoRegion().get());
+    assertEquals("C", waypoint.terminalSubSectionCode().get());
+    assertEquals("REDSX", waypoint.fixIdentifier().get());
+    assertEquals("K6", waypoint.icaoRegion().get());
+    assertEquals("1", waypoint.continuationRecordNumber().get());
+    assertEquals("RIF", waypoint.waypointType().get());
+    assertEquals("  ", waypoint.waypointUsage().get());
+    assertEquals(41.92262777777778d, waypoint.latitude().get());
+    assertEquals(-70.23493611111111d, waypoint.longitude().get());
+    assertEquals(-15.4d, waypoint.magneticVariation().get());
+    assertEquals("NAR", waypoint.datumCode().get());
+    assertEquals("P  ", waypoint.nameFormat().get());
+    assertEquals("REDSX", waypoint.waypointNameDescription().get());
+    assertEquals(Integer.valueOf(52091), waypoint.fileRecordNumber().get());
+    assertEquals("1902", waypoint.cycle().get());
   }
 }
