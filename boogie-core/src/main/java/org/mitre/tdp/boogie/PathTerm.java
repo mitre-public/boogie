@@ -1,8 +1,5 @@
 package org.mitre.tdp.boogie;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Arrays;
 import java.util.function.Predicate;
 
@@ -11,11 +8,9 @@ import com.google.common.base.Preconditions;
 /**
  * Aka Path Terminator.
  *
- * For graphical pictures of what these represent it is recommended to look at attachment 5 of the
- * Arinc Specification Document.
+ * For graphical pictures of what these represent it is recommended to look at attachment 5 of the Arinc Specification Document.
  *
- * Note each leg type is also a predicate over the {@link Leg} data type enforcing the existence
- * of key fields.
+ * Note each leg type is also a predicate over the {@link Leg} data type enforcing the existence of key fields.
  */
 public enum PathTerm implements LegType {
   /**
@@ -23,283 +18,202 @@ public enum PathTerm implements LegType {
    *
    * Defines a fix as a point in space.
    */
-  IF(l -> {
-    checkNotNull(l.pathTerminator());
-    return true;
-  }),
+  IF(l -> l.pathTerminator() != null),
   /**
    * Track to a Fix.
    *
-   * Defines a great circle track over the ground between two
-   * known fixes.
+   * Defines a great circle track over the ground between two known fixes.
    */
-  TF(l -> {
-    checkNotNull(l.pathTerminator());
-    return true;
-  }),
+  TF(l -> l.pathTerminator() != null),
   /**
    * Course to a Fix.
    *
    * Defines a specified course to a fix.
    */
-  CF(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.rho().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    return true;
-  }),
+  CF(l -> l.pathTerminator() != null
+      && l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.rho().isPresent()
+      && l.outboundMagneticCourse().isPresent()
+      && l.routeDistance().isPresent()),
   /**
    * Direct to a Fix.
    *
-   * Defines an unspecified track starting from an unspecified
-   * location to a fix.
+   * Defines an unspecified track starting from an unspecified location to a fix.
    */
-  DF(l -> {
-    checkNotNull(l.pathTerminator());
-    return true;
-  }),
+  DF(l -> l.pathTerminator() != null),
   /**
    * Fix to an Altitude.
    *
-   * Defines a specified track over ground from a database fix
-   * to a specified altitude at an unspecified position.
+   * Defines a specified track over ground from a database fix to a specified altitude at an unspecified position.
    */
-  FA(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.rho().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  FA(l -> l.pathTerminator() != null
+      && l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.rho().isPresent()
+      && l.outboundMagneticCourse().isPresent()),
   /**
    * Track from a Fix for a Distance.
    *
-   * Defines a specific track over ground from a fix for a specific
-   * distance.
+   * Defines a specific track over ground from a fix for a specific distance.
    */
-  FC(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.rho().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  FC(l -> l.pathTerminator() != null
+      && l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.rho().isPresent()
+      && l.outboundMagneticCourse().isPresent()),
   /**
    * Track from a Fix to a DMS Distance.
    *
-   * Defines a specific track over ground from a fix to a specific DME
-   * distance (the DME will be referenced and must exist).
+   * Defines a specific track over ground from a fix to a specific DME distance (the DME will be referenced and must exist).
    */
-  FD(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.rho().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  FD(l -> l.pathTerminator() != null
+      && l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.rho().isPresent()
+      && l.outboundMagneticCourse().isPresent()),
   /**
    * Fix to Manual Termination.
    *
-   * Defines a specified track over ground from a fix until manual
-   * termination of the leg.
+   * Defines a specified track over ground from a fix until manual termination of the leg.
    */
-  FM(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.rho().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  FM(l -> l.pathTerminator() != null
+      && l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.rho().isPresent()
+      && l.outboundMagneticCourse().isPresent()),
   /**
    * Course to an Altitude.
    *
    * Defines a course to specific altitude at an unspecified location.
    */
-  CA(l -> {
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  CA(l -> l.outboundMagneticCourse().isPresent()),
   /**
    * Course to a DME Distance.
    *
-   * Defines a course to a specific DME distance which corresponds to
-   * an existing navaid.
+   * Defines a course to a specific DME distance which corresponds to an existing navaid.
    */
-  CD(l -> {
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    return true;
-  }),
+  CD(l -> l.recommendedNavaid().isPresent()
+      && l.outboundMagneticCourse().isPresent()
+      && l.routeDistance().isPresent()),
   /**
    * Course to an Intercept.
    *
    * Defines a specified course to a subsequent leg.
    */
-  CI(l -> {
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  CI(l -> l.outboundMagneticCourse().isPresent()),
   /**
    * Course to a Radial Termination.
    *
    * Defines a course to a specified radial from a VOR navaid.
    */
-  CR(l -> {
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  CR(l -> l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.outboundMagneticCourse().isPresent()),
   /**
    * Constant Radius Arc.
    *
-   * Defines a constant radius turn between two fixes, lines tangent
-   * to the arc and a center fix.
+   * Defines a constant radius turn between two fixes, lines tangent to the arc and a center fix.
    */
-  RF(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.turnDirection().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    checkArgument(l.centerFix().isPresent());
-    return true;
-  }),
+  RF(l -> l.pathTerminator() != null
+      && l.turnDirection().isPresent()
+      && l.routeDistance().isPresent()
+      && l.centerFix().isPresent()),
   /**
    * Arc to Fix.
    *
-   * Defines a track over ground at a specified constant distance from
-   * a DME navaid.
+   * Defines a track over ground at a specified constant distance from a DME navaid.
    */
-  AF(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.turnDirection().isPresent());
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.rho().isPresent());
-    return true;
-  }),
+  AF(l -> l.pathTerminator() != null
+      && l.turnDirection().isPresent()
+      && l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.rho().isPresent()),
   /**
    * Heading to an Altitude Termination.
    *
-   * Defines a heading to a specific altitude termination at an unspecified
-   * position.
+   * Defines a heading to a specific altitude termination at an unspecified position.
    */
-  VA(l -> {
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  VA(l -> l.outboundMagneticCourse().isPresent()),
   /**
    * Heading to a DME Distance Termination.
    *
-   * Defines a specified heading to terminating at a specified distance from
-   * a DME navaid.
+   * Defines a specified heading to terminating at a specified distance from a DME navaid.
    */
-  VD(l -> {
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    return true;
-  }),
+  VD(l -> l.recommendedNavaid().isPresent()
+      && l.outboundMagneticCourse().isPresent()
+      && l.routeDistance().isPresent()),
   /**
    * Heading to an Intercept.
    *
    * Defines a heading to intercept the subsequent leg at an unspecified position.
    */
-  VI(l -> {
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  VI(l -> l.outboundMagneticCourse().isPresent()),
   /**
    * Heading to a Manual Termination.
    *
    * Defines a specified heading until a manual termination.
    */
-  VM(l -> {
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  VM(l -> l.outboundMagneticCourse().isPresent()),
   /**
    * Heading to a Radial Termination.
    *
    * Defines a heading to specified radial from a VOR navaid.
    */
-  VR(l -> {
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    return true;
-  }),
+  VR(l -> l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.outboundMagneticCourse().isPresent()),
   /**
    * Procedure Turn.
    *
-   * Defines a course reversal starting at the specified fix. Includes an outbound
-   * leg followed by a left or right turn and a 180 degree course reversal to intercept
-   * the next leg.
+   * Defines a course reversal starting at the specified fix. Includes an outbound leg followed by a left or right turn and a
+   * 180 degree course reversal to intercept the next leg.
    *
    * Note - A maximum excursion time and distance is included as a data field.
    */
-  PI(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.turnDirection().isPresent());
-    checkArgument(l.recommendedNavaid().isPresent());
-    checkArgument(l.theta().isPresent());
-    checkArgument(l.rho().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    return true;
-  }),
+  PI(l -> l.pathTerminator() != null
+      && l.turnDirection().isPresent()
+      && l.recommendedNavaid().isPresent()
+      && l.theta().isPresent()
+      && l.rho().isPresent()
+      && l.outboundMagneticCourse().isPresent()
+      && l.routeDistance().isPresent()),
   /**
    * Holding in Lieu of Procedure Turn.
    *
-   * Defines a holding pattern in lieu of a procedure turn course reversal or terminal
-   * procedure referenced mandatory holding pattern. Leg time or distance is included.
+   * Defines a holding pattern in lieu of a procedure turn course reversal or terminal procedure referenced mandatory holding
+   * pattern. Leg time or distance is included.
    *
    * HA = Altitude Termination
    */
-  HA(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.turnDirection().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    return true;
-  }),
+  HA(l -> l.pathTerminator() != null
+      && l.turnDirection().isPresent()
+      && l.outboundMagneticCourse().isPresent()
+      && l.routeDistance().isPresent()),
   /**
    * Holding in Lieu of Procedure Turn.
    *
-   * Defines a holding pattern in lieu of a procedure turn course reversal or terminal
-   * procedure referenced mandatory holding pattern. Leg time or distance is included.
+   * Defines a holding pattern in lieu of a procedure turn course reversal or terminal procedure referenced mandatory holding
+   * pattern. Leg time or distance is included.
    *
    * HF = Single circuit terminating at a fix
    */
-  HF(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.turnDirection().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    return true;
-  }),
+  HF(l -> l.pathTerminator() != null
+      && l.turnDirection().isPresent()
+      && l.outboundMagneticCourse().isPresent()
+      && l.routeDistance().isPresent()),
   /**
    * Holding in Lieu of Procedure Turn.
    *
-   * Defines a holding pattern in lieu of a procedure turn course reversal or terminal
-   * procedure referenced mandatory holding pattern. Leg time or distance is included.
+   * Defines a holding pattern in lieu of a procedure turn course reversal or terminal procedure referenced mandatory holding
+   * pattern. Leg time or distance is included.
    *
    * HM = Manual Termination
    */
-  HM(l -> {
-    checkNotNull(l.pathTerminator());
-    checkArgument(l.turnDirection().isPresent());
-    checkArgument(l.outboundMagneticCourse().isPresent());
-    checkArgument(l.routeDistance().isPresent());
-    return true;
-  });
+  HM(l -> l.pathTerminator() != null
+      && l.turnDirection().isPresent()
+      && l.outboundMagneticCourse().isPresent()
+      && l.routeDistance().isPresent());
 
   private final Predicate<Leg> valid;
 
