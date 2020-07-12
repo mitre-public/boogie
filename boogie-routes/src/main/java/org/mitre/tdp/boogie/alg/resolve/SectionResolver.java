@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
-import org.mitre.tdp.boogie.alg.graph.LegGraph;
+import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.element.AirwayElement;
@@ -34,7 +34,7 @@ import com.google.common.collect.Iterables;
  * The SectionResolver serves the purpose of taking the sections output by the
  * {@link SectionSplitter} and assigning to them matching infrastructure elements
  * returning a collection of {@link ResolvedSection}s which can be handed
- * off to the {@link LegGraph} for additional analysis.
+ * off to the {@link RouteLegGraph} for additional analysis.
  *
  * <p>This will match the provided route section split/id to any and all elements
  * sharing a common identifier. The graph solution handles the resolution of

@@ -24,10 +24,10 @@ public class LegGraphFactory {
 
   /**
    * Converts the resolved route and all of its contained sections into legs with edges between them and inserts
-   * them into an {@link LegGraph}.
+   * them into an {@link RouteLegGraph}.
    */
-  public static LegGraph build(ResolvedRoute route) {
-    LegGraph graph = new LegGraph();
+  public static RouteLegGraph build(ResolvedRoute route) {
+    RouteLegGraph graph = new RouteLegGraph();
 
     Iterators.fastslow2(
         route.sections(),
@@ -40,7 +40,7 @@ public class LegGraphFactory {
   /**
    * Generates linking edges between the subsequent resolved sections so there are valid paths between them.
    */
-  private static void linkSections(ResolvedSection s1, ResolvedSection s2, LegGraph graph) {
+  private static void linkSections(ResolvedSection s1, ResolvedSection s2, RouteLegGraph graph) {
     List<LinkedLegs> legs1 = s1.allLegs();
     List<LinkedLegs> legs2 = s2.allLegs();
 
@@ -69,9 +69,9 @@ public class LegGraphFactory {
   }
 
   /**
-   * Inserts the converted legs from within the {@link ResolvedSection} into the {@link LegGraph} for reference later.
+   * Inserts the converted legs from within the {@link ResolvedSection} into the {@link RouteLegGraph} for reference later.
    */
-  private static void insert(LinkedLegs linked, LegGraph graph) {
+  private static void insert(LinkedLegs linked, RouteLegGraph graph) {
     GraphableLeg ssl1 = linked.source();
     GraphableLeg ssl2 = linked.target();
 
@@ -84,7 +84,7 @@ public class LegGraphFactory {
     }
   }
 
-  private static void setEdgeWeight(double weight, GraphableLeg source, GraphableLeg target, LegGraph graph) {
+  private static void setEdgeWeight(double weight, GraphableLeg source, GraphableLeg target, RouteLegGraph graph) {
     if (graph.containsEdge(source, target)) {
       DefaultWeightedEdge edge = graph.getEdge(source, target);
       setContainedEdgeWeight(weight, edge, graph);
@@ -97,7 +97,7 @@ public class LegGraphFactory {
   /**
    * If a given edge already exists in the graph we use the lower of the two provided weights.
    */
-  private static void setContainedEdgeWeight(double weight, DefaultWeightedEdge edge, LegGraph graph) {
+  private static void setContainedEdgeWeight(double weight, DefaultWeightedEdge edge, RouteLegGraph graph) {
     double cw = graph.getEdgeWeight(edge);
     if (weight < cw) {
       graph.setEdgeWeight(edge, weight);

@@ -20,7 +20,7 @@ import org.mitre.tdp.boogie.util.Combinatorics;
 /**
  * Graph structure containing all of the elements resolved in the {@link ResolvedRoute}.
  */
-public class LegGraph extends SimpleDirectedWeightedGraph<GraphableLeg, DefaultWeightedEdge> {
+public class RouteLegGraph extends SimpleDirectedWeightedGraph<GraphableLeg, DefaultWeightedEdge> {
 
   /**
    * The minimum resolved section index from the original route string. The section associated with this
@@ -33,7 +33,7 @@ public class LegGraph extends SimpleDirectedWeightedGraph<GraphableLeg, DefaultW
    */
   private int maxdex;
 
-  LegGraph() {
+  RouteLegGraph() {
     super(DefaultWeightedEdge.class);
     this.mindex = Integer.MAX_VALUE;
     this.maxdex = Integer.MIN_VALUE;

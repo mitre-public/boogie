@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.interfaces.LowestCommonAncestorAlgorithm;
@@ -136,6 +137,6 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
 
   @Override
   public String toString() {
-    return identifier() + airport() + type().name() + navigationSource().name();
+    return "ProcedureGraph: ".concat(StringUtils.join(identifier(), airport(), type().name(), navigationSource().name()));
   }
 }

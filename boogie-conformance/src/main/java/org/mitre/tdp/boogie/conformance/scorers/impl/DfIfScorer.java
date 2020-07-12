@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 /**
  * This is the default conformance scorer for {@link PathTerm#DF} legs.
  */
-class DfIfScorer implements LegScorer {
+public class DfIfScorer implements LegScorer {
 
   private final ConsecutiveLegs legs;
 
@@ -30,7 +30,7 @@ class DfIfScorer implements LegScorer {
   }
 
   @Override
-  public double score(ConformablePoint that) {
+  public double scoreAgainstLeg(ConformablePoint that) {
     Function<Double, Double> courseWeight = simpleLogistic(5.0, 15.0);
     Function<Double, Double> distanceWeight = simpleLogistic(15.0, 40.0);
 

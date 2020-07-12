@@ -44,7 +44,7 @@ public class TestDfIfScorer {
     when(point.courseInDegrees(any())).thenCallRealMethod();
     when(point.distanceInNmTo(any())).thenCallRealMethod();
 
-    double score = scorer.score(point);
+    double score = scorer.scoreAgainstLeg(point);
     assertEquals(0.4, score, 0.05);
   }
 

@@ -31,9 +31,9 @@ import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestLegGraph {
+public class TestRouteLegGraph {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TestLegGraph.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestRouteLegGraph.class);
 
   private static RouteExpander apfExpander() {
     Airport kind = airport("KIND", 1.0, 0.0);
@@ -47,7 +47,7 @@ public class TestLegGraph {
     return RouteExpander.with(singletonList(l4.pathTerminator()), emptyList(), singletonList(kind), singletonList(t));
   }
 
-  private static LegGraph getGraph(String route, RouteExpander expander) {
+  private static RouteLegGraph getGraph(String route, RouteExpander expander) {
     List<SectionSplit> splits = SectionSplitter.newInstance().splits(route);
 
     SectionResolver resolver = SectionResolver.with(expander);
@@ -59,7 +59,7 @@ public class TestLegGraph {
   @Test
   public void testConnectedSubsets() {
     String route = "KIND.BLSTR1.VNY";
-    LegGraph graph = getGraph(route, apfExpander());
+    RouteLegGraph graph = getGraph(route, apfExpander());
 
     ConnectivityInspector<GraphableLeg, DefaultWeightedEdge> conn = new ConnectivityInspector<>(graph);
 
@@ -72,7 +72,7 @@ public class TestLegGraph {
   @Test
   public void testShortestPath() {
     String route = "KIND.BLSTR1.VNY";
-    LegGraph graph = getGraph(route, apfExpander());
+    RouteLegGraph graph = getGraph(route, apfExpander());
 
     GraphPath<GraphableLeg, DefaultWeightedEdge> path = graph.shortestPath();
 

@@ -33,7 +33,7 @@ public class TestAfScorer {
     when(legs.previous()).thenReturn(Optional.of(TF));
     when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -46,7 +46,7 @@ public class TestAfScorer {
     when(legs.previous()).thenReturn(Optional.of(TF));
     when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -59,7 +59,7 @@ public class TestAfScorer {
     when(legs.previous()).thenReturn(Optional.of(TF));
     when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -72,7 +72,7 @@ public class TestAfScorer {
     when(legs.previous()).thenReturn(Optional.of(TF));
     when(legs.current()).thenReturn(AF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -89,7 +89,7 @@ public class TestAfScorer {
     LatLong loc = AF.recommendedNavaid().get().projectOut(projCourse, AF.rho().get()).latLong();
     when(point.latLong()).thenReturn(loc);
 
-    double score = scorer.score(point);
+    double score = scorer.scoreAgainstLeg(point);
     assertEquals(0.0, score, 0.01, "Points past the end of the path terminator radial should have a 0.0 score.");
   }
 
@@ -107,7 +107,7 @@ public class TestAfScorer {
     LatLong loc = AF.recommendedNavaid().get().projectOut(projCourse, AF.rho().get()).latLong();
     when(point.latLong()).thenReturn(loc);
 
-    double score = scorer.score(point);
+    double score = scorer.scoreAgainstLeg(point);
     assertEquals(0.0, score, 0.01, "Points prior to the boundary radial should have a 0.0 score.");
   }
 
@@ -139,7 +139,7 @@ public class TestAfScorer {
     when(point.latitude()).thenCallRealMethod();
     when(point.longitude()).thenCallRealMethod();
 
-    double score = scorer.score(point);
+    double score = scorer.scoreAgainstLeg(point);
     assertEquals(0.95d, score, 0.02, "Points directly on the defined arc should get a high score.");
   }
 
@@ -159,7 +159,7 @@ public class TestAfScorer {
     when(point.latitude()).thenCallRealMethod();
     when(point.longitude()).thenCallRealMethod();
 
-    double score = scorer.score(point);
+    double score = scorer.scoreAgainstLeg(point);
     assertEquals(0.5d, score, 0.01, "Point only off by ~a mile should get a moderate score.");
   }
 
@@ -178,7 +178,7 @@ public class TestAfScorer {
     when(point.latitude()).thenCallRealMethod();
     when(point.longitude()).thenCallRealMethod();
 
-    double score = scorer.score(point);
+    double score = scorer.scoreAgainstLeg(point);
     assertEquals(0.05d, score, 0.01, "Point offset 2.0nm should get a low score.");
   }
 

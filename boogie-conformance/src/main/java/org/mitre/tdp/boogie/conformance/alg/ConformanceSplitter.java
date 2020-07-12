@@ -30,8 +30,7 @@ public interface ConformanceSplitter {
    * Generates a list of lists splitting conforming/non-conforming sections of points.
    */
   default List<List<ConformablePoint>> splits(List<? extends ConformablePoint> points) {
-    return points.stream()
-        .collect(Partitioner.listByPredicate(this::conforming));
+    return points.stream().collect(Partitioner.listByPredicate(this::conforming));
   }
 
   default boolean conforming(ConformablePoint point) {

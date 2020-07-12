@@ -3,9 +3,9 @@ package org.mitre.tdp.boogie.conformance.scorers;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.Distance;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.Scorer;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
@@ -20,6 +20,16 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 public interface LegScorer extends Scorer<ConformablePoint, ConsecutiveLegs> {
 
   ConsecutiveLegs scorerLeg();
+
+  /**
+   * Returns the score in the range [0,1] of the point to the decorated {@link #scorerLeg()}.
+   */
+  double scoreAgainstLeg(ConformablePoint point);
+
+  @Override
+  default Optional<Double> score(ConformablePoint point) {
+    return scorerLeg().current().type().hasRequiredFields(scorerLeg().current()) ? Optional.of(scoreAgainstLeg(point)) : Optional.empty();
+  }
 
   @Override
   default double transitionScore(ConsecutiveLegs consecutiveLegs) {
