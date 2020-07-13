@@ -13,7 +13,7 @@ myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | t
 echo "Running ${GREEN}$0${NONE} on ${GREEN}$branchName${NONE} at ${GREEN}$myProjVersion${NONE}"
 
 # run clean set of tests with jacoco reports configured
-./gradlew clean testSmall testLarge -Preporting --no-build-cache
+./gradlew clean test -Preporting --no-build-cache
 
 ## generate code coverage aggregate report (explictly depends on testSmall+testLarge)
 ./gradlew codeCoverageReport -Preporting --no-build-cache --no-parallel

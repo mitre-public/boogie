@@ -71,7 +71,7 @@ configure<org.sonarqube.gradle.SonarQubeExtension> {
                 "sonar.projectKey" to "boogie",
                 "sonar.projectName" to "boogie",
                 "sonar.host.url" to "https://caasd-sonar.mitre.org/sonar",
-                "sonar.login" to "81f2f4421267bc509e0627ab0fa97e2d6a8885ad"
+                "sonar.login" to "2c9dc52ffc9a381791b545266a882e806d597c59"
         ))
     }
 }
