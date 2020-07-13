@@ -2,23 +2,10 @@ plugins {
     `java-platform`
     jacoco
     id("com.adarshr.test-logger") version "2.0.0" apply false
-    id("com.bmuschko.clover") version "2.2.5"
     id("net.researchgate.release") version "2.8.1" // used to emulate mvn release: https://github.com/researchgate/gradle-release
 }
 
 val gradleScriptsDir = "./gradle-scripts/"
-
-/**
- * code coverage and reporting configuration
- */
-if (project.hasProperty("clover")) {
-    allprojects {
-        apply(plugin = "com.bmuschko.clover")
-        dependencies {
-            clover("org.openclover:clover:4.3.1")
-        }
-    }
-}
 
 val mockitoVersion by extra("3.2.4")
 
