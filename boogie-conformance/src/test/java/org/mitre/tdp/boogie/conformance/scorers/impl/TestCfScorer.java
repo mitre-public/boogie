@@ -30,7 +30,7 @@ public class TestCfScorer {
     when(legs.previous()).thenReturn(Optional.of(VI));
     when(legs.current()).thenReturn(CF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -43,7 +43,7 @@ public class TestCfScorer {
     when(legs.previous()).thenReturn(Optional.of(VI));
     when(legs.current()).thenReturn(CF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -56,7 +56,7 @@ public class TestCfScorer {
     when(legs.previous()).thenReturn(Optional.of(VI));
     when(legs.current()).thenReturn(CF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -69,7 +69,7 @@ public class TestCfScorer {
     when(legs.previous()).thenReturn(Optional.of(VI));
     when(legs.current()).thenReturn(CF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test
@@ -82,7 +82,7 @@ public class TestCfScorer {
     when(legs.previous()).thenReturn(Optional.of(VI));
     when(legs.current()).thenReturn(CF);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).score(dummyPoint()));
+    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer(legs).scoreAgainstLeg(dummyPoint()));
   }
 
   @Test

@@ -33,7 +33,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   /**
    * Creates a new dynamic programmer with the given stages, states, and optimization function.
    */
-  public DynamicProgrammer(Collection<Stage> stages, Collection<State> states, Optimization optimize) {
+  public DynamicProgrammer(Collection<? extends Stage> stages, Collection<? extends State> states, Optimization optimize) {
     this.optimization = optimize;
     this.states = states.stream()
         .collect(Collectors.toMap(

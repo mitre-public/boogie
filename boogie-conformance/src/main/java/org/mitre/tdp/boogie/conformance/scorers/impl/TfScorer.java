@@ -17,11 +17,11 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 /**
  * This is the default conformance evaluator for {@link PathTerm#TF} legs.
  */
-class TfScorer implements OffTrackScorer {
+public class TfScorer implements OffTrackScorer {
 
   private final ConsecutiveLegs legs;
 
-  TfScorer(ConsecutiveLegs legs) {
+  public TfScorer(ConsecutiveLegs legs) {
     this.legs = legs;
   }
 

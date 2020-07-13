@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
-import org.mitre.tdp.boogie.alg.graph.LegGraph;
+import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
@@ -48,7 +48,7 @@ import com.google.common.base.Preconditions;
  * modify the resolved output of step 2 with an additional section of candidate approach
  * procedures.
  *
- * <p>3) {@link LegGraph} to determine the path the flight most likely took through
+ * <p>3) {@link RouteLegGraph} to determine the path the flight most likely took through
  * the resolved infrastructure elements (e.g. resolving references to navaids that
  * appear with the same name in multiple ICAO regions)
  *
@@ -162,7 +162,7 @@ public interface RouteExpander extends Serializable {
 
     resolved.insert(approach);
 
-    LegGraph graph = LegGraphFactory.build(resolved);
+    RouteLegGraph graph = LegGraphFactory.build(resolved);
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
     return new ExpandedRoute(route, shortestPath.getVertexList());

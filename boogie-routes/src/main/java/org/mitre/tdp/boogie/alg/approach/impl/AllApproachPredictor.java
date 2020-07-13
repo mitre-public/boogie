@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
-import org.mitre.tdp.boogie.alg.graph.LegGraph;
+import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
@@ -22,7 +22,7 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 /**
  * "Predicts" all of the available approach procedures at the airport.
  *
- * <p>When used this will read into the final {@link LegGraph} all of the procedures at the given airport resolving
+ * <p>When used this will read into the final {@link RouteLegGraph} all of the procedures at the given airport resolving
  * which to fly via the shortest path algorithm.
  */
 public class AllApproachPredictor implements ApproachPredictor {

@@ -13,7 +13,7 @@ import org.mitre.caasd.commons.HasTime;
  * type of leg, but all conformable leg types will check for the existence of their required
  * fields.
  */
-public interface ConformablePoint extends HasPosition, HasTime {
+public interface ConformablePoint extends HasPosition, HasTime, Comparable<ConformablePoint> {
   /**
    * The true course of the aircraft - this is required instead of magnetic as for most
    * users this is easier that deriving the magnetic bearing, at least in the context of
@@ -36,4 +36,9 @@ public interface ConformablePoint extends HasPosition, HasTime {
    * The climb rate of the aircraft in feet per minute.
    */
   Optional<Double> climbrate();
+
+  @Override
+  default int compareTo(ConformablePoint that) {
+    return time().compareTo(that.time());
+  }
 }

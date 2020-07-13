@@ -2,14 +2,13 @@ package org.mitre.tdp.boogie.conformance.scorers;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.conformance.scorers.Angles.between;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.TurnDirection;
 
-public class TestAngles {
+public class TestRadialAngles {
 
   private TurnDirection right() {
     TurnDirection td = mock(TurnDirection.class);
@@ -34,30 +33,30 @@ public class TestAngles {
 
   @Test
   public void testRightAngleBetween() {
-    assertTrue(between(20.0, 10.0, 30.0, right()));
-    assertFalse(between(5.0, 10.0, 30.0, right()));
+    assertTrue(RadialAngles.of(10.0, 30.0, right()).contains(20.0));
+    assertFalse(RadialAngles.of(10.0, 30.0, right()).contains(5.0));
   }
 
   @Test
   public void testRightWrappedAngleBetween() {
-    assertTrue(between(356.0, 350.0, 10.0, right()));
-    assertFalse(between(248.0, 350.0, 10.0, right()));
+    assertTrue(RadialAngles.of(350.0, 10.0, right()).contains(356.0));
+    assertFalse(RadialAngles.of(350.0, 10.0, right()).contains(248.0));
   }
 
   @Test
   public void testLeftAngleBetween() {
-    assertTrue(between(20.0, 30.0, 10.0, left()));
-    assertFalse(between(5.0, 30.0, 10.0, left()));
+    assertTrue(RadialAngles.of(30.0, 10.0, left()).contains(20.0));
+    assertFalse(RadialAngles.of(30.0, 10.0, left()).contains(5.0));
   }
 
   @Test
   public void testLeftWrappedAngleBetween() {
-    assertTrue(between(356.0, 10.0, 350.0, left()));
-    assertFalse(between(248.0, 10.0, 350.0, left()));
+    assertTrue(RadialAngles.of(10.0, 350.0, left()).contains(356.0));
+    assertFalse(RadialAngles.of(10.0, 350.0, left()).contains(248.0));
   }
 
   @Test
   public void testEitherAngleBetween() {
-    assertTrue(between(123.0, 121.0, 126.0, either()));
+    assertTrue(RadialAngles.of(121.0, 126.0, either()).contains(123.0));
   }
 }

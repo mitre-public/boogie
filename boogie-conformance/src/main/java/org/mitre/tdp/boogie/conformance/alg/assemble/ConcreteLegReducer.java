@@ -1,14 +1,19 @@
 package org.mitre.tdp.boogie.conformance.alg.assemble;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.fn.Partitioner;
+
+import ch.hsr.geohash.GeoHash;
 
 /**
  * Reducer class for list of {@link ConsecutiveLegs} which start and end with concrete leg types.
@@ -20,24 +25,24 @@ public interface ConcreteLegReducer extends ConsecutiveLegReducer {
    */
   @Override
   default List<? extends ConsecutiveLegs> reduce(List<? extends ConsecutiveLegs> consecutiveLegs) {
-    checkArgument(allConcreteLegs(consecutiveLegs), "Provided legs must contain concrete leg types to be reduced.");
+    Map<Boolean, List<ConsecutiveLegs>> split = consecutiveLegs.stream().collect(Collectors.groupingBy(this::isConcretePair));
 
-    Map<String, List<ConsecutiveLegs>> byId = consecutiveLegs.stream()
+    Map<String, List<ConsecutiveLegs>> byId = split.getOrDefault(true, emptyList()).stream()
         .collect(Collectors.groupingBy(pair -> pair.current().pathTerminator().identifier()
             + pair.previous().orElseThrow(RuntimeException::new).pathTerminator().identifier()));
 
-    return byId.values().stream()
-        .flatMap(list -> reduceCollocated(list).stream())
-        .collect(Collectors.toList());
+    return concat(split.getOrDefault(false, emptyList()).stream(), byId.values().stream().flatMap(list -> reduceCollocated(list).stream())).collect(toList());
   }
 
   /**
    * Comparator for legs based on the general location of the legs.
    */
   default Comparator<ConsecutiveLegs> legLocationComparator() {
-    Comparator<ConsecutiveLegs> latcomp = Comparator.comparing(consecutiveLegs -> consecutiveLegs.current().pathTerminator().latLong().latitude());
-    Comparator<ConsecutiveLegs> loncomp = Comparator.comparing(consecutiveLegs -> consecutiveLegs.current().pathTerminator().latLong().longitude());
-    return latcomp.thenComparing(loncomp);
+    Function<ConsecutiveLegs, GeoHash> hasher = consecutiveLegs -> GeoHash.withBitPrecision(
+        consecutiveLegs.current().pathTerminator().latitude(),
+        consecutiveLegs.current().pathTerminator().longitude(),
+        30);
+    return Comparator.comparing(hasher);
   }
 
   /**
@@ -46,14 +51,12 @@ public interface ConcreteLegReducer extends ConsecutiveLegReducer {
   default List<ConsecutiveLegs> reduceCollocated(List<ConsecutiveLegs> consecutiveLegs) {
     BiPredicate<ConsecutiveLegs, ConsecutiveLegs> similarLocation = (l1, l2) -> l1.current().pathTerminator().distanceInNmTo(l2.current().pathTerminator()) < 1.0;
     return consecutiveLegs.stream().sorted(legLocationComparator()).collect(Partitioner.listByPredicate(similarLocation))
-        .stream().map(list -> list.get(0)).collect(Collectors.toList());
+        .stream().map(list -> list.get(0)).collect(toList());
   }
 
-  /**
-   * Returns true when the passed {@link ConsecutiveLegs} contain only concrete leg types.
-   */
-  default boolean allConcreteLegs(List<? extends ConsecutiveLegs> consecutiveLegs) {
-    return consecutiveLegs.stream().allMatch(cl -> cl.current().type().isConcrete() && cl.previous().isPresent() && cl.previous().get().type().isConcrete());
+  default boolean isConcretePair(ConsecutiveLegs consecutiveLegs) {
+    return consecutiveLegs.current().type().isConcrete()
+        && consecutiveLegs.previous().map(l -> l.type().isConcrete()).orElse(false);
   }
 
   static ConcreteLegReducer newInstance() {
