@@ -131,7 +131,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
   }
 
   default Long hoursToEpoch(Double hours) {
-    return Double.valueOf(hours * hour).longValue();
+    return (long) (hours * hour);
   }
 
   double hour = 60.0d * 60.0d * 1000.0d;

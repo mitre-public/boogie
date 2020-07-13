@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.FieldSpecParseException;
  */
 public class ArincStrings {
 
-  public static Predicate<String> isBlank = s -> s.trim().isEmpty();
+  public static final Predicate<String> isBlank = s -> s.trim().isEmpty();
 
   /**
    * Returns a copy of the given string with all of the internal characters replaced with blanks.
