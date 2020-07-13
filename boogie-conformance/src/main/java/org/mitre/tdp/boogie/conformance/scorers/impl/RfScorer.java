@@ -5,6 +5,7 @@ import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simp
 
 import java.util.Optional;
 
+import org.apache.commons.math3.util.FastMath;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
@@ -36,16 +37,25 @@ public class RfScorer implements OffTrackScorer {
   public double scoreAgainstLeg(ConformablePoint point) {
     Fix centerFix = scorerLeg().current().centerFix().orElseThrow(supplier("Arc Center Fix"));
 
-    MagneticVariation magneticVariation = scorerLeg().current().pathTerminator().magneticVariation();
+    MagneticVariation magneticVariation = scorerLeg().current().centerFix().map(Fix::magneticVariation)
+        .orElseGet(() -> scorerLeg().current().pathTerminator().magneticVariation());
     TurnDirection turnDirection = scorerLeg().current().turnDirection().orElseThrow(supplier("Turn Direction"));
 
-    double inboundTangentialMagBearing = scorerLeg().previous(Leg::outboundMagneticCourse).orElseThrow(supplier("Inbound Tangential Course"));
-    double inboundTrueRadial = Spherical.mod(magneticVariation.magneticToTrue(inboundTangentialMagBearing) - 90.0, 360.0);
+    double inboundTangentialMagBearing = scorerLeg()
+        // typically in the previous leg
+        .previous(Leg::outboundMagneticCourse)
+        // for certain leg combinations this is contained in theta (IF:RF, RF:RF, or RF:HX)
+        .orElseGet(() -> scorerLeg().current().theta().orElseThrow(supplier("Inbound Tangential Course")));
+    double inboundTrueRadial = Spherical.mod(magneticVariation.magneticToTrue(inboundTangentialMagBearing) + 90.0, 360.0);
 
-    double outboundTangentialMagBearing = scorerLeg().current().outboundMagneticCourse().orElseThrow(supplier("Outbound Tangential Course"));
-    double outboundTrueRadial = Spherical.mod(magneticVariation.magneticToTrue(outboundTangentialMagBearing) - 90.0, 360.0);
+    double outboundTangentialMagBearing = scorerLeg()
+        // typically in the next leg
+        .next().flatMap(Leg::outboundMagneticCourse)
+        // for certain leg combinations this is contained in current leg outbound (IF:RF, RF:RF, RF:HX, or RF is final leg)
+        .orElse(scorerLeg().current().outboundMagneticCourse().orElseThrow(supplier("Outbound Tangential Course")));
+    double outboundTrueRadial = Spherical.mod(magneticVariation.magneticToTrue(outboundTangentialMagBearing) + 90.0, 360.0);
 
-    double pointRadialTrue = magneticVariation.trueToMagnetic(centerFix.courseInDegrees(point));
+    double pointRadialTrue = centerFix.courseInDegrees(point);
     return OffTrackScorer.super.scoreAgainstLeg(point) * (RadialAngles.of(inboundTrueRadial, outboundTrueRadial, turnDirection).contains(pointRadialTrue) ? 1.0 : 0.0);
   }
 
@@ -60,6 +70,6 @@ public class RfScorer implements OffTrackScorer {
     Fix centerFix = scorerLeg().current().centerFix().orElseThrow(supplier("Arc Center Fix"));
 
     double radius = centerFix.distanceInNmTo(exitFix);
-    return Distance.ofNauticalMiles(radius);
+    return Distance.ofNauticalMiles(FastMath.abs(radius - centerFix.distanceInNmTo(point)));
   }
 }

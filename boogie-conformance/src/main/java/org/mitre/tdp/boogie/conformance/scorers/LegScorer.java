@@ -28,7 +28,9 @@ public interface LegScorer extends Scorer<ConformablePoint, ConsecutiveLegs> {
 
   @Override
   default Optional<Double> score(ConformablePoint point) {
-    return scorerLeg().current().type().hasRequiredFields(scorerLeg().current()) ? Optional.of(scoreAgainstLeg(point)) : Optional.empty();
+    return scorerLeg().current().type().hasRequiredFields(scorerLeg().current())
+        ? Optional.of(scoreAgainstLeg(point))
+        : Optional.empty();
   }
 
   @Override
