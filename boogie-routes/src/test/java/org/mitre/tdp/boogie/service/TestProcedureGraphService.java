@@ -63,7 +63,7 @@ public class TestProcedureGraphService {
     Transition t1 = transition(ProcedureType.STAR);
     Transition t2 = transition(ProcedureType.SID);
 
-    ProcedureGraphService ps = ProcedureGraphService.with(Arrays.asList(t1, t2));
+    ProcedureGraphService ps = ProcedureGraphService.withTransitions(Arrays.asList(t1, t2));
     Collection<ProcedureGraph> procedures = ps.allMatchingIdentifiers("PROC");
 
     assertEquals(2, procedures.size());

@@ -13,37 +13,17 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Service providing procedure lookup both by the procedure identifier (e.g. CSTL6, WYNDE8)
- * as well as by the airport they service (e.g. KATL, KORD).
+ * Service providing procedure lookup both by the procedure identifier (e.g. CSTL6, WYNDE8) as well as by the airport they
+ * service (e.g. KATL, KORD).
  */
 public final class ProcedureGraphService implements ProcedureService {
 
   private final Multimap<String, ProcedureGraph> byIdentifier;
   private final Multimap<String, ProcedureGraph> byAirport;
 
-  private ProcedureGraphService(Multimap<String, ProcedureGraph> id, Multimap<String, ProcedureGraph> apt) {
+  public ProcedureGraphService(Multimap<String, ProcedureGraph> id, Multimap<String, ProcedureGraph> apt) {
     this.byIdentifier = id;
     this.byAirport = apt;
-  }
-
-  public static ProcedureGraphService with(Collection<? extends Transition> transitions) {
-    Map<String, List<Transition>> procedures = transitions.stream()
-        .collect(Collectors.groupingBy(t ->
-            t.procedure()
-                + t.airport()
-                + t.procedureType().name()
-                + t.navigationSource().name()));
-
-    Multimap<String, ProcedureGraph> byId = HashMultimap.create();
-    Multimap<String, ProcedureGraph> byApt = HashMultimap.create();
-
-    procedures.values().forEach(ts -> {
-      ProcedureGraph graph = ProcedureGraph.from(ts);
-      byId.put(graph.identifier(), graph);
-      byApt.put(graph.airport(), graph);
-    });
-
-    return new ProcedureGraphService(byId, byApt);
   }
 
   @Override
@@ -54,5 +34,34 @@ public final class ProcedureGraphService implements ProcedureService {
   @Override
   public Collection<ProcedureGraph> allMatchingAirport(String airport) {
     return byAirport.get(airport);
+  }
+
+  /**
+   * Generates a new {@link ProcedureGraphService} with the configured collection of procedures.
+   */
+  public static ProcedureGraphService withProcedures(Collection<? extends ProcedureGraph> procedures) {
+    Multimap<String, ProcedureGraph> byId = HashMultimap.create();
+    Multimap<String, ProcedureGraph> byApt = HashMultimap.create();
+
+    procedures.forEach(procedure -> {
+      byId.put(procedure.identifier(), procedure);
+      byApt.put(procedure.airport(), procedure);
+    });
+
+    return new ProcedureGraphService(byId, byApt);
+  }
+
+  /**
+   * Generates a new {@link ProcedureGraphService} with the given transitions assembled into their associated procedureGraphs.
+   */
+  public static ProcedureGraphService withTransitions(Collection<? extends Transition> transitions) {
+    Map<String, List<Transition>> procedures = transitions.stream()
+        .collect(Collectors.groupingBy(t ->
+            t.procedure()
+                + t.airport()
+                + t.procedureType().name()
+                + t.navigationSource().name()));
+
+    return withProcedures(procedures.values().stream().map(ProcedureGraph::from).collect(Collectors.toList()));
   }
 }

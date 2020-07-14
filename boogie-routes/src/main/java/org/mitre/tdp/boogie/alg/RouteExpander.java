@@ -100,7 +100,7 @@ public interface RouteExpander extends Serializable {
     FixService fs = FixService.with(fixes);
     AirwayService ws = AirwayService.with(airways);
     AirportService as = AirportService.with(airports);
-    ProcedureGraphService ps = ProcedureGraphService.with(transitions);
+    ProcedureGraphService ps = ProcedureGraphService.withTransitions(transitions);
     return with(fs, ws, as, ps);
   }
 
