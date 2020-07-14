@@ -80,8 +80,8 @@ public class TestDynamicProgrammer {
     assertEquals(path.get(1).state(), IntersectionStates.C);
     assertEquals(path.get(2).state(), IntersectionStates.B);
     assertEquals(path.get(3).state(), IntersectionStates.B);
-    assertEquals(path.get(4).state(), IntersectionStates.A);
-    assertEquals(path.get(5).state(), IntersectionStates.A);
+    assertEquals(path.get(4).state(), IntersectionStates.B);
+    assertEquals(path.get(5).state(), IntersectionStates.C);
 
     assertEquals(path.get(5).score(), 39.0d, 0.1);
   }

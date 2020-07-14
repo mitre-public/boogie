@@ -69,15 +69,26 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     checkComputeOptimals();
     Comparator<Double> comp = optimization.comparator();
 
-    // grab the optimal state at the target stage
-    // note - there can be ties here, hard to say what the best option is
-    // but using a linked hash map above at least makes it deterministic
-    Map.Entry<State, OptimizedState> endState = states.entrySet().stream()
-        .min((e1, e2) -> comp.compare(
+    // take the final state with the highest or lowest score depending on optimization type
+    Comparator<Map.Entry<State, OptimizedState>> entryScoreComparator =
+        (e1, e2) -> comp.compare(
             e1.getValue().get(end).score(),
-            e2.getValue().get(end).score()))
+            e2.getValue().get(end).score());
+
+    // take the path with the fewest visited states if there are score ties
+    Comparator<Map.Entry<State, OptimizedState>> entryTotalStateComparator = Comparator.comparingLong(entry -> resolvePath(start, end, entry).values().stream().map(ScoredState::state).distinct().count());
+
+    Map.Entry<State, OptimizedState> endState = states.entrySet().stream()
+        .min(entryScoreComparator.thenComparing(entryTotalStateComparator))
         .orElseThrow(RuntimeException::new);
 
+    return resolvePath(start, end, endState);
+  }
+
+  /**
+   * Resolves the path from start to end stage which resulted in the given optimal end state.
+   */
+  private NavigableMap<Stage, ScoredState<State>> resolvePath(Stage start, Stage end, Map.Entry<State, OptimizedState> endState) {
     NavigableMap<Stage, ScoredState<State>> path = new TreeMap<>();
     path.put(end, new ScoredState<>(endState.getValue().get(end).score, endState.getKey()));
 
@@ -92,7 +103,6 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
       cstate = transition.fromState();
       path.put(cstage, new ScoredState<>(states.get(cstate).get(cstage).score(), cstate));
     }
-
     return path;
   }
 

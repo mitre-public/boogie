@@ -39,6 +39,7 @@ public class TestScoreBasedRouteAssigner {
     Leg e = leg("e", PathTerm.TF);
     Leg f = leg("f", PathTerm.TF);
     Leg g = leg("g", PathTerm.TF);
+    Leg h = leg("h", PathTerm.TF);
 
     List<ConformablePoint> pointList = LongStream.range(0, 6)
         .mapToObj(tau -> {
@@ -55,6 +56,7 @@ public class TestScoreBasedRouteAssigner {
     ConsecutiveLegs be = legs(b, e, scorer(pointList.get(3), pointList.get(4)));
     ConsecutiveLegs cf = legs(c, f, scorer());
     ConsecutiveLegs cg = legs(c, g, scorer());
+    ConsecutiveLegs eh = legs(e, h, scorer());
 
     ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.with(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg));
     Map<ConformablePoint, ConsecutiveLegs> mapping = resolver.resolveRoute(pointList);
@@ -65,9 +67,16 @@ public class TestScoreBasedRouteAssigner {
     expected.put(pointList.get(2), ab);
     expected.put(pointList.get(3), be);
     expected.put(pointList.get(4), be);
+    expected.put(pointList.get(5), ac);
+
+    assertEquals(expected, mapping, "Since we hit the end of the connected state at {b->e} we allow transitions to disconnected high-score states {a->c}.");
+
+    resolver = ScoreBasedRouteResolver.with(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg, eh));
+    mapping = resolver.resolveRoute(pointList);
+
     expected.put(pointList.get(5), be);
 
-    assertEquals(expected, mapping);
+    assertEquals(expected, mapping, "With additional downstream leg of {b->e} ({e->h}) we need to finish the connected components before we can transition to a disconnected state.");
   }
 
   private ConformablePoint conformablePoint(Instant tau) {
