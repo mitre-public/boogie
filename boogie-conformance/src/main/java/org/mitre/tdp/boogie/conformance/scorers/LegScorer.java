@@ -8,6 +8,8 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.Scorer;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Top level class for leg scoring, providing access to both the previous and the subsequent legs as
@@ -19,6 +21,8 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
  */
 public interface LegScorer extends Scorer<ConformablePoint, ConsecutiveLegs> {
 
+  Logger LOG = LoggerFactory.getLogger(LegScorer.class);
+
   ConsecutiveLegs scorerLeg();
 
   /**
@@ -28,9 +32,11 @@ public interface LegScorer extends Scorer<ConformablePoint, ConsecutiveLegs> {
 
   @Override
   default Optional<Double> score(ConformablePoint point) {
-    return scorerLeg().current().type().hasRequiredFields(scorerLeg().current())
-        ? Optional.of(scoreAgainstLeg(point))
-        : Optional.empty();
+    if (scorerLeg().current().type().hasRequiredFields(scorerLeg().current())) {
+      return Optional.of(scoreAgainstLeg(point));
+    }
+    LOG.info("Missing required fields - skipping score for leg {}", scorerLeg().current());
+    return Optional.empty();
   }
 
   @Override

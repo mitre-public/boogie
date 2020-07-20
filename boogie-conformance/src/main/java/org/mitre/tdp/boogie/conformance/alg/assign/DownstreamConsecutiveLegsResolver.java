@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
  * level consecutive legs become directed edges. When querying for the {@link #downstreamLegsOf(ConsecutiveLegs)} this class
  * returns all the legs which provide previous->next transitions from the current leg of the supplied consecutiveLegs.
  */
-class DownstreamConsecutiveLegsResolver extends SimpleDirectedGraph<Leg, ConsecutiveLegs> {
+public class DownstreamConsecutiveLegsResolver extends SimpleDirectedGraph<Leg, ConsecutiveLegs> {
 
   private ConnectivityInspector<Leg, ConsecutiveLegs> connectivityInspector;
 
@@ -29,6 +29,7 @@ class DownstreamConsecutiveLegsResolver extends SimpleDirectedGraph<Leg, Consecu
    */
   public ConnectivityInspector<Leg, ConsecutiveLegs> connectivityInspector() {
     if (connectivityInspector == null) {
+
       this.connectivityInspector = new ConnectivityInspector<>(this);
     }
     return connectivityInspector;
@@ -62,8 +63,19 @@ class DownstreamConsecutiveLegsResolver extends SimpleDirectedGraph<Leg, Consecu
       consecutiveLegs.previous().ifPresent(downstreamConsecutiveLegsResolver::addVertex);
       consecutiveLegs.next().ifPresent(downstreamConsecutiveLegsResolver::addVertex);
 
-      consecutiveLegs.previous().ifPresent(previous -> downstreamConsecutiveLegsResolver.addEdge(previous, consecutiveLegs.current(), consecutiveLegs));
-      consecutiveLegs.next().ifPresent(next -> downstreamConsecutiveLegsResolver.addEdge(consecutiveLegs.current(), next, consecutiveLegs));
+      consecutiveLegs.previous()
+          .filter(previous -> !previous.equals(consecutiveLegs.current()))
+          .ifPresent(previous -> downstreamConsecutiveLegsResolver.addEdge(
+              previous,
+              consecutiveLegs.current(),
+              consecutiveLegs));
+
+      consecutiveLegs.next()
+          .filter(next -> !next.equals(consecutiveLegs.current()))
+          .ifPresent(next -> downstreamConsecutiveLegsResolver.addEdge(
+              consecutiveLegs.current(),
+              next,
+              consecutiveLegs));
     });
     return downstreamConsecutiveLegsResolver;
   }

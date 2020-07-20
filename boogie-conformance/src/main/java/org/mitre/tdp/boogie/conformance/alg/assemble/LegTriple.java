@@ -38,7 +38,7 @@ public class LegTriple implements ConsecutiveLegs {
   }
 
   public LegTriple swap() {
-    return new LegTriple(next, current, previous);
+    return new LegTriple(next, current, previous).setSourceObject(sourceObject);
   }
 
   @Override
@@ -50,5 +50,15 @@ public class LegTriple implements ConsecutiveLegs {
   public LegTriple setSourceObject(Object o) {
     this.sourceObject = o;
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return "LegTriple{" +
+        "previous=" + previous +
+        ", current=" + current +
+        ", next=" + next +
+        ", sourceObject=" + sourceObject +
+        '}';
   }
 }

@@ -40,8 +40,8 @@ public interface ConsecutiveLegConnector {
       while (cartesian.hasNext()) {
         Pair<ConsecutiveLegs, ConsecutiveLegs> legs = cartesian.next();
         if (isConnected(legs.first(), legs.second())) {
-          connections.add(new LegTriple(legs.first().current(), legs.second().current(), null));
-          connections.add(new LegTriple(legs.second().current(), legs.first().current(), null));
+          connections.add(new LegTriple(legs.first().current(), legs.second().current(), legs.second().next().orElse(null)));
+          connections.add(new LegTriple(legs.second().current(), legs.first().current(), legs.first().next().orElse(null)));
         }
       }
     }

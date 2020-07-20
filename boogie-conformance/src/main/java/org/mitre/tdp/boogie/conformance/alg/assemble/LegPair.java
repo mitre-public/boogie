@@ -51,7 +51,7 @@ public class LegPair implements ConsecutiveLegs {
   }
 
   public LegPair swap() {
-    return new LegPair(current, previous, isSkip);
+    return new LegPair(current, previous, isSkip).setSourceObject(sourceObject);
   }
 
   @Override
@@ -63,5 +63,15 @@ public class LegPair implements ConsecutiveLegs {
   public LegPair setSourceObject(Object o) {
     this.sourceObject = o;
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return "LegPair{" +
+        "previous=" + previous +
+        ", current=" + current +
+        ", isSkip=" + isSkip +
+        ", sourceObject=" + sourceObject +
+        '}';
   }
 }

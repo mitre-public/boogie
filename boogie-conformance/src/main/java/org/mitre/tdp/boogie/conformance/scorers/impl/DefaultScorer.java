@@ -10,6 +10,8 @@ import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
  */
 public class DefaultScorer implements LegScorer {
 
+  public static final double DEFAULT_PROBABILITY = 0.01;
+
   private final ConsecutiveLegs legs;
 
   public DefaultScorer(ConsecutiveLegs legs) {
@@ -23,6 +25,6 @@ public class DefaultScorer implements LegScorer {
 
   @Override
   public double scoreAgainstLeg(ConformablePoint that) {
-    return 0.0;
+    return DEFAULT_PROBABILITY;
   }
 }

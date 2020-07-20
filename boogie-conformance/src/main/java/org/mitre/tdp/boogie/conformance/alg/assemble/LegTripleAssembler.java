@@ -26,10 +26,12 @@ public interface LegTripleAssembler extends ConsecutiveLegAssembler {
     if (legs.size() == 1) {
       forward.add(new LegTriple(null, legs.get(0), null));
     } else if (legs.size() == 2) {
-      forward.add(new LegTriple(null, legs.get(0), legs.get(1)));
       forward.add(new LegTriple(legs.get(0), legs.get(1), null));
+      forward.add(new LegTriple(null, legs.get(0), legs.get(1)));
     } else {
+      forward.add(new LegTriple(null, legs.get(0), legs.get(1)));
       Iterators.triples(legs, (l1, l2, l3) -> forward.add(new LegTriple(l1, l2, l3)));
+      forward.add(new LegTriple(legs.get(legs.size() - 2), legs.get(legs.size() - 1), null));
     }
 
     res.addAll(forward);

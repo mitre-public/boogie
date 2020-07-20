@@ -8,10 +8,10 @@ import java.util.Optional;
 
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Spherical;
+import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 
 /**
@@ -32,7 +32,7 @@ public class TfScorer implements OffTrackScorer {
 
   @Override
   public double weightFn(Distance distance) {
-    return simpleLogistic(1.0, 2.0).apply(distance.inNauticalMiles());
+    return simpleLogistic(5.0, 10.0).apply(distance.inNauticalMiles());
   }
 
   @Override

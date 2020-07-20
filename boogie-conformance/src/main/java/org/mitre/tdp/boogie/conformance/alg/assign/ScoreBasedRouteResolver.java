@@ -12,6 +12,7 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerState;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerTransition;
+import org.mitre.tdp.boogie.conformance.scorers.impl.DefaultScorer;
 
 import com.google.common.collect.Maps;
 
@@ -45,10 +46,12 @@ public class ScoreBasedRouteResolver {
     this.availableTransitions = availableStates.stream().collect(Collectors.toMap(ConsecutiveLegsState::consecutiveLegs, this::transitionTo));
   }
 
+  public NavigableMap<ConformablePoint, DynamicProgrammer.ScoredState<ConsecutiveLegsState>> resolveAssignedStates(List<? extends ConformablePoint> conformablePoints) {
+    return new DynamicProgrammer<>(conformablePoints, availableStates, DynamicProgrammer.Optimization.MAXIMIZE).optimalPath();
+  }
+
   public NavigableMap<ConformablePoint, ConsecutiveLegs> resolveRoute(List<? extends ConformablePoint> conformablePoints) {
-    DynamicProgrammer<ConformablePoint, ConsecutiveLegsState> dynamicProgrammer =
-        new DynamicProgrammer<>(conformablePoints, availableStates, DynamicProgrammer.Optimization.MAXIMIZE);
-    return Maps.transformValues(dynamicProgrammer.optimalPath(), scoredState -> scoredState.state().consecutiveLegs());
+    return Maps.transformValues(resolveAssignedStates(conformablePoints), scoredState -> scoredState.state().consecutiveLegs());
   }
 
   /**
@@ -70,7 +73,7 @@ public class ScoreBasedRouteResolver {
 
     @Override
     public double getValue(ConformablePoint stage) {
-      return consecutiveLegs.scorer().score(stage).orElse(0.0);
+      return consecutiveLegs.scorer().score(stage).orElse(DefaultScorer.DEFAULT_PROBABILITY);
     }
 
     /**
@@ -80,10 +83,10 @@ public class ScoreBasedRouteResolver {
     public List<DynamicProgrammerTransition<ConformablePoint, ConsecutiveLegsState>> getPossibleTransitions(ConformablePoint stage) {
       // include the downstream legs as well as the current leg as valid transition targets
       List<ConsecutiveLegs> downstreamLegs = downstreamConsecutiveLegsResolver.downstreamLegsOf(consecutiveLegs);
-      if (downstreamLegs.isEmpty()) {
-        // if no downstream legs we've reached the end of an element - this means we should zip back to other options and open up transitions
-        availableStates.forEach(state -> downstreamLegs.add(state.consecutiveLegs()));
-      }
+//      if (downstreamLegs.isEmpty()) {
+//        // if no downstream legs we've reached the end of an element - this means we should zip back to other options and open up transitions
+//        availableStates.forEach(state -> downstreamLegs.add(state.consecutiveLegs()));
+//      }
 
       return Stream.concat(downstreamLegs.stream(), Stream.of(consecutiveLegs()))
           .distinct()
