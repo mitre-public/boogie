@@ -21,21 +21,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
-public class TestDfIfScorer {
+public class TestDfScorer {
 
   @Test
   public void testFailPointWithNoCourse() {
-    DfIfScorer scorer = scorer();
+    DfScorer scorer = scorer();
     assertThrows(MissingRequiredFieldException.class, () -> scorer.score(dummyPoint()));
   }
 
   @Test
   public void test15nmOnCourseScore() {
-    DfIfScorer scorer = scorer();
+    DfScorer scorer = scorer();
 
     ConformablePoint point = mock(ConformablePoint.class);
 
-    LatLong loc = DF().pathTerminator().projectOut(0.0, 15.0).latLong();
+    LatLong loc = DF().pathTerminator().projectOut(0.0, 60.0).latLong();
     when(point.latLong()).thenReturn(loc);
     when(point.latitude()).thenCallRealMethod();
     when(point.longitude()).thenCallRealMethod();
@@ -74,12 +74,12 @@ public class TestDfIfScorer {
     return DF;
   }
 
-  private DfIfScorer scorer() {
+  private DfScorer scorer() {
     ConsecutiveLegs legs = mock(ConsecutiveLegs.class);
     Leg VA = VA();
     Leg DF = DF();
     when(legs.previous()).thenReturn(Optional.of(VA));
     when(legs.current()).thenReturn(DF);
-    return new DfIfScorer(legs);
+    return new DfScorer(legs);
   }
 }

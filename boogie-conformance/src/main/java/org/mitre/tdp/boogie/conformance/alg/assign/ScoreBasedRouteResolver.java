@@ -59,7 +59,7 @@ public class ScoreBasedRouteResolver {
    * state interface and allows access to the {@link DownstreamConsecutiveLegsResolver} which gives the set of candidate transitions
    * from any given {@link ConsecutiveLegsState}.
    */
-  class ConsecutiveLegsState implements DynamicProgrammerState<ConformablePoint> {
+  public class ConsecutiveLegsState implements DynamicProgrammerState<ConformablePoint> {
 
     private ConsecutiveLegs consecutiveLegs;
 
@@ -83,11 +83,6 @@ public class ScoreBasedRouteResolver {
     public List<DynamicProgrammerTransition<ConformablePoint, ConsecutiveLegsState>> getPossibleTransitions(ConformablePoint stage) {
       // include the downstream legs as well as the current leg as valid transition targets
       List<ConsecutiveLegs> downstreamLegs = downstreamConsecutiveLegsResolver.downstreamLegsOf(consecutiveLegs);
-//      if (downstreamLegs.isEmpty()) {
-//        // if no downstream legs we've reached the end of an element - this means we should zip back to other options and open up transitions
-//        availableStates.forEach(state -> downstreamLegs.add(state.consecutiveLegs()));
-//      }
-
       return Stream.concat(downstreamLegs.stream(), Stream.of(consecutiveLegs()))
           .distinct()
           .map(availableTransitions::get)

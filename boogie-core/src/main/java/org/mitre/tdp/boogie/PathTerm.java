@@ -134,7 +134,8 @@ public enum PathTerm implements LegType {
    *
    * Defines a heading to a specific altitude termination at an unspecified position.
    */
-  VA(l -> l.outboundMagneticCourse().isPresent()),
+  VA(l -> l.outboundMagneticCourse().isPresent()
+      && l.altitudeConstraint().flatMap(AltitudeLimit::altitudeLimit).isPresent()),
   /**
    * Heading to a DME Distance Termination.
    *

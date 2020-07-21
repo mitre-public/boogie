@@ -65,18 +65,36 @@ public class DownstreamConsecutiveLegsResolver extends SimpleDirectedGraph<Leg, 
 
       consecutiveLegs.previous()
           .filter(previous -> !previous.equals(consecutiveLegs.current()))
-          .ifPresent(previous -> downstreamConsecutiveLegsResolver.addEdge(
-              previous,
-              consecutiveLegs.current(),
-              consecutiveLegs));
+          .ifPresent(previous -> addNewEdge(previous, consecutiveLegs.current(), consecutiveLegs, downstreamConsecutiveLegsResolver));
 
       consecutiveLegs.next()
           .filter(next -> !next.equals(consecutiveLegs.current()))
-          .ifPresent(next -> downstreamConsecutiveLegsResolver.addEdge(
-              consecutiveLegs.current(),
-              next,
-              consecutiveLegs));
+          .ifPresent(next -> addNewEdge(consecutiveLegs.current(), next, consecutiveLegs, downstreamConsecutiveLegsResolver));
     });
     return downstreamConsecutiveLegsResolver;
+  }
+
+  /**
+   * Adds a new edge to the graph if one doesnt already exist between the vertex pair. If one does it resolves the conflict
+   * based first on whether the new or old edge contains the target vertex as its {@link ConsecutiveLegs#current()} leg and
+   * in then in the case of them both containing it it prefers the previously inserted edge.
+   */
+  private static void addNewEdge(Leg source, Leg target, ConsecutiveLegs newEdge, SimpleDirectedGraph<Leg, ConsecutiveLegs> graph) {
+    if (graph.containsEdge(source, target)) {
+      ConsecutiveLegs currentEdge = graph.getEdge(source, target);
+
+      ConsecutiveLegs preferredEdge = target.equals(newEdge.current())
+          ? target.equals(currentEdge.current())
+          ? currentEdge
+          : newEdge
+          : currentEdge;
+
+      if (!preferredEdge.equals(currentEdge)) {
+        graph.removeEdge(currentEdge);
+        graph.addEdge(source, target, newEdge);
+      }
+    } else {
+      graph.addEdge(source, target, newEdge);
+    }
   }
 }

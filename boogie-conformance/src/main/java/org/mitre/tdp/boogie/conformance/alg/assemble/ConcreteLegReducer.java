@@ -24,7 +24,7 @@ public interface ConcreteLegReducer extends ConsecutiveLegReducer {
    * Simplifies the input collection of {@link LegPair}s to just those representing unique legs.
    */
   @Override
-  default List<? extends ConsecutiveLegs> reduce(List<? extends ConsecutiveLegs> consecutiveLegs) {
+  default List<ConsecutiveLegs> reduce(List<? extends ConsecutiveLegs> consecutiveLegs) {
     Map<Boolean, List<ConsecutiveLegs>> split = consecutiveLegs.stream().collect(Collectors.groupingBy(this::isConcretePair));
 
     Map<String, List<ConsecutiveLegs>> byId = split.getOrDefault(true, emptyList()).stream()
@@ -50,8 +50,7 @@ public interface ConcreteLegReducer extends ConsecutiveLegReducer {
    */
   default List<ConsecutiveLegs> reduceCollocated(List<ConsecutiveLegs> consecutiveLegs) {
     BiPredicate<ConsecutiveLegs, ConsecutiveLegs> similarLocation = (l1, l2) -> l1.current().pathTerminator().distanceInNmTo(l2.current().pathTerminator()) < 1.0;
-    return consecutiveLegs.stream().sorted(legLocationComparator()).collect(Partitioner.listByPredicate(similarLocation))
-        .stream().map(list -> list.get(0)).collect(toList());
+    return consecutiveLegs.stream().sorted(legLocationComparator()).collect(Partitioner.listByPredicate(similarLocation)).stream().map(list -> list.get(0)).collect(toList());
   }
 
   default boolean isConcretePair(ConsecutiveLegs consecutiveLegs) {

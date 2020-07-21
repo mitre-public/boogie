@@ -86,8 +86,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "KATL");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "KATL");
 
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
   }
 
   @Test
@@ -181,8 +181,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "SHERL");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "SHERL");
 
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
   }
 
   @Test
@@ -200,8 +200,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "5300N/14000W");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "5300N/14000W");
 
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
   }
 
   @Test
@@ -303,7 +303,7 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().identifier(), "HTO");
     assertEquals(linked.target().leg().pathTerminator().identifier(), "HTO");
 
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
+    assertEquals(linked.source().leg().type(), PathTerm.DF);
   }
 }

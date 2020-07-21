@@ -16,7 +16,7 @@ public class FixElement extends ResolvedElement<Fix> {
 
   @Override
   public List<LinkedLegs> buildLegs() {
-    SimpleIFLeg leg = SimpleIFLeg.from(reference());
+    SimpleDFLeg leg = SimpleDFLeg.from(reference());
     GraphableLeg sleg = new GraphableLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }

@@ -81,7 +81,7 @@ public class TestRouteLegGraph {
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
     assertEquals("KIND", legs.get(0).split().value(), "Incorrect initial section. " + message);
     assertEquals("KIND", legs.get(0).leg().pathTerminator().identifier(), "Incorrect initial leg terminator. " + message);
-    assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message);
+    assertEquals(PathTerm.DF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message);
 
     assertEquals("BLSTR1", legs.get(1).split().value());
     assertEquals("BNDRR", legs.get(1).leg().pathTerminator().identifier());
@@ -97,7 +97,7 @@ public class TestRouteLegGraph {
 
     assertEquals("VNY", legs.get(5).split().value(), "Incorrect final section. " + message);
     assertEquals("VNY", legs.get(5).leg().pathTerminator().identifier(), "Incorrect final leg terminator. " + message);
-    assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
+    assertEquals(PathTerm.DF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
 
     assertEquals(60.007, path.getWeight(), 0.01, "Incorrect resolved shortest path weight. Check leg weight functions.");
   }

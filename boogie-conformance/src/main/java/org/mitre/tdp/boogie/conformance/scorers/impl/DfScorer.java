@@ -16,11 +16,11 @@ import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
 /**
  * This is the default conformance scorer for {@link PathTerm#DF}/{@link PathTerm#IF} legs.
  */
-public class DfIfScorer implements LegScorer {
+public class DfScorer implements LegScorer {
 
   private final ConsecutiveLegs legs;
 
-  DfIfScorer(ConsecutiveLegs legs) {
+  DfScorer(ConsecutiveLegs legs) {
     this.legs = legs;
   }
 
@@ -32,7 +32,7 @@ public class DfIfScorer implements LegScorer {
   @Override
   public double scoreAgainstLeg(ConformablePoint that) {
     Function<Double, Double> courseWeight = simpleLogistic(45.0, 90.0);
-    Function<Double, Double> distanceWeight = simpleLogistic(15.0, 40.0);
+    Function<Double, Double> distanceWeight = simpleLogistic(60.0, 110.0);
 
     Fix pathTerminator = scorerLeg().current().pathTerminator();
 

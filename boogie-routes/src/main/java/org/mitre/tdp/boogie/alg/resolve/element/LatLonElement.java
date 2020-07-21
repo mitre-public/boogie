@@ -29,7 +29,7 @@ public class LatLonElement extends ResolvedElement<LocationFix> {
 
   @Override
   public List<LinkedLegs> buildLegs() {
-    SimpleIFLeg leg = SimpleIFLeg.from(reference());
+    SimpleDFLeg leg = SimpleDFLeg.from(reference());
     GraphableLeg sleg = new GraphableLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }

@@ -3,14 +3,15 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 import java.time.Duration;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.Constraint;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.SpeedLimit;
 import org.mitre.tdp.boogie.TurnDirection;
 
 /**
- * Simple class for a simple TF leg within the framework. We use these standard implementations
+ * Simple class for a simple DF leg within the framework. We use these standard implementations
  * for connecting things to individual infrastructure elements in a leg-like way.
  *
  * <p>Elements connected by these are things like:
@@ -18,16 +19,16 @@ import org.mitre.tdp.boogie.TurnDirection;
  * 2) Direct to LatLon locations
  * 3) Direct to airport
  */
-final class SimpleIFLeg implements Leg {
+final class SimpleDFLeg implements Leg {
 
   private final Fix pathTerminator;
 
-  private SimpleIFLeg(Fix term) {
+  private SimpleDFLeg(Fix term) {
     this.pathTerminator = term;
   }
 
-  public static SimpleIFLeg from(Fix fix) {
-    return new SimpleIFLeg(fix);
+  public static SimpleDFLeg from(Fix fix) {
+    return new SimpleDFLeg(fix);
   }
 
   @Override
@@ -47,7 +48,7 @@ final class SimpleIFLeg implements Leg {
 
   @Override
   public PathTerm type() {
-    return PathTerm.IF;
+    return PathTerm.DF;
   }
 
   @Override
@@ -91,12 +92,12 @@ final class SimpleIFLeg implements Leg {
   }
 
   @Override
-  public Optional<Constraint> speedConstraint() {
+  public Optional<SpeedLimit> speedConstraint() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Constraint> altitudeConstraint() {
+  public Optional<AltitudeLimit> altitudeConstraint() {
     return Optional.empty();
   }
 

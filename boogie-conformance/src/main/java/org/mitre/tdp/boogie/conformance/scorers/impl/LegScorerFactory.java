@@ -13,14 +13,19 @@ public class LegScorerFactory {
       case TF:
         return new TfScorer(legs);
       case DF:
-      case IF:
-        return new DfIfScorer(legs);
+        return new DfScorer(legs);
       case AF:
         return new AfScorer(legs);
       case CF:
         return new CfScorer(legs);
       case RF:
         return new RfScorer(legs);
+      case VA:
+        return new VaScorer(legs);
+      case CA:
+      case FA:
+        // similar scoring functions, for FA we could check alignment from fix but probably un-necessary
+        return new CaScorer(legs);
       default:
         return new DefaultScorer(legs);
     }

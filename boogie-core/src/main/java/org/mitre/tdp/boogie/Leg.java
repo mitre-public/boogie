@@ -91,12 +91,13 @@ public interface Leg {
   /**
    * The speed constraint at the {@link Leg#pathTerminator()}.
    */
-  Optional<? extends Constraint> speedConstraint();
+  Optional<? extends SpeedLimit> speedConstraint();
+
 
   /**
    * The altitude constraint at the {@link Leg#pathTerminator()}.
    */
-  Optional<? extends Constraint> altitudeConstraint();
+  Optional<? extends AltitudeLimit> altitudeConstraint();
 
   /**
    * If the leg contains a turn this indicates the direction of the turn or both if

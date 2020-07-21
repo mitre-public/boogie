@@ -35,7 +35,7 @@ public interface LegScorer extends Scorer<ConformablePoint, ConsecutiveLegs> {
     if (scorerLeg().current().type().hasRequiredFields(scorerLeg().current())) {
       return Optional.of(scoreAgainstLeg(point));
     }
-    LOG.info("Missing required fields - skipping score for leg {}", scorerLeg().current());
+//    LOG.info("Missing required fields - skipping score for leg {}", scorerLeg().current());
     return Optional.empty();
   }
 

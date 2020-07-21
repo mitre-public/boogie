@@ -13,13 +13,17 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
-import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
+import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionFilter;
+import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;
+import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
@@ -132,6 +136,20 @@ public interface RouteExpander extends Serializable {
   }
 
   /**
+   * The {@link RunwayPredictor} to use when resolving the predicted arrival runway.
+   */
+  default RunwayPredictor arrivalRunwayPredictor() {
+    return RunwayPredictor.noop();
+  }
+
+  /**
+   * The {@link RunwayPredictor} to use when resolving the predicted departure runway.
+   */
+  default RunwayPredictor departureRunwayPredictor() {
+    return RunwayPredictor.noop();
+  }
+
+  /**
    * The {@link SectionResolver} to use for matching section splits to infrastructure elements.
    */
   default SectionResolver sectionResolver() {
@@ -156,6 +174,8 @@ public interface RouteExpander extends Serializable {
 
     ResolvedRoute resolved = sectionResolver().resolve(splits);
 
+    setRunwayTransitionFilters(resolved);
+
     ResolvedSection approach = approachPredictor().predictAndCheck(
         resolved.sectionAt(resolved.sectionCount() - 2),
         resolved.sectionAt(resolved.sectionCount() - 1));
@@ -166,5 +186,21 @@ public interface RouteExpander extends Serializable {
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
     return new ExpandedRoute(route, shortestPath.getVertexList());
+  }
+
+  /**
+   * Set the element transition filters based on the supplied arrival runway predictions.
+   */
+  default void setRunwayTransitionFilters(ResolvedRoute resolvedRoute) {
+    resolvedRoute.sections().forEach(resolvedSection -> resolvedSection.elements().stream()
+        .filter(resolvedElement -> resolvedElement instanceof ProcedureElement)
+        .map(ProcedureElement.class::cast)
+        .forEach(procedureElement -> {
+          arrivalRunwayPredictor().predictedRunway()
+              .ifPresent(arrivalRunway -> procedureElement.setTransitionFilter(new StarRunwayTransitionFilter(arrivalRunway)));
+
+          departureRunwayPredictor().predictedRunway()
+              .ifPresent(departureRunway -> procedureElement.setTransitionFilter(new SidRunwayTransitionFilter(departureRunway)));
+        }));
   }
 }

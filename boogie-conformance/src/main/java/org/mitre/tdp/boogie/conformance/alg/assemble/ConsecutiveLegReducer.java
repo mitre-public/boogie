@@ -14,5 +14,5 @@ public interface ConsecutiveLegReducer {
   /**
    * Takes as an input a list of assembled consecutive legs and reduces them to the unique triples.
    */
-  List<? extends ConsecutiveLegs> reduce(List<? extends ConsecutiveLegs> legs);
+  List<ConsecutiveLegs> reduce(List<? extends ConsecutiveLegs> legs);
 }
