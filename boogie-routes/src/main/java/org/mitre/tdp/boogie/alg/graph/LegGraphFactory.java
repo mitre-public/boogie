@@ -44,7 +44,7 @@ public class LegGraphFactory {
     List<LinkedLegs> legs1 = s1.allLegs();
     List<LinkedLegs> legs2 = s2.allLegs();
 
-    Iterator<Pair<LinkedLegs, LinkedLegs>> pairs = cartesianProduct(legs1, legs2);
+    Iterator<Pair<LinkedLegs, LinkedLegs>> pairs = cartesianProduct(legs1::iterator, legs2::iterator);
     List<Pair<LinkedLegs, LinkedLegs>> lpairs = new ArrayList<>();
     pairs.forEachRemaining(lpairs::add);
     lpairs.forEach(pair -> {

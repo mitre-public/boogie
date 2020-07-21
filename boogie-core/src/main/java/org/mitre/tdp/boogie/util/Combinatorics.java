@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,6 +39,13 @@ public class Combinatorics {
 
     Function<int[], Pair<T, T>> function = input -> new Pair<>(collList.get(input[0]), collList.get(input[1]));
     return Iterators.transform(iter, function);
+  }
+
+  public static <U, V> Collection<Pair<U, V>> cartesianProduct(Collection<U> first, Collection<V> second) {
+    Iterator<Pair<U, V>> iterator = cartesianProduct(first::iterator, second::iterator);
+    List<Pair<U, V>> pairList = new ArrayList<>();
+    iterator.forEachRemaining(pairList::add);
+    return pairList;
   }
 
   public static <U, V> Iterator<Pair<U, V>> cartesianProduct(Iterable<U> first, Iterable<V> second) {

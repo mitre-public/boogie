@@ -95,7 +95,7 @@ public class TransitionTriple {
     List<Leg> terminals = transform(previous, t -> ((List<Leg>) t.legs()).get(t.legs().size() - 1));
     List<Leg> initials = transform(next, t -> ((List<Leg>) t.legs()).get(0));
 
-    Iterator<Pair<Leg, Leg>> paired = Combinatorics.cartesianProduct(terminals, initials);
+    Iterator<Pair<Leg, Leg>> paired = Combinatorics.cartesianProduct(terminals::iterator, initials::iterator);
     paired.forEachRemaining(pair -> {
 
       // occasionally transition will end/start with non-concrete leg types (no associated fix) we can't

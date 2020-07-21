@@ -12,10 +12,19 @@ public class ReducibleLeg {
   /**
    * The decorated leg.
    */
-  private final Leg leg;
+  private Leg leg;
 
   public ReducibleLeg(Leg leg) {
     this.leg = leg;
+  }
+
+  public Leg leg() {
+    return leg;
+  }
+
+  public ReducibleLeg setLeg(Leg leg) {
+    this.leg = leg;
+    return this;
   }
 
   @Override

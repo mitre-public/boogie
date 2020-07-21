@@ -29,7 +29,6 @@ public class DownstreamConsecutiveLegsResolver extends SimpleDirectedGraph<Leg, 
    */
   public ConnectivityInspector<Leg, ConsecutiveLegs> connectivityInspector() {
     if (connectivityInspector == null) {
-
       this.connectivityInspector = new ConnectivityInspector<>(this);
     }
     return connectivityInspector;

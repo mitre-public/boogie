@@ -34,7 +34,7 @@ public interface ConsecutiveLegConnector {
     // iterate over the pairwise combinations of leg groups
     while (pairwise.hasNext()) {
       Pair<List<ConsecutiveLegs>, List<ConsecutiveLegs>> groups = pairwise.next();
-      Iterator<Pair<ConsecutiveLegs, ConsecutiveLegs>> cartesian = Combinatorics.cartesianProduct(groups.first(), groups.second());
+      Iterator<Pair<ConsecutiveLegs, ConsecutiveLegs>> cartesian = Combinatorics.cartesianProduct(groups.first()::iterator, groups.second()::iterator);
 
       // for each group pair consider all candidate connections between contained leg pairs
       while (cartesian.hasNext()) {

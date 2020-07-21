@@ -75,7 +75,7 @@ public class RouteLegGraph extends SimpleDirectedWeightedGraph<GraphableLeg, Def
     // those verticies and calc all shortest paths take the minimum of those
     List<GraphableLeg> slegs = legsByIndex.get(mindex);
     List<GraphableLeg> elegs = legsByIndex.get(maxdex);
-    Iterator<Pair<GraphableLeg, GraphableLeg>> iter = Combinatorics.cartesianProduct(slegs, elegs);
+    Iterator<Pair<GraphableLeg, GraphableLeg>> iter = Combinatorics.cartesianProduct(slegs::iterator, elegs::iterator);
 
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortest = null;
 
