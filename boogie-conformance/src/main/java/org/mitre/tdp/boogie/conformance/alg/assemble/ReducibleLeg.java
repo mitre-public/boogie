@@ -1,7 +1,9 @@
 package org.mitre.tdp.boogie.conformance.alg.assemble;
 
 import java.util.Objects;
+import java.util.Optional;
 
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 
 /**
@@ -12,7 +14,7 @@ public class ReducibleLeg {
   /**
    * The decorated leg.
    */
-  private Leg leg;
+  private final Leg leg;
 
   public ReducibleLeg(Leg leg) {
     this.leg = leg;
@@ -20,11 +22,6 @@ public class ReducibleLeg {
 
   public Leg leg() {
     return leg;
-  }
-
-  public ReducibleLeg setLeg(Leg leg) {
-    this.leg = leg;
-    return this;
   }
 
   @Override
@@ -36,7 +33,13 @@ public class ReducibleLeg {
       return false;
     }
     ReducibleLeg that = (ReducibleLeg) o;
-    return Objects.equals(leg.pathTerminator(), that.leg.pathTerminator())
+
+    Optional<Fix> pathTerminator = Optional.ofNullable(leg.pathTerminator());
+    Optional<Fix> thatPathTerminator = Optional.ofNullable(that.leg.pathTerminator());
+
+    return Objects.equals(pathTerminator.map(Fix::identifier).orElse(null), thatPathTerminator.map(Fix::identifier).orElse(null))
+        && Objects.equals(pathTerminator.map(Fix::latitude).orElse(null), thatPathTerminator.map(Fix::latitude).orElse(null))
+        && Objects.equals(pathTerminator.map(Fix::longitude).orElse(null), thatPathTerminator.map(Fix::longitude).orElse(null))
         && Objects.equals(leg.type(), that.leg.type());
   }
 

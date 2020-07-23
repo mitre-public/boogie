@@ -96,7 +96,6 @@ public class TestScoreBasedRouteAssigner {
 
     Scorer<ConformablePoint, ConsecutiveLegs> scorer = mock(Scorer.class);
     when(scorer.score(any())).thenAnswer(answer);
-    when(scorer.transitionScore(any())).thenReturn(1.0);
     return scorer;
   }
 

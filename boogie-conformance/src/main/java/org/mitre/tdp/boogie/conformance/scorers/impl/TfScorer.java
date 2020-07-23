@@ -36,6 +36,11 @@ public class TfScorer implements OffTrackScorer {
   }
 
   @Override
+  public Optional<Double> score(ConformablePoint point) {
+    return legs.previous().isPresent() ? OffTrackScorer.super.score(point) : Optional.empty();
+  }
+
+  @Override
   public Distance offTrackDistance(ConformablePoint point) {
     Fix startFix = scorerLeg().previous().map(Leg::pathTerminator)
         .orElseThrow(supplier("pathTerminator of from leg"));

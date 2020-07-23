@@ -82,11 +82,7 @@ public class DownstreamConsecutiveLegsResolver extends SimpleDirectedGraph<Leg, 
     if (graph.containsEdge(source, target)) {
       ConsecutiveLegs currentEdge = graph.getEdge(source, target);
 
-      ConsecutiveLegs preferredEdge = target.equals(newEdge.current())
-          ? target.equals(currentEdge.current())
-          ? currentEdge
-          : newEdge
-          : currentEdge;
+      ConsecutiveLegs preferredEdge = !currentEdge.previous().filter(target::equals).isPresent() ? newEdge : currentEdge;
 
       if (!preferredEdge.equals(currentEdge)) {
         graph.removeEdge(currentEdge);

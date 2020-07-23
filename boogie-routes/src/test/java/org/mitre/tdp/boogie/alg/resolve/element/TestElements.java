@@ -300,8 +300,8 @@ public class TestElements {
     assertEquals(linked.source().leg().pathTerminator().latLong(), linked.target().leg().pathTerminator().latLong());
 
     // do we want the first tailored string
-    assertEquals(linked.source().leg().pathTerminator().identifier(), "HTO");
-    assertEquals(linked.target().leg().pathTerminator().identifier(), "HTO");
+    assertEquals(linked.source().leg().pathTerminator().identifier(), "HTO354018");
+    assertEquals(linked.target().leg().pathTerminator().identifier(), "HTO354018");
 
     assertEquals(linked.source().leg().type(), PathTerm.DF);
     assertEquals(linked.source().leg().type(), PathTerm.DF);

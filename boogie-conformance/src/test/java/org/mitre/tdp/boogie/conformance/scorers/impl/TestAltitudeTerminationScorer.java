@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.conformance.scorers.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mitre.tdp.boogie.conformance.scorers.impl.WeightFunctions.simpleLogistic;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -47,5 +48,29 @@ public class TestAltitudeTerminationScorer {
     when(point.trueCourse()).thenReturn(Optional.of(100.0));
     when(point.pressureAltitude()).thenReturn(Optional.of(8100.0));
     assertEquals(0.5, altitudeTerminationScorer.scoreAgainstLeg(point), 0.05d);
+  }
+
+  @Test
+  public void testScoreReturnsEmptyIfPointMissingAltitude() {
+    ConformablePoint point = mock(ConformablePoint.class);
+    when(point.pressureAltitude()).thenReturn(Optional.empty());
+    when(point.trueCourse()).thenReturn(Optional.of(120.0));
+
+    AltitudeTerminationScorer scorer = mock(AltitudeTerminationScorer.class);
+    when(scorer.score(any())).thenCallRealMethod();
+
+    assertFalse(scorer.score(point).isPresent());
+  }
+
+  @Test
+  public void testScoreReturnsEmptyIfPointMissingTrueCourse() {
+    ConformablePoint point = mock(ConformablePoint.class);
+    when(point.pressureAltitude()).thenReturn(Optional.of(10000.0));
+    when(point.trueCourse()).thenReturn(Optional.empty());
+
+    AltitudeTerminationScorer scorer = mock(AltitudeTerminationScorer.class);
+    when(scorer.score(any())).thenCallRealMethod();
+
+    assertFalse(scorer.score(point).isPresent());
   }
 }

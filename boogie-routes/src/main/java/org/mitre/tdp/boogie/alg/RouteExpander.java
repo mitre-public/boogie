@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
+import org.mitre.tdp.boogie.alg.graph.MultiplyExpandedLegMerger;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
@@ -21,9 +22,6 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
@@ -174,8 +172,6 @@ public interface RouteExpander extends Serializable {
 
     ResolvedRoute resolved = sectionResolver().resolve(splits);
 
-    setRunwayTransitionFilters(resolved);
-
     ResolvedSection approach = approachPredictor().predictAndCheck(
         resolved.sectionAt(resolved.sectionCount() - 2),
         resolved.sectionAt(resolved.sectionCount() - 1));
@@ -185,22 +181,7 @@ public interface RouteExpander extends Serializable {
     RouteLegGraph graph = LegGraphFactory.build(resolved);
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
-    return new ExpandedRoute(route, shortestPath.getVertexList());
-  }
-
-  /**
-   * Set the element transition filters based on the supplied arrival runway predictions.
-   */
-  default void setRunwayTransitionFilters(ResolvedRoute resolvedRoute) {
-    resolvedRoute.sections().forEach(resolvedSection -> resolvedSection.elements().stream()
-        .filter(resolvedElement -> resolvedElement instanceof ProcedureElement)
-        .map(ProcedureElement.class::cast)
-        .forEach(procedureElement -> {
-          arrivalRunwayPredictor().predictedRunway()
-              .ifPresent(arrivalRunway -> procedureElement.setTransitionFilter(new StarRunwayTransitionFilter(arrivalRunway)));
-
-          departureRunwayPredictor().predictedRunway()
-              .ifPresent(departureRunway -> procedureElement.setTransitionFilter(new SidRunwayTransitionFilter(departureRunway)));
-        }));
+    List<GraphableLeg> finalLegs = MultiplyExpandedLegMerger.newInstance().mergeLegs(shortestPath.getVertexList());
+    return new ExpandedRoute(route, finalLegs);
   }
 }

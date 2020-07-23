@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.fn;
 import java.time.Instant;
 
 
-final class MergeMe implements Mergeable<MergeMe> {
+final class MergeMe {
 
   public String name;
   public long val;
@@ -19,15 +19,5 @@ final class MergeMe implements Mergeable<MergeMe> {
 
   public Instant getTime() {
     return Instant.ofEpochMilli(val);
-  }
-
-  @Override
-  public boolean mergeable(MergeMe obj) {
-    return name.equals(obj.name) && Math.abs(val - obj.val) <= 1000L;
-  }
-
-  @Override
-  public MergeMe mergeLeft(MergeMe obj) {
-    return this;
   }
 }

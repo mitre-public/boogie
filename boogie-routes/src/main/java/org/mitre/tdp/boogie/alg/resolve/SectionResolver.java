@@ -14,8 +14,8 @@ import java.util.stream.StreamSupport;
 
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
-import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
+import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.element.AirwayElement;
 import org.mitre.tdp.boogie.alg.resolve.element.FixElement;
@@ -162,6 +162,13 @@ public interface SectionResolver {
         // pre-filter approach procedures
         .filter(p -> !p.type().equals(ProcedureType.APPROACH))
         .map(ProcedureElement::new)
+        .peek(procedureElement -> {
+          inflator().arrivalRunwayPredictor().predictedRunway()
+              .ifPresent(arrivalRunway -> procedureElement.setTransitionFilter(new StarRunwayTransitionFilter(arrivalRunway)));
+
+          inflator().departureRunwayPredictor().predictedRunway()
+              .ifPresent(departureRunway -> procedureElement.setTransitionFilter(new SidRunwayTransitionFilter(departureRunway)));
+        })
         .collect(Collectors.toList());
   }
 

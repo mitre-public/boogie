@@ -5,6 +5,7 @@ import java.util.Optional;
 /**
  * A custom scorer typically built on the fly by {@link Scorable} objects.
  */
+@FunctionalInterface
 public interface Scorer<U, S extends Scorable<U, S>> {
 
   /**
@@ -12,6 +13,4 @@ public interface Scorer<U, S extends Scorable<U, S>> {
    * the {@link Scorable} which created the scorer.
    */
   Optional<Double> score(U that);
-
-  double transitionScore(S l2);
 }

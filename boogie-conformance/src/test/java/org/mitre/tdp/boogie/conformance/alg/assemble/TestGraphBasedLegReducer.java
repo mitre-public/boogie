@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Fix;
@@ -17,6 +16,9 @@ public class TestGraphBasedLegReducer {
 
   @Test
   public void testReducerPrefersLegsReferencingCurrentAsTarget() {
+    Object source1 = new Object();
+    Object source2 = new Object();
+
     Fix pathTerminator1 = mock(Fix.class);
     Fix pathTerminator2 = mock(Fix.class);
     Fix pathTerminator3 = mock(Fix.class);
@@ -33,14 +35,8 @@ public class TestGraphBasedLegReducer {
     when(leg3.type()).thenReturn(PathTerm.TF);
     when(leg3.pathTerminator()).thenReturn(pathTerminator3);
 
-    ConsecutiveLegs cl1 = mock(ConsecutiveLegs.class);
-    when(cl1.current()).thenReturn(leg1);
-    when(cl1.next()).thenReturn(Optional.of(leg2));
-
-    ConsecutiveLegs cl2 = mock(ConsecutiveLegs.class);
-    when(cl2.previous()).thenReturn(Optional.of(leg1));
-    when(cl2.current()).thenReturn(leg2);
-    when(cl2.next()).thenReturn(Optional.of(leg3));
+    LegPair cl1 = new LegPair(leg1, leg2, false).setSourceObject(source1);
+    LegTriple cl2 = new LegTriple(leg1, leg2, leg3).setSourceObject(source2);
 
     GraphBasedLegReducer reducer = GraphBasedLegReducer.newInstance();
     List<ConsecutiveLegs> resultantLegs = reducer.reduce(Arrays.asList(cl1, cl2));

@@ -4,6 +4,8 @@ import static org.apache.commons.math3.util.FastMath.abs;
 import static org.mitre.caasd.commons.Spherical.angleDifference;
 import static org.mitre.tdp.boogie.conformance.scorers.impl.MissingRequiredFieldException.supplier;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
@@ -24,6 +26,11 @@ public interface AltitudeTerminationScorer extends LegScorer {
    * taken to be the point altitude - the target altitude from the leg.
    */
   Double feetToTargetAltitudeWeight(Double altitudeDelta);
+
+  @Override
+  default Optional<Double> score(ConformablePoint that) {
+    return that.pressureAltitude().isPresent() && that.trueCourse().isPresent() ? LegScorer.super.score(that) : Optional.empty();
+  }
 
   @Override
   default double scoreAgainstLeg(ConformablePoint point) {

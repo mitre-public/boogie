@@ -31,8 +31,8 @@ public class DfScorer implements LegScorer {
 
   @Override
   public double scoreAgainstLeg(ConformablePoint that) {
-    Function<Double, Double> courseWeight = simpleLogistic(45.0, 90.0);
-    Function<Double, Double> distanceWeight = simpleLogistic(60.0, 110.0);
+    Function<Double, Double> courseWeight = simpleLogistic(10.0, 20.0);
+    Function<Double, Double> distanceWeight = simpleLogistic(20.0, 40.0);
 
     Fix pathTerminator = scorerLeg().current().pathTerminator();
 
