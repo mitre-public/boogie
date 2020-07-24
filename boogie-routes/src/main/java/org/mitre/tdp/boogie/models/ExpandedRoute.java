@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.models;
 
 import java.util.List;
 
+import org.mitre.tdp.boogie.alg.graph.MultiplyExpandedLegMerger;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 
 /**
@@ -26,5 +27,9 @@ public final class ExpandedRoute {
 
   public List<GraphableLeg> legs() {
     return legs;
+  }
+
+  public List<GraphableLeg> mergedLegs() {
+    return MultiplyExpandedLegMerger.newInstance().mergeLegs(legs());
   }
 }

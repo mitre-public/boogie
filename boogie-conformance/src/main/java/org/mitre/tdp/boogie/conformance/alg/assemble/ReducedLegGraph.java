@@ -48,10 +48,7 @@ public class ReducedLegGraph extends SimpleDirectedGraph<ReducibleLeg, LegPair> 
       if (!outgoingLegs.isEmpty() && !incomingLegs.isEmpty()) {
         return Combinatorics.cartesianProduct(incomingLegs, outgoingLegs).stream()
             .map(pair -> new FlyableLeg(pair.first().leg(), vertex.leg(), pair.second().leg()).setSourceObject(getEdge(pair.first(), vertex).getSourceObject().orElse(null)));
-      }
-//      return Stream.empty();
-      // otherwise either incoming or outgoing
-      else {
+      } else {
         return outgoingLegs.isEmpty()
             ? incomingLegs.stream().map(incoming -> new FlyableLeg(incoming.leg(), vertex.leg(), null).setSourceObject(getEdge(incoming, vertex).getSourceObject().orElse(null)))
             : outgoingLegs.stream().map(outgoing -> new FlyableLeg(null, vertex.leg(), outgoing.leg()).setSourceObject(getEdge(vertex, outgoing).getSourceObject().orElse(null)));

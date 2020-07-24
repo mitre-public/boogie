@@ -52,7 +52,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -133,7 +133,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -188,7 +188,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -217,7 +217,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -264,7 +264,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -312,7 +312,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -359,7 +359,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -389,7 +389,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -417,7 +417,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 
@@ -445,7 +445,7 @@ public class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
-    List<GraphableLeg> legs = expandedRoute.legs();
+    List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
     GraphableLeg leg;
 

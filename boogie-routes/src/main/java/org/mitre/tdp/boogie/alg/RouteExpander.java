@@ -14,7 +14,6 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
-import org.mitre.tdp.boogie.alg.graph.MultiplyExpandedLegMerger;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
@@ -181,7 +180,6 @@ public interface RouteExpander extends Serializable {
     RouteLegGraph graph = LegGraphFactory.build(resolved);
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
-    List<GraphableLeg> finalLegs = MultiplyExpandedLegMerger.newInstance().mergeLegs(shortestPath.getVertexList());
-    return new ExpandedRoute(route, finalLegs);
+    return new ExpandedRoute(route, shortestPath.getVertexList());
   }
 }
