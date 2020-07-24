@@ -7,13 +7,11 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 
 /**
- * Simple class for use within the {@link GraphBasedLegReducer} which extracts simple features of legs such that they can
- * be reduced via checks against hashCode and equals.
+ * Simple class for use within the {@link ReducedLegGraph} which extracts simple features of legs such that they can be reduced
+ * via checks against hashCode and equals.
  */
 public class ReducibleLeg {
-  /**
-   * The decorated leg.
-   */
+
   private final Leg leg;
 
   public ReducibleLeg(Leg leg) {

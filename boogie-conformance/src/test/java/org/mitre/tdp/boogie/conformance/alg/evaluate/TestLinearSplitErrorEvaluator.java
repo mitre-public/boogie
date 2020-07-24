@@ -25,8 +25,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 public class TestLinearSplitErrorEvaluator {
 
@@ -97,14 +96,14 @@ public class TestLinearSplitErrorEvaluator {
     when(l2.type()).thenReturn(PathTerm.TF);
     when(l2.toString()).thenReturn(0.0 + ":" + 5.0);
 
-    LegPair legPair = new LegPair(l1, l2, false);
+    FlyableLeg legPair = new FlyableLeg(l1, l2, null);
 
     Distance distance = Distance.ofNauticalMiles(15.0);
     Speed speed = Speed.of(400.0, Speed.Unit.KNOTS);
     Duration timeStep = speed.timeToTravel(distance);
     double latStep = LatLong.of(0.0, 0.0).project(Course.ofDegrees(0.0), distance).latitude();
 
-    List<Pair<ConformablePoint, ConsecutiveLegs>> pairs = IntStream.range(0, 10)
+    List<Pair<ConformablePoint, FlyableLeg>> pairs = IntStream.range(0, 10)
         .mapToObj(i -> {
           double lat = i < 5 ? latStep * i : latStep * (10 - i);
           double lon = i / 2.0d;
@@ -113,7 +112,7 @@ public class TestLinearSplitErrorEvaluator {
           ConformablePoint point = conformablePointAt(ll);
           when(point.time()).thenReturn(Instant.EPOCH.plus(Duration.ofMillis(timeStep.toMillis() * i)));
 
-          return Pair.of(point, (ConsecutiveLegs) legPair);
+          return Pair.of(point, (FlyableLeg) legPair);
         })
         .collect(Collectors.toList());
 

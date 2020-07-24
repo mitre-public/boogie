@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 import com.google.common.base.Preconditions;
 
@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 public class PrecomputedAssignerWrapper implements LegAssigner {
 
   private final PrecomputedAssigner assigner;
-  private Map<ConformablePoint, ConsecutiveLegs> assignments;
+  private Map<ConformablePoint, FlyableLeg> assignments;
 
   public PrecomputedAssignerWrapper(PrecomputedAssigner assigner) {
     this.assigner = assigner;
@@ -27,7 +27,7 @@ public class PrecomputedAssignerWrapper implements LegAssigner {
   }
 
   @Override
-  public ConsecutiveLegs assignmentFor(ConformablePoint conformablePoint) {
+  public FlyableLeg assignmentFor(ConformablePoint conformablePoint) {
     Preconditions.checkArgument(!assignments.isEmpty(), "Pre-compute step has not been run yet.");
     return assignments.get(conformablePoint);
   }
@@ -35,14 +35,14 @@ public class PrecomputedAssignerWrapper implements LegAssigner {
   /**
    * Pre-computes and saves the returned mapping as an internal field.
    */
-  public void precompute(Collection<ConformablePoint> allPoints, Collection<ConsecutiveLegs> allLegs) {
+  public void precompute(Collection<ConformablePoint> allPoints, Collection<FlyableLeg> allLegs) {
     this.assignments = assigner.assignments(allPoints, allLegs);
   }
 
   /**
    * Returns a new {@link PrecomputedAssigner} which has already had the {@link #precompute(Collection, Collection)} called.
    */
-  public static PrecomputedAssignerWrapper wrapAndPrecompute(PrecomputedAssigner assigner, Collection<ConformablePoint> allPoints, Collection<ConsecutiveLegs> allLegs) {
+  public static PrecomputedAssignerWrapper wrapAndPrecompute(PrecomputedAssigner assigner, Collection<ConformablePoint> allPoints, Collection<FlyableLeg> allLegs) {
     PrecomputedAssignerWrapper wrapper = new PrecomputedAssignerWrapper(assigner);
     wrapper.precompute(allPoints, allLegs);
     return wrapper;

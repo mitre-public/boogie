@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
-import org.mitre.tdp.boogie.conformance.scorers.LegScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
  * The maximal total score assigner uses the {@link DynamicProgrammer} determining the path the aircraft intended to
  * take through a collection of legs to be the one which - on the whole - maximizes the overall conformance score as
- * returned by the {@link LegScorer}s.
+ * returned by the {@link OnLegScorer}s.
  *
  * <p>To use this class for {@link LegAssigner} it is required that the full observed path of the aircraft be provided
  * as well as the full collection of legs. This class internally pre-computes the assignment and then serves it up by
@@ -29,9 +29,9 @@ public interface MaximalTotalScoreAssigner extends PrecomputedAssigner {
    * in CTD between the points and the collection of available legs.
    */
   @Override
-  default Map<ConformablePoint, ConsecutiveLegs> assignments(Collection<? extends ConformablePoint> allPoints, Collection<? extends ConsecutiveLegs> allLegs) {
-    List<ConsecutiveLegs> legList = new ArrayList<>(allLegs);
+  default Map<ConformablePoint, FlyableLeg> assignments(Collection<? extends ConformablePoint> allPoints, Collection<? extends FlyableLeg> allLegs) {
+    List<FlyableLeg> legList = new ArrayList<>(allLegs);
     List<ConformablePoint> pointList = new ArrayList<>(allPoints);
-    return ScoreBasedRouteResolver.with(legList).resolveRoute(pointList);
+    return ScoreBasedRouteResolver.withConformableLegs(legList).resolveRoute(pointList);
   }
 }

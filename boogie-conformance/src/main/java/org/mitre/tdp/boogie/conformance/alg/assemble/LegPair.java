@@ -1,77 +1,39 @@
 package org.mitre.tdp.boogie.conformance.alg.assemble;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import org.mitre.tdp.boogie.Leg;
 
 /**
- * Simple interface for a pair of concrete leg types.
+ * Interface representing a pair of subsequently traversed legs. This class is generally used in two ways:
+ *
+ * 1) To represent legs which can be reduced based on their similar features.
+ * 2) To represent pairs of legs for the assessment of conformance - which as typically defined is a question of lateral
+ * deviation from the flown path.
  */
-public class LegPair implements ConsecutiveLegs {
+public interface LegPair {
 
   /**
-   * The previous concrete leg.
+   * The leg which which the aircraft is flying from the end of.
    */
-  private final Leg previous;
+  Leg previous();
+
   /**
-   * The current concrete leg.
+   * The leg which the aircraft is flying to the end of given it has finished flying the from leg.
    */
-  private final Leg current;
+  Leg current();
+
   /**
-   * Returns whether the given leg pair is skipping a non-concrete leg type.
+   * Returns the source object for the ConsecutiveLegs if set via {@link #setSourceObject(Object)};
    */
-  private final boolean isSkip;
-
-  private Object sourceObject;
-
-  public LegPair(@Nonnull Leg previous, @Nonnull Leg current, boolean isSkip) {
-    this.previous = previous;
-    this.current = current;
-    this.isSkip = isSkip;
-  }
-
-  @Override
-  public Optional<Leg> previous() {
-    return Optional.of(previous);
-  }
-
-  @Override
-  public Leg current() {
-    return current;
-  }
-
-  @Override
-  public Optional<Leg> next() {
+  default Optional<Object> getSourceObject() {
     return Optional.empty();
   }
 
-  public boolean isSkip() {
-    return isSkip;
-  }
-
-  public LegPair swap() {
-    return new LegPair(current, previous, isSkip).setSourceObject(sourceObject);
-  }
-
-  @Override
-  public Optional<Object> getSourceObject() {
-    return Optional.ofNullable(sourceObject);
-  }
-
-  @Override
-  public LegPair setSourceObject(Object o) {
-    this.sourceObject = o;
+  /**
+   * Sets the source object for the consecutive legs if configured.
+   */
+  default LegPair setSourceObject(Object source) {
     return this;
-  }
-
-  @Override
-  public String toString() {
-    return "LegPair{" +
-        "previous=" + previous +
-        ", current=" + current +
-        ", isSkip=" + isSkip +
-        ", sourceObject=" + sourceObject +
-        '}';
   }
 }

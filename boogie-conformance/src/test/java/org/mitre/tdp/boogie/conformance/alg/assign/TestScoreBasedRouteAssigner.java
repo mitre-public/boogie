@@ -21,8 +21,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.conformance.Scorer;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Sets;
@@ -49,19 +48,19 @@ public class TestScoreBasedRouteAssigner {
         })
         .collect(Collectors.toList());
 
-    ConsecutiveLegs sourcea = legs(source, a, scorer(pointList.get(0)));
-    ConsecutiveLegs ab = legs(a, b, scorer(pointList.get(1), pointList.get(2)));
-    ConsecutiveLegs ac = legs(a, c, scorer(pointList.get(5)));
-    ConsecutiveLegs bd = legs(b, d, scorer());
-    ConsecutiveLegs be = legs(b, e, scorer(pointList.get(3), pointList.get(4)));
-    ConsecutiveLegs cf = legs(c, f, scorer());
-    ConsecutiveLegs cg = legs(c, g, scorer());
-    ConsecutiveLegs eh = legs(e, h, scorer());
+    FlyableLeg sourcea = legs(source, a, scorer(pointList.get(0)));
+    FlyableLeg ab = legs(a, b, scorer(pointList.get(1), pointList.get(2)));
+    FlyableLeg ac = legs(a, c, scorer(pointList.get(5)));
+    FlyableLeg bd = legs(b, d, scorer());
+    FlyableLeg be = legs(b, e, scorer(pointList.get(3), pointList.get(4)));
+    FlyableLeg cf = legs(c, f, scorer());
+    FlyableLeg cg = legs(c, g, scorer());
+    FlyableLeg eh = legs(e, h, scorer());
 
-    ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.with(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg));
-    Map<ConformablePoint, ConsecutiveLegs> mapping = resolver.resolveRoute(pointList);
+    ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.withConformableLegs(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg));
+    Map<ConformablePoint, FlyableLeg> mapping = resolver.resolveRoute(pointList);
 
-    Map<ConformablePoint, ConsecutiveLegs> expected = new HashMap<>();
+    Map<ConformablePoint, FlyableLeg> expected = new HashMap<>();
     expected.put(pointList.get(0), sourcea);
     expected.put(pointList.get(1), ab);
     expected.put(pointList.get(2), ab);
@@ -71,7 +70,7 @@ public class TestScoreBasedRouteAssigner {
 
 //    assertEquals(expected, mapping, "Since we hit the end of the connected state at {b->e} we allow transitions to disconnected high-score states {a->c}.");
 
-    resolver = ScoreBasedRouteResolver.with(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg, eh));
+    resolver = ScoreBasedRouteResolver.withConformableLegs(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg, eh));
     mapping = resolver.resolveRoute(pointList);
 
     expected.put(pointList.get(5), be);
@@ -87,24 +86,24 @@ public class TestScoreBasedRouteAssigner {
     return pt;
   }
 
-  private Scorer<ConformablePoint, ConsecutiveLegs> scorer(ConformablePoint... points) {
+  private OnLegScorer scorer(ConformablePoint... points) {
     Set<ConformablePoint> pointSet = Sets.newHashSet(points);
     Answer<Optional<Double>> answer = incoming -> {
       Object[] args = incoming.getArguments();
       return Optional.of(pointSet.contains(args[0]) ? 1.0 : 0.0);
     };
 
-    Scorer<ConformablePoint, ConsecutiveLegs> scorer = mock(Scorer.class);
-    when(scorer.score(any())).thenAnswer(answer);
+    OnLegScorer scorer = mock(OnLegScorer.class);
+    when(scorer.score(any(), any())).thenAnswer(answer);
     return scorer;
   }
 
-  private ConsecutiveLegs legs(Leg l1, Leg l2, Scorer<ConformablePoint, ConsecutiveLegs> scorer) {
+  private FlyableLeg legs(Leg l1, Leg l2, OnLegScorer scorer) {
     String toString = String.format("%s -> %s", l1.pathTerminator().identifier(), l2.pathTerminator().identifier());
-    ConsecutiveLegs consecutiveLegs = mock(ConsecutiveLegs.class);
+    FlyableLeg consecutiveLegs = mock(FlyableLeg.class);
     when(consecutiveLegs.previous()).thenReturn(Optional.of(l1));
     when(consecutiveLegs.current()).thenReturn(l2);
-    when(consecutiveLegs.scorer()).thenReturn(scorer);
+    when(consecutiveLegs.onLegScorer()).thenReturn(scorer);
     when(consecutiveLegs.toString()).thenReturn(toString);
     return consecutiveLegs;
   }

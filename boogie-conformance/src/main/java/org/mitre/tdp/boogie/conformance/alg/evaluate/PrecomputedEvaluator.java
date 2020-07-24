@@ -6,7 +6,7 @@ import java.util.NavigableMap;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 
 /**
  * This is an interface for {@link ConformanceEvaluator}s we don't want to have to run multiple times
@@ -21,11 +21,12 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
  * <p>These algorithms can be wrapped in the {@link PrecomputedEvaluatorWrapper} class which will serve
  * their results as a common {@link ConformanceEvaluator}.
  */
+@FunctionalInterface
 public interface PrecomputedEvaluator {
 
   /**
    * Returns a {@link NavigableMap} giving the start time of either a conforming (true) or non-conforming
    * (false) portion of the track.
    */
-  NavigableMap<Instant, Boolean> conformanceTimes(List<Pair<ConformablePoint, ConsecutiveLegs>> conformingPairs);
+  NavigableMap<Instant, Boolean> conformanceTimes(List<Pair<ConformablePoint, LegPair>> conformingPairs);
 }

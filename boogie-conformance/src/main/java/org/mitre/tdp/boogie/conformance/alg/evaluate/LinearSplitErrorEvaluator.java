@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
-import static org.mitre.tdp.boogie.conformance.alg.evaluate.ConformanceEvaluator.offTrackDistance;
+import static org.mitre.tdp.boogie.conformance.alg.evaluate.MaxOffTrackDistanceEvaluator.offTrackDistance;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,7 +18,7 @@ import org.mitre.caasd.commons.math.FastLinearApproximation;
 import org.mitre.caasd.commons.math.PiecewiseLinearSplitter;
 import org.mitre.caasd.commons.math.XyDataset;
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ConsecutiveLegs;
+import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 
 /**
  * Leverages a modified version of the Douglas-Peucker algorithm to partition the set of conformable
@@ -49,7 +49,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    * Returns the mapping of {time, conforming?} based on the computed linear split change points.
    */
   @Override
-  default NavigableMap<Instant, Boolean> conformanceTimes(List<Pair<ConformablePoint, ConsecutiveLegs>> conformingPairs) {
+  default NavigableMap<Instant, Boolean> conformanceTimes(List<Pair<ConformablePoint, LegPair>> conformingPairs) {
     NavigableMap<Duration, Pair<Speed, Distance>> piecewiseSlopes = computeOffsetToFittedSpeedAverageDistance(conformingPairs);
     Instant t0 = conformingPairs.get(0).first().time();
 
@@ -61,7 +61,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
     ));
   }
 
-  default NavigableMap<Duration, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(List<Pair<ConformablePoint, ConsecutiveLegs>> conformingPairs) {
+  default NavigableMap<Duration, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(List<Pair<ConformablePoint, LegPair>> conformingPairs) {
     XyDataset dataset = convertToXYData(conformingPairs);
     XyDataset[] splits = piecewiseSplits(dataset);
     return asOffsetToFittedSpeedAverageDistance(splits);
@@ -113,7 +113,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    * x = epoch time in hours
    * y = cross track distance from leg in nm
    */
-  default XyDataset convertToXYData(List<Pair<ConformablePoint, ConsecutiveLegs>> conformingPairs) {
+  default XyDataset convertToXYData(List<Pair<ConformablePoint, LegPair>> conformingPairs) {
     List<Double> times = new ArrayList<>();
     List<Double> crossTrackDistances = new ArrayList<>();
 
