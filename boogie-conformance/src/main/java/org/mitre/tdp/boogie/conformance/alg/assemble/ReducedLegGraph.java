@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.conformance.alg.assemble;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.connectivity.GabowStrongConnectivityInspector;
@@ -21,23 +20,27 @@ public class ReducedLegGraph extends SimpleDirectedGraph<ReducibleLeg, LegPair> 
 
   public ReducedLegGraph() {
     super(LegPair.class);
-    this.weakConnectivityInspector = new ConnectivityInspector<>(this);
-    this.strongConnectivityInspector = new GabowStrongConnectivityInspector<>(this);
   }
 
   public ConnectivityInspector<ReducibleLeg, LegPair> weakConnectivityInspector() {
+    if (null == weakConnectivityInspector) {
+      this.weakConnectivityInspector = new ConnectivityInspector<>(this);
+    }
     return weakConnectivityInspector;
   }
 
   public GabowStrongConnectivityInspector<ReducibleLeg, LegPair> strongConnectivityInspector() {
+    if (null == strongConnectivityInspector) {
+      this.strongConnectivityInspector = new GabowStrongConnectivityInspector<>(this);
+    }
     return strongConnectivityInspector;
   }
 
-  public List<FlyableLeg> allConformableLegs() {
+  public List<FlyableLeg> flyableLegs() {
     return vertexSet().stream().flatMap(vertex -> {
 
       // weak connectivity so have to check directional edge containment
-      Set<ReducibleLeg> connected = weakConnectivityInspector.connectedSetOf(vertex);
+      Set<ReducibleLeg> connected = weakConnectivityInspector().connectedSetOf(vertex);
 
       Set<ReducibleLeg> incomingLegs = connected.stream().filter(leg -> containsEdge(leg, vertex)).collect(Collectors.toSet());
       Set<ReducibleLeg> outgoingLegs = connected.stream().filter(leg -> containsEdge(vertex, leg)).collect(Collectors.toSet());
@@ -46,13 +49,13 @@ public class ReducedLegGraph extends SimpleDirectedGraph<ReducibleLeg, LegPair> 
         return Combinatorics.cartesianProduct(incomingLegs, outgoingLegs).stream()
             .map(pair -> new FlyableLeg(pair.first().leg(), vertex.leg(), pair.second().leg()).setSourceObject(getEdge(pair.first(), vertex).getSourceObject().orElse(null)));
       }
-      return Stream.empty();
-//      // otherwise either incoming or outgoing
-//      else {
-//        return outgoingLegs.isEmpty()
-//            ? incomingLegs.stream().map(incoming -> new FlyableLeg(incoming.leg(), vertex.leg(), null).setSourceObject(getEdge(incoming, vertex).getSourceObject().orElse(null)))
-//            : outgoingLegs.stream().map(outgoing -> new FlyableLeg(null, vertex.leg(), outgoing.leg()).setSourceObject(getEdge(vertex, outgoing).getSourceObject().orElse(null)));
-//      }
+//      return Stream.empty();
+      // otherwise either incoming or outgoing
+      else {
+        return outgoingLegs.isEmpty()
+            ? incomingLegs.stream().map(incoming -> new FlyableLeg(incoming.leg(), vertex.leg(), null).setSourceObject(getEdge(incoming, vertex).getSourceObject().orElse(null)))
+            : outgoingLegs.stream().map(outgoing -> new FlyableLeg(null, vertex.leg(), outgoing.leg()).setSourceObject(getEdge(vertex, outgoing).getSourceObject().orElse(null)));
+      }
 
     }).collect(Collectors.toList());
   }
@@ -67,7 +70,7 @@ public class ReducedLegGraph extends SimpleDirectedGraph<ReducibleLeg, LegPair> 
       reducedLegGraph.addVertex(prev);
       reducedLegGraph.addVertex(current);
 
-      if (!reducedLegGraph.containsEdge(prev, current)) {
+      if (!reducedLegGraph.containsEdge(prev, current) && !prev.equals(current)) {
         reducedLegGraph.addEdge(prev, current, leg);
       }
     });

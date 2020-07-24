@@ -48,7 +48,7 @@ public class ScoreBasedRouteResolver {
   }
 
   public NavigableMap<ConformablePoint, FlyableLeg> resolveRoute(List<? extends ConformablePoint> conformablePoints) {
-    return Maps.transformValues(resolveAssignedStates(conformablePoints), scoredState -> scoredState.state().conformableLeg());
+    return Maps.transformValues(resolveAssignedStates(conformablePoints), scoredState -> scoredState.state().flyableLeg());
   }
 
   /**
@@ -64,7 +64,7 @@ public class ScoreBasedRouteResolver {
       this.flyableLeg = flyableLeg;
     }
 
-    public FlyableLeg conformableLeg() {
+    public FlyableLeg flyableLeg() {
       return flyableLeg;
     }
 
@@ -79,10 +79,12 @@ public class ScoreBasedRouteResolver {
     @Override
     public List<DynamicProgrammerTransition<ConformablePoint, FlyableLegState>> getPossibleTransitions(ConformablePoint stage) {
       // include the downstream legs as well as the current leg as valid transition targets
-      List<FlyableLeg> downstreamLegs = downstreamFlyableLegResolver.downstreamLegsOf(flyableLeg);
-      return Stream.concat(downstreamLegs.stream(), Stream.of(flyableLeg))
+      List<FlyableLeg> downstreamLegs = downstreamFlyableLegResolver.downstreamLegsOf(flyableLeg());
+      return Stream.concat(downstreamLegs.stream(), Stream.of(flyableLeg()))
           .distinct()
-          .map(legs -> new FlyableLegTransition(availableStates.get(legs), flyableLeg.legTransitionScorer().transitionScore(stage, flyableLeg, legs)))
+          .map(legs -> new FlyableLegTransition(
+              availableStates.get(legs),
+              flyableLeg().legTransitionScorer().transitionScore(stage, flyableLeg(), legs)))
           .collect(Collectors.toList());
     }
   }
@@ -109,7 +111,7 @@ public class ScoreBasedRouteResolver {
   }
 
   public static ScoreBasedRouteResolver withConformableLegs(List<FlyableLeg> flyableLegs) {
-    return new ScoreBasedRouteResolver(DownstreamFlyableLegResolver.withConformableLegs(flyableLegs), flyableLegs);
+    return new ScoreBasedRouteResolver(DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs), flyableLegs);
   }
 
   /**
@@ -117,6 +119,6 @@ public class ScoreBasedRouteResolver {
    * collection of legs.
    */
   public static ScoreBasedRouteResolver fromLegPairs(List<? extends LegPair> routeLegs) {
-    return withConformableLegs(ReducedLegGraph.with(routeLegs).allConformableLegs());
+    return withConformableLegs(ReducedLegGraph.with(routeLegs).flyableLegs());
   }
 }

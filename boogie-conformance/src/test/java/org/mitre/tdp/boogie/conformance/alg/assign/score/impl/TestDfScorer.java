@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 public class TestDfScorer {
 
@@ -26,7 +27,7 @@ public class TestDfScorer {
   public void test15nmOnCourseScore() {
     ConformablePoint point = mock(ConformablePoint.class);
 
-    LatLong loc = DF().pathTerminator().projectOut(0.0, 60.0).latLong();
+    LatLong loc = DF().pathTerminator().projectOut(0.0, 20.0).latLong();
     when(point.latLong()).thenReturn(loc);
     when(point.latitude()).thenCallRealMethod();
     when(point.longitude()).thenCallRealMethod();
@@ -66,11 +67,6 @@ public class TestDfScorer {
   }
 
   private FlyableLeg conformableLegs() {
-    FlyableLeg legs = mock(FlyableLeg.class);
-    Leg VA = VA();
-    Leg DF = DF();
-    when(legs.previous()).thenReturn(Optional.of(VA));
-    when(legs.current()).thenReturn(DF);
-    return legs;
+    return new FlyableLeg(VA(), DF(), null);
   }
 }

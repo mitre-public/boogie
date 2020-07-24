@@ -56,7 +56,7 @@ public class DownstreamFlyableLegResolver extends SimpleDirectedGraph<FlyableLeg
   /**
    * Generates a new {@link DownstreamFlyableLegResolver} from the input collection of {@link FlyableLeg}s.
    */
-  public static DownstreamFlyableLegResolver withConformableLegs(List<? extends FlyableLeg> conformableLegs) {
+  public static DownstreamFlyableLegResolver withFlyableLegs(List<? extends FlyableLeg> conformableLegs) {
     DownstreamFlyableLegResolver downstreamFlyableLegResolver = new DownstreamFlyableLegResolver();
 
     Combinatorics.pairwiseCombos(conformableLegs).forEachRemaining(pair -> {
@@ -75,7 +75,7 @@ public class DownstreamFlyableLegResolver extends SimpleDirectedGraph<FlyableLeg
    * resolve the downstream edges of a given {@link FlyableLeg} edge.
    */
   public static DownstreamFlyableLegResolver fromLegPairs(List<? extends LegPair> legPairs) {
-    return DownstreamFlyableLegResolver.withConformableLegs(ReducedLegGraph.with(legPairs).allConformableLegs());
+    return DownstreamFlyableLegResolver.withFlyableLegs(ReducedLegGraph.with(legPairs).flyableLegs());
   }
 
   private static void addEdgeIfMatching(FlyableLeg t1, FlyableLeg t2, DownstreamFlyableLegResolver resolver) {

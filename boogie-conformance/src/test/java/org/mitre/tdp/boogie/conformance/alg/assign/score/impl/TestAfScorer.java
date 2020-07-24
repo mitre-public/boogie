@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 public class TestAfScorer {
 
@@ -28,50 +29,42 @@ public class TestAfScorer {
     Leg AF = AF();
     when(AF.theta()).thenReturn(empty());
 
-    FlyableLeg legs = mock(FlyableLeg.class);
-    when(legs.previous()).thenReturn(Optional.of(TF));
-    when(legs.current()).thenReturn(AF);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), conformableLeg()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
   public void testFailOnMissingRho() {
-    FlyableLeg legs = mock(FlyableLeg.class);
     Leg TF = TF();
     Leg AF = AF();
     when(AF.rho()).thenReturn(empty());
 
-    when(legs.previous()).thenReturn(Optional.of(TF));
-    when(legs.current()).thenReturn(AF);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), conformableLeg()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
   public void testFailOnMissingOutboundCourse() {
-    FlyableLeg legs = mock(FlyableLeg.class);
     Leg TF = TF();
     Leg AF = AF();
     when(AF.outboundMagneticCourse()).thenReturn(empty());
 
-    when(legs.previous()).thenReturn(Optional.of(TF));
-    when(legs.current()).thenReturn(AF);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), conformableLeg()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
   public void testFailOnMissingRecommendedNavaid() {
-    FlyableLeg legs = mock(FlyableLeg.class);
     Leg TF = TF();
     Leg AF = AF();
     when(AF.recommendedNavaid()).thenReturn(empty());
 
-    when(legs.previous()).thenReturn(Optional.of(TF));
-    when(legs.current()).thenReturn(AF);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), conformableLeg()));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
@@ -106,7 +99,7 @@ public class TestAfScorer {
     LatLong loc = AF.recommendedNavaid().get().projectOut(projCourse, AF.rho().get()).latLong();
     when(point.latLong()).thenReturn(loc);
 
-    double score = scorer.scoreAgainstLeg(point , conformableLeg());
+    double score = scorer.scoreAgainstLeg(point, conformableLeg());
     assertEquals(0.0, score, 0.01, "Points prior to the boundary radial should have a 0.0 score.");
   }
 
@@ -223,11 +216,6 @@ public class TestAfScorer {
   }
 
   private FlyableLeg conformableLeg() {
-    FlyableLeg legs = mock(FlyableLeg.class);
-    Leg TF = TF();
-    Leg AF = AF();
-    when(legs.previous()).thenReturn(Optional.of(TF));
-    when(legs.current()).thenReturn(AF);
-    return legs;
+    return new FlyableLeg(TF(), AF(), null);
   }
 }

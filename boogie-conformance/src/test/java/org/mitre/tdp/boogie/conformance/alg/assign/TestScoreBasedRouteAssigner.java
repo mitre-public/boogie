@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 import org.mockito.stubbing.Answer;
 
@@ -48,34 +50,46 @@ public class TestScoreBasedRouteAssigner {
         })
         .collect(Collectors.toList());
 
-    FlyableLeg sourcea = legs(source, a, scorer(pointList.get(0)));
-    FlyableLeg ab = legs(a, b, scorer(pointList.get(1), pointList.get(2)));
-    FlyableLeg ac = legs(a, c, scorer(pointList.get(5)));
-    FlyableLeg bd = legs(b, d, scorer());
-    FlyableLeg be = legs(b, e, scorer(pointList.get(3), pointList.get(4)));
-    FlyableLeg cf = legs(c, f, scorer());
-    FlyableLeg cg = legs(c, g, scorer());
-    FlyableLeg eh = legs(e, h, scorer());
+    FlyableLeg sourceab = legs(source, a, b, scorer(pointList.get(0)));
+    FlyableLeg sourceac = legs(source, a, c, scorer(pointList.get(0)));
+    FlyableLeg abd = legs(a, b, d, scorer(pointList.get(1), pointList.get(2)));
+    FlyableLeg abe = legs(a, b, e, scorer(pointList.get(1), pointList.get(2)));
+    FlyableLeg acf = legs(a, c, f, scorer(pointList.get(5)));
+    FlyableLeg acg = legs(a, c, g, scorer(pointList.get(5)));
+    FlyableLeg bdn = legs(b, d, null, scorer());
+    FlyableLeg beh = legs(b, e, h, scorer(pointList.get(3), pointList.get(4)));
+    FlyableLeg cfn = legs(c, f, null, scorer());
+    FlyableLeg cgn = legs(c, g, null, scorer());
+    FlyableLeg ehn = legs(e, h, null, scorer());
 
-    ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.withConformableLegs(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg));
+    ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.withConformableLegs(Arrays.asList(sourceab, sourceac, abd, abe, acf, acg, bdn, beh, cfn, cgn, ehn));
     Map<ConformablePoint, FlyableLeg> mapping = resolver.resolveRoute(pointList);
 
     Map<ConformablePoint, FlyableLeg> expected = new HashMap<>();
-    expected.put(pointList.get(0), sourcea);
-    expected.put(pointList.get(1), ab);
-    expected.put(pointList.get(2), ab);
-    expected.put(pointList.get(3), be);
-    expected.put(pointList.get(4), be);
-    expected.put(pointList.get(5), ac);
+    expected.put(pointList.get(0), sourceab);
+    expected.put(pointList.get(1), abe);
+    expected.put(pointList.get(2), abe);
+    expected.put(pointList.get(3), beh);
+    expected.put(pointList.get(4), beh);
+    expected.put(pointList.get(5), beh);
 
-//    assertEquals(expected, mapping, "Since we hit the end of the connected state at {b->e} we allow transitions to disconnected high-score states {a->c}.");
+    assertEquals(expected, mapping, String.format("Mismatched transitional legs: \n %s \n %s \n", format(expected), format(mapping)));
+  }
 
-    resolver = ScoreBasedRouteResolver.withConformableLegs(Arrays.asList(sourcea, ab, ac, bd, be, cf, cg, eh));
-    mapping = resolver.resolveRoute(pointList);
+  private String format(Map<ConformablePoint, FlyableLeg> legs) {
+    return legs.entrySet().stream()
+        .sorted(Comparator.comparing(entry -> entry.getKey().time()))
+        .map(entry -> {
+          Instant time = entry.getKey().time();
+          FlyableLeg leg = entry.getValue();
 
-    expected.put(pointList.get(5), be);
+          String ids = String.format("%s -> %s",
+              leg.previous().get().pathTerminator().identifier(),
+              leg.current().pathTerminator().identifier());
 
-    assertEquals(expected, mapping, "With additional downstream leg of {b->e} ({e->h}) we need to finish the connected components before we can transition to a disconnected state.");
+          return String.format("%s=%s", time.toString(), ids);
+        })
+        .collect(Collectors.joining(","));
   }
 
   private ConformablePoint conformablePoint(Instant tau) {
@@ -98,14 +112,8 @@ public class TestScoreBasedRouteAssigner {
     return scorer;
   }
 
-  private FlyableLeg legs(Leg l1, Leg l2, OnLegScorer scorer) {
-    String toString = String.format("%s -> %s", l1.pathTerminator().identifier(), l2.pathTerminator().identifier());
-    FlyableLeg consecutiveLegs = mock(FlyableLeg.class);
-    when(consecutiveLegs.previous()).thenReturn(Optional.of(l1));
-    when(consecutiveLegs.current()).thenReturn(l2);
-    when(consecutiveLegs.onLegScorer()).thenReturn(scorer);
-    when(consecutiveLegs.toString()).thenReturn(toString);
-    return consecutiveLegs;
+  private FlyableLeg legs(Leg l1, Leg l2, Leg l3, OnLegScorer scorer) {
+    return new FlyableLeg(l1, l2, l3).setOnLegScorer(scorer);
   }
 
   private Leg leg(String identifier, PathTerm type) {

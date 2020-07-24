@@ -25,7 +25,8 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
+import org.mitre.tdp.boogie.conformance.alg.assemble.LegPairImpl;
 
 public class TestLinearSplitErrorEvaluator {
 
@@ -96,14 +97,15 @@ public class TestLinearSplitErrorEvaluator {
     when(l2.type()).thenReturn(PathTerm.TF);
     when(l2.toString()).thenReturn(0.0 + ":" + 5.0);
 
-    FlyableLeg legPair = new FlyableLeg(l1, l2, null);
+    LegPair legPair = new LegPairImpl(l1, l2);
 
     Distance distance = Distance.ofNauticalMiles(15.0);
     Speed speed = Speed.of(400.0, Speed.Unit.KNOTS);
+
     Duration timeStep = speed.timeToTravel(distance);
     double latStep = LatLong.of(0.0, 0.0).project(Course.ofDegrees(0.0), distance).latitude();
 
-    List<Pair<ConformablePoint, FlyableLeg>> pairs = IntStream.range(0, 10)
+    List<Pair<ConformablePoint, LegPair>> pairs = IntStream.range(0, 10)
         .mapToObj(i -> {
           double lat = i < 5 ? latStep * i : latStep * (10 - i);
           double lon = i / 2.0d;
@@ -112,7 +114,7 @@ public class TestLinearSplitErrorEvaluator {
           ConformablePoint point = conformablePointAt(ll);
           when(point.time()).thenReturn(Instant.EPOCH.plus(Duration.ofMillis(timeStep.toMillis() * i)));
 
-          return Pair.of(point, (FlyableLeg) legPair);
+          return Pair.of(point, legPair);
         })
         .collect(Collectors.toList());
 
@@ -126,25 +128,12 @@ public class TestLinearSplitErrorEvaluator {
 
     Pair<Speed, Distance> first = piecewiseSlopes.firstEntry().getValue();
 
-    assertEquals(
-        Speed.of(400.0, Speed.Unit.KNOTS).inKnots(),
-        first.first().inKnots(),
-        0.001);
-
-    assertEquals(
-        Distance.ofNauticalMiles(37.5).inNauticalMiles(),
-        first.second().inNauticalMiles(),
-        0.001);
+    assertEquals(Speed.of(-400.0, Speed.Unit.KNOTS).inKnots(), first.first().inKnots(), 0.001);
+    assertEquals(Distance.ofNauticalMiles(-37.5).inNauticalMiles(), first.second().inNauticalMiles(), 0.001);
 
     Pair<Speed, Distance> last = piecewiseSlopes.lastEntry().getValue();
 
-    assertEquals(
-        Speed.of(-400.0, Speed.Unit.KNOTS).inKnots(),
-        last.first().inKnots(), 0.001);
-
-    assertEquals(
-        Distance.ofNauticalMiles(37.5).inNauticalMiles(),
-        last.second().inNauticalMiles(),
-        0.001);
+    assertEquals(Speed.of(400.0, Speed.Unit.KNOTS).inKnots(), last.first().inKnots(), 0.001);
+    assertEquals(Distance.ofNauticalMiles(-37.5).inNauticalMiles(), last.second().inNauticalMiles(), 0.001);
   }
 }

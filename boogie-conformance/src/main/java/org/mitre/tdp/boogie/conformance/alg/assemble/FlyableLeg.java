@@ -111,4 +111,14 @@ public class FlyableLeg {
         .setLegTransitionScorer(flyableLeg.legTransitionScorer())
         .setSourceObject(flyableLeg.getSourceObject());
   }
+
+  @Override
+  public String toString() {
+    return "FlyableLeg{" +
+        "previous=" + previous +
+        ", current=" + current +
+        ", next=" + next +
+        ", sourceObject=" + sourceObject +
+        '}';
+  }
 }

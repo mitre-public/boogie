@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPairImpl;
+import org.mitre.tdp.boogie.conformance.alg.assemble.ReducedLegGraph;
 
 import com.google.common.collect.Sets;
 
@@ -34,15 +36,17 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair2 = new LegPairImpl(a, c);
     LegPair legPair3 = new LegPairImpl(a, d);
 
-    FlyableLeg query = new FlyableLeg(null, source, a);
+    List<FlyableLeg> flyableLegs = ReducedLegGraph.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
+    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
 
-    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.fromLegPairs(Arrays.asList(legPair1, legPair2, legPair3, sourcePair));
+    FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);
 
     List<FlyableLeg> downstream = legsGraph.downstreamLegsOf(query);
     assertEquals(3, downstream.size());
 
     Set<String> downstreamIds = downstream.stream()
-        .map(FlyableLeg::current)
+        .map(FlyableLeg::next)
+        .map(Optional::get)
         .map(Leg::pathTerminator)
         .map(Fix::identifier)
         .collect(Collectors.toSet());
@@ -62,9 +66,10 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair2 = new LegPairImpl(c, a);
     LegPair legPair3 = new LegPairImpl(d, a);
 
-    FlyableLeg query = new FlyableLeg(null, source, a);
+    List<FlyableLeg> flyableLegs = ReducedLegGraph.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
+    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
 
-    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.fromLegPairs(Arrays.asList(legPair1, legPair2, legPair3, sourcePair));
+    FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(a)).findFirst().orElseThrow(RuntimeException::new);
 
     List<FlyableLeg> downstream = legsGraph.downstreamLegsOf(query);
     assertEquals(0, downstream.size());
@@ -85,9 +90,10 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair3 = new LegPairImpl(a, d);
     LegPair legPair4 = new LegPairImpl(b, e);
 
-    FlyableLeg query = new FlyableLeg(null, source, a);
+    List<FlyableLeg> flyableLegs = ReducedLegGraph.with(Arrays.asList(legPair1, legPair2, legPair3, legPair4, sourcePair)).flyableLegs();
+    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
 
-    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.fromLegPairs(Arrays.asList(legPair1, legPair2, legPair3, legPair4, sourcePair));
+    FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);
 
     List<FlyableLeg> downstream = legsGraph.downstreamLegsOf(query);
     assertEquals(3, downstream.size());

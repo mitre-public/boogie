@@ -4,13 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 public class TestTfScorer {
 
@@ -21,10 +20,7 @@ public class TestTfScorer {
     when(leg.pathTerminator()).thenReturn(pathTerminator);
     when(leg.type()).thenReturn(PathTerm.TF);
 
-    FlyableLeg legs = mock(FlyableLeg.class);
-    when(legs.previous()).thenReturn(Optional.empty());
-    when(legs.current()).thenReturn(leg);
-    when(legs.onLegScorer()).thenCallRealMethod();
+    FlyableLeg legs = new FlyableLeg(null, leg, null);
 
     ConformablePoint point = mock(ConformablePoint.class);
     assertFalse(legs.onLegScorer().score(point, legs).isPresent());

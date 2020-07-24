@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 public class TestAltitudeTerminationScorer {
 

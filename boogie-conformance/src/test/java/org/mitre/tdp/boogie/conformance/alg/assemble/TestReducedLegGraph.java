@@ -20,8 +20,13 @@ public class TestReducedLegGraph {
     Object source2 = new Object();
 
     Fix pathTerminator1 = mock(Fix.class);
+    when(pathTerminator1.identifier()).thenReturn("1");
+
     Fix pathTerminator2 = mock(Fix.class);
+    when(pathTerminator2.identifier()).thenReturn("2");
+
     Fix pathTerminator3 = mock(Fix.class);
+    when(pathTerminator3.identifier()).thenReturn("3");
 
     Leg leg1 = mock(Leg.class);
     when(leg1.type()).thenReturn(PathTerm.TF);
@@ -39,8 +44,8 @@ public class TestReducedLegGraph {
     LegPair cl2 = new LegPairImpl(leg2, leg3).setSourceObject(source2);
 
     ReducedLegGraph reducer = ReducedLegGraph.with(Arrays.asList(cl1, cl2));
-    List<FlyableLeg> resultantLegs = reducer.allConformableLegs();
+    List<FlyableLeg> resultantLegs = reducer.flyableLegs();
 
-    assertEquals(1, resultantLegs.size());
+    assertEquals(3, resultantLegs.size());
   }
 }
