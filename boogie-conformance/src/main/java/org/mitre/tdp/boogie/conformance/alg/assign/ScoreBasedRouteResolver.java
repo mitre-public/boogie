@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ReducedLegGraph;
+import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerState;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerTransition;
@@ -119,6 +119,6 @@ public class ScoreBasedRouteResolver {
    * collection of legs.
    */
   public static ScoreBasedRouteResolver fromLegPairs(List<? extends LegPair> routeLegs) {
-    return withConformableLegs(ReducedLegGraph.with(routeLegs).flyableLegs());
+    return withConformableLegs(GraphicalLegReducer.with(routeLegs).flyableLegs());
   }
 }

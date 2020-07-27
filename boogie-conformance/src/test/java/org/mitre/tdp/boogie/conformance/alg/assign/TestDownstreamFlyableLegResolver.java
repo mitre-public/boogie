@@ -17,7 +17,7 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPairImpl;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ReducedLegGraph;
+import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 
 import com.google.common.collect.Sets;
 
@@ -36,7 +36,7 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair2 = new LegPairImpl(a, c);
     LegPair legPair3 = new LegPairImpl(a, d);
 
-    List<FlyableLeg> flyableLegs = ReducedLegGraph.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
+    List<FlyableLeg> flyableLegs = GraphicalLegReducer.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
     DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);
@@ -66,7 +66,7 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair2 = new LegPairImpl(c, a);
     LegPair legPair3 = new LegPairImpl(d, a);
 
-    List<FlyableLeg> flyableLegs = ReducedLegGraph.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
+    List<FlyableLeg> flyableLegs = GraphicalLegReducer.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
     DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(a)).findFirst().orElseThrow(RuntimeException::new);
@@ -90,7 +90,7 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair3 = new LegPairImpl(a, d);
     LegPair legPair4 = new LegPairImpl(b, e);
 
-    List<FlyableLeg> flyableLegs = ReducedLegGraph.with(Arrays.asList(legPair1, legPair2, legPair3, legPair4, sourcePair)).flyableLegs();
+    List<FlyableLeg> flyableLegs = GraphicalLegReducer.with(Arrays.asList(legPair1, legPair2, legPair3, legPair4, sourcePair)).flyableLegs();
     DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);

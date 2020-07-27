@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 
-public class TestReducedLegGraph {
+public class TestGraphicalLegReducer {
 
   @Test
   public void testReducerPrefersLegsReferencingCurrentAsTarget() {
@@ -43,7 +43,7 @@ public class TestReducedLegGraph {
     LegPair cl1 = new LegPairImpl(leg1, leg2).setSourceObject(source1);
     LegPair cl2 = new LegPairImpl(leg2, leg3).setSourceObject(source2);
 
-    ReducedLegGraph reducer = ReducedLegGraph.with(Arrays.asList(cl1, cl2));
+    GraphicalLegReducer reducer = GraphicalLegReducer.with(Arrays.asList(cl1, cl2));
     List<FlyableLeg> resultantLegs = reducer.flyableLegs();
 
     assertEquals(3, resultantLegs.size());

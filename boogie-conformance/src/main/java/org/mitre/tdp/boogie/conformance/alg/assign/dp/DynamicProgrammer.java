@@ -76,7 +76,8 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
             e2.getValue().get(end).score());
 
     // take the path with the fewest visited states if there are score ties
-    Comparator<Map.Entry<State, OptimizedState>> entryTotalStateComparator = Comparator.comparingLong(entry -> resolvePath(start, end, entry).values().stream().map(ScoredState::state).distinct().count());
+    Comparator<Map.Entry<State, OptimizedState>> entryTotalStateComparator = Comparator.comparingLong(
+        entry -> resolvePath(start, end, entry).values().stream().map(ScoredState::state).distinct().count());
 
     Map.Entry<State, OptimizedState> endState = states.entrySet().stream()
         .min(entryScoreComparator.thenComparing(entryTotalStateComparator))

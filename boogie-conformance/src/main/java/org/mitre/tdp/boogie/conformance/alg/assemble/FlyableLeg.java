@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.LegTransitionScorer;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.OverlappingTransitionScorer;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.impl.LegScorerFactory;
 
 /**
@@ -52,7 +51,7 @@ public class FlyableLeg {
     this.next = n;
 
     this.onLegScorer = LegScorerFactory.forLegType(c.type());
-    this.legTransitionScorer = new OverlappingTransitionScorer();
+    this.legTransitionScorer = LegTransitionScorer.allowAll();
   }
 
   public Optional<Leg> previous() {

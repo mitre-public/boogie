@@ -9,7 +9,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
-import org.mitre.tdp.boogie.conformance.alg.assemble.ReducedLegGraph;
+import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
 /**
@@ -75,7 +75,7 @@ public class DownstreamFlyableLegResolver extends SimpleDirectedGraph<FlyableLeg
    * resolve the downstream edges of a given {@link FlyableLeg} edge.
    */
   public static DownstreamFlyableLegResolver fromLegPairs(List<? extends LegPair> legPairs) {
-    return DownstreamFlyableLegResolver.withFlyableLegs(ReducedLegGraph.with(legPairs).flyableLegs());
+    return DownstreamFlyableLegResolver.withFlyableLegs(GraphicalLegReducer.with(legPairs).flyableLegs());
   }
 
   private static void addEdgeIfMatching(FlyableLeg t1, FlyableLeg t2, DownstreamFlyableLegResolver resolver) {
