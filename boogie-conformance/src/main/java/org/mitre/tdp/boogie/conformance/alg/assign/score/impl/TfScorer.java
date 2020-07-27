@@ -26,7 +26,10 @@ public class TfScorer implements OffTrackScorer {
 
   @Override
   public Optional<Double> score(ConformablePoint point, FlyableLeg legTriple) {
-    return legTriple.previous().isPresent() ? OffTrackScorer.super.score(point, legTriple) : Optional.empty();
+    return legTriple.previous().isPresent()
+        && legTriple.previous().map(Leg::pathTerminator).isPresent()
+        && legTriple.previous().map(Leg::pathTerminator).map(Fix::latLong).isPresent()
+        ? OffTrackScorer.super.score(point, legTriple) : Optional.empty();
   }
 
   @Override
