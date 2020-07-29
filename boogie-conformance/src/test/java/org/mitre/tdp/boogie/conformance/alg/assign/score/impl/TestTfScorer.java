@@ -84,7 +84,7 @@ public class TestTfScorer {
   }
 
   @Test
-  public void testEndpointModifiedCrossTrackDistanceWithinLegRightStart() {
+  public void testEndpointModifiedCrossTrackDistanceOutsideLegRightStart() {
     HasPosition p1 = () -> LatLong.of(0.0, 0.0);
     HasPosition p2 = () -> LatLong.of(0.0, 1.0);
 
@@ -95,7 +95,7 @@ public class TestTfScorer {
   }
 
   @Test
-  public void testEndpointModifiedCrossTrackDistanceWithinLegLeftStart() {
+  public void testEndpointModifiedCrossTrackDistanceOutsideLegLeftStart() {
     HasPosition p1 = () -> LatLong.of(0.0, 0.0);
     HasPosition p2 = () -> LatLong.of(0.0, 1.0);
 
@@ -106,7 +106,7 @@ public class TestTfScorer {
   }
 
   @Test
-  public void testEndpointModifiedCrossTrackDistanceWithinLegRightEnd() {
+  public void testEndpointModifiedCrossTrackDistanceOutsideLegRightEnd() {
     HasPosition p1 = () -> LatLong.of(0.0, 0.0);
     HasPosition p2 = () -> LatLong.of(0.0, 1.0);
 
@@ -117,7 +117,7 @@ public class TestTfScorer {
   }
 
   @Test
-  public void testEndpointModifiedCrossTrackDistanceWithinLegLeftEnd() {
+  public void testEndpointModifiedCrossTrackDistanceOutsideLegLeftEnd() {
     HasPosition p1 = () -> LatLong.of(0.0, 0.0);
     HasPosition p2 = () -> LatLong.of(0.0, 1.0);
 
