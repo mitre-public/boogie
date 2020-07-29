@@ -6,16 +6,20 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 
+import com.google.common.collect.Sets;
+
 public class TestGraphicalLegReducer {
 
   @Test
-  public void testReducerPrefersLegsReferencingCurrentAsTarget() {
+  public void testResultantFlyableLegs() {
     Object source1 = new Object();
     Object source2 = new Object();
 
@@ -47,5 +51,12 @@ public class TestGraphicalLegReducer {
     List<FlyableLeg> resultantLegs = reducer.flyableLegs();
 
     assertEquals(3, resultantLegs.size());
+
+    assertEquals(Sets.newHashSet(leg1, leg2), resultantLegs.stream().map(leg -> leg.previous().orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet()));
+    assertEquals(Sets.newHashSet(leg2, leg3), resultantLegs.stream().map(leg -> leg.next().orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet()));
+
+    assertEquals(source1, resultantLegs.get(0).getSourceObject().get());
+    assertEquals(source1, resultantLegs.get(1).getSourceObject().get());
+    assertEquals(source2, resultantLegs.get(2).getSourceObject().get());
   }
 }

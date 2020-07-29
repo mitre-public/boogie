@@ -7,6 +7,7 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunct
 import java.util.Optional;
 
 import org.mitre.caasd.commons.Distance;
+import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
@@ -40,20 +41,26 @@ public class TfScorer implements OffTrackScorer {
     Fix endFix = Optional.ofNullable(legTriple.current().pathTerminator())
         .orElseThrow(supplier("pathTerminator of to leg"));
 
-    double ctd = Spherical.crossTrackDistanceNM(startFix, endFix, point);
-    double offTrackDistanceNm = modifyWithEndpointDistances(startFix, endFix, point, ctd);
-    return Distance.ofNauticalMiles(abs(offTrackDistanceNm));
+    return Distance.ofNauticalMiles(abs(endpointModifiedCrossTrackDistance(startFix, endFix, point)));
   }
 
   /**
-   * Checks whether the given point is either along the physical route segment (between the start
-   * and end fixes) or whether its within the off-track range of the endpoints of the segments.
+   * Returns the endpoint-modified cross track distance between the segment defined by the given start and end fix and the
+   * provided point position. This value is the normal cross-track distance when the point falls between the start and end
+   * points laterally - otherwise it is the distance from the nearest endpoint rather than the CTD of the extended segment.
+   *
+   * Note - this maintains the appropriate sign post the end of the segment. If off to the left the endpoint modified dist
+   * will still be negative as expected.
    */
-  public double modifyWithEndpointDistances(Fix startFix, Fix endFix, ConformablePoint point, double ctd) {
+  public static double endpointModifiedCrossTrackDistance(HasPosition startFix, HasPosition endFix, HasPosition point) {
+    double ctd = Spherical.crossTrackDistanceNM(startFix, endFix, point);
     double atd = Spherical.alongTrackDistanceNM(startFix, endFix, point, ctd);
+
     double pathLength = startFix.distanceInNmTo(endFix);
 
     boolean alongSegment = atd > 0.0 && atd < pathLength;
-    return alongSegment ? ctd : Math.min(point.distanceInNmTo(startFix), point.distanceInNmTo(endFix));
+    double minEndpointDistance = Math.min(point.distanceInNmTo(startFix), point.distanceInNmTo(endFix));
+
+    return alongSegment ? ctd : (ctd < 0 ? -1.0 * minEndpointDistance : minEndpointDistance);
   }
 }

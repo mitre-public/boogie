@@ -34,6 +34,12 @@ public class GraphicalLegReducer {
    */
   private final SimpleDirectedGraph<ReducibleLeg, DefaultEdge> reducedGraph;
 
+  public GraphicalLegReducer() {
+    this.legMapping = new HashMap<>();
+    this.sourceObjectMapping = new HashMap<>();
+    this.reducedGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
+  }
+
   public GraphicalLegReducer(
       Map<ReducibleLeg, Leg> legMapping,
       Map<Leg, Object> sourceObjectMapping,
@@ -45,6 +51,40 @@ public class GraphicalLegReducer {
 
   public SimpleDirectedGraph<ReducibleLeg, DefaultEdge> reducedGraph() {
     return reducedGraph;
+  }
+
+  /**
+   * Adds the given {@link LegPair} to the reduced graph. If the leg references {@link ReducibleLeg}s which already exist in
+   * the graph the precedence is given based on insertion order.
+   */
+  public GraphicalLegReducer addLegPair(LegPair pair) {
+    ReducibleLeg prev = new ReducibleLeg(pair.previous());
+    ReducibleLeg curr = new ReducibleLeg(pair.current());
+
+    legMapping.putIfAbsent(prev, pair.previous());
+    legMapping.putIfAbsent(curr, pair.current());
+
+    sourceObjectMapping.putIfAbsent(pair.previous(), pair.getSourceObject().orElse(null));
+    sourceObjectMapping.putIfAbsent(pair.current(), pair.getSourceObject().orElse(null));
+
+    reducedGraph.addVertex(prev);
+    reducedGraph.addVertex(curr);
+
+    if (!prev.equals(curr)) {
+      reducedGraph.addEdge(prev, curr);
+    }
+    return this;
+  }
+
+  /**
+   * Returns the list of all valid {@link LegPair}s from the reduced graph.
+   */
+  public List<LegPair> legPairs() {
+    return reducedGraph.edgeSet().stream().map(edge -> {
+      Leg previous = legMapping.get(reducedGraph.getEdgeSource(edge));
+      Leg current = legMapping.get(reducedGraph.getEdgeTarget(edge));
+      return new LegPairImpl(previous, current).setSourceObject(sourceObjectMapping.get(current));
+    }).collect(Collectors.toList());
   }
 
   /**
@@ -79,7 +119,6 @@ public class GraphicalLegReducer {
               return new FlyableLeg(null, current, outgoing).setSourceObject(sourceObjectMapping.get(current));
             });
       }
-
     }).collect(Collectors.toList());
   }
 
@@ -90,35 +129,15 @@ public class GraphicalLegReducer {
    * e.g. If flightplan-based references should be preferred then add the flightplan generated legs first.
    */
   public static GraphicalLegReducer with(List<? extends LegPair> legPairs) {
-    Map<ReducibleLeg, Leg> legMapping = new HashMap<>();
-    Map<Leg, Object> sourceObjectMapping = new HashMap<>();
-    SimpleDirectedGraph<ReducibleLeg, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
-
-    legPairs.forEach(pair -> {
-      ReducibleLeg prev = new ReducibleLeg(pair.previous());
-      ReducibleLeg curr = new ReducibleLeg(pair.current());
-
-      legMapping.putIfAbsent(prev, pair.previous());
-      legMapping.putIfAbsent(curr, pair.current());
-
-      sourceObjectMapping.putIfAbsent(pair.previous(), pair.getSourceObject().orElse(null));
-      sourceObjectMapping.putIfAbsent(pair.current(), pair.getSourceObject().orElse(null));
-
-      graph.addVertex(prev);
-      graph.addVertex(curr);
-
-      if (!prev.equals(curr)) {
-        graph.addEdge(prev, curr);
-      }
-    });
-
-    return new GraphicalLegReducer(legMapping, sourceObjectMapping, graph);
+    GraphicalLegReducer reducer = new GraphicalLegReducer();
+    legPairs.forEach(reducer::addLegPair);
+    return reducer;
   }
 
   /**
    * Simple wrapper class for leg information allowing us to reduce common leg references across a collection of input leg sources.
    */
-  static class ReducibleLeg {
+  public static class ReducibleLeg {
 
     private final String identifier;
     private final Double latitude;
@@ -131,6 +150,22 @@ public class GraphicalLegReducer {
       this.latitude = pathTerminator.map(Fix::latitude).orElse(null);
       this.longitude = pathTerminator.map(Fix::longitude).orElse(null);
       this.legType = leg.type();
+    }
+
+    public String identifier() {
+      return identifier;
+    }
+
+    public Double latitude() {
+      return latitude;
+    }
+
+    public Double longitude() {
+      return longitude;
+    }
+
+    public PathTerm legType() {
+      return legType;
     }
 
     @Override

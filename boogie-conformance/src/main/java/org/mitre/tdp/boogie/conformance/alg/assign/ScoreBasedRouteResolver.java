@@ -9,12 +9,11 @@ import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
+import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerState;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerTransition;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.impl.DefaultScorer;
 
 import com.google.common.collect.Maps;
 
@@ -70,7 +69,7 @@ public class ScoreBasedRouteResolver {
 
     @Override
     public double getValue(ConformablePoint stage) {
-      return flyableLeg.onLegScorer().score(stage, flyableLeg).orElse(DefaultScorer.DEFAULT_PROBABILITY);
+      return flyableLeg.onLegScorer().score(stage, flyableLeg).orElse(Double.MIN_VALUE);
     }
 
     /**
