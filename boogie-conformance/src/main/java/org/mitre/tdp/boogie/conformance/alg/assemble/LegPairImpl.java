@@ -5,6 +5,9 @@ import javax.annotation.Nonnull;
 
 import org.mitre.tdp.boogie.Leg;
 
+/**
+ * Default concrete implementation of a {@link LegPair}.
+ */
 public class LegPairImpl implements LegPair {
   /**
    * The previous concrete leg.

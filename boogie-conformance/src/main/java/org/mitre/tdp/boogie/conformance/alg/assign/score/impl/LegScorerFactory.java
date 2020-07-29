@@ -28,7 +28,7 @@ public class LegScorerFactory {
         // similar scoring functions, for FA we could check alignment from fix but probably un-necessary
         return new CaScorer();
       default:
-        return new DefaultScorer();
+        return new MinValueScorer();
     }
   }
 }
