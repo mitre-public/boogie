@@ -21,12 +21,11 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 
 /**
- * Leverages a modified version of the Douglas-Peucker algorithm to partition the set of conformable
- * points into level/non-level segments based on how the cross track distance from the leg set changes
- * over time.
+ * Leverages a modified version of the Douglas-Peucker algorithm to partition the set of conformable points into level/non-level
+ * segments based on how the cross track distance from the leg set changes over time.
  *
- * <p>In this paradigm when the cross track distance is changing rapidly the aircraft is considered non
- * conforming to the leg - while when it is staying constant (and not offset) its considered on-track.
+ * <p>In this paradigm when the cross track distance is changing rapidly the aircraft is considered non conforming to the leg -
+ * while when it is staying constant (and not offset) its considered on-track.
  * e.g. level portions are essentially flying parallel to the route.
  */
 public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
@@ -49,9 +48,9 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    * Returns the mapping of {time, conforming?} based on the computed linear split change points.
    */
   @Override
-  default NavigableMap<Instant, Boolean> conformanceTimes(List<Pair<ConformablePoint, LegPair>> conformingPairs) {
-    NavigableMap<Duration, Pair<Speed, Distance>> piecewiseSlopes = computeOffsetToFittedSpeedAverageDistance(conformingPairs);
-    Instant t0 = conformingPairs.get(0).first().time();
+  default NavigableMap<Instant, Boolean> conformanceTimes(NavigableMap<ConformablePoint, LegPair> conformablePairs) {
+    NavigableMap<Duration, Pair<Speed, Distance>> piecewiseSlopes = computeOffsetToFittedSpeedAverageDistance(conformablePairs);
+    Instant t0 = conformablePairs.firstKey().time();
 
     return piecewiseSlopes.entrySet().stream().collect(Collectors.toMap(
         e -> t0.plus(e.getKey()),
@@ -61,7 +60,11 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
     ));
   }
 
-  default NavigableMap<Duration, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(List<Pair<ConformablePoint, LegPair>> conformingPairs) {
+  /**
+   * Returns a map containing the Duration offset from the initial point in the conforming point to the fitted speed and max
+   * cross track distance over the course of the split.
+   */
+  default NavigableMap<Duration, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
     XyDataset dataset = convertToXYData(conformingPairs);
     XyDataset[] splits = piecewiseSplits(dataset);
     return asOffsetToFittedSpeedAverageDistance(splits);
@@ -95,7 +98,8 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
           Speed.of(approximation.slope(), Speed.Unit.KNOTS),
           Distance.ofNauticalMiles(approximation.averageY()));
 
-      Duration offset = Duration.ofMillis(hoursToEpoch(approximation.minX()));
+      Long epoch = hoursToEpoch(approximation.minX());
+      Duration offset = Duration.ofMillis(epoch);
       offsetToFittedSpeedAverageDuration.put(offset, pair);
     });
 
@@ -113,13 +117,14 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    * x = epoch time in hours
    * y = cross track distance from leg in nm
    */
-  default XyDataset convertToXYData(List<Pair<ConformablePoint, LegPair>> conformingPairs) {
+  default XyDataset convertToXYData(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
     List<Double> times = new ArrayList<>();
     List<Double> crossTrackDistances = new ArrayList<>();
 
-    conformingPairs.forEach(pair -> offTrackDistance(pair.first(), pair.second())
+    long t0 = conformingPairs.firstKey().time().toEpochMilli();
+    conformingPairs.forEach((point, pair) -> offTrackDistance(point, pair)
         .ifPresent(distance -> {
-          times.add(epochToHours(pair.first().time().toEpochMilli()));
+          times.add(epochToHours(point.time().toEpochMilli() - t0));
           crossTrackDistances.add(distance.inNauticalMiles());
         }));
 

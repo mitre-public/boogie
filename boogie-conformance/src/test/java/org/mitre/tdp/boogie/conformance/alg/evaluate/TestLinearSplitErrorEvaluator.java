@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -105,7 +105,7 @@ public class TestLinearSplitErrorEvaluator {
     Duration timeStep = speed.timeToTravel(distance);
     double latStep = LatLong.of(0.0, 0.0).project(Course.ofDegrees(0.0), distance).latitude();
 
-    List<Pair<ConformablePoint, LegPair>> pairs = IntStream.range(0, 10)
+    NavigableMap<ConformablePoint, LegPair> pairs = IntStream.range(0, 10)
         .mapToObj(i -> {
           double lat = i < 5 ? latStep * i : latStep * (10 - i);
           double lon = i / 2.0d;
@@ -116,7 +116,7 @@ public class TestLinearSplitErrorEvaluator {
 
           return Pair.of(point, legPair);
         })
-        .collect(Collectors.toList());
+        .collect(Collectors.toMap(Pair::first, Pair::second, (a, b) -> {throw new RuntimeException();}, TreeMap::new));
 
     LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
 

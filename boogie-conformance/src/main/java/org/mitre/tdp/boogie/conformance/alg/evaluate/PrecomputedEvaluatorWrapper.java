@@ -1,11 +1,9 @@
 package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.NavigableMap;
 import java.util.Optional;
 
-import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 
@@ -35,7 +33,7 @@ public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
    */
   public PrecomputedEvaluatorWrapper wrapAndPrecompute(
       PrecomputedEvaluator evaluator,
-      List<Pair<ConformablePoint, LegPair>> pairs) {
+      NavigableMap<ConformablePoint, LegPair> pairs) {
 
     return new PrecomputedEvaluatorWrapper(
         evaluator,
