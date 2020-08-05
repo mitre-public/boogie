@@ -1,23 +1,13 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.NavigableSet;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Doubles;
+import org.apache.commons.math3.util.FastMath;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -26,6 +16,7 @@ import com.google.common.primitives.Doubles;
 public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State extends DynamicProgrammerState<Stage>> {
 
   private final Optimization optimization;
+  private final ExecutionMode executionMode;
   // we want a consistent ordering so this is deterministic when the end states have ties
   private final LinkedHashMap<State, OptimizedState> states;
   private final NavigableSet<Stage> stages;
@@ -33,16 +24,17 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   /**
    * Creates a new dynamic programmer with the given stages, states, and optimization function.
    */
-  public DynamicProgrammer(Collection<? extends Stage> stages, Collection<? extends State> states, Optimization optimize) {
+  public DynamicProgrammer(Collection<Stage> stages, Collection<State> states, Optimization optimize, ExecutionMode executionMode) {
     this.optimization = optimize;
+    this.executionMode = executionMode;
     this.states = states.stream()
-        .collect(Collectors.toMap(
-            Function.identity(),
-            OptimizedState::new,
-            (a, b) -> {
-              throw new RuntimeException();
-            },
-            LinkedHashMap::new));
+            .collect(Collectors.toMap(
+                    Function.identity(),
+                    OptimizedState::new,
+                    (a, b) -> {
+                      throw new RuntimeException();
+                    },
+                    LinkedHashMap::new));
     this.stages = new TreeSet<>(stages);
   }
 
@@ -69,27 +61,15 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     checkComputeOptimals();
     Comparator<Double> comp = optimization.comparator();
 
-    // take the final state with the highest or lowest score depending on optimization type
-    Comparator<Map.Entry<State, OptimizedState>> entryScoreComparator =
-        (e1, e2) -> comp.compare(
-            e1.getValue().get(end).score(),
-            e2.getValue().get(end).score());
-
-    // take the path with the fewest visited states if there are score ties
-    Comparator<Map.Entry<State, OptimizedState>> entryTotalStateComparator = Comparator.comparingLong(
-        entry -> resolvePath(start, end, entry).values().stream().map(ScoredState::state).distinct().count());
-
+    // grab the optimal state at the target stage
+    // note - there can be ties here, hard to say what the best option is
+    // but using a linked hash map above at least makes it deterministic
     Map.Entry<State, OptimizedState> endState = states.entrySet().stream()
-        .min(entryScoreComparator.thenComparing(entryTotalStateComparator))
-        .orElseThrow(RuntimeException::new);
+            .min((e1, e2) -> comp.compare(
+                    e1.getValue().get(end).score(),
+                    e2.getValue().get(end).score()))
+            .orElseThrow(RuntimeException::new);
 
-    return resolvePath(start, end, endState);
-  }
-
-  /**
-   * Resolves the path from start to end stage which resulted in the given optimal end state.
-   */
-  private NavigableMap<Stage, ScoredState<State>> resolvePath(Stage start, Stage end, Map.Entry<State, OptimizedState> endState) {
     NavigableMap<Stage, ScoredState<State>> path = new TreeMap<>();
     path.put(end, new ScoredState<>(endState.getValue().get(end).score, endState.getKey()));
 
@@ -104,6 +84,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
       cstate = transition.fromState();
       path.put(cstage, new ScoredState<>(states.get(cstate).get(cstage).score(), cstate));
     }
+
     return path;
   }
 
@@ -117,7 +98,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     initialize();
 
     stages.tailSet(stages.first(), false)
-        .forEach(stage -> states.keySet().forEach(state -> optimalTransition(stage, state)));
+            .forEach(stage -> states.keySet().forEach(state -> optimalTransition(stage, state)));
     return this;
   }
 
@@ -131,24 +112,24 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     List<OptimalTransition> transitions;
     if (null == fromStage) {
       transitions = Collections.singletonList(new OptimalTransition(
-          fromState.getValue(toStage),
-          fromState,
-          null,
-          toStage,
-          null));
+              fromState.getValue(toStage),
+              fromState,
+              null,
+              toStage,
+              null));
     } else {
       List<? extends DynamicProgrammerTransition> ts = fromState.getPossibleTransitions(fromStage);
 
       // stream over the possible transitions and find the optimal one
       transitions = ts.stream()
-          .map(t -> {
-            DynamicProgrammerTransition<Stage, State> trans = (DynamicProgrammerTransition<Stage, State>) t;
-            return BigDecimal.valueOf(trans.getTransitionProbability()).equals(BigDecimal.valueOf(0.0d))
-                ? null
-                : candidateTransition(trans, fromStage, toStage, fromState);
-          })
-          .filter(Objects::nonNull)
-          .collect(Collectors.toList());
+              .map(t -> {
+                DynamicProgrammerTransition<Stage, State> trans = (DynamicProgrammerTransition<Stage, State>) t;
+                return BigDecimal.valueOf(trans.getTransitionProbability()).equals(BigDecimal.valueOf(0.0d))
+                        ? null
+                        : candidateTransition(trans, fromStage, toStage, fromState);
+              })
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
     }
     // insert the optimal transitions
     transitions.forEach(transition -> states.get(transition.toState).putIfOptimal(toStage, transition));
@@ -170,7 +151,11 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
 
     // combine the to state value at the to stage with the transition score and
     // add to the prior cumulative score, setting as the final transition score
-    double cumScore = fromStateCumulative + (toStateValue * transitionScore);
+    double cumScore = executionMode.equals(ExecutionMode.CUMULATIVE)
+            ? fromStateCumulative + (toStateValue * transitionScore)
+            : optimization.equals(Optimization.MINIMIZE)
+            ? FastMath.min(fromStateCumulative, toStateValue)
+            : FastMath.max(fromStateCumulative, toStateValue);
     return new OptimalTransition(cumScore, transitionTo.getTransition(), fromState, toStage, fromStage);
   }
 
@@ -191,6 +176,11 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     public <T extends Comparable<? super T>> Comparator<T> comparator() {
       return this.equals(MAXIMIZE) ? Comparator.reverseOrder() : Comparator.naturalOrder();
     }
+  }
+
+  public enum ExecutionMode {
+    DIFFERENTIAL,
+    CUMULATIVE
   }
 
   public static class ScoredState<STATE> implements Comparable<ScoredState> {
@@ -216,7 +206,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     }
   }
 
-  class OptimizedState {
+  public class OptimizedState {
     private final State state;
     private final HashMap<Stage, OptimalTransition> scores;
 
@@ -261,7 +251,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
    * Each optimal transition represents the optimal score for a given state at the listed stage.
    * It also contains a pointer to the source state that produced the optimal score.
    */
-  class OptimalTransition implements Comparable<OptimalTransition> {
+  public class OptimalTransition implements Comparable<OptimalTransition> {
     private final double score;
     private final State toState;
     private final Stage toStage;
