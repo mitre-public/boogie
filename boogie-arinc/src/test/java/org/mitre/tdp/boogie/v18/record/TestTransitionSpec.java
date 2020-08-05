@@ -158,7 +158,7 @@ public class TestTransitionSpec {
     assertEquals("0", record.getRequiredField("continuationRecordNumber"));
     assertEquals("E   ", record.getRequiredField("waypointDescription"));
     assertEquals(TurnDirection.L, record.getRequiredField("turnDirection"));
-    assertEquals(30.2d, record.getRequiredField("rnp"));
+    assertEquals(0.3, record.getRequiredField("rnp"));
     assertEquals(PathTerm.RF, record.getRequiredField("pathTerm"));
     assertEquals(false, record.getRequiredField("turnDirectionValid"));
     assertFalse(record.getOptionalField("recommendedNavaid").isPresent());

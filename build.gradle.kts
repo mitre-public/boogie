@@ -67,7 +67,6 @@ subprojects {
             excludeTestsMatching("IT*")
             isFailOnNoMatchingTests = false//allow modules to not have any tests
         }
-        failFast = true
     }
 
     /**

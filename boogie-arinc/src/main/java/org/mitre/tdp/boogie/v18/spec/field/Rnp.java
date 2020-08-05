@@ -30,10 +30,8 @@ public class Rnp implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public Double parseValue(String fieldValue) {
     checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return fieldValue.startsWith("0")
-        // 0 start means negative exponent - hmm string manipulation is ok here - alternatively division
-        ? parseDouble("0.".concat(StringUtils.leftPad(fieldValue.substring(1, 2), Integer.parseInt(fieldValue.substring(2)), '0')))
-        // non-zero start means normal 2 digits with tenths
-        : ArincStrings.parseDoubleWithTenths(fieldValue);
+    int value = Integer.parseInt(fieldValue.substring(0, 2));
+    int exp = -Integer.parseInt(fieldValue.substring(2));
+    return value * Math.pow(10., exp);
   }
 }
