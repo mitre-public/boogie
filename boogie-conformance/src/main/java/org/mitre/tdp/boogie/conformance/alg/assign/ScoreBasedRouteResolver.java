@@ -1,12 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.google.common.collect.Maps;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
@@ -15,7 +9,12 @@ import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerState;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerTransition;
 
-import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A score based route resolved is configured with an input collection of {@link FlyableLeg} which are used in conjunction with
@@ -43,7 +42,7 @@ public class ScoreBasedRouteResolver {
   }
 
   public NavigableMap<ConformablePoint, DynamicProgrammer.ScoredState<FlyableLegState>> resolveAssignedStates(List<? extends ConformablePoint> conformablePoints) {
-    return new DynamicProgrammer<>(conformablePoints, availableStates.values(), DynamicProgrammer.Optimization.MAXIMIZE).optimalPath();
+    return new DynamicProgrammer(conformablePoints, availableStates.values(), DynamicProgrammer.Optimization.MAXIMIZE, DynamicProgrammer.ExecutionMode.CUMULATIVE).optimalPath();
   }
 
   public NavigableMap<ConformablePoint, FlyableLeg> resolveRoute(List<? extends ConformablePoint> conformablePoints) {

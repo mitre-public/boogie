@@ -1,19 +1,15 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.apache.commons.math3.util.FastMath;
+import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NavigableMap;
-import java.util.NavigableSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
-import org.apache.commons.math3.util.FastMath;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestDynamicProgrammer {
 
@@ -36,7 +32,7 @@ public class TestDynamicProgrammer {
     NavigableMap<Long, DynamicProgrammer.ScoredState<State>> path;
     DynamicProgrammer<Long, State> programmer;
 
-    programmer = new DynamicProgrammer<>(stages, Arrays.asList(State.values()), DynamicProgrammer.Optimization.MINIMIZE);
+    programmer = new DynamicProgrammer(stages, Arrays.asList(State.values()), DynamicProgrammer.Optimization.MINIMIZE, DynamicProgrammer.ExecutionMode.CUMULATIVE);
     path = programmer.optimalPath();
 
     assertFalse(programmer.optimizedStates().isEmpty());
@@ -52,7 +48,7 @@ public class TestDynamicProgrammer {
     assertEquals(path.get(8L).state(), State.A);
     assertEquals(path.get(9L).state(), State.A);
 
-    programmer = new DynamicProgrammer<>(stages, Arrays.asList(State.values()), DynamicProgrammer.Optimization.MAXIMIZE);
+    programmer = new DynamicProgrammer(stages, Arrays.asList(State.values()), DynamicProgrammer.Optimization.MAXIMIZE, DynamicProgrammer.ExecutionMode.CUMULATIVE);
     path = programmer.optimalPath();
 
     assertFalse(programmer.optimizedStates().isEmpty());
@@ -71,8 +67,8 @@ public class TestDynamicProgrammer {
 
   @Test
   public void testMax() {
-    DynamicProgrammer<Integer, IntersectionStates> dp = new DynamicProgrammer<>(
-        stages2, states, DynamicProgrammer.Optimization.MAXIMIZE);
+    DynamicProgrammer<Integer, IntersectionStates> dp = new DynamicProgrammer(
+        stages2, states, DynamicProgrammer.Optimization.MAXIMIZE, DynamicProgrammer.ExecutionMode.CUMULATIVE);
 
     NavigableMap<Integer, DynamicProgrammer.ScoredState<IntersectionStates>> path = dp.optimalPath();
 
@@ -88,8 +84,8 @@ public class TestDynamicProgrammer {
 
   @Test
   public void testMin() {
-    DynamicProgrammer<Integer, IntersectionStates> dp = new DynamicProgrammer<>(
-        stages2, states, DynamicProgrammer.Optimization.MINIMIZE);
+    DynamicProgrammer<Integer, IntersectionStates> dp = new DynamicProgrammer(
+        stages2, states, DynamicProgrammer.Optimization.MINIMIZE, DynamicProgrammer.ExecutionMode.CUMULATIVE);
 
     NavigableMap<Integer, DynamicProgrammer.ScoredState<IntersectionStates>> path = dp.optimalPath();
 
