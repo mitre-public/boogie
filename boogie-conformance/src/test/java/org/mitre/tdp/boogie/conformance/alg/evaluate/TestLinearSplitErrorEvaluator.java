@@ -37,15 +37,27 @@ public class TestLinearSplitErrorEvaluator {
   }
 
   @Test
-  public void isNotLevelAndNotOffsetWhenAboveROCThreshold() {
+  public void isNotLevelWhenAboveROCThreshold() {
     LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
     assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(15.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(1.0))));
   }
 
   @Test
-  public void isNotLevelAndNotOffsetWhenAboveOffsetThreshold() {
+  public void isNotLevelWhenAbsIsAboveROCThreshold() {
+    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(-15.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(1.0))));
+  }
+
+  @Test
+  public void istOffsetWhenAboveOffsetThreshold() {
     LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
     assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(5.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(3.0))));
+  }
+
+  @Test
+  public void istOffsetWhenAbsIsAboveOffsetThreshold() {
+    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(5.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(-3.0))));
   }
 
   private ConformablePoint conformablePointAt(LatLong latLong) {

@@ -76,8 +76,8 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
   default boolean isLevelAndNotOffset(Pair<Speed, Distance> pair) {
     Speed slope = pair.first();
     Distance maxCtd = pair.second();
-    return (slope.isLessThan(rateOfChangeThreshold()))
-        && (maxCtd.isLessThan(maxError().times(2.0)));
+    return (slope.abs().isLessThan(rateOfChangeThreshold()))
+        && (maxCtd.abs().isLessThan(maxError().times(2.0)));
   }
 
   /**
