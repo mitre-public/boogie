@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.ArincRecord;
 import org.mitre.tdp.boogie.ArincVersion;
 import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.v18.ArincTransition;
 import org.mitre.tdp.boogie.v18.spec.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.v18.spec.field.RecordType;
 import org.mitre.tdp.boogie.v18.spec.field.SectionCode;
@@ -236,4 +239,16 @@ public class TestTransitionSpec {
     assertEquals(Integer.valueOf(74908), record.getRequiredField("fileRecordNumber"));
     assertEquals("1713", record.getRequiredField("cycle"));
   }
+
+  public static final String HOLD_TIME_LEG = "SEEUP UITTUIFN12   ACI4   020CI   UIDB0EE AR   HF                     1210T053      04160                              S   785571907";
+
+  @Test
+  public void testParseRouteHoldTime() {
+    ArincRecord record = ArincVersion.V18.parse(HOLD_TIME_LEG);
+    assertNotNull(record);
+    ArincTransition transition = ArincTransition.wrap(record);
+
+    assertEquals(Optional.of(Duration.ofSeconds(318)), transition.holdTime());
+  }
+
 }

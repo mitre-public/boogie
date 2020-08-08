@@ -92,4 +92,19 @@ public class TestRunwaySpec {
     assertEquals(Integer.valueOf(15523), record.getRequiredField("fileRecordNumber"));
     assertEquals("2003", record.getRequiredField("cycle"));
   }
+
+  public static final String runway3 = "SUSAP KBWIK6GRW28    0105032852 N39102198W076391849+0300          00130070055000      0000                                 179421907";
+
+  @Test
+  public void testSpecMatchesRunway3() {
+    assertTrue(new RunwaySpec().matchesRecord(runway3));
+  }
+
+  @Test
+  public void testParseRunway3() {
+    ArincRecord record = ArincVersion.V18.parse(runway3);
+    assertNotNull(record);
+
+    assertEquals(0.3, record.getRequiredField("runwayGradient"));
+  }
 }

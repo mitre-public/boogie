@@ -13,6 +13,11 @@ public class ArincStrings {
 
   public static final Predicate<String> isBlank = s -> s.trim().isEmpty();
 
+  // MISSING DECIMAL LOCATIONS
+  private static final int TENTHS = 1;
+  private static final int HUNDREDTHS = 2;
+  private static final int THOUSANDTHS = 3;
+
   /**
    * Returns a copy of the given string with all of the internal characters replaced with blanks.
    */
@@ -26,19 +31,23 @@ public class ArincStrings {
    * e.g. 0456 -> 45.6, 1245 -> 124.5, 0005 -> 0.5, 0001234 -> 123.4
    */
   public static Double parseDoubleWithTenths(String s) {
-    String cp = new String(s);
-    if (s.length() == 1) {
-      cp = "0".concat(cp);
-    }
-
-    String pre = cp.substring(0, cp.length() - 1);
-    String post = cp.substring(cp.length() - 1);
-    return Double.parseDouble(pre)
-        + (Double.parseDouble(post) / 10.0);
+    return parseDoubleMissingDecimal(s, TENTHS);
   }
 
   public static Float parseFloatWithTenths(String s) {
     return parseDoubleWithTenths(s).floatValue();
+  }
+
+  public static Double parseDoubleWithHundredths(String s) {
+    return parseDoubleMissingDecimal(s, HUNDREDTHS);
+  }
+
+  public static Double parseDoubleWithThousandths(String s) {
+    return parseDoubleMissingDecimal(s, THOUSANDTHS);
+  }
+
+  public static Double parseDoubleMissingDecimal(String s, Integer missingDecimalUnits) {
+    return Double.parseDouble(s) / Math.pow(10, missingDecimalUnits);
   }
 
   /**
