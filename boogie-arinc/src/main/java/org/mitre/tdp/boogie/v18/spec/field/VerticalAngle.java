@@ -26,6 +26,7 @@ public class VerticalAngle implements NumericDouble, FilterTrimEmptyInput<Double
 
   @Override
   public Double parseValue(String fieldValue) {
+    checkSpec(this, fieldValue, validValue(fieldValue));
     double angle = ArincStrings.parseDoubleWithHundredths(fieldValue);
     checkSpec(this, fieldValue, abs(angle) < 10.0);
     return angle;
