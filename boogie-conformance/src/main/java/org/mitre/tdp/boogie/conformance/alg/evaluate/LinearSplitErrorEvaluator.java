@@ -11,6 +11,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.util.FastMath;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.caasd.commons.Speed;
@@ -84,7 +85,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    * Converts the returned split {@link XyDataset} into a map of:
    *
    * key = offset from t0 in millis
-   * value = {Slope (as cross-track speed in knots), average y (as average distance from leg in nm)}.
+   * value = {Slope (as cross-track speed in knots), maxY (absVal)}.
    *
    * This map can later be transformed to get the time intervals and the cross t
    */
@@ -93,10 +94,11 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
 
     Arrays.stream(splits).forEach(xyDataset -> {
       FastLinearApproximation approximation = xyDataset.approximateFit();
+      double maxY = xyDataset.yData().stream().mapToDouble(FastMath::abs).max().orElse(0.0);
 
       Pair<Speed, Distance> pair = Pair.of(
           Speed.of(approximation.slope(), Speed.Unit.KNOTS),
-          Distance.ofNauticalMiles(approximation.averageY()));
+          Distance.ofNauticalMiles(maxY));
 
       Long epoch = hoursToEpoch(approximation.minX());
       Duration offset = Duration.ofMillis(epoch);
