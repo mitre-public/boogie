@@ -35,17 +35,23 @@ public class RfScorer implements OffTrackScorer {
         .previous(Leg::outboundMagneticCourse)
         // for certain leg combinations this is contained in theta (IF:RF, RF:RF, or RF:HX)
         .orElseGet(() -> legTriple.current().theta().orElseThrow(supplier("Inbound Tangential Course")));
-    double inboundTrueRadial = Spherical.mod(magneticVariation.magneticToTrue(inboundTangentialMagBearing) + 90.0, 360.0);
+    double inboundTrueRadial = tangentToRadial(magneticVariation.magneticToTrue(inboundTangentialMagBearing), turnDirection);
 
     double outboundTangentialMagBearing = legTriple
         // typically in the next leg
         .next().flatMap(Leg::outboundMagneticCourse)
         // for certain leg combinations this is contained in current leg outbound (IF:RF, RF:RF, RF:HX, or RF is final leg)
         .orElse(legTriple.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Tangential Course")));
-    double outboundTrueRadial = Spherical.mod(magneticVariation.magneticToTrue(outboundTangentialMagBearing) + 90.0, 360.0);
+    double outboundTrueRadial = tangentToRadial(magneticVariation.magneticToTrue(outboundTangentialMagBearing), turnDirection);
 
     double pointRadialTrue = centerFix.courseInDegrees(point);
-    return OffTrackScorer.super.scoreAgainstLeg(point, legTriple) * (RadialAngles.of(inboundTrueRadial, outboundTrueRadial, turnDirection).contains(pointRadialTrue) ? 1.0 : 0.0);
+    double radialWeight = (RadialAngles.of(inboundTrueRadial, outboundTrueRadial, turnDirection).contains(pointRadialTrue) ? 1. : 0.);
+
+    return OffTrackScorer.super.scoreAgainstLeg(point, legTriple) * radialWeight;
+  }
+
+  private double tangentToRadial(Double tangentialTrueBearing, TurnDirection turnDirection) {
+    return Spherical.mod(tangentialTrueBearing + (turnDirection.isLeft() ? 90 : -90), 360.);
   }
 
   @Override

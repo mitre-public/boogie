@@ -93,7 +93,7 @@ public class TestRfScorer {
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
     RfScorer scorer = new RfScorer();
 
-    LatLong pointLocation = centerFix.projectOut(110.0, radiusNm).latLong();
+    LatLong pointLocation = centerFix.projectOut(280.0, radiusNm).latLong();
     ConformablePoint point = pointAt(pointLocation);
 
     assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
@@ -113,7 +113,8 @@ public class TestRfScorer {
   public void testRfScorerRightWith0Crossing() {
     Leg rf = RF();
     when(rf.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.right()));
-    when(rf.theta()).thenReturn(Optional.of(245.0));
+    when(rf.theta()).thenReturn(Optional.of(275.0));
+    when(rf.outboundMagneticCourse()).thenReturn(Optional.of(140.0));
 
     FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null);
 
@@ -141,7 +142,7 @@ public class TestRfScorer {
     pointLocation = centerFix.projectOut(315.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
   }
 
   @Test
@@ -173,6 +174,11 @@ public class TestRfScorer {
     assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
 
     pointLocation = centerFix.projectOut(315.0, radiusNm).latLong();
+    point = pointAt(pointLocation);
+
+    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+
+    pointLocation = centerFix.projectOut(65.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
     assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
