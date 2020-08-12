@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.v18.spec.field;
 import static java.lang.Math.abs;
 import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
+import org.mitre.tdp.boogie.utils.ArincStrings;
 import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 import org.mitre.tdp.boogie.v18.spec.common.NumericDouble;
 
@@ -25,7 +26,8 @@ public class VerticalAngle implements NumericDouble, FilterTrimEmptyInput<Double
 
   @Override
   public Double parseValue(String fieldValue) {
-    double angle = NumericDouble.super.parseValue(fieldValue) / 100.0d; //hundreths
+    checkSpec(this, fieldValue, validValue(fieldValue));
+    double angle = ArincStrings.parseDoubleWithHundredths(fieldValue);
     checkSpec(this, fieldValue, abs(angle) < 10.0);
     return angle;
   }

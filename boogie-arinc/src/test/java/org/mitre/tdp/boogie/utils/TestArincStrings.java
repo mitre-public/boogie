@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.utils.ArincStrings.copyWithBlanks;
 import static org.mitre.tdp.boogie.utils.ArincStrings.isBlank;
 import static org.mitre.tdp.boogie.utils.ArincStrings.parseDoubleWithTenths;
+import static org.mitre.tdp.boogie.utils.ArincStrings.parseDoubleWithThousandths;
 import static org.mitre.tdp.boogie.utils.ArincStrings.toEnumValue;
 
 import org.junit.jupiter.api.Test;
@@ -71,5 +72,15 @@ public class TestArincStrings {
   @Test
   public void testToEnumValueThrowsParseExceptionWhenNameNotFound() {
     assertThrows(FieldSpecParseException.class, () -> toEnumValue("C", Dummy.class));
+  }
+
+  @Test
+  public void testParseNegativeDoubleWithTenths() {
+    assertEquals(-0.3, parseDoubleWithTenths("-03"));
+  }
+
+  @Test
+  public void testParseNegativeDoubleWithThousandths() {
+    assertEquals(-3.05, parseDoubleWithThousandths("-3050"));
   }
 }

@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 import static org.mitre.tdp.boogie.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.FieldSpec;
+import org.mitre.tdp.boogie.utils.ArincStrings;
 import org.mitre.tdp.boogie.v18.spec.common.FilterTrimEmptyInput;
 
 /**
@@ -20,10 +21,12 @@ public class LocalizerFrequency implements FieldSpec<Double>, FilterTrimEmptyInp
     return "5.45";
   }
 
+  /**
+   * The localizer frequency in MHz.
+   */
   @Override
   public Double parseValue(String fieldValue) {
     checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return Double.parseDouble(fieldValue.substring(0, 3))
-        + (Double.parseDouble(fieldValue.substring(3)) / 100.0);
+    return ArincStrings.parseDoubleWithHundredths(fieldValue);
   }
 }

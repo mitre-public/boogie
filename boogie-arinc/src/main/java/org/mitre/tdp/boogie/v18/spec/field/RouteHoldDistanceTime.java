@@ -36,12 +36,8 @@ public class RouteHoldDistanceTime implements FieldSpec<String>, FilterTrimEmpty
   public Optional<Duration> asDuration(String fieldString) {
     return Optional.of(fieldString)
         .filter(fs -> fs.startsWith("T"))
-        .map(fs -> {
-          String pre = fs.substring(1, 3);
-          String post = fs.substring(3);
-          long postLong = (Long.parseLong(post) * 60) / 10;
-          return Duration.ofSeconds(Long.parseLong(pre) * 60 + postLong);
-        });
+        .map(fs -> ArincStrings.parseDoubleWithTenths(fs.substring(1)))
+        .map(mins -> Duration.ofSeconds((int) (mins * 60)));
   }
 
   /**
