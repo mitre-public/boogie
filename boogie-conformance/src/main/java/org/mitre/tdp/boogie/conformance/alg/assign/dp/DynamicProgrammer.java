@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.apache.commons.math3.util.FastMath;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Doubles;
-
 
 /**
  * An implementation of a DynamicProgrammer for min/max optimization.
@@ -234,11 +232,11 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
 
   public class OptimizedState {
     private final State state;
-    private final HashMap<Stage, OptimalTransition> scores;
+    private final NavigableMap<Stage, OptimalTransition> scores;
 
     OptimizedState(State state) {
       this.state = state;
-      this.scores = new HashMap<>();
+      this.scores = new TreeMap<>();
     }
 
     public State state() {

@@ -14,23 +14,41 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
- * This is the default conformance scorer for {@link PathTerm#DF}/{@link PathTerm#IF} legs.
+ * This is the default conformance scorer for {@link PathTerm#DF} legs.
  */
 public class DfScorer implements OnLegScorer {
 
+  private final Function<Double, Double> courseWeight;
+  private final Function<Double, Double> distanceWeight;
+
+  public DfScorer() {
+    this.courseWeight = simpleLogistic(10.0, 20.0);
+    this.distanceWeight = simpleLogistic(20.0, 40.0);
+  }
+
+  public DfScorer(Function<Double, Double> courseWeight, Function<Double, Double> distanceWeight) {
+    this.courseWeight = courseWeight;
+    this.distanceWeight = distanceWeight;
+  }
+
+  public Function<Double, Double> courseWeight() {
+    return courseWeight;
+  }
+
+  public Function<Double, Double> distanceWeight() {
+    return distanceWeight;
+  }
+
   @Override
   public double scoreAgainstLeg(ConformablePoint that, FlyableLeg legTriple) {
-    Function<Double, Double> courseWeight = simpleLogistic(10.0, 20.0);
-    Function<Double, Double> distanceWeight = simpleLogistic(20.0, 40.0);
-
     Fix pathTerminator = legTriple.current().pathTerminator();
 
     double distance = that.distanceInNmTo(pathTerminator);
     double courseBetween = that.courseInDegrees(pathTerminator);
 
     double angleDiff = angleDifference(that.trueCourse().orElseThrow(supplier("Point Course")), courseBetween);
-    double wcrs = courseWeight.apply(abs(angleDiff));
-    double wdst = distanceWeight.apply(distance);
+    double wcrs = courseWeight().apply(abs(angleDiff));
+    double wdst = distanceWeight().apply(distance);
 
     return wcrs * wdst;
   }
