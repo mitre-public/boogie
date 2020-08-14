@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
@@ -32,6 +33,17 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   private final NavigableSet<Stage> stages;
 
   /**
+   * Indicates whether the process was interrupted while executing. If it was then the result of any optimal path calls will
+   * return the result od the {@link #interruptedReturnSupplier}.
+   */
+  private boolean interrupted = false;
+  /**
+   * This function can take a long time to execute since its basically a m x n^2 computation where m is the number of stages
+   * and n is the number of available states - assuming all transitions are valid.
+   */
+  private Supplier<NavigableMap<Stage, ScoredState<State>>> interruptedReturnSupplier = TreeMap::new;
+
+  /**
    * Creates a new dynamic programmer with the given stages, states, and optimization function.
    */
   public DynamicProgrammer(Collection<Stage> stages, Collection<State> states, Optimization optimize, ExecutionMode executionMode) {
@@ -48,6 +60,15 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     this.stages = new TreeSet<>(stages);
   }
 
+  /**
+   * Configures an interruption return supplier. Given the potential long runtime of the algorithm it supports interruptions
+   * where the return of {@link #optimalPath()} will be given by this supplier if it was interrupted during computation.
+   */
+  public DynamicProgrammer<Stage, State> setInterruptedReturnSupplier(Supplier<NavigableMap<Stage, ScoredState<State>>> supplier) {
+    this.interruptedReturnSupplier = supplier;
+    return this;
+  }
+
   private void initialize() {
     states.forEach((state, optimals) -> {
       Stage stage = stages.first();
@@ -61,7 +82,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   }
 
   public NavigableMap<Stage, ScoredState<State>> optimalPath() {
-    return optimalPath(stages.first(), stages.last());
+    return interrupted ? interruptedReturnSupplier.get() : optimalPath(stages.first(), stages.last());
   }
 
   /**
@@ -69,6 +90,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
    */
   private NavigableMap<Stage, ScoredState<State>> optimalPath(Stage start, Stage end) {
     checkComputeOptimals();
+
     Comparator<Double> comp = optimization.comparator();
 
     // take the final state with the highest or lowest score depending on optimization type
@@ -120,9 +142,15 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
 
   DynamicProgrammer<Stage, State> computeOptimalStates() {
     initialize();
+    NavigableSet<Stage> remainingStages = stages.tailSet(stages.first(), false);
 
-    stages.tailSet(stages.first(), false)
-        .forEach(stage -> states.keySet().forEach(state -> optimalTransition(stage, state)));
+    for (Stage stage : remainingStages) {
+      if (Thread.interrupted()) {
+        this.interrupted = true;
+        break;
+      }
+      states.keySet().forEach(state -> optimalTransition(stage, state));
+    }
     return this;
   }
 
