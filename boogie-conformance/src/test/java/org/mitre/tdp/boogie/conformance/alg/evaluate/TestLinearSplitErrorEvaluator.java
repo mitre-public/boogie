@@ -141,11 +141,11 @@ public class TestLinearSplitErrorEvaluator {
     Pair<Speed, Distance> first = piecewiseSlopes.firstEntry().getValue();
 
     assertEquals(Speed.of(-400.0, Speed.Unit.KNOTS).inKnots(), first.first().inKnots(), 0.001);
-    assertEquals(Distance.ofNauticalMiles(-37.5).inNauticalMiles(), first.second().inNauticalMiles(), 0.001);
+    assertEquals(Distance.ofNauticalMiles(75.0).inNauticalMiles(), first.second().inNauticalMiles(), 0.001);
 
     Pair<Speed, Distance> last = piecewiseSlopes.lastEntry().getValue();
 
     assertEquals(Speed.of(400.0, Speed.Unit.KNOTS).inKnots(), last.first().inKnots(), 0.001);
-    assertEquals(Distance.ofNauticalMiles(-37.5).inNauticalMiles(), last.second().inNauticalMiles(), 0.001);
+    assertEquals(Distance.ofNauticalMiles(60.0).inNauticalMiles(), last.second().inNauticalMiles(), 0.001);
   }
 }
