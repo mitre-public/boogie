@@ -23,7 +23,7 @@ public class CfScorer implements OnLegScorer {
   private final Function<Double, Double> distanceWeight;
 
   public CfScorer() {
-    this.courseWeight = simpleLogistic(5.0, 15.0);
+    this.courseWeight = simpleLogistic(5.0, 9.0);
     this.distanceWeight = simpleLogistic(20.0, 40.0);
   }
 
