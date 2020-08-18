@@ -19,9 +19,25 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
  */
 public class CfScorer implements OnLegScorer {
 
+  private final Function<Double, Double> courseWeight;
+  private final Function<Double, Double> distanceWeight;
+
+  public CfScorer() {
+    this.courseWeight = simpleLogistic(5.0, 9.0);
+    this.distanceWeight = simpleLogistic(20.0, 40.0);
+  }
+
+  public CfScorer(Function<Double, Double> courseWeight, Function<Double, Double> distanceWeight) {
+    this.courseWeight = courseWeight;
+    this.distanceWeight = distanceWeight;
+  }
+
   @Override
   public double scoreAgainstLeg(ConformablePoint that, FlyableLeg legTriple) {
-    Function<Double, Double> wfn = simpleLogistic(5.0, 15.0);
+    Fix pathTerminator = legTriple.current().pathTerminator();
+
+    double distance = that.distanceInNmTo(pathTerminator);
+
     Fix navaid = legTriple.current().recommendedNavaid().orElseThrow(supplier("Recommended Navaid"));
 
     // both of these are bearings - magnetic
@@ -30,7 +46,7 @@ public class CfScorer implements OnLegScorer {
     // convert the true course to the point to a magnetic one for comparison against the boundary/fix radials
     MagneticVariation localVariation = navaid.magneticVariation() != null
         ? navaid.magneticVariation()
-        : legTriple.current().pathTerminator().magneticVariation();
+        : pathTerminator.magneticVariation();
 
     if (localVariation == null) {
       throw new RuntimeException("No magnetic variation for navaid: " + navaid);
@@ -38,6 +54,10 @@ public class CfScorer implements OnLegScorer {
 
     double trueCourse = that.trueCourse().orElseThrow(supplier("Point Course"));
     double magneticCourse = localVariation.trueToMagnetic(trueCourse);
-    return wfn.apply(abs(angleDifference(magneticCourse, courseToFix)));
+
+    Double wcrs = courseWeight.apply(abs(angleDifference(magneticCourse, courseToFix)));
+    Double wdst = distanceWeight.apply(distance);
+
+    return wcrs * wdst;
   }
 }

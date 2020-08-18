@@ -1,7 +1,9 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score.impl;
 
 import static java.util.Optional.empty;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -19,39 +21,6 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 public class TestCfScorer {
-
-  @Test
-  public void testFailOnMissingTheta() {
-    Leg VI = VI();
-    Leg CF = CF();
-    when(CF.theta()).thenReturn(empty());
-
-    FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null);
-
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
-  }
-
-  @Test
-  public void testFailOnMissingRho() {
-    Leg VI = VI();
-    Leg CF = CF();
-    when(CF.rho()).thenReturn(empty());
-
-    FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null);
-
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
-  }
-
-  @Test
-  public void testFailOnMissingDistance() {
-    Leg VI = VI();
-    Leg CF = CF();
-    when(CF.routeDistance()).thenReturn(empty());
-
-    FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null);
-
-    assertThrows(MissingRequiredFieldException.class, () -> new CfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
-  }
 
   @Test
   public void testFailOnMissingOutboundMagneticCourse() {
@@ -75,8 +44,24 @@ public class TestCfScorer {
     assertThrows(MissingRequiredFieldException.class, () -> new CfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
+  @Test
+  public void testScoreDecreasesWithDistance() {
+    FlyableLeg flyableLeg = new FlyableLeg(VI(), CF(), null);
+    ConformablePoint pt = dummyPoint();
+
+    when(pt.distanceInNmTo(any())).thenReturn(0.1);
+    double nearPointScore = new CfScorer().scoreAgainstLeg(pt, flyableLeg);
+    assertEquals(1, nearPointScore, 0.1);
+
+    when(pt.distanceInNmTo(any())).thenReturn(40.);
+    double farPointScore = new CfScorer().scoreAgainstLeg(pt, flyableLeg);
+    assertTrue(nearPointScore - farPointScore > 0.5);
+  }
+
   private ConformablePoint dummyPoint() {
-    return mock(ConformablePoint.class);
+    ConformablePoint pt = mock(ConformablePoint.class);
+    when(pt.trueCourse()).thenReturn(Optional.of(212.));
+    return pt;
   }
 
   private Leg VI() {
