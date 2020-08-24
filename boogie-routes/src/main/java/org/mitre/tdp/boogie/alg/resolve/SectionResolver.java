@@ -7,12 +7,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
@@ -163,11 +166,18 @@ public interface SectionResolver {
         .filter(p -> !p.type().equals(ProcedureType.APPROACH))
         .map(ProcedureElement::new)
         .peek(procedureElement -> {
-          inflator().arrivalRunwayPredictor().predictedRunway()
-              .ifPresent(arrivalRunway -> procedureElement.setTransitionFilter(new StarRunwayTransitionFilter(arrivalRunway)));
 
-          inflator().departureRunwayPredictor().predictedRunway()
-              .ifPresent(departureRunway -> procedureElement.setTransitionFilter(new SidRunwayTransitionFilter(departureRunway)));
+          Optional<String> arrivalRunway = inflator().arrivalRunwayPredictor().predictedRunway();
+          Optional<String> departureRunway = inflator().departureRunwayPredictor().predictedRunway();
+
+          if (arrivalRunway.isPresent() && departureRunway.isPresent()) {
+            Predicate<Transition> transitionPredicate = new StarRunwayTransitionFilter(arrivalRunway.get())
+                .or(new SidRunwayTransitionFilter(departureRunway.get()));
+            procedureElement.setTransitionFilter(transitionPredicate);
+          } else {
+            arrivalRunway.ifPresent(ar -> procedureElement.setTransitionFilter(new StarRunwayTransitionFilter(ar)));
+            departureRunway.ifPresent(dr -> procedureElement.setTransitionFilter(new SidRunwayTransitionFilter(dr)));
+          }
         })
         .collect(Collectors.toList());
   }

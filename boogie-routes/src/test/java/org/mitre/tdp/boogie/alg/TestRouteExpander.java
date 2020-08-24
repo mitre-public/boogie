@@ -11,6 +11,7 @@ import static org.mitre.tdp.boogie.test.MockObjects.fix;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
@@ -48,7 +49,8 @@ public class TestRouteExpander {
         singletonList(fix("DBL", 39.439344444444444, -106.89468055555557)),
         emptyList(),
         singletonList(KDEN()),
-        CONNR5.build().transitions());
+        CONNR5.build().transitions())
+        .setDepartureRunwayPredictor(() -> Optional.of("RW16R"));
 
     ExpandedRoute expandedRoute = expander.expand(route);
 
@@ -129,7 +131,8 @@ public class TestRouteExpander {
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
-        HOBTT2.build().transitions());
+        HOBTT2.build().transitions())
+        .setArrivalRunwayPredictor(() -> Optional.of("RW26B"));
 
     ExpandedRoute expandedRoute = expander.expand(route);
 

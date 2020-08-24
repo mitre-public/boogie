@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
@@ -26,7 +27,8 @@ public class ProcedureElement extends ResolvedElement<Procedure> {
 
   public ProcedureElement(Procedure ref) {
     super(elementTypeFor(ref.type()), ref);
-    this.transitionFilter = transition -> true;
+    // by default drop all runway/approach transitions
+    this.transitionFilter = transition -> !(transition.transitionType().equals(TransitionType.RUNWAY) || transition.transitionType().equals(TransitionType.APPROACH));
   }
 
   /**

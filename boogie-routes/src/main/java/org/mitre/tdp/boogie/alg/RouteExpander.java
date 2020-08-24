@@ -61,110 +61,115 @@ import com.google.common.base.Preconditions;
  * route string to infrastructure name standardization may be necessary on the user side
  * to get a more complete set of expansions.
  */
-public interface RouteExpander extends Serializable {
-
-  /**
-   * Builds a new instance of the route expander with the given lookup services.
-   */
-  static RouteExpander with(
-      LookupService<Fix> fixService,
-      LookupService<Airway> airwayService,
-      LookupService<Airport> airportService,
-      ProcedureService procedureService) {
-    return new RouteExpander() {
-      @Override
-      public LookupService<Fix> fixService() {
-        return fixService;
-      }
-
-      @Override
-      public LookupService<Airway> airwayService() {
-        return airwayService;
-      }
-
-      @Override
-      public LookupService<Airport> airportService() {
-        return airportService;
-      }
-
-      @Override
-      public ProcedureService procedureService() {
-        return procedureService;
-      }
-    };
-  }
-
-  /**
-   * Builds a default implementation of the RouteExpander with no configured approach prediction.
-   */
-  static RouteExpander with(Collection<? extends Fix> fixes, Collection<? extends Airway> airways, Collection<? extends Airport> airports, Collection<? extends Transition> transitions) {
-    FixService fs = FixService.with(fixes);
-    AirwayService ws = AirwayService.with(airways);
-    AirportService as = AirportService.with(airports);
-    ProcedureGraphService ps = ProcedureGraphService.withTransitions(transitions);
-    return with(fs, ws, as, ps);
-  }
-
+public class RouteExpander implements Serializable {
   /**
    * Returns a configured service for {@link Fix} objects.
    */
-  LookupService<Fix> fixService();
-
+  private final LookupService<Fix> fixService;
   /**
    * Returns a configured service for {@link Airway} objects.
    */
-  LookupService<Airway> airwayService();
-
+  private final LookupService<Airway> airwayService;
   /**
    * Returns a configured service for {@link Airport} objects.
    */
-  LookupService<Airport> airportService();
-
+  private final LookupService<Airport> airportService;
   /**
    * Returns a configured service for {@link ProcedureGraph} objects.
    */
-  ProcedureService procedureService();
-
-  /**
-   * The {@link ApproachPredictor} to use in route resolution.
-   */
-  default ApproachPredictor approachPredictor() {
-    return new NoApproachPredictor();
-  }
-
-  /**
-   * The {@link RunwayPredictor} to use when resolving the predicted arrival runway.
-   */
-  default RunwayPredictor arrivalRunwayPredictor() {
-    return RunwayPredictor.noop();
-  }
-
-  /**
-   * The {@link RunwayPredictor} to use when resolving the predicted departure runway.
-   */
-  default RunwayPredictor departureRunwayPredictor() {
-    return RunwayPredictor.noop();
-  }
-
-  /**
-   * The {@link SectionResolver} to use for matching section splits to infrastructure elements.
-   */
-  default SectionResolver sectionResolver() {
-    return SectionResolver.with(this);
-  }
-
+  private final ProcedureService procedureService;
   /**
    * The {@link SectionSplitter} to use in splitting the route string into {@link SectionSplit}.
    */
-  default SectionSplitter sectionSplitter() {
-    return SectionSplitter.newInstance();
+  private final SectionSplitter sectionSplitter;
+  /**
+   * The {@link SectionResolver} to use for matching section splits to infrastructure elements.
+   */
+  private final SectionResolver sectionResolver;
+  /**
+   * The {@link ApproachPredictor} to use in route resolution.
+   */
+  private ApproachPredictor approachPredictor = new NoApproachPredictor();
+  /**
+   * The {@link RunwayPredictor} to use when resolving the predicted arrival runway.
+   */
+  private RunwayPredictor arrivalRunwayPredictor = RunwayPredictor.noop();
+  /**
+   * The {@link RunwayPredictor} to use when resolving the predicted departure runway.
+   */
+  private RunwayPredictor departureRunwayPredictor = RunwayPredictor.noop();
+
+  public RouteExpander(
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      ProcedureService procedureService,
+      SectionSplitter sectionSplitter,
+      SectionResolver sectionResolver) {
+    this.fixService = fixService;
+    this.airwayService = airwayService;
+    this.airportService = airportService;
+    this.procedureService = procedureService;
+    this.sectionSplitter = sectionSplitter;
+    this.sectionResolver = sectionResolver == null ? SectionResolver.with(this) : sectionResolver;
+  }
+
+  public LookupService<Fix> fixService() {
+    return fixService;
+  }
+
+  public LookupService<Airway> airwayService() {
+    return airwayService;
+  }
+
+  public LookupService<Airport> airportService() {
+    return airportService;
+  }
+
+  public ProcedureService procedureService() {
+    return procedureService;
+  }
+
+  public SectionResolver sectionResolver() {
+    return sectionResolver;
+  }
+
+  public SectionSplitter sectionSplitter() {
+    return sectionSplitter;
+  }
+
+  public ApproachPredictor approachPredictor() {
+    return approachPredictor;
+  }
+
+  public RouteExpander setApproachPredictor(ApproachPredictor approachPredictor) {
+    this.approachPredictor = approachPredictor;
+    return this;
+  }
+
+  public RunwayPredictor arrivalRunwayPredictor() {
+    return arrivalRunwayPredictor;
+  }
+
+  public RouteExpander setArrivalRunwayPredictor(RunwayPredictor arrivalRunwayPredictor) {
+    this.arrivalRunwayPredictor = arrivalRunwayPredictor;
+    return this;
+  }
+
+  public RunwayPredictor departureRunwayPredictor() {
+    return departureRunwayPredictor;
+  }
+
+  public RouteExpander setDepartureRunwayPredictor(RunwayPredictor departureRunwayPredictor) {
+    this.departureRunwayPredictor = departureRunwayPredictor;
+    return this;
   }
 
   /**
    * Takes the argument route string and expands it against the infrastructure data in the
    * provided services.
    */
-  default ExpandedRoute expand(@Nonnull String route) {
+  public ExpandedRoute expand(@Nonnull String route) {
     Preconditions.checkArgument(!route.isEmpty(), "Route cannot be empty.");
 
     List<SectionSplit> splits = sectionSplitter().splits(route);
@@ -181,5 +186,27 @@ public interface RouteExpander extends Serializable {
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
     return new ExpandedRoute(route, shortestPath.getVertexList());
+  }
+
+  /**
+   * Builds a new instance of the route expander with the given lookup services.
+   */
+  public static RouteExpander with(
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      ProcedureService procedureService) {
+    return new RouteExpander(fixService, airwayService, airportService, procedureService, SectionSplitter.newInstance(), null);
+  }
+
+  /**
+   * Builds a default implementation of the RouteExpander with no configured approach prediction.
+   */
+  public static RouteExpander with(Collection<? extends Fix> fixes, Collection<? extends Airway> airways, Collection<? extends Airport> airports, Collection<? extends Transition> transitions) {
+    FixService fs = FixService.with(fixes);
+    AirwayService ws = AirwayService.with(airways);
+    AirportService as = AirportService.with(airports);
+    ProcedureGraphService ps = ProcedureGraphService.withTransitions(transitions);
+    return with(fs, ws, as, ps);
   }
 }
