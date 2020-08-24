@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.conformance.alg.assign;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.NavigableMap;
 
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
@@ -29,7 +29,7 @@ public interface MaximalTotalScoreAssigner extends PrecomputedAssigner {
    * in CTD between the points and the collection of available legs.
    */
   @Override
-  default Map<ConformablePoint, FlyableLeg> assignments(Collection<? extends ConformablePoint> allPoints, Collection<? extends FlyableLeg> allLegs) {
+  default NavigableMap<ConformablePoint, FlyableLeg> assignments(Collection<? extends ConformablePoint> allPoints, Collection<? extends FlyableLeg> allLegs) {
     List<FlyableLeg> legList = new ArrayList<>(allLegs);
     List<ConformablePoint> pointList = new ArrayList<>(allPoints);
     return ScoreBasedRouteResolver.withConformableLegs(legList).resolveRoute(pointList);
