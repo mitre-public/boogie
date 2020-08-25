@@ -7,9 +7,9 @@ import java.util.List;
 
 public class IntersectionTransitions {
 
-  public static List<DynamicProgrammerTransition> getTransition(IntersectionStates state, Integer stage) {
+  public static List<HmmTransition> getTransition(IntersectionStates state, Integer stage) {
 
-    List<DynamicProgrammerTransition> transitions = new ArrayList<>();
+    List<HmmTransition> transitions = new ArrayList<>();
     if (stage % 2 == 0) {
       switch (state) {
         case A:
