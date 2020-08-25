@@ -254,7 +254,7 @@ public class TestElements {
   public void testProcedureElementMultiTransition() {
     ProcedureGraph pg = TestProcedureGraph.nominalGraph();
 
-    ProcedureElement element = new ProcedureElement(pg);
+    ProcedureElement element = new ProcedureElement(pg).setTransitionFilter(transition -> true);
 
     List<LinkedLegs> linked = element.legs();
 

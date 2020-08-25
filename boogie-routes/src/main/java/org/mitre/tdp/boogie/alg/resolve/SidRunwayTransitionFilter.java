@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
-import java.util.function.Predicate;
-
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -14,20 +12,14 @@ import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
  * This is essentially just down selecting the transitions based on whether the runway transition name contains the
  * provided runway identifier.
  */
-public class SidRunwayTransitionFilter implements Predicate<Transition> {
-
-  private final String runwayId;
+public class SidRunwayTransitionFilter extends RunwayTransitionFilter {
 
   public SidRunwayTransitionFilter(String runwayId) {
-    this.runwayId = runwayId;
+    super(runwayId);
   }
 
   @Override
   public boolean test(Transition transition) {
-    return !transition.transitionType().equals(TransitionType.RUNWAY)
-        || !transition.procedureType().equals(ProcedureType.SID)
-        // checks that the transition ID contains the runway name - stripping RW on the off chance it was pre-pended
-        || runwayId.contains(transition.identifier())
-        || transition.identifier().contains(runwayId);
+    return !transition.transitionType().equals(TransitionType.RUNWAY) || !transition.procedureType().equals(ProcedureType.SID) || super.test(transition);
   }
 }
