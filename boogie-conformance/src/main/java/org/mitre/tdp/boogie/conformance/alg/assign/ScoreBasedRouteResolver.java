@@ -5,9 +5,9 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerState;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerTransition;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.HmmState;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.HmmTransition;
 
 import java.util.List;
 import java.util.Map;
@@ -30,23 +30,24 @@ public class ScoreBasedRouteResolver {
    * The graphical representation of all of the {@link FlyableLeg} loaded into the resolver. This graph is used to determine
    * the available transitions given any particular edge state. If the edges don't show connections a transition cannot be made.
    */
-  private DownstreamFlyableLegResolver downstreamFlyableLegResolver;
+  private final DownstreamFlyableLegResolver downstreamFlyableLegResolver;
   /**
    * The configured list of all available {@link FlyableLegState}s for the assignment.
    */
-  private Map<FlyableLeg, FlyableLegState> availableStates;
+  private final Map<FlyableLeg, FlyableLegState> availableStates;
 
   private ScoreBasedRouteResolver(DownstreamFlyableLegResolver downstreamFlyableLegResolver, List<FlyableLeg> consecutiveLegs) {
     this.downstreamFlyableLegResolver = downstreamFlyableLegResolver;
     this.availableStates = consecutiveLegs.stream().collect(Collectors.toMap(Function.identity(), FlyableLegState::new));
   }
 
-  public NavigableMap<ConformablePoint, DynamicProgrammer.ScoredState<FlyableLegState>> resolveAssignedStates(List<? extends ConformablePoint> conformablePoints) {
-    return new DynamicProgrammer(conformablePoints, availableStates.values(), DynamicProgrammer.Optimization.MAXIMIZE, DynamicProgrammer.ExecutionMode.CUMULATIVE).optimalPath();
+  public NavigableMap<ConformablePoint, ViterbiTagger.ScoredState<FlyableLegState>> resolveAssignedStates(List<? extends ConformablePoint> conformablePoints) {
+    return new ViterbiTagger<>(conformablePoints, availableStates.values()).optimalScoredPath();
   }
 
   public NavigableMap<ConformablePoint, FlyableLeg> resolveRoute(List<? extends ConformablePoint> conformablePoints) {
-    return Maps.transformValues(resolveAssignedStates(conformablePoints), scoredState -> scoredState.state().flyableLeg());
+    NavigableMap<ConformablePoint, ViterbiTagger.ScoredState<FlyableLegState>> z = resolveAssignedStates(conformablePoints);
+    return Maps.transformValues(z, scoredState -> scoredState.state().flyableLeg());
   }
 
   /**
@@ -54,7 +55,7 @@ public class ScoreBasedRouteResolver {
    * state interface and allows access to the {@link DownstreamFlyableLegResolver} which gives the set of candidate transitions
    * from any given {@link FlyableLegState}.
    */
-  public class FlyableLegState implements DynamicProgrammerState<ConformablePoint> {
+  public class FlyableLegState implements HmmState<ConformablePoint> {
 
     private FlyableLeg flyableLeg;
 
@@ -68,26 +69,33 @@ public class ScoreBasedRouteResolver {
 
     @Override
     public double getValue(ConformablePoint stage) {
-      return flyableLeg.onLegScorer().score(stage, flyableLeg).orElse(Double.MIN_VALUE);
+      Double res = flyableLeg.onLegScorer().score(stage, flyableLeg).orElse(Double.MIN_VALUE);
+      return res;
     }
 
     /**
      * The set of all possible transitions from the given state - this is taken to be all downstream legs as well as the current leg.
      */
     @Override
-    public List<DynamicProgrammerTransition<ConformablePoint, FlyableLegState>> getPossibleTransitions(ConformablePoint stage) {
+    public List<HmmTransition<ConformablePoint, FlyableLegState>> getPossibleTransitions(ConformablePoint stage) {
       // include the downstream legs as well as the current leg as valid transition targets
       List<FlyableLeg> downstreamLegs = downstreamFlyableLegResolver.downstreamLegsOf(flyableLeg());
-      return Stream.concat(downstreamLegs.stream(), Stream.of(flyableLeg()))
+      List<HmmTransition<ConformablePoint, FlyableLegState>> res = Stream.concat(downstreamLegs.stream(), Stream.of(flyableLeg()))
           .distinct()
           .map(legs -> new FlyableLegTransition(
               availableStates.get(legs),
               flyableLeg().legTransitionScorer().transitionScore(stage, flyableLeg(), legs)))
           .collect(Collectors.toList());
+      return res;
+    }
+
+    @Override
+    public String toString() {
+      return flyableLeg().toString();
     }
   }
 
-  public static class FlyableLegTransition implements DynamicProgrammerTransition<ConformablePoint, FlyableLegState> {
+  public static class FlyableLegTransition implements HmmTransition<ConformablePoint, FlyableLegState> {
 
     private final FlyableLegState nextState;
     private final Double probability;
@@ -105,6 +113,12 @@ public class ScoreBasedRouteResolver {
     @Override
     public Double getTransitionProbability() {
       return probability;
+    }
+
+    @Override
+    public String toString() {
+      return "nextState=" + nextState.flyableLeg() +
+          ",probability=" + probability;
     }
   }
 

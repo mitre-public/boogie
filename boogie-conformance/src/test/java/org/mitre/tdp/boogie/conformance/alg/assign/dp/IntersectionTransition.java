@@ -1,21 +1,18 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerState;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammerTransition;
+public class IntersectionTransition implements HmmTransition {
 
-public class IntersectionTransition implements DynamicProgrammerTransition {
-
-  public final DynamicProgrammerState connected_state;
+  public final HmmState connected_state;
 
   public final Double probability;
 
-  public IntersectionTransition(DynamicProgrammerState connected_state, Double probability) {
+  public IntersectionTransition(HmmState connected_state, Double probability) {
     this.connected_state = connected_state;
     this.probability = probability;
   }
 
   @Override
-  public DynamicProgrammerState getTransition() {
+  public HmmState getTransition() {
     return connected_state;
   }
 
