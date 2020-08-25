@@ -272,8 +272,6 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State extend
         // smart
         if (transition.compareTo(ctrans) > 0) {
           scores.put(stage, transition);
-        } else if (transition.compareTo(ctrans) == 0) {
-          System.out.println("FOUND AMBIGUITY!! " + ctrans.fromState + " " + ctrans.score() + " == " + transition.fromState + " " + transition.score());
         }
       }
       return this;
