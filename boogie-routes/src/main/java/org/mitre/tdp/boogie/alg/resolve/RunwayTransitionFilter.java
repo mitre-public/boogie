@@ -7,6 +7,10 @@ import java.util.regex.Pattern;
 
 import org.mitre.tdp.boogie.Transition;
 
+/**
+ * Configurable runway transition filter for use in down-selecting the set of available runway transitions for the flight to just
+ * those servicing the arrival/departure runway.
+ */
 public class RunwayTransitionFilter implements Predicate<Transition> {
 
   private static final Pattern RUNWAY_NUMBER = Pattern.compile("(0[1-9]|[1-2]\\d|3[0-6])?");
