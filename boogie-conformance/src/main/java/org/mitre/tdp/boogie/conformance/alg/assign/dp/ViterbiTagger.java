@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
+import com.google.common.base.Preconditions;
+import com.google.common.primitives.Doubles;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,21 +17,15 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import org.apache.commons.math3.util.FastMath;
-
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Doubles;
+import org.mitre.tdp.boogie.conformance.alg.assign.ScoreBasedRouteResolver;
 
 /**
- * An implementation of a DynamicProgrammer for min/max optimization.
+ * Returns the maximum-likelihood state path for a sequence of observations (aka "stages").
  */
-public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State extends DynamicProgrammerState<Stage>> {
+public class ViterbiTagger<Stage extends Comparable<? super Stage>, State extends HmmState<Stage>> {
 
-  private final Optimization optimization;
-  private final ExecutionMode executionMode;
   // we want a consistent ordering so this is deterministic when the end states have ties
-  private final LinkedHashMap<State, OptimizedState> states;
+  private final LinkedHashMap<State, ViterbiState> states;
   private final NavigableSet<Stage> stages;
 
   /**
@@ -46,13 +42,11 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   /**
    * Creates a new dynamic programmer with the given stages, states, and optimization function.
    */
-  public DynamicProgrammer(Collection<Stage> stages, Collection<State> states, Optimization optimize, ExecutionMode executionMode) {
-    this.optimization = optimize;
-    this.executionMode = executionMode;
+  public ViterbiTagger(Collection<? extends Stage> stages, Collection<State> states) {
     this.states = states.stream()
         .collect(Collectors.toMap(
             Function.identity(),
-            OptimizedState::new,
+            ViterbiState::new,
             (a, b) -> {
               throw new RuntimeException();
             },
@@ -64,7 +58,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
    * Configures an interruption return supplier. Given the potential long runtime of the algorithm it supports interruptions
    * where the return of {@link #optimalPath()} will be given by this supplier if it was interrupted during computation.
    */
-  public DynamicProgrammer<Stage, State> setInterruptedReturnSupplier(Supplier<NavigableMap<Stage, ScoredState<State>>> supplier) {
+  public ViterbiTagger<Stage, State> setInterruptedReturnSupplier(Supplier<NavigableMap<Stage, ScoredState<State>>> supplier) {
     this.interruptedReturnSupplier = supplier;
     return this;
   }
@@ -72,17 +66,22 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   private void initialize() {
     states.forEach((state, optimals) -> {
       Stage stage = stages.first();
-      optimals.put(stage, new OptimalTransition(state.getValue(stage), state, null, stage, null));
+      optimals.put(stage, new ViterbiTransition(state.getValue(stage), 0, 0, 0, state, null, stage, null));
     });
   }
 
-  public Map<State, OptimizedState> optimizedStates() {
+  public Map<State, ViterbiState> optimizedStates() {
     checkComputeOptimals();
     return states;
   }
 
-  public NavigableMap<Stage, ScoredState<State>> optimalPath() {
+  public NavigableMap<Stage, ScoredState<State>> optimalScoredPath() {
     return interrupted ? interruptedReturnSupplier.get() : optimalPath(stages.first(), stages.last());
+  }
+
+  public NavigableMap<Stage, State> optimalPath() {
+    return optimalScoredPath().entrySet().stream()
+        .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue().state(), (a, b) -> {throw new RuntimeException();}, TreeMap::new));
   }
 
   /**
@@ -91,22 +90,22 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   private NavigableMap<Stage, ScoredState<State>> optimalPath(Stage start, Stage end) {
     checkComputeOptimals();
 
-    Comparator<Double> comp = optimization.comparator();
+    Comparator<Double> comp = Comparator.reverseOrder();
 
     // take the final state with the highest or lowest score depending on optimization type
-    Comparator<Map.Entry<State, OptimizedState>> entryScoreComparator =
+    Comparator<Map.Entry<State, ViterbiState>> entryScoreComparator =
         (e1, e2) -> comp.compare(
             e1.getValue().get(end).score(),
             e2.getValue().get(end).score());
 
     // take the path with the fewest visited states if there are score ties
-    Comparator<Map.Entry<State, OptimizedState>> entryTotalStateComparator = Comparator.comparingLong(
+    Comparator<Map.Entry<State, ViterbiState>> entryTotalStateComparator = Comparator.comparingLong(
         entry -> resolvePath(start, end, entry).values().stream().map(ScoredState::state).distinct().count());
 
     // grab the optimal state at the target stage
     // note - there can be ties here, hard to say what the best option is
     // but using a linked hash map above at least makes it deterministic
-    Map.Entry<State, OptimizedState> endState = states.entrySet().stream()
+    Map.Entry<State, ViterbiState> endState = states.entrySet().stream()
         .min(entryScoreComparator.thenComparing(entryTotalStateComparator))
         .orElseThrow(RuntimeException::new);
 
@@ -116,7 +115,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   /**
    * Resolves the path from start to end stage which resulted in the given optimal end state.
    */
-  private NavigableMap<Stage, ScoredState<State>> resolvePath(Stage start, Stage end, Map.Entry<State, OptimizedState> endState) {
+  private NavigableMap<Stage, ScoredState<State>> resolvePath(Stage start, Stage end, Map.Entry<State, ViterbiState> endState) {
     NavigableMap<Stage, ScoredState<State>> path = new TreeMap<>();
     path.put(end, new ScoredState<>(endState.getValue().get(end).score, endState.getKey()));
 
@@ -125,8 +124,8 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     Stage cstage = end;
     State cstate = endState.getKey();
     while (!cstage.equals(start)) {
-      OptimizedState copt = states.get(cstate);
-      OptimalTransition transition = copt.get(cstage);
+      ViterbiState copt = states.get(cstate);
+      ViterbiTransition transition = copt.get(cstage);
       cstage = transition.fromStage();
       cstate = transition.fromState();
       path.put(cstage, new ScoredState<>(states.get(cstate).get(cstage).score(), cstate));
@@ -140,7 +139,7 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     }
   }
 
-  DynamicProgrammer<Stage, State> computeOptimalStates() {
+  ViterbiTagger<Stage, State> computeOptimalStates() {
     initialize();
     NavigableSet<Stage> remainingStages = stages.tailSet(stages.first(), false);
 
@@ -154,6 +153,10 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     return this;
   }
 
+  private Map<State, ViterbiTransition> scoresForStage(Stage stage) {
+    return states.entrySet().stream().collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue().get(stage)));
+  }
+
   /**
    * Takes the stage we want to transition to and the current state, and
    * generates the collection of possible valid transitions from that state
@@ -161,21 +164,24 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
    */
   private void optimalTransition(Stage toStage, State fromState) {
     Stage fromStage = stages.lower(toStage);
-    List<OptimalTransition> transitions;
+    List<ViterbiTransition> transitions;
     if (null == fromStage) {
-      transitions = Collections.singletonList(new OptimalTransition(
+      transitions = Collections.singletonList(new ViterbiTransition(
           fromState.getValue(toStage),
+          0.,
+          0.,
+          0.,
           fromState,
           null,
           toStage,
           null));
     } else {
-      List<? extends DynamicProgrammerTransition> ts = fromState.getPossibleTransitions(fromStage);
+      List<? extends HmmTransition> ts = fromState.getPossibleTransitions(fromStage);
 
       // stream over the possible transitions and find the optimal one
       transitions = ts.stream()
           .map(t -> {
-            DynamicProgrammerTransition<Stage, State> trans = (DynamicProgrammerTransition<Stage, State>) t;
+            HmmTransition<Stage, State> trans = (HmmTransition<Stage, State>) t;
             return BigDecimal.valueOf(trans.getTransitionProbability()).equals(BigDecimal.valueOf(0.0d))
                 ? null
                 : candidateTransition(trans, fromStage, toStage, fromState);
@@ -191,48 +197,22 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
    * Builds a candidate optimal transition between fromState and toState at
    * between the fromStage and toStage.
    */
-  private OptimalTransition candidateTransition(DynamicProgrammerTransition<Stage, State> transitionTo, Stage fromStage, Stage toStage, State fromState) {
+  private ViterbiTransition candidateTransition(HmmTransition<Stage, State> transitionTo, Stage fromStage, Stage toStage, State fromState) {
     // extract the transition score from the raw transition probability
-    double transitionScore = optimization.transitionScore(transitionTo.getTransitionProbability());
+    double transitionScore = transitionTo.getTransitionProbability();
     double toStateValue = transitionTo.getTransition().getValue(toStage);
 
+    Preconditions.checkState(0.0 <= transitionScore && transitionScore <= 1.0, "Score must be in the interval [0,1]: " + transitionScore);
+
     // grab the cumulative score for the from state at the from stage
-    OptimizedState optState = states.get(fromState);
-    OptimalTransition optTrans = optState.get(fromStage);
+    ViterbiState optState = states.get(fromState);
+    ViterbiTransition optTrans = optState.get(fromStage);
     double fromStateCumulative = optTrans.score();
 
     // combine the to state value at the to stage with the transition score and
     // add to the prior cumulative score, setting as the final transition score
-    double cumScore = executionMode.equals(ExecutionMode.CUMULATIVE)
-        ? fromStateCumulative + (toStateValue * transitionScore)
-        : optimization.equals(Optimization.MINIMIZE)
-            ? FastMath.min(fromStateCumulative, toStateValue)
-            : FastMath.max(fromStateCumulative, toStateValue);
-    return new OptimalTransition(cumScore, transitionTo.getTransition(), fromState, toStage, fromStage);
-  }
-
-  public enum Direction {
-    FORWARD,
-    BACKWARD
-  }
-
-  public enum Optimization {
-    MAXIMIZE,
-    MINIMIZE;
-
-    public double transitionScore(double raw) {
-      Preconditions.checkArgument(raw <= 1.0 && raw >= 0.0, "Score must be in the interval [0,1]: " + raw);
-      return raw;
-    }
-
-    public <T extends Comparable<? super T>> Comparator<T> comparator() {
-      return this.equals(MAXIMIZE) ? Comparator.reverseOrder() : Comparator.naturalOrder();
-    }
-  }
-
-  public enum ExecutionMode {
-    DIFFERENTIAL,
-    CUMULATIVE
+    double cumScore = fromStateCumulative + Math.log(toStateValue * transitionScore);
+    return new ViterbiTransition(cumScore, fromStateCumulative, toStateValue, transitionScore, transitionTo.getTransition(), fromState, toStage, fromStage);
   }
 
   public static class ScoredState<STATE> implements Comparable<ScoredState> {
@@ -258,11 +238,11 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     }
   }
 
-  public class OptimizedState {
+  private class ViterbiState {
     private final State state;
-    private final NavigableMap<Stage, OptimalTransition> scores;
+    private final NavigableMap<Stage, ViterbiTransition> scores;
 
-    OptimizedState(State state) {
+    ViterbiState(State state) {
       this.state = state;
       this.scores = new TreeMap<>();
     }
@@ -275,23 +255,22 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
       return this.scores.isEmpty();
     }
 
-    public OptimalTransition get(Stage stage) {
+    public ViterbiTransition get(Stage stage) {
       return scores.get(stage);
     }
 
-    public OptimizedState put(Stage stage, OptimalTransition transition) {
+    private ViterbiState put(Stage stage, ViterbiTransition transition) {
       scores.put(stage, transition);
       return this;
     }
 
-    public OptimizedState putIfOptimal(Stage stage, OptimalTransition transition) {
-      OptimalTransition ctrans = scores.get(stage);
+    private ViterbiState putIfOptimal(Stage stage, ViterbiTransition transition) {
+      ViterbiTransition ctrans = scores.get(stage);
       if (null == ctrans) {
         scores.put(stage, transition);
       } else {
         // smart
-        Comparator<OptimalTransition> comp = optimization.comparator();
-        if (comp.compare(ctrans, transition) > 0) {
+        if (transition.compareTo(ctrans) > 0) {
           scores.put(stage, transition);
         }
       }
@@ -300,26 +279,44 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
   }
 
   /**
-   * Each optimal transition represents the optimal score for a given state at the listed stage.
-   * It also contains a pointer to the source state that produced the optimal score.
+   * A Viterbi transition represents the transition that is part of the optimal path to a state at the listed stage.
+   * It also contains a pointer to the preceding state in the optimal path.
    */
-  public class OptimalTransition implements Comparable<OptimalTransition> {
+  private class ViterbiTransition implements Comparable<ViterbiTransition> {
     private final double score;
+    private final double prevScore;
+    private final double stateScore;
+    private final double transitionScore;
     private final State toState;
     private final Stage toStage;
     private final State fromState;
     private final Stage fromStage;
 
-    OptimalTransition(double s, State tstate, State fstate, Stage tostage, Stage fromstage) {
-      this.score = s;
-      this.toState = tstate;
-      this.fromState = fstate;
-      this.toStage = tostage;
-      this.fromStage = fromstage;
+    public ViterbiTransition(double cumScore, double fromStateCumulative, double stateScore, double transitionScore, State toState, State fromState, Stage toStage, Stage fromStage) {
+      this.score = cumScore;
+      this.prevScore = fromStateCumulative;
+      this.stateScore = stateScore;
+      this.transitionScore = transitionScore;
+      this.toState = toState;
+      this.fromState = fromState;
+      this.toStage = toStage;
+      this.fromStage = fromStage;
     }
 
     public double score() {
       return score;
+    }
+
+    public double getPrevScore() {
+      return prevScore;
+    }
+
+    public double getStateScore() {
+      return stateScore;
+    }
+
+    public double getTransitionScore() {
+      return transitionScore;
     }
 
     public State toState() {
@@ -337,9 +334,8 @@ public class DynamicProgrammer<Stage extends Comparable<? super Stage>, State ex
     public Stage fromStage() {
       return fromStage;
     }
-
     @Override
-    public int compareTo(OptimalTransition transition) {
+    public int compareTo(ViterbiTransition transition) {
       return Double.compare(score, transition.score);
     }
   }

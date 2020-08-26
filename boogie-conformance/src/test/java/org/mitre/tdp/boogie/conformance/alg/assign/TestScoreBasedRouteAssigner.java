@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,20 +52,20 @@ public class TestScoreBasedRouteAssigner {
 
     FlyableLeg sourceab = legs(source, a, b, scorer(pointList.get(0)));
     FlyableLeg sourceac = legs(source, a, c, scorer(pointList.get(0)));
-    FlyableLeg abd = legs(a, b, d, scorer(pointList.get(1), pointList.get(2)));
+    FlyableLeg abd = legs(a, b, d, scorer(pointList.get(1), pointList.get(2), pointList.get(3)));
     FlyableLeg abe = legs(a, b, e, scorer(pointList.get(1), pointList.get(2)));
     FlyableLeg acf = legs(a, c, f, scorer(pointList.get(5)));
     FlyableLeg acg = legs(a, c, g, scorer(pointList.get(5)));
     FlyableLeg bdn = legs(b, d, null, scorer());
-    FlyableLeg beh = legs(b, e, h, scorer(pointList.get(3), pointList.get(4)));
+    FlyableLeg beh = legs(b, e, h, scorer(pointList.get(3), pointList.get(4), pointList.get(5)));
     FlyableLeg cfn = legs(c, f, null, scorer());
-    FlyableLeg cgn = legs(c, g, null, scorer());
+    FlyableLeg cgn = legs(c, g, null, scorer(pointList.get(3)));
     FlyableLeg ehn = legs(e, h, null, scorer());
 
     ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.withConformableLegs(Arrays.asList(sourceab, sourceac, abd, abe, acf, acg, bdn, beh, cfn, cgn, ehn));
     Map<ConformablePoint, FlyableLeg> mapping = resolver.resolveRoute(pointList);
 
-    Map<ConformablePoint, FlyableLeg> expected = new HashMap<>();
+    Map<ConformablePoint, FlyableLeg> expected = new LinkedHashMap<>();
     expected.put(pointList.get(0), sourceab);
     expected.put(pointList.get(1), abe);
     expected.put(pointList.get(2), abe);
@@ -104,7 +104,7 @@ public class TestScoreBasedRouteAssigner {
     Set<ConformablePoint> pointSet = Sets.newHashSet(points);
     Answer<Optional<Double>> answer = incoming -> {
       Object[] args = incoming.getArguments();
-      return Optional.of(pointSet.contains(args[0]) ? 1.0 : 0.0);
+      return Optional.of(pointSet.contains(args[0]) ? 0.99 : 0.01);
     };
 
     OnLegScorer scorer = mock(OnLegScorer.class);
@@ -118,7 +118,7 @@ public class TestScoreBasedRouteAssigner {
 
   private Leg leg(String identifier, PathTerm type) {
     Fix fix = fix(identifier);
-    Leg leg = mock(Leg.class);
+    Leg leg = mock(Leg.class, identifier);
     when(leg.pathTerminator()).thenReturn(fix);
     when(leg.type()).thenReturn(type);
     return leg;

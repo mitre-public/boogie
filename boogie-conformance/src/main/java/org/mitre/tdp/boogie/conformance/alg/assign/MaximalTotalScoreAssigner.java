@@ -7,11 +7,11 @@ import java.util.NavigableMap;
 
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.DynamicProgrammer;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
- * The maximal total score assigner uses the {@link DynamicProgrammer} determining the path the aircraft intended to
+ * The maximal total score assigner uses the {@link ViterbiTagger} determining the path the aircraft intended to
  * take through a collection of legs to be the one which - on the whole - maximizes the overall conformance score as
  * returned by the {@link OnLegScorer}s.
  *
@@ -20,7 +20,7 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
  * point.
  *
  * <p>Typically this should be used when comparing the track against a smaller scoped set of legs (due to the intensity
- * of the {@link DynamicProgrammer} computation).
+ * of the {@link ViterbiTagger} computation).
  */
 public interface MaximalTotalScoreAssigner extends PrecomputedAssigner {
 
