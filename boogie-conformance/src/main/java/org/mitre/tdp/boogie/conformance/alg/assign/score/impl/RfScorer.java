@@ -45,7 +45,7 @@ public class RfScorer implements OffTrackScorer {
     double outboundTrueRadial = tangentToRadial(magneticVariation.magneticToTrue(outboundTangentialMagBearing), turnDirection);
 
     double pointRadialTrue = centerFix.courseInDegrees(point);
-    double radialWeight = (RadialAngles.of(inboundTrueRadial, outboundTrueRadial, turnDirection).contains(pointRadialTrue) ? 1. : 0.);
+    double radialWeight = (RadialAngles.of(inboundTrueRadial, outboundTrueRadial, turnDirection).contains(pointRadialTrue) ? 1. : 0.1);
 
     return OffTrackScorer.super.scoreAgainstLeg(point, legTriple) * radialWeight;
   }

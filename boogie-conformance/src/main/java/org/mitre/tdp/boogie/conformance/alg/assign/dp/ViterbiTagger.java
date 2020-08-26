@@ -17,7 +17,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import org.mitre.tdp.boogie.conformance.alg.assign.ScoreBasedRouteResolver;
 
 /**
  * Returns the maximum-likelihood state path for a sequence of observations (aka "stages").

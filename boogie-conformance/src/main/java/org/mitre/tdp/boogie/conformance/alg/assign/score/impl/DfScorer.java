@@ -23,7 +23,7 @@ public class DfScorer implements OnLegScorer {
 
   public DfScorer() {
     this.courseWeight = simpleLogistic(10.0, 20.0);
-    this.distanceWeight = simpleLogistic(20.0, 40.0);
+    this.distanceWeight = x -> 1.0; // temporary, until the next pass on all scoring functions
   }
 
   public DfScorer(Function<Double, Double> courseWeight, Function<Double, Double> distanceWeight) {

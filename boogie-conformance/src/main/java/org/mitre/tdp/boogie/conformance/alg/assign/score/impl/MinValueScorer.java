@@ -12,6 +12,6 @@ public class MinValueScorer implements OnLegScorer {
 
   @Override
   public double scoreAgainstLeg(ConformablePoint that, FlyableLeg legTriple) {
-    return Double.MIN_VALUE;
+    return 1e-5;
   }
 }

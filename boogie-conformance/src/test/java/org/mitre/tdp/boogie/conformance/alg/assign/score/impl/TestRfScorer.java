@@ -37,12 +37,12 @@ public class TestRfScorer {
     pointLocation = centerFix.projectOut(135.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
 
     pointLocation = centerFix.projectOut(20.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
   }
 
   @Test
@@ -71,12 +71,12 @@ public class TestRfScorer {
     pointLocation = centerFix.projectOut(135.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
 
     pointLocation = centerFix.projectOut(320.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
   }
 
   @Test
@@ -101,12 +101,12 @@ public class TestRfScorer {
     pointLocation = centerFix.projectOut(170.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
 
     pointLocation = centerFix.projectOut(75.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
   }
 
   @Test
@@ -137,7 +137,7 @@ public class TestRfScorer {
     pointLocation = centerFix.projectOut(170.0, radiusNm).latLong();
     point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get());
+    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
 
     pointLocation = centerFix.projectOut(315.0, radiusNm).latLong();
     point = pointAt(pointLocation);
