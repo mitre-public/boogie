@@ -165,21 +165,29 @@ public interface SectionResolver {
         // pre-filter approach procedures
         .filter(p -> !p.type().equals(ProcedureType.APPROACH))
         .map(ProcedureElement::new)
-        .peek(procedureElement -> {
-
-          Optional<String> arrivalRunway = inflator().arrivalRunwayPredictor().predictedRunway();
-          Optional<String> departureRunway = inflator().departureRunwayPredictor().predictedRunway();
-
-          if (arrivalRunway.isPresent() && departureRunway.isPresent()) {
-            Predicate<Transition> transitionPredicate = new StarRunwayTransitionFilter(arrivalRunway.get())
-                .or(new SidRunwayTransitionFilter(departureRunway.get()));
-            procedureElement.setTransitionFilter(transitionPredicate);
-          } else {
-            arrivalRunway.ifPresent(ar -> procedureElement.setTransitionFilter(new StarRunwayTransitionFilter(ar)));
-            departureRunway.ifPresent(dr -> procedureElement.setTransitionFilter(new SidRunwayTransitionFilter(dr)));
-          }
-        })
+        .peek(procedureElement -> procedureElement.setTransitionFilter(transitionFilter()))
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Returns the potentially composite transition filter based on the predicted arrival and departure runways for the flight right.
+   */
+  default Predicate<Transition> transitionFilter() {
+    Optional<String> arrivalRunway = inflator().arrivalRunwayPredictor().predictedRunway();
+    Optional<String> departureRunway = inflator().departureRunwayPredictor().predictedRunway();
+
+    if (arrivalRunway.isPresent() && departureRunway.isPresent()) {
+      return new StarRunwayTransitionFilter(arrivalRunway.get())
+          .and(new SidRunwayTransitionFilter(departureRunway.get()));
+    } else {
+      if (departureRunway.isPresent()) {
+        return new SidRunwayTransitionFilter(departureRunway.get());
+      } else if (arrivalRunway.isPresent()) {
+        return new StarRunwayTransitionFilter(arrivalRunway.get());
+      } else {
+        return ProcedureElement.DEFAULT_TRANSITION_FILTER;
+      }
+    }
   }
 
   /**

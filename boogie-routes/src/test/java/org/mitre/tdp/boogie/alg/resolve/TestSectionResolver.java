@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg.resolve;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.test.MockObjects.IF;
@@ -12,10 +13,13 @@ import static org.mitre.tdp.boogie.test.MockObjects.fix;
 import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mitre.tdp.boogie.test.MockObjects.transition;
 import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -153,6 +157,58 @@ public class TestSectionResolver {
 
     LinkedLegs legs = element.legs().get(0);
     assertNotEquals(LatLong.of(0.0, 0.0), legs.source().leg().pathTerminator().latLong());
+  }
+
+  @Test
+  public void testTransitionFilterWithRunwayPredictions() {
+    RouteExpander routeExpander = mock(RouteExpander.class);
+    when(routeExpander.arrivalRunwayPredictor()).thenReturn(() -> Optional.of("28R"));
+    when(routeExpander.departureRunwayPredictor()).thenReturn(() -> Optional.of("26C"));
+
+    Transition t1 = mock(Transition.class);
+    when(t1.identifier()).thenReturn("RW28R");
+    when(t1.transitionType()).thenReturn(TransitionType.RUNWAY);
+    when(t1.procedureType()).thenReturn(ProcedureType.STAR);
+
+    Transition t2 = mock(Transition.class);
+    when(t2.identifier()).thenReturn("RW26B");
+    when(t2.transitionType()).thenReturn(TransitionType.RUNWAY);
+    when(t2.procedureType()).thenReturn(ProcedureType.SID);
+
+    SectionResolver resolver = SectionResolver.with(routeExpander);
+    Predicate<Transition> transitionPredicate = resolver.transitionFilter();
+
+    assertTrue(transitionPredicate.test(t1));
+    assertTrue(transitionPredicate.test(t2));
+
+    when(t1.identifier()).thenReturn("RW09R");
+    assertFalse(transitionPredicate.test(t1));
+
+    when(t2.identifier()).thenReturn("RW31R");
+    assertFalse(transitionPredicate.test(t2));
+
+    when(t2.transitionType()).thenReturn(TransitionType.COMMON);
+    assertTrue(transitionPredicate.test(t2));
+  }
+
+  @Test
+  public void testTransitionFilterWithNoPredictions() {
+    RouteExpander routeExpander = mock(RouteExpander.class);
+    when(routeExpander.arrivalRunwayPredictor()).thenReturn(Optional::empty);
+    when(routeExpander.departureRunwayPredictor()).thenReturn(Optional::empty);
+
+    SectionResolver resolver = SectionResolver.with(routeExpander);
+    Predicate<Transition> transitionPredicate = resolver.transitionFilter();
+
+    Transition t1 = mock(Transition.class);
+    when(t1.identifier()).thenReturn("RW28R");
+    when(t1.transitionType()).thenReturn(TransitionType.RUNWAY);
+    when(t1.procedureType()).thenReturn(ProcedureType.STAR);
+
+    assertFalse(transitionPredicate.test(t1));
+
+    when(t1.transitionType()).thenReturn(TransitionType.COMMON);
+    assertTrue(transitionPredicate.test(t1));
   }
 
   private RouteExpander expanderForRoute0() {

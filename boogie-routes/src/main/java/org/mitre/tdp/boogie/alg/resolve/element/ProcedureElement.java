@@ -18,6 +18,8 @@ import org.mitre.tdp.boogie.models.Procedure;
 
 public class ProcedureElement extends ResolvedElement<Procedure> {
 
+  public static Predicate<Transition> DEFAULT_TRANSITION_FILTER = transition -> !(transition.transitionType().equals(TransitionType.RUNWAY) || transition.transitionType().equals(TransitionType.APPROACH));
+
   /**
    * Filter for transitions to be applied prior to construction of the {@link ProcedureGraph}.
    *
@@ -28,7 +30,7 @@ public class ProcedureElement extends ResolvedElement<Procedure> {
   public ProcedureElement(Procedure ref) {
     super(elementTypeFor(ref.type()), ref);
     // by default drop all runway/approach transitions
-    this.transitionFilter = transition -> !(transition.transitionType().equals(TransitionType.RUNWAY) || transition.transitionType().equals(TransitionType.APPROACH));
+    this.transitionFilter = DEFAULT_TRANSITION_FILTER;
   }
 
   /**
