@@ -23,7 +23,7 @@ public class DfScorer implements OnLegScorer {
 
   public DfScorer() {
     this.courseWeight = simpleLogistic(10.0, 20.0);
-    this.distanceWeight = x -> 1.0; //simpleLogistic(20.0, 40.0);
+    this.distanceWeight = x -> 1.0; // temporary, until the next pass on all scoring functions
   }
 
   public DfScorer(Function<Double, Double> courseWeight, Function<Double, Double> distanceWeight) {
@@ -50,7 +50,6 @@ public class DfScorer implements OnLegScorer {
     double wcrs = courseWeight().apply(abs(angleDiff));
     double wdst = distanceWeight().apply(distance);
 
-    double s = wcrs * wdst;
-    return s;
+    return wcrs * wdst;
   }
 }
