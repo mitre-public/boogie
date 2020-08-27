@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
+import org.mitre.tdp.boogie.alg.resolve.CommonOrEnrouteTransitionFilter;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;
@@ -18,7 +18,7 @@ import org.mitre.tdp.boogie.models.Procedure;
 
 public class ProcedureElement extends ResolvedElement<Procedure> {
 
-  public static Predicate<Transition> DEFAULT_TRANSITION_FILTER = transition -> !(transition.transitionType().equals(TransitionType.RUNWAY) || transition.transitionType().equals(TransitionType.APPROACH));
+  private static Predicate<Transition> DEFAULT_TRANSITION_FILTER = new CommonOrEnrouteTransitionFilter();
 
   /**
    * Filter for transitions to be applied prior to construction of the {@link ProcedureGraph}.

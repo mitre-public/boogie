@@ -20,6 +20,8 @@ public class StarRunwayTransitionFilter extends RunwayTransitionFilter {
 
   @Override
   public boolean test(Transition transition) {
-    return !transition.transitionType().equals(TransitionType.RUNWAY) || !transition.procedureType().equals(ProcedureType.STAR) || super.test(transition);
+    return transition.transitionType().equals(TransitionType.RUNWAY)
+        && transition.procedureType().equals(ProcedureType.STAR)
+        && super.test(transition);
   }
 }

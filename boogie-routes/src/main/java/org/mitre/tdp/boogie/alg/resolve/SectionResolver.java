@@ -165,27 +165,27 @@ public interface SectionResolver {
         // pre-filter approach procedures
         .filter(p -> !p.type().equals(ProcedureType.APPROACH))
         .map(ProcedureElement::new)
-        .peek(procedureElement -> procedureElement.setTransitionFilter(transitionFilter()))
+        .map(procedureElement -> procedureElement.setTransitionFilter(runwayTransitionFilter().or(new CommonOrEnrouteTransitionFilter())))
         .collect(Collectors.toList());
   }
 
   /**
-   * Returns the potentially composite transition filter based on the predicted arrival and departure runways for the flight right.
+   * Returns the potentially composite runway transition filter based on the predicted arrival and departure runways for the flight.
    */
-  default Predicate<Transition> transitionFilter() {
+  default Predicate<Transition> runwayTransitionFilter() {
     Optional<String> arrivalRunway = inflator().arrivalRunwayPredictor().predictedRunway();
     Optional<String> departureRunway = inflator().departureRunwayPredictor().predictedRunway();
 
     if (arrivalRunway.isPresent() && departureRunway.isPresent()) {
       return new StarRunwayTransitionFilter(arrivalRunway.get())
-          .and(new SidRunwayTransitionFilter(departureRunway.get()));
+          .or(new SidRunwayTransitionFilter(departureRunway.get()));
     } else {
       if (departureRunway.isPresent()) {
         return new SidRunwayTransitionFilter(departureRunway.get());
       } else if (arrivalRunway.isPresent()) {
         return new StarRunwayTransitionFilter(arrivalRunway.get());
       } else {
-        return ProcedureElement.DEFAULT_TRANSITION_FILTER;
+        return transition -> false;
       }
     }
   }

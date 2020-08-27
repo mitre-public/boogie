@@ -26,6 +26,7 @@ import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class TestRouteLegGraph {
   }
 
   private static RouteLegGraph getGraph(String route, RouteExpander expander) {
-    List<SectionSplit> splits = SectionSplitter.newInstance().splits(route);
+    List<SectionSplit> splits =new IfrFormatSectionSplitter().splits(route);
 
     SectionResolver resolver = SectionResolver.with(expander);
     ResolvedRoute resolved = resolver.resolve(splits);
