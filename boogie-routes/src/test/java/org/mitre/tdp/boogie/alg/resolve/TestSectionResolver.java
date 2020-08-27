@@ -34,6 +34,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
+import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.LinkedLegs;
@@ -43,7 +44,7 @@ public class TestSectionResolver {
   private String route0 = "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/0054";
 
   private List<SectionSplit> splits(String name) {
-    return SectionSplitter.newInstance().splits(name);
+    return new IfrFormatSectionSplitter().splits(name);
   }
 
   @Test
@@ -160,7 +161,7 @@ public class TestSectionResolver {
   }
 
   @Test
-  public void testTransitionFilterWithRunwayPredictions() {
+  public void testRunwayTransitionFilterWithRunwayPredictions() {
     RouteExpander routeExpander = mock(RouteExpander.class);
     when(routeExpander.arrivalRunwayPredictor()).thenReturn(() -> Optional.of("28R"));
     when(routeExpander.departureRunwayPredictor()).thenReturn(() -> Optional.of("26C"));
@@ -176,7 +177,7 @@ public class TestSectionResolver {
     when(t2.procedureType()).thenReturn(ProcedureType.SID);
 
     SectionResolver resolver = SectionResolver.with(routeExpander);
-    Predicate<Transition> transitionPredicate = resolver.transitionFilter();
+    Predicate<Transition> transitionPredicate = resolver.runwayTransitionFilter();
 
     assertTrue(transitionPredicate.test(t1));
     assertTrue(transitionPredicate.test(t2));
@@ -188,7 +189,7 @@ public class TestSectionResolver {
     assertFalse(transitionPredicate.test(t2));
 
     when(t2.transitionType()).thenReturn(TransitionType.COMMON);
-    assertTrue(transitionPredicate.test(t2));
+    assertFalse(transitionPredicate.test(t2));
   }
 
   @Test
@@ -198,7 +199,7 @@ public class TestSectionResolver {
     when(routeExpander.departureRunwayPredictor()).thenReturn(Optional::empty);
 
     SectionResolver resolver = SectionResolver.with(routeExpander);
-    Predicate<Transition> transitionPredicate = resolver.transitionFilter();
+    Predicate<Transition> transitionPredicate = resolver.runwayTransitionFilter();
 
     Transition t1 = mock(Transition.class);
     when(t1.identifier()).thenReturn("RW28R");
@@ -208,7 +209,7 @@ public class TestSectionResolver {
     assertFalse(transitionPredicate.test(t1));
 
     when(t1.transitionType()).thenReturn(TransitionType.COMMON);
-    assertTrue(transitionPredicate.test(t1));
+    assertFalse(transitionPredicate.test(t1));
   }
 
   private RouteExpander expanderForRoute0() {

@@ -20,6 +20,8 @@ public class SidRunwayTransitionFilter extends RunwayTransitionFilter {
 
   @Override
   public boolean test(Transition transition) {
-    return !transition.transitionType().equals(TransitionType.RUNWAY) || !transition.procedureType().equals(ProcedureType.SID) || super.test(transition);
+    return transition.transitionType().equals(TransitionType.RUNWAY)
+        && transition.procedureType().equals(ProcedureType.SID)
+        && super.test(transition);
   }
 }

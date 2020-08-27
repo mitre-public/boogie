@@ -13,19 +13,19 @@ import org.mitre.tdp.boogie.TransitionType;
 public class TestStarRunwayTransitionFilter {
 
   @Test
-  public void testFilterIgnoresNonRunwayTransitions() {
+  public void testFilterFailsNonRunwayTransitions() {
     Transition transition = testTransition();
     when(transition.transitionType()).thenReturn(TransitionType.COMMON);
 
-    assertTrue(new StarRunwayTransitionFilter("25R").test(transition));
+    assertFalse(new StarRunwayTransitionFilter("25R").test(transition));
   }
 
   @Test
-  public void testFilterIgnoresNonSidProcedures() {
+  public void testFilterFailsSidProcedures() {
     Transition transition = testTransition();
     when(transition.procedureType()).thenReturn(ProcedureType.SID);
 
-    assertTrue(new StarRunwayTransitionFilter("25R").test(transition));
+    assertFalse(new StarRunwayTransitionFilter("25R").test(transition));
   }
 
   @Test

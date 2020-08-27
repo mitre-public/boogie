@@ -21,6 +21,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
@@ -196,7 +197,7 @@ public class RouteExpander implements Serializable {
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
       ProcedureService procedureService) {
-    return new RouteExpander(fixService, airwayService, airportService, procedureService, SectionSplitter.newInstance(), null);
+    return new RouteExpander(fixService, airwayService, airportService, procedureService, new IfrFormatSectionSplitter(), null);
   }
 
   /**
