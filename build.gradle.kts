@@ -31,6 +31,9 @@ val mavenPassword: String? by project
 release {
     preTagCommitMessage = "[Gradle] Bump to stable version "
     newVersionCommitMessage = "[Gradle] Bump to version "
+
+    val git: net.researchgate.release.GitAdapter.GitConfig = getProperty("git") as net.researchgate.release.GitAdapter.GitConfig
+    git.requireBranch = "main"
 }
 
 subprojects {
