@@ -3,18 +3,24 @@
 #
 # ./ci-publish-release.sh -PmavenUser=username -PmavenPassword=pass
 #
-# Tthis script will:
+# This script will:
 # 1. Ensure you're on a clean working copy of git
 # 2. Bump the version to a stable artifact (i.e., remove "-SNAPSHOT")
 # 3. Commit and tag the release
 # 4. Bump to the next snapshot version (i.e., increment patch and add "-SNAPSHOT")
-# 5. Push changes to master
+# 5. Push changes to main
 # 6. Publish artifacts to Nexus from the stable commit
 #
 # See: https://github.com/researchgate/gradle-release for details on the Gradle release plugin
+NONE="$(echo -e "\033[0m")"
+RED="$(echo -e "\033[31m")"
+GREEN="$(echo -e "\033[32m")"
+YELLOW="$(echo -e "\033[33m")"
+BLUE="$(echo -e "\033[34m")"
 
-echo "Running CI Script 'ci-prepare-release' using CI branch: $bamboo_planRepository_branchName"
+branchName=$(git rev-parse --abbrev-ref HEAD)
 myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
+echo "Running ${BLUE}$0${NONE} on branch ${BLUE}$branchName${NONE} at version: ${BLUE}$myProjVersion${NONE}"
 
 echo "current dev version: $myProjVersion"
 
@@ -22,8 +28,7 @@ echo "current dev version: $myProjVersion"
 ./gradlew release -Prelease.useAutomaticVersion=true
 
 # if the above was successful, back up to stable version's commit & deploy to dali
-if [ $? -eq 0 ]
-then
+if [ $? -eq 0 ]; then
   echo "Successfully created version bump commits... deploying to Dali"
   # back up to stable commit
   git checkout HEAD^
