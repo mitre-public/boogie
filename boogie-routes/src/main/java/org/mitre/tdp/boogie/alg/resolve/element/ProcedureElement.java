@@ -33,6 +33,10 @@ public class ProcedureElement extends ResolvedElement<Procedure> {
     this.transitionFilter = DEFAULT_TRANSITION_FILTER;
   }
 
+  public Predicate<Transition> transitionFilter() {
+    return transitionFilter;
+  }
+
   /**
    * Sets the internal transition filter to be the provided transition predicate.
    */
