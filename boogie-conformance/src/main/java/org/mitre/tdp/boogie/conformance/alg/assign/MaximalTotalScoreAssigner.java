@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.NavigableMap;
 
@@ -22,16 +20,21 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
  * <p>Typically this should be used when comparing the track against a smaller scoped set of legs (due to the intensity
  * of the {@link ViterbiTagger} computation).
  */
-public interface MaximalTotalScoreAssigner extends PrecomputedAssigner {
+public class MaximalTotalScoreAssigner {
+
+  private final List<FlyableLeg> legList;
+  private final List<? extends ConformablePoint> pointList;
+
+  public MaximalTotalScoreAssigner(List<FlyableLeg> legList, List<? extends ConformablePoint> pointList) {
+    this.legList = legList;
+    this.pointList = pointList;
+  }
 
   /**
    * Pre-computes the collection of leg assignments based off of the Dynamic programmer's minimization of the total error
    * in CTD between the points and the collection of available legs.
    */
-  @Override
-  default NavigableMap<ConformablePoint, FlyableLeg> assignments(Collection<? extends ConformablePoint> allPoints, Collection<? extends FlyableLeg> allLegs) {
-    List<FlyableLeg> legList = new ArrayList<>(allLegs);
-    List<ConformablePoint> pointList = new ArrayList<>(allPoints);
+  public NavigableMap<ConformablePoint, FlyableLeg> assignments() {
     return ScoreBasedRouteResolver.withConformableLegs(legList).resolveRoute(pointList);
   }
 }

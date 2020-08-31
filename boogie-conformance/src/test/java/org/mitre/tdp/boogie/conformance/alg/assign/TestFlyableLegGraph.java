@@ -21,7 +21,7 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 
 import com.google.common.collect.Sets;
 
-public class TestDownstreamFlyableLegResolver {
+public class TestFlyableLegGraph {
 
   @Test
   public void testGrabsDownstreamLinks() {
@@ -37,7 +37,7 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair3 = new LegPairImpl(a, d);
 
     List<FlyableLeg> flyableLegs = GraphicalLegReducer.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
-    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
+    FlyableLegGraph legsGraph = FlyableLegGraph.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);
 
@@ -67,7 +67,7 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair3 = new LegPairImpl(d, a);
 
     List<FlyableLeg> flyableLegs = GraphicalLegReducer.with(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
-    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
+    FlyableLegGraph legsGraph = FlyableLegGraph.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(a)).findFirst().orElseThrow(RuntimeException::new);
 
@@ -91,7 +91,7 @@ public class TestDownstreamFlyableLegResolver {
     LegPair legPair4 = new LegPairImpl(b, e);
 
     List<FlyableLeg> flyableLegs = GraphicalLegReducer.with(Arrays.asList(legPair1, legPair2, legPair3, legPair4, sourcePair)).flyableLegs();
-    DownstreamFlyableLegResolver legsGraph = DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs);
+    FlyableLegGraph legsGraph = FlyableLegGraph.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);
 

@@ -30,14 +30,14 @@ public class ScoreBasedRouteResolver {
    * The graphical representation of all of the {@link FlyableLeg} loaded into the resolver. This graph is used to determine
    * the available transitions given any particular edge state. If the edges don't show connections a transition cannot be made.
    */
-  private final DownstreamFlyableLegResolver downstreamFlyableLegResolver;
+  private final FlyableLegGraph flyableLegGraph;
   /**
    * The configured list of all available {@link FlyableLegState}s for the assignment.
    */
   private final Map<FlyableLeg, FlyableLegState> availableStates;
 
-  private ScoreBasedRouteResolver(DownstreamFlyableLegResolver downstreamFlyableLegResolver, List<FlyableLeg> consecutiveLegs) {
-    this.downstreamFlyableLegResolver = downstreamFlyableLegResolver;
+  private ScoreBasedRouteResolver(FlyableLegGraph flyableLegGraph, List<FlyableLeg> consecutiveLegs) {
+    this.flyableLegGraph = flyableLegGraph;
     this.availableStates = consecutiveLegs.stream().collect(Collectors.toMap(Function.identity(), FlyableLegState::new));
   }
 
@@ -52,7 +52,7 @@ public class ScoreBasedRouteResolver {
 
   /**
    * Internal wrapper class for state associated with a given configured {@link FlyableLeg} object. Implements dynamic programmer
-   * state interface and allows access to the {@link DownstreamFlyableLegResolver} which gives the set of candidate transitions
+   * state interface and allows access to the {@link FlyableLegGraph} which gives the set of candidate transitions
    * from any given {@link FlyableLegState}.
    */
   public class FlyableLegState implements HmmState<ConformablePoint> {
@@ -79,7 +79,7 @@ public class ScoreBasedRouteResolver {
     @Override
     public List<HmmTransition<ConformablePoint, FlyableLegState>> getPossibleTransitions(ConformablePoint stage) {
       // include the downstream legs as well as the current leg as valid transition targets
-      List<FlyableLeg> downstreamLegs = downstreamFlyableLegResolver.downstreamLegsOf(flyableLeg());
+      List<FlyableLeg> downstreamLegs = flyableLegGraph.downstreamLegsOf(flyableLeg());
       List<HmmTransition<ConformablePoint, FlyableLegState>> res = Stream.concat(downstreamLegs.stream(), Stream.of(flyableLeg()))
           .distinct()
           .map(legs -> new FlyableLegTransition(
@@ -123,7 +123,7 @@ public class ScoreBasedRouteResolver {
   }
 
   public static ScoreBasedRouteResolver withConformableLegs(List<FlyableLeg> flyableLegs) {
-    return new ScoreBasedRouteResolver(DownstreamFlyableLegResolver.withFlyableLegs(flyableLegs), flyableLegs);
+    return new ScoreBasedRouteResolver(FlyableLegGraph.withFlyableLegs(flyableLegs), flyableLegs);
   }
 
   /**

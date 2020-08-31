@@ -20,11 +20,11 @@ import org.mitre.tdp.boogie.util.Combinatorics;
  * level consecutive legs become directed edges. When querying for the {@link #downstreamLegsOf(FlyableLeg)} this class
  * returns all the legs which provide previous->next transitions from the current leg of the supplied consecutiveLegs.
  */
-public class DownstreamFlyableLegResolver extends SimpleDirectedGraph<FlyableLeg, DefaultEdge> {
+public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge> {
 
   private ConnectivityInspector<FlyableLeg, DefaultEdge> connectivityInspector;
 
-  public DownstreamFlyableLegResolver() {
+  public FlyableLegGraph() {
     super(DefaultEdge.class);
   }
 
@@ -34,6 +34,7 @@ public class DownstreamFlyableLegResolver extends SimpleDirectedGraph<FlyableLeg
   public ConnectivityInspector<FlyableLeg, DefaultEdge> connectivityInspector() {
     if (connectivityInspector == null) {
       this.connectivityInspector = new ConnectivityInspector<>(this);
+      System.out.println("Number of connected sets: " + connectivityInspector.connectedSets().size());
     }
     return connectivityInspector;
   }
@@ -54,31 +55,31 @@ public class DownstreamFlyableLegResolver extends SimpleDirectedGraph<FlyableLeg
   }
 
   /**
-   * Generates a new {@link DownstreamFlyableLegResolver} from the input collection of {@link FlyableLeg}s.
+   * Generates a new {@link FlyableLegGraph} from the input collection of {@link FlyableLeg}s.
    */
-  public static DownstreamFlyableLegResolver withFlyableLegs(List<? extends FlyableLeg> conformableLegs) {
-    DownstreamFlyableLegResolver downstreamFlyableLegResolver = new DownstreamFlyableLegResolver();
+  public static FlyableLegGraph withFlyableLegs(List<? extends FlyableLeg> conformableLegs) {
+    FlyableLegGraph flyableLegGraph = new FlyableLegGraph();
 
     Combinatorics.pairwiseCombos(conformableLegs).forEachRemaining(pair -> {
-      downstreamFlyableLegResolver.addVertex(pair.first());
-      downstreamFlyableLegResolver.addVertex(pair.second());
+      flyableLegGraph.addVertex(pair.first());
+      flyableLegGraph.addVertex(pair.second());
 
-      addEdgeIfMatching(pair.first(), pair.second(), downstreamFlyableLegResolver);
-      addEdgeIfMatching(pair.second(), pair.first(), downstreamFlyableLegResolver);
+      addEdgeIfMatching(pair.first(), pair.second(), flyableLegGraph);
+      addEdgeIfMatching(pair.second(), pair.first(), flyableLegGraph);
     });
 
-    return downstreamFlyableLegResolver;
+    return flyableLegGraph;
   }
 
   /**
-   * Generates a new {@link DownstreamFlyableLegResolver} from the input list of {@link FlyableLeg}. This graph can then be used to
+   * Generates a new {@link FlyableLegGraph} from the input list of {@link FlyableLeg}. This graph can then be used to
    * resolve the downstream edges of a given {@link FlyableLeg} edge.
    */
-  public static DownstreamFlyableLegResolver fromLegPairs(List<? extends LegPair> legPairs) {
-    return DownstreamFlyableLegResolver.withFlyableLegs(GraphicalLegReducer.with(legPairs).flyableLegs());
+  public static FlyableLegGraph fromLegPairs(List<? extends LegPair> legPairs) {
+    return FlyableLegGraph.withFlyableLegs(GraphicalLegReducer.with(legPairs).flyableLegs());
   }
 
-  private static void addEdgeIfMatching(FlyableLeg t1, FlyableLeg t2, DownstreamFlyableLegResolver resolver) {
+  private static void addEdgeIfMatching(FlyableLeg t1, FlyableLeg t2, FlyableLegGraph resolver) {
     if (t2.previous().filter(t1.current()::equals).isPresent() && t1.next().filter(t2.current()::equals).isPresent()) {
       resolver.addEdge(t1, t2);
     }
