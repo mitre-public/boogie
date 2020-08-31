@@ -13,9 +13,8 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
  * take through a collection of legs to be the one which - on the whole - maximizes the overall conformance score as
  * returned by the {@link OnLegScorer}s.
  *
- * <p>To use this class for {@link LegAssigner} it is required that the full observed path of the aircraft be provided
- * as well as the full collection of legs. This class internally pre-computes the assignment and then serves it up by
- * point.
+ * <p>To use this class it is required that the full observed path of the aircraft be provided as well as the full
+ * collection of legs. This class internally pre-computes the assignment and then serves it up by point.
  *
  * <p>Typically this should be used when comparing the track against a smaller scoped set of legs (due to the intensity
  * of the {@link ViterbiTagger} computation).

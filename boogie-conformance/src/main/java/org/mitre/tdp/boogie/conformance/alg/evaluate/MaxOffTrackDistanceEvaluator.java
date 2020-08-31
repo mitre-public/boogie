@@ -7,11 +7,10 @@ import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
-import org.mitre.tdp.boogie.conformance.alg.assign.LegAssigner;
 
 /**
  * The max off track distance evaluator considers an aircraft to be non-conforming when it is outside
- * some buffer around the active leg its on via the {@link LegAssigner}.
+ * some buffer around the active leg its on via the {@link ConformanceEvaluator}.
  */
 public interface MaxOffTrackDistanceEvaluator extends ConformanceEvaluator {
 
