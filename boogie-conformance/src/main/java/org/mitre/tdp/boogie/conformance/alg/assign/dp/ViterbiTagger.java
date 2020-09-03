@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,7 +54,7 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
       BiFunction<Stage, State, Double> stateScorer, Function<State, Collection<State>> validTransitions, BiFunction<State, State, Double> transitionScorer) {
     this.stages = new TreeSet<>(stages);
     this.states = new LinkedHashSet<>(states);
-    this.stateScorer = stateScorer;
+    this.stateScorer = Objects.requireNonNull(stateScorer);
     this.validTransitions = memoize(validTransitions);
     this.transitionScorer = memoize(transitionScorer);
     this.trellis = new ViterbiTrellis<>(this.stages, this.states);

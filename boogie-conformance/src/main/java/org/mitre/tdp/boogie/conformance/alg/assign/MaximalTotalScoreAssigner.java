@@ -38,7 +38,7 @@ public class MaximalTotalScoreAssigner {
     return ScoreBasedRouteResolver.withConformableLegs(legList).resolveRoute(pointList);
   }
 
-  public ViterbiTrellis<ConformablePoint, ScoreBasedRouteResolver.FlyableLegState> trellis() {
+  public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis() {
     return ScoreBasedRouteResolver.withConformableLegs(legList).trellis(pointList);
   }
 }
