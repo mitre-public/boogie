@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Internal representation of the stages and states within the {@link ViterbiTrellis}.
+ * <p>
+ * Values here are only meant to be exposed via the {@link ViterbiTrellis}, so all
+ * classes and members are package-private.
+ */
 class ScoredStage<Stage, State> {
   private State viterbiPathState;
 
@@ -16,7 +22,7 @@ class ScoredStage<Stage, State> {
     this.scoredStates = scoredStates;
   }
 
-  public Collection<ScoredState<State>> scoredStates() {
+  Collection<ScoredState<State>> scoredStates() {
     return scoredStates.values();
   }
 
@@ -60,22 +66,22 @@ class ScoredStage<Stage, State> {
     return scoredStates.get(viterbiPathState);
   }
 
-  public static <Stage extends Comparable<? super Stage>, State> ScoredStage<Stage, State> initialStage(LinkedHashSet<State> states) {
+  static <Stage extends Comparable<? super Stage>, State> ScoredStage<Stage, State> initialStage(LinkedHashSet<State> states) {
     LinkedHashMap<State, ScoredState<State>> scoredStates = states.stream()
         .collect(Collectors.toMap(s -> s, s -> ScoredState.initialState(s),
             (u, v) -> { throw new IllegalStateException();}, LinkedHashMap::new));
     return new ScoredStage<>(scoredStates);
   }
 
-  public static <State, Stage extends Comparable<? super Stage>> ScoredStage<Stage,State> intermediateStage() {
+  static <State, Stage extends Comparable<? super Stage>> ScoredStage<Stage,State> intermediateStage() {
     return new ScoredStage<>(new LinkedHashMap<>());
   }
 
-  public void setViterbiPathState(State state) {
+  void setViterbiPathState(State state) {
     this.viterbiPathState = state;
   }
 
-  public Likelihood stateLikelihood(State fromState) {
+  Likelihood stateLikelihood(State fromState) {
     return scoredStates.get(fromState).likelihood();
   }
 

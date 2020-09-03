@@ -12,8 +12,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * @param <Stage>
- * @param <State>
+ * Intermediate representation of the Viterbi algorithm, containing all information
+ * needed to obtain the maximum-likelihood path to arrive at each state in a stage.
  */
 public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> extends TreeMap<Stage, ScoredStage<Stage, State>> {
 
@@ -88,6 +88,14 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
         .collect(Collectors.toMap(x -> x.getKey(), x -> mapper.apply(x.getValue()), (u, v) -> {throw new IllegalStateException();}, TreeMap::new));
   }
 
+  public void assertComplete(Stage stage) {
+    Preconditions.checkState(this.containsKey(stage));
+    this.get(stage).scoredStates().forEach(x -> {
+      Preconditions.checkState(x.state() != null, "Issue with " + stage + ", " + x);
+      Preconditions.checkState(x.likelihood() != null, "Issue with " + stage + ", " + x);
+    });
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -106,16 +114,5 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), stages, states);
-  }
-
-  public void assertComplete(Stage stage) {
-    Preconditions.checkState(this.containsKey(stage));
-    this.get(stage).scoredStates().forEach(x -> {
-      Preconditions.checkState(x.state() != null, "Issue with " + stage + ", " + x);
-//      Preconditions.checkState(x.fromState() != null, "Issue with " + stage + ", " + x);
-//      Preconditions.checkState(x.cumulativeTransitionLikelihood() != null, "Issue with " + stage + ", " + x);
-//      Preconditions.checkState(x.stateScore() != null, "Issue with " + stage + ", " + x);
-      Preconditions.checkState(x.likelihood() != null, "Issue with " + stage + ", " + x);
-    });
   }
 }
