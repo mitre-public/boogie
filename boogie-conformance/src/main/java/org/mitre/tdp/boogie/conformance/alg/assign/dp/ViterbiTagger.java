@@ -125,7 +125,7 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
     trellis.assertComplete(toStage);
   }
 
-  public static <Stage extends Comparable<Stage>, State extends HmmState<Stage>> ViterbiTagger<Stage, State> forHmmStates(Collection<? extends Stage> stages, Collection<? extends State> states) {
+  public static <Stage extends Comparable<? super Stage>, State extends HmmState<Stage>> ViterbiTagger<Stage, State> forHmmStates(Collection<? extends Stage> stages, Collection<? extends State> states) {
     BiFunction<Stage, State, Double> scorer = (Stage stage, State s) -> s.getValue(stage);
     Function<State, Collection<State>> validTransitions = (State s) -> s.getPossibleTransitions().stream().map(x -> (State) x.getTransition()).collect(Collectors.toList());
     BiFunction<State, State, Double> transitionScorer = (State s, State s2) -> s.getPossibleTransitions().stream().filter(x -> x.getTransition().equals(s2)).map(x -> x.getTransitionProbability()).findFirst().orElse(0.0);
