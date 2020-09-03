@@ -1,20 +1,15 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
-import com.google.common.collect.Maps;
+import java.util.Collection;
+import java.util.List;
+import java.util.NavigableMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.HmmState;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.HmmTransition;
-
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTrellis;
 
 /**
@@ -33,95 +28,40 @@ public class ScoreBasedRouteResolver {
    */
   private final FlyableLegGraph flyableLegGraph;
   /**
-   * The configured list of all available {@link FlyableLegState}s for the assignment.
+   * The configured list of all available {@link FlyableLeg}s for the assignment.
    */
-  private final Map<FlyableLeg, FlyableLegState> availableStates;
+  private final List<FlyableLeg> flyableLegs;
 
-  private ScoreBasedRouteResolver(FlyableLegGraph flyableLegGraph, List<FlyableLeg> consecutiveLegs) {
+  private ScoreBasedRouteResolver(FlyableLegGraph flyableLegGraph, List<FlyableLeg> flyableLegs) {
     this.flyableLegGraph = flyableLegGraph;
-    this.availableStates = consecutiveLegs.stream().collect(Collectors.toMap(Function.identity(), FlyableLegState::new));
+    this.flyableLegs = flyableLegs;
   }
 
   public NavigableMap<ConformablePoint, FlyableLeg> resolveRoute(List<? extends ConformablePoint> conformablePoints) {
-    NavigableMap<ConformablePoint, FlyableLegState> z = ViterbiTagger.forHmmStates(conformablePoints, availableStates.values()).optimalPath();
-    return Maps.transformValues(z, scoredState -> scoredState.flyableLeg());
+    return tagger(conformablePoints).optimalPath();
   }
 
-  public ViterbiTrellis<ConformablePoint, FlyableLegState> trellis(List<? extends ConformablePoint> conformablePoints) {
-    return ViterbiTagger.forHmmStates(conformablePoints, availableStates.values()).trellis();
+  public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis(List<? extends ConformablePoint> conformablePoints) {
+    return tagger(conformablePoints).trellis();
   }
 
-  /**
-   * Internal wrapper class for state associated with a given configured {@link FlyableLeg} object. Implements dynamic programmer
-   * state interface and allows access to the {@link FlyableLegGraph} which gives the set of candidate transitions
-   * from any given {@link FlyableLegState}.
-   */
-  public class FlyableLegState implements HmmState<ConformablePoint> {
-
-    private FlyableLeg flyableLeg;
-
-    public FlyableLegState(FlyableLeg flyableLeg) {
-      this.flyableLeg = flyableLeg;
-    }
-
-    public FlyableLeg flyableLeg() {
-      return flyableLeg;
-    }
-
-    @Override
-    public double getValue(ConformablePoint stage) {
-      Double res = flyableLeg.onLegScorer().score(stage, flyableLeg).orElse(Double.MIN_VALUE);
-      return res;
-    }
-
-    /**
-     * The set of all possible transitions from the given state - this is taken to be all downstream legs as well as the current leg.
-     */
-    @Override
-    public List<HmmTransition<ConformablePoint, FlyableLegState>> getPossibleTransitions() {
-      // include the downstream legs as well as the current leg as valid transition targets
-      List<FlyableLeg> downstreamLegs = flyableLegGraph.downstreamLegsOf(flyableLeg());
-      List<HmmTransition<ConformablePoint, FlyableLegState>> res = Stream.concat(downstreamLegs.stream(), Stream.of(flyableLeg()))
-          .distinct()
-          .map(legs -> new FlyableLegTransition(
-              availableStates.get(legs),
-              flyableLeg().legTransitionScorer().transitionScore(flyableLeg(), legs)))
-          .collect(Collectors.toList());
-      return res;
-    }
-
-    @Override
-    public String toString() {
-      return flyableLeg().toString();
-    }
+  private ViterbiTagger<ConformablePoint, FlyableLeg> tagger(List<? extends ConformablePoint> conformablePoints) {
+    return new ViterbiTagger<>(conformablePoints, flyableLegs,
+        ScoreBasedRouteResolver::legScore, this::validTransitions, ScoreBasedRouteResolver::transitionScore);
   }
 
-  public static class FlyableLegTransition implements HmmTransition<ConformablePoint, FlyableLegState> {
-
-    private final FlyableLegState nextState;
-    private final Double probability;
-
-    FlyableLegTransition(FlyableLegState nextState, Double probability) {
-      this.nextState = nextState;
-      this.probability = probability;
-    }
-
-    @Override
-    public FlyableLegState getTransition() {
-      return nextState;
-    }
-
-    @Override
-    public Double getTransitionProbability() {
-      return probability;
-    }
-
-    @Override
-    public String toString() {
-      return "nextState=" + nextState.flyableLeg() +
-          ",probability=" + probability;
-    }
+  private static Double legScore(ConformablePoint pt, FlyableLeg leg) {
+    return leg.onLegScorer().score(pt, leg).orElse(1e-10);
   }
+
+  private Collection<FlyableLeg> validTransitions(FlyableLeg s) {
+    return Stream.concat(flyableLegGraph.downstreamLegsOf(s).stream(), Stream.of(s)).collect(Collectors.toList());
+  }
+
+  private static Double transitionScore(FlyableLeg l1, FlyableLeg l2) {
+    return l1.legTransitionScorer().transitionScore(l1, l2);
+  }
+
 
   public static ScoreBasedRouteResolver withConformableLegs(List<FlyableLeg> flyableLegs) {
     return new ScoreBasedRouteResolver(FlyableLegGraph.withFlyableLegs(flyableLegs), flyableLegs);
@@ -134,4 +74,5 @@ public class ScoreBasedRouteResolver {
   public static ScoreBasedRouteResolver fromLegPairs(List<? extends LegPair> routeLegs) {
     return withConformableLegs(GraphicalLegReducer.with(routeLegs).flyableLegs());
   }
+
 }
