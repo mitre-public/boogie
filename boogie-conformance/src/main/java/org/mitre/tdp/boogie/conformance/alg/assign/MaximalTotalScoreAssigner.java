@@ -6,6 +6,7 @@ import java.util.NavigableMap;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTrellis;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
@@ -35,5 +36,9 @@ public class MaximalTotalScoreAssigner {
    */
   public NavigableMap<ConformablePoint, FlyableLeg> assignments() {
     return ScoreBasedRouteResolver.withConformableLegs(legList).resolveRoute(pointList);
+  }
+
+  public ViterbiTrellis<ConformablePoint, ScoreBasedRouteResolver.FlyableLegState> trellis() {
+    return ScoreBasedRouteResolver.withConformableLegs(legList).trellis(pointList);
   }
 }

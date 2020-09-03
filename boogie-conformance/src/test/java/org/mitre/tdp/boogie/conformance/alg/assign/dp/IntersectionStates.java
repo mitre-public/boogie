@@ -24,7 +24,7 @@ public enum IntersectionStates implements HmmState<Integer> {
   }
 
   @Override
-  public List<HmmTransition> getPossibleTransitions(Integer stage) {
-    return IntersectionTransitions.getTransition(this, stage);
+  public List<HmmTransition> getPossibleTransitions() {
+    return IntersectionTransitions.getTransition(this);
   }
 }

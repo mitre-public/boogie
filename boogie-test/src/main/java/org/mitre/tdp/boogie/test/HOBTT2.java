@@ -20,6 +20,7 @@ import org.mitre.tdp.boogie.TransitionType;
 /**
  * A mocked copy of the HOBTT2 Procedure at KATL from cycle 1913 for use in testing.
  */
+@SuppressWarnings("squid:S117")
 public class HOBTT2 {
 
   private final Map<String, Transition> transitions;

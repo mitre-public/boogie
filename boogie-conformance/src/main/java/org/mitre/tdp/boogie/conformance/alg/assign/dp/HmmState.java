@@ -15,5 +15,5 @@ public interface HmmState<T> {
 
   double getValue(T stage);
 
-  List<? extends HmmTransition> getPossibleTransitions(T stage);
+  List<? extends HmmTransition> getPossibleTransitions();
 }

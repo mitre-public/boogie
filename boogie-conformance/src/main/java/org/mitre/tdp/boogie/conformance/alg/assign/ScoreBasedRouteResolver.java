@@ -15,6 +15,7 @@ import java.util.NavigableMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTrellis;
 
 /**
  * A score based route resolved is configured with an input collection of {@link FlyableLeg} which are used in conjunction with
@@ -41,13 +42,13 @@ public class ScoreBasedRouteResolver {
     this.availableStates = consecutiveLegs.stream().collect(Collectors.toMap(Function.identity(), FlyableLegState::new));
   }
 
-  public NavigableMap<ConformablePoint, ViterbiTagger.ScoredState<FlyableLegState>> resolveAssignedStates(List<? extends ConformablePoint> conformablePoints) {
-    return new ViterbiTagger<>(conformablePoints, availableStates.values()).optimalScoredPath();
+  public NavigableMap<ConformablePoint, FlyableLeg> resolveRoute(List<? extends ConformablePoint> conformablePoints) {
+    NavigableMap<ConformablePoint, FlyableLegState> z = ViterbiTagger.forHmmStates(conformablePoints, availableStates.values()).optimalPath();
+    return Maps.transformValues(z, scoredState -> scoredState.flyableLeg());
   }
 
-  public NavigableMap<ConformablePoint, FlyableLeg> resolveRoute(List<? extends ConformablePoint> conformablePoints) {
-    NavigableMap<ConformablePoint, ViterbiTagger.ScoredState<FlyableLegState>> z = resolveAssignedStates(conformablePoints);
-    return Maps.transformValues(z, scoredState -> scoredState.state().flyableLeg());
+  public ViterbiTrellis<ConformablePoint, FlyableLegState> trellis(List<? extends ConformablePoint> conformablePoints) {
+    return ViterbiTagger.forHmmStates(conformablePoints, availableStates.values()).trellis();
   }
 
   /**
@@ -77,14 +78,14 @@ public class ScoreBasedRouteResolver {
      * The set of all possible transitions from the given state - this is taken to be all downstream legs as well as the current leg.
      */
     @Override
-    public List<HmmTransition<ConformablePoint, FlyableLegState>> getPossibleTransitions(ConformablePoint stage) {
+    public List<HmmTransition<ConformablePoint, FlyableLegState>> getPossibleTransitions() {
       // include the downstream legs as well as the current leg as valid transition targets
       List<FlyableLeg> downstreamLegs = flyableLegGraph.downstreamLegsOf(flyableLeg());
       List<HmmTransition<ConformablePoint, FlyableLegState>> res = Stream.concat(downstreamLegs.stream(), Stream.of(flyableLeg()))
           .distinct()
           .map(legs -> new FlyableLegTransition(
               availableStates.get(legs),
-              flyableLeg().legTransitionScorer().transitionScore(stage, flyableLeg(), legs)))
+              flyableLeg().legTransitionScorer().transitionScore(flyableLeg(), legs)))
           .collect(Collectors.toList());
       return res;
     }

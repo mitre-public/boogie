@@ -18,39 +18,38 @@ class TestViterbiTagger {
   private static final NavigableSet<Long> stages = LongStream.range(0, 10).boxed()
       .collect(Collectors.toCollection(TreeSet::new));
 
-  // this is basically an abs value function with a slope of 2 centered at 5
-  private static final Function<Long, Double> linear = t -> FastMath.abs((-2.0 * t) + 10.0) / 10.0;
+  // this is basically an abs value function with a slope of 0.2 centered at 5
   private static final List<Integer> stages2 = Arrays.asList(0, 1, 2, 3, 4, 5);
   private static final List<IntersectionStates> states = Arrays.asList(IntersectionStates.values());
 
   @Test
   void testTagger() {
-    ViterbiTagger<Integer, IntersectionStates> tagger = new ViterbiTagger<>(stages2, states);
+    ViterbiTagger<Integer, IntersectionStates> tagger = ViterbiTagger.forHmmStates(stages2, states);
 
     NavigableMap<Integer, IntersectionStates> path = tagger.optimalPath();
 
     assertEquals(Arrays.asList(
+        IntersectionStates.B,
+        IntersectionStates.B,
+        IntersectionStates.B,
+        IntersectionStates.B,
         IntersectionStates.C,
-        IntersectionStates.C,
-        IntersectionStates.B,
-        IntersectionStates.B,
-        IntersectionStates.B,
         IntersectionStates.C), new ArrayList<>(path.values()));
 
-    assertEquals(-1.66, tagger.optimalScoredPath().get(5).score(), 0.01);
+    assertEquals(-2.87, tagger.trellis().optimalPathScoreAt(5).logLikelihood(), 0.01);
   }
 
   @Test
   void testForwardMinMax() {
-    ViterbiTagger<Long, State> tagger = new ViterbiTagger<>(stages, Arrays.asList(State.values()));
+    ViterbiTagger<Long, State> tagger = ViterbiTagger.forHmmStates(stages, Arrays.asList(State.values()));
 
-    assertFalse(tagger.optimizedStates().isEmpty());
-    assertEquals(Arrays.asList(B, A, B, B, B, B, B, B, B, A), new ArrayList<>(tagger.optimalPath().values()));
+    assertFalse(tagger.trellis().optimalPath().isEmpty());
+    assertEquals(Arrays.asList(A, B, A, B, B, B, B, B, B, B), new ArrayList<>(tagger.optimalPath().values()));
   }
 
   enum State implements HmmState<Long> {
-    A(x -> x.doubleValue() + 1.0),
-    B(x -> x.doubleValue() + 2.0);
+    A(x -> Math.pow(0.8, x.doubleValue())),
+    B(x -> Math.pow(0.9, x.doubleValue()));
 
     private final Function<Long, Double> scorer;
 
@@ -64,15 +63,15 @@ class TestViterbiTagger {
     }
 
     @Override
-    public List<? extends HmmTransition<?, ?>> getPossibleTransitions(Long stage) {
+    public List<? extends HmmTransition<?, ?>> getPossibleTransitions() {
       switch (this) {
         case A:
           return Arrays.asList(
               new Transition(A, 0.5),
-              new Transition(B, linear.apply(stage)));
+              new Transition(B, 0.6));
         case B:
           return Arrays.asList(
-              new Transition(A, linear.apply(stage)),
+              new Transition(A, 0.6),
               new Transition(B, 0.5));
         default:
           throw new RuntimeException();
