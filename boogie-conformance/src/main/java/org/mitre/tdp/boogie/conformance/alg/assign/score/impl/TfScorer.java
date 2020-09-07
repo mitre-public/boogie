@@ -5,6 +5,7 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.MissingRequ
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.HasPosition;
@@ -20,9 +21,22 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
  */
 public class TfScorer implements OffTrackScorer {
 
+  /**
+   * The weight function to use when weighting the on leg score by cross track distance from the leg.
+   */
+  private final Function<Double, Double> offTrackDistanceWeight;
+
+  public TfScorer() {
+    this(simpleLogistic(5.0, 10.0));
+  }
+
+  public TfScorer(Function<Double, Double> offTrackDistanceWeight) {
+    this.offTrackDistanceWeight = offTrackDistanceWeight;
+  }
+
   @Override
   public double weightFn(Distance distance) {
-    return simpleLogistic(5.0, 10.0).apply(distance.inNauticalMiles());
+    return offTrackDistanceWeight.apply(distance.inNauticalMiles());
   }
 
   @Override

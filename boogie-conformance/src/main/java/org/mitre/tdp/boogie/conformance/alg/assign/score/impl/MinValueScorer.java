@@ -10,8 +10,10 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
  */
 public class MinValueScorer implements OnLegScorer {
 
+  public static double MIN_SCORE = 1e-5;
+
   @Override
   public double scoreAgainstLeg(ConformablePoint that, FlyableLeg legTriple) {
-    return 1e-5;
+    return MIN_SCORE;
   }
 }

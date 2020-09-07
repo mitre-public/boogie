@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
-import com.google.common.base.Preconditions;
 import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Wrapper for likelihood values, stored internally as log-likelihoods to prevent Double underflow.
@@ -23,6 +24,14 @@ public final class Likelihood implements Comparable<Likelihood> {
 
   public Likelihood times(Double that) {
     return times(valueOf(that));
+  }
+
+  public boolean isLessThan(Likelihood that) {
+    return this.l < that.l;
+  }
+
+  public boolean isGreaterThan(Likelihood that) {
+    return this.l > that.l;
   }
 
   public static Likelihood valueOf(double d) {
