@@ -96,7 +96,7 @@ subprojects {
         reports {
             xml.isEnabled = false
             html.isEnabled = true
-            html.stylesheet = resources.text.fromFile("${rootProject.rootDir}/config/xsl/checksytle-report-stylesheet.xml")
+            html.stylesheet = resources.text.fromFile("${rootProject.rootDir}/config/xsl/checkstyle-report-stylesheet.xml")
         }
     }
 }
