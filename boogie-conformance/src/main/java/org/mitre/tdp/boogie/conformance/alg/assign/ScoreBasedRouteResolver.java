@@ -6,11 +6,13 @@ import java.util.NavigableMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTrellis;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.impl.MinValueScorer;
 
 /**
  * A score based route resolved is configured with an input collection of {@link FlyableLeg} which are used in conjunction with
@@ -31,6 +33,9 @@ public class ScoreBasedRouteResolver {
    * The configured list of all available {@link FlyableLeg}s for the assignment.
    */
   private final List<FlyableLeg> flyableLegs;
+
+  private static final Leg UNKNOWN_LEG = new UnknownLeg();
+  private static final FlyableLeg UNKNOWN_FLYABLE_LEG = new FlyableLeg(null, UNKNOWN_LEG, null).setOnLegScorer(new MinValueScorer()).setLegTransitionScorer((x, y) -> 1e-5);
 
   private ScoreBasedRouteResolver(FlyableLegGraph flyableLegGraph, List<FlyableLeg> flyableLegs) {
     this.flyableLegGraph = flyableLegGraph;
@@ -55,13 +60,18 @@ public class ScoreBasedRouteResolver {
   }
 
   private Collection<FlyableLeg> validTransitions(FlyableLeg s) {
-    return Stream.concat(flyableLegGraph.downstreamLegsOf(s).stream(), Stream.of(s)).collect(Collectors.toList());
+    if (s.equals(UNKNOWN_FLYABLE_LEG)) {
+      return flyableLegs;
+    }
+    return Stream.concat(flyableLegGraph.downstreamLegsOf(s).stream(), Stream.of(s, UNKNOWN_FLYABLE_LEG)).collect(Collectors.toList());
   }
 
   private static Double transitionScore(FlyableLeg l1, FlyableLeg l2) {
+    if (l1 == UNKNOWN_FLYABLE_LEG) {
+      return 1e-5;
+    }
     return l1.legTransitionScorer().transitionScore(l1, l2);
   }
-
 
   public static ScoreBasedRouteResolver withConformableLegs(List<FlyableLeg> flyableLegs) {
     return new ScoreBasedRouteResolver(FlyableLegGraph.withFlyableLegs(flyableLegs), flyableLegs);
