@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -80,6 +81,19 @@ public class GraphicalLegReducer {
    * Returns the list of all valid {@link LegPair}s from the reduced graph.
    */
   public List<LegPair> legPairs() {
+//    return reducedGraph.vertexSet().stream().flatMap(vertex -> {
+//      Set<DefaultEdge> incomingLegs = reducedGraph.incomingEdgesOf(vertex);
+//      Set<DefaultEdge> outgoingLegs = reducedGraph.outgoingEdgesOf(vertex);
+//
+//      Leg current = legMapping.get(vertex);
+//      if (!incomingLegs.isEmpty() && !outgoingLegs.isEmpty()){
+//        return Stream.concat(
+//            incomingLegs.stream().map(edge -> new LegPairImpl(legMapping.get(reducedGraph.getEdgeSource(edge)), current).setSourceObject(sourceObjectMapping.get(current))),
+//            outgoingLegs.stream().map(edge -> new LegPairImpl(current, legMapping.get(reducedGraph.getEdgeTarget(edge))).setSourceObject())
+//        )
+//      }
+//    })
+
     return reducedGraph.edgeSet().stream().map(edge -> {
       Leg previous = legMapping.get(reducedGraph.getEdgeSource(edge));
       Leg current = legMapping.get(reducedGraph.getEdgeTarget(edge));

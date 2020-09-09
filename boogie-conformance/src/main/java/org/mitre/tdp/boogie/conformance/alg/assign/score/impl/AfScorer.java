@@ -24,7 +24,7 @@ public class AfScorer implements OnLegScorer {
   @Override
   public double scoreAgainstLeg(ConformablePoint point, FlyableLeg legTriple) {
     checkArgument(legTriple.current().type().equals(PathTerm.AF), "Incorrect to leg in AF leg scorer.");
-    Function<Double, Double> wfn = simpleLogistic(1.0, 2.0);
+    Function<Double, Double> wfn = simpleLogistic(0.5, 1.0);
 
     Fix navaid = legTriple.current().recommendedNavaid().orElseThrow(supplier("Recommended Navaid"));
     double radius = legTriple.current().rho().orElseThrow(supplier("Rho"));

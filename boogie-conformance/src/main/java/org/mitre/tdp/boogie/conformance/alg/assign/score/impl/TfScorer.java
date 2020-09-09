@@ -27,7 +27,7 @@ public class TfScorer implements OffTrackScorer {
   private final Function<Double, Double> offTrackDistanceWeight;
 
   public TfScorer() {
-    this(simpleLogistic(5.0, 10.0));
+    this(simpleLogistic(1.0, 2.0));
   }
 
   public TfScorer(Function<Double, Double> offTrackDistanceWeight) {

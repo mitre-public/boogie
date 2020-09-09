@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.conformance.alg.assign;
 
 import java.time.Duration;
 import java.util.Optional;
+
 import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -9,7 +10,24 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.SpeedLimit;
 import org.mitre.tdp.boogie.TurnDirection;
 
+/**
+ * Singleton instance of a leg with no known features. This is useful as a stand in for a state representing the aircraft
+ * not being assigned to any state in particular (see {@link ScoreBasedRouteResolver}).
+ */
 public class UnknownLeg implements Leg {
+
+  private static final UnknownLeg INSTANCE = new UnknownLeg();
+
+  private UnknownLeg() {
+  }
+
+  /**
+   * Returns the singleton instance of the unknown leg.
+   */
+  public static UnknownLeg getInstance() {
+    return INSTANCE;
+  }
+
   @Override
   public Fix pathTerminator() {
     return null;
@@ -27,7 +45,7 @@ public class UnknownLeg implements Leg {
 
   @Override
   public PathTerm type() {
-    return PathTerm.DF;
+    return PathTerm.UNK;
   }
 
   @Override

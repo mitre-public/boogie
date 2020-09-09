@@ -1,12 +1,11 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score.impl;
 
-import static org.apache.commons.math3.util.FastMath.abs;
-import static org.mitre.caasd.commons.Spherical.angleDifference;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.MissingRequiredFieldException.supplier;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 
 import java.util.function.Function;
 
+import org.mitre.caasd.commons.HasPosition;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerm;
@@ -15,24 +14,19 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
  * This is the default conformance scorer for {@link PathTerm#DF} legs.
+ *
+ * The class uses the projected distance offset from the DF path terminator to score the leg as being flown.
  */
 public class DfScorer implements OnLegScorer {
 
-  private final Function<Double, Double> courseWeight;
   private final Function<Double, Double> distanceWeight;
 
   public DfScorer() {
-    this.courseWeight = simpleLogistic(10.0, 20.0);
-    this.distanceWeight = x -> 1.0; // temporary, until the next pass on all scoring functions
+    this.distanceWeight = simpleLogistic(1.0, 2.0);
   }
 
-  public DfScorer(Function<Double, Double> courseWeight, Function<Double, Double> distanceWeight) {
-    this.courseWeight = courseWeight;
+  public DfScorer(Function<Double, Double> distanceWeight) {
     this.distanceWeight = distanceWeight;
-  }
-
-  public Function<Double, Double> courseWeight() {
-    return courseWeight;
   }
 
   public Function<Double, Double> distanceWeight() {
@@ -44,12 +38,10 @@ public class DfScorer implements OnLegScorer {
     Fix pathTerminator = legTriple.current().pathTerminator();
 
     double distance = that.distanceInNmTo(pathTerminator);
-    double courseBetween = that.courseInDegrees(pathTerminator);
+    double pointCourse = that.trueCourse().orElseThrow(supplier("Point Course"));
 
-    double angleDiff = angleDifference(that.trueCourse().orElseThrow(supplier("Point Course")), courseBetween);
-    double wcrs = courseWeight().apply(abs(angleDiff));
-    double wdst = distanceWeight().apply(distance);
-
-    return wcrs * wdst;
+    HasPosition projectedPosition = that.projectOut(pointCourse, distance);
+    double weight = distanceWeight().apply(projectedPosition.distanceInNmTo(pathTerminator));
+    return weight;
   }
 }
