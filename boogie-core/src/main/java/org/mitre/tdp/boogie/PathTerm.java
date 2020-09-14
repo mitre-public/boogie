@@ -214,7 +214,11 @@ public enum PathTerm implements LegType {
   HM(l -> l.pathTerminator() != null
       && l.turnDirection().isPresent()
       && l.outboundMagneticCourse().isPresent()
-      && l.routeDistance().isPresent());
+      && l.routeDistance().isPresent()),
+  /**
+   * Unknown path terminator type - used to represent manually defined legs.
+   */
+  UNK(l -> true);
 
   private final Predicate<Leg> valid;
 

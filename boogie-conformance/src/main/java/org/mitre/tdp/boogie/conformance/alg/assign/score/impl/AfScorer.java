@@ -21,10 +21,19 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngles;
  */
 public class AfScorer implements OnLegScorer {
 
+  private final Function<Double, Double> offTrackWeight;
+
+  public AfScorer() {
+    this(simpleLogistic(0.5, 1.0));
+  }
+
+  public AfScorer(Function<Double, Double> offTrackWeight) {
+    this.offTrackWeight = offTrackWeight;
+  }
+
   @Override
   public double scoreAgainstLeg(ConformablePoint point, FlyableLeg legTriple) {
     checkArgument(legTriple.current().type().equals(PathTerm.AF), "Incorrect to leg in AF leg scorer.");
-    Function<Double, Double> wfn = simpleLogistic(1.0, 2.0);
 
     Fix navaid = legTriple.current().recommendedNavaid().orElseThrow(supplier("Recommended Navaid"));
     double radius = legTriple.current().rho().orElseThrow(supplier("Rho"));
@@ -40,7 +49,7 @@ public class AfScorer implements OnLegScorer {
     double radialScore = RadialAngles.of(boundaryRadial, fixRadial, turnDirection).contains(pointRadial) ? 1.0 : 0.0;
 
     double pointDistance = navaid.distanceInNmTo(point);
-    double distanceScore = wfn.apply(abs(pointDistance - radius));
+    double distanceScore = offTrackWeight.apply(abs(pointDistance - radius));
 
     return distanceScore * radialScore;
   }

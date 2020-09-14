@@ -20,23 +20,20 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 public class CfScorer implements OnLegScorer {
 
   private final Function<Double, Double> courseWeight;
-  private final Function<Double, Double> distanceWeight;
+  private final DfScorer dfScorer;
 
   public CfScorer() {
-    this.courseWeight = simpleLogistic(5.0, 9.0);
-    this.distanceWeight = simpleLogistic(20.0, 40.0);
+    this(simpleLogistic(5.0, 10.0), simpleLogistic(0.5, 1.0));
   }
 
   public CfScorer(Function<Double, Double> courseWeight, Function<Double, Double> distanceWeight) {
     this.courseWeight = courseWeight;
-    this.distanceWeight = distanceWeight;
+    this.dfScorer = new DfScorer(distanceWeight);
   }
 
   @Override
   public double scoreAgainstLeg(ConformablePoint that, FlyableLeg legTriple) {
     Fix pathTerminator = legTriple.current().pathTerminator();
-
-    double distance = that.distanceInNmTo(pathTerminator);
 
     Fix navaid = legTriple.current().recommendedNavaid().orElseThrow(supplier("Recommended Navaid"));
 
@@ -56,8 +53,6 @@ public class CfScorer implements OnLegScorer {
     double magneticCourse = localVariation.trueToMagnetic(trueCourse);
 
     Double wcrs = courseWeight.apply(abs(angleDifference(magneticCourse, courseToFix)));
-    Double wdst = distanceWeight.apply(distance);
-
-    return wcrs * wdst;
+    return wcrs * dfScorer.scoreAgainstLeg(that, legTriple);
   }
 }

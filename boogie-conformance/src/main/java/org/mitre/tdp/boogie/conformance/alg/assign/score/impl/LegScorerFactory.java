@@ -4,6 +4,9 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
+/**
+ * Simple leg scorer factory for generating leg scorers based off of the {@link PathTerm} of a leg.
+ */
 public class LegScorerFactory {
 
   /**
@@ -27,8 +30,10 @@ public class LegScorerFactory {
       case FA:
         // similar scoring functions, for FA we could check alignment from fix but probably un-necessary
         return new CaScorer();
+      case IF:
+        return new IfScorer();
       default:
-        return new MinValueScorer();
+        return UnscoreableLegScorer.getInstance();
     }
   }
 }

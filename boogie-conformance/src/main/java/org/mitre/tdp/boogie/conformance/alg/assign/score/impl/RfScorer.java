@@ -4,6 +4,7 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.MissingRequ
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.commons.math3.util.FastMath;
 import org.mitre.caasd.commons.Distance;
@@ -21,6 +22,16 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngles;
  * This is the default conformance scorer for {@link PathTerm#RF} legs.
  */
 public class RfScorer implements OffTrackScorer {
+
+  private final Function<Double, Double> offTrackWeight;
+
+  public RfScorer() {
+    this.offTrackWeight = simpleLogistic(0.25, 0.5);
+  }
+
+  public RfScorer(Function<Double, Double> offTrackWeight) {
+    this.offTrackWeight = offTrackWeight;
+  }
 
   @Override
   public double scoreAgainstLeg(ConformablePoint point, FlyableLeg legTriple) {
@@ -56,7 +67,7 @@ public class RfScorer implements OffTrackScorer {
 
   @Override
   public double weightFn(Distance distance) {
-    return simpleLogistic(0.75, 1.25).apply(distance.inNauticalMiles());
+    return offTrackWeight.apply(distance.inNauticalMiles());
   }
 
   @Override

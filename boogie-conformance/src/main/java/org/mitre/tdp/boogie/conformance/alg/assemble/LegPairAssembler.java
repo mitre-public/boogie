@@ -3,52 +3,49 @@ package org.mitre.tdp.boogie.conformance.alg.assemble;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 /**
- * Assembles only the concrete legs pair from a given input piece of infrastructure.
- *
- * When we say concrete legs we refer solely to those which terminate in a concrete fix.
+ * Assembly logic for converting an ordered sequence of legs into a set of leg pairs.
  */
-@FunctionalInterface
-public interface LegPairAssembler {
+public class LegPairAssembler {
+  /**
+   * A filter predicate for removing legs which are skippable/not required from the collection of legs to assemble.
+   */
+  private Predicate<Leg> legFilter = leg -> true;
+
+  public LegPairAssembler setLegFilter(Predicate<Leg> legFilter) {
+    this.legFilter = legFilter;
+    return this;
+  }
+
+  public List<LegPairImpl> assemble(List<? extends Leg> legs) {
+    return assemble(legs, LegPairImpl::new);
+  }
 
   /**
-   * Returns whether the leg should be included or skipped when building the {@link LegPair}s.
+   * Generates a collection of leg pairs from the input collection of sequentially ordered legs and the provided templated
+   * leg assembler function.
    */
-  boolean includeLeg(Leg leg);
+  public <L extends Leg, P extends LegPair> List<P> assemble(List<L> legs, BiFunction<L, L, P> assembler) {
+    List<L> filteredLegs = legs.stream().filter(legFilter).collect(Collectors.toList());
 
-  /**
-   * Generates a collection of leg triples from the input list of legs - optionally in a bidirectional
-   * fashion.
-   */
-  default List<LegPair> assemble(List<? extends Leg> legs) {
-    if (legs.stream().filter(this::includeLeg).count() < 2) {
+    if (filteredLegs.size() < 2) {
       return Collections.emptyList();
     }
 
-    List<LegPair> res = new ArrayList<>();
-    Iterators.fastslow2(legs, this::includeLeg, (l1, l2, skip) -> {
-      LegPair pair = new LegPairImpl(l1, l2);
+    List<P> res = new ArrayList<>();
+
+    Iterators.pairwise(filteredLegs, (l1, l2) -> {
+      P pair = assembler.apply(l1, l2);
       res.add(pair);
     });
+
     return res;
-  }
-
-  /**
-   * Returns a new {@link LegPairAssembler} which returns all consecutive leg pairs regardless of leg type.
-   */
-  static LegPairAssembler allPairs() {
-    return leg -> true;
-  }
-
-  /**
-   * Returns a new {@link LegPairAssembler} which only returns legs matching the given predicate.
-   */
-  static LegPairAssembler onlyAllow(Predicate<Leg> includeLeg) {
-    return includeLeg::test;
   }
 }

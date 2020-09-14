@@ -35,6 +35,7 @@ public class TestDfScorer {
 
     when(point.courseInDegrees(any())).thenCallRealMethod();
     when(point.distanceInNmTo(any())).thenCallRealMethod();
+    when(point.projectOut(any(), any())).thenCallRealMethod();
 
     double score = new DfScorer().scoreAgainstLeg(point, conformableLegs());
     assertEquals(0.95, score, 0.05);

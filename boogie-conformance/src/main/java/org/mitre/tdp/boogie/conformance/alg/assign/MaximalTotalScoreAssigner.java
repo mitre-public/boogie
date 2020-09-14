@@ -35,10 +35,10 @@ public class MaximalTotalScoreAssigner {
    * in CTD between the points and the collection of available legs.
    */
   public NavigableMap<ConformablePoint, FlyableLeg> assignments() {
-    return ScoreBasedRouteResolver.withConformableLegs(legList).resolveRoute(pointList);
+    return ScoreBasedRouteResolver.withFlyableLegs(legList).resolveRoute(pointList);
   }
 
   public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis() {
-    return ScoreBasedRouteResolver.withConformableLegs(legList).trellis(pointList);
+    return ScoreBasedRouteResolver.withFlyableLegs(legList).trellis(pointList);
   }
 }

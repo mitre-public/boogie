@@ -62,7 +62,7 @@ public class TestScoreBasedRouteAssigner {
     FlyableLeg cgn = legs(c, g, null, scorer(pointList.get(3)));
     FlyableLeg ehn = legs(e, h, null, scorer());
 
-    ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.withConformableLegs(Arrays.asList(sourceab, sourceac, abd, abe, acf, acg, bdn, beh, cfn, cgn, ehn));
+    ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.withFlyableLegs(Arrays.asList(sourceab, sourceac, abd, abe, acf, acg, bdn, beh, cfn, cgn, ehn));
     Map<ConformablePoint, FlyableLeg> mapping = resolver.resolveRoute(pointList);
 
     Map<ConformablePoint, FlyableLeg> expected = new LinkedHashMap<>();

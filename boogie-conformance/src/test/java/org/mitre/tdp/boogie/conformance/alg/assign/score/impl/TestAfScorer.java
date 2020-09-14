@@ -4,6 +4,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -31,7 +32,7 @@ public class TestAfScorer {
 
     FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
@@ -42,7 +43,7 @@ public class TestAfScorer {
 
     FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
@@ -53,7 +54,7 @@ public class TestAfScorer {
 
     FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
@@ -64,12 +65,12 @@ public class TestAfScorer {
 
     FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
 
-    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
+    assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
 
   @Test
   public void testAFPastTerminatorScore() {
-    AfScorer scorer = new AfScorer();
+    AfScorer scorer = new AfScorer(simpleLogistic(1.0, 2.0));
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -87,7 +88,7 @@ public class TestAfScorer {
 
   @Test
   public void testAFPreBoundaryRadialScore() {
-    AfScorer scorer = new AfScorer();
+    AfScorer scorer = new AfScorer(simpleLogistic(1.0, 2.0));
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -105,7 +106,7 @@ public class TestAfScorer {
 
   @Test
   public void testAFMagneticConversionMovesCourseToOutsideRadialsScore() {
-    AfScorer scorer = new AfScorer();
+    AfScorer scorer = new AfScorer(simpleLogistic(1.0, 2.0));
 
     ConformablePoint point = mock(ConformablePoint.class);
 
@@ -117,7 +118,7 @@ public class TestAfScorer {
 
   @Test
   public void testAFInBoundaryOnArcScoreHigh() {
-    AfScorer scorer = new AfScorer();
+    AfScorer scorer = new AfScorer(simpleLogistic(1.0, 2.0));
 
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
@@ -137,7 +138,7 @@ public class TestAfScorer {
 
   @Test
   public void testAFInBoundaryOffset1NMScoreModerate() {
-    AfScorer scorer = new AfScorer();
+    AfScorer scorer = new AfScorer(simpleLogistic(1.0, 2.0));
 
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
@@ -157,7 +158,7 @@ public class TestAfScorer {
 
   @Test
   public void testAFInBoundaryOffset2NMScoreLow() {
-    AfScorer scorer = new AfScorer();
+    AfScorer scorer = new AfScorer(simpleLogistic(1.0, 2.0));
 
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();

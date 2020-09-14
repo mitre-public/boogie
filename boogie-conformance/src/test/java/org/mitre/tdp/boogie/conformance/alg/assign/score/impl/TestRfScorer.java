@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,7 +28,7 @@ public class TestRfScorer {
     Fix centerFix = consecutiveLegs.current().centerFix().get();
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
-    RfScorer scorer = new RfScorer();
+    RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
     LatLong pointLocation = centerFix.projectOut(75.0, radiusNm).latLong();
     ConformablePoint point = pointAt(pointLocation);
@@ -56,7 +57,7 @@ public class TestRfScorer {
     Fix centerFix = consecutiveLegs.current().centerFix().get();
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
-    RfScorer scorer = new RfScorer();
+    RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
     LatLong pointLocation = centerFix.projectOut(357.0, radiusNm).latLong();
     ConformablePoint point = pointAt(pointLocation);
@@ -91,7 +92,7 @@ public class TestRfScorer {
     Fix centerFix = consecutiveLegs.current().centerFix().get();
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
-    RfScorer scorer = new RfScorer();
+    RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
     LatLong pointLocation = centerFix.projectOut(280.0, radiusNm).latLong();
     ConformablePoint point = pointAt(pointLocation);
@@ -122,7 +123,7 @@ public class TestRfScorer {
     Fix centerFix = consecutiveLegs.current().centerFix().get();
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
-    RfScorer scorer = new RfScorer();
+    RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
     LatLong pointLocation = centerFix.projectOut(350.0, radiusNm).latLong();
     ConformablePoint point = pointAt(pointLocation);
@@ -156,7 +157,7 @@ public class TestRfScorer {
     Fix centerFix = consecutiveLegs.current().centerFix().get();
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
-    RfScorer scorer = new RfScorer();
+    RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
     LatLong pointLocation = centerFix.projectOut(350.0, radiusNm).latLong();
     ConformablePoint point = pointAt(pointLocation);
