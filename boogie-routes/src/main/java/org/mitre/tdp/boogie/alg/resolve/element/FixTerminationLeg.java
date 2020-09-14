@@ -19,16 +19,26 @@ import org.mitre.tdp.boogie.TurnDirection;
  * 2) Direct to LatLon locations
  * 3) Direct to airport
  */
-final class SimpleDFLeg implements Leg {
+final class FixTerminationLeg implements Leg {
 
   private final Fix pathTerminator;
+  private final PathTerm pathTerm;
 
-  private SimpleDFLeg(Fix term) {
+  private FixTerminationLeg(Fix term, PathTerm pathTerm) {
     this.pathTerminator = term;
+    this.pathTerm = pathTerm;
   }
 
-  public static SimpleDFLeg from(Fix fix) {
-    return new SimpleDFLeg(fix);
+  public static FixTerminationLeg from(Fix fix, PathTerm pathTerm) {
+    return new FixTerminationLeg(fix, pathTerm);
+  }
+
+  public static FixTerminationLeg IF(Fix fix) {
+    return from(fix, PathTerm.IF);
+  }
+
+  public static FixTerminationLeg DF(Fix fix) {
+    return from(fix, PathTerm.DF);
   }
 
   @Override
@@ -48,7 +58,7 @@ final class SimpleDFLeg implements Leg {
 
   @Override
   public PathTerm type() {
-    return PathTerm.DF;
+    return pathTerm;
   }
 
   @Override

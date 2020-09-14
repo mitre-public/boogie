@@ -28,7 +28,6 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class TestRouteLegGraph {
   }
 
   private static RouteLegGraph getGraph(String route, RouteExpander expander) {
-    List<SectionSplit> splits =new IfrFormatSectionSplitter().splits(route);
+    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(route);
 
     SectionResolver resolver = SectionResolver.with(expander);
     ResolvedRoute resolved = resolver.resolve(splits);
@@ -82,7 +81,7 @@ public class TestRouteLegGraph {
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
     assertEquals("KIND", legs.get(0).split().value(), "Incorrect initial section. " + message);
     assertEquals("KIND", legs.get(0).leg().pathTerminator().identifier(), "Incorrect initial leg terminator. " + message);
-    assertEquals(PathTerm.DF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message);
+    assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message);
 
     assertEquals("BLSTR1", legs.get(1).split().value());
     assertEquals("BNDRR", legs.get(1).leg().pathTerminator().identifier());
@@ -98,7 +97,7 @@ public class TestRouteLegGraph {
 
     assertEquals("VNY", legs.get(5).split().value(), "Incorrect final section. " + message);
     assertEquals("VNY", legs.get(5).leg().pathTerminator().identifier(), "Incorrect final leg terminator. " + message);
-    assertEquals(PathTerm.DF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
+    assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
 
     assertEquals(60.007, path.getWeight(), 0.01, "Incorrect resolved shortest path weight. Check leg weight functions.");
   }
