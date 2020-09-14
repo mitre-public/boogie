@@ -41,7 +41,6 @@ public class DfScorer implements OnLegScorer {
     double pointCourse = that.trueCourse().orElseThrow(supplier("Point Course"));
 
     HasPosition projectedPosition = that.projectOut(pointCourse, distance);
-    double weight = distanceWeight().apply(projectedPosition.distanceInNmTo(pathTerminator));
-    return weight;
+    return distanceWeight().apply(projectedPosition.distanceInNmTo(pathTerminator));
   }
 }

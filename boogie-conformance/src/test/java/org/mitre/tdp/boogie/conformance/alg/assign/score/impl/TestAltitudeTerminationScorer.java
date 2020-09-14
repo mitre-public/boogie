@@ -29,11 +29,10 @@ public class TestAltitudeTerminationScorer {
     FlyableLeg consecutiveLegs = mock(FlyableLeg.class);
     when(consecutiveLegs.current()).thenReturn(va);
 
-    AltitudeTerminationScorer altitudeTerminationScorer = mock(AltitudeTerminationScorer.class);
-    when(altitudeTerminationScorer.score(any(), any())).thenCallRealMethod();
-    when(altitudeTerminationScorer.scoreAgainstLeg(any(), any())).thenCallRealMethod();
-    when(altitudeTerminationScorer.offCourseWeight(any())).thenAnswer(invocation -> simpleLogistic(10.0, 20.0).apply(invocation.getArgument(0)));
-    when(altitudeTerminationScorer.feetToTargetAltitudeWeight(any())).thenAnswer(invocation -> simpleLogistic(100.0, 250.0).apply(invocation.getArgument(0)));
+    AltitudeTerminationScorer altitudeTerminationScorer = new AltitudeTerminationScorer(
+        simpleLogistic(10.0, 20.0),
+        simpleLogistic(100.0, 250.0)
+    );
 
     ConformablePoint point = mock(ConformablePoint.class);
     when(point.trueCourse()).thenReturn(Optional.of(100.0));
