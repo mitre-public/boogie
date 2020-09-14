@@ -39,7 +39,7 @@ public class TailoredElement extends ResolvedElement<Fix> {
     LatLong projectedLocation = reference().latLong().projectOut(course, distance);
     LocationFix asFix = new LocationFix(tailored, projectedLocation);
 
-    SimpleDFLeg leg = SimpleDFLeg.from(asFix);
+    FixTerminationLeg leg = FixTerminationLeg.IF(asFix);
     GraphableLeg sleg = new GraphableLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }
