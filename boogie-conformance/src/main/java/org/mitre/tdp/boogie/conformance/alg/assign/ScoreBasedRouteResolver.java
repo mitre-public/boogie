@@ -30,7 +30,10 @@ public class ScoreBasedRouteResolver {
    * no better leg can be assigned.
    */
   private static final LegTransitionScorer UNKNOWN_LEG_TRANSITION_SCORER = (x, y) -> x.current().equals(UnknownLeg.getInstance()) && y.current().equals(UnknownLeg.getInstance()) ? 1. : 1e-1;
-  private static final FlyableLeg UNKNOWN_FLYABLE_LEG = new FlyableLeg(null, UnknownLeg.getInstance(), null).setOnLegScorer(MinValueScorer.getInstance()).setLegTransitionScorer(UNKNOWN_LEG_TRANSITION_SCORER);
+
+  private static final FlyableLeg UNKNOWN_FLYABLE_LEG = new FlyableLeg(null, UnknownLeg.getInstance(), null)
+      .setOnLegScorer(MinValueScorer.getInstance())
+      .setLegTransitionScorer(UNKNOWN_LEG_TRANSITION_SCORER);
   /**
    * The graphical representation of all of the {@link FlyableLeg} loaded into the resolver. This graph is used to determine
    * the available transitions given any particular edge state. If the edges don't show connections a transition cannot be made.
