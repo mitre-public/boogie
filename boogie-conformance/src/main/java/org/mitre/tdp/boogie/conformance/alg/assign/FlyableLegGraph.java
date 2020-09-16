@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
+import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
 /**
@@ -23,6 +24,7 @@ import org.mitre.tdp.boogie.util.Combinatorics;
 public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge> {
 
   private ConnectivityInspector<FlyableLeg, DefaultEdge> connectivityInspector;
+  private AllDirectedPaths<FlyableLeg, DefaultEdge> allDirectedPaths;
 
   public FlyableLegGraph() {
     super(DefaultEdge.class);
@@ -37,6 +39,16 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
       System.out.println("Number of connected sets: " + connectivityInspector.connectedSets().size());
     }
     return connectivityInspector;
+  }
+
+  /**
+   * The configured {@link AllDirectedPaths} object associated with the graph.
+   */
+  public AllDirectedPaths<FlyableLeg, DefaultEdge> allDirectedPaths() {
+    if (allDirectedPaths == null) {
+      this.allDirectedPaths = new AllDirectedPaths<>(this);
+    }
+    return allDirectedPaths;
   }
 
   /**
