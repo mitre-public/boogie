@@ -1,8 +1,10 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
@@ -52,6 +54,13 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
   }
 
   /**
+   * Returns a list of lists containing all directed paths between the provieded start and end leg.
+   */
+  public List<List<FlyableLeg>> allDirectedPaths(FlyableLeg start, FlyableLeg end) {
+    return allDirectedPaths().getAllPaths(start, end, true, vertexSet().size()).stream().map(GraphPath::getVertexList).collect(Collectors.toList());
+  }
+
+  /**
    * Returns the set of {@link FlyableLeg} downstream of the input consecutiveLegs. These are considered to be the set of
    * available transition targets from a given leg in the {@link ScoreBasedRouteResolver}.
    *
@@ -69,7 +78,7 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
   /**
    * Generates a new {@link FlyableLegGraph} from the input collection of {@link FlyableLeg}s.
    */
-  public static FlyableLegGraph withFlyableLegs(List<? extends FlyableLeg> conformableLegs) {
+  public static FlyableLegGraph withFlyableLegs(Collection<? extends FlyableLeg> conformableLegs) {
     FlyableLegGraph flyableLegGraph = new FlyableLegGraph();
 
     Combinatorics.pairwiseCombos(conformableLegs).forEachRemaining(pair -> {

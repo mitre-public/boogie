@@ -16,7 +16,7 @@ public class UnscoreableLegScorer implements OnLegScorer {
 
   @Override
   public double scoreAgainstLeg(ConformablePoint point, FlyableLeg legTriple) {
-    return 1e-3;
+    return 1e-10;
   }
 
   public static UnscoreableLegScorer getInstance() {
