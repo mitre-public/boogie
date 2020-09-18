@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assemble;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import org.mitre.tdp.boogie.Leg;
 
@@ -20,7 +19,7 @@ public class LegPairImpl implements LegPair {
 
   private Object sourceObject;
 
-  public LegPairImpl(@Nonnull Leg previous, @Nonnull Leg current) {
+  public LegPairImpl(Leg previous, Leg current) {
     this.previous = previous;
     this.current = current;
   }
