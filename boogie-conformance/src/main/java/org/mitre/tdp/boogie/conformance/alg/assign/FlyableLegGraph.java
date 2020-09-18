@@ -53,11 +53,15 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
     return allDirectedPaths;
   }
 
-  /**
-   * Returns a list of lists containing all directed paths between the provieded start and end leg.
-   */
   public List<List<FlyableLeg>> allDirectedPaths(FlyableLeg start, FlyableLeg end) {
-    return allDirectedPaths().getAllPaths(start, end, true, vertexSet().size()).stream().map(GraphPath::getVertexList).collect(Collectors.toList());
+    return allDirectedPaths(start, end, true);
+  }
+
+  /**
+   * Returns a list of lists containing all directed paths between the provided start and end leg.
+   */
+  public List<List<FlyableLeg>> allDirectedPaths(FlyableLeg start, FlyableLeg end, boolean simple) {
+    return allDirectedPaths().getAllPaths(start, end, simple, vertexSet().size()).stream().map(GraphPath::getVertexList).collect(Collectors.toList());
   }
 
   /**
@@ -85,8 +89,10 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
       flyableLegGraph.addVertex(pair.first());
       flyableLegGraph.addVertex(pair.second());
 
-      addEdgeIfMatching(pair.first(), pair.second(), flyableLegGraph);
-      addEdgeIfMatching(pair.second(), pair.first(), flyableLegGraph);
+      if (!pair.first().equals(pair.second())) {
+        addEdgeIfMatching(pair.first(), pair.second(), flyableLegGraph);
+        addEdgeIfMatching(pair.second(), pair.first(), flyableLegGraph);
+      }
     });
 
     return flyableLegGraph;

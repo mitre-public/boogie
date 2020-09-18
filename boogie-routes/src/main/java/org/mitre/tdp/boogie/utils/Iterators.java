@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -45,8 +46,8 @@ public class Iterators {
   }
 
   /**
-   * Takes a list of elements, a predicate, and a TriConsumer and iterates through the list providing to the consumer the first and last elements
-   * which matched the predicate and a boolean indicating whether there were elements in between them.
+   * Takes a list of elements, a predicate, and a TriConsumer and iterates through the list providing to the consumer the first
+   * and last elements which matched the predicate and a boolean indicating whether there were elements in between them.
    */
   public static <T> void fastslow(List<T> list, Predicate<T> match, TriConsumer<T, T, Boolean> consumer) {
     fastslow2(list, match, (l, h, ls) -> consumer.accept(l, h, !ls.isEmpty()));
@@ -61,13 +62,44 @@ public class Iterators {
   }
 
   /**
-   * Fast/Slow iterator for list of elements. When both the fast and slow iterators have a match the the consumer is called on the pair along with
-   * the list of skipped elements between the fast and slow iterators.
+   * Fast/Slow iterator for list of elements. When both the fast and slow iterators have a match the the consumer is called on
+   * the pair along with the list of skipped elements between the fast and slow iterators.
    *
-   * Note - This method requires that there be at least two elements which match the supplied predicate to avoid silently never calling the consumer.
+   * Note - This method requires that there be at least two elements which match the supplied predicate to avoid silently never
+   * calling the consumer.
    */
   public static <T> void fastslow2(List<T> list, Predicate<T> match, TriConsumer<T, T, List<T>> consumer) {
     Preconditions.checkArgument(checkMatchCount(list, match));
+    openClose2(list, match, (lo, hi) -> match.test(hi), consumer);
+  }
+
+  /**
+   * See {@link #openClose2(List, Predicate, BiPredicate, TriConsumer)}.
+   */
+  public static <T> void openClose(List<T> list, Predicate<T> open, Predicate<T> close, TriConsumer<T, T, Boolean> consumer) {
+    openClose2(list, open, (lo, hi) -> close.test(hi), (l, h, ls) -> consumer.accept(l, h, !ls.isEmpty()));
+  }
+
+  /**
+   * See {@link #openClose2(List, Predicate, BiPredicate, TriConsumer)}.
+   */
+  public static <T> void openClose(List<T> list, Predicate<T> open, BiPredicate<T, T> close, TriConsumer<T, T, Boolean> consumer) {
+    openClose2(list, open, close, (l, h, ls) -> consumer.accept(l, h, !ls.isEmpty()));
+  }
+
+  public static <T> void openClose2(List<T> list, Predicate<T> open, Predicate<T> close, TriConsumer<T, T, List<T>> consumer) {
+    openClose2(list, open, (lo, hi) -> close.test(hi), consumer);
+  }
+
+  /**
+   * Open/Close iterator for a sequence of elements, similar to a fast/slow iterator except the start lo condition is different
+   * than the hi condition. The close bipredicate provides arguments as (lo, hi) in case the lo element is necessary as well for
+   * determining a close condition.
+   *
+   * Note - There are no checks in this method to ensure the close ever returns true - this means the iteration may run without
+   * ever directly calling the consumer.
+   */
+  public static <T> void openClose2(List<T> list, Predicate<T> open, BiPredicate<T, T> close, TriConsumer<T, T, List<T>> consumer) {
     int n = list.size();
     int l = 0;
     int h = 1;
@@ -75,8 +107,8 @@ public class Iterators {
     while (h < n) {
       T lo = list.get(l);
       T hi = list.get(h);
-      if (match.test(lo)) {
-        if (match.test(hi)) {
+      if (open.test(lo)) {
+        if (close.test(lo, hi)) {
           consumer.accept(lo, hi, skipped);
           skipped.clear();
           l = h;
