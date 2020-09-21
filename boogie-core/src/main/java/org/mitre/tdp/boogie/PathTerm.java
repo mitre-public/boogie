@@ -18,19 +18,19 @@ public enum PathTerm implements LegType {
    *
    * Defines a fix as a point in space.
    */
-  IF(l -> l.pathTerminator() != null),
+  IF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null),
   /**
    * Track to a Fix.
    *
    * Defines a great circle track over the ground between two known fixes.
    */
-  TF(l -> l.pathTerminator() != null),
+  TF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null),
   /**
    * Course to a Fix.
    *
    * Defines a specified course to a fix.
    */
-  CF(l -> l.pathTerminator() != null
+  CF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.recommendedNavaid().isPresent()
       && l.theta().isPresent()
       && l.rho().isPresent()
@@ -41,13 +41,13 @@ public enum PathTerm implements LegType {
    *
    * Defines an unspecified track starting from an unspecified location to a fix.
    */
-  DF(l -> l.pathTerminator() != null),
+  DF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null),
   /**
    * Fix to an Altitude.
    *
    * Defines a specified track over ground from a database fix to a specified altitude at an unspecified position.
    */
-  FA(l -> l.pathTerminator() != null
+  FA(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.recommendedNavaid().isPresent()
       && l.theta().isPresent()
       && l.rho().isPresent()
@@ -57,7 +57,7 @@ public enum PathTerm implements LegType {
    *
    * Defines a specific track over ground from a fix for a specific distance.
    */
-  FC(l -> l.pathTerminator() != null
+  FC(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.recommendedNavaid().isPresent()
       && l.theta().isPresent()
       && l.rho().isPresent()
@@ -67,7 +67,7 @@ public enum PathTerm implements LegType {
    *
    * Defines a specific track over ground from a fix to a specific DME distance (the DME will be referenced and must exist).
    */
-  FD(l -> l.pathTerminator() != null
+  FD(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.recommendedNavaid().isPresent()
       && l.theta().isPresent()
       && l.rho().isPresent()
@@ -77,7 +77,7 @@ public enum PathTerm implements LegType {
    *
    * Defines a specified track over ground from a fix until manual termination of the leg.
    */
-  FM(l -> l.pathTerminator() != null
+  FM(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.recommendedNavaid().isPresent()
       && l.theta().isPresent()
       && l.rho().isPresent()
@@ -115,7 +115,7 @@ public enum PathTerm implements LegType {
    *
    * Defines a constant radius turn between two fixes, lines tangent to the arc and a center fix.
    */
-  RF(l -> l.pathTerminator() != null
+  RF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
       && l.routeDistance().isPresent()
       && l.centerFix().isPresent()),
@@ -124,7 +124,7 @@ public enum PathTerm implements LegType {
    *
    * Defines a track over ground at a specified constant distance from a DME navaid.
    */
-  AF(l -> l.pathTerminator() != null
+  AF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
       && l.recommendedNavaid().isPresent()
       && l.theta().isPresent()
@@ -172,7 +172,7 @@ public enum PathTerm implements LegType {
    *
    * Note - A maximum excursion time and distance is included as a data field.
    */
-  PI(l -> l.pathTerminator() != null
+  PI(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
       && l.recommendedNavaid().isPresent()
       && l.theta().isPresent()
@@ -187,7 +187,7 @@ public enum PathTerm implements LegType {
    *
    * HA = Altitude Termination
    */
-  HA(l -> l.pathTerminator() != null
+  HA(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
       && l.outboundMagneticCourse().isPresent()
       && l.routeDistance().isPresent()),
@@ -199,7 +199,7 @@ public enum PathTerm implements LegType {
    *
    * HF = Single circuit terminating at a fix
    */
-  HF(l -> l.pathTerminator() != null
+  HF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
       && l.outboundMagneticCourse().isPresent()
       && l.routeDistance().isPresent()),
@@ -211,7 +211,7 @@ public enum PathTerm implements LegType {
    *
    * HM = Manual Termination
    */
-  HM(l -> l.pathTerminator() != null
+  HM(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
       && l.outboundMagneticCourse().isPresent()
       && l.routeDistance().isPresent()),
