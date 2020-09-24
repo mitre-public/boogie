@@ -16,7 +16,7 @@ public abstract class SimpleService<I extends Infrastructure> implements LookupS
   }
 
   @Override
-  public Collection<I> allMatchingIdentifiers(String identifier) {
+  public Collection<I> allMatchingIdentifier(String identifier) {
     return byIdentifier.get(identifier);
   }
 }

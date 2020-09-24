@@ -13,5 +13,5 @@ public interface LookupService<I extends Infrastructure> {
   /**
    * Returns the set of infrastructure elements matching the given identifier.
    */
-  Collection<I> allMatchingIdentifiers(String identifier);
+  Collection<I> allMatchingIdentifier(String identifier);
 }

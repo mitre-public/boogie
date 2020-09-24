@@ -18,6 +18,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.models.Procedure;
 
 /**
  * "Predicts" all of the available approach procedures at the airport.
@@ -52,9 +53,9 @@ public class AllApproachPredictor implements ApproachPredictor {
    */
   private List<ResolvedElement<?>> approachProceduresAtAirport(ResolvedElement<?> element) {
     Airport airport = (Airport) element.reference();
-    Collection<ProcedureGraph> procedures = expander.procedureService().allMatchingAirport(airport.identifier());
+    Collection<Procedure> procedures = expander.procedureService().allMatchingAirport(airport.identifier());
 
-    List<ProcedureGraph> approaches = filter(procedures, procedure -> procedure.type().equals(ProcedureType.APPROACH));
+    List<Procedure> approaches = filter(procedures, procedure -> procedure.type().equals(ProcedureType.APPROACH));
     return transform(approaches, ProcedureElement::new);
   }
 }

@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.NavigationSource;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
+import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
 
 public class TestProcedureGraphService {
@@ -64,7 +64,7 @@ public class TestProcedureGraphService {
     Transition t2 = transition(ProcedureType.SID);
 
     ProcedureGraphService ps = ProcedureGraphService.withTransitions(Arrays.asList(t1, t2));
-    Collection<ProcedureGraph> procedures = ps.allMatchingIdentifiers("PROC");
+    Collection<Procedure> procedures = ps.allMatchingIdentifier("PROC");
 
     assertEquals(2, procedures.size());
     assertTrue(procedures.stream().anyMatch(p -> p.type().equals(ProcedureType.STAR)));

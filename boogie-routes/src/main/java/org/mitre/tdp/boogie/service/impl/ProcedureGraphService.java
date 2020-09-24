@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
+import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.ProcedureService;
 
 import com.google.common.collect.HashMultimap;
@@ -27,12 +28,23 @@ public final class ProcedureGraphService implements ProcedureService {
   }
 
   @Override
-  public Collection<ProcedureGraph> allMatchingIdentifiers(String identifier) {
+  public Collection<Procedure> allMatchingIdentifier(String identifier) {
+    return (Collection<Procedure>) (Collection) allGraphsMatchingIdentifier(identifier);
+  }
+
+  public Collection<ProcedureGraph> allGraphsMatchingIdentifier(String identifier) {
     return byIdentifier.get(identifier);
   }
 
   @Override
-  public Collection<ProcedureGraph> allMatchingAirport(String airport) {
+  public Collection<Procedure> allMatchingAirport(String airport) {
+    return (Collection<Procedure>) (Collection) allGraphsMatchingAirport(airport);
+  }
+
+  /**
+   * Returns all indexed procedure graph matching the airport as procedure graphs.
+   */
+  public Collection<ProcedureGraph> allGraphsMatchingAirport(String airport) {
     return byAirport.get(airport);
   }
 

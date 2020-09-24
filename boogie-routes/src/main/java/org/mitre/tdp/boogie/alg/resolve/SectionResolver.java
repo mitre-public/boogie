@@ -17,7 +17,6 @@ import java.util.stream.StreamSupport;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.RouteExpander;
-import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.element.AirwayElement;
@@ -28,6 +27,7 @@ import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.element.TailoredElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
+import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.LookupService;
 
 import com.google.common.base.Strings;
@@ -130,7 +130,7 @@ public interface SectionResolver {
 
   default List<ResolvedElement<?>> airport(String section) {
     return inflator().airportService()
-        .allMatchingIdentifiers(section)
+        .allMatchingIdentifier(section)
         .stream()
         .map(AirportElement::new)
         .collect(Collectors.toList());
@@ -147,7 +147,7 @@ public interface SectionResolver {
         : section;
 
     return inflator().fixService()
-        .allMatchingIdentifiers(s).stream()
+        .allMatchingIdentifier(s).stream()
         .map(fix -> section.equals(s)
             ? new FixElement(fix)
             : new TailoredElement(section, fix))
@@ -158,8 +158,8 @@ public interface SectionResolver {
    * Attempts to find a a procedure who's identifier matches the section.
    */
   default List<ResolvedElement<?>> procedure(String section) {
-    Collection<ProcedureGraph> procedures = inflator().procedureService()
-        .allMatchingIdentifiers(section);
+    Collection<Procedure> procedures = inflator().procedureService()
+        .allMatchingIdentifier(section);
     // Procedure objects dont handle multi-source, have to group by here
     return procedures.stream()
         // pre-filter approach procedures
@@ -194,7 +194,7 @@ public interface SectionResolver {
    * Attempts to find and airway matching the section.
    */
   default List<ResolvedElement<?>> airway(String section) {
-    return inflator().airwayService().allMatchingIdentifiers(section)
+    return inflator().airwayService().allMatchingIdentifier(section)
         .stream()
         .map(AirwayElement::new)
         .collect(Collectors.toList());
