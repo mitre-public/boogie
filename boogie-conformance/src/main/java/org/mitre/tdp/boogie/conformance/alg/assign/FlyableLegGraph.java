@@ -11,8 +11,6 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
-import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
 /**
@@ -96,14 +94,6 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
     });
 
     return flyableLegGraph;
-  }
-
-  /**
-   * Generates a new {@link FlyableLegGraph} from the input list of {@link FlyableLeg}. This graph can then be used to
-   * resolve the downstream edges of a given {@link FlyableLeg} edge.
-   */
-  public static FlyableLegGraph fromLegPairs(List<? extends LegPair> legPairs) {
-    return FlyableLegGraph.withFlyableLegs(GraphicalLegReducer.with(legPairs).flyableLegs());
   }
 
   private static void addEdgeIfMatching(FlyableLeg t1, FlyableLeg t2, FlyableLegGraph resolver) {
