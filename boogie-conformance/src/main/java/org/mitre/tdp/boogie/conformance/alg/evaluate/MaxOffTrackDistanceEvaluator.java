@@ -6,7 +6,9 @@ import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngles;
 
 /**
  * The max off track distance evaluator considers an aircraft to be non-conforming when it is outside
@@ -34,6 +36,10 @@ public interface MaxOffTrackDistanceEvaluator extends ConformanceEvaluator {
     Fix previousTerminator = legPair.previous().pathTerminator();
     Fix currentTerminator = legPair.current().pathTerminator();
 
+    if (legPair.current().type().isArc()) {
+      return arcLegOffTrackDistance(point, legPair);
+    }
+
     boolean isConcretePair = legPair.previous().type().isConcrete() && legPair.current().type().isConcrete();
     boolean hasDefinedEndpoints = previousTerminator.latLong() != null && currentTerminator.latLong() != null;
 
@@ -48,5 +54,30 @@ public interface MaxOffTrackDistanceEvaluator extends ConformanceEvaluator {
     }
 
     return Optional.empty();
+  }
+
+  /**
+   * @return Distance from the supplied {@code point} to an arc leg.  If the
+   *         point is before or after the angles included in the arc, returns
+   *         the distance to the nearest arc endpoint.
+   */
+  static Optional<Distance> arcLegOffTrackDistance(ConformablePoint point, LegPair legPair) {
+    Fix previousTerminator = legPair.previous().pathTerminator();
+    Fix currentTerminator = legPair.current().pathTerminator();
+
+    Fix centerFix = legPair.current().centerFix().orElseThrow(() -> new IllegalStateException("Center Fix required to compute off-track distance on arc"));
+    TurnDirection turnDirection = legPair.current().turnDirection().orElseThrow(() -> new IllegalStateException("Turn direction required to compute off-track distance on arc"));
+    double previousFixBearing = centerFix.courseInDegrees(previousTerminator);
+    double currentFixBearing = centerFix.courseInDegrees(currentTerminator);
+    double pointBearing = centerFix.courseInDegrees(point);
+
+    if (RadialAngles.of(previousFixBearing, currentFixBearing, turnDirection).contains(pointBearing)){
+      double radius = centerFix.distanceInNmTo(currentTerminator);
+      return Optional.of(Distance.ofNauticalMiles(Math.abs(radius - centerFix.distanceInNmTo(point))));
+    } else {
+      double previousFixDistance = previousTerminator.distanceInNmTo(point);
+      double currentFixDistance = currentTerminator.distanceInNmTo(point);
+      return Optional.of(Distance.ofNauticalMiles(Math.min(previousFixDistance, currentFixDistance)));
+    }
   }
 }
