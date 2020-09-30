@@ -65,7 +65,7 @@ public class GraphicalLegReducer {
     reducedGraph.addVertex(prevHash);
     reducedGraph.addVertex(currHash);
 
-    if (!prevHash.equals(currHash)) {
+    if (!prevHash.equals(currHash) && !(reducedGraph.containsEdge(prevHash, currHash) || reducedGraph.containsEdge(currHash, prevHash))) {
       reducedGraph.addEdge(prevHash, currHash);
     }
     return this;
