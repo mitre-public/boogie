@@ -44,7 +44,15 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
 
   private ProcedureGraph(Collection<? extends Transition> transitions, NameLocationService<Leg> nls) {
     super(DefaultEdge.class);
-    this.transitions = (Collection<Transition>) transitions;
+    if (transitions.iterator().next().procedureType().equals(ProcedureType.APPROACH)) {
+      this.transitions = (Collection<Transition>) transitions;
+    } else {
+      // sort transitions into the order in which you would fly them
+      this.transitions = TransitionTriple.from(transitions)
+          .listOrdered().stream()
+          .flatMap(Collection::stream)
+          .collect(Collectors.toList());
+    }
     this.nls = nls;
   }
 

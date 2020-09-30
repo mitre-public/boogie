@@ -253,7 +253,7 @@ public enum PathTerm implements LegType {
   /**
    * Concrete leg types are those that end with a specified fix identifier.
    */
-  public static final Predicate<PathTerm> CONCRETETYPES = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF).contains(leg);
+  public static final Predicate<PathTerm> CONCRETETYPES = leg -> Arrays.asList(IF, TF, CF, AF, DF, RF, FM).contains(leg);
 
   public static final Predicate<PathTerm> ARCTYPES = leg -> Arrays.asList(AF, RF).contains(leg);
 }

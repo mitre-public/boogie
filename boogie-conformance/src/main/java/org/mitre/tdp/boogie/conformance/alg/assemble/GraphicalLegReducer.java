@@ -48,6 +48,10 @@ public class GraphicalLegReducer {
     return reducedGraph;
   }
 
+  public Leg legAtVertex(Integer vertex) {
+    return legMapping.get(vertex).get(0);
+  }
+
   /**
    * Adds the given {@link LegPair} to the reduced graph. Multiple legs mapped to the same hash via the {@link #legHasher} are
    * stored in an {@link ArrayListMultimap} based on the order in which they were inserted into the graph.
