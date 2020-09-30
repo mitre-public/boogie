@@ -47,7 +47,14 @@ public class TestGraphicalLegReducer {
     LegPair cl1 = new LegPairImpl(leg1, leg2).setSourceObject(source1);
     LegPair cl2 = new LegPairImpl(leg2, leg3).setSourceObject(source2);
 
-    GraphicalLegReducer reducer = GraphicalLegReducer.with(Arrays.asList(cl1, cl2));
+    GraphicalLegReducer reducer = new GraphicalLegReducer(
+        LegHashers.byIdentifier()
+            .andThenBy(LegHashers.byLocation())
+            .andThenBy(LegHashers.byType())
+            .orElseBy(LegHashers.byHashCode())
+    );
+
+    Arrays.asList(cl1, cl2).forEach(reducer::addLegPair);
     List<FlyableLeg> resultantLegs = reducer.flyableLegs();
 
     assertEquals(3, resultantLegs.size());

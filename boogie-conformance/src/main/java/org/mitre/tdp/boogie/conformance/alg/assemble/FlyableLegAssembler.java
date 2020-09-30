@@ -9,13 +9,13 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.utils.Iterators;
 
-public interface FlyableLegAssembler {
+public class FlyableLegAssembler {
 
   /**
    * Generates a collection of leg triples from the input list of legs - optionally in a bidirectional
    * fashion.
    */
-  default List<FlyableLeg> assemble(List<? extends Leg> legs) {
+  public List<FlyableLeg> assemble(List<? extends Leg> legs) {
     if (legs.isEmpty()) {
       return Collections.emptyList();
     }
@@ -35,21 +35,7 @@ public interface FlyableLegAssembler {
     return forward;
   }
 
-  /**
-   * Assembles a list of sequential, bidirectional, {@link FlyableLeg}s from the given {@link Airway}.
-   */
-  default List<FlyableLeg> assembleFrom(Airway airway) {
-    return assemble(airway.legs());
-  }
-
-  /**
-   * Assembles a list of sequential {@link FlyableLeg}s from the given {@link Transition}.
-   */
-  default List<FlyableLeg> assembleFrom(Transition transition) {
-    return assemble(transition.legs());
-  }
-
   static FlyableLegAssembler allTriples() {
-    return new FlyableLegAssembler() {};
+    return new FlyableLegAssembler();
   }
 }
