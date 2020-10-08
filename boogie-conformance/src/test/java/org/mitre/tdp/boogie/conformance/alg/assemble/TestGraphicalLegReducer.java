@@ -1,20 +1,23 @@
 package org.mitre.tdp.boogie.conformance.alg.assemble;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 
 import com.google.common.collect.Sets;
+import org.mockito.stubbing.Answer;
 
 public class TestGraphicalLegReducer {
 
@@ -65,5 +68,43 @@ public class TestGraphicalLegReducer {
     assertEquals(source1, resultantLegs.get(0).getSourceObject().get());
     assertEquals(source1, resultantLegs.get(1).getSourceObject().get());
     assertEquals(source2, resultantLegs.get(2).getSourceObject().get());
+  }
+
+  @Test
+  void testArcCenterHasher() {
+    Fix pathTerminator = mock(Fix.class, "F");
+    when(pathTerminator.identifier()).thenReturn("F");
+
+    Fix rfCenter1 = mock(Fix.class, "C1");
+    when(rfCenter1.identifier()).thenReturn("C1");
+    when(rfCenter1.latLong()).thenReturn(LatLong.of(0., 1.));
+
+    Fix rfCenter2 = mock(Fix.class, "C2");
+    when(rfCenter2.identifier()).thenReturn("C2");
+    when(rfCenter2.latLong()).thenReturn(LatLong.of(0., 2.));
+
+    Leg leg1 = mock(Leg.class, "leg1");
+    when(leg1.type()).thenReturn(PathTerm.RF);
+    when(leg1.pathTerminator()).thenReturn(pathTerminator);
+    when(leg1.centerFix()).then((Answer<Optional<Fix>>) (x -> Optional.of(rfCenter1)));
+
+    Leg leg1b = mock(Leg.class, "leg1b");
+    when(leg1b.type()).thenReturn(PathTerm.RF);
+    when(leg1b.pathTerminator()).thenReturn(pathTerminator);
+    when(leg1b.centerFix()).then((Answer<Optional<Fix>>) (x -> Optional.of(rfCenter1)));
+
+    Leg leg2 = mock(Leg.class, "leg2");
+    when(leg2.type()).thenReturn(PathTerm.RF);
+    when(leg2.pathTerminator()).thenReturn(pathTerminator);
+    when(leg2.centerFix()).then((Answer<Optional<Fix>>) (x -> Optional.of(rfCenter2)));
+
+    LegHasher hasher = LegHashers.byIdentifier()
+        .andThenBy(LegHashers.byArcCenter())
+        .orElseBy(LegHashers.byHashCode());
+
+    assertEquals(hasher.hash(leg1), hasher.hash(leg1b),
+        "Arc legs with matching center fixes should have matching hashes");
+    assertNotEquals(hasher.hash(leg1), hasher.hash(leg2),
+        "Arc legs with different center fixes should have different hashes");
   }
 }
