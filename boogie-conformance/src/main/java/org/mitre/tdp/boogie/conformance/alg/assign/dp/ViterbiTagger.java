@@ -90,11 +90,13 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
 
   void computeOptimalStates() {
     if (LOG.isInfoEnabled()) {
-      LOG.info("Computing optimal states for:\n {} stages,\n {} states,\n {} trellis path options,\n {} trellis transitions",
-          String.format("%,d", stages.size()),
-          String.format("%,d", states.size()),
-          String.format("%,d", stages.size() * states.size()),
-          String.format("%,d", Long.valueOf(stages.size()) * states.size() * states.size()));
+      long numStates = states.size();
+      long numStages = stages.size();
+      LOG.info("Computing maximum-likelihood path for trellis with:\n {} states,\n {} stages,\n {} cells,\n {} transitions",
+          String.format("%,d", numStates),
+          String.format("%,d", numStages),
+          String.format("%,d", numStates * numStages),
+          String.format("%,d", numStates * numStates * numStages));
     }
     for (Stage stage : stages) {
       if (Thread.interrupted()) {
