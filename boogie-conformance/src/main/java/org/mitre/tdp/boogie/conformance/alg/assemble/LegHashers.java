@@ -48,9 +48,9 @@ public class LegHashers {
   }
 
   /**
-   * A hasher generating a hash based on whether the leg is {@link PathTerm#isArc()}.
+   * A hasher generating a hash based on the {@link Leg#centerFix()} when {@link PathTerm#isArc()}.
    */
-  public static LegHasher isArc() {
-    return leg -> Optional.of(leg.type()).map(type -> Boolean.valueOf(type.isArc()).hashCode());
+  public static LegHasher byArcCenter() {
+    return leg -> Optional.of(leg).flatMap(l -> l.type().isArc() ? l.centerFix().map(Fix::latLong).map(LatLong::hashCode) : Optional.of(1));
   }
 }

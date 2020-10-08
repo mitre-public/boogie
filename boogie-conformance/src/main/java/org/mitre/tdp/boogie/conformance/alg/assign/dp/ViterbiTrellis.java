@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 import com.google.common.base.Preconditions;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Objects;
@@ -95,6 +97,30 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
       Preconditions.checkState(x.likelihood() != null, "Issue with " + stage + ", " + x);
     });
   }
+
+  /**
+   * Visitor methods allow extracting information about the trellis
+   * without granting direct access to the internal data structures
+   */
+  public <T> void visit(StateVisitor<State, T> stateVisitor, StageVisitor<Stage, T> stageVisitor) {
+    for (Map.Entry<Stage, ScoredStage<Stage, State>> e : this.entrySet()) {
+      List<T> stageResults = e.getValue().scoredStates().stream()
+          .map(x -> stateVisitor.visit(x.state(), x.stateScore(), x.likelihood(), x.fromState()))
+          .collect(Collectors.toList());
+      stageVisitor.visit(e.getKey(), stageResults);
+    }
+  }
+
+  @FunctionalInterface
+  public static interface StateVisitor <State, T> {
+    T visit(State state, Likelihood stateScore, Likelihood cumulativeStateLikelihood, State fromState);
+  }
+
+  @FunctionalInterface
+  public static interface StageVisitor<Stage, T> {
+    void visit(Stage stage, List<T> stageResults);
+  }
+
 
   @Override
   public boolean equals(Object o) {
