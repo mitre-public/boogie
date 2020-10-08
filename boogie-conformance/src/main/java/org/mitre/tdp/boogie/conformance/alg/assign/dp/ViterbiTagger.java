@@ -13,6 +13,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Returns the maximum-likelihood state path for a sequence of observations (aka "stages").
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
  * All output likelihood values are expressed in
  */
 public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
+
+  private static final Logger LOG = LoggerFactory.getLogger(ViterbiTagger.class);
 
   private final NavigableSet<Stage> stages;
   private final LinkedHashSet<State> states; // uses a deterministic ordering
@@ -85,6 +89,13 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
   }
 
   void computeOptimalStates() {
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Computing optimal states for:\n {} stages,\n {} states,\n {} trellis path options,\n {} trellis transitions",
+          String.format("%,d", stages.size()),
+          String.format("%,d", states.size()),
+          String.format("%,d", stages.size() * states.size()),
+          String.format("%,d", Long.valueOf(stages.size()) * states.size() * states.size()));
+    }
     for (Stage stage : stages) {
       if (Thread.interrupted()) {
         this.interrupted = true;
