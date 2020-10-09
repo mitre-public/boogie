@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
@@ -49,7 +48,7 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
    * This function can take a long time to execute since its basically a m x n^2 computation where m is the number of stages
    * and n is the number of available states - assuming all transitions are valid.
    */
-  private Supplier<NavigableMap<Stage, State>> interruptedReturnSupplier = TreeMap::new;
+  private Supplier<ViterbiTrellis<Stage, State>> interruptedReturnSupplier = ViterbiTrellis::empty;
 
   /**
    * Creates a new dynamic programmer with the given stages, states, and optimization function.
@@ -68,14 +67,14 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
    * Configures an interruption return supplier. Given the potential long runtime of the algorithm it supports interruptions
    * where the return of {@link #optimalPath()} will be given by this supplier if it was interrupted during computation.
    */
-  public ViterbiTagger<Stage, State> setInterruptedReturnSupplier(Supplier<NavigableMap<Stage, State>> supplier) {
+  public ViterbiTagger<Stage, State> setInterruptedReturnSupplier(Supplier<ViterbiTrellis<Stage, State>> supplier) {
     this.interruptedReturnSupplier = supplier;
     return this;
   }
 
   public ViterbiTrellis<Stage, State> trellis() {
     checkComputeOptimals();
-    return trellis;
+    return interrupted ? this.interruptedReturnSupplier.get() : trellis;
   }
 
   public NavigableMap<Stage, State> optimalPath() {
@@ -100,6 +99,7 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
     }
     for (Stage stage : stages) {
       if (Thread.interrupted()) {
+        LOG.warn("Viterbi optimal path computation was interrupted.");
         this.interrupted = true;
         break;
       }

@@ -10,6 +10,7 @@ import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -96,6 +97,10 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
       Preconditions.checkState(x.state() != null, "Issue with " + stage + ", " + x);
       Preconditions.checkState(x.likelihood() != null, "Issue with " + stage + ", " + x);
     });
+  }
+
+  public static <S extends Comparable<? super S>, T> ViterbiTrellis<S, T> empty() {
+    return new ViterbiTrellis<S, T>(new TreeSet<>(), new LinkedHashSet<>());
   }
 
   /**
