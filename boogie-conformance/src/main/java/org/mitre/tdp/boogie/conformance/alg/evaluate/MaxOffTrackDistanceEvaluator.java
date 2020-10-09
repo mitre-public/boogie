@@ -6,6 +6,8 @@ import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngles;
@@ -65,8 +67,11 @@ public interface MaxOffTrackDistanceEvaluator extends ConformanceEvaluator {
     Fix previousTerminator = legPair.previous().pathTerminator();
     Fix currentTerminator = legPair.current().pathTerminator();
 
-    Fix centerFix = legPair.current().centerFix().orElseThrow(() -> new IllegalStateException("Center Fix required to compute off-track distance on arc"));
+    Fix centerFix = legPair.current().type().equals(PathTerm.RF) ?
+        legPair.current().centerFix().orElseThrow(() -> new IllegalStateException("Center Fix required to compute off-track distance on RF leg")) :
+        legPair.current().recommendedNavaid().orElseThrow(() -> new IllegalStateException("Recommended Navaid required to compute off-track distance on AF leg"));
     TurnDirection turnDirection = legPair.current().turnDirection().orElseThrow(() -> new IllegalStateException("Turn direction required to compute off-track distance on arc"));
+
     double previousFixBearing = centerFix.courseInDegrees(previousTerminator);
     double currentFixBearing = centerFix.courseInDegrees(currentTerminator);
     double pointBearing = centerFix.courseInDegrees(point);
