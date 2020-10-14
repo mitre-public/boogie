@@ -52,7 +52,7 @@ public class TestRouteExpander {
         CONNR5.build().transitions())
         .setDepartureRunwayPredictor(() -> Optional.of("RW16R"));
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -134,7 +134,7 @@ public class TestRouteExpander {
         HOBTT2.build().transitions())
         .setArrivalRunwayPredictor(() -> Optional.of("RW26B"));
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -189,7 +189,7 @@ public class TestRouteExpander {
         singletonList(KATL()),
         HOBTT2.build().transitions());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -218,7 +218,7 @@ public class TestRouteExpander {
         emptyList(),
         emptyList());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -265,7 +265,7 @@ public class TestRouteExpander {
         emptyList(),
         emptyList());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -313,7 +313,7 @@ public class TestRouteExpander {
         emptyList(),
         emptyList());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -360,7 +360,7 @@ public class TestRouteExpander {
         emptyList(),
         emptyList());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -390,7 +390,7 @@ public class TestRouteExpander {
         singletonList(Airports.KDEN()),
         emptyList());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -418,7 +418,7 @@ public class TestRouteExpander {
 
     RouteExpander expander = RouteExpander.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 
@@ -446,7 +446,7 @@ public class TestRouteExpander {
 
     RouteExpander expander = RouteExpander.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
 
-    ExpandedRoute expandedRoute = expander.expand(route);
+    ExpandedRoute expandedRoute = expander.expand(route).get();
 
     List<GraphableLeg> legs = expandedRoute.mergedLegs();
 

@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import org.jgrapht.GraphPath;
@@ -31,6 +32,7 @@ import org.mitre.tdp.boogie.service.impl.AirportService;
 import org.mitre.tdp.boogie.service.impl.AirwayService;
 import org.mitre.tdp.boogie.service.impl.FixService;
 import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
+import org.mitre.tdp.boogie.utils.Iterators;
 
 import com.google.common.base.Preconditions;
 
@@ -169,13 +171,20 @@ public class RouteExpander implements Serializable {
   /**
    * Takes the argument route string and expands it against the infrastructure data in the
    * provided services.
+   *
+   * This class may occasionally return {@link Optional#empty()} when the input route cannot
+   * be resolved to two or more sections (enough to actually make a route).
    */
-  public ExpandedRoute expand(@Nonnull String route) {
+  public Optional<ExpandedRoute> expand(@Nonnull String route) {
     Preconditions.checkArgument(!route.isEmpty(), "Route cannot be empty.");
 
     List<SectionSplit> splits = sectionSplitter().splits(route);
 
     ResolvedRoute resolved = sectionResolver().resolve(splits);
+
+    if (!Iterators.checkMatchCount(resolved.sections(), s -> !s.elements().isEmpty())) {
+      return Optional.empty();
+    }
 
     ResolvedSection approach = approachPredictor().predictAndCheck(
         resolved.sectionAt(resolved.sectionCount() - 2),
@@ -186,7 +195,7 @@ public class RouteExpander implements Serializable {
     RouteLegGraph graph = LegGraphFactory.build(resolved);
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
 
-    return new ExpandedRoute(route, shortestPath.getVertexList());
+    return Optional.of(new ExpandedRoute(route, shortestPath.getVertexList()));
   }
 
   /**
