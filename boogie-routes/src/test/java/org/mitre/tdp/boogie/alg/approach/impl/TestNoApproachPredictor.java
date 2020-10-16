@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.alg.approach.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
@@ -23,7 +25,7 @@ public class TestNoApproachPredictor {
     ResolvedSection s1 = newSection("KATL", 0);
     ResolvedSection s2 = newSection("KBOS", 0);
 
-    ResolvedSection approach = predictor.predictAndCheck(s1, s2);
-    assertEquals(0, approach.elements().size(), "No approach predictor returned a section with resolved elements...");
+    Optional<ResolvedSection> approach = predictor.predictAndCheck(s1, s2);
+    assertFalse(approach.isPresent(), "No approach predictor returned a section with resolved elements...");
   }
 }

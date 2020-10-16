@@ -186,14 +186,18 @@ public class RouteExpander implements Serializable {
       return Optional.empty();
     }
 
-    ResolvedSection approach = approachPredictor().predictAndCheck(
+    Optional<ResolvedSection> approach = approachPredictor().predictAndCheck(
         resolved.sectionAt(resolved.sectionCount() - 2),
         resolved.sectionAt(resolved.sectionCount() - 1));
 
-    resolved.insert(approach);
+    approach.ifPresent(resolved::insert);
 
     RouteLegGraph graph = LegGraphFactory.build(resolved);
     GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
+
+    if (shortestPath == null) {
+      return Optional.empty();
+    }
 
     return Optional.of(new ExpandedRoute(route, shortestPath.getVertexList()));
   }

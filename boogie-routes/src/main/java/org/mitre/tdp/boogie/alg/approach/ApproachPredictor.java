@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg.approach;
 import static org.mitre.tdp.boogie.utils.Collections.filter;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
@@ -24,7 +25,7 @@ public interface ApproachPredictor {
    * Takes the last two resolved sections of the route string and attempts to resolve an in-between
    * section for the final approach procedure.
    */
-  ResolvedSection predictCandidateApproaches(ResolvedSection prev, ResolvedSection last);
+  Optional<ResolvedSection> predictCandidateApproaches(ResolvedSection prev, ResolvedSection last);
 
   /**
    * Runs the approach prediction and then checks the output meets the expected contract for the
@@ -33,31 +34,28 @@ public interface ApproachPredictor {
    * {@link ApproachPredictor#checkResolvedElementTypes(ResolvedSection)}
    * {@link ApproachPredictor#checkSectionSplitInformation(ResolvedSection, ResolvedSection, ResolvedSection)}
    */
-  default ResolvedSection predictAndCheck(ResolvedSection prev, ResolvedSection last) {
-    ResolvedSection result = predictCandidateApproaches(prev, last);
-
-    checkResolvedElementTypes(result);
-    checkSectionSplitInformation(result, prev, last);
-
-    return result;
+  default Optional<ResolvedSection> predictAndCheck(ResolvedSection prev, ResolvedSection last) {
+    return predictCandidateApproaches(prev, last)
+        .map(this::checkResolvedElementTypes)
+        .map(resolvedSection -> checkSectionSplitInformation(resolvedSection, prev, last));
   }
 
   /**
    * Checks that the resolved section contains elements tagged as {@link ElementType#APPROACH}
    * filtering any non-approach elements (i.e. you cant assign a STAR with the approach predictor).
    */
-  default void checkResolvedElementTypes(ResolvedSection resolvedSection) {
+  default ResolvedSection checkResolvedElementTypes(ResolvedSection resolvedSection) {
     List<ResolvedElement<?>> allowedElements = filter(
         resolvedSection.elements(),
         element -> element.type().equals(ElementType.APPROACH));
-    resolvedSection.setElements(allowedElements);
+    return resolvedSection.setElements(allowedElements);
   }
 
   /**
    * Checks that the section split index has is between the prev/last resolution sections provided
    * to the prediction logic.
    */
-  default void checkSectionSplitInformation(ResolvedSection resolvedSection, ResolvedSection prev, ResolvedSection last) {
+  default ResolvedSection checkSectionSplitInformation(ResolvedSection resolvedSection, ResolvedSection prev, ResolvedSection last) {
     int prevIndex = prev.sectionSplit().index();
     int lastIndex = last.sectionSplit().index();
     int approachIndex = resolvedSection.sectionSplit().index();
@@ -65,5 +63,6 @@ public interface ApproachPredictor {
       last.setSectionSplit(last.sectionSplit().builder().setIndex(lastIndex + 1).build());
       resolvedSection.setSectionSplit(last.sectionSplit().builder().setIndex(lastIndex).build());
     }
+    return resolvedSection;
   }
 }

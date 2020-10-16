@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.alg.RouteExpander;
@@ -42,15 +43,15 @@ public class TestApproachPredictor {
       }
 
       @Override
-      public ResolvedSection predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
-        return returnSection;
+      public Optional<ResolvedSection> predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
+        return Optional.of(returnSection);
       }
     };
 
     ResolvedSection s1 = newSection("", 1, emptyList());
     ResolvedSection s2 = newSection("", 5, emptyList());
 
-    ResolvedSection checked = predictor.predictAndCheck(s1, s2);
+    ResolvedSection checked = predictor.predictAndCheck(s1, s2).get();
     assertEquals(0, checked.elements().size(), "Bad element types not filtered.");
   }
 
@@ -65,15 +66,15 @@ public class TestApproachPredictor {
       }
 
       @Override
-      public ResolvedSection predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
-        return returnSection;
+      public Optional<ResolvedSection> predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
+        return Optional.of(returnSection);
       }
     };
 
     ResolvedSection s1 = newSection("", 1, emptyList());
     ResolvedSection s2 = newSection("", 5, emptyList());
 
-    ResolvedSection checked = predictor.predictAndCheck(s1, s2);
+    ResolvedSection checked = predictor.predictAndCheck(s1, s2).get();
     assertEquals(1, checked.elements().size(), "Element should not have been filtered, index should have been adjusted.");
     assertEquals(5, checked.sectionSplit().index(), "Index not adjusted correctly for checked element.");
     assertEquals(6, s2.sectionSplit().index(), "Index not adjusted correctly for parameter element.");

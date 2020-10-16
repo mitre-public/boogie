@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.test.Airports.KATL;
@@ -40,6 +41,16 @@ import org.mitre.tdp.boogie.test.HOBTT2;
  * composite route elements.
  */
 public class TestRouteExpander {
+
+  @Test
+  public void testExitsEarlyWithNoResolvedElements() {
+    String route = "KDEN.CONNR5.DBL";
+
+    RouteExpander expander = RouteExpander.with(
+        emptyList(), emptyList(), emptyList(), emptyList());
+
+    assertFalse(expander.expand(route).isPresent());
+  }
 
   @Test
   public void testAPF() {

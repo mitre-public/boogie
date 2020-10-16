@@ -57,13 +57,29 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
   }
 
   /**
+   * Checker for the input collection of transitions to a given {@link ProcedureGraph}.
+   */
+  private static void checkArgument(Collection<? extends Transition> transitions) {
+    Preconditions.checkArgument(!transitions.isEmpty());
+
+    Preconditions.checkArgument(allMatch(transitions, Transition::procedure),
+        String.join(",", Collections.transform(transitions, Transition::procedure)));
+
+    Preconditions.checkArgument(allMatch(transitions, Transition::procedureType),
+        String.join(",", Collections.transform(transitions, t -> t.procedureType().name())));
+
+    Preconditions.checkArgument(allMatch(transitions, Transition::airport),
+        String.join(",", Collections.transform(transitions, Transition::airport)));
+
+    Preconditions.checkArgument(allMatch(transitions, Transition::navigationSource),
+        String.join(",", Collections.transform(transitions, t -> t.navigationSource().name())));
+  }
+
+  /**
    * Constructs a procedure graph object from the collection of transitions associated with a particular procedure.
    */
   public static ProcedureGraph from(Collection<? extends Transition> transitions) {
-    Preconditions.checkArgument(allMatch(transitions, Transition::procedure));
-    Preconditions.checkArgument(allMatch(transitions, Transition::procedureType));
-    Preconditions.checkArgument(allMatch(transitions, Transition::airport));
-    Preconditions.checkArgument(allMatch(transitions, Transition::navigationSource));
+    checkArgument(transitions);
 
     // find the terminators of the concrete leg types (these exist as actual fixes)
     Collection<Leg> concrete = transitions.stream()
