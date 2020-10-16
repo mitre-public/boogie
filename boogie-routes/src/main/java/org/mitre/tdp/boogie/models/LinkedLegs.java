@@ -10,7 +10,7 @@ public class LinkedLegs {
    * <p>
    * A non-zero weight is used to keep things deterministic.
    */
-  static final double MATCH_WEIGHT = 0.00001;
+  public static final double MATCH_WEIGHT = 0.00001;
 
   private final GraphableLeg source;
   private final GraphableLeg target;

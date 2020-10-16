@@ -5,6 +5,7 @@ import static org.mitre.tdp.boogie.utils.Collections.transform;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
@@ -36,7 +37,7 @@ public class AllApproachPredictor implements ApproachPredictor {
   }
 
   @Override
-  public ResolvedSection predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
+  public Optional<ResolvedSection> predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
     List<ResolvedElement<?>> candidates = last.elements().stream()
         .filter(element -> element.type().equals(ElementType.AIRPORT))
         .map(this::approachProceduresAtAirport)
@@ -44,7 +45,7 @@ public class AllApproachPredictor implements ApproachPredictor {
         .collect(Collectors.toList());
 
     SectionSplit split = new SectionSplit.Builder().setValue("APCH").setIndex(last.sectionSplit().index()).build();
-    return new ResolvedSection(split).setElements(candidates);
+    return Optional.of(new ResolvedSection(split).setElements(candidates));
   }
 
   /**

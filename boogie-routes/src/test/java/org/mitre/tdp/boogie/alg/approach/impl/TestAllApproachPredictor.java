@@ -54,7 +54,7 @@ public class TestAllApproachPredictor {
     ResolvedSection s1 = newSection("JIMMY1", 6, singletonList(resolvedElement(ElementType.STAR)));
     ResolvedSection s2 = newSection("KDEN", 6, singletonList(new AirportElement(kden)));
 
-    ResolvedSection section = predictor.predictCandidateApproaches(s1, s2);
+    ResolvedSection section = predictor.predictCandidateApproaches(s1, s2).get();
 
     assertEquals(1, section.elements().size());
   }

@@ -45,8 +45,13 @@ public class LegGraphFactory {
     List<LinkedLegs> legs2 = s2.allLegs();
 
     Iterator<Pair<LinkedLegs, LinkedLegs>> pairs = cartesianProduct(legs1::iterator, legs2::iterator);
+
     List<Pair<LinkedLegs, LinkedLegs>> lpairs = new ArrayList<>();
     pairs.forEachRemaining(lpairs::add);
+
+    boolean noLocations = lpairs.stream().noneMatch(pair -> pair.second().source().leg().type().isConcrete())
+        || lpairs.stream().noneMatch(pair -> pair.first().target().leg().type().isConcrete());
+
     lpairs.forEach(pair -> {
       LinkedLegs ll1 = pair.first();
       LinkedLegs ll2 = pair.second();
@@ -64,6 +69,10 @@ public class LegGraphFactory {
         double distance = lltgt.distanceInNM(llsrc);
 
         setEdgeWeight(distance, ll1.target(), ll2.source(), graph);
+      }
+
+      if (noLocations) {
+        setEdgeWeight(LinkedLegs.MATCH_WEIGHT, ll1.target(), ll2.source(), graph);
       }
     });
   }

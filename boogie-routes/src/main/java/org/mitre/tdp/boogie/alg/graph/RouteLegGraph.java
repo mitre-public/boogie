@@ -92,7 +92,9 @@ public class RouteLegGraph extends SimpleDirectedWeightedGraph<GraphableLeg, Def
         throw e;
       }
 
-      if (shortest == null || pathComparator().compare(path, shortest) < 0) {
+      if (shortest == null ||
+          // dijkstra can return null if there is no path from source->target
+          (path != null && pathComparator().compare(path, shortest) < 0)) {
         shortest = path;
       }
     }

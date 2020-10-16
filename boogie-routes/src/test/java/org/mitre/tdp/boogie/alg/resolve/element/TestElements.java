@@ -59,6 +59,7 @@ public class TestElements {
     when(transition.legs()).thenReturn((List) Arrays.asList(l1, l2, l3));
     when(transition.procedure()).thenReturn("GNDLF1");
     when(transition.procedureType()).thenReturn(ProcedureType.STAR);
+    when(transition.navigationSource()).thenReturn(() -> "CIFP");
 
     return ProcedureGraph.from(Collections.singletonList(transition));
   }
@@ -202,6 +203,12 @@ public class TestElements {
 
     assertEquals(linked.source().leg().type(), PathTerm.DF);
     assertEquals(linked.source().leg().type(), PathTerm.DF);
+  }
+
+  @Test
+  public void testProcedureElementFilteredReturnsNoLegsIfNoTransitionsPass(){
+    ProcedureElement element = new ProcedureElement(singleTransitionProcedureGraph()).setTransitionFilter(transition -> false);
+    assertEquals(Collections.emptyList(), element.buildLegs());
   }
 
   @Test

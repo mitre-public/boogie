@@ -165,7 +165,8 @@ public interface SectionResolver {
         // pre-filter approach procedures
         .filter(p -> !p.type().equals(ProcedureType.APPROACH))
         .map(ProcedureElement::new)
-        .map(procedureElement -> procedureElement.setTransitionFilter(runwayTransitionFilter().or(new CommonOrEnrouteTransitionFilter())))
+        .map(procedureElement -> procedureElement
+            .setTransitionFilter(runwayTransitionFilter().or(new CommonOrEnrouteTransitionFilter())))
         .collect(Collectors.toList());
   }
 

@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ import org.mitre.tdp.boogie.models.Procedure;
 
 public class ProcedureElement extends ResolvedElement<Procedure> {
 
-  private static Predicate<Transition> DEFAULT_TRANSITION_FILTER = new CommonOrEnrouteTransitionFilter();
+  private static final Predicate<Transition> DEFAULT_TRANSITION_FILTER = new CommonOrEnrouteTransitionFilter();
 
   /**
    * Filter for transitions to be applied prior to construction of the {@link ProcedureGraph}.
@@ -49,7 +50,15 @@ public class ProcedureElement extends ResolvedElement<Procedure> {
   public List<LinkedLegs> buildLegs() {
     List<LinkedLegs> legs = new ArrayList<>();
 
-    ProcedureGraph graph = ProcedureGraph.from(reference.transitions().stream().filter(transitionFilter).collect(Collectors.toSet()));
+    Set<Transition> filteredTransitions = reference.transitions().stream()
+        .filter(transitionFilter())
+        .collect(Collectors.toSet());
+
+    if (filteredTransitions.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    ProcedureGraph graph = ProcedureGraph.from(filteredTransitions);
 
     graph.edgeSet().forEach(edge -> {
       Leg source = graph.getEdgeSource(edge);
