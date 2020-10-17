@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
-import com.github.davidmoten.guavamini.Preconditions;
+import com.google.common.base.Preconditions;
 
 public class CompositeWeightedScorer implements OnLegScorer {
 
