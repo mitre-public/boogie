@@ -35,7 +35,7 @@ public final class Likelihood implements Comparable<Likelihood> {
   }
 
   public static Likelihood valueOf(double d) {
-    Preconditions.checkArgument(0.0 <= d && d <= 1.0, "Likelihood values must be between 0.0 and 1.0, not " + d);
+    Preconditions.checkArgument(0.0 <= d && d <= 1.0, "Likelihood values must be between 0.0 and 1.0");
     return new Likelihood(Math.log(d));
   }
 

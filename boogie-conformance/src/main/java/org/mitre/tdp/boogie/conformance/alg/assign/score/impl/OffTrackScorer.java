@@ -27,7 +27,7 @@ public interface OffTrackScorer extends OnLegScorer {
   @Override
   default double scoreAgainstLeg(ConformablePoint point, FlyableLeg legTriple) {
     double score = weightFn(offTrackDistance(point, legTriple));
-    checkArgument(1.0 >= score && score >= 0.0, "Score must be in range [0,1]. Score was: " + score + " with type: " + legTriple.current().type());
+    checkArgument(0.0 <= score && score <= 1.0, "Score must be in range [0, 1]");
     return score;
   }
 }

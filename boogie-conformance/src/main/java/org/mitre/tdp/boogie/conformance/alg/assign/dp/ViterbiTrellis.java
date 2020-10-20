@@ -41,13 +41,13 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
   }
 
   public Set<State> statesInStage(Stage fromStage) {
-    ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(fromStage), "ViterbiTrellis missing stage " + fromStage);
+    ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(fromStage), "ViterbiTrellis missing stage");
     return scoredStage.states();
   }
 
   public void updateTransitionLikelihood(Stage toStage, State fromState, State toState, Likelihood transitionScore) {
-    ScoredStage<Stage, State> fromScoredStage = Objects.requireNonNull(this.get(stages.lower(toStage)), "Missing stage " + stages.lower(toStage));
-    ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(toStage), "Missing stage " + toStage);
+    ScoredStage<Stage, State> fromScoredStage = Objects.requireNonNull(this.get(stages.lower(toStage)), "ViterbiTrellis missing expected previous stage");
+    ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(toStage), "ViterbiTrellis missing expected stage");
     Likelihood cumulativeTransitionlikelihood = fromScoredStage.stateLikelihood(fromState).times(transitionScore);
     scoredStage.updateTransitionLikelihood(fromState, toState, cumulativeTransitionlikelihood);
   }
@@ -68,7 +68,7 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
   private void checkOptimalPath() {
     State optimalState = null;
     for (Stage stage : stages.descendingSet()) {
-      ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(stage), "ViterbiTrellis missing stage " + stage);
+      ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(stage), "ViterbiTrellis missing stage");
       if (optimalState == null) {
         ScoredStage.ScoredState<State> optimalScoredState = scoredStage.scoredStates().stream().max(Comparator.comparing(x -> x.likelihood())).orElseThrow(() -> new IllegalStateException());
         scoredStage.setViterbiPathState(optimalScoredState.state());
@@ -89,14 +89,6 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
   public static <K, V1, V2> NavigableMap<K, V2> mapValues(NavigableMap<K, V1> m, Function<V1, V2> mapper) {
     return m.entrySet().stream()
         .collect(Collectors.toMap(x -> x.getKey(), x -> mapper.apply(x.getValue()), (u, v) -> {throw new IllegalStateException();}, TreeMap::new));
-  }
-
-  public void assertComplete(Stage stage) {
-    Preconditions.checkState(this.containsKey(stage));
-    this.get(stage).scoredStates().forEach(x -> {
-      Preconditions.checkState(x.state() != null, "Issue with " + stage + ", " + x);
-      Preconditions.checkState(x.likelihood() != null, "Issue with " + stage + ", " + x);
-    });
   }
 
   public static <S extends Comparable<? super S>, T> ViterbiTrellis<S, T> empty() {

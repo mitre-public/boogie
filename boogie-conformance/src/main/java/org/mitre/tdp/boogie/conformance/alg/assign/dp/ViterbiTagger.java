@@ -135,8 +135,6 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
         throw new RuntimeException("Invalid likelihood value for state: " + toState + ", stage: " + toStage, e);
       }
     }
-
-    trellis.assertComplete(toStage);
   }
 
   public static <Stage extends Comparable<? super Stage>, State extends HmmState<Stage>> ViterbiTagger<Stage, State> forHmmStates(Collection<? extends Stage> stages, Collection<? extends State> states) {

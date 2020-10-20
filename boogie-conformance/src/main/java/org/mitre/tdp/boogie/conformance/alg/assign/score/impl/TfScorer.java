@@ -73,8 +73,11 @@ public class TfScorer implements OffTrackScorer {
     double pathLength = startFix.distanceInNmTo(endFix);
 
     boolean alongSegment = atd > 0.0 && atd < pathLength;
-    double minEndpointDistance = Math.min(point.distanceInNmTo(startFix), point.distanceInNmTo(endFix));
-
-    return alongSegment ? ctd : (ctd < 0 ? -1.0 * minEndpointDistance : minEndpointDistance);
+    if (alongSegment) {
+      return ctd;
+    } else {
+      double minEndpointDistance = Math.min(point.distanceInNmTo(startFix), point.distanceInNmTo(endFix));
+      return (ctd < 0 ? -1.0 * minEndpointDistance : minEndpointDistance);
+    }
   }
 }
