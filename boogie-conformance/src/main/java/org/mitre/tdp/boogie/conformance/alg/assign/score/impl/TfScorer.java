@@ -7,7 +7,6 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunct
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
@@ -15,28 +14,31 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
  * This is the default conformance evaluator for {@link PathTerm#TF} legs.
  */
-public class TfScorer implements OffTrackScorer {
+public class TfScorer implements OnLegScorer {
 
   /**
    * The weight function to use when weighting the on leg score by cross track distance from the leg.
    */
   private final Function<Double, Double> offTrackDistanceWeight;
+  /**
+   * Weight function to use when scoring the heading delta between the leg and the track.
+   */
+  private final Function<Double, Double> headingWeight;
 
   public TfScorer() {
-    this(simpleLogistic(.5, 1.));
+    this(simpleLogistic(.5, 1.), simpleLogistic(90., 175.));
   }
 
-  public TfScorer(Function<Double, Double> offTrackDistanceWeight) {
+  public TfScorer(
+      Function<Double, Double> offTrackDistanceWeight,
+      Function<Double, Double> headingWeight) {
     this.offTrackDistanceWeight = offTrackDistanceWeight;
-  }
-
-  @Override
-  public double weightFn(Distance distance) {
-    return offTrackDistanceWeight.apply(distance.inNauticalMiles());
+    this.headingWeight = headingWeight;
   }
 
   @Override
@@ -44,18 +46,27 @@ public class TfScorer implements OffTrackScorer {
     return legTriple.previous().isPresent()
         && legTriple.previous().map(Leg::pathTerminator).isPresent()
         && legTriple.previous().map(Leg::pathTerminator).map(Fix::latLong).isPresent()
-        ? OffTrackScorer.super.score(point, legTriple) : Optional.empty();
+        ? Optional.of(scoreAgainstLeg(point, legTriple)) : Optional.empty();
   }
 
   @Override
-  public Distance offTrackDistance(ConformablePoint point, FlyableLeg legTriple) {
+  public double scoreAgainstLeg(ConformablePoint point, FlyableLeg legTriple) {
     Fix startFix = legTriple.previous().map(Leg::pathTerminator)
         .orElseThrow(supplier("pathTerminator of from leg"));
 
     Fix endFix = Optional.ofNullable(legTriple.current().pathTerminator())
         .orElseThrow(supplier("pathTerminator of to leg"));
 
-    return Distance.ofNauticalMiles(abs(endpointModifiedCrossTrackDistance(startFix, endFix, point)));
+    double distanceWeight = offTrackDistanceWeight.apply(abs(endpointModifiedCrossTrackDistance(startFix, endFix, point)));
+    double headingWeight = headingWeight(point, startFix, endFix);
+
+    return distanceWeight * headingWeight;
+  }
+
+  double headingWeight(ConformablePoint conformablePoint, Fix startFix, Fix endFix) {
+    double legCourse = startFix.courseInDegrees(endFix);
+    double angleDifference = abs(Spherical.angleDifference(conformablePoint.trueCourse().orElseThrow(supplier("required course")), legCourse));
+    return headingWeight.apply(angleDifference);
   }
 
   /**
