@@ -20,7 +20,7 @@ public class LegScorerFactory {
     switch (pathTerm) {
       case TF:
         TfScorer onTfScorer = new TfScorer();
-        TfScorer offTfScorer = new TfScorer(simpleLogistic(5., 10.));
+        TfScorer offTfScorer = new TfScorer(simpleLogistic(5., 10.), simpleLogistic(135., 175.));
         return compose(of(onTfScorer, .9), of(offTfScorer, .1));
       case DF:
         DfScorer onDfScorer = new DfScorer();
