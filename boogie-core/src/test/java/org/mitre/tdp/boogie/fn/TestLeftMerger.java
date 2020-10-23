@@ -15,25 +15,37 @@ public class TestLeftMerger {
 
   @Test
   public void testMerge() {
-    List<MergeMe> mergeMes = LongStream.range(0, 10)
+    LeftMerger<MergeMe> merger = leftMerger();
+
+    assertEquals(10, merger.reduce(reduceNone()).size());
+    assertEquals(5, merger.reduce(reduceTo5()).size());
+  }
+
+  @Test
+  public void testMergeViaCollector() {
+    LeftMerger<MergeMe> merger = leftMerger();
+
+    assertEquals(10, reduceNone().stream().collect(merger.asCollector()).size());
+    assertEquals(5, reduceTo5().stream().collect(merger.asCollector()).size());
+  }
+
+  private List<MergeMe> reduceNone() {
+    return LongStream.range(0, 10)
         .map(l -> l * 1500L)
         .mapToObj(MergeMe::new)
         .collect(Collectors.toList());
+  }
 
-    BiPredicate<MergeMe, MergeMe> pred = (m1, m2) -> m1.name.equals(m2.name) && Math.abs(m1.val - m2.val) <= 1000L;
-    BiFunction<MergeMe, MergeMe, MergeMe> mergeLeft = (m1, m2) -> m1;
-
-    LeftMerger<MergeMe> merger = new LeftMerger<>(pred, mergeLeft);
-
-    mergeMes = merger.reduce(mergeMes);
-    assertEquals(mergeMes.size(), 10);
-
-    mergeMes = LongStream.range(0, 10)
+  private List<MergeMe> reduceTo5() {
+    return LongStream.range(0, 10)
         .map(l -> l * 501L)
         .mapToObj(MergeMe::new)
         .collect(Collectors.toList());
+  }
 
-    mergeMes = merger.reduce(mergeMes);
-    assertEquals(mergeMes.size(), 5);
+  private LeftMerger<MergeMe> leftMerger() {
+    BiPredicate<MergeMe, MergeMe> pred = (m1, m2) -> m1.name.equals(m2.name) && Math.abs(m1.val - m2.val) <= 1000L;
+    BiFunction<MergeMe, MergeMe, MergeMe> mergeLeft = (m1, m2) -> m1;
+    return new LeftMerger<>(pred, mergeLeft);
   }
 }
