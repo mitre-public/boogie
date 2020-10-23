@@ -1,9 +1,16 @@
 package org.mitre.tdp.boogie.fn;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 import com.google.common.base.Preconditions;
 
@@ -66,5 +73,52 @@ public class LeftMerger<T> {
   public T nullableMerge(T m1, T m2) {
     Preconditions.checkArgument(nullMergeable(m1, m2));
     return null == m1 ? m2 : null == m2 ? m1 : mergeLeft(m1, m2);
+  }
+
+  /**
+   * Returns the given {@link LeftMerger} as a {@link Collector} which can be used to reduce elements at the end of a stream
+   * via the mergers {@link #mergeable} and {@link #mergeLeft} functions.
+   */
+  public Collector<T, List<T>, List<T>> asCollector() {
+    return new Collector<T, List<T>, List<T>>() {
+      @Override
+      public Supplier<List<T>> supplier() {
+        return ArrayList::new;
+      }
+
+      @Override
+      public BiConsumer<List<T>, T> accumulator() {
+        return (list, next) -> {
+          if (list.isEmpty()) {
+            list.add(next);
+          } else {
+            T last = list.get(list.size() - 1);
+            if (mergeable(last, next)) {
+              list.set(list.size() - 1, mergeLeft(last, next));
+            } else {
+              list.add(next);
+            }
+          }
+        };
+      }
+
+      @Override
+      public BinaryOperator<List<T>> combiner() {
+        return (l1, l2) -> {
+          l1.addAll(l2);
+          return l1;
+        };
+      }
+
+      @Override
+      public Function<List<T>, List<T>> finisher() {
+        return Function.identity();
+      }
+
+      @Override
+      public Set<Characteristics> characteristics() {
+        return Collections.singleton(Characteristics.IDENTITY_FINISH);
+      }
+    };
   }
 }
