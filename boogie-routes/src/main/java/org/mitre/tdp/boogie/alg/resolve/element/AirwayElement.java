@@ -19,13 +19,16 @@ public class AirwayElement extends ResolvedElement<Airway> {
   public List<LinkedLegs> buildLegs() {
     List<LinkedLegs> legs = new ArrayList<>();
 
-    Iterators.pairwise(reference().legs(), (l1, l2) -> {
-      GraphableLeg ssl1 = new GraphableLeg(l1);
-      GraphableLeg ssl2 = new GraphableLeg(l2);
-      legs.add(new LinkedLegs(ssl1, ssl2));
-      legs.add(new LinkedLegs(ssl2, ssl1));
-    });
+    if (reference().legs().size() >= 2) {
 
+      Iterators.pairwise(reference().legs(), (l1, l2) -> {
+        GraphableLeg ssl1 = new GraphableLeg(l1);
+        GraphableLeg ssl2 = new GraphableLeg(l2);
+        legs.add(new LinkedLegs(ssl1, ssl2));
+        legs.add(new LinkedLegs(ssl2, ssl1));
+      });
+
+    }
     return legs;
   }
 }
