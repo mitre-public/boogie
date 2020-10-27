@@ -182,7 +182,7 @@ public class RouteExpander implements Serializable {
 
     ResolvedRoute resolved = sectionResolver().resolve(splits);
 
-    if (!Iterators.checkMatchCount(resolved.sections(), s -> !s.elements().isEmpty())) {
+    if (!Iterators.checkMatchCount(resolved.sections(), s -> !s.allLegs().isEmpty())) {
       return Optional.empty();
     }
 

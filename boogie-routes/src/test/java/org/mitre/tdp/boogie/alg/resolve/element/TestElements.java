@@ -91,6 +91,18 @@ public class TestElements {
     assertEquals(linked.source().leg().type(), PathTerm.IF);
   }
 
+  // no hard exception
+  @Test
+  public void testAirwayElementSafeWithAirwaysOfLessThanTwoLegs(){
+    Leg leg = mock(Leg.class);
+
+    Airway airway = mock(Airway.class);
+    when(airway.legs()).thenReturn((List)Collections.singletonList(leg));
+
+    AirwayElement element = new AirwayElement(airway);
+    assertEquals(0, element.buildLegs().size());
+  }
+
   @Test
   public void testAirwayElement() {
     Airway airway = singleAirway();
