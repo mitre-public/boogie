@@ -31,20 +31,26 @@ public class TestRfScorer {
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
     RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
-    LatLong pointLocation = centerFix.projectOut(75.0, radiusNm).latLong();
-    ConformablePoint point = pointAt(pointLocation);
+    assertAll(
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(75.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+          assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05, "Expected 0.0 at angle 75.0");
+        },
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(135.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    pointLocation = centerFix.projectOut(135.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
+          assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1, "Expected 0.0 at angle 135.0");
+        },
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(330.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
-
-    pointLocation = centerFix.projectOut(20.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
-
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
+          assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1, "Expected 0.0 at angle 340.0");
+        }
+    );
   }
 
   @Test
@@ -60,32 +66,38 @@ public class TestRfScorer {
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
     RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
-    LatLong pointLocation = centerFix.projectOut(357.0, radiusNm).latLong();
-    ConformablePoint point = pointAt(pointLocation);
+    assertAll(
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(357.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+          assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+        },
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(10.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    pointLocation = centerFix.projectOut(10.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
+          assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+        },
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(135.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+          assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
+        },
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(320.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    pointLocation = centerFix.projectOut(135.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
-
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
-
-    pointLocation = centerFix.projectOut(320.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
-
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
+          assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
+        }
+    );
   }
 
   @Test
   public void testRfScorerRightNo0Crossing() {
     Leg rf = RF();
     when(rf.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.right()));
-    when(rf.outboundMagneticCourse()).thenReturn(Optional.of(50.0));
 
     FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null);
 
@@ -95,56 +107,26 @@ public class TestRfScorer {
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
     RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
 
-    LatLong pointLocation = centerFix.projectOut(280.0, radiusNm).latLong();
-    ConformablePoint point = pointAt(pointLocation);
+    assertAll(
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(280.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+          assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05, "Expected 1.0 at angle 280.0");
+        },
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(45.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    pointLocation = centerFix.projectOut(170.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
+          assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1, "Expected 0.0 at angle 45.0");
+        },
+        () -> {
+          LatLong pointLocation = centerFix.projectOut(110.0, radiusNm).latLong();
+          ConformablePoint point = pointAt(pointLocation);
 
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
-
-    pointLocation = centerFix.projectOut(75.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
-
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
-  }
-
-  @Test
-  public void testRfScorerRightWith0Crossing() {
-    Leg rf = RF();
-    when(rf.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.right()));
-    when(rf.theta()).thenReturn(Optional.of(275.0));
-    when(rf.outboundMagneticCourse()).thenReturn(Optional.of(140.0));
-
-    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null);
-
-    Fix pathTerminator = consecutiveLegs.current().pathTerminator();
-    Fix centerFix = consecutiveLegs.current().centerFix().get();
-
-    double radiusNm = centerFix.distanceInNmTo(pathTerminator);
-    RfScorer scorer = new RfScorer(simpleLogistic(0.75, 1.25));
-
-    LatLong pointLocation = centerFix.projectOut(350.0, radiusNm).latLong();
-    ConformablePoint point = pointAt(pointLocation);
-
-    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
-
-    pointLocation = centerFix.projectOut(35.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
-
-    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
-
-    pointLocation = centerFix.projectOut(170.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
-
-    assertEquals(0.0, scorer.score(point, consecutiveLegs).get(), 0.1);
-
-    pointLocation = centerFix.projectOut(315.0, radiusNm).latLong();
-    point = pointAt(pointLocation);
-
-    assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+          assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.1, "Expected 1.0 at angle 110.0");
+        }
+    );
   }
 
   @Test
@@ -218,12 +200,6 @@ public class TestRfScorer {
     return conformablePoint;
   }
 
-  private Leg TF() {
-    Leg leg = mock(Leg.class);
-    when(leg.type()).thenReturn(PathTerm.TF);
-    return leg;
-  }
-
   private Leg RF() {
     MagneticVariation pathTermMagvar = new MagneticVariation() {
       @Override
@@ -237,8 +213,11 @@ public class TestRfScorer {
       }
     };
 
+    LatLong ptLoc = LatLong.of(38.875502777777776, -77.05605277777778);
+    LatLong cfLoc = LatLong.of(38.838230555555555, -77.05605277777778);
+
     Fix pathTerminator = mock(Fix.class);
-    when(pathTerminator.latLong()).thenReturn(LatLong.of(38.875502777777776, -77.05605277777778));
+    when(pathTerminator.latLong()).thenReturn(ptLoc);
     when(pathTerminator.latitude()).thenCallRealMethod();
     when(pathTerminator.longitude()).thenCallRealMethod();
     when(pathTerminator.magneticVariation()).thenReturn(pathTermMagvar);
@@ -259,7 +238,7 @@ public class TestRfScorer {
     };
 
     Fix centerFix = mock(Fix.class);
-    when(centerFix.latLong()).thenReturn(LatLong.of(38.838230555555555, -77.05605277777778));
+    when(centerFix.latLong()).thenReturn(cfLoc);
     when(centerFix.latitude()).thenCallRealMethod();
     when(centerFix.longitude()).thenCallRealMethod();
     when(centerFix.magneticVariation()).thenReturn(centerFixMagvar);
@@ -277,6 +256,45 @@ public class TestRfScorer {
     when(leg.outboundMagneticCourse()).thenReturn(Optional.of(326.6));
     when(leg.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.left()));
 
+    return leg;
+  }
+
+  private Leg TF() {
+    MagneticVariation pathTermMagvar = new MagneticVariation() {
+      @Override
+      public Optional<Double> published() {
+        return Optional.of(-10.8);
+      }
+
+      @Override
+      public double modeled() {
+        return -10.829837;
+      }
+    };
+
+    RfScorer scorer = new RfScorer();
+
+    Leg rf = RF();
+    LatLong ptLoc = rf.pathTerminator().latLong();
+    LatLong cfLoc = rf.centerFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
+
+    double effectiveRadius = cfLoc.distanceInNM(ptLoc);
+
+    double course = scorer.tangentToRadial(pathTermMagvar.magneticToTrue(6.5), TurnDirection.left());
+    LatLong loc = cfLoc.projectOut(course, effectiveRadius);
+
+    Fix pathTerminator = mock(Fix.class);
+    when(pathTerminator.latLong()).thenReturn(loc);
+    when(pathTerminator.latitude()).thenCallRealMethod();
+    when(pathTerminator.longitude()).thenCallRealMethod();
+    when(pathTerminator.magneticVariation()).thenReturn(pathTermMagvar);
+    when(pathTerminator.distanceInNmTo(any())).thenCallRealMethod();
+    when(pathTerminator.courseInDegrees(any())).thenCallRealMethod();
+    when(pathTerminator.projectOut(any(), any())).thenCallRealMethod();
+
+    Leg leg = mock(Leg.class);
+    when(leg.pathTerminator()).thenReturn(pathTerminator);
+    when(leg.type()).thenReturn(PathTerm.TF);
     return leg;
   }
 }

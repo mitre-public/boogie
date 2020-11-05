@@ -7,30 +7,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngles;
 
 public class TestRadialAngles {
-
-  private TurnDirection right() {
-    TurnDirection td = mock(TurnDirection.class);
-    when(td.isRight()).thenReturn(true);
-    when(td.isLeft()).thenReturn(false);
-    return td;
-  }
-
-  private TurnDirection left() {
-    TurnDirection td = mock(TurnDirection.class);
-    when(td.isRight()).thenReturn(false);
-    when(td.isLeft()).thenReturn(true);
-    return td;
-  }
-
-  private TurnDirection either() {
-    TurnDirection td = mock(TurnDirection.class);
-    when(td.isRight()).thenReturn(true);
-    when(td.isLeft()).thenReturn(true);
-    return td;
-  }
 
   @Test
   public void testRightAngleBetween() {
@@ -59,5 +37,32 @@ public class TestRadialAngles {
   @Test
   public void testEitherAngleBetween() {
     assertTrue(RadialAngles.of(121.0, 126.0, either()).contains(123.0));
+  }
+
+  @Test
+  public void testWrappingAt360() {
+    assertFalse(RadialAngles.of(10., 360., left()).contains(350.));
+    assertFalse(RadialAngles.of(80., 360., left()).contains(90.));
+  }
+
+  private TurnDirection right() {
+    TurnDirection td = mock(TurnDirection.class);
+    when(td.isRight()).thenReturn(true);
+    when(td.isLeft()).thenReturn(false);
+    return td;
+  }
+
+  private TurnDirection left() {
+    TurnDirection td = mock(TurnDirection.class);
+    when(td.isRight()).thenReturn(false);
+    when(td.isLeft()).thenReturn(true);
+    return td;
+  }
+
+  private TurnDirection either() {
+    TurnDirection td = mock(TurnDirection.class);
+    when(td.isRight()).thenReturn(true);
+    when(td.isLeft()).thenReturn(true);
+    return td;
   }
 }

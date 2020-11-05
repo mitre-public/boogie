@@ -57,6 +57,7 @@ class TestMaxOffTrackDistanceEvaluator {
     Leg previousLeg = mock(Leg.class);
     Leg currentLeg = mock(Leg.class);
 
+    when(previousLeg.type()).thenReturn(PathTerm.TF);
     when(previousLeg.pathTerminator()).thenReturn(previousPathTerminator);
     when(currentLeg.pathTerminator()).thenReturn(currentPathTerminator);
     when(currentLeg.centerFix()).then((Answer<Optional<Fix>>) (x -> Optional.of(centerFix)));
@@ -82,6 +83,7 @@ class TestMaxOffTrackDistanceEvaluator {
     Leg previousLeg = mock(Leg.class);
     Leg currentLeg = mock(Leg.class);
 
+    when(previousLeg.type()).thenReturn(PathTerm.TF);
     when(previousLeg.pathTerminator()).thenReturn(previousPathTerminator);
     when(currentLeg.pathTerminator()).thenReturn(currentPathTerminator);
     when(currentLeg.recommendedNavaid()).then((Answer<Optional<Fix>>) (x -> Optional.of(recommendedNavaid)));
