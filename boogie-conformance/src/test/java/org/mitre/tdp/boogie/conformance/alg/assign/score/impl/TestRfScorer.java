@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score.impl;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 import static org.mockito.ArgumentMatchers.any;
@@ -183,6 +184,28 @@ public class TestRfScorer {
     point = pointAt(pointLocation);
 
     assertEquals(1.0, scorer.score(point, consecutiveLegs).get(), 0.05);
+  }
+
+  @Test
+  public void testTangentToRadial() {
+    RfScorer scorer = new RfScorer();
+    assertAll(
+        () -> assertEquals(270., scorer.tangentToRadial(0., TurnDirection.right())),
+        () -> assertEquals(90., scorer.tangentToRadial(180.0, TurnDirection.right())),
+        () -> assertEquals(90., scorer.tangentToRadial(0., TurnDirection.left())),
+        () -> assertEquals(270., scorer.tangentToRadial(180., TurnDirection.left()))
+    );
+  }
+
+  @Test
+  public void testRadialToTangent() {
+    RfScorer scorer = new RfScorer();
+    assertAll(
+        () -> assertEquals(0., scorer.radialToTangent(270., TurnDirection.right())),
+        () -> assertEquals(180., scorer.radialToTangent(90.0, TurnDirection.right())),
+        () -> assertEquals(0., scorer.radialToTangent(90., TurnDirection.left())),
+        () -> assertEquals(180., scorer.radialToTangent(270., TurnDirection.left()))
+    );
   }
 
   private ConformablePoint pointAt(LatLong latLong) {

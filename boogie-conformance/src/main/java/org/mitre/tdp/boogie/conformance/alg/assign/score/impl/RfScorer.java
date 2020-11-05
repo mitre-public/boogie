@@ -45,14 +45,14 @@ public class RfScorer implements OffTrackScorer {
         // typically in the previous leg
         .previous(Leg::outboundMagneticCourse)
         // for certain leg combinations this is contained in theta (IF:RF, RF:RF, or RF:HX)
-        .orElseGet(() -> legTriple.current().theta().orElseThrow(supplier("Inbound Tangential Course")));
+        .orElseGet(() -> legTriple.current().theta().orElseGet(() -> computeInboundTangentialCourse(legTriple)));
     double inboundTrueRadial = tangentToRadial(magneticVariation.magneticToTrue(inboundTangentialMagBearing), turnDirection);
 
     double outboundTangentialMagBearing = legTriple
         // typically in the next leg
         .next().flatMap(Leg::outboundMagneticCourse)
         // for certain leg combinations this is contained in current leg outbound (IF:RF, RF:RF, RF:HX, or RF is final leg)
-        .orElse(legTriple.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Tangential Course")));
+        .orElse(legTriple.current().outboundMagneticCourse().orElseGet(() -> computeOutboundTangentialCourse(legTriple)));
     double outboundTrueRadial = tangentToRadial(magneticVariation.magneticToTrue(outboundTangentialMagBearing), turnDirection);
 
     double pointRadialTrue = centerFix.courseInDegrees(point);
@@ -61,8 +61,25 @@ public class RfScorer implements OffTrackScorer {
     return OffTrackScorer.super.scoreAgainstLeg(point, legTriple) * radialWeight;
   }
 
-  private double tangentToRadial(Double tangentialTrueBearing, TurnDirection turnDirection) {
+  double tangentToRadial(Double tangentialTrueBearing, TurnDirection turnDirection) {
     return Spherical.mod(tangentialTrueBearing + (turnDirection.isLeft() ? 90 : -90), 360.);
+  }
+
+  double radialToTangent(Double radialTrueBearing, TurnDirection turnDirection) {
+    return Spherical.mod(radialTrueBearing - (turnDirection.isLeft() ? 90. : -90.), 360.);
+  }
+
+  double computeInboundTangentialCourse(FlyableLeg flyableLeg) {
+    Fix previousFix = flyableLeg.previous().map(Leg::pathTerminator).orElseThrow(supplier("Inbound Fix"));
+    Fix centerFix = flyableLeg.current().centerFix().orElseThrow(supplier("Arc Center Fix"));
+    TurnDirection turnDirection = flyableLeg.current().turnDirection().orElseThrow(supplier("Turn Direction"));
+    return tangentToRadial(centerFix.courseInDegrees(previousFix), turnDirection);
+  }
+
+  double computeOutboundTangentialCourse(FlyableLeg flyableLeg) {
+    Fix nextFix = flyableLeg.next().map(Leg::pathTerminator).orElseThrow(supplier("Outbound Fix"));
+    Fix currentFix = Optional.ofNullable(flyableLeg.current().pathTerminator()).orElseThrow(supplier("Current Fix"));
+    return currentFix.courseInDegrees(nextFix);
   }
 
   @Override
