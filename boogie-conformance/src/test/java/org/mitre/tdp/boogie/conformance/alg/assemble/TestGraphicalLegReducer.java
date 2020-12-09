@@ -2,7 +2,8 @@ package org.mitre.tdp.boogie.conformance.alg.assemble;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,9 +16,9 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Sets;
-import org.mockito.stubbing.Answer;
 
 public class TestGraphicalLegReducer {
 
@@ -58,7 +59,7 @@ public class TestGraphicalLegReducer {
     );
 
     Arrays.asList(cl1, cl2).forEach(reducer::addLegPair);
-    List<FlyableLeg> resultantLegs = reducer.flyableLegs();
+    List<FlyableLeg> resultantLegs = reducer.flyableLegList();
 
     assertEquals(3, resultantLegs.size());
 

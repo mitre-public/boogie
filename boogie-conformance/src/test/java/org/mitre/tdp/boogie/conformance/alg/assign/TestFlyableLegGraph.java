@@ -19,22 +19,13 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.GraphicalLegReducer;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegHashers;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assemble.LegPairImpl;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.LegScoringStrategy;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.LegTransitionScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 import com.google.common.collect.Sets;
 
 public class TestFlyableLegGraph {
-
-  private GraphicalLegReducer reducer(List<LegPair> legPairs) {
-    GraphicalLegReducer reducer = new GraphicalLegReducer(
-        LegHashers.byIdentifier()
-            .andThenBy(LegHashers.byLocation())
-            .andThenBy(LegHashers.byType())
-            .orElseBy(LegHashers.byHashCode())
-    );
-
-    legPairs.forEach(reducer::addLegPair);
-    return reducer;
-  }
 
   @Test
   public void testGrabsDownstreamLinks() {
@@ -49,7 +40,9 @@ public class TestFlyableLegGraph {
     LegPair legPair2 = new LegPairImpl(a, c);
     LegPair legPair3 = new LegPairImpl(a, d);
 
-    List<FlyableLeg> flyableLegs = reducer(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
+    List<FlyableLeg> flyableLegs = reducer(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegStream()
+        .peek(dummyStrategy()::apply).collect(Collectors.toList());
+
     FlyableLegGraph legsGraph = FlyableLegGraph.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);
@@ -79,7 +72,9 @@ public class TestFlyableLegGraph {
     LegPair legPair2 = new LegPairImpl(c, a);
     LegPair legPair3 = new LegPairImpl(d, a);
 
-    List<FlyableLeg> flyableLegs = reducer(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegs();
+    List<FlyableLeg> flyableLegs = reducer(Arrays.asList(legPair1, legPair2, legPair3, sourcePair)).flyableLegStream()
+        .peek(dummyStrategy()::apply).collect(Collectors.toList());
+
     FlyableLegGraph legsGraph = FlyableLegGraph.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(a)).findFirst().orElseThrow(RuntimeException::new);
@@ -103,13 +98,43 @@ public class TestFlyableLegGraph {
     LegPair legPair3 = new LegPairImpl(a, d);
     LegPair legPair4 = new LegPairImpl(b, e);
 
-    List<FlyableLeg> flyableLegs = reducer(Arrays.asList(legPair1, legPair2, legPair3, legPair4, sourcePair)).flyableLegs();
+    List<FlyableLeg> flyableLegs = reducer(Arrays.asList(legPair1, legPair2, legPair3, legPair4, sourcePair)).flyableLegStream()
+        .peek(dummyStrategy()::apply).collect(Collectors.toList());
+
     FlyableLegGraph legsGraph = FlyableLegGraph.withFlyableLegs(flyableLegs);
 
     FlyableLeg query = flyableLegs.stream().filter(leg -> leg.current().equals(source)).findFirst().orElseThrow(RuntimeException::new);
 
     List<FlyableLeg> downstream = legsGraph.downstreamLegsOf(query);
     assertEquals(3, downstream.size());
+  }
+
+  private LegScoringStrategy dummyStrategy(){
+    OnLegScorer onLegScorer = mock(OnLegScorer.class);
+    LegTransitionScorer legTransitionScorer = mock(LegTransitionScorer.class);
+    return new LegScoringStrategy() {
+      @Override
+      public OnLegScorer onLegScorerFor(FlyableLeg flyableLeg) {
+        return onLegScorer;
+      }
+
+      @Override
+      public LegTransitionScorer legTransitionScorer(FlyableLeg flyableLeg) {
+        return legTransitionScorer;
+      }
+    };
+  }
+
+  private GraphicalLegReducer reducer(List<LegPair> legPairs) {
+    GraphicalLegReducer reducer = new GraphicalLegReducer(
+        LegHashers.byIdentifier()
+            .andThenBy(LegHashers.byLocation())
+            .andThenBy(LegHashers.byType())
+            .orElseBy(LegHashers.byHashCode())
+    );
+
+    legPairs.forEach(reducer::addLegPair);
+    return reducer;
   }
 
   private Fix fix(String identifier) {

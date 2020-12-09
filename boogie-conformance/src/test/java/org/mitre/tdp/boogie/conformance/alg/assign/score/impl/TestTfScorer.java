@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.conformance.alg.assign.score.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,8 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
 public class TestTfScorer {
 
+  private static final TfScorer scorer = new TfScorer(simpleLogistic(.5, 1.), simpleLogistic(90., 175.));
+
   @Test
   public void testTfScorerReturnsEmptyWithNoPreviousLeg() {
     Fix pathTerminator = mock(Fix.class);
@@ -26,7 +29,7 @@ public class TestTfScorer {
     FlyableLeg legs = new FlyableLeg(null, leg, null);
 
     ConformablePoint point = mock(ConformablePoint.class);
-    assertFalse(legs.onLegScorer().score(point, legs).isPresent());
+    assertFalse(scorer.score(point, legs).isPresent());
   }
 
   @Test
@@ -41,7 +44,7 @@ public class TestTfScorer {
     FlyableLeg legs = new FlyableLeg(prev, leg, null);
 
     ConformablePoint point = mock(ConformablePoint.class);
-    assertFalse(legs.onLegScorer().score(point, legs).isPresent());
+    assertFalse(scorer.score(point, legs).isPresent());
   }
 
   @Test
@@ -58,7 +61,7 @@ public class TestTfScorer {
     FlyableLeg legs = new FlyableLeg(prev, leg, null);
 
     ConformablePoint point = mock(ConformablePoint.class);
-    assertFalse(legs.onLegScorer().score(point, legs).isPresent());
+    assertFalse(scorer.score(point, legs).isPresent());
   }
 
   @Test

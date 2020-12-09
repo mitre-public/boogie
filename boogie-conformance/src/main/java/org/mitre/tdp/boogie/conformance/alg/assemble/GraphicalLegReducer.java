@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -90,7 +91,11 @@ public class GraphicalLegReducer {
    * Given the collection of all input leg pairs this method leverages the {@link #reducedGraph()} to build the full set
    * of {@link FlyableLeg} triples based on the contained leg references of the simplified graph.
    */
-  public List<FlyableLeg> flyableLegs() {
+  public List<FlyableLeg> flyableLegList() {
+    return flyableLegStream().collect(Collectors.toList());
+  }
+
+  public Stream<FlyableLeg> flyableLegStream(){
     return reducedGraph.vertexSet().stream().flatMap(vertex -> {
 
       Set<DefaultEdge> incomingLegs = reducedGraph.incomingEdgesOf(vertex);
@@ -118,6 +123,6 @@ public class GraphicalLegReducer {
               return new FlyableLeg(null, current, outgoing).setSourceObject(sourceObjectMapping.get(current));
             });
       }
-    }).collect(Collectors.toList());
+    });
   }
 }

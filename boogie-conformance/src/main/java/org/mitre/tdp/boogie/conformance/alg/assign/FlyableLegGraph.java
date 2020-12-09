@@ -13,6 +13,8 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Graphical structure for storing consecutive leg connections as potential transitions. This class is used to determine the
  * set of downstream legs which are available to transition to from the currently assigned leg.
@@ -80,10 +82,16 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
   /**
    * Generates a new {@link FlyableLegGraph} from the input collection of {@link FlyableLeg}s.
    */
-  public static FlyableLegGraph withFlyableLegs(Collection<? extends FlyableLeg> conformableLegs) {
+  public static FlyableLegGraph withFlyableLegs(Collection<? extends FlyableLeg> flyableLegs) {
+    Preconditions.checkArgument(flyableLegs.stream().allMatch(flyableLeg -> flyableLeg.onLegScorer() != null),
+        "Unset on leg scorers in input FlyableLegs, apply a LegScoringStrategy");
+
+    Preconditions.checkArgument(flyableLegs.stream().allMatch(flyableLeg -> flyableLeg.legTransitionScorer() != null),
+        "Unset leg transition scorers in input FlyableLegs, apply a LegScoringStrategy");
+
     FlyableLegGraph flyableLegGraph = new FlyableLegGraph();
 
-    Combinatorics.pairwiseCombos(conformableLegs).forEachRemaining(pair -> {
+    Combinatorics.pairwiseCombos(flyableLegs).forEachRemaining(pair -> {
       flyableLegGraph.addVertex(pair.first());
       flyableLegGraph.addVertex(pair.second());
 

@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.LegTransitionScorer;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.impl.LegScorerFactory;
 
 /**
  * High-level interface for a leg which should be considered "flyable". This means based on the definition of the leg we
@@ -49,9 +48,8 @@ public class FlyableLeg {
     this.previous = p;
     this.current = c;
     this.next = n;
-
-    this.onLegScorer = LegScorerFactory.forLegType(c.type());
-    this.legTransitionScorer = LegTransitionScorer.allowAll();
+    this.onLegScorer = null;
+    this.legTransitionScorer = null;
   }
 
   public Optional<Leg> previous() {

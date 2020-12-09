@@ -23,6 +23,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.LegTransitionScorer;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 import org.mockito.stubbing.Answer;
 
@@ -63,6 +64,7 @@ public class TestScoreBasedRouteAssigner {
     FlyableLeg ehn = legs(e, h, null, scorer());
 
     ScoreBasedRouteResolver resolver = ScoreBasedRouteResolver.withFlyableLegs(Arrays.asList(sourceab, sourceac, abd, abe, acf, acg, bdn, beh, cfn, cgn, ehn));
+
     Map<ConformablePoint, FlyableLeg> mapping = resolver.resolveRoute(pointList);
 
     Map<ConformablePoint, FlyableLeg> expected = new LinkedHashMap<>();
@@ -113,7 +115,7 @@ public class TestScoreBasedRouteAssigner {
   }
 
   private FlyableLeg legs(Leg l1, Leg l2, Leg l3, OnLegScorer scorer) {
-    return new FlyableLeg(l1, l2, l3).setOnLegScorer(scorer);
+    return new FlyableLeg(l1, l2, l3).setOnLegScorer(scorer).setLegTransitionScorer(LegTransitionScorer.allowAll());
   }
 
   private Leg leg(String identifier, PathTerm type) {

@@ -10,6 +10,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTrellis;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.LegScoringStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.impl.UnscoreableLegScorer;
 
 /**
@@ -64,5 +65,9 @@ public class ScoreBasedRouteResolver {
 
   public static ScoreBasedRouteResolver withFlyableLegs(List<FlyableLeg> flyableLegs) {
     return new ScoreBasedRouteResolver(FlyableLegGraph.withFlyableLegs(flyableLegs), flyableLegs);
+  }
+
+  public static ScoreBasedRouteResolver withScoringStrategy(LegScoringStrategy strategy, List<FlyableLeg> flyableLegs) {
+    return withFlyableLegs(flyableLegs.stream().map(strategy).collect(Collectors.toList()));
   }
 }
