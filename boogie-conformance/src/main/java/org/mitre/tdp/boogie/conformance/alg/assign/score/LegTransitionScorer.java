@@ -1,24 +1,22 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
 import java.util.Optional;
-import org.mitre.tdp.boogie.ConformablePoint;
+
 import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
 
+/**
+ * Returns a score representing the likelihood of a given transition between {@link FlyableLeg}s. Optionally empty if the
+ * given scoring function doesn't apply to the provided pair of flyable legs.
+ */
 @FunctionalInterface
 public interface LegTransitionScorer {
 
-  double transitionScore(FlyableLeg currentLeg, FlyableLeg nextLeg);
+  Optional<Double> transitionScore(FlyableLeg currentLeg, FlyableLeg nextLeg);
 
-  static LegTransitionScorer allowAll() {
-    return (currentLeg, nextLeg) -> {
-      Optional<Object> currentSourceObject = currentLeg.getSourceObject();
-      Optional<Object> nextSourceObject = nextLeg.getSourceObject();
-      if (currentSourceObject.equals(nextSourceObject) && nextLeg.previous().map(p -> p.equals(currentLeg.current())).orElse(false)) {
-        return 0.99;
-      } else if (currentSourceObject.equals(nextSourceObject)) {
-        return 0.5;
-      }
-      return 0.1;
+  default LegTransitionScorer orElseTry(LegTransitionScorer legTransitionScorer) {
+    return (l1, l2) -> {
+      Optional<Double> score = transitionScore(l1, l2);
+      return score.isPresent() ? score : legTransitionScorer.transitionScore(l1, l2);
     };
   }
 }

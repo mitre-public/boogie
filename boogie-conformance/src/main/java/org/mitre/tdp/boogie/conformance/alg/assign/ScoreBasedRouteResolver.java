@@ -60,7 +60,7 @@ public class ScoreBasedRouteResolver {
   }
 
   private static Double transitionScore(FlyableLeg l1, FlyableLeg l2) {
-    return l1.legTransitionScorer().transitionScore(l1, l2);
+    return l1.legTransitionScorer().transitionScore(l1, l2).orElseThrow(IllegalArgumentException::new);
   }
 
   public static ScoreBasedRouteResolver withFlyableLegs(List<FlyableLeg> flyableLegs) {

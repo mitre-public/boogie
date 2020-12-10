@@ -115,7 +115,20 @@ public class TestScoreBasedRouteAssigner {
   }
 
   private FlyableLeg legs(Leg l1, Leg l2, Leg l3, OnLegScorer scorer) {
-    return new FlyableLeg(l1, l2, l3).setOnLegScorer(scorer).setLegTransitionScorer(LegTransitionScorer.allowAll());
+    return new FlyableLeg(l1, l2, l3).setOnLegScorer(scorer).setLegTransitionScorer(allowAll());
+  }
+
+  static LegTransitionScorer allowAll() {
+    return (currentLeg, nextLeg) -> {
+      Optional<Object> currentSourceObject = currentLeg.getSourceObject();
+      Optional<Object> nextSourceObject = nextLeg.getSourceObject();
+      if (currentSourceObject.equals(nextSourceObject) && nextLeg.previous().map(p -> p.equals(currentLeg.current())).orElse(false)) {
+        return Optional.of(0.99);
+      } else if (currentSourceObject.equals(nextSourceObject)) {
+        return Optional.of(0.5);
+      }
+      return Optional.of(0.1);
+    };
   }
 
   private Leg leg(String identifier, PathTerm type) {
