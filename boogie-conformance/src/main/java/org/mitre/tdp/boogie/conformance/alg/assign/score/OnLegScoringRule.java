@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
  * Defines a "rule" for deciding when a given {@link FlyableLeg} should be configured with a particular {@link OnLegScorer}.
  */
 @FunctionalInterface
-interface OnLegScoringRule extends Function<FlyableLeg, FlyableLeg> {
+public interface OnLegScoringRule extends Function<FlyableLeg, FlyableLeg> {
 
   /**
    * Returns an optional {@link OnLegScorer} assuming the scorer applies to the provided {@link FlyableLeg}.
