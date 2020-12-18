@@ -18,7 +18,6 @@ import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTrellis;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScoringRule;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.ScoringStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

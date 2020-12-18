@@ -1,0 +1,23 @@
+package org.mitre.tdp.boogie.conformance.alg.assign.combine;
+
+import java.util.Collection;
+import java.util.Map;
+
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
+
+/**
+ * A combination strategy defines a methodology for combining {@link FlyableLeg}s which represent logically similar flight
+ * paths/trajectories.
+ */
+@FunctionalInterface
+public interface CombinationStrategy {
+
+  /**
+   * Takes a collection of input {@link FlyableLeg}s and reduces it them to an output mapping from leg->representative.
+   *
+   * This signature is chosen so that the results of the {@link LinkingStrategy} can be done between candidates from the pre
+   * combination phase and then mapped to the appropriate post-combination legs.
+   */
+  Map<FlyableLeg, FlyableLeg> combineSimilar(Collection<FlyableLeg> flyableLegs);
+}
