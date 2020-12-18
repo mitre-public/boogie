@@ -5,7 +5,7 @@ import java.util.NavigableMap;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
+import org.mitre.tdp.boogie.conformance.alg.LegPair;
 
 import com.google.common.collect.Maps;
 

@@ -25,38 +25,38 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPairImpl;
+import org.mitre.tdp.boogie.conformance.alg.LegPair;
 
-public class TestLinearSplitErrorEvaluator {
+
+class TestLinearSplitErrorEvaluator {
 
   @Test
   public void testIsLevelAndNotOffsetWhenBelowROCThresholdAndBelowOffsetThreshold() {
-    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    LinearSplitErrorEvaluator splitter = new LinearSplitErrorEvaluator(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
     assertTrue(splitter.isLevelAndNotOffset(Pair.of(Speed.of(5.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(1.0))));
   }
 
   @Test
   public void isNotLevelWhenAboveROCThreshold() {
-    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    LinearSplitErrorEvaluator splitter = new LinearSplitErrorEvaluator(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
     assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(15.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(1.0))));
   }
 
   @Test
   public void isNotLevelWhenAbsIsAboveROCThreshold() {
-    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    LinearSplitErrorEvaluator splitter = new LinearSplitErrorEvaluator(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
     assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(-15.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(1.0))));
   }
 
   @Test
   public void istOffsetWhenAboveOffsetThreshold() {
-    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    LinearSplitErrorEvaluator splitter = new LinearSplitErrorEvaluator(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
     assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(5.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(3.0))));
   }
 
   @Test
   public void istOffsetWhenAbsIsAboveOffsetThreshold() {
-    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    LinearSplitErrorEvaluator splitter = new LinearSplitErrorEvaluator(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
     assertFalse(splitter.isLevelAndNotOffset(Pair.of(Speed.of(5.0, Speed.Unit.KNOTS), Distance.ofNauticalMiles(-3.0))));
   }
 
@@ -109,7 +109,7 @@ public class TestLinearSplitErrorEvaluator {
     when(l2.type()).thenReturn(PathTerm.TF);
     when(l2.toString()).thenReturn(0.0 + ":" + 5.0);
 
-    LegPair legPair = new LegPairImpl(l1, l2);
+    LegPair legPair = new LegPair(l1, l2);
 
     Distance distance = Distance.ofNauticalMiles(15.0);
     Speed speed = Speed.of(400.0, Speed.Unit.KNOTS);
@@ -130,7 +130,7 @@ public class TestLinearSplitErrorEvaluator {
         })
         .collect(Collectors.toMap(Pair::first, Pair::second, (a, b) -> {throw new RuntimeException();}, TreeMap::new));
 
-    LinearSplitErrorEvaluator splitter = LinearSplitErrorEvaluator.newInstance(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+    LinearSplitErrorEvaluator splitter = new LinearSplitErrorEvaluator(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
 
     XyDataset dataset = splitter.convertToXYData(pairs);
     XyDataset[] splits = splitter.piecewiseSplits(dataset);

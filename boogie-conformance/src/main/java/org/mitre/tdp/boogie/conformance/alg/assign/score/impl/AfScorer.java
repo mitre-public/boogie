@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngles;
 

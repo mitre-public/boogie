@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.conformance.alg.assign.score;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
 /**
  * Top level class for leg scoring, providing access to both the previous and the subsequent legs as declared in the

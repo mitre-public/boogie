@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
 /**
  * Returns a score representing the likelihood of a given transition between {@link FlyableLeg}s. Optionally empty if the

@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,10 +9,9 @@ import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
-import org.mitre.tdp.boogie.util.Combinatorics;
-
-import com.google.common.base.Preconditions;
+import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Graphical structure for storing consecutive leg connections as potential transitions. This class is used to determine the
@@ -23,7 +21,9 @@ import com.google.common.base.Preconditions;
  * level consecutive legs become directed edges. When querying for the {@link #downstreamLegsOf(FlyableLeg)} this class
  * returns all the legs which provide previous->next transitions from the current leg of the supplied consecutiveLegs.
  */
-public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge> {
+public final class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge> {
+
+  private final Logger LOG = LoggerFactory.getLogger(FlyableLegGraph.class);
 
   private ConnectivityInspector<FlyableLeg, DefaultEdge> connectivityInspector;
   private AllDirectedPaths<FlyableLeg, DefaultEdge> allDirectedPaths;
@@ -38,7 +38,7 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
   public ConnectivityInspector<FlyableLeg, DefaultEdge> connectivityInspector() {
     if (connectivityInspector == null) {
       this.connectivityInspector = new ConnectivityInspector<>(this);
-      System.out.println("Number of connected sets: " + connectivityInspector.connectedSets().size());
+      LOG.info("Number of connected sets: {}", connectivityInspector.connectedSets().size());
     }
     return connectivityInspector;
   }
@@ -66,7 +66,7 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
 
   /**
    * Returns the set of {@link FlyableLeg} downstream of the input consecutiveLegs. These are considered to be the set of
-   * available transition targets from a given leg in the {@link ScoreBasedRouteResolver}.
+   * available transition targets from a given leg in the {@link AssignmentAlgorithm}/{@link ViterbiTagger}.
    *
    * The graph stores consecutive legs as directed edges rather than as vertices. Due to the implementation of {@link ConnectivityInspector}
    * the directionality of edge from source to target vertex must be checked before returning the input#current() to this::connected() edge.
@@ -77,36 +77,5 @@ public class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge
         // need to check the directional edge exists
         .filter(leg -> this.containsEdge(consecutiveLegs, leg))
         .collect(Collectors.toList());
-  }
-
-  /**
-   * Generates a new {@link FlyableLegGraph} from the input collection of {@link FlyableLeg}s.
-   */
-  public static FlyableLegGraph withFlyableLegs(Collection<? extends FlyableLeg> flyableLegs) {
-    Preconditions.checkArgument(flyableLegs.stream().allMatch(flyableLeg -> flyableLeg.onLegScorer() != null),
-        "Unset on leg scorers in input FlyableLegs, apply a LegScoringStrategy");
-
-    Preconditions.checkArgument(flyableLegs.stream().allMatch(flyableLeg -> flyableLeg.legTransitionScorer() != null),
-        "Unset leg transition scorers in input FlyableLegs, apply a LegScoringStrategy");
-
-    FlyableLegGraph flyableLegGraph = new FlyableLegGraph();
-
-    Combinatorics.pairwiseCombos(flyableLegs).forEachRemaining(pair -> {
-      flyableLegGraph.addVertex(pair.first());
-      flyableLegGraph.addVertex(pair.second());
-
-      if (!pair.first().equals(pair.second())) {
-        addEdgeIfMatching(pair.first(), pair.second(), flyableLegGraph);
-        addEdgeIfMatching(pair.second(), pair.first(), flyableLegGraph);
-      }
-    });
-
-    return flyableLegGraph;
-  }
-
-  private static void addEdgeIfMatching(FlyableLeg t1, FlyableLeg t2, FlyableLegGraph resolver) {
-    if (t2.previous().filter(t1.current()::equals).isPresent() && t1.next().filter(t2.current()::equals).isPresent()) {
-      resolver.addEdge(t1, t2);
-    }
   }
 }

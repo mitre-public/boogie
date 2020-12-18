@@ -1,33 +1,90 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+
+import com.google.common.collect.Lists;
 
 /**
- * Extension of the {@link LegScoringStrategy} for use compositionally with the composable {@link OnLegScoringRule}s.
+ * Extension of the {@link ScoringStrategy} for use compositionally with the composable {@link OnLegScoringRule}s.
  */
-public interface RuleBasedScoringStrategy extends LegScoringStrategy {
+public final class RuleBasedScoringStrategy implements ScoringStrategy {
 
   /**
-   * The collection of {@link OnLegScoringRule}s to use to configure the {@link OnLegScorer}s of {@link FlyableLeg}s. The list
-   * is expected to be provided in priority order for configuration.
+   * The reduce collection of {@link OnLegScoringRule}s to use to configure the {@link OnLegScorer}s of {@link FlyableLeg}s.
    */
-  List<OnLegScoringRule> onLegScoringRules();
-
+  private final OnLegScoringRule onLegScoringRule;
   /**
-   * The collection of {@link LegTransitionScorer}s.
+   * The reduced collection of {@link LegTransitionScorer}s provided via the builder.
    */
-  List<LegTransitionScorer> legTransitionScorers();
+  private final LegTransitionScorer legTransitionScorer;
 
-  @Override
-  default OnLegScorer onLegScorerFor(FlyableLeg flyableLeg) {
-    return onLegScoringRules().stream().reduce(leg -> Optional.empty(), OnLegScoringRule::orElse).onLegScorerFor(flyableLeg).orElseThrow(IllegalStateException::new);
+  private RuleBasedScoringStrategy(
+      OnLegScoringRule onLegScoringRule,
+      LegTransitionScorer legTransitionScorer
+  ) {
+    this.onLegScoringRule = onLegScoringRule;
+    this.legTransitionScorer = legTransitionScorer;
   }
 
   @Override
-  default LegTransitionScorer legTransitionScorer(FlyableLeg flyableLeg) {
-    return legTransitionScorers().stream().reduce((l1, l2) -> Optional.empty(), LegTransitionScorer::orElseTry);
+  public OnLegScorer onLegScorerFor(FlyableLeg flyableLeg) {
+    return onLegScoringRule.onLegScorerFor(flyableLeg).orElseThrow(IllegalStateException::new);
+  }
+
+  @Override
+  public LegTransitionScorer legTransitionScorer(FlyableLeg flyableLeg) {
+    return legTransitionScorer;
+  }
+
+  public static class Builder {
+    private List<OnLegScoringRule> onLegScoringRules = new ArrayList<>();
+    private List<LegTransitionScorer> legTransitionScorers = new ArrayList<>();
+
+    public Builder setOnLegScoringRules(List<OnLegScoringRule> onLegScoringRules) {
+      this.onLegScoringRules = onLegScoringRules;
+      return this;
+    }
+
+    public Builder setOnLegScorers(OnLegScoringRule... onLegScoringRules) {
+      return setOnLegScoringRules(Lists.newArrayList(onLegScoringRules));
+    }
+
+    public Builder addOnLegScoringRules(List<OnLegScoringRule> onLegScoringRules) {
+      this.onLegScoringRules.addAll(onLegScoringRules);
+      return this;
+    }
+
+    public Builder addOnLegScoringRules(OnLegScoringRule... onLegScoringRules) {
+      return addOnLegScoringRules(Lists.newArrayList(onLegScoringRules));
+    }
+
+    public Builder setLegTransitionScorers(List<LegTransitionScorer> legTransitionScorers) {
+      this.legTransitionScorers = legTransitionScorers;
+      return this;
+    }
+
+    public Builder setLegTransitionScorers(LegTransitionScorer... legTransitionScorers) {
+      return setLegTransitionScorers(Lists.newArrayList(legTransitionScorers));
+    }
+
+    public Builder addLegTransitionScorers(List<LegTransitionScorer> legTransitionScorers) {
+      this.legTransitionScorers.addAll(legTransitionScorers);
+      return this;
+    }
+
+    public Builder addLegTransitionScorers(LegTransitionScorer... legTransitionScorers) {
+      return addLegTransitionScorers(Lists.newArrayList(legTransitionScorers));
+    }
+
+    public RuleBasedScoringStrategy build() {
+      return new RuleBasedScoringStrategy(
+          onLegScoringRules.stream().reduce(leg -> Optional.empty(), OnLegScoringRule::orElse),
+          legTransitionScorers.stream().reduce((l1, l2) -> Optional.empty(), LegTransitionScorer::orElseTry)
+      );
+    }
   }
 }

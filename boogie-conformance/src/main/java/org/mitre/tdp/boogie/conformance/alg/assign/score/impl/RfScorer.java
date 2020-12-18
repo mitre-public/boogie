@@ -10,8 +10,8 @@ import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPairImpl;
+import org.mitre.tdp.boogie.conformance.alg.LegPair;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 import org.mitre.tdp.boogie.conformance.alg.evaluate.MaxOffTrackDistanceEvaluator;
 
@@ -34,7 +34,7 @@ public class RfScorer implements OnLegScorer {
   public Optional<Double> score(ConformablePoint point, FlyableLeg legTriple) {
     return legTriple.previous()
         .flatMap(previous -> {
-          LegPairImpl asLegPair = new LegPairImpl(previous, legTriple.current());
+          LegPair asLegPair = new LegPair(previous, legTriple.current());
           return MaxOffTrackDistanceEvaluator.offTrackDistance(point, asLegPair);
         })
         .map(Distance::inNauticalMiles)
