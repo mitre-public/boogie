@@ -44,7 +44,7 @@ public class AfScorer implements OnLegScorer {
     TurnDirection turnDirection = legTriple.current().turnDirection().orElseThrow(supplier("Turn Direction"));
 
     // convert the true course to the point to a magnetic one for comparison against the boundary/fix radials
-    MagneticVariation localVariation = navaid.magneticVariation();
+    MagneticVariation localVariation = MagneticVariationResolver.getInstance().magneticVariation(point, legTriple);
     double pointRadial = localVariation.trueToMagnetic(navaid.courseInDegrees(point));
     double radialScore = RadialAngles.of(boundaryRadial, fixRadial, turnDirection).contains(pointRadial) ? 1.0 : 0.0;
 

@@ -11,6 +11,7 @@ import java.util.function.Function;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
@@ -51,7 +52,9 @@ public final class ViScorer implements OnLegScorer {
       double viCourse = legTriple.current().outboundMagneticCourse().orElseThrow(IllegalStateException::new);
       double distToCf = point.distanceInNmTo(legTriple.next().map(Leg::pathTerminator).orElseThrow(IllegalStateException::new));
 
-      double courseScore = courseWeight.apply(abs(Spherical.angleDifference(viCourse, pointCourse)));
+      MagneticVariation localVariation = MagneticVariationResolver.getInstance().magneticVariation(point, legTriple);
+
+      double courseScore = courseWeight.apply(abs(Spherical.angleDifference(viCourse, localVariation.trueToMagnetic(pointCourse))));
       double distScore = CF_DISTANCE_WEIGHT.apply(distToCf);
 
       return courseScore * distScore;

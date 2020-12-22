@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
@@ -42,9 +43,11 @@ public class AltitudeTerminationScorer implements OnLegScorer {
     Double targetAltitude = legTriple.current().altitudeConstraint().flatMap(AltitudeLimit::altitudeLimit).orElseThrow(supplier("Target Altitude"));
     Double outboundCourse = legTriple.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
 
+    MagneticVariation localVariation = MagneticVariationResolver.getInstance().magneticVariation(point, legTriple);
+
     Double pointAltitude = point.pressureAltitude().orElseThrow(supplier("Pressure Altitude"));
     Double pointCourseTrue = point.trueCourse().orElseThrow(supplier("True Course"));
 
-    return offCourseWeight.apply(abs(angleDifference(pointCourseTrue, outboundCourse))) * pastTargetAltitudeWeight.apply(pointAltitude - targetAltitude);
+    return offCourseWeight.apply(abs(angleDifference(localVariation.trueToMagnetic(pointCourseTrue), outboundCourse))) * pastTargetAltitudeWeight.apply(pointAltitude - targetAltitude);
   }
 }
