@@ -9,11 +9,11 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
 /**
  * A linking strategy defines a way to connect potentially disconnected sequences of {@link FlyableLeg}s into a connected
- * overall graph representing the collection of route possibilities we want to consider assignment against.
+ * overall graph representing the connected infrastructure we want to consider assignment against.
  *
- * Note that all legs originating from the same route are assumed to be lined (in their declared consecutive order) and do not
- * need to be manually linked in the linking strategy. This strategy should primarily address linking between otherwise unlinked
- * from separate routes.
+ * Note that all legs originating from the same route are assumed to be linked (in their declared consecutive order) and do not
+ * need to be manually linked in the linking strategy. The strategy should primarily address linking between otherwise unlinked
+ * routes.
  */
 @FunctionalInterface
 public interface LinkingStrategy {
