@@ -11,17 +11,15 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Route;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
-
-import com.google.common.collect.Sets;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
 class TestHashCombinationStrategy {
 
   @Test
   public void testCombineByHash() {
-    Route r1 = Collections::emptyList;
-    Route r2 = Collections::emptyList;
+    Route r1 = Route.newRoute(Collections.emptyList(), new Object());
+    Route r2 = Route.newRoute(Collections.emptyList(), new Object());
 
     Leg leg = mock(Leg.class);
     Leg alt = mock(Leg.class);
@@ -33,7 +31,7 @@ class TestHashCombinationStrategy {
 
     assertAll(
         () -> assertEquals(mapping.get(f1), mapping.get(f2)),
-        () -> assertTrue(mapping.get(f1).routes().containsAll(Sets.newHashSet(r1, r2)))
+        () -> assertTrue(mapping.get(f1).routes().containsAll(Arrays.asList(r1, r2)))
     );
   }
 }

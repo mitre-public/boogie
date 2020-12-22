@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +34,8 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
   private final BiFunction<State, State, Double> transitionScorer;
 
   /**
-   the output of the algorithm is the "trellis" of maximum-likelihood paths from the initial stage
-   * through each valid state/stage combination
+   * The output of the algorithm is the "trellis" of maximum-likelihood paths from the initial stage through each valid
+   * state/stage combination
    */
   private final ViterbiTrellis<Stage, State> trellis;
 
@@ -72,6 +73,22 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
     return this;
   }
 
+  public int totalStates() {
+    return states.size();
+  }
+
+  public int totalStages() {
+    return stages.size();
+  }
+
+  public int totalCells() {
+    return totalStates() * totalStages();
+  }
+
+  public int totalTransitions() {
+    return totalStates() * totalStates() * totalStages();
+  }
+
   public ViterbiTrellis<Stage, State> trellis() {
     checkComputeOptimals();
     return interrupted ? this.interruptedReturnSupplier.get() : trellis;
@@ -89,13 +106,11 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
 
   void computeOptimalStates() {
     if (LOG.isInfoEnabled()) {
-      long numStates = states.size();
-      long numStages = stages.size();
       LOG.info("Computing maximum-likelihood path for trellis with:\n {} states,\n {} stages,\n {} cells,\n {} transitions",
-          String.format("%,d", numStates),
-          String.format("%,d", numStages),
-          String.format("%,d", numStates * numStages),
-          String.format("%,d", numStates * numStates * numStages));
+          String.format("%,d", totalStates()),
+          String.format("%,d", totalStages()),
+          String.format("%,d", totalCells()),
+          String.format("%,d", totalTransitions()));
     }
     for (Stage stage : stages) {
       if (Thread.interrupted()) {
@@ -108,9 +123,8 @@ public class ViterbiTagger<Stage extends Comparable<? super Stage>, State> {
   }
 
   /**
-   * Takes the stage we want to transition to and
-   * generates the collection of possible valid transitions from that state
-   * to other available states at the provided stage.
+   * Takes the stage we want to transition to and generates the collection of possible valid transitions from that state to
+   * other available states at the provided stage.
    */
   private void updateTrellis(Stage toStage) {
     Stage fromStage = stages.lower(toStage);

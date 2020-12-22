@@ -12,7 +12,7 @@ public class MinValueScorer implements OnLegScorer {
 
   public static final MinValueScorer INSTANCE = new MinValueScorer();
 
-  public static final double MIN_SCORE = 1e-4;
+  public static final double MIN_SCORE = 1e-10;
 
   private MinValueScorer() {
   }

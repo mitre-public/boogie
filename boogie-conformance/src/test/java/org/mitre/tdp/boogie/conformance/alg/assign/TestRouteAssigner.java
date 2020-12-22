@@ -24,7 +24,6 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.Route;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.NoopCombinationStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.SuppliedLinkStrategy;
@@ -35,7 +34,7 @@ import org.mockito.stubbing.Answer;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-class TestAssignmentAlgorithm {
+class TestRouteAssigner {
 
   @Test
   public void testScorerReturnsMaxValuePath() {
@@ -68,7 +67,7 @@ class TestAssignmentAlgorithm {
         Pair.of(new FlyableLeg(b, c, d, route1), new FlyableLeg(f, g, h, route2))
     );
 
-    AssignmentAlgorithm alg = new AssignmentAlgorithm(
+    RouteAssigner alg = new RouteAssigner(
         linkingStrategy,
         new NoopCombinationStrategy(),
         new RuleBasedScoringStrategy.Builder()

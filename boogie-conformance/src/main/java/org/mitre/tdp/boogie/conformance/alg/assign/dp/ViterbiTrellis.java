@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
-import com.google.common.base.Preconditions;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -96,8 +95,7 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
   }
 
   /**
-   * Visitor methods allow extracting information about the trellis
-   * without granting direct access to the internal data structures
+   * Visitor methods allow extracting information about the trellis without granting direct access to the internal data structures.
    */
   public <T> void visit(StateVisitor<State, T> stateVisitor, StageVisitor<Stage, T> stageVisitor) {
     for (Map.Entry<Stage, ScoredStage<Stage, State>> e : this.entrySet()) {
@@ -109,7 +107,7 @@ public class ViterbiTrellis<Stage extends Comparable<? super Stage>, State> exte
   }
 
   @FunctionalInterface
-  public static interface StateVisitor <State, T> {
+  public static interface StateVisitor<State, T> {
     T visit(State state, Likelihood stateScore, Likelihood cumulativeStateLikelihood, State fromState);
   }
 

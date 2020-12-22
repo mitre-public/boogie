@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.mitre.tdp.boogie.Route;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
 /**
  * Represents a combination strategy based on a {@link HashMap} which merges {@link FlyableLeg}s sharing the same generated
@@ -44,7 +44,7 @@ public class HashCombinationStrategy implements CombinationStrategy {
     return flyableLegs.stream()
         .collect(Collectors.toMap(
             Function.identity(),
-            flyableLeg -> combinedRep.get(hasher.apply(flyableLeg))
+            flyableLeg -> checkNotNull(combinedRep.get(hasher.apply(flyableLeg)))
         ));
   }
 

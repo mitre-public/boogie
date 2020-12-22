@@ -212,7 +212,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
   }
 
   private int vaHasher(FlyableLeg flyableLeg) {
-    Preconditions.checkArgument(flyableLeg.current().type().equals(VD));
+    Preconditions.checkArgument(flyableLeg.current().type().equals(VA));
     return newHasher(flyableLeg)
         .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
         .append(flyableLeg.current().altitudeConstraint().flatMap(AltitudeLimit::altitudeLimit).orElse(null))

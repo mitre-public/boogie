@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.PathTerm;
 
 import com.google.common.collect.Sets;
 
-class TestFlyableLegGraph {
+class TestLegTransitionGraph {
 
   @Test
   public void testGrabsDownstreamLinks() {
@@ -32,7 +32,7 @@ class TestFlyableLegGraph {
     FlyableLeg p3 = new FlyableLeg(source, c, d);
     FlyableLeg p4 = new FlyableLeg(null, source, e);
 
-    FlyableLegGraph legsGraph = new FlyableLegGraph();
+    LegTransitionGraph legsGraph = new LegTransitionGraph();
 
     Stream.of(p1, p2, p3, p4).forEach(legsGraph::addVertex);
     legsGraph.addEdge(p1, p2);
@@ -65,7 +65,7 @@ class TestFlyableLegGraph {
     FlyableLeg p3 = new FlyableLeg(source, c, d);
     FlyableLeg p4 = new FlyableLeg(null, source, e);
 
-    FlyableLegGraph legsGraph = new FlyableLegGraph();
+    LegTransitionGraph legsGraph = new LegTransitionGraph();
 
     Stream.of(p1, p2, p3, p4).forEach(legsGraph::addVertex);
     legsGraph.addEdge(p1, p2);

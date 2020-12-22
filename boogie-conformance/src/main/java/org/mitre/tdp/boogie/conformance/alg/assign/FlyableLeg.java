@@ -9,9 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Route;
 
 public final class FlyableLeg {
 
@@ -97,10 +95,9 @@ public final class FlyableLeg {
 
   @Override
   public String toString() {
-    return "FlyableLeg{" +
-        "previous=" + previous +
-        ", current=" + current +
-        ", next=" + next +
-        '}';
+    return String.format(
+        "FlyableLeg{\nprevious=%s\ncurrent=%s\nnext=%s\n}",
+        previous, current, next
+    );
   }
 }

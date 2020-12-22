@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Route;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 public final class FlyableLegAssembler {
@@ -30,8 +29,8 @@ public final class FlyableLegAssembler {
     if (legs.size() == 1) {
       assembled.add(new FlyableLeg(null, legs.get(0), null, route));
     } else if (legs.size() == 2) {
-      assembled.add(new FlyableLeg(legs.get(0), legs.get(1), null, route));
       assembled.add(new FlyableLeg(null, legs.get(0), legs.get(1), route));
+      assembled.add(new FlyableLeg(legs.get(0), legs.get(1), null, route));
     } else {
       assembled.add(new FlyableLeg(null, legs.get(0), legs.get(1), route));
       Iterators.triples(legs, (l1, l2, l3) -> assembled.add(new FlyableLeg(l1, l2, l3, route)));
@@ -41,7 +40,7 @@ public final class FlyableLegAssembler {
     return assembled;
   }
 
-  public static Pair<Collection<FlyableLeg>, Collection<Pair<FlyableLeg, FlyableLeg>>> assembleWithLinks(List<? extends Route> routes) {
+  public static Pair<Collection<FlyableLeg>, Collection<Pair<FlyableLeg, FlyableLeg>>> assembleWithLinks(Collection<? extends Route> routes) {
     Collection<FlyableLeg> flyableLegs = new ArrayList<>();
     Collection<Pair<FlyableLeg, FlyableLeg>> links = new ArrayList<>();
 

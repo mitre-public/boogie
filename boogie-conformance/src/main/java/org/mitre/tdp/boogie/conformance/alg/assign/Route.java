@@ -1,0 +1,59 @@
+package org.mitre.tdp.boogie.conformance.alg.assign;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.List;
+import java.util.Objects;
+
+import org.mitre.tdp.boogie.Leg;
+
+/**
+ * Simple decorator class for a source of {@link Leg}s which can be composed into {@link FlyableLeg} elements (i.e. has some
+ * assumed structure - rather than being a free-form object).
+ */
+public final class Route {
+
+  /**
+   * Functional to apply to the source to extract a consecutive sequence of legs.
+   */
+  private final List<Leg> legs;
+  /**
+   * The source object of the legs.
+   */
+  private final Object source;
+
+  private Route(List<Leg> legs, Object source) {
+    this.legs = legs;
+    this.source = source;
+  }
+
+  public Object source() {
+    return source;
+  }
+
+  public List<Leg> legs() {
+    return legs;
+  }
+
+  public static Route newRoute(List<? extends Leg> legs, Object source) {
+    return new Route((List<Leg>) (List) legs, checkNotNull(source));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Route route = (Route) o;
+    return Objects.equals(legs, route.legs) &&
+        Objects.equals(source, route.source);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(legs, source);
+  }
+}

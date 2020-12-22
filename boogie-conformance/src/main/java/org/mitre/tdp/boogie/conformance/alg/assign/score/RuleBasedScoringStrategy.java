@@ -49,7 +49,7 @@ public final class RuleBasedScoringStrategy implements ScoringStrategy {
       return this;
     }
 
-    public Builder setOnLegScorers(OnLegScoringRule... onLegScoringRules) {
+    public Builder setOnLegScoringRules(OnLegScoringRule... onLegScoringRules) {
       return setOnLegScoringRules(Lists.newArrayList(onLegScoringRules));
     }
 

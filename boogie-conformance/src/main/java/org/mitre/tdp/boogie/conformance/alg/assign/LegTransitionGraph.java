@@ -8,27 +8,26 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
+import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Graphical structure for storing consecutive leg connections as potential transitions. This class is used to determine the
- * set of downstream legs which are available to transition to from the currently assigned leg.
+ * set of downstream legs which are available to transition to from a given {@link FlyableLeg}.
  *
- * This class inserts as nodes each of the {@link Leg}s within the supplied {@link FlyableLeg} records, while the top
- * level consecutive legs become directed edges. When querying for the {@link #downstreamLegsOf(FlyableLeg)} this class
- * returns all the legs which provide previous->next transitions from the current leg of the supplied consecutiveLegs.
+ * The nodes of the graph are {@link FlyableLeg}s with edges added between them typically via external {@link LinkingStrategy}.
+ * When querying for the {@link #downstreamLegsOf(FlyableLeg)} this class returns all connected legs via directed edges.
  */
-public final class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge> {
+public final class LegTransitionGraph extends SimpleDirectedGraph<FlyableLeg, DefaultEdge> {
 
-  private final Logger LOG = LoggerFactory.getLogger(FlyableLegGraph.class);
+  private final Logger LOG = LoggerFactory.getLogger(LegTransitionGraph.class);
 
   private ConnectivityInspector<FlyableLeg, DefaultEdge> connectivityInspector;
   private AllDirectedPaths<FlyableLeg, DefaultEdge> allDirectedPaths;
 
-  public FlyableLegGraph() {
+  public LegTransitionGraph() {
     super(DefaultEdge.class);
   }
 
@@ -65,17 +64,21 @@ public final class FlyableLegGraph extends SimpleDirectedGraph<FlyableLeg, Defau
   }
 
   /**
-   * Returns the set of {@link FlyableLeg} downstream of the input consecutiveLegs. These are considered to be the set of
-   * available transition targets from a given leg in the {@link AssignmentAlgorithm}/{@link ViterbiTagger}.
+   * Returns the set of {@link FlyableLeg} downstream of the input flyableLeg. These are considered to be the set of available
+   * transition targets from a given leg in the {@link RouteAssigner}/{@link ViterbiTagger}.
    *
-   * The graph stores consecutive legs as directed edges rather than as vertices. Due to the implementation of {@link ConnectivityInspector}
-   * the directionality of edge from source to target vertex must be checked before returning the input#current() to this::connected() edge.
+   * The edges of the graph are directed - however the used implementation of {@link ConnectivityInspector} treats all edges
+   * as undirected for the purpose of determining a connected set around the provided vertex (FlyableLeg). Therefore we check
+   * via {@link SimpleDirectedGraph#containsEdge(Object, Object)} returns true for the proposed edge (from source->target)
+   * before returning the vertex as connected.
+   *
+   * Note this returned list of flyable legs does <i>not</i> include the edge used to query.
    */
-  public List<FlyableLeg> downstreamLegsOf(FlyableLeg consecutiveLegs) {
+  public List<FlyableLeg> downstreamLegsOf(FlyableLeg flyableLeg) {
     // weakly connected components
-    return connectivityInspector().connectedSetOf(consecutiveLegs).stream()
+    return connectivityInspector().connectedSetOf(flyableLeg).stream()
         // need to check the directional edge exists
-        .filter(leg -> this.containsEdge(consecutiveLegs, leg))
+        .filter(leg -> this.containsEdge(flyableLeg, leg))
         .collect(Collectors.toList());
   }
 }
