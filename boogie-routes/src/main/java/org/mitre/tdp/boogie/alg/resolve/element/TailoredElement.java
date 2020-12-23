@@ -8,15 +8,18 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
+import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 
 public class TailoredElement extends ResolvedElement<Fix> {
 
   private final String tailored;
+  private final String wildcards;
 
-  public TailoredElement(String tailored, Fix ref) {
+  public TailoredElement(String tailored, String wildcards, Fix ref) {
     super(ElementType.TAILORED, ref);
     this.tailored = tailored;
+    this.wildcards = wildcards;
   }
 
   /**
@@ -39,7 +42,10 @@ public class TailoredElement extends ResolvedElement<Fix> {
     LatLong projectedLocation = reference().latLong().projectOut(course, distance);
     LocationFix asFix = new LocationFix(tailored, projectedLocation);
 
-    FixTerminationLeg leg = FixTerminationLeg.IF(asFix);
+    FixTerminationLeg leg = Wildcard.TAILORED.test(wildcards)
+        ? FixTerminationLeg.IF(asFix)
+        : FixTerminationLeg.DF(asFix);
+
     GraphableLeg sleg = new GraphableLeg(leg);
     return Collections.singletonList(new LinkedLegs(sleg, sleg));
   }

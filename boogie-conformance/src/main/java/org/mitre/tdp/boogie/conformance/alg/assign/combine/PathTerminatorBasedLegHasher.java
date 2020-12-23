@@ -9,7 +9,6 @@ import static org.mitre.tdp.boogie.PathTerm.IF;
 import static org.mitre.tdp.boogie.PathTerm.RF;
 import static org.mitre.tdp.boogie.PathTerm.TF;
 import static org.mitre.tdp.boogie.PathTerm.VA;
-import static org.mitre.tdp.boogie.PathTerm.VD;
 import static org.mitre.tdp.boogie.PathTerm.VI;
 
 import java.util.HashMap;
@@ -157,10 +156,12 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
 
   private int tfHasher(FlyableLeg flyableLeg) {
     Preconditions.checkArgument(flyableLeg.current().type().equals(TF));
-    return newHasher(flyableLeg)
-        .withPathTerminator(flyableLeg.current())
-        .withPathTerminator(flyableLeg.previous().orElseThrow(IllegalStateException::new))
-        .hashCode();
+    Hasher hasher = newHasher(flyableLeg).withPathTerminator(flyableLeg.current());
+    return flyableLeg.previous().isPresent()
+        // allow null previous fixes because the scorer lets them pass as well I think
+        // this is likely an issue with CIFP airways on the boundary of countries
+        ? hasher.withPathTerminator(flyableLeg.previous().orElseThrow(IllegalStateException::new)).hashCode()
+        : hasher.hashCode();
   }
 
   private int cfHasher(FlyableLeg flyableLeg) {

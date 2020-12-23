@@ -79,6 +79,7 @@ public final class TransitionGraphAssembler {
         col.stream()
             .map(pair -> remap(pair, representativeMap::get))
             .filter(pair -> !pair.first().equals(pair.second()))
+            .filter(pair -> !graph.containsEdge(pair.second(), pair.first()))
             .forEach(pair -> graph.addEdge(pair.first(), pair.second()));
 
     linkAdder.accept(nativeLinks);

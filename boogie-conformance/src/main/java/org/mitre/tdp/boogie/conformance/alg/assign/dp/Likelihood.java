@@ -60,5 +60,4 @@ public final class Likelihood implements Comparable<Likelihood> {
   public int compareTo(Likelihood that) {
     return Double.compare(this.l, that.l);
   }
-
 }
