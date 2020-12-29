@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.conformance.alg.evaluate;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.LegPair;
 
 /**
  * A conformance evaluator takes a {@link ConformablePoint} and {@link LegPair} being flown at the time

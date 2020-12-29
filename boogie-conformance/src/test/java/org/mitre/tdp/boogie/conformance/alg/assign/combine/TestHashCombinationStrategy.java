@@ -27,11 +27,11 @@ class TestHashCombinationStrategy {
     FlyableLeg f2 = new FlyableLeg(null, leg, alt, r2);
 
     HashCombinationStrategy combinationStrategy = new HashCombinationStrategy(l -> l.current().hashCode());
-    Map<FlyableLeg, FlyableLeg> mapping = combinationStrategy.combineSimilar(Arrays.asList(f1, f2));
+    Map<FlyableLeg, CompositeLeg> mapping = combinationStrategy.combineSimilar(Arrays.asList(f1, f2));
 
     assertAll(
         () -> assertEquals(mapping.get(f1), mapping.get(f2)),
-        () -> assertTrue(mapping.get(f1).routes().containsAll(Arrays.asList(r1, r2)))
+        () -> assertTrue(mapping.get(f1).representative().routes().containsAll(Arrays.asList(r1, r2)))
     );
   }
 }

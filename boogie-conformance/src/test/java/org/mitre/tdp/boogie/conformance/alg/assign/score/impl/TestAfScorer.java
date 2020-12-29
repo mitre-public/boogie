@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
 public class TestAfScorer {
 
@@ -30,7 +32,7 @@ public class TestAfScorer {
     Leg AF = AF();
     when(AF.theta()).thenReturn(empty());
 
-    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null, dummyRoute());
 
     assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
@@ -41,7 +43,7 @@ public class TestAfScorer {
     Leg AF = AF();
     when(AF.rho()).thenReturn(empty());
 
-    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null, dummyRoute());
 
     assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
@@ -52,7 +54,7 @@ public class TestAfScorer {
     Leg AF = AF();
     when(AF.outboundMagneticCourse()).thenReturn(empty());
 
-    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null, dummyRoute());
 
     assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
@@ -63,7 +65,7 @@ public class TestAfScorer {
     Leg AF = AF();
     when(AF.recommendedNavaid()).thenReturn(empty());
 
-    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null);
+    FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null, dummyRoute());
 
     assertThrows(MissingRequiredFieldException.class, () -> new AfScorer(simpleLogistic(1.0, 2.0)).scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
@@ -217,6 +219,10 @@ public class TestAfScorer {
   }
 
   private FlyableLeg conformableLeg() {
-    return new FlyableLeg(TF(), AF(), null);
+    return new FlyableLeg(TF(), AF(), null, dummyRoute());
+  }
+
+  private Route dummyRoute(){
+    return Route.newRoute(new ArrayList<>(), new Object());
   }
 }

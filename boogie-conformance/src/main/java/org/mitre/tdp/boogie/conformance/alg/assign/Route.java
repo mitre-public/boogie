@@ -22,9 +22,16 @@ public final class Route {
    */
   private final Object source;
 
+  /**
+   * The precomputed hash of the route object - turns out it can be expensive to continually be computing this value and in
+   * reality it's constant over the lifetime of the object - so we compute it once and save it.
+   */
+  private final int hash;
+
   private Route(List<Leg> legs, Object source) {
     this.legs = legs;
     this.source = source;
+    this.hash = Objects.hash(legs, source);
   }
 
   public Object source() {
@@ -54,6 +61,6 @@ public final class Route {
 
   @Override
   public int hashCode() {
-    return Objects.hash(legs, source);
+    return hash;
   }
 }

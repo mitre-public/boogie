@@ -19,7 +19,6 @@ import org.mitre.caasd.commons.math.FastLinearApproximation;
 import org.mitre.caasd.commons.math.PiecewiseLinearSplitter;
 import org.mitre.caasd.commons.math.XyDataset;
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.LegPair;
 
 /**
  * Leverages a modified version of the Douglas-Peucker algorithm to partition the set of conformable points into level/non-level

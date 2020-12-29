@@ -6,6 +6,8 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunct
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.LatLong;
@@ -14,6 +16,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
 public class TestTfScorer {
 
@@ -26,7 +29,7 @@ public class TestTfScorer {
     when(leg.pathTerminator()).thenReturn(pathTerminator);
     when(leg.type()).thenReturn(PathTerm.TF);
 
-    FlyableLeg legs = new FlyableLeg(null, leg, null);
+    FlyableLeg legs = new FlyableLeg(null, leg, null, dummyRoute());
 
     ConformablePoint point = mock(ConformablePoint.class);
     assertFalse(scorer.score(point, legs).isPresent());
@@ -41,7 +44,7 @@ public class TestTfScorer {
 
     Leg prev = mock(Leg.class);
 
-    FlyableLeg legs = new FlyableLeg(prev, leg, null);
+    FlyableLeg legs = new FlyableLeg(prev, leg, null, dummyRoute());
 
     ConformablePoint point = mock(ConformablePoint.class);
     assertFalse(scorer.score(point, legs).isPresent());
@@ -58,7 +61,7 @@ public class TestTfScorer {
     Fix fix = mock(Fix.class);
     when(prev.pathTerminator()).thenReturn(fix);
 
-    FlyableLeg legs = new FlyableLeg(prev, leg, null);
+    FlyableLeg legs = new FlyableLeg(prev, leg, null, dummyRoute());
 
     ConformablePoint point = mock(ConformablePoint.class);
     assertFalse(scorer.score(point, legs).isPresent());
@@ -128,5 +131,9 @@ public class TestTfScorer {
     HasPosition pt = () -> LatLong.of(proj.latitude(), 1.5);
 
     assertEquals(-1.0 * p2.distanceInNmTo(pt), TfScorer.endpointModifiedCrossTrackDistance(p1, p2, pt), 0.0001);
+  }
+
+  private Route dummyRoute(){
+    return Route.newRoute(new ArrayList<>(), new Object());
   }
 }

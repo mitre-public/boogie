@@ -68,33 +68,53 @@ public final class RouteAssigner {
     this.scoringStrategy = scoringStrategy;
   }
 
-  /**
-   * Returns the resultant {@link ViterbiTrellis} from running the assignment algorithm on the given collection of points and routes.
-   */
+  public LegTransitionGraph transitionGraph(Collection<? extends Route> routes) {
+    LOG.info("Generating transition graph.");
+    return transitionGraphAssembler.assembleFrom(routes);
+  }
+
   public ViterbiTagger<ConformablePoint, FlyableLeg> tagger(
       Collection<? extends ConformablePoint> points,
       Collection<? extends Route> routes) {
-    Preconditions.checkArgument(!points.isEmpty(), String.format("Invalid number of supplied points %s.", points.size()));
+    return tagger(points, transitionGraph(routes));
+  }
 
-    LOG.info("Generating transition graph.");
-    LegTransitionGraph graph = transitionGraphAssembler.assembleFrom(routes);
+  public ViterbiTagger<ConformablePoint, FlyableLeg> tagger(
+      Collection<? extends ConformablePoint> points,
+      LegTransitionGraph transitionGraph) {
+    Preconditions.checkArgument(!points.isEmpty(), String.format("Invalid number of supplied points %s.", points.size()));
 
     LOG.info("Generating ViterbiTagger instance.");
     return new ViterbiTagger<>(
         points,
-        graph.vertexSet(),
+        transitionGraph.vertexSet(),
         this::legScore,
-        transitionFunction(graph),
+        transitionFunction(transitionGraph),
         this::transitionScore);
   }
 
   public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis(
       Collection<? extends ConformablePoint> points,
-      Collection<? extends Route> routes) {
-    ViterbiTagger<ConformablePoint, FlyableLeg> tagger = tagger(points, routes);
+      LegTransitionGraph transitionGraph) {
+    ViterbiTagger<ConformablePoint, FlyableLeg> tagger = tagger(points, transitionGraph);
 
     LOG.info("Generating trellis.");
     return tagger.trellis();
+  }
+
+  public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis(
+      Collection<? extends ConformablePoint> points,
+      Collection<? extends Route> routes) {
+    return trellis(points, transitionGraph(routes));
+  }
+
+  public NavigableMap<ConformablePoint, FlyableLeg> assignments(
+      Collection<? extends ConformablePoint> points,
+      LegTransitionGraph transitionGraph) {
+    ViterbiTrellis<ConformablePoint, FlyableLeg> trellis = trellis(points, transitionGraph);
+
+    LOG.info("Computing optimal path.");
+    return trellis.optimalPath();
   }
 
   /**
@@ -103,10 +123,7 @@ public final class RouteAssigner {
   public NavigableMap<ConformablePoint, FlyableLeg> assignments(
       Collection<? extends ConformablePoint> points,
       Collection<? extends Route> routes) {
-    ViterbiTrellis<ConformablePoint, FlyableLeg> trellis = trellis(points, routes);
-
-    LOG.info("Computing optimal path.");
-    return trellis.optimalPath();
+    return assignments(points, transitionGraph(routes));
   }
 
   private Double legScore(ConformablePoint pt, FlyableLeg leg) {

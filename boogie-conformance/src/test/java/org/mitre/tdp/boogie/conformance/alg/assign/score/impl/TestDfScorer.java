@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
 public class TestDfScorer {
 
@@ -68,6 +70,10 @@ public class TestDfScorer {
   }
 
   private FlyableLeg conformableLegs() {
-    return new FlyableLeg(VA(), DF(), null);
+    return new FlyableLeg(VA(), DF(), null, dummyRoute());
+  }
+
+  private Route dummyRoute(){
+    return Route.newRoute(new ArrayList<>(), new Object());
   }
 }

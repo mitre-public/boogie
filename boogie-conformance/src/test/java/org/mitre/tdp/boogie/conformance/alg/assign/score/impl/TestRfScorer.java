@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -18,12 +19,13 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
 public class TestRfScorer {
 
   @Test
   public void testRfScorerLeftNo0Crossing() {
-    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), RF(), null);
+    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), RF(), null, dummyRoute());
 
     Fix pathTerminator = consecutiveLegs.current().pathTerminator();
     Fix centerFix = consecutiveLegs.current().centerFix().get();
@@ -58,7 +60,7 @@ public class TestRfScorer {
     Leg rf = RF();
     when(rf.outboundMagneticCourse()).thenReturn(Optional.of(265.0));
 
-    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null);
+    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null, dummyRoute());
 
     Fix pathTerminator = consecutiveLegs.current().pathTerminator();
     Fix centerFix = consecutiveLegs.current().centerFix().get();
@@ -99,7 +101,7 @@ public class TestRfScorer {
     Leg rf = RF();
     when(rf.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.right()));
 
-    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null);
+    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null, dummyRoute());
 
     Fix pathTerminator = consecutiveLegs.current().pathTerminator();
     Fix centerFix = consecutiveLegs.current().centerFix().get();
@@ -134,7 +136,7 @@ public class TestRfScorer {
     Leg rf = RF();
     when(rf.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.either()));
 
-    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null);
+    FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null, dummyRoute());
 
     Fix pathTerminator = consecutiveLegs.current().pathTerminator();
     Fix centerFix = consecutiveLegs.current().centerFix().get();
@@ -296,5 +298,9 @@ public class TestRfScorer {
     when(leg.pathTerminator()).thenReturn(pathTerminator);
     when(leg.type()).thenReturn(PathTerm.TF);
     return leg;
+  }
+
+  private Route dummyRoute(){
+    return Route.newRoute(new ArrayList<>(), new Object());
   }
 }

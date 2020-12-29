@@ -65,6 +65,8 @@ public class TfScorer implements OnLegScorer {
 
   double headingWeight(ConformablePoint conformablePoint, Fix startFix, Fix endFix) {
     double legCourse = startFix.courseInDegrees(endFix);
+    double courseToPathTerm = conformablePoint.courseInDegrees(endFix);
+
     double angleDifference = abs(Spherical.angleDifference(conformablePoint.trueCourse().orElseThrow(supplier("required course")), legCourse));
     return headingWeight.apply(angleDifference);
   }

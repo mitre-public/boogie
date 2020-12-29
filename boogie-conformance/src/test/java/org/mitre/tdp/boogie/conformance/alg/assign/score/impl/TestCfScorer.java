@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Disabled;
@@ -21,6 +22,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
 public class TestCfScorer {
 
@@ -30,7 +32,7 @@ public class TestCfScorer {
     Leg CF = CF();
     when(CF.outboundMagneticCourse()).thenReturn(empty());
 
-    FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null);
+    FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null, dummyRoute());
 
     assertThrows(MissingRequiredFieldException.class, () -> new CfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
@@ -41,7 +43,7 @@ public class TestCfScorer {
     Leg CF = CF();
     when(CF.recommendedNavaid()).thenReturn(empty());
 
-    FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null);
+    FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null, dummyRoute());
 
     assertThrows(MissingRequiredFieldException.class, () -> new CfScorer().scoreAgainstLeg(dummyPoint(), flyableLeg));
   }
@@ -49,7 +51,7 @@ public class TestCfScorer {
   @Test
   @Disabled
   public void testScoreDecreasesWithDistance() {
-    FlyableLeg flyableLeg = new FlyableLeg(VI(), CF(), null);
+    FlyableLeg flyableLeg = new FlyableLeg(VI(), CF(), null, dummyRoute());
     ConformablePoint pt = dummyPoint();
 
     LatLong ptLoc = flyableLeg.current().pathTerminator().latLong().projectOut(0.0, 10.0);
@@ -111,6 +113,10 @@ public class TestCfScorer {
   }
 
   private FlyableLeg conformableLeg() {
-    return new FlyableLeg(VI(), CF(), null);
+    return new FlyableLeg(VI(), CF(), null, dummyRoute());
+  }
+
+  private Route dummyRoute(){
+    return Route.newRoute(new ArrayList<>(), new Object());
   }
 }

@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
@@ -67,6 +68,11 @@ public final class FlyableLeg {
 
   public <T> Optional<T> next(Function<Leg, Optional<T>> ext) {
     return next().flatMap(ext);
+  }
+
+  public Route route() {
+    checkArgument(routes().size() == 1, String.format("Method use should be limited to flyable legs with only 1 source route, actual number was %s", routes.size()));
+    return routes().iterator().next();
   }
 
   public LinkedHashSet<Route> routes() {

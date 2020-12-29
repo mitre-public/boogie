@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
 public final class NoopCombinationStrategy implements CombinationStrategy {
   @Override
-  public Map<FlyableLeg, FlyableLeg> combineSimilar(Collection<FlyableLeg> flyableLegs) {
-    return flyableLegs.stream().collect(Collectors.toMap(Function.identity(), Function.identity()));
+  public Map<FlyableLeg, CompositeLeg> combineSimilar(Collection<FlyableLeg> flyableLegs) {
+    return flyableLegs.stream().collect(Collectors.toMap(Function.identity(), CompositeLeg::new));
   }
 }

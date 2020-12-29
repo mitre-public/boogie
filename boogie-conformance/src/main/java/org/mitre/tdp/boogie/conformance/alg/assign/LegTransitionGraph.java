@@ -1,6 +1,10 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.GraphPath;
@@ -8,6 +12,7 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.mitre.tdp.boogie.conformance.alg.assign.combine.CompositeLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.slf4j.Logger;
@@ -24,11 +29,24 @@ public final class LegTransitionGraph extends SimpleDirectedGraph<FlyableLeg, De
 
   private final Logger LOG = LoggerFactory.getLogger(LegTransitionGraph.class);
 
+  /**
+   * The mapping from the representative {@link FlyableLeg} which was inserted into the graph as a vertex to it's union cohort.
+   *
+   * This mapping is maintained here for applications which want traceability from the assigned representative legs to their
+   * explicit sources.
+   */
+  private final Map<FlyableLeg, CompositeLeg> representativeMap;
+
   private ConnectivityInspector<FlyableLeg, DefaultEdge> connectivityInspector;
   private AllDirectedPaths<FlyableLeg, DefaultEdge> allDirectedPaths;
 
-  public LegTransitionGraph() {
+  public LegTransitionGraph(Map<FlyableLeg, CompositeLeg> representativeMap) {
     super(DefaultEdge.class);
+    this.representativeMap = representativeMap;
+  }
+
+  public CompositeLeg unionFor(FlyableLeg flyableLeg) {
+    return checkNotNull(representativeMap.get(flyableLeg));
   }
 
   /**
@@ -76,9 +94,11 @@ public final class LegTransitionGraph extends SimpleDirectedGraph<FlyableLeg, De
    */
   public List<FlyableLeg> downstreamLegsOf(FlyableLeg flyableLeg) {
     // weakly connected components
-    return connectivityInspector().connectedSetOf(flyableLeg).stream()
+    Set<FlyableLeg> connections = connectivityInspector().connectedSetOf(flyableLeg);
+    List<FlyableLeg> downstream = connections.stream()
         // need to check the directional edge exists
         .filter(leg -> this.containsEdge(flyableLeg, leg))
         .collect(Collectors.toList());
+    return downstream;
   }
 }

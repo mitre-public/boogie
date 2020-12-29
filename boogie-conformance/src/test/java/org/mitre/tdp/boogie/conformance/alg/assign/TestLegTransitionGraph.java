@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,12 +29,12 @@ class TestLegTransitionGraph {
     Leg d = leg("d", PathTerm.TF);
     Leg e = leg("e", PathTerm.TF);
 
-    FlyableLeg p1 = new FlyableLeg(source, a, b);
-    FlyableLeg p2 = new FlyableLeg(source, b, c);
-    FlyableLeg p3 = new FlyableLeg(source, c, d);
-    FlyableLeg p4 = new FlyableLeg(null, source, e);
+    FlyableLeg p1 = new FlyableLeg(source, a, b, dummyRoute());
+    FlyableLeg p2 = new FlyableLeg(source, b, c, dummyRoute());
+    FlyableLeg p3 = new FlyableLeg(source, c, d, dummyRoute());
+    FlyableLeg p4 = new FlyableLeg(null, source, e, dummyRoute());
 
-    LegTransitionGraph legsGraph = new LegTransitionGraph();
+    LegTransitionGraph legsGraph = new LegTransitionGraph(new HashMap<>());
 
     Stream.of(p1, p2, p3, p4).forEach(legsGraph::addVertex);
     legsGraph.addEdge(p1, p2);
@@ -60,12 +62,12 @@ class TestLegTransitionGraph {
     Leg d = leg("d", PathTerm.TF);
     Leg e = leg("e", PathTerm.TF);
 
-    FlyableLeg p1 = new FlyableLeg(source, a, b);
-    FlyableLeg p2 = new FlyableLeg(source, b, c);
-    FlyableLeg p3 = new FlyableLeg(source, c, d);
-    FlyableLeg p4 = new FlyableLeg(null, source, e);
+    FlyableLeg p1 = new FlyableLeg(source, a, b, dummyRoute());
+    FlyableLeg p2 = new FlyableLeg(source, b, c, dummyRoute());
+    FlyableLeg p3 = new FlyableLeg(source, c, d, dummyRoute());
+    FlyableLeg p4 = new FlyableLeg(null, source, e, dummyRoute());
 
-    LegTransitionGraph legsGraph = new LegTransitionGraph();
+    LegTransitionGraph legsGraph = new LegTransitionGraph(new HashMap<>());
 
     Stream.of(p1, p2, p3, p4).forEach(legsGraph::addVertex);
     legsGraph.addEdge(p1, p2);
@@ -80,6 +82,10 @@ class TestLegTransitionGraph {
 
     downstream = legsGraph.downstreamLegsOf(p2);
     assertEquals(0, downstream.size());
+  }
+
+  private Route dummyRoute(){
+    return Route.newRoute(new ArrayList<>(), new Object());
   }
 
   private Fix fix(String identifier) {

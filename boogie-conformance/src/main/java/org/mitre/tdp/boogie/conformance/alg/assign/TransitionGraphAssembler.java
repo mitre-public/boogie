@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.CombinationStrategy;
+import org.mitre.tdp.boogie.conformance.alg.assign.combine.CompositeLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,24 +62,29 @@ public final class TransitionGraphAssembler {
     Collection<Pair<FlyableLeg, FlyableLeg>> nativeLinks = assembled.second();
     LOG.info("Assembled {} native links from {} input routes", nativeLinks.size(), routes.size());
 
-    Map<FlyableLeg, FlyableLeg> representativeMap = combinationStrategy.combineSimilar(flyableLegs);
+    // mapping of each input leg to its composite version
+    Map<FlyableLeg, CompositeLeg> legToComposite = combinationStrategy.combineSimilar(flyableLegs);
     LOG.info("Built representative map.");
 
-    Set<FlyableLeg> combined = new HashSet<>(representativeMap.values());
+    Set<CompositeLeg> combined = new HashSet<>(legToComposite.values());
     LOG.info("Combined similar legs down to {} total legs.", combined.size());
 
     Collection<Pair<FlyableLeg, FlyableLeg>> additionalLinks = linkingStrategy.links(flyableLegs);
     int totalLinks = additionalLinks.size() + nativeLinks.size();
     LOG.info("Generated {} additional links from linking strategy for {} total links.", additionalLinks.size(), totalLinks);
 
+    // mapping of representative (as input into the LegTransitionGraph) to the source CompositeLeg
+    Map<FlyableLeg, CompositeLeg> representativeMap = combined.stream()
+        .collect(Collectors.toMap(CompositeLeg::representative, Function.identity()));
+
     LOG.info("Adding {} vertices to flyable leg graph.", combined.size());
-    LegTransitionGraph graph = new LegTransitionGraph();
-    combined.forEach(graph::addVertex);
+    LegTransitionGraph graph = new LegTransitionGraph(representativeMap);
+    combined.forEach(union -> graph.addVertex(union.representative()));
 
     LOG.info("Adding {} edges to flyable leg graph.", totalLinks);
     Consumer<Collection<Pair<FlyableLeg, FlyableLeg>>> linkAdder = col ->
         col.stream()
-            .map(pair -> remap(pair, representativeMap::get))
+            .map(pair -> remap(pair, legToComposite::get))
             .filter(pair -> !pair.first().equals(pair.second()))
             .filter(pair -> !graph.containsEdge(pair.second(), pair.first()))
             .forEach(pair -> graph.addEdge(pair.first(), pair.second()));
@@ -92,10 +99,10 @@ public final class TransitionGraphAssembler {
   /**
    * Re-maps the given pair to a new one by applying the provided {@link Function}.
    */
-  private Pair<FlyableLeg, FlyableLeg> remap(Pair<FlyableLeg, FlyableLeg> pair, Function<FlyableLeg, FlyableLeg> fn) {
+  private Pair<FlyableLeg, FlyableLeg> remap(Pair<FlyableLeg, FlyableLeg> pair, Function<FlyableLeg, CompositeLeg> fn) {
     return Pair.of(
-        checkNotNull(fn.apply(pair.first()), String.format("Failed to re-map: %s", pair.first())),
-        checkNotNull(fn.apply(pair.second()), String.format("Failed to re-map: %s", pair.second()))
+        checkNotNull(fn.apply(pair.first()).representative(), String.format("Failed to re-map: %s", pair.first())),
+        checkNotNull(fn.apply(pair.second()).representative(), String.format("Failed to re-map: %s", pair.second()))
     );
   }
 }

@@ -10,7 +10,7 @@ import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.alg.LegPair;
+import org.mitre.tdp.boogie.conformance.alg.evaluate.LegPair;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 import org.mitre.tdp.boogie.conformance.alg.evaluate.MaxOffTrackDistanceEvaluator;

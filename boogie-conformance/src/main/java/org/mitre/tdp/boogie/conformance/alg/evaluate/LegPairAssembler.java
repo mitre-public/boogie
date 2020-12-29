@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance.alg.assign;
+package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.conformance.alg.LegPair;
+import org.mitre.tdp.boogie.conformance.alg.evaluate.LegPair;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 public final class LegPairAssembler {

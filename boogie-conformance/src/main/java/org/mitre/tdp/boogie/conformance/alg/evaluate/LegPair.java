@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance.alg;
+package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
 import org.mitre.tdp.boogie.Leg;
 
