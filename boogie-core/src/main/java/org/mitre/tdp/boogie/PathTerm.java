@@ -238,7 +238,6 @@ public enum PathTerm implements LegType {
 
   @Override
   public boolean hasRequiredFields(Leg leg) {
-    Preconditions.checkArgument(leg.type().equals(this));
     return valid.test(leg);
   }
 
