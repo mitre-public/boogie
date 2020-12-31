@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
@@ -41,9 +41,7 @@ public class CfScorer implements OnLegScorer {
     double courseToFix = legTriple.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
 
     // convert the true course to the point to a magnetic one for comparison against the boundary/fix radials
-    MagneticVariation localVariation = navaid.magneticVariation() != null
-        ? navaid.magneticVariation()
-        : pathTerminator.magneticVariation();
+    MagneticVariation localVariation = MagneticVariationResolver.getInstance().magneticVariation(that, legTriple);
 
     if (localVariation == null) {
       throw new RuntimeException("No magnetic variation for navaid: " + navaid);

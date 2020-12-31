@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.mitre.tdp.boogie.ProcedureType;
@@ -99,33 +98,26 @@ public interface SectionResolver {
 
   /**
    * Returns a {@link ResolvedSection} containing all of the possible infrastructure
-   * elements
-   */
-  default ResolvedSection resolve(SectionSplit split) {
-    String id = split.value();
-    ResolvedSection section = new ResolvedSection(split);
-    return section.setElements(resolve(id));
-  }
-
-  default List<ResolvedElement<?>> resolve(String... ids) {
-    return Stream.of(ids).map(this::resolve).flatMap(Collection::stream).collect(Collectors.toList());
-  }
-
-  /**
+   * elements.
+   *
    * Resolves the provided identifier to a collection of {@link ResolvedElement}s based on the
    * various {@link LookupService}s configured in the referenced {@link RouteExpander}.
    */
-  default List<ResolvedElement<?>> resolve(String id) {
+  default ResolvedSection resolve(SectionSplit split) {
+    String id = split.value();
     Iterable<ResolvedElement<?>> elements = Iterables.concat(
         airport(id),
-        fix(id),
+        fix(split),
         procedure(id),
         airway(id),
-        Collections.singletonList(latLon(id)));
+        Collections.singletonList(latLon(split)));
 
-    return StreamSupport.stream(elements.spliterator(), false)
+    List<ResolvedElement<?>> resolved = StreamSupport.stream(elements.spliterator(), false)
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
+
+    ResolvedSection section = new ResolvedSection(split);
+    return section.setElements(resolved);
   }
 
   default List<ResolvedElement<?>> airport(String section) {
@@ -139,7 +131,9 @@ public interface SectionResolver {
   /**
    * Attempts to find a fix which matches the id of the section.
    */
-  default List<ResolvedElement<?>> fix(String section) {
+  default List<ResolvedElement<?>> fix(SectionSplit split) {
+    String section = split.value();
+
     // check to see if the parsed section is a tailored waypoint reference
     // if so extract the course/distance suffix from the fix identifier
     String s = section.matches(tailored().pattern())
@@ -149,8 +143,8 @@ public interface SectionResolver {
     return inflator().fixService()
         .allMatchingIdentifier(s).stream()
         .map(fix -> section.equals(s)
-            ? new FixElement(fix)
-            : new TailoredElement(section, fix))
+            ? new FixElement(fix, split.wildcards())
+            : new TailoredElement(section, split.wildcards(), fix))
         .collect(Collectors.toList());
   }
 
@@ -204,8 +198,9 @@ public interface SectionResolver {
   /**
    * Attempts to parse the section identifier as a Lat/Lon coordinate.
    */
-  default ResolvedElement<?> latLon(String section) {
+  default ResolvedElement<?> latLon(SectionSplit split) {
+    String section = split.value();
     boolean match = section.matches(SectionHeuristics.latLon().pattern());
-    return match ? LatLonElement.from(section) : null;
+    return match ? LatLonElement.from(section, split.wildcards()) : null;
   }
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -108,7 +109,7 @@ public class RouteExpander implements Serializable {
       LookupService<Airport> airportService,
       ProcedureService procedureService,
       SectionSplitter sectionSplitter,
-      SectionResolver sectionResolver) {
+      @Nullable SectionResolver sectionResolver) {
     this.fixService = fixService;
     this.airwayService = airwayService;
     this.airportService = airportService;
@@ -216,7 +217,11 @@ public class RouteExpander implements Serializable {
   /**
    * Builds a default implementation of the RouteExpander with no configured approach prediction.
    */
-  public static RouteExpander with(Collection<? extends Fix> fixes, Collection<? extends Airway> airways, Collection<? extends Airport> airports, Collection<? extends Transition> transitions) {
+  public static RouteExpander with(
+      Collection<? extends Fix> fixes,
+      Collection<? extends Airway> airways,
+      Collection<? extends Airport> airports,
+      Collection<? extends Transition> transitions) {
     FixService fs = FixService.with(fixes);
     AirwayService ws = AirwayService.with(airways);
     AirportService as = AirportService.with(airports);

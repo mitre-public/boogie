@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.test.MockObjects.IF;
@@ -93,11 +94,11 @@ public class TestElements {
 
   // no hard exception
   @Test
-  public void testAirwayElementSafeWithAirwaysOfLessThanTwoLegs(){
+  public void testAirwayElementSafeWithAirwaysOfLessThanTwoLegs() {
     Leg leg = mock(Leg.class);
 
     Airway airway = mock(Airway.class);
-    when(airway.legs()).thenReturn((List)Collections.singletonList(leg));
+    when(airway.legs()).thenReturn((List) Collections.singletonList(leg));
 
     AirwayElement element = new AirwayElement(airway);
     assertEquals(0, element.buildLegs().size());
@@ -182,43 +183,63 @@ public class TestElements {
     when(fix.identifier()).thenReturn(fixId);
     when(fix.navigationSource()).thenReturn(() -> "CIFP");
 
-    FixElement element = new FixElement(fix);
+    FixElement element = new FixElement(fix, "");
 
     assertEquals(element.legs().size(), 1);
 
     LinkedLegs linked = element.legs().get(0);
 
-    assertEquals(linked.source().leg().pathTerminator().latLong(), fixLocation);
-    assertEquals(linked.target().leg().pathTerminator().latLong(), fixLocation);
+    assertAll(
+        () -> assertEquals(fixLocation, linked.source().leg().pathTerminator().latLong()),
+        () -> assertEquals(fixLocation, linked.target().leg().pathTerminator().latLong()),
 
-    assertEquals(linked.source().leg().pathTerminator().identifier(), "SHERL");
-    assertEquals(linked.target().leg().pathTerminator().identifier(), "SHERL");
+        () -> assertEquals("SHERL", linked.source().leg().pathTerminator().identifier()),
+        () -> assertEquals("SHERL", linked.target().leg().pathTerminator().identifier()),
 
-    assertEquals(linked.source().leg().type(), PathTerm.DF);
-    assertEquals(linked.source().leg().type(), PathTerm.DF);
+        () -> assertEquals(PathTerm.DF, linked.source().leg().type()),
+        () -> assertEquals(PathTerm.DF, linked.source().leg().type())
+    );
+
+    element = new FixElement(fix, "/");
+    LinkedLegs linked2 = element.legs().iterator().next();
+
+    assertAll(
+        () -> assertEquals(PathTerm.IF, linked2.source().leg().type()),
+        () -> assertEquals(PathTerm.IF, linked2.target().leg().type())
+    );
   }
 
   @Test
   public void testLatLonElement() {
     String latLonId = "5300N/14000W";
-    LatLonElement element = LatLonElement.from(latLonId);
+    LatLonElement element = LatLonElement.from(latLonId, "");
 
     assertEquals(element.legs().size(), 1);
 
     LinkedLegs linked = element.legs().get(0);
 
-    assertEquals(linked.source().leg().pathTerminator().latLong(), LatLong.of(53.0, -140.0));
-    assertEquals(linked.target().leg().pathTerminator().latLong(), LatLong.of(53.0, -140.0));
+    assertAll(
+        () -> assertEquals(linked.source().leg().pathTerminator().latLong(), LatLong.of(53.0, -140.0)),
+        () -> assertEquals(linked.target().leg().pathTerminator().latLong(), LatLong.of(53.0, -140.0)),
 
-    assertEquals(linked.source().leg().pathTerminator().identifier(), "5300N/14000W");
-    assertEquals(linked.target().leg().pathTerminator().identifier(), "5300N/14000W");
+        () -> assertEquals(linked.source().leg().pathTerminator().identifier(), "5300N/14000W"),
+        () -> assertEquals(linked.target().leg().pathTerminator().identifier(), "5300N/14000W"),
 
-    assertEquals(linked.source().leg().type(), PathTerm.DF);
-    assertEquals(linked.source().leg().type(), PathTerm.DF);
+        () -> assertEquals(linked.source().leg().type(), PathTerm.DF),
+        () -> assertEquals(linked.source().leg().type(), PathTerm.DF)
+    );
+
+    element = LatLonElement.from(latLonId, "/");
+    LinkedLegs linked2 = element.legs().iterator().next();
+
+    assertAll(
+        () -> assertEquals(PathTerm.IF, linked2.source().leg().type()),
+        () -> assertEquals(PathTerm.IF, linked2.target().leg().type())
+    );
   }
 
   @Test
-  public void testProcedureElementFilteredReturnsNoLegsIfNoTransitionsPass(){
+  public void testProcedureElementFilteredReturnsNoLegsIfNoTransitionsPass() {
     ProcedureElement element = new ProcedureElement(singleTransitionProcedureGraph()).setTransitionFilter(transition -> false);
     assertEquals(Collections.emptyList(), element.buildLegs());
   }
@@ -277,13 +298,15 @@ public class TestElements {
 
     List<LinkedLegs> linked = element.legs();
 
-    assertEquals(pg.edgeSet().size(), linked.size());
+    assertAll(
+        () -> assertEquals(pg.edgeSet().size(), linked.size()),
 
-    assertTrue(legMatches(linked, "AAA", PathTerm.IF, "BBB", PathTerm.TF));
-    assertTrue(legMatches(linked, "BBB", PathTerm.IF, "CCC", PathTerm.TF));
-    assertTrue(legMatches(linked, "CCC", PathTerm.TF, "CCC", PathTerm.IF));
-    assertTrue(legMatches(linked, "CCC", PathTerm.IF, "DDD", PathTerm.TF));
-    assertTrue(legMatches(linked, "CCC", PathTerm.IF, "EEE", PathTerm.TF));
+        () -> assertTrue(legMatches(linked, "AAA", PathTerm.IF, "BBB", PathTerm.TF)),
+        () -> assertTrue(legMatches(linked, "BBB", PathTerm.IF, "CCC", PathTerm.TF)),
+        () -> assertTrue(legMatches(linked, "CCC", PathTerm.TF, "CCC", PathTerm.IF)),
+        () -> assertTrue(legMatches(linked, "CCC", PathTerm.IF, "DDD", PathTerm.TF)),
+        () -> assertTrue(legMatches(linked, "CCC", PathTerm.IF, "EEE", PathTerm.TF))
+    );
   }
 
   @Test
@@ -306,7 +329,7 @@ public class TestElements {
     MagneticVariation magneticVariation = magneticVariation(-10.0f, -9.0f);
     when(fix.magneticVariation()).thenReturn(magneticVariation);
 
-    TailoredElement element = new TailoredElement(tailoredId, fix);
+    TailoredElement element = new TailoredElement(tailoredId, "/", fix);
 
     assertEquals(element.legs().size(), 1);
 
@@ -314,15 +337,26 @@ public class TestElements {
 
     double projLat = 0.288345;
     double projLon = -0.082682;
-    assertEquals(linked.source().leg().pathTerminator().latLong().latitude(), projLat, 0.0001);
-    assertEquals(linked.source().leg().pathTerminator().latLong().longitude(), projLon, 0.0001);
-    assertEquals(linked.source().leg().pathTerminator().latLong(), linked.target().leg().pathTerminator().latLong());
 
-    // do we want the first tailored string
-    assertEquals(linked.source().leg().pathTerminator().identifier(), "HTO354018");
-    assertEquals(linked.target().leg().pathTerminator().identifier(), "HTO354018");
+    assertAll(
+        () -> assertEquals(projLat, linked.source().leg().pathTerminator().latLong().latitude(), 0.0001),
+        () -> assertEquals(projLon, linked.source().leg().pathTerminator().latLong().longitude(), 0.0001),
+        () -> assertEquals(linked.source().leg().pathTerminator().latLong(), linked.target().leg().pathTerminator().latLong()),
 
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
+        // do we want the first tailored string
+        () -> assertEquals("HTO354018", linked.source().leg().pathTerminator().identifier()),
+        () -> assertEquals("HTO354018", linked.target().leg().pathTerminator().identifier()),
+
+        () -> assertEquals(PathTerm.IF, linked.source().leg().type()),
+        () -> assertEquals(PathTerm.IF, linked.source().leg().type())
+    );
+
+    element = new TailoredElement(tailoredId, "", fix);
+    LinkedLegs linked2 = element.legs().iterator().next();
+
+    assertAll(
+        () -> assertEquals(PathTerm.DF, linked2.source().leg().type()),
+        () -> assertEquals(PathTerm.DF, linked2.target().leg().type())
+    );
   }
 }

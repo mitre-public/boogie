@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**
@@ -65,6 +65,8 @@ public class TfScorer implements OnLegScorer {
 
   double headingWeight(ConformablePoint conformablePoint, Fix startFix, Fix endFix) {
     double legCourse = startFix.courseInDegrees(endFix);
+    double courseToPathTerm = conformablePoint.courseInDegrees(endFix);
+
     double angleDifference = abs(Spherical.angleDifference(conformablePoint.trueCourse().orElseThrow(supplier("required course")), legCourse));
     return headingWeight.apply(angleDifference);
   }

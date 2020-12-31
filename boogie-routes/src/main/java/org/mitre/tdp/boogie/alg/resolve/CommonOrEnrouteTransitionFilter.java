@@ -11,6 +11,7 @@ import org.mitre.tdp.boogie.TransitionType;
 public class CommonOrEnrouteTransitionFilter implements Predicate<Transition> {
   @Override
   public boolean test(Transition transition) {
-    return transition.transitionType().equals(TransitionType.COMMON) || transition.transitionType().equals(TransitionType.ENROUTE);
+    return transition.transitionType().equals(TransitionType.COMMON)
+        || transition.transitionType().equals(TransitionType.ENROUTE);
   }
 }

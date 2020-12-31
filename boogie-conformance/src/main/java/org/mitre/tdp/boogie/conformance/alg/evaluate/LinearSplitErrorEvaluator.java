@@ -19,7 +19,6 @@ import org.mitre.caasd.commons.math.FastLinearApproximation;
 import org.mitre.caasd.commons.math.PiecewiseLinearSplitter;
 import org.mitre.caasd.commons.math.XyDataset;
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 
 /**
  * Leverages a modified version of the Douglas-Peucker algorithm to partition the set of conformable points into level/non-level
@@ -29,27 +28,39 @@ import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
  * while when it is staying constant (and not offset) its considered on-track.
  * e.g. level portions are essentially flying parallel to the route.
  */
-public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
+public class LinearSplitErrorEvaluator implements PrecomputedEvaluator {
 
   /**
    * The maximum error between the final linear fit curve and the data points.
    */
-  default Distance maxError() {
-    return Distance.ofNauticalMiles(1.0);
-  }
-
+  private final Distance maxError;
   /**
    * The rate of change threshold to use to consider a segment level/non-level.
    */
-  default Speed rateOfChangeThreshold() {
-    return Speed.of(10.0, Speed.Unit.KNOTS);
+  private final Speed rateOfChangeThreshold;
+
+  public LinearSplitErrorEvaluator() {
+    this(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
+  }
+
+  public LinearSplitErrorEvaluator(Distance maxError, Speed rateOfChangeThreshold) {
+    this.maxError = maxError;
+    this.rateOfChangeThreshold = rateOfChangeThreshold;
+  }
+
+  public Distance maxError() {
+    return maxError;
+  }
+
+  public Speed rateOfChangeThreshold() {
+    return rateOfChangeThreshold;
   }
 
   /**
    * Returns the mapping of {time, conforming?} based on the computed linear split change points.
    */
   @Override
-  default NavigableMap<Instant, Boolean> conformanceTimes(NavigableMap<ConformablePoint, LegPair> conformablePairs) {
+  public NavigableMap<Instant, Boolean> conformanceTimes(NavigableMap<ConformablePoint, LegPair> conformablePairs) {
     NavigableMap<Duration, Pair<Speed, Distance>> piecewiseSlopes = computeOffsetToFittedSpeedAverageDistance(conformablePairs);
     Instant t0 = conformablePairs.firstKey().time();
 
@@ -65,7 +76,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    * Returns a map containing the Duration offset from the initial point in the conforming point to the fitted speed and max
    * cross track distance over the course of the split.
    */
-  default NavigableMap<Duration, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
+  public NavigableMap<Duration, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
     XyDataset dataset = convertToXYData(conformingPairs);
     XyDataset[] splits = piecewiseSplits(dataset);
     return asOffsetToFittedSpeedAverageDistance(splits);
@@ -74,7 +85,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
   /**
    * Returns whether the given speed/distance pair is level and offset from the assigned leg.
    */
-  default boolean isLevelAndNotOffset(Pair<Speed, Distance> pair) {
+  public boolean isLevelAndNotOffset(Pair<Speed, Distance> pair) {
     Speed slope = pair.first();
     Distance maxCtd = pair.second();
     return (slope.abs().isLessThan(rateOfChangeThreshold()))
@@ -89,7 +100,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    *
    * This map can later be transformed to get the time intervals and the cross t
    */
-  default NavigableMap<Duration, Pair<Speed, Distance>> asOffsetToFittedSpeedAverageDistance(XyDataset[] splits) {
+  public NavigableMap<Duration, Pair<Speed, Distance>> asOffsetToFittedSpeedAverageDistance(XyDataset[] splits) {
     NavigableMap<Duration, Pair<Speed, Distance>> offsetToFittedSpeedAverageDuration = new TreeMap<>();
 
     Arrays.stream(splits).forEach(xyDataset -> {
@@ -108,7 +119,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
     return offsetToFittedSpeedAverageDuration;
   }
 
-  default XyDataset[] piecewiseSplits(XyDataset dataset) {
+  public XyDataset[] piecewiseSplits(XyDataset dataset) {
     PiecewiseLinearSplitter splitter = new PiecewiseLinearSplitter(maxError().inNauticalMiles());
     return dataset.split(splitter);
   }
@@ -119,7 +130,7 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
    * x = epoch time in hours
    * y = cross track distance from leg in nm
    */
-  default XyDataset convertToXYData(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
+  public XyDataset convertToXYData(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
     List<Double> times = new ArrayList<>();
     List<Double> crossTrackDistances = new ArrayList<>();
 
@@ -133,34 +144,13 @@ public interface LinearSplitErrorEvaluator extends PrecomputedEvaluator {
     return new XyDataset(times, crossTrackDistances);
   }
 
-  default Double epochToHours(Long epoch) {
+  private Double epochToHours(Long epoch) {
     return epoch.doubleValue() / hour;
   }
 
-  default Long hoursToEpoch(Double hours) {
+  private Long hoursToEpoch(Double hours) {
     return (long) (hours * hour);
   }
 
   double hour = 60.0d * 60.0d * 1000.0d;
-
-  /**
-   * Creates a new anonymous instance of a {@link LinearSplitErrorEvaluator}.
-   */
-  static LinearSplitErrorEvaluator newInstance() {
-    return new LinearSplitErrorEvaluator() {};
-  }
-
-  static LinearSplitErrorEvaluator newInstance(Distance maxError, Speed rateOfChangeThreshold) {
-    return new LinearSplitErrorEvaluator() {
-      @Override
-      public Distance maxError() {
-        return maxError;
-      }
-
-      @Override
-      public Speed rateOfChangeThreshold() {
-        return rateOfChangeThreshold;
-      }
-    };
-  }
 }

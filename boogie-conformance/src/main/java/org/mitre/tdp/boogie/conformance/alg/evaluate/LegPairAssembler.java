@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.conformance.alg.assemble;
+package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,31 +8,28 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.conformance.alg.evaluate.LegPair;
 import org.mitre.tdp.boogie.utils.Iterators;
 
-/**
- * Assembly logic for converting an ordered sequence of legs into a set of leg pairs.
- */
-public class LegPairAssembler {
-  /**
-   * A filter predicate for removing legs which are skippable/not required from the collection of legs to assemble.
-   */
-  private Predicate<Leg> legFilter = leg -> true;
+public final class LegPairAssembler {
 
-  public LegPairAssembler setLegFilter(Predicate<Leg> legFilter) {
-    this.legFilter = legFilter;
-    return this;
+  private LegPairAssembler() {
+    throw new IllegalStateException();
   }
 
-  public List<LegPairImpl> assemble(List<? extends Leg> legs) {
-    return assemble(legs, LegPairImpl::new);
+  public static List<LegPair> assemble(List<? extends Leg> legs) {
+    return assemble(legs, LegPair::new);
+  }
+
+  public static <L extends Leg, P extends LegPair> List<P> assemble(List<L> legs, BiFunction<L, L, P> assembler) {
+    return assemble(legs, l -> true, assembler);
   }
 
   /**
    * Generates a collection of leg pairs from the input collection of sequentially ordered legs and the provided templated
    * leg assembler function.
    */
-  public <L extends Leg, P extends LegPair> List<P> assemble(List<L> legs, BiFunction<L, L, P> assembler) {
+  public static <L extends Leg, P extends LegPair> List<P> assemble(List<L> legs, Predicate<L> legFilter, BiFunction<L, L, P> assembler) {
     List<L> filteredLegs = legs.stream().filter(legFilter).collect(Collectors.toList());
 
     if (filteredLegs.size() < 2) {

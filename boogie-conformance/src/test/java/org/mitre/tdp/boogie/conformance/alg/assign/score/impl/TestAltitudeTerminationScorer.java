@@ -12,8 +12,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
 public class TestAltitudeTerminationScorer {
 
@@ -22,9 +24,18 @@ public class TestAltitudeTerminationScorer {
     AltitudeLimit altitudeLimit = mock(AltitudeLimit.class);
     when(altitudeLimit.altitudeLimit()).thenReturn(Optional.of(8000.0));
 
+    MagneticVariation magvar = mock(MagneticVariation.class);
+    when(magvar.published()).thenReturn(Optional.empty());
+    when(magvar.modeled()).thenReturn(0.);
+    when(magvar.trueToMagnetic(any())).thenCallRealMethod();
+
+    Fix navaid = mock(Fix.class);
+    when(navaid.magneticVariation()).thenReturn(magvar);
+
     Leg va = mock(Leg.class);
     when(va.outboundMagneticCourse()).thenReturn(Optional.of(100.0));
     when(va.altitudeConstraint()).thenReturn((Optional) Optional.of(altitudeLimit));
+    when(va.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
 
     FlyableLeg consecutiveLegs = mock(FlyableLeg.class);
     when(consecutiveLegs.current()).thenReturn(va);

@@ -11,9 +11,6 @@ test-output/
 .launch
 .pydevproject
 bin/
-MAP
-REDUCE
-COMBINE
 *.jar
 .project
 *.crc

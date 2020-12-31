@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import org.mitre.caasd.commons.Distance;
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
 
 /**

@@ -5,7 +5,6 @@ import java.util.NavigableMap;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
 
 public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
 

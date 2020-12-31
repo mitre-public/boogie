@@ -1,20 +1,22 @@
 package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPair;
-import org.mitre.tdp.boogie.conformance.alg.assemble.LegPairImpl;
 import org.mockito.stubbing.Answer;
 
 class TestMaxOffTrackDistanceEvaluator {
@@ -53,7 +55,7 @@ class TestMaxOffTrackDistanceEvaluator {
   static LegPair mockRfLegPair() {
     Fix previousPathTerminator = mock(Fix.class, "PREVIOUS");
     Fix currentPathTerminator = mock(Fix.class, "CURRENT");
-    Fix centerFix = mock(Fix.class,"CENTER");
+    Fix centerFix = mock(Fix.class, "CENTER");
     Leg previousLeg = mock(Leg.class);
     Leg currentLeg = mock(Leg.class);
 
@@ -73,13 +75,13 @@ class TestMaxOffTrackDistanceEvaluator {
     when(previousPathTerminator.latLong()).thenReturn(LatLong.of(0.0, 1.0));
     when(currentPathTerminator.latLong()).thenReturn(LatLong.of(1.0, 0.0));
 
-    return new LegPairImpl(previousLeg, currentLeg);
+    return new LegPair(previousLeg, currentLeg);
   }
 
   static LegPair mockAfLegPair() {
     Fix previousPathTerminator = mock(Fix.class, "PREVIOUS");
     Fix currentPathTerminator = mock(Fix.class, "CURRENT");
-    Fix recommendedNavaid = mock(Fix.class,"CENTER");
+    Fix recommendedNavaid = mock(Fix.class, "CENTER");
     Leg previousLeg = mock(Leg.class);
     Leg currentLeg = mock(Leg.class);
 
@@ -99,6 +101,6 @@ class TestMaxOffTrackDistanceEvaluator {
     when(previousPathTerminator.latLong()).thenReturn(LatLong.of(0.0, 1.0));
     when(currentPathTerminator.latLong()).thenReturn(LatLong.of(1.0, 0.0));
 
-    return new LegPairImpl(previousLeg, currentLeg);
+    return new LegPair(previousLeg, currentLeg);
   }
 }
