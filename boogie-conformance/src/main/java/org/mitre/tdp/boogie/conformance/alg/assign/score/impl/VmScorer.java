@@ -56,7 +56,7 @@ public final class VmScorer implements OnLegScorer {
     if (PathTerm.VM.hasRequiredFields(legTriple.current()) && legTriple.next().filter(this::supportedNextLeg).isPresent()) {
       return Optional.of(scoreAgainstLeg(point, legTriple));
     }
-    return Optional.empty();
+    return MinValueScorer.getInstance().score(point, legTriple);
   }
 
   private boolean supportedNextLeg(Leg leg) {

@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.impl.WeightFunctions.simpleLogistic;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -68,7 +67,7 @@ public class TestAltitudeTerminationScorer {
     AltitudeTerminationScorer scorer = mock(AltitudeTerminationScorer.class);
     when(scorer.score(any(), any())).thenCallRealMethod();
 
-    assertFalse(scorer.score(point, null).isPresent());
+    assertEquals(MinValueScorer.MIN_SCORE, scorer.score(point, null).get());
   }
 
   @Test
@@ -80,6 +79,6 @@ public class TestAltitudeTerminationScorer {
     AltitudeTerminationScorer scorer = mock(AltitudeTerminationScorer.class);
     when(scorer.score(any(), any())).thenCallRealMethod();
 
-    assertFalse(scorer.score(point, null).isPresent());
+    assertEquals(MinValueScorer.MIN_SCORE, scorer.score(point, null).get());
   }
 }

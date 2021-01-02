@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score.impl;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
@@ -20,6 +22,11 @@ public class MinValueScorer implements OnLegScorer {
   @Override
   public double scoreAgainstLeg(ConformablePoint that, FlyableLeg legTriple) {
     return MIN_SCORE;
+  }
+
+  @Override
+  public Optional<Double> score(ConformablePoint that, FlyableLeg legTriple) {
+    return Optional.of(scoreAgainstLeg(that, legTriple));
   }
 
   public static MinValueScorer getInstance() {

@@ -35,7 +35,9 @@ public class AltitudeTerminationScorer implements OnLegScorer {
 
   @Override
   public Optional<Double> score(ConformablePoint that, FlyableLeg legTriple) {
-    return that.pressureAltitude().isPresent() && that.trueCourse().isPresent() ? OnLegScorer.super.score(that, legTriple) : Optional.empty();
+    return that.pressureAltitude().isPresent() && that.trueCourse().isPresent()
+        ? OnLegScorer.super.score(that, legTriple)
+        : MinValueScorer.getInstance().score(that, legTriple);
   }
 
   @Override
