@@ -117,6 +117,13 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
   private static class Hasher {
     private final HashCodeBuilder builder = new HashCodeBuilder();
 
+    /**
+     * The resolution to use when comparing lat/lon values.  Used to combine fixes from different sources with slightly different coordinates.
+     * <p>
+     * 1e-3 translates to ~111 meters at equator, so only fixes at most that far away will have the same hash.
+     */
+    private static final double HASH_RESOLUTION = 1e-3;
+
     public Hasher append(Object that) {
       builder.append(that);
       return this;
@@ -124,7 +131,8 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
 
     public Hasher withPathTerminator(Leg leg) {
       builder.append(leg.pathTerminator().identifier());
-      builder.append(leg.pathTerminator().latLong());
+      builder.append(Math.round(leg.pathTerminator().latitude() / HASH_RESOLUTION));
+      builder.append(Math.round(leg.pathTerminator().longitude() / HASH_RESOLUTION));
       return this;
     }
 
