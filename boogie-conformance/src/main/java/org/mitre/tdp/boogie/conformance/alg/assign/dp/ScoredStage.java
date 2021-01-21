@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.conformance.alg.assign.dp;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,9 +13,10 @@ import java.util.stream.Collectors;
  * classes and members are package-private.
  */
 class ScoredStage<Stage, State> {
-  private State viterbiPathState;
 
-  private LinkedHashMap<State, ScoredState<State>> scoredStates;
+  private final LinkedHashMap<State, ScoredState<State>> scoredStates;
+
+  private State viterbiPathState;
 
   ScoredStage(LinkedHashMap<State, ScoredState<State>> scoredStates) {
     this.scoredStates = scoredStates;
@@ -66,14 +66,14 @@ class ScoredStage<Stage, State> {
     return scoredStates.get(viterbiPathState);
   }
 
-  static <Stage extends Comparable<? super Stage>, State> ScoredStage<Stage, State> initialStage(LinkedHashSet<State> states) {
+  static <Stage, State> ScoredStage<Stage, State> initialStage(Set<State> states) {
     LinkedHashMap<State, ScoredState<State>> scoredStates = states.stream()
         .collect(Collectors.toMap(s -> s, s -> ScoredState.initialState(s),
             (u, v) -> { throw new IllegalStateException();}, LinkedHashMap::new));
     return new ScoredStage<>(scoredStates);
   }
 
-  static <State, Stage extends Comparable<? super Stage>> ScoredStage<Stage,State> intermediateStage() {
+  static <Stage, State> ScoredStage<Stage, State> intermediateStage() {
     return new ScoredStage<>(new LinkedHashMap<>());
   }
 

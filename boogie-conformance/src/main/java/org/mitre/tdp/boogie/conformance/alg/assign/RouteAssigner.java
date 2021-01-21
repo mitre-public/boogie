@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
 import java.util.Collection;
-import java.util.NavigableMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -85,7 +85,7 @@ public final class RouteAssigner {
     Preconditions.checkArgument(!points.isEmpty(), String.format("Invalid number of supplied points %s.", points.size()));
 
     LOG.info("Generating ViterbiTagger instance.");
-    return new ViterbiTagger<>(
+    return ViterbiTagger.with(
         points,
         transitionGraph.vertexSet(),
         this::legScore,
@@ -108,7 +108,7 @@ public final class RouteAssigner {
     return trellis(points, transitionGraph(routes));
   }
 
-  public NavigableMap<ConformablePoint, FlyableLeg> assignments(
+  public Map<ConformablePoint, FlyableLeg> assignments(
       Collection<? extends ConformablePoint> points,
       LegTransitionGraph transitionGraph) {
     ViterbiTrellis<ConformablePoint, FlyableLeg> trellis = trellis(points, transitionGraph);
@@ -120,7 +120,7 @@ public final class RouteAssigner {
   /**
    * Returns a sorted mapping of {@link ConformablePoint} to associated {@link FlyableLeg} as derived via the {@link ViterbiTagger}.
    */
-  public NavigableMap<ConformablePoint, FlyableLeg> assignments(
+  public Map<ConformablePoint, FlyableLeg> assignments(
       Collection<? extends ConformablePoint> points,
       Collection<? extends Route> routes) {
     return assignments(points, transitionGraph(routes));

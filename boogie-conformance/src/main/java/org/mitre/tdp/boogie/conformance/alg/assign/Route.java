@@ -43,7 +43,7 @@ public final class Route {
   }
 
   public static Route newRoute(List<? extends Leg> legs, Object source) {
-    return new Route((List<Leg>) (List) legs, checkNotNull(source));
+    return new Route((List<Leg>) legs, checkNotNull(source));
   }
 
   @Override

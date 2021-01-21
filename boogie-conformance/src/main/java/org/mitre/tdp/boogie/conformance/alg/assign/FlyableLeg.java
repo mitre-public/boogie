@@ -94,9 +94,15 @@ public final class FlyableLeg {
         Objects.equals(routes, that.routes);
   }
 
+  /** Cache hash code because FlyableLeg is expensive to hash and used frequently in HashMaps */
+  private volatile int hashCode;
+
   @Override
   public int hashCode() {
-    return Objects.hash(previous, current, next, routes);
+    if (hashCode == 0) {
+      hashCode = Objects.hash(previous, current, next, routes);
+    }
+    return hashCode;
   }
 
   @Override

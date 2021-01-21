@@ -26,7 +26,7 @@ class TestViterbiTagger {
   void testTagger() {
     ViterbiTagger<Integer, IntersectionStates> tagger = ViterbiTagger.forHmmStates(stages2, states);
 
-    NavigableMap<Integer, IntersectionStates> path = tagger.optimalPath();
+    Map<Integer, IntersectionStates> path = tagger.optimalPath();
 
     assertEquals(Arrays.asList(
         IntersectionStates.B,

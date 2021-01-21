@@ -18,6 +18,10 @@ public final class Likelihood implements Comparable<Likelihood> {
     return l;
   }
 
+  public double value() {
+    return Math.exp(l);
+  }
+
   public Likelihood times(Likelihood that) {
     return that == null ? null : new Likelihood(this.l + that.l);
   }
