@@ -118,7 +118,7 @@ public enum PathTerm implements LegType {
   RF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
       && l.routeDistance().isPresent()
-      && l.centerFix().isPresent()),
+      && l.centerFix().filter(fix -> fix.latLong() != null).isPresent()),
   /**
    * Arc to Fix.
    *
@@ -126,7 +126,7 @@ public enum PathTerm implements LegType {
    */
   AF(l -> l.pathTerminator() != null && l.pathTerminator().latLong() != null
       && l.turnDirection().isPresent()
-      && l.recommendedNavaid().isPresent()
+      && l.recommendedNavaid().filter(fix -> fix.latLong() != null).isPresent()
       && l.theta().isPresent()
       && l.rho().isPresent()),
   /**
