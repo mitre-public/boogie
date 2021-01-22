@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -29,6 +31,11 @@ public class Iterators {
     IntStream.range(1, list.size()).forEach(i -> consumer.accept(list.get(i - 1), list.get(i)));
   }
 
+  public static <T> void pairwiseWithNulls(List<T> list, BiConsumer<T, T> consumer) {
+    IntFunction<T> getOrNull = i -> i >= 0 && i < list.size() ? list.get(i) : null;
+    IntStream.range(0, list.size() + 1).forEach(i -> consumer.accept(getOrNull.apply(i - 1), getOrNull.apply(i)));
+  }
+
   /**
    * Iterates through the provided {@link HashedLinkedSequence} in a pairwise fashion.
    */
@@ -43,6 +50,11 @@ public class Iterators {
   public static <T> void triples(List<T> list, TriConsumer<T, T, T> consumer) {
     Preconditions.checkArgument(list.size() > 2);
     IntStream.range(1, list.size() - 1).forEach(i -> consumer.accept(list.get(i - 1), list.get(i), list.get(i + 1)));
+  }
+
+  public static <T> void triplesWithNulls(List<T> list, TriConsumer<T, T, T> consumer) {
+    IntFunction<T> getOrNull = i -> i >= 0 && i < list.size() ? list.get(i) : null;
+    IntStream.range(-1, list.size() + 1).forEach(i -> consumer.accept(getOrNull.apply(i - 1), getOrNull.apply(i), getOrNull.apply(i + 1)));
   }
 
   /**
