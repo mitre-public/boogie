@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
-import org.mitre.tdp.boogie.alg.resolve.CommonOrEnrouteTransitionFilter;
+import org.mitre.tdp.boogie.alg.resolve.resolver.CommonOrEnrouteTransitionFilter;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;

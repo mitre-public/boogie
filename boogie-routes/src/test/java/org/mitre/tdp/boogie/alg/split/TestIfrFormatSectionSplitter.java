@@ -1,86 +1,89 @@
 package org.mitre.tdp.boogie.alg.split;
 
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+class TestIfrFormatSectionSplitter {
 
-public class TestIfrFormatSectionSplitter {
-
-  private List<String> ROUTE0 = Arrays.asList(
+  private final List<String> ROUTE0 = Arrays.asList(
       "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/0054",
       "KBDL.CSTL6.SHERL.J121.BRIGS.JIIMS2.KPHL/1814",
       "KBDL./.HTO354018..CCC..MANTA.J121.BRIGS.JIIMS2.KPHL/1814");
-  private List<String> ROUTE1 = Collections.singletonList("KDCA./.WALCE..KGSO*");
-  private List<String> ROUTE2 = Collections.singletonList("KFRG..+RBV.J230.SAAME.J6.+BWG*..KMEM");
-  private List<String> ROUTE3 = Collections.singletonList("KMSO./.*4222N/10726W..WOOKY.TSHNR2.KDEN");
 
   @Test
-  public void testRoute0_0() {
+  void testRoute0_0() {
     List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE0.get(0));
 
-    assertEquals(splits.get(0).value(), "KBDL");
-    assertEquals(splits.get(1).value(), "CSTL6");
-    assertEquals(splits.get(2).value(), "SHERL");
-    assertEquals(splits.get(3).value(), "J121");
-    assertEquals(splits.get(6).value(), "KPHL");
-    assertEquals(splits.get(6).etaEet(), "0054");
+    assertAll(
+        () -> assertEquals("KBDL", splits.get(0).value()),
+        () -> assertEquals("CSTL6", splits.get(1).value()),
+        () -> assertEquals("SHERL", splits.get(2).value()),
+        () -> assertEquals("J121", splits.get(3).value()),
+        () -> assertEquals("KPHL", splits.get(6).value()),
+        () -> assertEquals("0054", splits.get(6).etaEet())
+    );
   }
 
   @Test
-  public void testRoute0_1() {
+  void testRoute0_1() {
     List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE0.get(2));
 
-    assertEquals(splits.get(0).value(), "KBDL");
-    assertEquals(splits.get(1).value(), "");
-    assertEquals(splits.get(1).wildcards(), "/");
-    assertEquals(splits.get(2).value(), "HTO354018");
-    assertEquals(splits.get(10).value(), "KPHL");
-    assertEquals(splits.get(10).etaEet(), "1814");
-
-    assertTrue(Wildcard.TAILORED.test("+*/"));
+    assertAll(
+        () -> assertEquals("KBDL", splits.get(0).value()),
+        () -> assertEquals("HTO354018", splits.get(1).value()),
+        () -> assertEquals("/", splits.get(1).wildcards()),
+        () -> assertEquals("KPHL", splits.get(7).value()),
+        () -> assertEquals("1814", splits.get(7).etaEet())
+    );
   }
 
+  private final List<String> ROUTE1 = singletonList("KDCA./.WALCE..KGSO*");
+
   @Test
-  public void testRoute1_0() {
+  void testRoute1_0() {
     List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE1.get(0));
 
-    assertEquals(splits.get(0).value(), "KDCA");
-    assertEquals(splits.get(1).value(), "");
-    assertTrue(Wildcard.TAILORED.test(splits.get(1).wildcards()));
-    assertEquals(splits.get(2).value(), "WALCE");
-    assertEquals(splits.get(3).value(), "");
-    assertEquals(splits.get(4).value(), "KGSO");
-    assertTrue(Wildcard.SUPPRESSED.test(splits.get(4).wildcards()));
+    assertAll(
+        () -> assertEquals("KDCA", splits.get(0).value()),
+        () -> assertEquals("WALCE", splits.get(1).value()),
+        () -> assertEquals("/", splits.get(1).wildcards()),
+        () -> assertEquals("KGSO", splits.get(2).value()),
+        () -> assertEquals("*", splits.get(2).wildcards())
+    );
   }
 
+  private final List<String> ROUTE2 = singletonList("KFRG..+RBV.J230.SAAME.J6.+BWG*..KMEM");
+
   @Test
-  public void testRoute2_0() {
+  void testRoute2_0() {
     List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE2.get(0));
 
-    assertEquals(splits.get(0).value(), "KFRG");
-    assertTrue(Wildcard.PLUS.test(splits.get(2).wildcards()));
-    assertEquals(splits.get(2).value(), "RBV");
-
-    assertEquals(splits.get(6).value(), "BWG");
-    assertTrue(Wildcard.PLUS.test(splits.get(6).wildcards()));
-    assertTrue(Wildcard.SUPPRESSED.test(splits.get(6).wildcards()));
+    assertAll(
+        () -> assertEquals("KFRG", splits.get(0).value()),
+        () -> assertEquals("RBV", splits.get(1).value()),
+        () -> assertEquals("+", splits.get(1).wildcards()),
+        () -> assertEquals("BWG", splits.get(5).value()),
+        () -> assertTrue(Wildcard.PLUS.test(splits.get(5).wildcards())),
+        () -> assertTrue(Wildcard.SUPPRESSED.test(splits.get(5).wildcards()))
+    );
   }
 
+  private final List<String> ROUTE3 = singletonList("KMSO./.*4222N/10726W..WOOKY.TSHNR2.KDEN");
+
   @Test
-  public void testRoute3_0() {
+  void testRoute3_0() {
     List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE3.get(0));
 
-    SectionSplit ll = splits.get(2);
-
-    assertEquals(ll.value(), "4222N/10726W");
-    assertEquals(ll.wildcards(), "*");
-    assertEquals(splits.get(1).value(), "");
-    assertEquals(splits.get(1).wildcards(), "/");
+    assertAll(
+        () -> assertEquals("4222N/10726W", splits.get(1).value()),
+        () -> assertEquals("*/", splits.get(1).wildcards())
+    );
   }
 }

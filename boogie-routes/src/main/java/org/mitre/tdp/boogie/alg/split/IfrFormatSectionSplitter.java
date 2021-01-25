@@ -3,15 +3,18 @@ package org.mitre.tdp.boogie.alg.split;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.mitre.tdp.boogie.fn.LeftMerger;
+
+import com.google.common.base.Strings;
 
 /**
  * Section splitter for FAA IFR format route strings.
  *
  * e.g. KATL.BOOVE4.DRSDN..AMF.J121.RPA..WYNDE.WYNDE8.KORD/0211
  */
-public class IfrFormatSectionSplitter implements SectionSplitter {
+public final class IfrFormatSectionSplitter implements SectionSplitter {
 
   static Pattern etaEet() {
     return Pattern.compile("/[0-9]{4}$");
@@ -28,6 +31,7 @@ public class IfrFormatSectionSplitter implements SectionSplitter {
   @Override
   public List<SectionSplit> splits(String route) {
     String[] splits = route.split("\\.");
+
     return IntStream.range(0, splits.length)
         .mapToObj(i -> {
           String s = splits[i];
@@ -53,6 +57,14 @@ public class IfrFormatSectionSplitter implements SectionSplitter {
               .setWildcards(wildcards)
               .build();
         })
-        .collect(Collectors.toList());
+        .collect(splitMerger.asCollector());
   }
+
+  /**
+   * Cleans the '.' delimited splits pushing any wildcards from referenced empty splits into the following split.
+   */
+  private static final LeftMerger<SectionSplit> splitMerger = new LeftMerger<>(
+      (l1, l2) -> Strings.isNullOrEmpty(l1.value()),
+      (l1, l2) -> l2.setWildcards(l2.wildcards().concat(l1.wildcards()))
+  );
 }

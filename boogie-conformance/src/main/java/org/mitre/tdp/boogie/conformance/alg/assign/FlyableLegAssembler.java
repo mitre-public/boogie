@@ -26,6 +26,7 @@ public final class FlyableLegAssembler {
     }
 
     List<FlyableLeg> assembled = new ArrayList<>();
+
     if (legs.size() == 1) {
       assembled.add(new FlyableLeg(null, legs.get(0), null, route));
     } else if (legs.size() == 2) {

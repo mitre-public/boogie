@@ -22,44 +22,18 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
+import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolverFactory;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TestRouteLegGraph {
-
-  private static final Logger LOG = LoggerFactory.getLogger(TestRouteLegGraph.class);
-
-  private static RouteExpander apfExpander() {
-    Airport kind = airport("KIND", 1.0, 0.0);
-
-    Leg l1 = IF("BNDRR", 0.0, 0.0);
-    Leg l2 = TF("HRRDR", 0.0, 1.0);
-    Leg l3 = TF("GRRDR", 0.0, 2.0);
-    Leg l4 = TF("VNY", 0.0, 3.0);
-
-    Transition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
-    return RouteExpander.with(singletonList(l4.pathTerminator()), emptyList(), singletonList(kind), singletonList(t));
-  }
-
-  private static RouteLegGraph getGraph(String route, RouteExpander expander) {
-    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(route);
-
-    SectionResolver resolver = SectionResolver.with(expander);
-    ResolvedRoute resolved = resolver.resolve(splits);
-
-    return LegGraphFactory.build(resolved);
-  }
+class TestRouteLegGraph {
 
   @Test
   public void testConnectedSubsets() {
     String route = "KIND.BLSTR1.VNY";
-    RouteLegGraph graph = getGraph(route, apfExpander());
+    RouteLegGraph graph = getGraph(route, apfResolver());
 
     ConnectivityInspector<GraphableLeg, DefaultWeightedEdge> conn = new ConnectivityInspector<>(graph);
 
@@ -72,7 +46,7 @@ public class TestRouteLegGraph {
   @Test
   public void testShortestPath() {
     String route = "KIND.BLSTR1.VNY";
-    RouteLegGraph graph = getGraph(route, apfExpander());
+    RouteLegGraph graph = getGraph(route, apfResolver());
 
     GraphPath<GraphableLeg, DefaultWeightedEdge> path = graph.shortestPath();
 
@@ -100,5 +74,22 @@ public class TestRouteLegGraph {
     assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
 
     assertEquals(60.007, path.getWeight(), 0.01, "Incorrect resolved shortest path weight. Check leg weight functions.");
+  }
+
+  private static RouteResolver apfResolver() {
+    Airport kind = airport("KIND", 1.0, 0.0);
+
+    Leg l1 = IF("BNDRR", 0.0, 0.0);
+    Leg l2 = TF("HRRDR", 0.0, 1.0);
+    Leg l3 = TF("GRRDR", 0.0, 2.0);
+    Leg l4 = TF("VNY", 0.0, 3.0);
+
+    Transition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
+    return new RouteResolverFactory(singletonList(l4.pathTerminator()), emptyList(), singletonList(kind), singletonList(t)).newResolver();
+  }
+
+  private static RouteLegGraph getGraph(String route, RouteResolver resolver) {
+    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(route);
+    return LegGraphFactory.build(resolver.apply(splits));
   }
 }
