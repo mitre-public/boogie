@@ -1,38 +1,25 @@
 package org.mitre.tdp.boogie.alg;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
-import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
+import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
-import org.mitre.tdp.boogie.service.LookupService;
-import org.mitre.tdp.boogie.service.ProcedureService;
-import org.mitre.tdp.boogie.service.impl.AirportService;
-import org.mitre.tdp.boogie.service.impl.AirwayService;
-import org.mitre.tdp.boogie.service.impl.FixService;
-import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
 import org.mitre.tdp.boogie.utils.Iterators;
 
 import com.google.common.base.Preconditions;
@@ -46,7 +33,7 @@ import com.google.common.base.Preconditions;
  *
  * <p>1) {@link SectionSplitter} to split the provided route string into its components
  *
- * <p>2) {@link SectionResolver} to associate split sections of the route with infrastructure
+ * <p>2) {@link RouteResolver} to associate split sections of the route with infrastructure
  * (e.g. procedures, waypoints, etc.)
  *
  * <p>2.5) (Optional) Allows configuration of a {@link ApproachPredictor} object which will
@@ -65,108 +52,35 @@ import com.google.common.base.Preconditions;
  * route string to infrastructure name standardization may be necessary on the user side
  * to get a more complete set of expansions.
  */
-public class RouteExpander implements Serializable {
-  /**
-   * Returns a configured service for {@link Fix} objects.
-   */
-  private final LookupService<Fix> fixService;
-  /**
-   * Returns a configured service for {@link Airway} objects.
-   */
-  private final LookupService<Airway> airwayService;
-  /**
-   * Returns a configured service for {@link Airport} objects.
-   */
-  private final LookupService<Airport> airportService;
-  /**
-   * Returns a configured service for {@link ProcedureGraph} objects.
-   */
-  private final ProcedureService procedureService;
+public final class RouteExpander implements Serializable {
   /**
    * The {@link SectionSplitter} to use in splitting the route string into {@link SectionSplit}.
    */
   private final SectionSplitter sectionSplitter;
   /**
-   * The {@link SectionResolver} to use for matching section splits to infrastructure elements.
+   * The {@link RouteResolver} to use for matching section splits to infrastructure elements.
    */
-  private final SectionResolver sectionResolver;
+  private final RouteResolver routeResolver;
   /**
    * The {@link ApproachPredictor} to use in route resolution.
    */
-  private ApproachPredictor approachPredictor = new NoApproachPredictor();
-  /**
-   * The {@link RunwayPredictor} to use when resolving the predicted arrival runway.
-   */
-  private RunwayPredictor arrivalRunwayPredictor = RunwayPredictor.noop();
-  /**
-   * The {@link RunwayPredictor} to use when resolving the predicted departure runway.
-   */
-  private RunwayPredictor departureRunwayPredictor = RunwayPredictor.noop();
+  private ApproachPredictor approachPredictor;
 
   public RouteExpander(
-      LookupService<Fix> fixService,
-      LookupService<Airway> airwayService,
-      LookupService<Airport> airportService,
-      ProcedureService procedureService,
       SectionSplitter sectionSplitter,
-      @Nullable SectionResolver sectionResolver) {
-    this.fixService = fixService;
-    this.airwayService = airwayService;
-    this.airportService = airportService;
-    this.procedureService = procedureService;
-    this.sectionSplitter = sectionSplitter;
-    this.sectionResolver = sectionResolver == null ? SectionResolver.with(this) : sectionResolver;
+      RouteResolver routeResolver
+  ) {
+    this(sectionSplitter, routeResolver, new NoApproachPredictor());
   }
 
-  public LookupService<Fix> fixService() {
-    return fixService;
-  }
-
-  public LookupService<Airway> airwayService() {
-    return airwayService;
-  }
-
-  public LookupService<Airport> airportService() {
-    return airportService;
-  }
-
-  public ProcedureService procedureService() {
-    return procedureService;
-  }
-
-  public SectionResolver sectionResolver() {
-    return sectionResolver;
-  }
-
-  public SectionSplitter sectionSplitter() {
-    return sectionSplitter;
-  }
-
-  public ApproachPredictor approachPredictor() {
-    return approachPredictor;
-  }
-
-  public RouteExpander setApproachPredictor(ApproachPredictor approachPredictor) {
-    this.approachPredictor = approachPredictor;
-    return this;
-  }
-
-  public RunwayPredictor arrivalRunwayPredictor() {
-    return arrivalRunwayPredictor;
-  }
-
-  public RouteExpander setArrivalRunwayPredictor(RunwayPredictor arrivalRunwayPredictor) {
-    this.arrivalRunwayPredictor = arrivalRunwayPredictor;
-    return this;
-  }
-
-  public RunwayPredictor departureRunwayPredictor() {
-    return departureRunwayPredictor;
-  }
-
-  public RouteExpander setDepartureRunwayPredictor(RunwayPredictor departureRunwayPredictor) {
-    this.departureRunwayPredictor = departureRunwayPredictor;
-    return this;
+  public RouteExpander(
+      SectionSplitter sectionSplitter,
+      RouteResolver routeResolver,
+      ApproachPredictor approachPredictor
+  ) {
+    this.sectionSplitter = checkNotNull(sectionSplitter);
+    this.routeResolver = checkNotNull(routeResolver);
+    this.approachPredictor = checkNotNull(approachPredictor);
   }
 
   /**
@@ -179,15 +93,15 @@ public class RouteExpander implements Serializable {
   public Optional<ExpandedRoute> expand(@Nonnull String route) {
     Preconditions.checkArgument(!route.isEmpty(), "Route cannot be empty.");
 
-    List<SectionSplit> splits = sectionSplitter().splits(route);
+    List<SectionSplit> splits = sectionSplitter.splits(route);
 
-    ResolvedRoute resolved = sectionResolver().resolve(splits);
+    ResolvedRoute resolved = routeResolver.apply(splits);
 
     if (!Iterators.checkMatchCount(resolved.sections(), s -> !s.allLegs().isEmpty())) {
       return Optional.empty();
     }
 
-    Optional<ResolvedSection> approach = approachPredictor().predictAndCheck(
+    Optional<ResolvedSection> approach = approachPredictor.predictAndCheck(
         resolved.sectionAt(resolved.sectionCount() - 2),
         resolved.sectionAt(resolved.sectionCount() - 1));
 
@@ -201,31 +115,5 @@ public class RouteExpander implements Serializable {
     }
 
     return Optional.of(new ExpandedRoute(route, shortestPath.getVertexList()));
-  }
-
-  /**
-   * Builds a new instance of the route expander with the given lookup services.
-   */
-  public static RouteExpander with(
-      LookupService<Fix> fixService,
-      LookupService<Airway> airwayService,
-      LookupService<Airport> airportService,
-      ProcedureService procedureService) {
-    return new RouteExpander(fixService, airwayService, airportService, procedureService, new IfrFormatSectionSplitter(), null);
-  }
-
-  /**
-   * Builds a default implementation of the RouteExpander with no configured approach prediction.
-   */
-  public static RouteExpander with(
-      Collection<? extends Fix> fixes,
-      Collection<? extends Airway> airways,
-      Collection<? extends Airport> airports,
-      Collection<? extends Transition> transitions) {
-    FixService fs = FixService.with(fixes);
-    AirwayService ws = AirwayService.with(airways);
-    AirportService as = AirportService.with(airports);
-    ProcedureGraphService ps = ProcedureGraphService.withTransitions(transitions);
-    return with(fs, ws, as, ps);
   }
 }

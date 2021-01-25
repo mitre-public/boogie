@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.models.LinkedLegs;
 
 /**
  * Wrapper class for a section containing context flags from the filed route string itself
  * (e.g. direct/suppressed) as well as a collection of possible infrastructure elements that
- * were determined to be associated with the section id via the {@link SectionResolver}.
+ * were determined to be associated with the section id via the {@link RouteResolver}.
  */
 public class ResolvedSection {
 

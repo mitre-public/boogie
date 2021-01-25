@@ -59,8 +59,9 @@ public class SectionSplit implements Comparable<SectionSplit> {
     return wildcards;
   }
 
-  public void setWildcards(String cards) {
+  public SectionSplit setWildcards(String cards) {
     this.wildcards = cards;
+    return this;
   }
 
   public Builder builder() {

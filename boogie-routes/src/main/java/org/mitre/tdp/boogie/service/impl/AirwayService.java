@@ -7,7 +7,7 @@ import com.google.common.collect.Multimap;
 
 public final class AirwayService extends SimpleService<Airway> {
 
-  private AirwayService(Multimap<String, Airway> map) {
+  public AirwayService(Multimap<String, Airway> map) {
     super(map);
   }
 

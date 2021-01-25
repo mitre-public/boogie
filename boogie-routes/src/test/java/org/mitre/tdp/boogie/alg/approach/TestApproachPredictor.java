@@ -10,13 +10,40 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 public class TestApproachPredictor {
+
+  @Test
+  public void testFilteringNonProcedureElements() {
+    ResolvedSection returnSection = newSection("", 3, singletonList(resolvedElement(ElementType.AIRPORT)));
+
+    ApproachPredictor predictor = (p, n) -> Optional.of(returnSection);
+
+    ResolvedSection s1 = newSection("", 1, emptyList());
+    ResolvedSection s2 = newSection("", 5, emptyList());
+
+    ResolvedSection checked = predictor.predictAndCheck(s1, s2).get();
+    assertEquals(0, checked.elements().size(), "Bad element types not filtered.");
+  }
+
+  @Test
+  public void testSectionIndexModification() {
+    ResolvedSection returnSection = newSection("", 7, singletonList(resolvedElement(ElementType.APPROACH)));
+
+    ApproachPredictor predictor = (p, n) -> Optional.of(returnSection);
+
+    ResolvedSection s1 = newSection("", 1, emptyList());
+    ResolvedSection s2 = newSection("", 5, emptyList());
+
+    ResolvedSection checked = predictor.predictAndCheck(s1, s2).get();
+    assertEquals(1, checked.elements().size(), "Element should not have been filtered, index should have been adjusted.");
+    assertEquals(5, checked.sectionSplit().index(), "Index not adjusted correctly for checked element.");
+    assertEquals(6, s2.sectionSplit().index(), "Index not adjusted correctly for parameter element.");
+  }
 
   private ResolvedElement<?> resolvedElement(ElementType type) {
     ResolvedElement<?> element = mock(ResolvedElement.class);
@@ -30,53 +57,5 @@ public class TestApproachPredictor {
 
   private ResolvedSection newSection(String name, int index, List<ResolvedElement<?>> elements) {
     return new ResolvedSection(newSplit(name, index)).setElements(elements);
-  }
-
-  @Test
-  public void testFilteringNonProcedureElements() {
-    ResolvedSection returnSection = newSection("", 3, singletonList(resolvedElement(ElementType.AIRPORT)));
-
-    ApproachPredictor predictor = new ApproachPredictor() {
-      @Override
-      public void configure(RouteExpander expander) {
-
-      }
-
-      @Override
-      public Optional<ResolvedSection> predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
-        return Optional.of(returnSection);
-      }
-    };
-
-    ResolvedSection s1 = newSection("", 1, emptyList());
-    ResolvedSection s2 = newSection("", 5, emptyList());
-
-    ResolvedSection checked = predictor.predictAndCheck(s1, s2).get();
-    assertEquals(0, checked.elements().size(), "Bad element types not filtered.");
-  }
-
-  @Test
-  public void testSectionIndexModification() {
-    ResolvedSection returnSection = newSection("", 7, singletonList(resolvedElement(ElementType.APPROACH)));
-
-    ApproachPredictor predictor = new ApproachPredictor() {
-      @Override
-      public void configure(RouteExpander expander) {
-
-      }
-
-      @Override
-      public Optional<ResolvedSection> predictCandidateApproaches(ResolvedSection prev, ResolvedSection last) {
-        return Optional.of(returnSection);
-      }
-    };
-
-    ResolvedSection s1 = newSection("", 1, emptyList());
-    ResolvedSection s2 = newSection("", 5, emptyList());
-
-    ResolvedSection checked = predictor.predictAndCheck(s1, s2).get();
-    assertEquals(1, checked.elements().size(), "Element should not have been filtered, index should have been adjusted.");
-    assertEquals(5, checked.sectionSplit().index(), "Index not adjusted correctly for checked element.");
-    assertEquals(6, s2.sectionSplit().index(), "Index not adjusted correctly for parameter element.");
   }
 }

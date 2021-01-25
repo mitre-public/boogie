@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
  * This is essentially just down selecting the transitions based on whether the runway transition name contains the
  * provided runway identifier.
  */
-public class SidRunwayTransitionFilter extends RunwayTransitionFilter {
+public final class SidRunwayTransitionFilter extends RunwayTransitionFilter {
 
   public SidRunwayTransitionFilter(String runwayId) {
     super(runwayId);

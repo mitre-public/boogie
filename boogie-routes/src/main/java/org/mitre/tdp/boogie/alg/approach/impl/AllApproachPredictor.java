@@ -13,13 +13,13 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
-import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.models.Procedure;
+import org.mitre.tdp.boogie.service.ProcedureService;
 
 /**
  * "Predicts" all of the available approach procedures at the airport.
@@ -27,13 +27,12 @@ import org.mitre.tdp.boogie.models.Procedure;
  * <p>When used this will read into the final {@link RouteLegGraph} all of the procedures at the given airport resolving
  * which to fly via the shortest path algorithm.
  */
-public class AllApproachPredictor implements ApproachPredictor {
+public final class AllApproachPredictor implements ApproachPredictor {
 
-  private RouteExpander expander;
+  private final ProcedureService procedureService;
 
-  @Override
-  public void configure(RouteExpander expander) {
-    this.expander = expander;
+  public AllApproachPredictor(ProcedureService procedureService) {
+    this.procedureService = procedureService;
   }
 
   @Override
@@ -49,12 +48,11 @@ public class AllApproachPredictor implements ApproachPredictor {
   }
 
   /**
-   * Queries the {@link RouteExpander#procedureService()} for the collection of all approach procedures into
-   * the resolved airport element.
+   * Queries the {@link #procedureService)} for the collection of all approach procedures into the resolved airport element.
    */
   private List<ResolvedElement<?>> approachProceduresAtAirport(ResolvedElement<?> element) {
     Airport airport = (Airport) element.reference();
-    Collection<Procedure> procedures = expander.procedureService().allMatchingAirport(airport.identifier());
+    Collection<Procedure> procedures = procedureService.allMatchingAirport(airport.identifier());
 
     List<Procedure> approaches = filter(procedures, procedure -> procedure.type().equals(ProcedureType.APPROACH));
     return transform(approaches, ProcedureElement::new);

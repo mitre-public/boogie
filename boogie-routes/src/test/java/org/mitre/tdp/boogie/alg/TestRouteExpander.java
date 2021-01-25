@@ -11,13 +11,20 @@ import static org.mitre.tdp.boogie.test.Airports.KDEN;
 import static org.mitre.tdp.boogie.test.MockObjects.fix;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
+import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolverFactory;
+import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
+import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
 import org.mitre.tdp.boogie.test.Airports;
@@ -46,8 +53,9 @@ public class TestRouteExpander {
   public void testExitsEarlyWithNoResolvedElements() {
     String route = "KDEN.CONNR5.DBL";
 
-    RouteExpander expander = RouteExpander.with(
-        emptyList(), emptyList(), emptyList(), emptyList());
+    RouteExpander expander = newExpander(
+        emptyList(), emptyList(), emptyList(), emptyList(),
+        RunwayPredictor.noop(), RunwayPredictor.noop());
 
     assertFalse(expander.expand(route).isPresent());
   }
@@ -56,12 +64,13 @@ public class TestRouteExpander {
   public void testAPF() {
     String route = "KDEN.CONNR5.DBL";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         singletonList(fix("DBL", 39.439344444444444, -106.89468055555557)),
         emptyList(),
         singletonList(KDEN()),
-        CONNR5.build().transitions())
-        .setDepartureRunwayPredictor(() -> Optional.of("RW16R"));
+        CONNR5.build().transitions(),
+        RunwayPredictor.noop(),
+        () -> Optional.of("RW16R"));
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -138,12 +147,13 @@ public class TestRouteExpander {
   public void testFPA() {
     String route = "DRSDN.HOBTT2.KATL";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
-        HOBTT2.build().transitions())
-        .setArrivalRunwayPredictor(() -> Optional.of("RW26B"));
+        HOBTT2.build().transitions(),
+        () -> Optional.of("RW26B"),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -194,11 +204,13 @@ public class TestRouteExpander {
   public void testFPA_NoProcedureMatch() {
     String route = "DRSDN.HOBTT3.KATL";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
-        HOBTT2.build().transitions());
+        HOBTT2.build().transitions(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -221,13 +233,15 @@ public class TestRouteExpander {
   public void testFAF() {
     String route = "JMACK.J121.KALDA";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         Arrays.asList(
             fix("JMACK", 33.98850277777778, -78.96658333333333),
             fix("KALDA", 37.84195833333334, -75.62648333333333)),
         singletonList(Airways.J121()),
         emptyList(),
-        emptyList());
+        emptyList(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -268,13 +282,15 @@ public class TestRouteExpander {
   public void testFAFReverse() {
     String route = "KALDA.J121.JMACK";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         Arrays.asList(
             fix("JMACK", 33.98850277777778, -78.96658333333333),
             fix("KALDA", 37.84195833333334, -75.62648333333333)),
         singletonList(Airways.J121()),
         emptyList(),
-        emptyList());
+        emptyList(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -315,14 +331,16 @@ public class TestRouteExpander {
   public void testFWFWFRepeatedAirway() {
     String route = "MILIE.J121.BARTL.J121.ORF";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         Arrays.asList(
             fix("MILIE", 31.328622222222222, -81.17371944444444),
             fix("BARTL", 34.303177777777776, -78.65149444444445),
             fix("ORF", 36.89190555555555, -76.20032777777779)),
         singletonList(Airways.J121()),
         emptyList(),
-        emptyList());
+        emptyList(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -363,13 +381,15 @@ public class TestRouteExpander {
   public void testFLF() {
     String route = "MILIE..5300N/14000W..BARTL";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         Arrays.asList(
             fix("MILIE", 31.328622222222222, -81.17371944444444),
             fix("BARTL", 34.303177777777776, -78.65149444444445)),
         emptyList(),
         emptyList(),
-        emptyList());
+        emptyList(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -395,11 +415,13 @@ public class TestRouteExpander {
   public void testALF() {
     String route = "KDEN./.2200N/12000W..BARTL";
 
-    RouteExpander expander = RouteExpander.with(
+    RouteExpander expander = newExpander(
         singletonList(fix("BARTL", 34.303177777777776, -78.65149444444445)),
         emptyList(),
         singletonList(Airports.KDEN()),
-        emptyList());
+        emptyList(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -427,7 +449,13 @@ public class TestRouteExpander {
 
     Fix bartl = fix("BARTL", 34.303177777777776, -78.65149444444445);
 
-    RouteExpander expander = RouteExpander.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
+    RouteExpander expander = newExpander(
+        singletonList(bartl),
+        emptyList(),
+        singletonList(Airports.KDEN()),
+        emptyList(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -455,7 +483,13 @@ public class TestRouteExpander {
 
     Fix bartl = fix("BARTL", 34.303177777777776, -78.65149444444445);
 
-    RouteExpander expander = RouteExpander.with(singletonList(bartl), emptyList(), singletonList(Airports.KDEN()), emptyList());
+    RouteExpander expander = newExpander(
+        singletonList(bartl),
+        emptyList(),
+        singletonList(Airports.KDEN()),
+        emptyList(),
+        RunwayPredictor.noop(),
+        RunwayPredictor.noop());
 
     ExpandedRoute expandedRoute = expander.expand(route).get();
 
@@ -475,5 +509,16 @@ public class TestRouteExpander {
     leg = legs.get(2);
     assertEquals("BARTL", leg.split().value());
     assertEquals("BARTL", leg.leg().pathTerminator().identifier());
+  }
+
+  private RouteExpander newExpander(
+      Collection<? extends Fix> fixes,
+      Collection<? extends Airway> airways,
+      Collection<? extends Airport> airports,
+      Collection<? extends Transition> transitions,
+      RunwayPredictor arrivalPredictor,
+      RunwayPredictor departurePredictor
+  ) {
+    return RouteExpanderFactory.newFactory(fixes, airways ,airports, transitions).newExpander(arrivalPredictor, departurePredictor);
   }
 }
