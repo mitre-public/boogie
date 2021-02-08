@@ -5,7 +5,6 @@ import static org.mitre.tdp.boogie.utils.Collections.filter;
 import java.util.List;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
@@ -14,12 +13,8 @@ import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
  * The job of an approach predictor is to, given the context of the last and second to last sections
  * of the route string, determine the collection of candidate final approach procedures.
  */
+@FunctionalInterface
 public interface ApproachPredictor {
-
-  /**
-   * Provides access to a configured {@link RouteExpander} object for internal use.
-   */
-  void configure(RouteExpander expander);
 
   /**
    * Takes the last two resolved sections of the route string and attempts to resolve an in-between

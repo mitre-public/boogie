@@ -106,6 +106,10 @@ public class MockObjects {
     return transition(null, pname, "FOO", ttype, ptype, legs);
   }
 
+  public static Transition transition(String pname, String aname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
+    return transition(null, pname, aname, ttype, ptype, legs);
+  }
+
   public static Transition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<? extends Leg> legs) {
     Transition transition = mock(Transition.class);
 

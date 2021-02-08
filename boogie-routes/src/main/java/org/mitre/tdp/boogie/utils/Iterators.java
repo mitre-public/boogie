@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -55,6 +56,18 @@ public class Iterators {
   public static <T> void triplesWithNulls(List<T> list, TriConsumer<T, T, T> consumer) {
     IntFunction<T> getOrNull = i -> i >= 0 && i < list.size() ? list.get(i) : null;
     IntStream.range(-1, list.size() + 1).forEach(i -> consumer.accept(getOrNull.apply(i - 1), getOrNull.apply(i), getOrNull.apply(i + 1)));
+  }
+
+  /**
+   * Method for iterating through triples of elements within a list of size > 1.
+   */
+  public static <T> void triples2(List<T> list, TriConsumer<Optional<T>, T, Optional<T>> consumer) {
+    Preconditions.checkArgument(!list.isEmpty());
+    IntStream.range(0, list.size()).forEach(i -> consumer.accept(
+        i - 1 < 0 ? Optional.empty() : Optional.of(list.get(i - 1)),
+        list.get(i),
+        i + 1 >= list.size() ? Optional.empty() : Optional.of(list.get(i + 1))
+    ));
   }
 
   /**

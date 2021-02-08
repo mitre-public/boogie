@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.alg.resolve.resolver.CommonOrEnrouteTransitionFilter;
 
 public class TestCommonOrEnrouteTransitionFilter {
 
