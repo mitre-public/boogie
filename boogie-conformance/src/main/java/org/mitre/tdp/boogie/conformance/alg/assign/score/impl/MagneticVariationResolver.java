@@ -30,7 +30,8 @@ final class MagneticVariationResolver {
   MagneticVariation magneticVariation(ConformablePoint point, FlyableLeg flyableLeg) {
     return flyableLeg.current().recommendedNavaid().map(Fix::magneticVariation)
         .orElseGet(() -> Optional.of(flyableLeg).map(FlyableLeg::current).map(Leg::pathTerminator).map(Fix::magneticVariation)
-            .orElseGet(() -> magneticVariation(Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude(), point.time()))));
+            .orElseGet(() -> flyableLeg.next().map(Leg::pathTerminator).map(Fix::magneticVariation)
+                .orElseGet(() -> magneticVariation(Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude(), point.time())))));
   }
 
   private static MagneticVariation magneticVariation(double modeled) {
