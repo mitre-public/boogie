@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * Intermediate representation of the Viterbi algorithm, containing all information
  * needed to obtain the maximum-likelihood path to arrive at each state in a stage.
  */
-public class ViterbiTrellis<Stage, State> extends HashMap<Stage, ScoredStage<Stage, State>> {
+public class ViterbiTrellis<Stage, State> extends LinkedHashMap<Stage, ScoredStage<Stage, State>> {
 
   private final List<Stage> stages;
   private final Set<State> states;

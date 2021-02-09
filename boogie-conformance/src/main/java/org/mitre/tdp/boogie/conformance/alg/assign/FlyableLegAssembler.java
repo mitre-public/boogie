@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Optional;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.utils.Iterators;
@@ -26,18 +27,7 @@ public final class FlyableLegAssembler {
     }
 
     List<FlyableLeg> assembled = new ArrayList<>();
-
-    if (legs.size() == 1) {
-      assembled.add(new FlyableLeg(null, legs.get(0), null, route));
-    } else if (legs.size() == 2) {
-      assembled.add(new FlyableLeg(null, legs.get(0), legs.get(1), route));
-      assembled.add(new FlyableLeg(legs.get(0), legs.get(1), null, route));
-    } else {
-      assembled.add(new FlyableLeg(null, legs.get(0), legs.get(1), route));
-      Iterators.triples(legs, (l1, l2, l3) -> assembled.add(new FlyableLeg(l1, l2, l3, route)));
-      assembled.add(new FlyableLeg(legs.get(legs.size() - 2), legs.get(legs.size() - 1), null, route));
-    }
-
+    Iterators.triplesWithNulls(legs, (l1, l2, l3) -> Optional.ofNullable(l2).ifPresent(x -> assembled.add(new FlyableLeg(l1, l2, l3, route))));
     return assembled;
   }
 
