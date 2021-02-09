@@ -65,7 +65,6 @@ public class TfScorer implements OnLegScorer {
 
   double headingWeight(ConformablePoint conformablePoint, Fix startFix, Fix endFix) {
     double legCourse = startFix.courseInDegrees(endFix);
-    double courseToPathTerm = conformablePoint.courseInDegrees(endFix);
 
     double angleDifference = abs(Spherical.angleDifference(conformablePoint.trueCourse().orElseThrow(supplier("required course")), legCourse));
     return headingWeight.apply(angleDifference);
@@ -89,7 +88,7 @@ public class TfScorer implements OnLegScorer {
     if (alongSegment) {
       return ctd;
     } else {
-      double minEndpointDistance = Math.min(point.distanceInNmTo(startFix), point.distanceInNmTo(endFix));
+      double minEndpointDistance = atd < 0 ? point.distanceInNmTo(startFix) : point.distanceInNmTo(endFix);
       return (ctd < 0 ? -1.0 * minEndpointDistance : minEndpointDistance);
     }
   }
