@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.utils;
+package org.mitre.tdp.boogie.util;
 
 import java.util.Collection;
 import java.util.Comparator;

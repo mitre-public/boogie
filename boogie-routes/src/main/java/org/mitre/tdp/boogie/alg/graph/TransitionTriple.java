@@ -1,10 +1,10 @@
 package org.mitre.tdp.boogie.alg.graph;
 
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
-import static org.mitre.tdp.boogie.utils.Collections.noneMatch;
-import static org.mitre.tdp.boogie.utils.Collections.transform;
-import static org.mitre.tdp.boogie.utils.Iterators.checkMatchCount;
-import static org.mitre.tdp.boogie.utils.Iterators.fastslow;
+import static org.mitre.tdp.boogie.util.Collections.allMatch;
+import static org.mitre.tdp.boogie.util.Collections.noneMatch;
+import static org.mitre.tdp.boogie.util.Collections.transform;
+import static org.mitre.tdp.boogie.util.Iterators.checkMatchCount;
+import static org.mitre.tdp.boogie.util.Iterators.fastslow;
 
 import java.util.Arrays;
 import java.util.Collection;

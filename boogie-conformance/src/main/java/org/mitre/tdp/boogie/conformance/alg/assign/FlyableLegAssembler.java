@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import java.util.Optional;
+
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.utils.Iterators;
+import org.mitre.tdp.boogie.util.Iterators;
 
 public final class FlyableLegAssembler {
 

@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.alg.approach.impl;
 
-import static org.mitre.tdp.boogie.utils.Collections.filter;
-import static org.mitre.tdp.boogie.utils.Collections.transform;
+import static org.mitre.tdp.boogie.util.Collections.filter;
+import static org.mitre.tdp.boogie.util.Collections.transform;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
 import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;

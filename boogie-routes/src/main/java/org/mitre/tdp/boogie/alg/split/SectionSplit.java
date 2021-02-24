@@ -3,14 +3,12 @@ package org.mitre.tdp.boogie.alg.split;
 import java.util.Comparator;
 import java.util.Objects;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 /**
  * Represents the cleaned and tagged portion of a route string between two `.`s.
  * <p>
  * e.g. WYNDE8 in FLT.WYNDE8.KORD.
  */
-public class SectionSplit implements Comparable<SectionSplit> {
+public final class SectionSplit implements Comparable<SectionSplit> {
   /**
    * The alphanumeric string section value.
    * <p>
@@ -90,13 +88,18 @@ public class SectionSplit implements Comparable<SectionSplit> {
   }
 
   @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this);
+  public int compareTo(SectionSplit that) {
+    return Comparator.comparingInt(SectionSplit::index).compare(this, that);
   }
 
   @Override
-  public int compareTo(SectionSplit that) {
-    return Comparator.comparingInt(SectionSplit::index).compare(this, that);
+  public String toString() {
+    return "SectionSplit{" +
+        "value='" + value + '\'' +
+        ", etaEet='" + etaEet + '\'' +
+        ", index=" + index +
+        ", wildcards='" + wildcards + '\'' +
+        '}';
   }
 
   public static class Builder {

@@ -20,7 +20,7 @@ import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
-import org.mitre.tdp.boogie.utils.Iterators;
+import org.mitre.tdp.boogie.util.Iterators;
 
 import com.google.common.base.Preconditions;
 

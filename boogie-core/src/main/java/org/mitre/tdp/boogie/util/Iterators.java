@@ -1,24 +1,26 @@
-package org.mitre.tdp.boogie.utils;
+package org.mitre.tdp.boogie.util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.fn.TriConsumer;
+import org.mitre.tdp.boogie.fn.TriFunction;
 
 import com.google.common.base.Preconditions;
 
 /**
  * Collection of methods for executing common iteration patterns.
  */
-public class Iterators {
+public final class Iterators {
 
   private Iterators() {
     throw new IllegalStateException("Utility Class");

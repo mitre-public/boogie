@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
-import static org.mitre.tdp.boogie.utils.Collections.sort;
+import static org.mitre.tdp.boogie.util.Collections.sort;
 
 import java.util.Comparator;
 import java.util.List;

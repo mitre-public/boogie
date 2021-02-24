@@ -7,7 +7,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.models.LinkedLegs;
-import org.mitre.tdp.boogie.utils.Iterators;
+import org.mitre.tdp.boogie.util.Iterators;
 
 public class AirwayElement extends ResolvedElement<Airway> {
 

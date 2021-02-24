@@ -10,20 +10,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.utils.Iterators;
 
-
-public class TestIterators {
+class TestIterators {
 
   private boolean odd(Integer i) {
     return i % 2 != 0;
   }
 
   @Test
-  public void testSkipEvens() {
+   void testSkipEvens() {
     List<Integer> ints = IntStream.range(0, 20).boxed().collect(Collectors.toList());
 
     List<Integer> odds = new ArrayList<>();

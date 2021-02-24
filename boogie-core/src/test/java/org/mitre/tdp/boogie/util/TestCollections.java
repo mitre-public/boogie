@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.utils.Collections;
 
 public class TestCollections {
 

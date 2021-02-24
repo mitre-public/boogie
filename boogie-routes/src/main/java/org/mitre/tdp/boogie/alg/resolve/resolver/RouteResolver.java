@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.models.ExpandedRoute;
-import org.mitre.tdp.boogie.utils.Iterators;
+import org.mitre.tdp.boogie.util.Iterators;
 
 /**
  * Wrapper class for applying a composite {@link SectionResolver} to a sequence of {@link SectionSplit}s generating a new

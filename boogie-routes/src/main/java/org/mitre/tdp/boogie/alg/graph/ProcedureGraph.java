@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.alg.graph;
 
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mitre.tdp.boogie.util.Collections.allMatch;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.interfaces.LowestCommonAncestorAlgorithm;
@@ -21,16 +20,18 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.impl.NameLocationService;
-import org.mitre.tdp.boogie.utils.Collections;
-import org.mitre.tdp.boogie.utils.Iterators;
+import org.mitre.tdp.boogie.util.Collections;
+import org.mitre.tdp.boogie.util.Iterators;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 
 /**
  * Representation of the procedure built from its collection of transitions as a graph object.
  *
- * <p>Using jgrapht as the engine we leverage a whole host of common graph algorithms on the procedure
- * treating it as a directed graph. For the route expansion use case the most important are:
+ * <p>Using jgrapht as the engine we leverage a whole host of common graph algorithms on the procedure treating it as a directed
+ * graph. For the route expansion use case the most important are:</p>
+ *
  * {@link ConnectivityInspector}
  * {@link AllDirectedPaths}
  * {@link LowestCommonAncestorAlgorithm}
@@ -161,6 +162,6 @@ public class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implem
 
   @Override
   public String toString() {
-    return "ProcedureGraph: ".concat(StringUtils.join(identifier(), airport(), type().name(), navigationSource().name()));
+    return "ProcedureGraph: ".concat(Joiner.on(",").join(identifier(), airport(), type().name(), navigationSource().name()));
   }
 }

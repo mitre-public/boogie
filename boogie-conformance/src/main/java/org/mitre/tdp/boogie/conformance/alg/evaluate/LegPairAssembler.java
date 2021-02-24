@@ -8,8 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.conformance.alg.evaluate.LegPair;
-import org.mitre.tdp.boogie.utils.Iterators;
+import org.mitre.tdp.boogie.util.Iterators;
 
 public final class LegPairAssembler {
 

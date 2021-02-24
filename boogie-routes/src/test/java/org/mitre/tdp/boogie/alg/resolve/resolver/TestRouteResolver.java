@@ -9,7 +9,7 @@ import static org.mitre.tdp.boogie.test.MockObjects.airport;
 import static org.mitre.tdp.boogie.test.MockObjects.airway;
 import static org.mitre.tdp.boogie.test.MockObjects.fix;
 import static org.mitre.tdp.boogie.test.MockObjects.transition;
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mitre.tdp.boogie.util.Collections.allMatch;
 
 import java.util.Arrays;
 import java.util.List;

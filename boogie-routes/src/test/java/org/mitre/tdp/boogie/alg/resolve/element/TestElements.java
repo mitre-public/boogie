@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.test.MockObjects.IF;
 import static org.mitre.tdp.boogie.test.MockObjects.TF;
 import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
-import static org.mitre.tdp.boogie.utils.Collections.allMatch;
+import static org.mitre.tdp.boogie.util.Collections.allMatch;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +31,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.graph.TestProcedureGraph;
 import org.mitre.tdp.boogie.models.LinkedLegs;
-import org.mitre.tdp.boogie.utils.Iterators;
+import org.mitre.tdp.boogie.util.Iterators;
 
 public class TestElements {
 

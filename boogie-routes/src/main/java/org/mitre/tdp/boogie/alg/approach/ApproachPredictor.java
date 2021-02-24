@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.alg.approach;
 
-import static org.mitre.tdp.boogie.utils.Collections.filter;
+import static org.mitre.tdp.boogie.util.Collections.filter;
 
 import java.util.List;
 import java.util.Optional;
