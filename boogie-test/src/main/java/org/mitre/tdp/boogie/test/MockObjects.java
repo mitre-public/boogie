@@ -116,6 +116,7 @@ public class MockObjects {
     when(transition.identifier()).thenReturn(tname);
     when(transition.airport()).thenReturn(aname);
     when(transition.legs()).thenReturn((List) legs);
+    when(transition.concreteLegs()).thenCallRealMethod();
     when(transition.procedure()).thenReturn(pname);
     when(transition.procedureType()).thenReturn(ptype);
     when(transition.transitionType()).thenReturn(ttype);

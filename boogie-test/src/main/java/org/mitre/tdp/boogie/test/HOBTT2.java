@@ -20,7 +20,7 @@ import org.mitre.tdp.boogie.TransitionType;
 /**
  * A mocked copy of the HOBTT2 Procedure at KATL from cycle 1913 for use in testing.
  */
-public class HOBTT2 {
+public final class HOBTT2 {
 
   private final Map<String, Transition> transitions;
 
@@ -182,7 +182,7 @@ public class HOBTT2 {
 
   public Leg get(String fname, String tname) {
     Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+    return transition.legs().stream().filter(l -> l.pathTerminator() != null).filter(l -> fname.equals(l.pathTerminator().identifier())).findFirst().orElse(null);
   }
 
   public Transition get(String tname) {

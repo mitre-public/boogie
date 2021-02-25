@@ -23,7 +23,7 @@ import org.mitre.tdp.boogie.TransitionType;
 /**
  * Mock of I16R approach procedure for runway 16R at KDEN.
  */
-public class I16R {
+public final class I16R {
 
   private final Map<String, Transition> transitions;
 
@@ -87,7 +87,7 @@ public class I16R {
 
   public Leg get(String fname, String tname) {
     Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+    return transition.legs().stream().filter(l -> l.pathTerminator() != null).filter(l -> fname.equals(l.pathTerminator().identifier())).findFirst().orElse(null);
   }
 
   public Transition get(String tname) {

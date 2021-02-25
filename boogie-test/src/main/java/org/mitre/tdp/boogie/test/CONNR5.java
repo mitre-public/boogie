@@ -24,7 +24,7 @@ import org.mitre.tdp.boogie.TransitionType;
 /**
  * RNAV Departure SID out of Denver from cycle 1910 for use in testing.
  */
-public class CONNR5 {
+public final class CONNR5 {
 
   private final Map<String, Transition> transitions;
 
@@ -153,7 +153,7 @@ public class CONNR5 {
 
   public Leg get(String fname, String tname) {
     Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator().identifier().equals(fname)).findFirst().orElse(null);
+    return transition.legs().stream().filter(l -> l.pathTerminator() != null).filter(l -> fname.equals(l.pathTerminator().identifier())).findFirst().orElse(null);
   }
 
   public Transition get(String tname) {

@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.Leg;
 /**
  * A mocked copy of the J121 airway over the US for use in unit testing.
  */
-public class Airways {
+public final class Airways {
 
   public static Airway J121() {
     Leg CRG = TF("CRG", 30.338880555555555, -81.50992777777778);

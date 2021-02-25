@@ -64,7 +64,7 @@ public final class RouteExpander implements Serializable {
   /**
    * The {@link ApproachPredictor} to use in route resolution.
    */
-  private ApproachPredictor approachPredictor;
+  private final ApproachPredictor approachPredictor;
 
   public RouteExpander(
       SectionSplitter sectionSplitter,
