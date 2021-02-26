@@ -2,33 +2,24 @@ package org.mitre.tdp.boogie.alg.graph;
 
 import static org.mitre.tdp.boogie.util.Collections.allMatch;
 import static org.mitre.tdp.boogie.util.Collections.noneMatch;
-import static org.mitre.tdp.boogie.util.Collections.transform;
-import static org.mitre.tdp.boogie.util.Iterators.checkMatchCount;
-import static org.mitre.tdp.boogie.util.Iterators.fastslow;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.util.Combinatorics;
 
 import com.google.common.base.Preconditions;
 
 /**
  * Convenience class for handling transitions grouped by their {@link TransitionType}.
  */
-public class TransitionTriple {
+public final class TransitionTriple {
 
   private final ProcedureType procedureType;
   private final List<Transition> enroute;
@@ -82,47 +73,5 @@ public class TransitionTriple {
         byType.getOrDefault(TransitionType.ENROUTE, Collections.emptyList()),
         byType.getOrDefault(TransitionType.COMMON, Collections.emptyList()),
         byType.getOrDefault(TransitionType.RUNWAY, Collections.emptyList()));
-  }
-
-  /**
-   * Takes two collections of transitions assumed to be of following types and zips them together
-   * along their endpoints.
-   *
-   * <p>e.g. List<ENROUTE> -> List<COMMON>
-   */
-  private void zipAndInsert(List<Transition> previous, List<Transition> next, ProcedureGraph graph) {
-    // these should all have concrete fixes as path terminators
-    List<Leg> terminals = transform(previous, t -> ((List<Leg>) t.legs()).get(t.legs().size() - 1));
-    List<Leg> initials = transform(next, t -> ((List<Leg>) t.legs()).get(0));
-
-    Iterator<Pair<Leg, Leg>> paired = Combinatorics.cartesianProduct(terminals::iterator, initials::iterator);
-    paired.forEachRemaining(pair -> {
-
-      // occasionally transition will end/start with non-concrete leg types (no associated fix) we can't
-      // zip these together but we can pass them through without failing
-      String firstIdentifier = Optional.ofNullable(pair.first())
-          .map(Leg::pathTerminator)
-          .map(Fix::identifier)
-          .orElse(null);
-
-      String secondIdentifier = Optional.ofNullable(pair.second())
-          .map(Leg::pathTerminator)
-          .map(Fix::identifier)
-          .orElse(null);
-
-      if (firstIdentifier != null && firstIdentifier.equals(secondIdentifier)) {
-        graph.addEdge(pair.first(), pair.second());
-      }
-    });
-  }
-
-  /**
-   * Takes the provided procedure graph and its internal set of transitions divided by type and zips
-   * the transitions together based on the type of procedure they are a part of.
-   */
-  void zipAndInsert(ProcedureGraph graph) {
-    if (checkMatchCount(listOrdered(), c -> !c.isEmpty())) {
-      fastslow(listOrdered(), c -> !c.isEmpty(), (l1, l2, skip) -> zipAndInsert(l1, l2, graph));
-    }
   }
 }

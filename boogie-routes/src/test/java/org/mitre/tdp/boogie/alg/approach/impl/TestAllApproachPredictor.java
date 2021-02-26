@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.alg.approach.impl;
 
 import static com.google.common.collect.Streams.concat;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mitre.tdp.boogie.test.Airports.KDEN;
@@ -14,25 +13,20 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.RouteExpander;
-import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
-import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.models.Procedure;
-import org.mitre.tdp.boogie.service.ProcedureService;
 import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
 import org.mitre.tdp.boogie.test.CONNR5;
 import org.mitre.tdp.boogie.test.HOBTT2;
 import org.mitre.tdp.boogie.test.I16R;
 
-public class TestAllApproachPredictor {
+class TestAllApproachPredictor {
 
   @Test
-  public void testReturnsAllApproaches() {
+  void testReturnsAllApproaches() {
     Airport kden = KDEN();
 
     List<Transition> transitions = concat(

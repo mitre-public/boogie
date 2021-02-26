@@ -26,6 +26,136 @@ import org.mitre.tdp.boogie.test.HOBTT2;
 
 public class TestProcedureGraph {
 
+  @Test
+  void testSingleLegSingleTransition() {
+    Leg leg = IF("YYT", 0.0, 0.0);
+    Transition transition = transition("A", TransitionType.COMMON, ProcedureType.STAR, singletonList(leg));
+
+    ProcedureGraph graph = ProcedureGraph.from(singletonList(transition));
+
+    assertTrue(graph.edgeSet().isEmpty());
+    assertEquals(1, graph.vertexSet().size());
+  }
+
+  @Test
+  void assertNominalGraphConnected() {
+    assertTrue(new ConnectivityInspector<>(nominalGraph()).isConnected());
+  }
+
+  @Test
+  void testNominalPathAAA_EEE() {
+    ProcedureGraph pg = nominalGraph();
+
+    List<List<Leg>> paths = pg.pathsBetween(
+        getLeg(pg, "AAA").pathTerminator(),
+        getLeg(pg, "EEE").pathTerminator());
+
+    assertEquals(1, paths.size());
+
+    List<Leg> path = paths.get(0);
+    matchesSequence(path, Arrays.asList(
+        Pair.of("AAA", PathTerm.IF),
+        Pair.of("BBB", PathTerm.TF),
+        Pair.of("BBB", PathTerm.IF),
+        Pair.of("CCC", PathTerm.TF),
+        Pair.of("CCC", PathTerm.IF),
+        Pair.of("EEE", PathTerm.TF)
+    ));
+  }
+
+  @Test
+  void testNominalPathAAA_DDD() {
+    ProcedureGraph pg = nominalGraph();
+
+    List<List<Leg>> paths = pg.pathsBetween(
+        getLeg(pg, "AAA").pathTerminator(),
+        getLeg(pg, "DDD").pathTerminator());
+
+    assertEquals(1, paths.size());
+
+    List<Leg> path = paths.get(0);
+    matchesSequence(path, Arrays.asList(
+        Pair.of("AAA", PathTerm.IF),
+        Pair.of("BBB", PathTerm.TF),
+        Pair.of("BBB", PathTerm.IF),
+        Pair.of("CCC", PathTerm.TF),
+        Pair.of("CCC", PathTerm.IF),
+        Pair.of("DDD", PathTerm.TF)
+    ));
+  }
+
+  @Test
+  void testNoBackPath() {
+    ProcedureGraph pg = nominalGraph();
+
+    List<List<Leg>> paths = pg.pathsBetween(
+        getLeg(pg, "DDD").pathTerminator(),
+        getLeg(pg, "AAA").pathTerminator());
+
+    assertEquals(0, paths.size());
+  }
+
+  @Test
+  void assertSplitGraphDisconnected() {
+    assertFalse(new ConnectivityInspector<>(splitGraph()).isConnected());
+  }
+
+  @Test
+  void testSplitGraphPathWithinTransitions() {
+    ProcedureGraph pg = splitGraph();
+
+    assertFalse(pg.pathsBetween(getLeg(pg, "CCC").pathTerminator(), getLeg(pg, "DDD").pathTerminator()).isEmpty());
+    assertFalse(pg.pathsBetween(getLeg(pg, "EEE").pathTerminator(), getLeg(pg, "FFF").pathTerminator()).isEmpty());
+  }
+
+  @Test
+  void testSplitGraphPathBetweenTransitions() {
+    ProcedureGraph pg = splitGraph();
+    assertTrue(pg.pathsBetween(getLeg(pg, "CCC").pathTerminator(), getLeg(pg, "FFF").pathTerminator()).isEmpty());
+  }
+
+  @Test
+  void testHOBTT2Connections() {
+    HOBTT2 hobtt2 = HOBTT2.build();
+    ProcedureGraph pg = ProcedureGraph.from(hobtt2.transitions());
+
+    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
+    assertTrue(ci.isConnected(), "Constructed graph is not connected.");
+
+    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("YURII", "RW28")));
+
+    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("KEAVY", "RW26B")));
+    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("YURII", "RW27B")));
+    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("YURII", "RW28")));
+  }
+
+  @Test
+  void testCONNR5Connections() {
+    CONNR5 connr5 = CONNR5.build();
+    ProcedureGraph pg = ProcedureGraph.from(connr5.transitions());
+
+    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
+    assertTrue(ci.isConnected());
+
+    assertTrue(ci.pathExists((Leg) connr5.get("RW17L").legs().get(0), connr5.get("DBL", "")), "Single VI leg reference as path start failed.");
+    assertTrue(ci.pathExists((Leg) connr5.get("RW08").legs().get(0), connr5.get("DBL", "")), "Multiple non-concrete leg as path start failed.");
+    assertTrue(ci.pathExists((Leg) connr5.get("RW16L").legs().get(0), connr5.get("DBL", "")), "VI into CF leg chain start failure.");
+  }
+
   public static ProcedureGraph nominalGraph() {
     Leg l1_1 = IF("AAA", 0.0, 0.0);
     Leg l1_2 = TF("BBB", 0.0, 0.1);
@@ -71,135 +201,5 @@ public class TestProcedureGraph {
         .filter(leg -> leg.pathTerminator().identifier().equals(id))
         .findFirst()
         .orElse(null);
-  }
-
-  @Test
-  public void testSingleLegSingleTransition() {
-    Leg leg = IF("YYT", 0.0, 0.0);
-    Transition transition = transition("A", TransitionType.COMMON, ProcedureType.STAR, singletonList(leg));
-
-    ProcedureGraph graph = ProcedureGraph.from(singletonList(transition));
-
-    assertTrue(graph.edgeSet().isEmpty());
-    assertEquals(1, graph.vertexSet().size());
-  }
-
-  @Test
-  public void assertNominalGraphConnected() {
-    assertTrue(new ConnectivityInspector<>(nominalGraph()).isConnected());
-  }
-
-  @Test
-  public void testNominalPathAAA_EEE() {
-    ProcedureGraph pg = nominalGraph();
-
-    List<List<Leg>> paths = pg.pathsBetween(
-        getLeg(pg, "AAA").pathTerminator(),
-        getLeg(pg, "EEE").pathTerminator());
-
-    assertEquals(1, paths.size());
-
-    List<Leg> path = paths.get(0);
-    matchesSequence(path, Arrays.asList(
-        Pair.of("AAA", PathTerm.IF),
-        Pair.of("BBB", PathTerm.TF),
-        Pair.of("BBB", PathTerm.IF),
-        Pair.of("CCC", PathTerm.TF),
-        Pair.of("CCC", PathTerm.IF),
-        Pair.of("EEE", PathTerm.TF)
-    ));
-  }
-
-  @Test
-  public void testNominalPathAAA_DDD() {
-    ProcedureGraph pg = nominalGraph();
-
-    List<List<Leg>> paths = pg.pathsBetween(
-        getLeg(pg, "AAA").pathTerminator(),
-        getLeg(pg, "DDD").pathTerminator());
-
-    assertEquals(1, paths.size());
-
-    List<Leg> path = paths.get(0);
-    matchesSequence(path, Arrays.asList(
-        Pair.of("AAA", PathTerm.IF),
-        Pair.of("BBB", PathTerm.TF),
-        Pair.of("BBB", PathTerm.IF),
-        Pair.of("CCC", PathTerm.TF),
-        Pair.of("CCC", PathTerm.IF),
-        Pair.of("DDD", PathTerm.TF)
-    ));
-  }
-
-  @Test
-  public void testNoBackPath() {
-    ProcedureGraph pg = nominalGraph();
-
-    List<List<Leg>> paths = pg.pathsBetween(
-        getLeg(pg, "DDD").pathTerminator(),
-        getLeg(pg, "AAA").pathTerminator());
-
-    assertEquals(0, paths.size());
-  }
-
-  @Test
-  public void assertSplitGraphDisconnected() {
-    assertFalse(new ConnectivityInspector<>(splitGraph()).isConnected());
-  }
-
-  @Test
-  public void testSplitGraphPathWithinTransitions() {
-    ProcedureGraph pg = splitGraph();
-
-    assertFalse(pg.pathsBetween(getLeg(pg, "CCC").pathTerminator(), getLeg(pg, "DDD").pathTerminator()).isEmpty());
-    assertFalse(pg.pathsBetween(getLeg(pg, "EEE").pathTerminator(), getLeg(pg, "FFF").pathTerminator()).isEmpty());
-  }
-
-  @Test
-  public void testSplitGraphPathBetweenTransitions() {
-    ProcedureGraph pg = splitGraph();
-    assertTrue(pg.pathsBetween(getLeg(pg, "CCC").pathTerminator(), getLeg(pg, "FFF").pathTerminator()).isEmpty());
-  }
-
-  @Test
-  public void testHOBTT2Connections() {
-    HOBTT2 hobtt2 = HOBTT2.build();
-    ProcedureGraph pg = ProcedureGraph.from(hobtt2.transitions());
-
-    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
-    assertTrue(ci.isConnected(), "Constructed graph is not connected.");
-
-    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("KEAVY", "RW26B")));
-    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("YURII", "RW27B")));
-    assertTrue(ci.pathExists(hobtt2.get("DRSDN", "DRSDN"), hobtt2.get("YURII", "RW28")));
-
-    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("KEAVY", "RW26B")));
-    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("YURII", "RW27B")));
-    assertTrue(ci.pathExists(hobtt2.get("KHMYA", "KHMYA"), hobtt2.get("YURII", "RW28")));
-
-    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("KEAVY", "RW26B")));
-    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("YURII", "RW27B")));
-    assertTrue(ci.pathExists(hobtt2.get("COOUP", "COOUP"), hobtt2.get("YURII", "RW28")));
-
-    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("KEAVY", "RW26B")));
-    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("YURII", "RW27B")));
-    assertTrue(ci.pathExists(hobtt2.get("BEORN", "BEORN"), hobtt2.get("YURII", "RW28")));
-
-    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("KEAVY", "RW26B")));
-    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("YURII", "RW27B")));
-    assertTrue(ci.pathExists(hobtt2.get("FRDDO", "FRDDO"), hobtt2.get("YURII", "RW28")));
-  }
-
-  @Test
-  public void testCONNR5Connections() {
-    CONNR5 connr5 = CONNR5.build();
-    ProcedureGraph pg = ProcedureGraph.from(connr5.transitions());
-
-    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
-    assertTrue(ci.isConnected());
-
-    assertTrue(ci.pathExists((Leg) connr5.get("RW17L").legs().get(0), connr5.get("DBL", "")), "Single VI leg reference as path start failed.");
-    assertTrue(ci.pathExists((Leg) connr5.get("RW08").legs().get(0), connr5.get("DBL", "")), "Multiple non-concrete leg as path start failed.");
-    assertTrue(ci.pathExists((Leg) connr5.get("RW16L").legs().get(0), connr5.get("DBL", "")), "VI into CF leg chain start failure.");
   }
 }

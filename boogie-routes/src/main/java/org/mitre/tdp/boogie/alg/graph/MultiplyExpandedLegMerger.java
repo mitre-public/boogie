@@ -15,13 +15,13 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
  * e.g. HOBBT.GLAVN1.SMAUG -> HOBBT(DF)-HOBBT(TF)-GLAVN(TF)... we want to remove the duplicate HOBBT references as the addition
  * of the DF leg version adds no value in the context of the route even though it is convenient for the graphical expansion.
  */
-public interface MultiplyExpandedLegMerger {
+public final class MultiplyExpandedLegMerger {
 
   /**
    * Applies a {@link LeftMerger} with internally defined merge criteria to the input collection of legs and reducing the overall
    * list of legs.
    */
-  default List<GraphableLeg> mergeLegs(List<GraphableLeg> graphableLegs) {
+  public List<GraphableLeg> mergeLegs(List<GraphableLeg> graphableLegs) {
     LeftMerger<GraphableLeg> leftMerger = new LeftMerger<>(this::mergeable, (l1, l2) -> l1);
     return leftMerger.reduce(graphableLegs);
   }
@@ -29,7 +29,7 @@ public interface MultiplyExpandedLegMerger {
   /**
    * Indicates the legs are mergeable when the legs are concrete, have matching path terminators and appropriate leg types.
    */
-  default boolean mergeable(GraphableLeg left, GraphableLeg right) {
+  public boolean mergeable(GraphableLeg left, GraphableLeg right) {
     return left.leg().type().isConcrete() && right.leg().type().isConcrete()
         && matchingPathTerminators(left.leg().pathTerminator(), right.leg().pathTerminator())
         && matchingOrDFLegTypes(left.leg().type(), right.leg().type());
@@ -38,18 +38,14 @@ public interface MultiplyExpandedLegMerger {
   /**
    * Returns whether the path terminators are matching, or either is a {@link PathTerm#DF}.
    */
-  default boolean matchingOrDFLegTypes(PathTerm left, PathTerm right) {
+  public boolean matchingOrDFLegTypes(PathTerm left, PathTerm right) {
     return left.equals(PathTerm.DF) || right.equals(PathTerm.DF) || right.equals(left);
   }
 
   /**
    * Returns whether the path termination fixes are non-null and have the same identifier.
    */
-  default boolean matchingPathTerminators(Fix left, Fix right) {
+  public boolean matchingPathTerminators(Fix left, Fix right) {
     return left != null && right != null && left.identifier() != null && left.identifier().equals(right.identifier());
-  }
-
-  static MultiplyExpandedLegMerger newInstance() {
-    return new MultiplyExpandedLegMerger() {};
   }
 }

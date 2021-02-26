@@ -13,6 +13,8 @@ import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
  */
 public final class ExpandedRoute {
 
+  private static final MultiplyExpandedLegMerger merger = new MultiplyExpandedLegMerger();
+
   private final String route;
   private final List<GraphableLeg> legs;
 
@@ -30,6 +32,6 @@ public final class ExpandedRoute {
   }
 
   public List<GraphableLeg> mergedLegs() {
-    return MultiplyExpandedLegMerger.newInstance().mergeLegs(legs());
+    return merger.mergeLegs(legs());
   }
 }

@@ -16,17 +16,10 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-public class TestTransitionTriple {
-
-  private Transition transition(TransitionType ttype, ProcedureType ptype) {
-    Transition transition = mock(Transition.class);
-    when(transition.transitionType()).thenReturn(ttype);
-    when(transition.procedureType()).thenReturn(ptype);
-    return transition;
-  }
+class TestTransitionTriple {
 
   @Test
-  public void testTripleStarOrdering() {
+  void testTripleStarOrdering() {
     List<Transition> transitions = Arrays.asList(
         transition(TransitionType.RUNWAY, ProcedureType.STAR),
         transition(TransitionType.COMMON, ProcedureType.STAR),
@@ -47,7 +40,7 @@ public class TestTransitionTriple {
   }
 
   @Test
-  public void testTripleSidOrdering() {
+  void testTripleSidOrdering() {
     List<Transition> transitions = Arrays.asList(
         transition(TransitionType.RUNWAY, ProcedureType.SID),
         transition(TransitionType.COMMON, ProcedureType.SID),
@@ -66,16 +59,23 @@ public class TestTransitionTriple {
   }
 
   @Test
-  public void testFailOnRunwayTransitions() {
+  void testFailOnRunwayTransitions() {
     assertThrows(
         IllegalArgumentException.class,
         () -> TransitionTriple.from(Collections.singletonList(transition(TransitionType.APPROACH, ProcedureType.SID))));
   }
 
   @Test
-  public void testFailOnApproachProcedures() {
+  void testFailOnApproachProcedures() {
     assertThrows(
         IllegalArgumentException.class,
         () -> TransitionTriple.from(Collections.singletonList(transition(TransitionType.ENROUTE, ProcedureType.APPROACH))));
+  }
+
+  private Transition transition(TransitionType ttype, ProcedureType ptype) {
+    Transition transition = mock(Transition.class);
+    when(transition.transitionType()).thenReturn(ttype);
+    when(transition.procedureType()).thenReturn(ptype);
+    return transition;
   }
 }
