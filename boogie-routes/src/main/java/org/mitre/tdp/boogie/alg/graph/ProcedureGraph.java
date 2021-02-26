@@ -23,7 +23,6 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.impl.NameLocationService;
@@ -45,6 +44,8 @@ import com.google.common.base.Preconditions;
  */
 public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implements Procedure {
 
+  private static final TransitionSorter sorter = new TransitionSorter();
+
   private final transient Collection<Transition> transitions;
   private final transient NameLocationService<Leg> nls;
 
@@ -52,15 +53,9 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
 
   private ProcedureGraph(Collection<? extends Transition> transitions, NameLocationService<Leg> nls) {
     super(DefaultEdge.class);
-    if (transitions.iterator().next().procedureType().equals(ProcedureType.APPROACH)) {
-      this.transitions = (Collection<Transition>) transitions;
-    } else {
-      // sort transitions into the order in which you would fly them
-      this.transitions = TransitionTriple.from(transitions)
-          .listOrdered().stream()
-          .flatMap(Collection::stream)
-          .collect(Collectors.toList());
-    }
+    this.transitions = sorter.sort(transitions).stream()
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
     this.nls = nls;
   }
 
@@ -74,24 +69,22 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
     if (allPaths == null) {
       allPaths = new AllDirectedPaths<>(this);
     }
-    List<GraphPath<Leg, DefaultEdge>> gpaths =
-        allPaths.getAllPaths(
-            bestLegMatch(entry),
-            bestLegMatch(exit),
-            false,
-            100);
+    List<GraphPath<Leg, DefaultEdge>> gpaths = allPaths.getAllPaths(
+        closestLegMatch(entry),
+        closestLegMatch(exit),
+        false,
+        100
+    );
     return transform(gpaths, GraphPath::getVertexList);
   }
 
   /**
-   * Returns the leg of the preferred type which best matches the specified fix. This lookup is done
-   * both by name as well as geospatially if the fix identifier doesn't exist in the procedure.
+   * Returns the leg of the preferred type which best matches the specified fix. This lookup is done both by name as well as
+   * geospatially if the fix identifier doesn't exist in the procedure.
    */
-  private Leg bestLegMatch(Fix fix) {
+  private Leg closestLegMatch(Fix fix) {
     Collection<Leg> nameMatches = nls.matches(fix.identifier());
-    return nameMatches.stream()
-        .min(Comparator.comparing(Leg::type))
-        .orElse(nls.nearest(fix.latLong()));
+    return nameMatches.stream().min(Comparator.comparing(Leg::type)).orElse(nls.nearest(fix.latLong()));
   }
 
   @Override
@@ -181,20 +174,11 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
    * Constructs a procedure graph object from the collection of transitions associated with a particular procedure.
    */
   public static ProcedureGraph from(Collection<? extends Transition> transitions) {
-    List<List<Transition>> in = new ArrayList<>();
-
-    if (!transitions.isEmpty() && !transitions.iterator().next().procedureType().equals(ProcedureType.APPROACH)) {
-      in.addAll(TransitionTriple.from(transitions).listOrdered());
-    }else{
-      in.add(new ArrayList<>(transitions));
-    }
-
-    return from(in);
+    return from(sorter.sort(transitions));
   }
 
   /**
-   * Takes two collections of transitions assumed to be of following types and zips them together
-   * along their endpoints.
+   * Takes two collections of transitions assumed to be of following types and zips them together along their endpoints.
    *
    * <p>e.g. List<ENROUTE> -> List<COMMON>
    */
