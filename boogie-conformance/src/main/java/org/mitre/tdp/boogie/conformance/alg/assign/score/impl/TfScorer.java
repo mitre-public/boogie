@@ -25,10 +25,19 @@ public class TfScorer implements OnLegScorer {
    * The weight function to use when weighting the on leg score by cross track distance from the leg.
    */
   private final Function<Double, Double> offTrackDistanceWeight;
+
   /**
    * Weight function to use when scoring the heading delta between the leg and the track.
    */
   private final Function<Double, Double> headingWeight;
+
+  /**
+   * Function to translate {@link SegmentDistances} into a distance to use for scoring.
+   * <p>
+   * This is pluggable for cases where a penalty should be applied to points based on
+   * SegmentDistance attributes.
+   */
+  private final Function<SegmentDistances, Double> distanceExtractor;
 
   public TfScorer() {
     this(simpleLogistic(.5, 1.), simpleLogistic(90., 175.));
@@ -37,8 +46,16 @@ public class TfScorer implements OnLegScorer {
   public TfScorer(
       Function<Double, Double> offTrackDistanceWeight,
       Function<Double, Double> headingWeight) {
+    this(offTrackDistanceWeight, headingWeight, penalizePrePost(2, 2));
+  }
+
+  public TfScorer(
+      Function<Double, Double> offTrackDistanceWeight,
+      Function<Double, Double> headingWeight,
+      Function<SegmentDistances, Double> distanceExtractor) {
     this.offTrackDistanceWeight = offTrackDistanceWeight;
     this.headingWeight = headingWeight;
+    this.distanceExtractor = distanceExtractor;
   }
 
   @Override
@@ -57,7 +74,9 @@ public class TfScorer implements OnLegScorer {
     Fix endFix = Optional.ofNullable(legTriple.current().pathTerminator())
         .orElseThrow(supplier("pathTerminator of to leg"));
 
-    double distanceWeight = offTrackDistanceWeight.apply(abs(endpointModifiedCrossTrackDistance(startFix, endFix, point)));
+    double distanceToScore = abs(distanceExtractor.apply(SegmentDistances.of(startFix, endFix, point)));
+
+    double distanceWeight = offTrackDistanceWeight.apply(distanceToScore);
     double headingWeight = headingWeight(point, startFix, endFix);
 
     return distanceWeight * headingWeight;
@@ -70,26 +89,53 @@ public class TfScorer implements OnLegScorer {
     return headingWeight.apply(angleDifference);
   }
 
-  /**
-   * Returns the endpoint-modified cross track distance between the segment defined by the given start and end fix and the
-   * provided point position. This value is the normal cross-track distance when the point falls between the start and end
-   * points laterally - otherwise it is the distance from the nearest endpoint rather than the CTD of the extended segment.
-   *
-   * Note - this maintains the appropriate sign post the end of the segment. If off to the left the endpoint modified dist
-   * will still be negative as expected.
-   */
-  public static double endpointModifiedCrossTrackDistance(HasPosition startFix, HasPosition endFix, HasPosition point) {
-    double ctd = Spherical.crossTrackDistanceNM(startFix, endFix, point);
-    double atd = Spherical.alongTrackDistanceNM(startFix, endFix, point, ctd);
+  public static class SegmentDistances {
+    /** Cross-track distance (negative on left side of leg, positive on right) */
+    final double ctd;
+    /** Pre-/post-distance (negative before start, positive after end) */
+    final double ppd;
+    /** Off-track distance (aka "segment distance", with sign of ctd) */
+    final double otd;
 
-    double pathLength = startFix.distanceInNmTo(endFix);
+    SegmentDistances(double ctd, double ppd, double otd) {
+      this.ctd = ctd;
+      this.ppd = ppd;
+      this.otd = otd;
+    }
 
-    boolean alongSegment = atd > 0.0 && atd < pathLength;
-    if (alongSegment) {
-      return ctd;
-    } else {
-      double minEndpointDistance = atd < 0 ? point.distanceInNmTo(startFix) : point.distanceInNmTo(endFix);
-      return (ctd < 0 ? -1.0 * minEndpointDistance : minEndpointDistance);
+    public static SegmentDistances of(HasPosition startFix, HasPosition endFix, HasPosition point) {
+      double ctd = Spherical.crossTrackDistanceNM(startFix, endFix, point);
+      double atd = Spherical.alongTrackDistanceNM(startFix, endFix, point, ctd);
+
+      double pathLength = startFix.distanceInNmTo(endFix);
+      boolean beforeSegment = atd < 0.0;
+      boolean afterSegment = atd > pathLength;
+
+      if (beforeSegment) {
+        return new SegmentDistances(ctd, atd, Math.signum(ctd) * point.distanceInNmTo(startFix));
+      } else if (afterSegment) {
+        return new SegmentDistances(ctd, atd - pathLength, Math.signum(ctd) * point.distanceInNmTo(endFix));
+      } else {
+        return new SegmentDistances(ctd, 0., ctd);
+      }
+
     }
   }
+
+  /**
+   * Returns a distance extractor that penalizes points preceding the start fix or past the end fix by
+   * applying the specified multiplicative penalty.
+   */
+  public static Function<SegmentDistances, Double> penalizePrePost(int prePenalty, int postPenalty) {
+    return x -> (x.ppd > 0. ? postPenalty : x.ppd < 0 ? prePenalty : 1) * x.otd;
+  }
+
+  /**
+   * Returns a distance extractor with no pre/post penalty
+   */
+  public static Function<SegmentDistances, Double> extractSegmentDistance() {
+    return x -> x.otd;
+  }
+
+
 }

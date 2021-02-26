@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
+import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.LatLong;
@@ -17,6 +18,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.impl.TfScorer.SegmentDistances;
 
 public class TestTfScorer {
 
@@ -75,7 +77,7 @@ public class TestTfScorer {
     HasPosition proj = p1.projectOut(180.0, 10.0);
     HasPosition pt = () -> LatLong.of(proj.latitude(), 0.5);
 
-    assertEquals(10.0, TfScorer.endpointModifiedCrossTrackDistance(p1, p2, pt), 0.0001);
+    assertEquals(10.0, SegmentDistances.of(p1, p2, pt).otd, 0.0001);
   }
 
   @Test
@@ -86,7 +88,13 @@ public class TestTfScorer {
     HasPosition proj = p1.projectOut(0.0, 10.0);
     HasPosition pt = () -> LatLong.of(proj.latitude(), 0.5);
 
-    assertEquals(-10.0, TfScorer.endpointModifiedCrossTrackDistance(p1, p2, pt), 0.0001);
+    SegmentDistances segmentDistances = SegmentDistances.of(p1, p2, pt);
+
+    Function<SegmentDistances, Double> extractor1 = TfScorer.extractSegmentDistance();
+    Function<SegmentDistances, Double> extractor2 = TfScorer.penalizePrePost(5, 3);
+
+    assertEquals(-10.0, extractor1.apply(segmentDistances), 0.0001);
+    assertEquals(-10.0, extractor2.apply(segmentDistances), 0.0001);
   }
 
   @Test
@@ -97,7 +105,13 @@ public class TestTfScorer {
     HasPosition proj = p1.projectOut(180.0, 10.0);
     HasPosition pt = () -> LatLong.of(proj.latitude(), -0.5);
 
-    assertEquals(p1.distanceInNmTo(pt), TfScorer.endpointModifiedCrossTrackDistance(p1, p2, pt), 0.0001);
+    SegmentDistances segmentDistances = SegmentDistances.of(p1, p2, pt);
+
+    Function<SegmentDistances, Double> extractor1 = TfScorer.extractSegmentDistance();
+    Function<SegmentDistances, Double> extractor2 = TfScorer.penalizePrePost(5, 3);
+
+    assertEquals(p1.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
+    assertEquals(5.0 * p1.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
   }
 
   @Test
@@ -108,7 +122,13 @@ public class TestTfScorer {
     HasPosition proj = p1.projectOut(0.0, 10.0);
     HasPosition pt = () -> LatLong.of(proj.latitude(), -0.5);
 
-    assertEquals(-1.0 * p1.distanceInNmTo(pt), TfScorer.endpointModifiedCrossTrackDistance(p1, p2, pt), 0.0001);
+    SegmentDistances segmentDistances = SegmentDistances.of(p1, p2, pt);
+
+    Function<SegmentDistances, Double> extractor1 = TfScorer.extractSegmentDistance();
+    Function<SegmentDistances, Double> extractor2 = TfScorer.penalizePrePost(5, 3);
+
+    assertEquals(-1.0 * p1.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
+    assertEquals(-5.0 * p1.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
   }
 
   @Test
@@ -119,7 +139,13 @@ public class TestTfScorer {
     HasPosition proj = p1.projectOut(180.0, 10.0);
     HasPosition pt = () -> LatLong.of(proj.latitude(), 1.5);
 
-    assertEquals(p2.distanceInNmTo(pt), TfScorer.endpointModifiedCrossTrackDistance(p1, p2, pt), 0.0001);
+    SegmentDistances segmentDistances = SegmentDistances.of(p1, p2, pt);
+
+    Function<SegmentDistances, Double> extractor1 = TfScorer.extractSegmentDistance();
+    Function<SegmentDistances, Double> extractor2 = TfScorer.penalizePrePost(5, 3);
+
+    assertEquals(p2.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
+    assertEquals(3.0 * p2.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
   }
 
   @Test
@@ -130,7 +156,13 @@ public class TestTfScorer {
     HasPosition proj = p1.projectOut(0.0, 10.0);
     HasPosition pt = () -> LatLong.of(proj.latitude(), 1.5);
 
-    assertEquals(-1.0 * p2.distanceInNmTo(pt), TfScorer.endpointModifiedCrossTrackDistance(p1, p2, pt), 0.0001);
+    SegmentDistances segmentDistances = SegmentDistances.of(p1, p2, pt);
+
+    Function<SegmentDistances, Double> extractor1 = TfScorer.extractSegmentDistance();
+    Function<SegmentDistances, Double> extractor2 = TfScorer.penalizePrePost(5, 3);
+
+    assertEquals(-1.0 * p2.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
+    assertEquals(-3.0 * p2.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
   }
 
   private Route dummyRoute(){
