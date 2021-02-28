@@ -84,7 +84,8 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
    */
   private Leg closestLegMatch(Fix fix) {
     Collection<Leg> nameMatches = nls.matches(fix.identifier());
-    return nameMatches.stream().min(Comparator.comparing(Leg::type)).orElse(nls.nearest(fix.latLong()));
+    Optional<Leg> match = nameMatches.stream().filter(leg -> fix.equals(leg.pathTerminator())).findFirst();
+    return match.orElseGet(() -> nameMatches.stream().min(Comparator.comparing(Leg::type)).orElse(nls.nearest(fix.latLong())));
   }
 
   @Override
