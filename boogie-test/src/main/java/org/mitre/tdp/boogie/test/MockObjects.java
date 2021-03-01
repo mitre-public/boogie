@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.test;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
@@ -26,7 +27,7 @@ import org.mitre.tdp.boogie.util.Declinations;
 public class MockObjects {
 
   public static Fix fix(String name, double lat, double lon) {
-    Fix fix = mock(Fix.class);
+    Fix fix = spy(Fix.class);
     when(fix.identifier()).thenReturn(name);
     when(fix.latLong()).thenReturn(LatLong.of(lat, lon));
     when(fix.latitude()).thenCallRealMethod();
