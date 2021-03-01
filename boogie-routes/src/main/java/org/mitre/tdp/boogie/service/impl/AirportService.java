@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.service.impl;
 
 import org.mitre.tdp.boogie.Airport;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 public final class AirportService extends SimpleService<Airport> {
@@ -12,7 +12,7 @@ public final class AirportService extends SimpleService<Airport> {
   }
 
   public static AirportService with(Iterable<? extends Airport> airports) {
-    Multimap<String, Airport> byId = HashMultimap.create();
+    Multimap<String, Airport> byId = LinkedHashMultimap.create();
     airports.forEach(a -> byId.put(a.identifier(), a));
     return new AirportService(byId);
   }

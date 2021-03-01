@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
 import org.mitre.tdp.boogie.models.Procedure;
 import org.mitre.tdp.boogie.service.ProcedureService;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -52,8 +52,8 @@ public final class ProcedureGraphService implements ProcedureService {
    * Generates a new {@link ProcedureGraphService} with the configured collection of procedures.
    */
   public static ProcedureGraphService withProcedures(Collection<? extends ProcedureGraph> procedures) {
-    Multimap<String, ProcedureGraph> byId = HashMultimap.create();
-    Multimap<String, ProcedureGraph> byApt = HashMultimap.create();
+    Multimap<String, ProcedureGraph> byId = LinkedHashMultimap.create();
+    Multimap<String, ProcedureGraph> byApt = LinkedHashMultimap.create();
 
     procedures.forEach(procedure -> {
       byId.put(procedure.identifier(), procedure);
