@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.models.ExpandedRoute;
+import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.util.Iterators;
 
 /**

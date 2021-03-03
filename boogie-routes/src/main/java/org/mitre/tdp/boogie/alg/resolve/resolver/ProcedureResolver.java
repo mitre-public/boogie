@@ -4,20 +4,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
-import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;
 import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.models.Procedure;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.service.ProcedureService;
 
 /**
@@ -26,17 +23,9 @@ import org.mitre.tdp.boogie.service.ProcedureService;
 public final class ProcedureResolver implements SectionResolver {
 
   private final ProcedureService lookupService;
-  private final RunwayPredictor arrivalRunwayPredictor;
-  private final RunwayPredictor departureRunwayPredictor;
 
-  public ProcedureResolver(
-      ProcedureService lookupService,
-      RunwayPredictor arrivalRunwayPredictor,
-      RunwayPredictor departureRunwayPredictor
-  ) {
+  public ProcedureResolver(ProcedureService lookupService) {
     this.lookupService = checkNotNull(lookupService);
-    this.arrivalRunwayPredictor = checkNotNull(arrivalRunwayPredictor);
-    this.departureRunwayPredictor = checkNotNull(departureRunwayPredictor);
   }
 
   @Override
@@ -58,11 +47,10 @@ public final class ProcedureResolver implements SectionResolver {
   }
 
   /**
-   * Converts the provided procedures into {@link ProcedureElement}s attaching the {@link #runwayTransitionFilter()} to them
-   * as they are generated and shipped off.
+   * Converts the provided procedures into {@link ProcedureElement}s attaching the {@link #transitionFilter)} to them as they
+   * are generated and shipped off.
    */
   List<ResolvedElement<?>> convertToResolvedElements(Collection<Procedure> procedures) {
-    Predicate<Transition> transitionFilter = runwayTransitionFilter().or(new CommonOrEnrouteTransitionFilter());
     return procedures.stream()
         .map(ProcedureElement::new)
         .map(procedureElement -> procedureElement.setTransitionFilter(transitionFilter))
@@ -90,24 +78,10 @@ public final class ProcedureResolver implements SectionResolver {
   }
 
   /**
-   * Filter for runway transitions when returning {@link ProcedureElement}s based in the supplied arrival/departure runway
-   * transitions.
+   * A transition filter to apply the the transitions of the resolved {@link ProcedureElement} prior the {@link LinkedLegs}
+   * generation and insertion into the graph. This lets us remove things like runway transitions which confuse the resolution
+   * algorithm while preserving the full procedure context in the resolved elements so we can inspect them later to decide if
+   * we want to add those runway transitions back in.
    */
-  Predicate<Transition> runwayTransitionFilter() {
-    Optional<String> arrivalRunway = arrivalRunwayPredictor.predictedRunway();
-    Optional<String> departureRunway = departureRunwayPredictor.predictedRunway();
-
-    if (arrivalRunway.isPresent() && departureRunway.isPresent()) {
-      return new StarRunwayTransitionFilter(arrivalRunway.get())
-          .or(new SidRunwayTransitionFilter(departureRunway.get()));
-    } else {
-      if (departureRunway.isPresent()) {
-        return new SidRunwayTransitionFilter(departureRunway.get());
-      } else if (arrivalRunway.isPresent()) {
-        return new StarRunwayTransitionFilter(arrivalRunway.get());
-      } else {
-        return transition -> false;
-      }
-    }
-  }
+  private static final Predicate<Transition> transitionFilter = new CommonOrEnrouteTransitionFilter();
 }

@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
- * Class for generating a {@link LegTransitionGraph} from an input collection of route and a:
+ * Class for generating a {@link LegTransitionGraph} from an input collection of routes and a:
  *
  * 1) {@link CombinationStrategy}
  * 2) {@link LinkingStrategy}

@@ -8,7 +8,6 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.service.LookupService;
 import org.mitre.tdp.boogie.service.ProcedureService;
 import org.mitre.tdp.boogie.service.impl.AirportService;
@@ -26,6 +25,10 @@ public final class RouteResolverFactory {
   private final LookupService<Airport> airportService;
   private final ProcedureService procedureService;
 
+  /**
+   * Creates a new {@link RouteResolverFactory} with the provided {@link LookupService}s for the infrastructure element types
+   * which can appear in the route string of a flight.
+   */
   public RouteResolverFactory(
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
@@ -38,6 +41,10 @@ public final class RouteResolverFactory {
     this.procedureService = checkNotNull(procedureService);
   }
 
+  /**
+   * Creates a new {@link RouteResolverFactory} with the provided collections of infrastructure element types known to be used
+   * in route strings - indexing them in default {@link LookupService} implementations.
+   */
   public RouteResolverFactory(
       Collection<? extends Fix> fixes,
       Collection<? extends Airway> airways,
@@ -52,26 +59,16 @@ public final class RouteResolverFactory {
     );
   }
 
-  public RouteResolver newResolver() {
-    return newResolver(RunwayPredictor.noop(), RunwayPredictor.noop());
-  }
-
   /**
-   * Generates a new {@link RouteResolver} with the provided {@link RunwayPredictor}s for arrival/departure runway respectively.
-   *
-   * When provided the arrival/departure runway predictors will be used to generate candidate route segments through the runway
-   * transition of any matched sid/stars from the flightplan.
+   * Generates a new {@link RouteResolver} which uses no runway predictions in it's expansion - this means all SID/STAR expansions
+   * will be cut off at the start/end of the common portion of the procedures.
    */
-  public RouteResolver newResolver(RunwayPredictor arrivalPredictor, RunwayPredictor departurePredictor) {
+  public RouteResolver newResolver() {
     return new RouteResolver(
         new FixResolver(fixService),
         new AirwayResolver(airwayService),
         new AirportResolver(airportService),
-        new ProcedureResolver(
-            procedureService,
-            arrivalPredictor,
-            departurePredictor
-        ),
+        new ProcedureResolver(procedureService),
         new LatLonResolver()
     );
   }

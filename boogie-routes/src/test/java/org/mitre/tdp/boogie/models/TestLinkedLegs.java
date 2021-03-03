@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 

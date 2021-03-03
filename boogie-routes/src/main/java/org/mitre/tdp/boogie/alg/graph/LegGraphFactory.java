@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg.graph;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
 import java.util.ArrayList;
@@ -13,24 +14,22 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.models.LinkedLegs;
 import org.mitre.tdp.boogie.util.Iterators;
 
-public class LegGraphFactory {
-
-  private LegGraphFactory() {
-    throw new IllegalStateException("Cannot access static utility class.");
-  }
+/**
+ * Factory class for generating {@link RouteLegGraph} objects based on an input {@link ResolvedRoute}.
+ */
+public final class LegGraphFactory {
 
   /**
-   * Converts the resolved route and all of its contained sections into legs with edges between them and inserts
-   * them into an {@link RouteLegGraph}.
+   * Converts the resolved route and all of its contained sections into legs with edges between them and inserts them into a
+   * {@link RouteLegGraph}.
    */
-  public static RouteLegGraph build(ResolvedRoute route) {
+  public RouteLegGraph newLegGraphFor(ResolvedRoute resolvedRoute) {
     RouteLegGraph graph = new RouteLegGraph();
 
     Iterators.fastslow2(
-        route.sections(),
+        checkNotNull(resolvedRoute).sections(),
         s -> !s.allLegs().isEmpty(),
         (s1, s2, skipped) -> linkSections(s1, s2, graph));
 
@@ -38,9 +37,16 @@ public class LegGraphFactory {
   }
 
   /**
-   * Generates linking edges between the subsequent resolved sections so there are valid paths between them.
+   * Links legs generated from subsequent portions of the route string together with some default weighting.
+   *
+   * This method considers the cartesian product of all leg combinations between the two sections, generating edges between all
+   * legs from the two sets for which a pathTerminator -> pathTerminator distance can be computed (that distance is taken to be
+   * the edge weight).
+   *
+   * This results in a relatively large - but full linked graph - which later on we can run a shortest path algorithm in order
+   * to resolve a unique route (sequence of legs) via {@link RouteLegGraph#shortestPath()}.
    */
-  private static void linkSections(ResolvedSection s1, ResolvedSection s2, RouteLegGraph graph) {
+  private void linkSections(ResolvedSection s1, ResolvedSection s2, RouteLegGraph graph) {
     List<LinkedLegs> legs1 = s1.allLegs();
     List<LinkedLegs> legs2 = s2.allLegs();
 
@@ -80,7 +86,7 @@ public class LegGraphFactory {
   /**
    * Inserts the converted legs from within the {@link ResolvedSection} into the {@link RouteLegGraph} for reference later.
    */
-  private static void insert(LinkedLegs linked, RouteLegGraph graph) {
+  private void insert(LinkedLegs linked, RouteLegGraph graph) {
     GraphableLeg ssl1 = linked.source();
     GraphableLeg ssl2 = linked.target();
 
@@ -93,7 +99,7 @@ public class LegGraphFactory {
     }
   }
 
-  private static void setEdgeWeight(double weight, GraphableLeg source, GraphableLeg target, RouteLegGraph graph) {
+  private void setEdgeWeight(double weight, GraphableLeg source, GraphableLeg target, RouteLegGraph graph) {
     if (graph.containsEdge(source, target)) {
       DefaultWeightedEdge edge = graph.getEdge(source, target);
       setContainedEdgeWeight(weight, edge, graph);
@@ -106,7 +112,7 @@ public class LegGraphFactory {
   /**
    * If a given edge already exists in the graph we use the lower of the two provided weights.
    */
-  private static void setContainedEdgeWeight(double weight, DefaultWeightedEdge edge, RouteLegGraph graph) {
+  private void setContainedEdgeWeight(double weight, DefaultWeightedEdge edge, RouteLegGraph graph) {
     double cw = graph.getEdgeWeight(edge);
     if (weight < cw) {
       graph.setEdgeWeight(edge, weight);

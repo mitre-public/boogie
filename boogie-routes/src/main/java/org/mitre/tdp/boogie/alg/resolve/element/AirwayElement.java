@@ -6,10 +6,10 @@ import java.util.List;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-import org.mitre.tdp.boogie.models.LinkedLegs;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 import org.mitre.tdp.boogie.util.Iterators;
 
-public class AirwayElement extends ResolvedElement<Airway> {
+public final class AirwayElement extends ResolvedElement<Airway> {
 
   public AirwayElement(Airway ref) {
     super(ElementType.AIRWAY, ref);

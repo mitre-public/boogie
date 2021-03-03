@@ -7,9 +7,9 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.models.LinkedLegs;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 
-public class FixElement extends ResolvedElement<Fix> {
+public final class FixElement extends ResolvedElement<Fix> {
 
   private final String wildcards;
 

@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.alg.graph;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.test.MockObjects.IF;
@@ -31,20 +32,23 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 class TestRouteLegGraph {
 
   @Test
-  public void testConnectedSubsets() {
+  void testConnectedSubsets() {
     String route = "KIND.BLSTR1.VNY";
     RouteLegGraph graph = getGraph(route, apfResolver());
 
     ConnectivityInspector<GraphableLeg, DefaultWeightedEdge> conn = new ConnectivityInspector<>(graph);
 
     String msg = "Check hashing and object references for insert into graph.";
-    assertTrue(conn.isConnected(), msg);
-    assertEquals(1, conn.connectedSets().size(), msg);
-    assertEquals(6, conn.connectedSets().get(0).size(), msg);
+
+    assertAll(
+        () -> assertTrue(conn.isConnected(), msg),
+        () -> assertEquals(1, conn.connectedSets().size(), msg),
+        () -> assertEquals(6, conn.connectedSets().get(0).size(), msg)
+    );
   }
 
   @Test
-  public void testShortestPath() {
+  void testShortestPath() {
     String route = "KIND.BLSTR1.VNY";
     RouteLegGraph graph = getGraph(route, apfResolver());
 
@@ -53,27 +57,30 @@ class TestRouteLegGraph {
     List<GraphableLeg> legs = path.getVertexList();
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
-    assertEquals("KIND", legs.get(0).split().value(), "Incorrect initial section. " + message);
-    assertEquals("KIND", legs.get(0).leg().pathTerminator().identifier(), "Incorrect initial leg terminator. " + message);
-    assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message);
 
-    assertEquals("BLSTR1", legs.get(1).split().value());
-    assertEquals("BNDRR", legs.get(1).leg().pathTerminator().identifier());
+    assertAll(
+        () -> assertEquals("KIND", legs.get(0).split().value(), "Incorrect initial section. " + message),
+        () -> assertEquals("KIND", legs.get(0).leg().pathTerminator().identifier(), "Incorrect initial leg terminator. " + message),
+        () -> assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message),
 
-    assertEquals("BLSTR1", legs.get(2).split().value());
-    assertEquals("HRRDR", legs.get(2).leg().pathTerminator().identifier());
+        () -> assertEquals("BLSTR1", legs.get(1).split().value()),
+        () -> assertEquals("BNDRR", legs.get(1).leg().pathTerminator().identifier()),
 
-    assertEquals("BLSTR1", legs.get(3).split().value());
-    assertEquals("GRRDR", legs.get(3).leg().pathTerminator().identifier());
+        () -> assertEquals("BLSTR1", legs.get(2).split().value()),
+        () -> assertEquals("HRRDR", legs.get(2).leg().pathTerminator().identifier()),
 
-    assertEquals("BLSTR1", legs.get(4).split().value());
-    assertEquals("VNY", legs.get(4).leg().pathTerminator().identifier());
+        () -> assertEquals("BLSTR1", legs.get(3).split().value()),
+        () -> assertEquals("GRRDR", legs.get(3).leg().pathTerminator().identifier()),
 
-    assertEquals("VNY", legs.get(5).split().value(), "Incorrect final section. " + message);
-    assertEquals("VNY", legs.get(5).leg().pathTerminator().identifier(), "Incorrect final leg terminator. " + message);
-    assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message);
+        () -> assertEquals("BLSTR1", legs.get(4).split().value()),
+        () -> assertEquals("VNY", legs.get(4).leg().pathTerminator().identifier()),
 
-    assertEquals(60.007, path.getWeight(), 0.01, "Incorrect resolved shortest path weight. Check leg weight functions.");
+        () -> assertEquals("VNY", legs.get(5).split().value(), "Incorrect final section. " + message),
+        () -> assertEquals("VNY", legs.get(5).leg().pathTerminator().identifier(), "Incorrect final leg terminator. " + message),
+        () -> assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message),
+
+        () -> assertEquals(60.007, path.getWeight(), 0.01, "Incorrect resolved shortest path weight. Check leg weight functions.")
+    );
   }
 
   private static RouteResolver apfResolver() {
@@ -90,6 +97,8 @@ class TestRouteLegGraph {
 
   private static RouteLegGraph getGraph(String route, RouteResolver resolver) {
     List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(route);
-    return LegGraphFactory.build(resolver.apply(splits));
+    return graphFactory.newLegGraphFor(resolver.apply(splits));
   }
+
+  private static final LegGraphFactory graphFactory = new LegGraphFactory();
 }

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.models.LinkedLegs;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 
 /**
  * Wrapper class for a section containing context flags from the filed route string itself

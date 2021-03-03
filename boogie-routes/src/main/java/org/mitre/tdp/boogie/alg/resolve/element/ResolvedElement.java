@@ -5,8 +5,15 @@ import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Infrastructure;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.models.LinkedLegs;
+import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 
+/**
+ * Abstract representation of an object which was resolved from a {@link SectionSplit} of a route string.
+ *
+ * Extensions of this class maintain traceability through this classes fieldset to the the source object and override the
+ * {@link #buildLegs()} method which is used to generate legs which will be fed into the final route expansion graph.
+ */
 public abstract class ResolvedElement<I extends Infrastructure> {
   final ElementType type;
   final I reference;

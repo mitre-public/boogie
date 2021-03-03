@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.models;
+package org.mitre.tdp.boogie.alg;
 
 import java.util.List;
 
@@ -33,5 +33,11 @@ public final class ExpandedRoute {
 
   public List<GraphableLeg> mergedLegs() {
     return merger.mergeLegs(legs());
+  }
+
+  public ExpandedRoute replaceLegs(List<GraphableLeg> legs) {
+    this.legs.clear();
+    this.legs.addAll(legs);
+    return this;
   }
 }

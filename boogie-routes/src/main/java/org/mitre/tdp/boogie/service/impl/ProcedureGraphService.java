@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
-import org.mitre.tdp.boogie.models.Procedure;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.service.ProcedureService;
 
 import com.google.common.collect.LinkedHashMultimap;
