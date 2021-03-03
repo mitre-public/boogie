@@ -12,8 +12,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Leg;
@@ -21,11 +19,9 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.models.Procedure;
-import org.mitre.tdp.boogie.service.ProcedureService;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
 
 class TestProcedureResolver {
@@ -38,11 +34,7 @@ class TestProcedureResolver {
 
     Transition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
-    ProcedureResolver resolver = new ProcedureResolver(
-        ProcedureGraphService.withTransitions(Arrays.asList(atlJimmy, bnyJimmy)),
-        RunwayPredictor.noop(),
-        RunwayPredictor.noop()
-    );
+    ProcedureResolver resolver = new ProcedureResolver(ProcedureGraphService.withTransitions(Arrays.asList(atlJimmy, bnyJimmy)));
 
     List<ResolvedElement<?>> resolved = resolver.resolve(null, split("JIMMY"), null);
 
@@ -61,11 +53,7 @@ class TestProcedureResolver {
 
     Transition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
-    ProcedureResolver resolver = new ProcedureResolver(
-        ProcedureGraphService.withTransitions(Arrays.asList(atlJimmy, bnyJimmy)),
-        RunwayPredictor.noop(),
-        RunwayPredictor.noop()
-    );
+    ProcedureResolver resolver = new ProcedureResolver(ProcedureGraphService.withTransitions(Arrays.asList(atlJimmy, bnyJimmy)));
 
     List<ResolvedElement<?>> resolved = resolver.resolve(split("KATL"), split("JIMMY"), null);
 
@@ -85,11 +73,7 @@ class TestProcedureResolver {
 
     Transition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.STAR, singletonList(l));
 
-    ProcedureResolver resolver = new ProcedureResolver(
-        ProcedureGraphService.withTransitions(Arrays.asList(atlJimmy, bnyJimmy)),
-        RunwayPredictor.noop(),
-        RunwayPredictor.noop()
-    );
+    ProcedureResolver resolver = new ProcedureResolver(ProcedureGraphService.withTransitions(Arrays.asList(atlJimmy, bnyJimmy)));
 
     List<ResolvedElement<?>> resolved = resolver.resolve(null, split("JIMMY"), split("KATL"));
 
@@ -98,47 +82,6 @@ class TestProcedureResolver {
         () -> assertEquals("JIMMY", resolved.get(0).reference().identifier()),
         () -> assertEquals("KATL", ((Procedure) resolved.get(0).reference()).airport()),
         () -> assertEquals(ElementType.STAR, resolved.get(0).type())
-    );
-  }
-
-  @Test
-  void testRunwayTransitionFilterWithRunwayPredictions() {
-    ProcedureService procedureService = mock(ProcedureService.class);
-
-    ProcedureResolver resolver = new ProcedureResolver(
-        procedureService,
-        () -> Optional.of("28R"),
-        () -> Optional.of("26C")
-    );
-
-    Predicate<Transition> transitionPredicate = resolver.runwayTransitionFilter();
-    List<Transition> transitions = sampleTransitions();
-
-    assertAll(
-        () -> assertTrue(transitionPredicate.test(transitions.get(0))),
-        () -> assertTrue(transitionPredicate.test(transitions.get(1))),
-        () -> assertFalse(transitionPredicate.test(transitions.get(2))),
-        () -> assertFalse(transitionPredicate.test(transitions.get(3))),
-        () -> assertFalse(transitionPredicate.test(transitions.get(4)))
-    );
-  }
-
-  @Test
-  void testTransitionFilterWithNoPredictions() {
-    ProcedureService procedureService = mock(ProcedureService.class);
-
-    ProcedureResolver resolver = new ProcedureResolver(
-        procedureService,
-        Optional::empty,
-        Optional::empty
-    );
-
-    Predicate<Transition> transitionPredicate = resolver.runwayTransitionFilter();
-    List<Transition> transitions = sampleTransitions();
-
-    assertAll(
-        () -> assertFalse(transitionPredicate.test(transitions.get(0))),
-        () -> assertFalse(transitionPredicate.test(transitions.get(4)))
     );
   }
 

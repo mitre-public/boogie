@@ -10,7 +10,7 @@ import org.mitre.caasd.commons.collect.MetricTree;
 import org.mitre.caasd.commons.collect.SearchResult;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -38,7 +38,7 @@ public class NameLocationService<T> {
     Preconditions.checkNotNull(nameFn);
     Preconditions.checkNotNull(locFn);
 
-    Multimap<String, T> nm = HashMultimap.create();
+    Multimap<String, T> nm = LinkedHashMultimap.create();
     MetricTree<LatLong, T> lm = new MetricTree<>(LatLong::distanceInNM);
 
     objs.forEach(o -> {

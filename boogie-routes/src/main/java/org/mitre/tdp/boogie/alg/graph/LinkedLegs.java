@@ -1,10 +1,10 @@
-package org.mitre.tdp.boogie.models;
+package org.mitre.tdp.boogie.alg.graph;
 
 import static org.mitre.tdp.boogie.utils.Nulls.nonNullEquals;
 
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 
-public class LinkedLegs {
+public final class LinkedLegs {
   /**
    * This is the default weight we use when a linked pair of legs come from the same reference section.
    * <p>

@@ -8,9 +8,6 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.approach.ApproachPredictor;
-import org.mitre.tdp.boogie.alg.approach.impl.NoApproachPredictor;
-import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolverFactory;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
@@ -19,8 +16,7 @@ import org.mitre.tdp.boogie.service.ProcedureService;
 
 /**
  * Factory class for generating instances of {@link RouteExpander}s. This class decorates a {@link RouteResolverFactory} to
- * generate the {@link RouteResolver} to use in expansion, then tacks on a default {@link IfrFormatSectionSplitter} and the
- * {@link NoApproachPredictor}.
+ * generate the {@link RouteResolver} to use in expansion tacking on a default {@link IfrFormatSectionSplitter}.
  */
 public final class RouteExpanderFactory {
 
@@ -58,26 +54,6 @@ public final class RouteExpanderFactory {
    * Generates a new {@link RouteExpander} with no arrival or departure runway predictions.
    */
   public RouteExpander newExpander() {
-    return newExpander(RunwayPredictor.noop(), RunwayPredictor.noop());
-  }
-
-  /**
-   * Generates a new {@link RouteExpander} with the provided arrival and departure runway predictions. With these supplied the
-   * expansion will be attempted all the way through the runway transition of the arrival/departure procedures.
-   */
-  public RouteExpander newExpander(RunwayPredictor arrivalPredictor, RunwayPredictor departurePredictor) {
-    return new RouteExpander(
-        new IfrFormatSectionSplitter(),
-        resolverFactory.newResolver(arrivalPredictor, departurePredictor),
-        new NoApproachPredictor()
-    );
-  }
-
-  public RouteExpander newExpander(RunwayPredictor arrivalPredictor, RunwayPredictor departurePredictor, ApproachPredictor approachPredictor) {
-    return new RouteExpander(
-        new IfrFormatSectionSplitter(),
-        resolverFactory.newResolver(arrivalPredictor, departurePredictor),
-        approachPredictor
-    );
+    return new RouteExpander(new IfrFormatSectionSplitter(), resolverFactory.newResolver());
   }
 }

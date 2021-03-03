@@ -26,7 +26,6 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
@@ -66,11 +65,7 @@ class TestRouteResolver {
     Transition cstl6 = transition("CSTL6", TransitionType.COMMON, ProcedureType.SID, singletonList(ifSherl));
     Transition jiims2 = transition("JIIMS2", TransitionType.COMMON, ProcedureType.STAR, singletonList(ifBrigs));
 
-    ProcedureResolver procedureResolver = new ProcedureResolver(
-        ProcedureGraphService.withTransitions(Arrays.asList(cstl6, jiims2)),
-        RunwayPredictor.noop(),
-        RunwayPredictor.noop()
-    );
+    ProcedureResolver procedureResolver = new ProcedureResolver(ProcedureGraphService.withTransitions(Arrays.asList(cstl6, jiims2)));
 
     Airport kbdl = airport("KBDL", 0.0, 0.0);
     Airport kphl = airport("KPHL", 0.0, 0.0);

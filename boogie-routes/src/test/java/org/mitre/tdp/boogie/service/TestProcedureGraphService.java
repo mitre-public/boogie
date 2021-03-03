@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.NavigationSource;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.models.Procedure;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
 
 public class TestProcedureGraphService {

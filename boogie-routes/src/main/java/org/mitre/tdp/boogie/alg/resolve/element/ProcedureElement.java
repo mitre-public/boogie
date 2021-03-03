@@ -14,10 +14,10 @@ import org.mitre.tdp.boogie.alg.resolve.resolver.CommonOrEnrouteTransitionFilter
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;
-import org.mitre.tdp.boogie.models.LinkedLegs;
-import org.mitre.tdp.boogie.models.Procedure;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
+import org.mitre.tdp.boogie.Procedure;
 
-public class ProcedureElement extends ResolvedElement<Procedure> {
+public final class ProcedureElement extends ResolvedElement<Procedure> {
 
   private static final Predicate<Transition> DEFAULT_TRANSITION_FILTER = new CommonOrEnrouteTransitionFilter();
 

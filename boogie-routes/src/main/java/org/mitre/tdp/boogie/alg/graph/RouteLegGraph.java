@@ -14,13 +14,13 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
-import org.mitre.tdp.boogie.models.ExpandedRoute;
+import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
 /**
  * Graph structure containing all of the elements resolved in the {@link ResolvedRoute}.
  */
-public class RouteLegGraph extends SimpleDirectedWeightedGraph<GraphableLeg, DefaultWeightedEdge> {
+public final class RouteLegGraph extends SimpleDirectedWeightedGraph<GraphableLeg, DefaultWeightedEdge> {
 
   /**
    * The minimum resolved section index from the original route string. The section associated with this

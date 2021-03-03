@@ -10,10 +10,10 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-public class TestStarRunwayTransitionFilter {
+class TestStarRunwayTransitionFilter {
 
   @Test
-  public void testFilterFailsNonRunwayTransitions() {
+  void testFilterFailsNonRunwayTransitions() {
     Transition transition = testTransition();
     when(transition.transitionType()).thenReturn(TransitionType.COMMON);
 
@@ -21,7 +21,7 @@ public class TestStarRunwayTransitionFilter {
   }
 
   @Test
-  public void testFilterFailsSidProcedures() {
+  void testFilterFailsSidProcedures() {
     Transition transition = testTransition();
     when(transition.procedureType()).thenReturn(ProcedureType.SID);
 
@@ -29,12 +29,12 @@ public class TestStarRunwayTransitionFilter {
   }
 
   @Test
-  public void testFilterPassesTransitionsMatchingRunway() {
+  void testFilterPassesTransitionsMatchingRunway() {
     assertTrue(new StarRunwayTransitionFilter("25R").test(testTransition()));
   }
 
   @Test
-  public void testFilterSkipsTransitionsNotMatchingRunway() {
+  void testFilterSkipsTransitionsNotMatchingRunway() {
     assertFalse(new StarRunwayTransitionFilter("24R").test(testTransition()));
   }
 
