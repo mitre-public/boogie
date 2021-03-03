@@ -55,7 +55,7 @@ class TestIfrFormatSectionSplitter {
         () -> assertEquals("WALCE", splits.get(1).value()),
         () -> assertEquals("/", splits.get(1).wildcards()),
         () -> assertEquals("KGSO", splits.get(2).value()),
-        () -> assertEquals("*", splits.get(2).wildcards())
+        () -> assertEquals("* ", splits.get(2).wildcards())
     );
   }
 
@@ -68,7 +68,7 @@ class TestIfrFormatSectionSplitter {
     assertAll(
         () -> assertEquals("KFRG", splits.get(0).value()),
         () -> assertEquals("RBV", splits.get(1).value()),
-        () -> assertEquals("+", splits.get(1).wildcards()),
+        () -> assertEquals("+ ", splits.get(1).wildcards()),
         () -> assertEquals("BWG", splits.get(5).value()),
         () -> assertTrue(Wildcard.PLUS.test(splits.get(5).wildcards())),
         () -> assertTrue(Wildcard.SUPPRESSED.test(splits.get(5).wildcards()))

@@ -65,33 +65,6 @@ public class TestElements {
     return ProcedureGraph.from(Collections.singletonList(transition));
   }
 
-  @Test
-  public void testAirportElement() {
-    Airport airport = mock(Airport.class);
-
-    LatLong airportLocation = LatLong.of(0.0, 0.0);
-    String airportId = "KATL";
-
-    when(airport.latLong()).thenReturn(airportLocation);
-    when(airport.identifier()).thenReturn(airportId);
-    when(airport.navigationSource()).thenReturn(() -> "CIFP");
-
-    AirportElement element = new AirportElement(airport);
-
-    assertEquals(element.legs().size(), 1);
-
-    LinkedLegs linked = element.legs().get(0);
-
-    assertEquals(linked.source().leg().pathTerminator().latLong(), airportLocation);
-    assertEquals(linked.target().leg().pathTerminator().latLong(), airportLocation);
-
-    assertEquals(linked.source().leg().pathTerminator().identifier(), "KATL");
-    assertEquals(linked.target().leg().pathTerminator().identifier(), "KATL");
-
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
-    assertEquals(linked.source().leg().type(), PathTerm.IF);
-  }
-
   // no hard exception
   @Test
   public void testAirwayElementSafeWithAirwaysOfLessThanTwoLegs() {
