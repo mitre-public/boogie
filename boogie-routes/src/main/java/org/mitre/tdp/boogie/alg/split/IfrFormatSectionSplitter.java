@@ -40,11 +40,12 @@ public final class IfrFormatSectionSplitter implements SectionSplitter {
           String ns = null == etaEet ? s : s.replace("/" + etaEet, "");
 
           String clean = ns.replaceAll("[^A-Za-z0-9/]", "");
-          String wildcards = ns.replaceAll("[A-Za-z0-9/]", "");
 
-          // special case for tailored, we want this to be a wildcard
-          // but we need this to work with Lat/Lon vals and preserve
-          // the forward slash
+          // if the cleaned section is empty - then that means the section indicates a direct - tag it in the wildcards
+          String wildcards = ns.replaceAll("[A-Za-z0-9/]", "").concat(clean.isEmpty() ? " " : "");
+
+          // special case for tailored, we want this to be a wildcard but we need this to work with Lat/Lon vals and
+          // preserve the forward slash
           if ("/".equals(clean)) {
             clean = "";
             wildcards += "/";

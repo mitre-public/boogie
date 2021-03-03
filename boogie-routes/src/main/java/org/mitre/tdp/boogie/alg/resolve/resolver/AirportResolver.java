@@ -24,7 +24,7 @@ public final class AirportResolver implements SingleSectionResolver {
     return lookupService
         .allMatchingIdentifier(sectionSplit.value())
         .stream()
-        .map(AirportElement::new)
+        .map(airport -> new AirportElement(sectionSplit.wildcards(), airport))
         .collect(Collectors.toList());
   }
 }
