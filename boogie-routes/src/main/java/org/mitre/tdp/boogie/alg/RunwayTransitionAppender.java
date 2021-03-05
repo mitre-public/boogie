@@ -8,16 +8,17 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionFilter;
 import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;
 import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.Procedure;
 
 /**
  * This class inspects a provided {@link ExpandedRoute} introspecting the elements on either end of the route looking for:
@@ -62,11 +63,10 @@ public final class RunwayTransitionAppender implements Function<ExpandedRoute, E
    * {@link ExpandedRoute}.
    */
   private void appendSidRunwayTransition(ExpandedRoute expandedRoute, String departureRunway) {
-    GraphableLeg initial = expandedRoute.legs().get(0);
-    GraphableLeg subsequent = expandedRoute.legs().get(1);
+    if (hasSidSectionCombination(expandedRoute)) {
+      ResolvedSection section = expandedRoute.sections().get(1);
 
-    if (initial.sourceElement().type().equals(ElementType.AIRPORT) && subsequent.sourceElement().type().equals(ElementType.SID)) {
-      ProcedureElement element = (ProcedureElement) subsequent.sourceElement();
+      ProcedureElement element = (ProcedureElement) section.elements().stream().findFirst().orElseThrow(IllegalStateException::new);
       Procedure procedure = element.reference();
 
       SidRunwayTransitionFilter filter = new SidRunwayTransitionFilter(departureRunway);
@@ -75,13 +75,23 @@ public final class RunwayTransitionAppender implements Function<ExpandedRoute, E
       runwayTransition.ifPresent(transition -> {
         List<GraphableLeg> newLegs = new ArrayList<>();
 
-        newLegs.add(initial);
-        newLegs.addAll(toGraphableLegs(subsequent, transition));
-        newLegs.addAll(expandedRoute.legs().subList(1, expandedRoute.legs().size()));
+        newLegs.addAll(expandedRoute.legsFor(expandedRoute.sections().get(0)));
+        newLegs.addAll(toGraphableLegs(section, transition));
+
+        expandedRoute.sections().subList(1, expandedRoute.sections().size())
+            .forEach(s -> newLegs.addAll(expandedRoute.legsFor(s)));
 
         expandedRoute.replaceLegs(newLegs);
       });
     }
+  }
+
+  private boolean hasSidSectionCombination(ExpandedRoute expandedRoute) {
+    ResolvedSection initial = expandedRoute.sections().get(0);
+    ResolvedSection subsequent = expandedRoute.sections().get(1);
+
+    return initial.elements().stream().allMatch(element -> element.type().equals(ElementType.AIRPORT))
+        && subsequent.elements().stream().allMatch(element -> element.type().equals(ElementType.SID));
   }
 
   /**
@@ -89,12 +99,10 @@ public final class RunwayTransitionAppender implements Function<ExpandedRoute, E
    * {@link ExpandedRoute}.
    */
   private void appendStarRunwayTransition(ExpandedRoute expandedRoute, String arrivalRunway) {
-    int n = expandedRoute.legs().size();
-    GraphableLeg terminal = expandedRoute.legs().get(n - 1);
-    GraphableLeg previous = expandedRoute.legs().get(n - 2);
+    if (hasStarSectionCombination(expandedRoute)) {
+      ResolvedSection section = expandedRoute.sections().get(expandedRoute.sections().size() - 2);
 
-    if (terminal.sourceElement().type().equals(ElementType.AIRPORT) && previous.sourceElement().type().equals(ElementType.STAR)) {
-      ProcedureElement element = (ProcedureElement) previous.sourceElement();
+      ProcedureElement element = (ProcedureElement) section.elements().stream().findFirst().orElseThrow(IllegalStateException::new);
       Procedure procedure = element.reference();
 
       StarRunwayTransitionFilter filter = new StarRunwayTransitionFilter(arrivalRunway);
@@ -103,22 +111,33 @@ public final class RunwayTransitionAppender implements Function<ExpandedRoute, E
       runwayTransition.ifPresent(transition -> {
         List<GraphableLeg> newLegs = new ArrayList<>();
 
-        newLegs.addAll(expandedRoute.legs().subList(0, expandedRoute.legs().size() - 1));
-        newLegs.addAll(toGraphableLegs(previous, transition));
-        newLegs.add(terminal);
+        expandedRoute.sections().subList(0, expandedRoute.sections().size() - 1)
+            .forEach(s -> newLegs.addAll(expandedRoute.legsFor(s)));
+
+        newLegs.addAll(toGraphableLegs(section, transition));
+        newLegs.addAll(expandedRoute.legsFor(expandedRoute.sections().get(expandedRoute.sections().size() - 1)));
 
         expandedRoute.replaceLegs(newLegs);
       });
     }
   }
 
+  private boolean hasStarSectionCombination(ExpandedRoute expandedRoute) {
+    int n = expandedRoute.sections().size();
+    ResolvedSection terminal = expandedRoute.sections().get(n - 1);
+    ResolvedSection previous = expandedRoute.sections().get(n - 2);
+
+    return terminal.elements().stream().allMatch(element -> element.type().equals(ElementType.AIRPORT))
+        && previous.elements().stream().allMatch(element -> element.type().equals(ElementType.STAR));
+  }
+
   /**
    * Converts the given {@link Transition} and it's associated {@link ProcedureElement} to a collection of {@link GraphableLeg}s
    * which can be appended to the start or end of the {@link ExpandedRoute}.
    */
-  private List<GraphableLeg> toGraphableLegs(GraphableLeg source, Transition transition) {
-    SectionSplit split = source.split();
-    ResolvedElement<?> element = source.sourceElement();
+  private List<GraphableLeg> toGraphableLegs(ResolvedSection section, Transition transition) {
+    SectionSplit split = section.sectionSplit();
+    ResolvedElement<?> element = section.elements().iterator().next();
 
     return transition.legs().stream()
         .map(leg -> new GraphableLeg(leg).setSplit(split).setSourceElement(element))

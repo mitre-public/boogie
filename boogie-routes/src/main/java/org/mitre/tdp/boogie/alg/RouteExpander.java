@@ -87,7 +87,7 @@ public final class RouteExpander implements Function<String, Optional<ExpandedRo
       return Optional.empty();
     }
 
-    return Optional.of(new ExpandedRoute(route, shortestPath.getVertexList()));
+    return Optional.of(ExpandedRoute.from(route, resolved, shortestPath.getVertexList()));
   }
 
   /**

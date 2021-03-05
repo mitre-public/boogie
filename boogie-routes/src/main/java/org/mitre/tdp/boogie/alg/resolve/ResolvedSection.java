@@ -5,28 +5,26 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 
 /**
- * Wrapper class for a section containing context flags from the filed route string itself
- * (e.g. direct/suppressed) as well as a collection of possible infrastructure elements that
- * were determined to be associated with the section id via the {@link RouteResolver}.
+ * Wrapper class for a section containing context flags from the filed route string itself (e.g. direct/suppressed) as well
+ * as a collection of possible infrastructure elements that were determined to be associated with the section id via the
+ * {@link RouteResolver}.
  */
-public class ResolvedSection {
+public final class ResolvedSection {
 
   /**
-   * The split section with wildcards and etc associated with this collection of route
-   * elements.
+   * The split section with wildcards and etc associated with this collection of route elements.
    */
   private SectionSplit sectionSplit;
   /**
    * List of resolved infrastructure elements.
    *
-   * <p>This is the superset of all potential elements the filed section of the route string
-   * could possible be referring to.
+   * <p>This is the superset of all potential elements the filed section of the route string could possible be referring to.
    */
   private List<ResolvedElement<?>> elements;
 
