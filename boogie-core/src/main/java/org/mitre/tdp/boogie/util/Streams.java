@@ -37,7 +37,7 @@ public final class Streams {
    */
   public static <U, V> Stream<V> pairwiseWithNulls(List<U> list, BiFunction<U, U, V> fn) {
     IntFunction<U> getOrNull = i -> i >= 0 && i < list.size() ? list.get(i) : null;
-    return IntStream.range(1, list.size() + 1).mapToObj(i -> fn.apply(getOrNull.apply(i - 1), getOrNull.apply(i)));
+    return IntStream.range(0, list.size() + 1).mapToObj(i -> fn.apply(getOrNull.apply(i - 1), getOrNull.apply(i)));
   }
 
   /**
