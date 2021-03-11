@@ -6,15 +6,18 @@ be generated both domestically and internationally.
 <p>Domestic routes by arrival airport (<span style="color: red;">KLAX</span>, <span style="color: lime;">KSEA</span>, <span style="color: purple;">KORD</span>,
  <span style="color: cyan;">KJFK</span>, <span style="color: gold;">KDFW</span>):</p>
 </div>
+<br />
 
 <img align="left" height="150" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmain">
-
+<br />
 <div class="img-with-text">
 <p>International expansions  (<span style="color: red;">WSSS</span>, <span style="color: lime;">EGLL</span>, <span style="color: purple;">EHAM</span>,
  <span style="color: cyan;">RJAA</span>, <span style="color: gold;">LEMD</span>):</p>
 </div>
+<br />
 <img align="left" height="150" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain">
 <img align="left" height="150" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain">
+<br />
 
 ## Algorithm
 
