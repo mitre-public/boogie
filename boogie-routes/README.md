@@ -8,15 +8,15 @@ be generated both domestically and internationally.
 </div>
 <br />
 
-<img align="float: left;" height="50%" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmain"/>
 <br />
 <div class="img-with-text">
 <p>International expansions  (<span style="color: red;">WSSS</span>, <span style="color: lime;">EGLL</span>, <span style="color: purple;">EHAM</span>,
  <span style="color: cyan;">RJAA</span>, <span style="color: gold;">LEMD</span>):</p>
 </div>
 <br />
-<img align="float: left;" height="50%" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain"/>
-<img align="float: left;" height="50%" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
 <br />
 
 ## Algorithm
@@ -97,7 +97,18 @@ String myRouteString....
 
 RouteExpander routeExpander = RouteExpanderFactory.newRouteExpander(fixes, airways, airports, transitions);
 
-ExpandedRoute expandedRoute = routeExpander.apply(myRouteString);
+Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString);
 ```
 
+Where the expansion may not be performed in the case of insufficent information to match elements. The generated route expander can be re-used across route strings and performs expansion through the common 
+portion of the SID/STAR.
  
+For expansions looking to continue past the common portion and on to the runway there is an optional chainable transform to include the appropriate runway transitions, the ```RunwayTransitionAppender```. 
+This class is instantiated with a pair of runway predictions (one for arrival and one for departure) and will select the appropriate continuing transition beyond the common portion based on some (relatively) 
+simple string identifier matching (handing things like RW02B transitions, etc. for SIDs). One can be instantiated and chained with a route expander:
+
+```
+RunwayTransitionAppender appender = new RunwayTransitionAppender(() -> Optional.of("RW26B"), () -> Optional.of("RW34"));
+
+Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString).map(appender);
+```
