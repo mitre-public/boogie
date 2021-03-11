@@ -7,14 +7,14 @@ be generated both domestically and internationally.
  <span style="color: cyan;">KJFK</span>, <span style="color: gold;">KDFW</span>):</p>
 </div>
 
-<img align="left" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmaster">
+<img align="left" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmain">
 
 <div class="img-with-text">
 <p>International expansions  (<span style="color: red;">WSSS</span>, <span style="color: lime;">EGLL</span>, <span style="color: purple;">EHAM</span>,
  <span style="color: cyan;">RJAA</span>, <span style="color: gold;">LEMD</span>):</p>
 </div>
-<img align="left" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain">
-<img align="left" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain">
+<img align="left" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain">
+<img align="left" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain">
 
 ## Algorithm
 
@@ -73,4 +73,28 @@ to determine edge weights between adjacent sections (e.g. distance to nearest fi
 is then taken to be the assigned route.
 
 The approach above allows us to keep the algorithm itself reasonable generic and relatively robust without needing to add too many rules/special cases to the underlying code as the graphically 
-resolved path generally does a good job of handling things like repeated airways in the route string, etc. 
+resolved path generally does a good job of handling things like repeated airways in the route string, etc.
+
+Additionally boogie provides the legs within this path in a "flyable" form - this means the leg types accurately reflect the way the aircraft should actually fly them.
+
+### The code
+
+The entry point to the code is the ```RouteExpanderFactory.java``` class. This class provides a pair of methods for generating a ```RouteExpander``` based on either collections of cached infrastructure data 
+or based on a ```LookupService``` which can be used to identify infrastructure elements by their string identifier (as one would see them referenced by in the flightplan).
+
+Assuming you have a collection of infrastructure records on hand implementing the associated ```boogie-core``` interfaces instantiating a ```RouteExpander``` is as simple as:
+
+```
+Collection<Transition> transitions...
+Collection<Airway> airways...
+Collection<Fix> fixes...
+Collection<Airport> airports...
+
+String myRouteString....
+
+RouteExpander routeExpander = RouteExpanderFactory.newRouteExpander(fixes, airways, airports, transitions);
+
+ExpandedRoute expandedRoute = routeExpander.apply(myRouteString);
+```
+
+ 
