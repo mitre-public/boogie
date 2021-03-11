@@ -86,12 +86,12 @@ public final class RunwayTransitionAppender implements Function<ExpandedRoute, E
     }
   }
 
-  private boolean hasSidSectionCombination(ExpandedRoute expandedRoute) {
+  boolean hasSidSectionCombination(ExpandedRoute expandedRoute) {
     ResolvedSection initial = expandedRoute.sections().get(0);
     ResolvedSection subsequent = expandedRoute.sections().get(1);
 
-    return initial.elements().stream().allMatch(element -> element.type().equals(ElementType.AIRPORT))
-        && subsequent.elements().stream().allMatch(element -> element.type().equals(ElementType.SID));
+    return !initial.elements().isEmpty() && initial.elements().stream().allMatch(element -> element.type().equals(ElementType.AIRPORT))
+        && !subsequent.elements().isEmpty() && subsequent.elements().stream().allMatch(element -> element.type().equals(ElementType.SID));
   }
 
   /**
@@ -122,13 +122,13 @@ public final class RunwayTransitionAppender implements Function<ExpandedRoute, E
     }
   }
 
-  private boolean hasStarSectionCombination(ExpandedRoute expandedRoute) {
+  boolean hasStarSectionCombination(ExpandedRoute expandedRoute) {
     int n = expandedRoute.sections().size();
     ResolvedSection terminal = expandedRoute.sections().get(n - 1);
     ResolvedSection previous = expandedRoute.sections().get(n - 2);
 
-    return terminal.elements().stream().allMatch(element -> element.type().equals(ElementType.AIRPORT))
-        && previous.elements().stream().allMatch(element -> element.type().equals(ElementType.STAR));
+    return !terminal.elements().isEmpty() && terminal.elements().stream().allMatch(element -> element.type().equals(ElementType.AIRPORT))
+        && !previous.elements().isEmpty() && previous.elements().stream().allMatch(element -> element.type().equals(ElementType.STAR));
   }
 
   /**

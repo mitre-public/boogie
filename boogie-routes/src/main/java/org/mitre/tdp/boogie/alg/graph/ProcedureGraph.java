@@ -7,8 +7,6 @@ import static org.mitre.tdp.boogie.util.Iterators.fastslow;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -24,8 +22,8 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.service.impl.NameLocationService;
 import org.mitre.tdp.boogie.util.Combinatorics;
 import org.mitre.tdp.boogie.util.Iterators;
@@ -70,30 +68,29 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
     if (allPaths == null) {
       allPaths = new AllDirectedPaths<>(this);
     }
-    List<GraphPath<Leg, DefaultEdge>> gpaths = allPaths.getAllPaths(
-        closestLegMatch(entry),
-        closestLegMatch(exit),
-        false,
-        100
-    );
-    return transform(gpaths, GraphPath::getVertexList);
-  }
 
-  public List<Leg> legsTerminatingWith(Fix fix) {
-    Collection<Leg> nameMatches = nls.matches(fix.identifier());
-    return nameMatches.isEmpty()
-        ? Collections.singletonList(nls.nearest(fix.latLong()))
-        : new ArrayList<>(nameMatches);
+    List<Leg> entryCandidates = legsTerminatingIn(entry);
+    List<Leg> exitCandidates = legsTerminatingIn(exit);
+
+    return Combinatorics.cartesianProduct(entryCandidates, exitCandidates).stream()
+        .map(pair -> allPaths.getAllPaths(
+            pair.first(),
+            pair.second(),
+            false,
+            100
+        ))
+        .flatMap(Collection::stream)
+        .map(GraphPath::getVertexList)
+        .distinct()
+        .collect(Collectors.toList());
   }
 
   /**
-   * Returns the leg of the preferred type which best matches the specified fix. This lookup is done both by name as well as
-   * geospatially if the fix identifier doesn't exist in the procedure.
+   * Returns the list of legs from the procedure terminating with the provided fix. These fixes are matched based on identifier
+   * in which case multiple can be returned.
    */
-  public Leg closestLegMatch(Fix fix) {
-    Collection<Leg> nameMatches = nls.matches(fix.identifier());
-    Optional<Leg> match = nameMatches.stream().filter(leg -> fix.equals(leg.pathTerminator())).findFirst();
-    return match.orElseGet(() -> nameMatches.stream().min(Comparator.comparing(Leg::type)).orElseGet(() -> nls.nearest(fix.latLong())));
+  private List<Leg> legsTerminatingIn(Fix fix) {
+    return new ArrayList<>(nls.matches(fix.identifier()));
   }
 
   @Override

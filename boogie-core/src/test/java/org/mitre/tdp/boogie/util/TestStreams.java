@@ -22,7 +22,7 @@ class TestStreams {
   @Test
   void testPairwiseWithNullsLessThanTwoElements() {
     int actual = Streams.pairwiseWithNulls(Arrays.asList(5), biSum).mapToInt(i -> i).sum();
-    assertEquals(5, actual);
+    assertEquals(10, actual);
   }
 
   @Test
