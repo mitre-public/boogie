@@ -165,7 +165,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
   private int tfHasher(FlyableLeg flyableLeg) {
     Preconditions.checkArgument(flyableLeg.current().type().equals(TF));
     Hasher hasher = newHasher(flyableLeg).withPathTerminator(flyableLeg.current());
-    return flyableLeg.previous().isPresent()
+    return flyableLeg.previous().filter(l -> l.pathTerminator() != null).isPresent()
         // allow null previous fixes because the scorer lets them pass as well I think
         // this is likely an issue with CIFP airways on the boundary of countries
         ? hasher.withPathTerminator(flyableLeg.previous().orElseThrow(IllegalStateException::new)).hashCode()
