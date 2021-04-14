@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
  * Wrapper for likelihood values, stored internally as log-likelihoods to prevent Double underflow.
  */
 public final class Likelihood implements Comparable<Likelihood> {
+
   private final double l;
 
   private Likelihood(double l) {
