@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.v18.spec.record.AirportSpec;
 import org.mitre.tdp.boogie.v18.spec.record.AirwaySpec;
+import org.mitre.tdp.boogie.v18.spec.record.GlideSlopeSpec;
 import org.mitre.tdp.boogie.v18.spec.record.NdbNavaidSpec;
 import org.mitre.tdp.boogie.v18.spec.record.RunwaySpec;
 import org.mitre.tdp.boogie.v18.spec.record.TransitionSpec;
@@ -20,6 +21,7 @@ public enum ArincVersion implements ArincSpec, ArincParser {
    */
   V18(new AirportSpec(),
       new RunwaySpec(),
+      new GlideSlopeSpec(),
       new AirwaySpec(),
       new NdbNavaidSpec(),
       new VhfNavaidSpec(),
