@@ -1,18 +1,20 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.BiFunction;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.CombinationStrategy;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTagger;
-import org.mitre.tdp.boogie.conformance.alg.assign.dp.ViterbiTrellis;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.ScoringStrategy;
+import org.mitre.tdp.boogie.viterbi.GraphBackedViterbiTransitionStrategy;
+import org.mitre.tdp.boogie.viterbi.ViterbiScoringStrategy;
+import org.mitre.tdp.boogie.viterbi.ViterbiTagger;
+import org.mitre.tdp.boogie.viterbi.ViterbiTrellis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,20 +57,21 @@ public final class RouteAssigner {
    */
   private final TransitionGraphAssembler transitionGraphAssembler;
   /**
-   * See {@link ScoringStrategy}.
+   * See {@link ViterbiScoringStrategy}.
    */
-  private final ScoringStrategy scoringStrategy;
+  private final ViterbiScoringStrategy<ConformablePoint, FlyableLeg> scoringStrategy;
 
   public RouteAssigner(
       LinkingStrategy linkingStrategy,
       CombinationStrategy combinationStrategy,
-      ScoringStrategy scoringStrategy
+      ViterbiScoringStrategy<ConformablePoint, FlyableLeg> scoringStrategy,
+      BiFunction<FlyableLeg, FlyableLeg, Double> transitionScorer
   ) {
-    this.transitionGraphAssembler = new TransitionGraphAssembler(linkingStrategy, combinationStrategy);
-    this.scoringStrategy = scoringStrategy;
+    this.transitionGraphAssembler = new TransitionGraphAssembler(linkingStrategy, combinationStrategy, transitionScorer);
+    this.scoringStrategy = requireNonNull(scoringStrategy);
   }
 
-  public LegTransitionGraph transitionGraph(Collection<? extends Route> routes) {
+  public TransitionGraphAssembler.AssemblyResult transitionGraph(Collection<? extends Route> routes) {
     LOG.info("Generating transition graph.");
     return transitionGraphAssembler.assembleFrom(routes);
   }
@@ -76,26 +79,26 @@ public final class RouteAssigner {
   public ViterbiTagger<ConformablePoint, FlyableLeg> tagger(
       Collection<? extends ConformablePoint> points,
       Collection<? extends Route> routes) {
-    return tagger(points, transitionGraph(routes));
+    return tagger(points, transitionGraph(routes).graph());
   }
 
   public ViterbiTagger<ConformablePoint, FlyableLeg> tagger(
       Collection<? extends ConformablePoint> points,
-      LegTransitionGraph transitionGraph) {
+      Graph<FlyableLeg, DefaultWeightedEdge> transitionGraph) {
     Preconditions.checkArgument(!points.isEmpty(), String.format("Invalid number of supplied points %s.", points.size()));
 
     LOG.info("Generating ViterbiTagger instance.");
     return ViterbiTagger.with(
         points,
         transitionGraph.vertexSet(),
-        this::legScore,
-        transitionFunction(transitionGraph),
-        this::transitionScore);
+        scoringStrategy,
+        new GraphBackedViterbiTransitionStrategy<>(transitionGraph)
+    );
   }
 
   public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis(
       Collection<? extends ConformablePoint> points,
-      LegTransitionGraph transitionGraph) {
+      Graph<FlyableLeg, DefaultWeightedEdge> transitionGraph) {
     ViterbiTagger<ConformablePoint, FlyableLeg> tagger = tagger(points, transitionGraph);
 
     LOG.info("Generating trellis.");
@@ -105,12 +108,12 @@ public final class RouteAssigner {
   public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis(
       Collection<? extends ConformablePoint> points,
       Collection<? extends Route> routes) {
-    return trellis(points, transitionGraph(routes));
+    return trellis(points, transitionGraph(routes).graph());
   }
 
   public Map<ConformablePoint, FlyableLeg> assignments(
       Collection<? extends ConformablePoint> points,
-      LegTransitionGraph transitionGraph) {
+      Graph<FlyableLeg, DefaultWeightedEdge> transitionGraph) {
     ViterbiTrellis<ConformablePoint, FlyableLeg> trellis = trellis(points, transitionGraph);
 
     LOG.info("Computing optimal path.");
@@ -123,19 +126,6 @@ public final class RouteAssigner {
   public Map<ConformablePoint, FlyableLeg> assignments(
       Collection<? extends ConformablePoint> points,
       Collection<? extends Route> routes) {
-    return assignments(points, transitionGraph(routes));
-  }
-
-  private Double legScore(ConformablePoint pt, FlyableLeg leg) {
-    OnLegScorer scorer = scoringStrategy.onLegScorerFor(leg);
-    return scorer.score(pt, leg).orElseThrow(() -> new IllegalStateException("No leg score provided for flyable leg ".concat(leg.toString())));
-  }
-
-  private Function<FlyableLeg, Collection<FlyableLeg>> transitionFunction(LegTransitionGraph graph) {
-    return flyableLeg -> Stream.concat(graph.downstreamLegsOf(flyableLeg).stream(), Stream.of(flyableLeg)).collect(Collectors.toList());
-  }
-
-  private Double transitionScore(FlyableLeg l1, FlyableLeg l2) {
-    return scoringStrategy.legTransitionScorer(l1).transitionScore(l1, l2).orElseThrow(() -> new IllegalStateException("No LegTransitionScorer provided for flyable leg ".concat(l1.toString())));
+    return assignments(points, transitionGraph(routes).graph());
   }
 }

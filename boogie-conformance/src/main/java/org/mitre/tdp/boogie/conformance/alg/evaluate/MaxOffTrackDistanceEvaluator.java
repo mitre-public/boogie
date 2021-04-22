@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngles;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngle;
 
 /**
  * The max off track distance evaluator considers an aircraft to be non-conforming when it is outside
@@ -86,7 +86,7 @@ public class MaxOffTrackDistanceEvaluator implements ConformanceEvaluator {
     double currentFixBearing = centerFix.courseInDegrees(currentTerminator);
     double pointBearing = centerFix.courseInDegrees(point);
 
-    if (RadialAngles.of(previousFixBearing, currentFixBearing, turnDirection).contains(pointBearing)) {
+    if (new RadialAngle(previousFixBearing, currentFixBearing, turnDirection).contains(pointBearing)) {
       double radius = centerFix.distanceInNmTo(currentTerminator);
       return Optional.of(Distance.ofNauticalMiles(Math.abs(radius - centerFix.distanceInNmTo(point))));
     } else {

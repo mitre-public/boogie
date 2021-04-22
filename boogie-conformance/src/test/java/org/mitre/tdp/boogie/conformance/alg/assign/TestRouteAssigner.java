@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScoringRule.newScoringRule;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,8 +12,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -27,9 +26,7 @@ import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.NoopCombinationStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.SuppliedLinkStrategy;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.OnLegScorer;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.RuleBasedScoringStrategy;
-import org.mockito.stubbing.Answer;
+import org.mitre.tdp.boogie.viterbi.RuleBasedViterbiScoringStrategy;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -37,7 +34,7 @@ import com.google.common.collect.Sets;
 class TestRouteAssigner {
 
   @Test
-  public void testScorerReturnsMaxValuePath() {
+  void testScorerReturnsMaxValuePath() {
     Leg source = leg("source");
     Leg a = leg("a");
     Leg b = leg("b");
@@ -70,16 +67,14 @@ class TestRouteAssigner {
     RouteAssigner alg = new RouteAssigner(
         linkingStrategy,
         new NoopCombinationStrategy(),
-        new RuleBasedScoringStrategy.Builder()
-            .addOnLegScoringRules(
-                newScoringRule(l -> l.current().equals(a), scorer(points.get(0), points.get(1))),
-                newScoringRule(l -> l.current().equals(b), scorer(points.get(2), points.get(3))),
-                newScoringRule(l -> l.current().equals(g), scorer(points.get(4), points.get(5), points.get(6))),
-                newScoringRule(l -> l.current().equals(h), scorer(points.get(7), points.get(8), points.get(9))),
-                newScoringRule(l -> true, scorer())
-            )
-            .setLegTransitionScorers((l1, l2) -> Optional.of(.1))
-            .build()
+        RuleBasedViterbiScoringStrategy.<ConformablePoint, FlyableLeg>newBuilder()
+            .addStateDelegatedScorer(l -> l.current().equals(a) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(0), points.get(1)))
+            .addStateDelegatedScorer(l -> l.current().equals(b) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(2), points.get(3)))
+            .addStateDelegatedScorer(l -> l.current().equals(g) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(4), points.get(5), points.get(6)))
+            .addStateDelegatedScorer(l -> l.current().equals(h) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(7), points.get(8), points.get(9)))
+            .addStateDelegatedScorer(l -> true, scorer())
+            .build(),
+        (l1, l2) -> .1
     );
 
     Map<ConformablePoint, Leg> mapping = Maps.transformValues(
@@ -115,16 +110,9 @@ class TestRouteAssigner {
         .collect(Collectors.joining(","));
   }
 
-  private OnLegScorer scorer(ConformablePoint... points) {
+  private BiFunction<ConformablePoint, FlyableLeg, Double> scorer(ConformablePoint... points) {
     Set<ConformablePoint> pointSet = Sets.newHashSet(points);
-    Answer<Optional<Double>> answer = incoming -> {
-      Object[] args = incoming.getArguments();
-      return Optional.of(pointSet.contains(args[0]) ? 0.99 / points.length : 0.01);
-    };
-
-    OnLegScorer scorer = mock(OnLegScorer.class);
-    when(scorer.score(any(), any())).thenAnswer(answer);
-    return scorer;
+    return (conformablePoint, flyableLeg) -> pointSet.contains(conformablePoint) ? .99 / points.length : .01;
   }
 
   private ConformablePoint conformablePoint(Instant tau) {
