@@ -75,20 +75,20 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
    * Returns a new instance of a {@link PathTerminatorBasedLegHasher} with the default hashing functions per leg type.
    */
   public static PathTerminatorBasedLegHasher newInstance() {
-    return withOverridenHashers(new HashMap<>());
+    return withOverriddenHashers(new HashMap<>());
   }
 
   /**
    * Returns a new instance of a {@link PathTerminatorBasedLegHasher} with the supplied overrides.
    */
-  public static PathTerminatorBasedLegHasher withOverridenHashers(Pair<PathTerm, Function<FlyableLeg, Integer>>... overrides) {
-    return withOverridenHashers(Stream.of(overrides).collect(Collectors.toMap(Pair::first, Pair::second)));
+  public static PathTerminatorBasedLegHasher withOverriddenHashers(Pair<PathTerm, Function<FlyableLeg, Integer>>... overrides) {
+    return withOverriddenHashers(Stream.of(overrides).collect(Collectors.toMap(Pair::first, Pair::second)));
   }
 
   /**
    * Returns a new instance of a {@link PathTerminatorBasedLegHasher} with the supplied mapping of overrides.
    */
-  public static PathTerminatorBasedLegHasher withOverridenHashers(Map<PathTerm, Function<FlyableLeg, Integer>> overrides) {
+  public static PathTerminatorBasedLegHasher withOverriddenHashers(Map<PathTerm, Function<FlyableLeg, Integer>> overrides) {
     return new PathTerminatorBasedLegHasher(overrides);
   }
 

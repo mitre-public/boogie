@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
  *
  * For an example of a common hash function see {@link PathTerminatorBasedLegHasher}.
  */
-public class HashCombinationStrategy implements CombinationStrategy {
+public final class HashCombinationStrategy implements CombinationStrategy {
 
   private final Function<FlyableLeg, Integer> hasher;
 
