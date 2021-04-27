@@ -14,97 +14,85 @@ import org.mitre.tdp.boogie.TurnDirection;
  * Singleton instance of a leg with no known features. This is useful as a stand in for a state representing the aircraft
  * not being assigned to any state in particular (see {@link ScoreBasedRouteResolver}).
  */
-public class UnknownLeg implements Leg {
-
-  private static final UnknownLeg INSTANCE = new UnknownLeg();
-
-  private UnknownLeg() {
-  }
-
-  /**
-   * Returns the singleton instance of the unknown leg.
-   */
-  public static UnknownLeg getInstance() {
-    return INSTANCE;
-  }
+public interface UnknownLeg extends Leg {
 
   @Override
-  public Fix pathTerminator() {
+  default Fix pathTerminator() {
     return null;
   }
 
   @Override
-  public Optional<? extends Fix> recommendedNavaid() {
+  default Optional<? extends Fix> recommendedNavaid() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<? extends Fix> centerFix() {
+  default Optional<? extends Fix> centerFix() {
     return Optional.empty();
   }
 
   @Override
-  public PathTerm type() {
+  default PathTerm type() {
     return PathTerm.UNK;
   }
 
   @Override
-  public Integer sequenceNumber() {
+  default Integer sequenceNumber() {
     return null;
   }
 
   @Override
-  public Optional<Double> outboundMagneticCourse() {
+  default Optional<Double> outboundMagneticCourse() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Double> rho() {
+  default Optional<Double> rho() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Double> theta() {
+  default Optional<Double> theta() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Double> rnp() {
+  default Optional<Double> rnp() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Double> routeDistance() {
+  default Optional<Double> routeDistance() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Duration> holdTime() {
+  default Optional<Duration> holdTime() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Double> verticalAngle() {
+  default Optional<Double> verticalAngle() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<? extends SpeedLimit> speedConstraint() {
+  default Optional<? extends SpeedLimit> speedConstraint() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<? extends AltitudeLimit> altitudeConstraint() {
+  default Optional<? extends AltitudeLimit> altitudeConstraint() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<? extends TurnDirection> turnDirection() {
+  default Optional<? extends TurnDirection> turnDirection() {
     return Optional.empty();
   }
 
   @Override
-  public Optional<Boolean> overfly() {
+  default Optional<Boolean> overfly() {
     return Optional.empty();
   }
 }
