@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.conformance.alg.assign.score;
 import java.util.function.BiPredicate;
 
 import org.mitre.tdp.boogie.ConformablePoint;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerm;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
@@ -14,6 +16,7 @@ public final class ViDelegator implements BiPredicate<ConformablePoint, FlyableL
   public boolean test(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
     return PathTerm.VI.equals(flyableLeg.current().type())
         && PathTerm.VI.hasRequiredFields(flyableLeg.current())
-        && conformablePoint.trueCourse().isPresent();
+        && conformablePoint.trueCourse().isPresent()
+        && flyableLeg.next().map(Leg::pathTerminator).map(Fix::latLong).isPresent();
   }
 }
