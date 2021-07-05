@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.v18.spec.record;
 
 import static org.mitre.tdp.boogie.ArincField.newField;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.mitre.tdp.boogie.ArincField;
@@ -35,15 +34,17 @@ import org.mitre.tdp.boogie.v18.spec.field.SpeedLimitAltitude;
 import org.mitre.tdp.boogie.v18.spec.field.SubSectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.TransitionAltitude;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Record specification for ARINC airport records.
  */
-public class AirportSpec implements RecordSpec {
+public final class AirportSpec implements RecordSpec {
 
-  private List<ArincField<?>> recordFields;
+  private final List<ArincField<?>> recordFields;
 
   public AirportSpec() {
-    this.recordFields = Arrays.asList(
+    this.recordFields = ImmutableList.of(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),

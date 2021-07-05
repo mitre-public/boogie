@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.v18.spec.record;
 
 import static org.mitre.tdp.boogie.ArincField.newField;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.mitre.tdp.boogie.ArincField;
@@ -26,15 +25,17 @@ import org.mitre.tdp.boogie.v18.spec.field.SubSectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.VorNdbFrequency;
 import org.mitre.tdp.boogie.v18.spec.field.VorNdbIdentifier;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Specification for a NDB navaid record from ARINC.
  */
-public class NdbNavaidSpec implements RecordSpec {
+public final class NdbNavaidSpec implements RecordSpec {
 
-  private List<ArincField<?>> recordFields;
+  private final List<ArincField<?>> recordFields;
 
   public NdbNavaidSpec() {
-    this.recordFields = Arrays.asList(
+    this.recordFields = ImmutableList.of(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),

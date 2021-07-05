@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.v18.spec.record;
 
 import static org.mitre.tdp.boogie.ArincField.newField;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.mitre.tdp.boogie.ArincField;
@@ -38,15 +37,17 @@ import org.mitre.tdp.boogie.v18.spec.field.SubSectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.Theta;
 import org.mitre.tdp.boogie.v18.spec.field.WaypointDescription;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * The specification for an ARINC enroute airway record.
  */
-public class AirwaySpec implements RecordSpec {
+public final class AirwaySpec implements RecordSpec {
 
-  private List<ArincField<?>> recordFields;
+  private final List<ArincField<?>> recordFields;
 
   public AirwaySpec() {
-    this.recordFields = Arrays.asList(
+    this.recordFields = ImmutableList.of(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),

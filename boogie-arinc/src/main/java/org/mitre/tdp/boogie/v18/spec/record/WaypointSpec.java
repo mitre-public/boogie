@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.v18.spec.record;
 
 import static org.mitre.tdp.boogie.ArincField.newField;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.mitre.tdp.boogie.ArincField;
@@ -27,15 +26,17 @@ import org.mitre.tdp.boogie.v18.spec.field.WaypointNameDescription;
 import org.mitre.tdp.boogie.v18.spec.field.WaypointType;
 import org.mitre.tdp.boogie.v18.spec.field.WaypointUsage;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Specification for Terminal/Enroute waypoint records in ARINC.
  */
-public class WaypointSpec implements RecordSpec {
+public final class WaypointSpec implements RecordSpec {
 
-  private List<ArincField<?>> recordFields;
+  private final List<ArincField<?>> recordFields;
 
   public WaypointSpec() {
-    this.recordFields = Arrays.asList(
+    this.recordFields = ImmutableList.of(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),

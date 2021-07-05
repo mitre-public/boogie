@@ -42,15 +42,17 @@ import org.mitre.tdp.boogie.v18.spec.field.TurnDirectionValid;
 import org.mitre.tdp.boogie.v18.spec.field.VerticalAngle;
 import org.mitre.tdp.boogie.v18.spec.field.WaypointDescription;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Record specification for an ARINC SID/STAR/APPROACH.
  */
-public class TransitionSpec implements RecordSpec {
+public final class TransitionSpec implements RecordSpec {
 
-  private List<ArincField<?>> recordFields;
+  private final List<ArincField<?>> recordFields;
 
   public TransitionSpec(){
-    this.recordFields = Arrays.asList(
+    this.recordFields = ImmutableList.of(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),

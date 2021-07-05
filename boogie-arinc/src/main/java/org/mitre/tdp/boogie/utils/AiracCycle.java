@@ -12,9 +12,9 @@ import com.ko_sys.av.airac.Airac;
 /**
  * Decorator class for internal only dependency on the {@link Airac} project.
  */
-public class AiracCycle {
+public final class AiracCycle {
 
-  private Airac airac;
+  private final Airac airac;
 
   public AiracCycle(String cycle) {
     this.airac = Airac.fromIdentifier(cycle);

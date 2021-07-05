@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.v18.spec.record;
 
-import java.util.Arrays;
+import static org.mitre.tdp.boogie.ArincField.newField;
+
 import java.util.List;
 
 import org.mitre.tdp.boogie.ArincField;
@@ -32,14 +33,14 @@ import org.mitre.tdp.boogie.v18.spec.field.SubSectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.ThresholdCrossingHeight;
 import org.mitre.tdp.boogie.v18.spec.field.VorNdbIdentifier;
 
-import static org.mitre.tdp.boogie.ArincField.newField;
+import com.google.common.collect.ImmutableList;
 
-public class GlideSlopeSpec implements RecordSpec {
+public final class GlideSlopeSpec implements RecordSpec {
 
-  private List<ArincField<?>> recordFields;
+  private final List<ArincField<?>> recordFields;
 
   public GlideSlopeSpec() {
-    this.recordFields = Arrays.asList(
+    this.recordFields = ImmutableList.of(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),

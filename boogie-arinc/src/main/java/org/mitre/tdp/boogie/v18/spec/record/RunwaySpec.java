@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.v18.spec.record;
 
 import static org.mitre.tdp.boogie.ArincField.newField;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.mitre.tdp.boogie.ArincField;
@@ -32,15 +31,17 @@ import org.mitre.tdp.boogie.v18.spec.field.SubSectionCode;
 import org.mitre.tdp.boogie.v18.spec.field.ThresholdCrossingHeight;
 import org.mitre.tdp.boogie.v18.spec.field.ThresholdDisplacementDistance;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Runway specification from ARINC.
  */
-public class RunwaySpec implements RecordSpec {
+public final class RunwaySpec implements RecordSpec {
 
-  private List<ArincField<?>> recordFields;
+  private final List<ArincField<?>> recordFields;
 
   public RunwaySpec() {
-    this.recordFields = Arrays.asList(
+    this.recordFields = ImmutableList.of(
         newField(RecordType.SPEC),
         newField(CustomerAreaCode.SPEC),
         newField(SectionCode.SPEC),
