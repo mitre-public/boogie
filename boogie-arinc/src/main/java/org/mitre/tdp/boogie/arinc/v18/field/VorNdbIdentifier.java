@@ -3,7 +3,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The “VOR/NDB Identifier” field identifies the VHF/MF/LF facility defined in the record.
  */
-public class VorNdbIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class VorNdbIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+
   @Override
   public int fieldLength() {
     return 4;

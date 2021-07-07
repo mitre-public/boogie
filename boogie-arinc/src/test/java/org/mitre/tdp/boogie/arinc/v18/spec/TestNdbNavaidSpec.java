@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.arinc.v18.spec;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ public class TestNdbNavaidSpec {
   @Test
   void testParseNavaid1() {
     ArincRecord record = ArincVersion.V18.parser().apply(navaid1).orElseThrow(AssertionError::new);
-    assertNotNull(record);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -33,10 +31,10 @@ public class TestNdbNavaidSpec {
         () -> assertEquals("N", record.requiredField("subSectionCode")),
         () -> assertEquals("UUOL", record.requiredField("airportIdentifier")),
         () -> assertEquals("UU", record.requiredField("airportIcaoRegion")),
-        () -> assertEquals("D", record.requiredField("vorNdbIdentifier")),
-        () -> assertEquals("UU", record.requiredField("icaoRegion")),
+        () -> assertEquals("D", record.requiredField("ndbIdentifier")),
+        () -> assertEquals("UU", record.requiredField("ndbIcaoRegion")),
         () -> assertEquals("1", record.requiredField("continuationRecordNumber")),
-        () -> assertEquals(400.0d, record.requiredField("vorNdbFrequency")),
+        () -> assertEquals(400.0d, record.requiredField("ndbFrequency")),
         () -> assertEquals("HMLW ", record.requiredField("navaidClass")),
         () -> assertEquals(52.72094444444445d, record.requiredField("latitude")),
         () -> assertEquals(39.52708333333333d, record.requiredField("longitude")),
@@ -44,7 +42,7 @@ public class TestNdbNavaidSpec {
         () -> assertEquals("RPE", record.requiredField("datumCode")),
         () -> assertEquals("LIPETSK LMM RW15", record.requiredField("ndbNavaidName")),
         () -> assertEquals(Integer.valueOf(35303), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("2003", record.requiredField("cycle"))
+        () -> assertEquals("2003", record.requiredField("lastUpdateCycle"))
     );
   }
 }

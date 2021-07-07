@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 
 public class TestCustomerAreaCode {
 

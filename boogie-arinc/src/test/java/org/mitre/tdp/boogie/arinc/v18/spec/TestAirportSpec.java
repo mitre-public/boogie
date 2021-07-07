@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
 
 public class TestAirportSpec {
 
@@ -33,7 +33,7 @@ public class TestAirportSpec {
         () -> assertEquals(CustomerAreaCode.USA, record.requiredField("customerAreaCode")),
         () -> assertEquals(SectionCode.P, record.requiredField("sectionCode")),
         () -> assertEquals("01GE", record.requiredField("airportIdentifier")),
-        () -> assertEquals("K7", record.requiredField("icaoRegion")),
+        () -> assertEquals("K7", record.requiredField("airportIcaoRegion")),
         () -> assertEquals("A", record.requiredField("subSectionCode")),
         () -> assertFalse(record.optionalField("iataDesignator").isPresent()),
         () -> assertEquals("1", record.requiredField("continuationRecordNumber")),
@@ -56,7 +56,7 @@ public class TestAirportSpec {
         () -> assertEquals("NAR", record.requiredField("datumCode")),
         () -> assertEquals("WRIGHTSVILLE/THE FARM", record.requiredField("airportFullName")),
         () -> assertEquals(Integer.valueOf(81888), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("1902", record.requiredField("cycle"))
+        () -> assertEquals("1902", record.requiredField("lastUpdateCycle"))
     );
   }
 
@@ -76,7 +76,7 @@ public class TestAirportSpec {
         () -> assertEquals(CustomerAreaCode.CAN, record.requiredField("customerAreaCode")),
         () -> assertEquals(SectionCode.P, record.requiredField("sectionCode")),
         () -> assertEquals("CAL4", record.requiredField("airportIdentifier")),
-        () -> assertEquals("CY", record.requiredField("icaoRegion")),
+        () -> assertEquals("CY", record.requiredField("airportIcaoRegion")),
         () -> assertEquals("A", record.requiredField("subSectionCode")),
         () -> assertFalse(record.optionalField("iataDesignator").isPresent()),
         () -> assertEquals("0", record.requiredField("continuationRecordNumber")),
@@ -99,7 +99,7 @@ public class TestAirportSpec {
         () -> assertFalse(record.optionalField("datumCode").isPresent()),
         () -> assertEquals("ALBIAN", record.requiredField("airportFullName")),
         () -> assertEquals(Integer.valueOf(28), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("1813", record.requiredField("cycle"))
+        () -> assertEquals("1813", record.requiredField("lastUpdateCycle"))
     );
   }
 
@@ -120,7 +120,7 @@ public class TestAirportSpec {
         () -> assertEquals(CustomerAreaCode.USA, record.requiredField("customerAreaCode")),
         () -> assertEquals(SectionCode.P, record.requiredField("sectionCode")),
         () -> assertEquals("KJFK", record.requiredField("airportIdentifier")),
-        () -> assertEquals("K6", record.requiredField("icaoRegion")),
+        () -> assertEquals("K6", record.requiredField("airportIcaoRegion")),
         () -> assertEquals("A", record.requiredField("subSectionCode")),
         () -> assertEquals("JFK", record.requiredField("iataDesignator")),
         () -> assertEquals("1", record.requiredField("continuationRecordNumber")),
@@ -143,7 +143,7 @@ public class TestAirportSpec {
         () -> assertEquals("NAR", record.requiredField("datumCode")),
         () -> assertEquals("NEW YORK/JOHN F KENNEDY INTL", record.requiredField("airportFullName")),
         () -> assertEquals(Integer.valueOf(14599), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("2003", record.requiredField("cycle"))
+        () -> assertEquals("2003", record.requiredField("lastUpdateCycle"))
     );
   }
 }

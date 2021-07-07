@@ -46,11 +46,11 @@ public final class VhfNavaidSpec implements RecordSpec {
         new RecordField<>("airportIdentifier", new AirportHeliportIdentifier()),
         new RecordField<>("airportIcaoRegion", new IcaoRegion()),
         new RecordField<>("blank1", new BlankSpec(1)),
-        new RecordField<>(new VorNdbIdentifier()),
+        new RecordField<>("vhfIdentifier", new VorNdbIdentifier()),
         new RecordField<>("blank2", new BlankSpec(2)),
-        new RecordField<>(new IcaoRegion()),
+        new RecordField<>("vhfIcaoRegion", new IcaoRegion()),
         new RecordField<>(new ContinuationRecordNumber()),
-        new RecordField<>(new VorNdbFrequency()),
+        new RecordField<>("vhfFrequency", new VorNdbFrequency()),
         new RecordField<>(new NavaidClass()),
         new RecordField<>(new Latitude()),
         new RecordField<>(new Longitude()),
@@ -65,7 +65,7 @@ public final class VhfNavaidSpec implements RecordSpec {
         new RecordField<>(new DatumCode()),
         new RecordField<>("vhfNavaidName", new NameField()),
         new RecordField<>(new FileRecordNumber()),
-        new RecordField<>(new Cycle())
+        new RecordField<>("lastUpdateCycle", new Cycle())
     );
   }
 
@@ -81,6 +81,6 @@ public final class VhfNavaidSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.substring(4, 5).equals("D");
+    return "D".equals(arincRecord.substring(4, 5));
   }
 }

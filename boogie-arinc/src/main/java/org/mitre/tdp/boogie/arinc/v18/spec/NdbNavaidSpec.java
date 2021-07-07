@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.RecordSpecValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
 import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
@@ -42,11 +41,11 @@ public final class NdbNavaidSpec implements RecordSpec {
         new RecordField<>("airportIdentifier", new AirportHeliportIdentifier()),
         new RecordField<>("airportIcaoRegion", new IcaoRegion()),
         new RecordField<>("blank1", new BlankSpec(1)),
-        new RecordField<>(new VorNdbIdentifier()),
+        new RecordField<>("ndbIdentifier", new VorNdbIdentifier()),
         new RecordField<>("blank2", new BlankSpec(2)),
-        new RecordField<>(new IcaoRegion()),
+        new RecordField<>("ndbIcaoRegion", new IcaoRegion()),
         new RecordField<>(new ContinuationRecordNumber()),
-        new RecordField<>(new VorNdbFrequency()),
+        new RecordField<>("ndbFrequency", new VorNdbFrequency()),
         new RecordField<>(new NavaidClass()),
         new RecordField<>(new Latitude()),
         new RecordField<>(new Longitude()),
@@ -57,7 +56,7 @@ public final class NdbNavaidSpec implements RecordSpec {
         new RecordField<>(new DatumCode()),
         new RecordField<>("ndbNavaidName", new NameField()),
         new RecordField<>(new FileRecordNumber()),
-        new RecordField<>(new Cycle())
+        new RecordField<>("lastUpdateCycle", new Cycle())
     );
   }
 

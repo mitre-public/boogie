@@ -2,19 +2,18 @@ package org.mitre.tdp.boogie.arinc.v18.spec;
 
 import java.util.List;
 
+import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
+import org.mitre.tdp.boogie.arinc.v18.field.IataDesignator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.RecordSpecValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportElevation;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
 import org.mitre.tdp.boogie.arinc.v18.field.DatumCode;
 import org.mitre.tdp.boogie.arinc.v18.field.DaylightTimeIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IataDesignator;
 import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
 import org.mitre.tdp.boogie.arinc.v18.field.IfrCapability;
 import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
@@ -49,7 +48,7 @@ public final class AirportSpec implements RecordSpec {
         new RecordField<>(SectionCode.SPEC),
         new RecordField<>("blank1", new BlankSpec(1)),
         new RecordField<>("airportIdentifier", new AirportHeliportIdentifier()),
-        new RecordField<>(new IcaoRegion()),
+        new RecordField<>("airportIcaoRegion", new IcaoRegion()),
         new RecordField<>(new SubSectionCode()),
         new RecordField<>(new IataDesignator()),
         new RecordField<>("reserved1", new BlankSpec(2)),
@@ -76,7 +75,7 @@ public final class AirportSpec implements RecordSpec {
         new RecordField<>("reserved2", new BlankSpec(4)),
         new RecordField<>("airportFullName", new NameField()),
         new RecordField<>(new FileRecordNumber()),
-        new RecordField<>(new Cycle())
+        new RecordField<>("lastUpdateCycle", new Cycle())
     );
   }
 

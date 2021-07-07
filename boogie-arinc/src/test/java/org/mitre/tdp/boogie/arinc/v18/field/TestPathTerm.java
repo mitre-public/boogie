@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
@@ -21,7 +22,7 @@ public class TestPathTerm {
 
   @Test
   public void testParseGoodPathTerminator() {
-    assertEquals(PathTerm.AF, new org.mitre.tdp.boogie.arinc.v18.field.PathTerm().parseValue("AF"));
+    Assertions.assertEquals(PathTerm.AF, new org.mitre.tdp.boogie.arinc.v18.field.PathTerm().parseValue("AF"));
   }
 
   @Test

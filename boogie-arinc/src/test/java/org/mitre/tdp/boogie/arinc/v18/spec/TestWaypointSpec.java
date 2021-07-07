@@ -3,9 +3,9 @@ package org.mitre.tdp.boogie.arinc.v18.spec;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
@@ -27,14 +27,14 @@ public class TestWaypointSpec {
     ArincRecord arincRecord = ArincVersion.V18.parser().apply(enrouteWaypoint).orElseThrow(AssertionError::new);
 
     assertAll(
-        () -> assertEquals(RecordType.S, arincRecord.requiredField("recordType")),
-        () -> assertEquals(CustomerAreaCode.SAM, arincRecord.requiredField("customerAreaCode")),
-        () -> assertEquals(SectionCode.E, arincRecord.requiredField("sectionCode")),
+        () -> Assertions.assertEquals(RecordType.S, arincRecord.requiredField("recordType")),
+        () -> Assertions.assertEquals(CustomerAreaCode.SAM, arincRecord.requiredField("customerAreaCode")),
+        () -> Assertions.assertEquals(SectionCode.E, arincRecord.requiredField("sectionCode")),
         () -> assertEquals("A", arincRecord.requiredField("enrouteSubSectionCode")),
         () -> assertEquals("ENRT", arincRecord.requiredField("airportIdentifier")),
         () -> assertFalse(arincRecord.optionalField("airportIcaoRegion").isPresent()),
-        () -> assertEquals("UMGOS", arincRecord.requiredField("fixIdentifier")),
-        () -> assertEquals("SK", arincRecord.requiredField("icaoRegion")),
+        () -> assertEquals("UMGOS", arincRecord.requiredField("waypointIdentifier")),
+        () -> assertEquals("SK", arincRecord.requiredField("waypointIcaoRegion")),
         () -> assertEquals("1", arincRecord.requiredField("continuationRecordNumber")),
         () -> assertEquals("R  ", arincRecord.requiredField("waypointType")),
         () -> assertEquals("RH", arincRecord.requiredField("waypointUsage")),
@@ -45,7 +45,7 @@ public class TestWaypointSpec {
         () -> assertEquals("P  ", arincRecord.requiredField("nameFormat")),
         () -> assertEquals("UMGOS", arincRecord.requiredField("waypointNameDescription")),
         () -> assertEquals(Integer.valueOf(20914), arincRecord.requiredField("fileRecordNumber")),
-        () -> assertEquals("2003", arincRecord.requiredField("cycle"))
+        () -> assertEquals("2003", arincRecord.requiredField("lastUpdateCycle"))
     );
   }
 
@@ -68,8 +68,8 @@ public class TestWaypointSpec {
         () -> assertEquals("KFMH", arincRecord.requiredField("airportIdentifier")),
         () -> assertEquals("K6", arincRecord.requiredField("airportIcaoRegion")),
         () -> assertEquals("C", arincRecord.requiredField("terminalSubSectionCode")),
-        () -> assertEquals("REDSX", arincRecord.requiredField("fixIdentifier")),
-        () -> assertEquals("K6", arincRecord.requiredField("icaoRegion")),
+        () -> assertEquals("REDSX", arincRecord.requiredField("waypointIdentifier")),
+        () -> assertEquals("K6", arincRecord.requiredField("waypointIcaoRegion")),
         () -> assertEquals("1", arincRecord.requiredField("continuationRecordNumber")),
         () -> assertEquals("RIF", arincRecord.requiredField("waypointType")),
         () -> assertEquals("  ", arincRecord.requiredField("waypointUsage")),
@@ -80,7 +80,7 @@ public class TestWaypointSpec {
         () -> assertEquals("P  ", arincRecord.requiredField("nameFormat")),
         () -> assertEquals("REDSX", arincRecord.requiredField("waypointNameDescription")),
         () -> assertEquals(Integer.valueOf(52091), arincRecord.requiredField("fileRecordNumber")),
-        () -> assertEquals("1902", arincRecord.requiredField("cycle"))
+        () -> assertEquals("1902", arincRecord.requiredField("lastUpdateCycle"))
     );
   }
 }

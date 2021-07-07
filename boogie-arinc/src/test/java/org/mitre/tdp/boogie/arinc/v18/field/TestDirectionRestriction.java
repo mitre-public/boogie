@@ -4,15 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
-import org.mitre.tdp.boogie.arinc.v18.field.DirectionRestriction;
 
 public class TestDirectionRestriction {
 
   @Test
   public void testNoFilterOnEmptyInputs() {
-    assertFalse(new DirectionRestriction().filterInput(" "));
+    Assertions.assertFalse(new DirectionRestriction().filterInput(" "));
   }
 
   @Test

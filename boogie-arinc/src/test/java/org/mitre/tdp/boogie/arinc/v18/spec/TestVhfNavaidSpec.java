@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
 
 public class TestVhfNavaidSpec {
 
@@ -33,10 +33,10 @@ public class TestVhfNavaidSpec {
         () -> assertFalse(record.optionalField("subSectionCode").isPresent()),
         () -> assertFalse(record.optionalField("airportIdentifier").isPresent()),
         () -> assertFalse(record.optionalField("airportIcaoRegion").isPresent()),
-        () -> assertEquals("GAL", record.requiredField("vorNdbIdentifier")),
-        () -> assertEquals("PA", record.requiredField("icaoRegion")),
+        () -> assertEquals("GAL", record.requiredField("vhfIdentifier")),
+        () -> assertEquals("PA", record.requiredField("vhfIcaoRegion")),
         () -> assertEquals("0", record.requiredField("continuationRecordNumber")),
-        () -> assertEquals(1148.0d, record.requiredField("vorNdbFrequency")),
+        () -> assertEquals(1148.0d, record.requiredField("vhfFrequency")),
         () -> assertEquals("VDHW ", record.requiredField("navaidClass")),
         () -> assertEquals(64.73813055555556d, record.requiredField("latitude")),
         () -> assertEquals(-156.77715d, record.requiredField("longitude")),
@@ -50,7 +50,7 @@ public class TestVhfNavaidSpec {
         () -> assertFalse(record.optionalField("frequencyProtectionDistance").isPresent()),
         () -> assertEquals("NAR", record.requiredField("datumCode")),
         () -> assertEquals(Integer.valueOf(262), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("1711", record.requiredField("cycle"))
+        () -> assertEquals("1711", record.requiredField("lastUpdateCycle"))
     );
   }
 
@@ -72,10 +72,10 @@ public class TestVhfNavaidSpec {
         () -> assertFalse(record.optionalField("subSectionCode").isPresent()),
         () -> assertFalse(record.optionalField("airportIdentifier").isPresent()),
         () -> assertFalse(record.optionalField("airportIcaoRegion").isPresent()),
-        () -> assertEquals("ABQ", record.requiredField("vorNdbIdentifier")),
-        () -> assertEquals("K2", record.requiredField("icaoRegion")),
+        () -> assertEquals("ABQ", record.requiredField("vhfIdentifier")),
+        () -> assertEquals("K2", record.requiredField("vhfIcaoRegion")),
         () -> assertEquals("1", record.requiredField("continuationRecordNumber")),
-        () -> assertEquals(1132.0d, record.requiredField("vorNdbFrequency")),
+        () -> assertEquals(1132.0d, record.requiredField("vhfFrequency")),
         () -> assertEquals("VTHW ", record.requiredField("navaidClass")),
         () -> assertEquals(35.043794444444444d, record.requiredField("latitude")),
         () -> assertEquals(-106.8163111111111d, record.requiredField("longitude")),
@@ -89,7 +89,7 @@ public class TestVhfNavaidSpec {
         () -> assertEquals(423.0d, record.requiredField("frequencyProtectionDistance")),
         () -> assertEquals("NAR", record.requiredField("datumCode")),
         () -> assertEquals(Integer.valueOf(5758), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("2003", record.requiredField("cycle"))
+        () -> assertEquals("2003", record.requiredField("lastUpdateCycle"))
     );
   }
 }

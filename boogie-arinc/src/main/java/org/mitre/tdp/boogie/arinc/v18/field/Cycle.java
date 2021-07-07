@@ -13,8 +13,8 @@ import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
  * any ARINC 424 field, except Dynamic Magnetic V ariation, Frequency Protection, Continuation Record Number and File Record Number,
  * requires a cycle date change. The cycle date will not change if there is no change in the data.
  */
-public class Cycle implements FieldSpec<String> {
-  
+public final class Cycle implements FieldSpec<String> {
+
   @Override
   public int fieldLength() {
     return 4;
@@ -28,6 +28,7 @@ public class Cycle implements FieldSpec<String> {
   @Override
   public String parseValue(String fieldValue) {
     checkSpec(this, fieldValue, isNumeric(fieldValue));
+    checkSpec(this, fieldValue, () -> new AiracCycle(fieldValue));
     return fieldValue;
   }
 

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
 
 public class TestRouteHoldDistanceTime {
 

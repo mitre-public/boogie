@@ -42,9 +42,9 @@ public final class WaypointSpec implements RecordSpec {
         new RecordField<>("airportIdentifier", new AirportHeliportIdentifier()),
         new RecordField<>("airportIcaoRegion", new IcaoRegion()),
         new RecordField<>("terminalSubSectionCode", new SubSectionCode()),
-        new RecordField<>(new FixIdentifier()),
+        new RecordField<>("waypointIdentifier", new FixIdentifier()),
         new RecordField<>("blank1", new BlankSpec(1)),
-        new RecordField<>(new IcaoRegion()),
+        new RecordField<>("waypointIcaoRegion", new IcaoRegion()),
         new RecordField<>(new ContinuationRecordNumber()),
         new RecordField<>("blank2", new BlankSpec(4)),
         new RecordField<>(new WaypointType()),
@@ -60,7 +60,7 @@ public final class WaypointSpec implements RecordSpec {
         new RecordField<>(new NameFormat()),
         new RecordField<>(new WaypointNameDescription()),
         new RecordField<>(new FileRecordNumber()),
-        new RecordField<>(new Cycle())
+        new RecordField<>("lastUpdateCycle", new Cycle())
     );
   }
 

@@ -7,7 +7,6 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
 
 public class TestCycle {
 

@@ -1,14 +1,23 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.v18.field.VorNdbIdentifier;
+import java.util.Optional;
 
-public class TestVorNdbIdentifier {
+import org.junit.jupiter.api.Test;
+
+class TestVorNdbIdentifier {
+
+  private static final VorNdbIdentifier vorNdbIdentifier = new VorNdbIdentifier();
 
   @Test
-  public void testFiltersTrimmableInput() {
-    assertTrue(new VorNdbIdentifier().filterInput("  "));
+  void testFiltersTrimmableInput() {
+    assertTrue(vorNdbIdentifier.filterInput("  "));
+  }
+
+  @Test
+  void testReturnsEmptyOnEmptyInput() {
+    assertEquals(Optional.empty(), vorNdbIdentifier.parse("   "));
   }
 }

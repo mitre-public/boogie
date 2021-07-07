@@ -3,6 +3,10 @@ allprojects {
         // only uncomment to test a build that depends on locally installed maven artifacts
 //        mavenLocal()
         maven {
+            name = "clojars"
+            url = uri("https://repo.clojars.org/")
+        }
+        maven {
             name = "dali-mirror"
             url = uri("https://dali.mitre.org/nexus/content/groups/mirror")
             content {

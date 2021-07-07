@@ -1,11 +1,11 @@
 package org.mitre.tdp.boogie.arinc;
 
+import org.mitre.tdp.boogie.arinc.v18.spec.AirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.spec.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.spec.AirportSpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.AirwaySpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.GlideSlopeSpec;
+import org.mitre.tdp.boogie.arinc.v18.spec.LocalizerGlideSlopeSpec;
 import org.mitre.tdp.boogie.arinc.v18.spec.NdbNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.spec.RunwaySpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.TransitionSpec;
 import org.mitre.tdp.boogie.arinc.v18.spec.VhfNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.spec.WaypointSpec;
 
@@ -23,23 +23,23 @@ public enum ArincVersion {
    */
   V18(new AirportSpec(),
       new RunwaySpec(),
-      new GlideSlopeSpec(),
-      new AirwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new AirwayLegSpec(),
       new NdbNavaidSpec(),
       new VhfNavaidSpec(),
       new WaypointSpec(),
-      new TransitionSpec());
+      new ProcedureLegSpec());
 
-  private final ArincParser parser;
+  private final ArincRecordParser parser;
 
   ArincVersion(RecordSpec... specs) {
-    this.parser = new ArincParser(specs);
+    this.parser = new ArincRecordParser(specs);
   }
 
   /**
    * Returns the internally constructed parser instance.
    */
-  public ArincParser parser() {
+  public ArincRecordParser parser() {
     return parser;
   }
 }

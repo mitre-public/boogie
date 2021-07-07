@@ -1,138 +1,503 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
+import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
-@FunctionalInterface
-public interface ArincLocalizerGlideSlope {
+/**
+ * Data class for representing structured/parsed content from within an ARINC format localizer/glidslope record.
+ * <br>
+ * Section/Subsection = PI
+ */
+public final class ArincLocalizerGlideSlope {
 
-  ArincRecord arincRecord();
+  private final RecordType recordType;
+  private final CustomerAreaCode customerAreaCode;
+  private final SectionCode sectionCode;
+  private final String airportIdentifier;
+  private final String airportIcaoRegion;
+  private final String subSectionCode;
+  private final String localizerIdentifier;
+  private final String ilsMlsGlsCategory;
+  private final String continuationRecordNumber;
+  private final Double localizerFrequency;
+  private final String runwayIdentifier;
+  private final Double localizerLatitude;
+  private final Double localizerLongitude;
+  private final Double localizerBearing;
+  private final Double glideSlopeLatitude;
+  private final Double glideSlopeLongitude;
+  private final Integer localizerPosition;
+  private final String localizerPositionReference;
+  private final Integer glideSlopePosition;
+  private final Double localizerWidth;
+  private final Double glideSlopeAngle;
+  private final Double stationDeclination;
+  private final Integer glideSlopeHeightAtLandingThreshold;
+  private final Double glideSlopeElevation;
+  private final String supportingFacilityIdentifier;
+  private final String supportingFacilityIcaoRegion;
+  private final SectionCode supportingFacilitySectionCode;
+  private final String supportingFacilitySubsectionCode;
+  private final Integer fileRecordNumber;
+  private final String lastUpdateCycle;
 
-  default Optional<RecordType> recordType() {
-    return arincRecord().optionalField("recordType");
+  private ArincLocalizerGlideSlope(Builder builder) {
+    this.recordType = builder.recordType;
+    this.customerAreaCode = builder.customerAreaCode;
+    this.sectionCode = builder.sectionCode;
+    this.airportIdentifier = builder.airportIdentifier;
+    this.airportIcaoRegion = builder.airportIcaoRegion;
+    this.subSectionCode = builder.subSectionCode;
+    this.localizerIdentifier = builder.localizerIdentifier;
+    this.ilsMlsGlsCategory = builder.ilsMlsGlsCategory;
+    this.continuationRecordNumber = builder.continuationRecordNumber;
+    this.localizerFrequency = builder.localizerFrequency;
+    this.runwayIdentifier = builder.runwayIdentifier;
+    this.localizerLatitude = builder.localizerLatitude;
+    this.localizerLongitude = builder.localizerLongitude;
+    this.localizerBearing = builder.localizerBearing;
+    this.glideSlopeLatitude = builder.glideSlopeLatitude;
+    this.glideSlopeLongitude = builder.glideSlopeLongitude;
+    this.localizerPosition = builder.localizerPosition;
+    this.localizerPositionReference = builder.localizerPositionReference;
+    this.glideSlopePosition = builder.glideSlopePosition;
+    this.localizerWidth = builder.localizerWidth;
+    this.glideSlopeAngle = builder.glideSlopeAngle;
+    this.stationDeclination = builder.stationDeclination;
+    this.glideSlopeHeightAtLandingThreshold = builder.glideSlopeHeightAtLandingThreshold;
+    this.glideSlopeElevation = builder.glideSlopeElevation;
+    this.supportingFacilityIdentifier = builder.supportingFacilityIdentifier;
+    this.supportingFacilityIcaoRegion = builder.supportingFacilityIcaoRegion;
+    this.supportingFacilitySectionCode = builder.supportingFacilitySectionCode;
+    this.supportingFacilitySubsectionCode = builder.supportingFacilitySubsectionCode;
+    this.fileRecordNumber = builder.fileRecordNumber;
+    this.lastUpdateCycle = builder.lastUpdateCycle;
   }
 
-  default Optional<CustomerAreaCode> customerAreaCode() {
-    return arincRecord().optionalField("customerAreaCode");
+  public RecordType recordType() {
+    return recordType;
   }
 
-  default Optional<SectionCode> sectionCode() {
-    return arincRecord().optionalField("sectionCode");
+  public Optional<CustomerAreaCode> customerAreaCode() {
+    return Optional.ofNullable(customerAreaCode);
   }
 
-  default Optional<String> airportIdentifier() {
-    return arincRecord().optionalField("airportIdentifier");
+  public SectionCode sectionCode() {
+    return sectionCode;
   }
 
-  default Optional<String> airportIcaoRegion() {
-    return arincRecord().optionalField("airportIcaoRegion");
+  public String airportIdentifier() {
+    return airportIdentifier;
   }
 
-  default Optional<String> subSectionCode() {
-    return arincRecord().optionalField("subSectionCode");
+  public String airportIcaoRegion() {
+    return airportIcaoRegion;
   }
 
-  default Optional<String> localizerIdentifier() {
-    return arincRecord().optionalField("localizerIdentifier");
+  public String subSectionCode() {
+    return subSectionCode;
   }
 
-  default Optional<String> ilsMlsGlsCategory() {
-    return arincRecord().optionalField("cat");
+  public String localizerIdentifier() {
+    return localizerIdentifier;
   }
 
-  default Optional<String> continuationRecordNumber() {
-    return arincRecord().optionalField("continuationRecordNumber");
+  public Optional<String> ilsMlsGlsCategory() {
+    return Optional.ofNullable(ilsMlsGlsCategory);
   }
 
-  default Optional<Double> localizerFrequency() {
-    return arincRecord().optionalField("localizerFrequency");
+  public Optional<String> continuationRecordNumber() {
+    return Optional.ofNullable(continuationRecordNumber);
   }
 
-  default Optional<String> runwayIdentifier() {
-    return arincRecord().optionalField("runwayIdentifier");
+  public Optional<Double> localizerFrequency() {
+    return Optional.ofNullable(localizerFrequency);
   }
 
-  default Optional<Double> localizerLatitude() {
-    return arincRecord().optionalField("localizerLatitude");
+  public String runwayIdentifier() {
+    return runwayIdentifier;
   }
 
-  default Optional<Double> localizerLongitude() {
-    return arincRecord().optionalField("localizerLongitude");
+  public Optional<Double> localizerLatitude() {
+    return Optional.ofNullable(localizerLatitude);
   }
 
-  default Optional<Double> localizerBearing() {
-    return arincRecord().optionalField("localizerBearing");
+  public Optional<Double> localizerLongitude() {
+    return Optional.ofNullable(localizerLongitude);
   }
 
-  default Optional<Double> glideSlopeLatitude() {
-    return arincRecord().optionalField("glideSlopeLatitude");
+  public Optional<Double> localizerBearing() {
+    return Optional.ofNullable(localizerBearing);
   }
 
-  default Optional<Double> glideSlopeLongitude() {
-    return arincRecord().optionalField("glideSlopeLongitude");
+  public Optional<Double> glideSlopeLatitude() {
+    return Optional.ofNullable(glideSlopeLatitude);
   }
 
-  default Optional<Integer> localizerPosition() {
-    return arincRecord().optionalField("localizerPosition");
+  public Optional<Double> glideSlopeLongitude() {
+    return Optional.ofNullable(glideSlopeLongitude);
   }
 
-  default Optional<String> localizerPositionReference() {
-    return arincRecord().optionalField("localizerPositionReference");
+  public Optional<Integer> localizerPosition() {
+    return Optional.ofNullable(localizerPosition);
   }
 
-  default Optional<Integer> glideslopePosition() {
-    return arincRecord().optionalField("glideslopePosition");
+  public Optional<String> localizerPositionReference() {
+    return Optional.ofNullable(localizerPositionReference);
   }
 
-  default Optional<Double> localizerWidth() {
-    return arincRecord().optionalField("localizerWidth");
+  public Optional<Integer> glideSlopePosition() {
+    return Optional.ofNullable(glideSlopePosition);
   }
 
-  default Optional<Double> glideSlopeAngle() {
-    return arincRecord().optionalField("glideSlopeAngle");
+  public Optional<Double> localizerWidth() {
+    return Optional.ofNullable(localizerWidth);
   }
 
-  default Optional<Double> stationDeclination() {
-    return arincRecord().optionalField("stationDeclination");
+  public Optional<Double> glideSlopeAngle() {
+    return Optional.ofNullable(glideSlopeAngle);
   }
 
-  default Optional<Integer> glideSlopeHeightAtLandingThreshold() {
-    return arincRecord().optionalField("glideSlopeHeightAtLandingThreshold");
+  public Optional<Double> stationDeclination() {
+    return Optional.ofNullable(stationDeclination);
   }
 
-  default Optional<Double> glideSlopeElevation() {
-    return arincRecord().optionalField("glideSlopeElevation");
+  public Optional<Integer> glideSlopeHeightAtLandingThreshold() {
+    return Optional.ofNullable(glideSlopeHeightAtLandingThreshold);
   }
 
-  default Optional<String> supportingFacilityId() {
-    return arincRecord().optionalField("supportingFacilityId");
+  public Optional<Double> glideSlopeElevation() {
+    return Optional.ofNullable(glideSlopeElevation);
   }
 
-  default Optional<String> supportingFacilityIcaoCode() {
-    return arincRecord().optionalField("supportingFacilityIcaoCode");
+  public Optional<String> supportingFacilityIdentifier() {
+    return Optional.ofNullable(supportingFacilityIdentifier);
   }
 
-  default Optional<String> supportingFacilitySectionCode() {
-    return arincRecord().optionalField("supportingFacilitySectionCode");
+  public Optional<String> supportingFacilityIcaoCode() {
+    return Optional.ofNullable(supportingFacilityIcaoRegion);
   }
 
-  default Optional<String> supportingFacilitySubsectionCode() {
-    return arincRecord().optionalField("supportingFacilitySubsectionCode");
+  public Optional<SectionCode> supportingFacilitySectionCode() {
+    return Optional.ofNullable(supportingFacilitySectionCode);
   }
 
-  default Optional<Integer> fileRecordNumber() {
-    return arincRecord().optionalField("fileRecordNumber");
+  public Optional<String> supportingFacilitySubSectionCode() {
+    return Optional.ofNullable(supportingFacilitySubsectionCode);
   }
 
-  default Optional<String> cycle() {
-    return arincRecord().optionalField("cycle");
+  public Integer fileRecordNumber() {
+    return fileRecordNumber;
   }
 
-  static ArincLocalizerGlideSlope wrap(ArincRecord record) {
-    return () -> record;
+  public String lastUpdateCycle() {
+    return lastUpdateCycle;
+  }
+
+  public Builder toBuilder() {
+    return new Builder()
+        .recordType(recordType())
+        .customerAreaCode(customerAreaCode().orElse(null))
+        .sectionCode(sectionCode())
+        .airportIdentifier(airportIdentifier())
+        .airportIcaoRegion(airportIcaoRegion())
+        .subSectionCode(subSectionCode())
+        .localizerIdentifier(localizerIdentifier())
+        .ilsMlsGlsCategory(ilsMlsGlsCategory().orElse(null))
+        .continuationRecordNumber(continuationRecordNumber().orElse(null))
+        .localizerFrequency(localizerFrequency().orElse(null))
+        .runwayIdentifier(runwayIdentifier())
+        .localizerLatitude(localizerLatitude().orElse(null))
+        .localizerLongitude(localizerLongitude().orElse(null))
+        .localizerBearing(localizerBearing().orElse(null))
+        .glideSlopeLatitude(glideSlopeLatitude().orElse(null))
+        .glideSlopeLongitude(glideSlopeLongitude().orElse(null))
+        .localizerPosition(localizerPosition().orElse(null))
+        .localizerPositionReference(localizerPositionReference().orElse(null))
+        .glideSlopePosition(glideSlopePosition().orElse(null))
+        .localizerWidth(localizerWidth().orElse(null))
+        .glideSlopeAngle(glideSlopeAngle().orElse(null))
+        .stationDeclination(stationDeclination().orElse(null))
+        .glideSlopeHeightAtLandingThreshold(glideSlopeHeightAtLandingThreshold().orElse(null))
+        .glideSlopeElevation(glideSlopeElevation().orElse(null))
+        .supportingFacilityIdentifier(supportingFacilityIdentifier().orElse(null))
+        .supportingFacilityIcaoRegion(supportingFacilityIcaoCode().orElse(null))
+        .supportingFacilitySectionCode(supportingFacilitySectionCode().orElse(null))
+        .supportingFacilitySubSectionCode(supportingFacilitySubSectionCode().orElse(null))
+        .fileRecordNumber(fileRecordNumber())
+        .lastUpdateCycle(lastUpdateCycle());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ArincLocalizerGlideSlope that = (ArincLocalizerGlideSlope) o;
+    return recordType == that.recordType &&
+        customerAreaCode == that.customerAreaCode &&
+        sectionCode == that.sectionCode &&
+        Objects.equals(airportIdentifier, that.airportIdentifier) &&
+        Objects.equals(airportIcaoRegion, that.airportIcaoRegion) &&
+        Objects.equals(subSectionCode, that.subSectionCode) &&
+        Objects.equals(localizerIdentifier, that.localizerIdentifier) &&
+        Objects.equals(ilsMlsGlsCategory, that.ilsMlsGlsCategory) &&
+        Objects.equals(continuationRecordNumber, that.continuationRecordNumber) &&
+        Objects.equals(localizerFrequency, that.localizerFrequency) &&
+        Objects.equals(runwayIdentifier, that.runwayIdentifier) &&
+        Objects.equals(localizerLatitude, that.localizerLatitude) &&
+        Objects.equals(localizerLongitude, that.localizerLongitude) &&
+        Objects.equals(localizerBearing, that.localizerBearing) &&
+        Objects.equals(glideSlopeLatitude, that.glideSlopeLatitude) &&
+        Objects.equals(glideSlopeLongitude, that.glideSlopeLongitude) &&
+        Objects.equals(localizerPosition, that.localizerPosition) &&
+        Objects.equals(localizerPositionReference, that.localizerPositionReference) &&
+        Objects.equals(glideSlopePosition, that.glideSlopePosition) &&
+        Objects.equals(localizerWidth, that.localizerWidth) &&
+        Objects.equals(glideSlopeAngle, that.glideSlopeAngle) &&
+        Objects.equals(stationDeclination, that.stationDeclination) &&
+        Objects.equals(glideSlopeHeightAtLandingThreshold, that.glideSlopeHeightAtLandingThreshold) &&
+        Objects.equals(glideSlopeElevation, that.glideSlopeElevation) &&
+        Objects.equals(supportingFacilityIdentifier, that.supportingFacilityIdentifier) &&
+        Objects.equals(supportingFacilityIcaoRegion, that.supportingFacilityIcaoRegion) &&
+        supportingFacilitySectionCode == that.supportingFacilitySectionCode &&
+        Objects.equals(supportingFacilitySubsectionCode, that.supportingFacilitySubsectionCode) &&
+        Objects.equals(fileRecordNumber, that.fileRecordNumber) &&
+        Objects.equals(lastUpdateCycle, that.lastUpdateCycle);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, localizerIdentifier, ilsMlsGlsCategory, continuationRecordNumber, localizerFrequency, runwayIdentifier, localizerLatitude, localizerLongitude, localizerBearing, glideSlopeLatitude, glideSlopeLongitude, localizerPosition, localizerPositionReference, glideSlopePosition, localizerWidth, glideSlopeAngle, stationDeclination, glideSlopeHeightAtLandingThreshold, glideSlopeElevation, supportingFacilityIdentifier, supportingFacilityIcaoRegion, supportingFacilitySectionCode, supportingFacilitySubsectionCode, fileRecordNumber, lastUpdateCycle);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincLocalizerGlideSlope2{" +
+        "recordType=" + recordType +
+        ", customerAreaCode=" + customerAreaCode +
+        ", sectionCode=" + sectionCode +
+        ", airportIdentifier='" + airportIdentifier + '\'' +
+        ", airportIcaoRegion='" + airportIcaoRegion + '\'' +
+        ", subsectionCode='" + subSectionCode + '\'' +
+        ", localizerIdentifier='" + localizerIdentifier + '\'' +
+        ", ilsMlsGlsCategory='" + ilsMlsGlsCategory + '\'' +
+        ", continuationRecordNumber='" + continuationRecordNumber + '\'' +
+        ", localizerFrequency=" + localizerFrequency +
+        ", runwayIdentifier='" + runwayIdentifier + '\'' +
+        ", localizerLatitude=" + localizerLatitude +
+        ", localizerLongitude=" + localizerLongitude +
+        ", localizerBearing=" + localizerBearing +
+        ", glideSlopeLatitude=" + glideSlopeLatitude +
+        ", glideSlopeLongitude=" + glideSlopeLongitude +
+        ", localizerPosition=" + localizerPosition +
+        ", localizerPositionReference='" + localizerPositionReference + '\'' +
+        ", glideSlopePosition=" + glideSlopePosition +
+        ", localizerWidth=" + localizerWidth +
+        ", glideSlopeAngle=" + glideSlopeAngle +
+        ", stationDeclination=" + stationDeclination +
+        ", glideSlopeHeightAtLandingThreshold=" + glideSlopeHeightAtLandingThreshold +
+        ", glideSlopeElevation=" + glideSlopeElevation +
+        ", supportingFacilityIdentifier='" + supportingFacilityIdentifier + '\'' +
+        ", supportingFacilityIcaoRegion='" + supportingFacilityIcaoRegion + '\'' +
+        ", supportingFacilitySectionCode=" + supportingFacilitySectionCode +
+        ", supportingFacilitySubsectionCode='" + supportingFacilitySubsectionCode + '\'' +
+        ", fileRecordNumber=" + fileRecordNumber +
+        ", lastUpdateCycle='" + lastUpdateCycle + '\'' +
+        '}';
+  }
+
+  public static final class Builder {
+    private RecordType recordType;
+    private CustomerAreaCode customerAreaCode;
+    private SectionCode sectionCode;
+    private String airportIdentifier;
+    private String airportIcaoRegion;
+    private String subSectionCode;
+    private String localizerIdentifier;
+    private String ilsMlsGlsCategory;
+    private String continuationRecordNumber;
+    private Double localizerFrequency;
+    private String runwayIdentifier;
+    private Double localizerLatitude;
+    private Double localizerLongitude;
+    private Double localizerBearing;
+    private Double glideSlopeLatitude;
+    private Double glideSlopeLongitude;
+    private Integer localizerPosition;
+    private String localizerPositionReference;
+    private Integer glideSlopePosition;
+    private Double localizerWidth;
+    private Double glideSlopeAngle;
+    private Double stationDeclination;
+    private Integer glideSlopeHeightAtLandingThreshold;
+    private Double glideSlopeElevation;
+    private String supportingFacilityIdentifier;
+    private String supportingFacilityIcaoRegion;
+    private SectionCode supportingFacilitySectionCode;
+    private String supportingFacilitySubsectionCode;
+    private Integer fileRecordNumber;
+    private String lastUpdateCycle;
+
+    public Builder recordType(RecordType recordType) {
+      this.recordType = recordType;
+      return this;
+    }
+
+    public Builder customerAreaCode(CustomerAreaCode customerAreaCode) {
+      this.customerAreaCode = customerAreaCode;
+      return this;
+    }
+
+    public Builder sectionCode(SectionCode sectionCode) {
+      this.sectionCode = sectionCode;
+      return this;
+    }
+
+    public Builder airportIdentifier(String airportIdentifier) {
+      this.airportIdentifier = airportIdentifier;
+      return this;
+    }
+
+    public Builder airportIcaoRegion(String airportIcaoRegion) {
+      this.airportIcaoRegion = airportIcaoRegion;
+      return this;
+    }
+
+    public Builder subSectionCode(String subsectionCode) {
+      this.subSectionCode = subsectionCode;
+      return this;
+    }
+
+    public Builder localizerIdentifier(String localizerIdentifier) {
+      this.localizerIdentifier = localizerIdentifier;
+      return this;
+    }
+
+    public Builder ilsMlsGlsCategory(String ilsMlsGlsCategory) {
+      this.ilsMlsGlsCategory = ilsMlsGlsCategory;
+      return this;
+    }
+
+    public Builder continuationRecordNumber(String continuationRecordNumber) {
+      this.continuationRecordNumber = continuationRecordNumber;
+      return this;
+    }
+
+    public Builder localizerFrequency(Double localizerFrequency) {
+      this.localizerFrequency = localizerFrequency;
+      return this;
+    }
+
+    public Builder runwayIdentifier(String runwayIdentifier) {
+      this.runwayIdentifier = runwayIdentifier;
+      return this;
+    }
+
+    public Builder localizerLatitude(Double localizerLatitude) {
+      this.localizerLatitude = localizerLatitude;
+      return this;
+    }
+
+    public Builder localizerLongitude(Double localizerLongitude) {
+      this.localizerLongitude = localizerLongitude;
+      return this;
+    }
+
+    public Builder localizerBearing(Double localizerBearing) {
+      this.localizerBearing = localizerBearing;
+      return this;
+    }
+
+    public Builder glideSlopeLatitude(Double glideSlopeLatitude) {
+      this.glideSlopeLatitude = glideSlopeLatitude;
+      return this;
+    }
+
+    public Builder glideSlopeLongitude(Double glideSlopeLongitude) {
+      this.glideSlopeLongitude = glideSlopeLongitude;
+      return this;
+    }
+
+    public Builder localizerPosition(Integer localizerPosition) {
+      this.localizerPosition = localizerPosition;
+      return this;
+    }
+
+    public Builder localizerPositionReference(String localizerPositionReference) {
+      this.localizerPositionReference = localizerPositionReference;
+      return this;
+    }
+
+    public Builder glideSlopePosition(Integer glideSlopePosition) {
+      this.glideSlopePosition = glideSlopePosition;
+      return this;
+    }
+
+    public Builder localizerWidth(Double localizerWidth) {
+      this.localizerWidth = localizerWidth;
+      return this;
+    }
+
+    public Builder glideSlopeAngle(Double glideSlopeAngle) {
+      this.glideSlopeAngle = glideSlopeAngle;
+      return this;
+    }
+
+    public Builder stationDeclination(Double stationDeclination) {
+      this.stationDeclination = stationDeclination;
+      return this;
+    }
+
+    public Builder glideSlopeHeightAtLandingThreshold(Integer glideSlopeHeightAtLandingThreshold) {
+      this.glideSlopeHeightAtLandingThreshold = glideSlopeHeightAtLandingThreshold;
+      return this;
+    }
+
+    public Builder glideSlopeElevation(Double glideSlopeElevation) {
+      this.glideSlopeElevation = glideSlopeElevation;
+      return this;
+    }
+
+    public Builder supportingFacilityIdentifier(String supportingFacilityIdentifier) {
+      this.supportingFacilityIdentifier = supportingFacilityIdentifier;
+      return this;
+    }
+
+    public Builder supportingFacilityIcaoRegion(String supportingFacilityIcaoRegion) {
+      this.supportingFacilityIcaoRegion = supportingFacilityIcaoRegion;
+      return this;
+    }
+
+    public Builder supportingFacilitySectionCode(SectionCode supportingFacilitySectionCode) {
+      this.supportingFacilitySectionCode = supportingFacilitySectionCode;
+      return this;
+    }
+
+    public Builder supportingFacilitySubSectionCode(String supportingFacilitySubsectionCode) {
+      this.supportingFacilitySubsectionCode = supportingFacilitySubsectionCode;
+      return this;
+    }
+
+    public Builder fileRecordNumber(Integer fileRecordNumber) {
+      this.fileRecordNumber = fileRecordNumber;
+      return this;
+    }
+
+    public Builder lastUpdateCycle(String cycle) {
+      this.lastUpdateCycle = cycle;
+      return this;
+    }
+
+    public ArincLocalizerGlideSlope build() {
+      return new ArincLocalizerGlideSlope(this);
+    }
   }
 }

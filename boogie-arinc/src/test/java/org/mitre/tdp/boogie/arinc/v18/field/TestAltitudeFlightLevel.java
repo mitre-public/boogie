@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.v18.field.AltitudeFlightLevel;
 
 public class TestAltitudeFlightLevel {
 

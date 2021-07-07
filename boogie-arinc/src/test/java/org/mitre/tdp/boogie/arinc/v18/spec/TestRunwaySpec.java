@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
 
 public class TestRunwaySpec {
 
@@ -45,13 +45,13 @@ public class TestRunwaySpec {
         () -> assertEquals(Integer.valueOf(57), record.requiredField("thresholdCrossingHeight")),
         () -> assertEquals(Integer.valueOf(200), record.requiredField("runwayWidth")),
         () -> assertEquals("IHIQ", record.requiredField("ilsMlsGlsIdentifier")),
-        () -> assertEquals("1", record.requiredField("cat")),
+        () -> assertEquals("1", record.requiredField("ilsMlsGlsCategory")),
         () -> assertEquals(Integer.valueOf(0), record.requiredField("stopway")),
         () -> assertFalse(record.optionalField("secondaryIlsMlsGlsIdentifier").isPresent()),
-        () -> assertFalse(record.optionalField("secondaryCat").isPresent()),
+        () -> assertFalse(record.optionalField("secondaryIlsMlsGlsCategory").isPresent()),
         () -> assertEquals("CONC     090RBWT", record.requiredField("runwayDescription")),
         () -> assertEquals(Integer.valueOf(15519), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("2003", record.requiredField("cycle"))
+        () -> assertEquals("2003", record.requiredField("lastUpdateCycle"))
     );
   }
 
@@ -85,13 +85,13 @@ public class TestRunwaySpec {
         () -> assertEquals(Integer.valueOf(53), record.requiredField("thresholdCrossingHeight")),
         () -> assertEquals(Integer.valueOf(200), record.requiredField("runwayWidth")),
         () -> assertEquals("IIWY", record.requiredField("ilsMlsGlsIdentifier")),
-        () -> assertEquals("3", record.requiredField("cat")),
+        () -> assertEquals("3", record.requiredField("ilsMlsGlsCategory")),
         () -> assertEquals(Integer.valueOf(0), record.requiredField("stopway")),
         () -> assertFalse(record.optionalField("secondaryIlsMlsGlsIdentifier").isPresent()),
-        () -> assertFalse(record.optionalField("secondaryCat").isPresent()),
+        () -> assertFalse(record.optionalField("secondaryIlsMlsGlsCategory").isPresent()),
         () -> assertEquals("ASPH     090FBWT", record.requiredField("runwayDescription")),
         () -> assertEquals(Integer.valueOf(15523), record.requiredField("fileRecordNumber")),
-        () -> assertEquals("2003", record.requiredField("cycle"))
+        () -> assertEquals("2003", record.requiredField("lastUpdateCycle"))
     );
   }
 

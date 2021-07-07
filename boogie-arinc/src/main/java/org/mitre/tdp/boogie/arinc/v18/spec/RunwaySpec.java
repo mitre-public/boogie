@@ -64,14 +64,14 @@ public final class RunwaySpec implements RecordSpec {
         new RecordField<>(new RunwayWidth()),
         new RecordField<>("tch", new BlankSpec(1)), // 5.270
         new RecordField<>(new IlsMlsGlsIdentifier()),
-        new RecordField<>("cat", new IlsMlsGlsCategory()),
+        new RecordField<>(new IlsMlsGlsCategory()),
         new RecordField<>(new Stopway()),
         new RecordField<>("secondaryIlsMlsGlsIdentifier", new IlsMlsGlsIdentifier()),
-        new RecordField<>("secondaryCat", new IlsMlsGlsCategory()),
+        new RecordField<>("secondaryIlsMlsGlsCategory", new IlsMlsGlsCategory()),
         new RecordField<>("reserved", new BlankSpec(6)),
         new RecordField<>(new RunwayDescription()),
         new RecordField<>(new FileRecordNumber()),
-        new RecordField<>(new Cycle())
+        new RecordField<>("lastUpdateCycle", new Cycle())
     );
   }
 

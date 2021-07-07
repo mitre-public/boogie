@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
