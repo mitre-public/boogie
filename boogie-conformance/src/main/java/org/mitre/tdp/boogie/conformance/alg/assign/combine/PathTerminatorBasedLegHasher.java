@@ -148,7 +148,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
       return this;
     }
 
-    public int hashCode() {
+    public int buildHash() {
       return builder.build();
     }
   }
@@ -159,7 +159,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
 
   private int ifHasher(FlyableLeg flyableLeg) {
     Preconditions.checkArgument(flyableLeg.current().type().equals(IF));
-    return newHasher(flyableLeg).withPathTerminator(flyableLeg.current()).hashCode();
+    return newHasher(flyableLeg).withPathTerminator(flyableLeg.current()).buildHash();
   }
 
   private int tfHasher(FlyableLeg flyableLeg) {
@@ -168,8 +168,8 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
     return flyableLeg.previous().filter(l -> l.pathTerminator() != null).isPresent()
         // allow null previous fixes because the scorer lets them pass as well I think
         // this is likely an issue with CIFP airways on the boundary of countries
-        ? hasher.withPathTerminator(flyableLeg.previous().orElseThrow(IllegalStateException::new)).hashCode()
-        : hasher.hashCode();
+        ? hasher.withPathTerminator(flyableLeg.previous().orElseThrow(IllegalStateException::new)).buildHash()
+        : hasher.buildHash();
   }
 
   private int cfHasher(FlyableLeg flyableLeg) {
@@ -181,22 +181,22 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
         .append(flyableLeg.current().rho().orElse(null))
         .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
         .append(flyableLeg.current().routeDistance().orElse(null))
-        .hashCode();
+        .buildHash();
   }
 
   private int dfHasher(FlyableLeg flyableLeg) {
     Preconditions.checkArgument(flyableLeg.current().type().equals(DF));
-    return newHasher(flyableLeg).withPathTerminator(flyableLeg.current()).hashCode();
+    return newHasher(flyableLeg).withPathTerminator(flyableLeg.current()).buildHash();
   }
 
   private int caHasher(FlyableLeg flyableLeg) {
     Preconditions.checkArgument(flyableLeg.current().type().equals(CA));
-    return newHasher(flyableLeg).append(flyableLeg.current().outboundMagneticCourse().orElse(null)).hashCode();
+    return newHasher(flyableLeg).append(flyableLeg.current().outboundMagneticCourse().orElse(null)).buildHash();
   }
 
   private int ciHasher(FlyableLeg flyableLeg) {
     Preconditions.checkArgument(flyableLeg.current().type().equals(CI));
-    return newHasher(flyableLeg).append(flyableLeg.current().outboundMagneticCourse().orElse(null)).hashCode();
+    return newHasher(flyableLeg).append(flyableLeg.current().outboundMagneticCourse().orElse(null)).buildHash();
   }
 
   private int rfHasher(FlyableLeg flyableLeg) {
@@ -206,7 +206,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
         .withArcCenter(flyableLeg.current())
         .withPathTerminator(flyableLeg.previous().orElseThrow(IllegalStateException::new))
         .append(flyableLeg.current().turnDirection().orElseThrow(IllegalStateException::new))
-        .hashCode();
+        .buildHash();
   }
 
   private int afHasher(FlyableLeg flyableLeg) {
@@ -217,7 +217,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
         .append(flyableLeg.current().turnDirection())
         .append(flyableLeg.current().theta().orElse(null))
         .append(flyableLeg.current().rho().orElse(null))
-        .hashCode();
+        .buildHash();
   }
 
   private int vaHasher(FlyableLeg flyableLeg) {
@@ -225,11 +225,11 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
     return newHasher(flyableLeg)
         .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
         .append(flyableLeg.current().altitudeConstraint().flatMap(AltitudeLimit::altitudeLimit).orElse(null))
-        .hashCode();
+        .buildHash();
   }
 
   private int viHasher(FlyableLeg flyableLeg) {
     Preconditions.checkArgument(flyableLeg.current().type().equals(VI));
-    return newHasher(flyableLeg).append(flyableLeg.current().outboundMagneticCourse().orElse(null)).hashCode();
+    return newHasher(flyableLeg).append(flyableLeg.current().outboundMagneticCourse().orElse(null)).buildHash();
   }
 }
