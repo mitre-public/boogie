@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 /**
  * The magnetic bearing of the runway identified in the “runway identifier” field of the record is specified in the “Runway Magnetic Bearing” field.
  */
-public class RunwayMagneticBearing implements FieldSpec<Double> {
+public final class RunwayMagneticBearing implements FieldSpec<Double> {
   @Override
   public int fieldLength() {
     return 4;

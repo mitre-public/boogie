@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * “Theta” is defined as the magnetic bearing to the waypoint identified in the record’s “FIX Ident” field from
  * the Navaid in the “Recommended Navaid” field.
  */
-public class Theta implements NumericDouble {
+public final class Theta implements NumericDouble {
 
   @Override
   public int fieldLength() {

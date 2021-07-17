@@ -5,7 +5,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 /**
  * Spec for records which have explicit blank space in them.
  */
-public class BlankSpec implements FieldSpec<Void> {
+public final class BlankSpec implements FieldSpec<Void> {
 
   private final int fieldLength;
 

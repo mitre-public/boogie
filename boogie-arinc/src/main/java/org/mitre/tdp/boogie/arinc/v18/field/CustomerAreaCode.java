@@ -5,7 +5,9 @@ import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
- * The spec for an instance of the customer area code spec.
+ * Definition/Description: The “Customer Area Code” field permits the categorization of standard records by geographical area
+ * and of tailored records by the airlines for whom they are provided in the master file. Several record types do not adhere
+ * to the established geographical boundaries. There is no “AREA” in such records.
  */
 public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode>, FilterTrimEmptyInput<CustomerAreaCode> {
   SPEC(null),

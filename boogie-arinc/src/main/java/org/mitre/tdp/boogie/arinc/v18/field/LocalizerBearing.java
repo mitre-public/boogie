@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 /**
  * The “Localizer Bearing” field defines the magnetic bearing of the localizer course of the ILS facility/GLS approach described in the record.
  */
-public class LocalizerBearing implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class LocalizerBearing implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;

@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * track distances/excursion distances/DME distances. The actual content is dependent on the Path and Termination. For more information
  * on the content, refer to Table Three, Leg Data Fields, in Attachment 5 of this document.
  */
-public class RouteHoldDistanceTime implements FieldSpec<String>, FilterTrimEmptyInput<String> {
+public final class RouteHoldDistanceTime implements FieldSpec<String>, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 4;

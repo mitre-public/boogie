@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 /**
  * This field is used to specify the DME offset.
  */
-public class IlsDmeBias implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class IlsDmeBias implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 2;

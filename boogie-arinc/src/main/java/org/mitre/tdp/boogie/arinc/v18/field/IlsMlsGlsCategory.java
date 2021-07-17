@@ -12,7 +12,7 @@ import java.util.List;
  * and localizer installation such as IGS, LDA, or SDF. As used in the runway record, there are two fields, one labeled Localizer/MLS/GLS
  * Category/Classification and the other labeled Second Localizer/MLS/GLS Category/Classification.
  */
-public class IlsMlsGlsCategory implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class IlsMlsGlsCategory implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 1;

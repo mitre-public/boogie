@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 /**
  * The waypoint usage field is employed to indicate the structure in which the waypoint is utilized.
  */
-public class WaypointUsage implements FieldSpec<String> {
+public final class WaypointUsage implements FieldSpec<String> {
   @Override
   public int fieldLength() {
     return 2;

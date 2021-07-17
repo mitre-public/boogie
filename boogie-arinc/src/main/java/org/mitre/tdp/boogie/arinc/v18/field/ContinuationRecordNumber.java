@@ -6,7 +6,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  *
  * e.g. [1-9][A-Z]
  */
-public class ContinuationRecordNumber implements FreeFormString {
+public final class ContinuationRecordNumber implements FreeFormString {
+
   @Override
   public int fieldLength() {
     return 1;

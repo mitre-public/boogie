@@ -6,7 +6,7 @@ import org.mitre.tdp.boogie.util.CoordinateParser;
 /**
  * The “Latitude” field contains the latitude of the navigational feature identified in the record.
  */
-public class Latitude implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class Latitude implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
 
   @Override
   public int fieldLength() {

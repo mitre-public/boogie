@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 /**
  * The “VOR/NDB Frequency” field specifies the frequency of the NAVAID identified in the “VOR/NDB Identifier” field of the record.
  */
-public class VorNdbFrequency implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class VorNdbFrequency implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 5;

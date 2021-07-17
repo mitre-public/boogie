@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * output power of the navaid, information carried on the navaid signal and collocation of navaids in both an electronic
  * and aeronautical sense. The field is made up of five columns of codes that define this information.
  */
-public class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInput<String> {
+public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

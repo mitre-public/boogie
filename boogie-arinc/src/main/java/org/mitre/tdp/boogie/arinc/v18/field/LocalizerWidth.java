@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 /**
  * The "Localizer Width" field specifies the localizer course width of the ILS facility defined in the record.
  */
-public class LocalizerWidth implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class LocalizerWidth implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;

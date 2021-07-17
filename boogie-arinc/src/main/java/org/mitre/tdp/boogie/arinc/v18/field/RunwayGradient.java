@@ -4,7 +4,7 @@ import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 
-public class RunwayGradient implements NumericDouble {
+public final class RunwayGradient implements NumericDouble {
   @Override
   public int fieldLength() {
     return 5;

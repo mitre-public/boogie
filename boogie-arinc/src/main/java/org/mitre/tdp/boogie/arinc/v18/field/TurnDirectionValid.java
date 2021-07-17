@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * This field is used in conjunction with Turn direction to indicate that a turn is required prior to capturing the
  * path defined in a terminal procedure.
  */
-public class TurnDirectionValid implements FieldSpec<Boolean> {
+public final class TurnDirectionValid implements FieldSpec<Boolean> {
   @Override
   public int fieldLength() {
     return 1;

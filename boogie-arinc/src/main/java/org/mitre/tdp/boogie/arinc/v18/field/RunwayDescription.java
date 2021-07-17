@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * f required, additional information concerning a runway can be included in a record in the “Runway Description” field.
  */
-public class RunwayDescription implements FreeFormString {
+public final class RunwayDescription implements FreeFormString {
   @Override
   public int fieldLength() {
     return 22;

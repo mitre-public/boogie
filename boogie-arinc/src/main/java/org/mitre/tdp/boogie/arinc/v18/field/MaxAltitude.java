@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * The “Maximum Altitude” field is used to indicate the maximum altitude allowed.
  */
-public class MaxAltitude implements AltitudeFlightLevel {
+public final class MaxAltitude implements AltitudeFlightLevel {
 
   @Override
   public int fieldLength() {

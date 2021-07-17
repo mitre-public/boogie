@@ -5,7 +5,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * the fix is identified. This includes Waypoint Identifiers, VHF NA V AID Identifiers, NDB NA V AID identifier,
  * Airport Identifiers, and Runway Identifiers.
  */
-public class FixIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class FixIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 5;

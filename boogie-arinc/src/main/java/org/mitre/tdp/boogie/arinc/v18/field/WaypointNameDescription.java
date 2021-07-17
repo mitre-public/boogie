@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The “Waypoint Name/Description” field sets the unabbreviated name of a named waypoint or a definition of an unnamed waypoint.
  */
-public class WaypointNameDescription implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class WaypointNameDescription implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 25;

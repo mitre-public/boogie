@@ -5,7 +5,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * for an Airport or Heliport to be specified. VHF, NDB (Enroute and Terminal), Localizer, TACAN, GLS and MLS Navaids may
  * be referenced.
  */
-public class RecommendedNavaid implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class RecommendedNavaid implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 4;

@@ -4,7 +4,7 @@ import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 
-public class ArcRadius implements NumericDouble {
+public final class ArcRadius implements NumericDouble {
   @Override
   public int fieldLength() {
     return 6;

@@ -7,7 +7,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * Heliport SID/STAR/Approach Records, the field is an indication of a speed for a fix in the procedure description, used in
  * conjunction with Speed Limit Description (5.261).
  */
-public class SpeedLimit implements NumericInteger {
+public final class SpeedLimit implements NumericInteger {
+
   @Override
   public int fieldLength() {
     return 3;

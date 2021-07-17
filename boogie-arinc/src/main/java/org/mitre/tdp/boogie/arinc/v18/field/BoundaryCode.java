@@ -5,6 +5,10 @@ import java.util.Arrays;
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
+/**
+ * Routes of flight frequently cross geographical boundaries. The “Boundary Code” field identifies the area into, or from which
+ * a continuous route passes when such a crossing occurs.
+ */
 public enum BoundaryCode implements FieldSpec<BoundaryCode>, FilterTrimEmptyInput<BoundaryCode> {
   /**
    * Intended to use to parse other boundary codes.

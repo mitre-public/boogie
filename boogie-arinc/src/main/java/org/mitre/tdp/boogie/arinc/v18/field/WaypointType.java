@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 /**
  * The “Waypoint Type” field defines both the “type” and function of IFR waypoints and also define a waypoint as being VFR.
  */
-public class WaypointType implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class WaypointType implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

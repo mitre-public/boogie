@@ -10,7 +10,7 @@ import java.util.List;
  * or below” specified altitudes. The field is also used to designate recommended altitudes and cases where two distinct altitudes are provided
  * at a single fix.
  */
-public class AltitudeDescription implements FreeFormString, FilterTrimEmptyInput<String> {
+public  final class AltitudeDescription implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

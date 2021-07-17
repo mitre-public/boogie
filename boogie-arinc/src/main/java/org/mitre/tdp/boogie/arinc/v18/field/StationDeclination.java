@@ -15,7 +15,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * the NAVAID at the time the NAVAID was last site checked. For ILS localizers, the field contains the angular difference between true
  * north and magnetic north at the localizer antenna site at the time the magnetic bearing of the localizer course was established.
  */
-public class StationDeclination implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class StationDeclination implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
 
   @Override
   public int fieldLength() {

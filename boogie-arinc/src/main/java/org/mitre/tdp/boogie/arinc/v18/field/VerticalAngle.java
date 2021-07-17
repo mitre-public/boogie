@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * for that fix at which the angle is coded. Vertical Angle information is provided only for descending vertical navigation. The
  * angle is preceded by a “–” (minus sign) to indicate the descending flight.
  */
-public class VerticalAngle implements NumericDouble, FilterTrimEmptyInput<Double> {
+public final class VerticalAngle implements NumericDouble, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;

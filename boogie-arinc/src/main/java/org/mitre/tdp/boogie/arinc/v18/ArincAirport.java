@@ -3,12 +3,18 @@ package org.mitre.tdp.boogie.arinc.v18;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
 import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
 import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
+import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 
 /**
  * Data class for representing structured/parsed content from within an ARINC format airport record.
@@ -17,14 +23,38 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  */
 public final class ArincAirport {
 
+  /**
+   * See {@link RecordType}.
+   */
   private final RecordType recordType;
+  /**
+   * See {@link CustomerAreaCode}.
+   */
   private final CustomerAreaCode customerAreaCode;
+  /**
+   * See {@link SectionCode}.
+   */
   private final SectionCode sectionCode;
+  /**
+   * See {@link AirportHeliportIdentifier}.
+   */
   private final String airportIdentifier;
+  /**
+   * See {@link IcaoRegion}.
+   */
   private final String airportIcaoRegion;
+  /**
+   * See {@link SubSectionCode}.
+   */
   private final String subSectionCode;
   private final String iataDesignator;
+  /**
+   * See {@link ContinuationRecordNumber}.
+   */
   private final String continuationRecordNumber;
+  /**
+   * See {@link SpeedLimitAltitude}.
+   */
   private final Double speedLimitAltitude;
   private final Integer longestRunway;
   private final Boolean ifrCapability;
@@ -33,6 +63,9 @@ public final class ArincAirport {
   private final Double longitude;
   private final Double magneticVariation;
   private final Double airportElevation;
+  /**
+   * See {@link SpeedLimit}.
+   */
   private final Integer speedLimit;
   private final String recommendedNavaid;
   private final String recommendedNavaidIcaoRegion;

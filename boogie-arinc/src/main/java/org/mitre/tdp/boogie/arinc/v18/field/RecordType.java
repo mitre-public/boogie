@@ -5,7 +5,9 @@ import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
- * Enum for the ARINC record type.
+ * Definition/Description: The “Record Type” field content indicates whether the record data are “standard,” i.e., suitable for
+ * universal application, or “tailored,” i.e. included  on  the  master  file  for  a  single  user’s  specific  purpose (Section
+ * 1.2 of this Specification refers).
  */
 public enum RecordType implements FieldSpec<RecordType>, FilterTrimEmptyInput<RecordType> {
   SPEC,

@@ -11,7 +11,7 @@ import java.util.List;
  * in terminal procedures and terminal procedure path termination defined by the Path Terminator in the Airport or Heliport
  * SID/STAR/Approach Record and (4) lowest altitude of the “blocked altitudes” for a Preferred Route.
  */
-public class MinimumAltitude implements AltitudeFlightLevel {
+public final class MinimumAltitude implements AltitudeFlightLevel {
 
   @Override
   public int fieldLength() {

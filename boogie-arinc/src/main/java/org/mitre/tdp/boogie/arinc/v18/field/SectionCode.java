@@ -4,6 +4,10 @@ import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
+/**
+ * Definition/Description: The “Section Code” field defines the major section of the navigation system data base in which the
+ * record resides.
+ */
 public enum SectionCode implements FieldSpec<SectionCode>, FilterTrimEmptyInput<SectionCode> {
   SPEC,
   /**

@@ -8,10 +8,11 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * The “Altitude Limitation” field is used to define the altitude(s) at which the limitation applies.
- *
+ * <br>
  * Used in conjunction with {@link AltitudeDescription}.
  */
-public class AltitudeLimit implements FieldSpec<Pair<Double, Double>>, FilterTrimEmptyInput<Pair<Double, Double>> {
+public final class AltitudeLimit implements FieldSpec<Pair<Double, Double>>, FilterTrimEmptyInput<Pair<Double, Double>> {
+
   @Override
   public int fieldLength() {
     return 6;

@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 /**
  * The “Localizer Frequency” field specifies the VHF frequency of the facility identified in the “Localizer Identifier” field.
  */
-public class LocalizerFrequency implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class LocalizerFrequency implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 5;

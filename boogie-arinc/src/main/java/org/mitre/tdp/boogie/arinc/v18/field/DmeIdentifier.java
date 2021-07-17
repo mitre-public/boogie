@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The identification of a DME facility, a TACAN facility or the DME (or TACAN) component of a VORDME or VORTAC facility.
  */
-public class DmeIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class DmeIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 4;

@@ -12,7 +12,8 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * The “Direction Restriction” field, when used on Preferred Route records, will indicate whether the routing is available only in the
  * direction of “from initial fix to terminus fix” or in both directions.
  */
-public class DirectionRestriction implements FieldSpec<String> {
+public final class DirectionRestriction implements FieldSpec<String> {
+
   @Override
   public int fieldLength() {
     return 1;

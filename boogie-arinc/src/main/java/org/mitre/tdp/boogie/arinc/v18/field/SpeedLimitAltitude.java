@@ -2,8 +2,11 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 /**
  * “Speed Limit Altitude” is the altitude below which speed limits may be imposed.
+ * <br>
+ * The “Speed Limit Altitude” will be derived from official government sources in feet MSL or FL’s.
  */
-public class SpeedLimitAltitude implements AltitudeFlightLevel {
+public final class SpeedLimitAltitude implements AltitudeFlightLevel {
+
   @Override
   public int fieldLength() {
     return 5;

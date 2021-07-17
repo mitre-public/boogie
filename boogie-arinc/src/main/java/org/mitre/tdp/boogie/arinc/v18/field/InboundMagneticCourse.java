@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * “Inbound Magnetic Course” is the published inbound magnetic course to the waypoint in the “Fix Ident” field of the
  * records in which it is employed.
  */
-public class InboundMagneticCourse implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final  class InboundMagneticCourse implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;

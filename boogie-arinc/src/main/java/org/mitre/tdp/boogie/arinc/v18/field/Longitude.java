@@ -6,7 +6,7 @@ import org.mitre.tdp.boogie.util.CoordinateParser;
 /**
  * The Longitude field contains the longitude of the geographic position of the navigational feature identified in the record.
  */
-public class Longitude implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class Longitude implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 10;

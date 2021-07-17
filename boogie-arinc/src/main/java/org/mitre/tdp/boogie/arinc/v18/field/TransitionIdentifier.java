@@ -5,7 +5,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * the terminal area and vice versa, and from the terminal area to the approach or from the runway or helipad to the
  * terminal area.
  */
-public class TransitionIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class TransitionIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

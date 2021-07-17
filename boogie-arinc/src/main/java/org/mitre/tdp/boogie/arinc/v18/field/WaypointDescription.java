@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * identified. The field provides information on the type of fix. As a single fix can be used in different route structures and
  * multiple times within a given structure, the field provides the function for each occurrence of a fix.
  */
-public class WaypointDescription implements FieldSpec<String>, FilterTrimEmptyInput<String> {
+public final class WaypointDescription implements FieldSpec<String>, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

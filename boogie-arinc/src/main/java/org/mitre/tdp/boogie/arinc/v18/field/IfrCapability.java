@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The “IFR Capability” field indicates if the Airport/Heliport has any published Instrument Approach Procedures.
  */
-public class IfrCapability implements BooleanString {
+public final class IfrCapability implements BooleanString {
   @Override
   public int fieldLength() {
     return 1;

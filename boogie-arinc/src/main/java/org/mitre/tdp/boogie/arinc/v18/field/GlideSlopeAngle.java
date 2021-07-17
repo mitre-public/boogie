@@ -4,7 +4,7 @@ import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
 
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 
-public class GlideSlopeAngle implements NumericDouble, FilterTrimEmptyInput<Double> {
+public final class GlideSlopeAngle implements NumericDouble, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 3;

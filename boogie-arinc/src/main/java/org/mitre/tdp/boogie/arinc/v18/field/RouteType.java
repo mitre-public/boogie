@@ -5,7 +5,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * which the record is an element. For Airport and Heliport Approach Routes, “Route Type” includes a “primary route type,” and
  * up to two “route type qualifiers.”
  */
-public class RouteType implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class RouteType implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

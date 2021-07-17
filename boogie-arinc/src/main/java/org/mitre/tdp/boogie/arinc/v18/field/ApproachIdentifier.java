@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-public class ApproachIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class ApproachIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 6;

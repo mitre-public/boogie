@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * The “Name Format Indicator” field is used to describe the format of the “Waypoint Name/Description” field (5.43). This field
  * will be formatted according to the rules described in Chapter 7 of this Specification, Waypoint Naming Conventions.
  */
-public class NameFormat implements FieldSpec<String>, FilterTrimEmptyInput<String> {
+public final class NameFormat implements FieldSpec<String>, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

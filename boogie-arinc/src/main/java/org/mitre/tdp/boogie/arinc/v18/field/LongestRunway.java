@@ -3,7 +3,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The “Longest Runway” field permits airport to be classified on the basis of the longest operational hard-surface runway.
  */
-public class LongestRunway implements NumericInteger {
+public final class LongestRunway implements NumericInteger {
+
   @Override
   public int fieldLength() {
     return 3;

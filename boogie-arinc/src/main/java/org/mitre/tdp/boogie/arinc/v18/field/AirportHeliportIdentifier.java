@@ -1,12 +1,14 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 /**
- * The content of this field is derived from official government sources. It will be the four character
- * ICAO Location Identifier of the airport or heliport when such is published. It will be the three or
- * four character Domestic Identifier when published and no ICAO Location Identifier is available for the
- * airport or heliport
+ * The content of this field is derived from official government sources. It will be the four character ICAO Location Identifier
+ * of the airport or heliport when such is published. It will be the three or four character Domestic Identifier when published
+ * and no ICAO Location Identifier is available for the airport or heliport.
+ * <br>
+ * When used on Airport or Heliport Flight Planning Continuation Records, it will be the Airport or Heliport Identifier owning
+ * the terminal controlled airspace referenced in that record.
  */
-public class AirportHeliportIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class AirportHeliportIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
   public int fieldLength() {

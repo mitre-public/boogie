@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 /**
  * Indicates that a specific turn radius from the inbound course to the outbound course is required by the airspace controlling agency.
  */
-public class FixedRadiusTransitionIndicator implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class FixedRadiusTransitionIndicator implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
 
   @Override
   public int fieldLength() {

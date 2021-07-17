@@ -10,7 +10,7 @@ import java.util.HashSet;
  * the record is an element. For Airport and Heliport Approach Routes, “Route Type” includes a “primary route type,” and up to two
  * “route type qualifiers.”
  */
-public class RouteTypeQualifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class RouteTypeQualifier implements FreeFormString, FilterTrimEmptyInput<String> {
   @Override
   public int fieldLength() {
     return 1;

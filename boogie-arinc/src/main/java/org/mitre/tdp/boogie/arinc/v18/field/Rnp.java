@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * Required Navigation Performance (RNP) is a statement of the Navigation Performance necessary for operation within a defined
  * airspace in accordance with ICAO Annex 15 and/or State published rules.
  */
-public class Rnp implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class Rnp implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 3;

@@ -8,7 +8,8 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * The “EU Indicator” field is used to identify those Enroute Airway records that have an Airway Restriction record
  * without identifying the restriction.
  */
-public class EuIndicator implements FieldSpec<Boolean> {
+public final class EuIndicator implements FieldSpec<Boolean> {
+
   @Override
   public int fieldLength() {
     return 1;

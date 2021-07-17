@@ -8,7 +8,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * series of records used to define a complete condition, the “Sequence Number” is used to define each primary
  * record in the sequence.
  */
-public class SequenceNumber implements NumericInteger {
+public final class SequenceNumber implements NumericInteger {
 
   private final int characters;
 

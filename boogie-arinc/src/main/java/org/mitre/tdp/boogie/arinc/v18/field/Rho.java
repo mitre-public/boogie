@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * “RHO” is defined as the geodesic distance in nautical miles to the waypoint identified in the record’s “Fix Ident” field
  * from the NA V AID in the “Recommended NAVAID” field.
  */
-public class Rho implements NumericDouble {
+public final class Rho implements NumericDouble {
 
   @Override
   public int fieldLength() {

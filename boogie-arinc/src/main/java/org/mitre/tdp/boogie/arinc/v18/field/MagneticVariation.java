@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * “Dynamic Magnetic Variation” is a computer model derived value and takes location and date into consideration. For the “Station Declination”
  * used in some record types, refer to Section 5.66.
  */
-public class MagneticVariation implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class MagneticVariation implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 5;

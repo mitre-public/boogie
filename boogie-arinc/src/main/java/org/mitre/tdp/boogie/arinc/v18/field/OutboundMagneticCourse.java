@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * “Fix Ident” field. In addition, this field is used for Course/Heading/Radials on SID/STAR Approach Records through
  * requirements of the Path Terminator and coding rules contained in Attachment 5 of this specification.
  */
-public class OutboundMagneticCourse implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class OutboundMagneticCourse implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
   @Override
   public int fieldLength() {
     return 4;
