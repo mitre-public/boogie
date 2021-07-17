@@ -1,16 +1,15 @@
-package org.mitre.tdp.boogie.arinc.v18.field;
+package org.mitre.tdp.boogie.arinc.v19.field;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
 
-import java.util.HashSet;
+import java.util.Set;
 
-/**
- * The “Route Type” field defines the type of Enroute Airway, Preferred Route, Airport and Heliport SID/STAR/Approach Routes of which
- * the record is an element.
- * <br>
- * For Airport and Heliport Approach Routes, “Route Type” includes a “primary route type”, and up to two “route type qualifiers”.
- */
+import org.mitre.tdp.boogie.arinc.v18.field.FilterTrimEmptyInput;
+import org.mitre.tdp.boogie.arinc.v18.field.FreeFormString;
+
+import com.google.common.collect.Sets;
+
 public final class RouteTypeQualifier implements FreeFormString, FilterTrimEmptyInput<String> {
 
   @Override
@@ -32,5 +31,10 @@ public final class RouteTypeQualifier implements FreeFormString, FilterTrimEmpty
   /**
    * The collection of allowed route type qualifier codes.
    */
-  private static final HashSet<String> allowedCodes = newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "P", "R", "T", "U", "V", "W");
+  private static final Set<String> allowedCodes = Sets.union(
+      // V18 codes
+      newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "P", "R", "T", "U", "V", "W"),
+      // V19a codes
+      newHashSet("H", "F", "I")
+  );
 }

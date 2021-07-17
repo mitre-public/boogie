@@ -1,13 +1,13 @@
 package org.mitre.tdp.boogie.arinc;
 
-import org.mitre.tdp.boogie.arinc.v18.spec.AirwayLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.ProcedureLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.AirportSpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.LocalizerGlideSlopeSpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.NdbNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.RunwaySpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.VhfNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.spec.WaypointSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 
 /**
  * Pre-configured set of parsers for various well-known ARINC spec types and record formats.

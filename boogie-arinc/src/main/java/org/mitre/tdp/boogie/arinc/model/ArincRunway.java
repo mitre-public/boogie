@@ -1,0 +1,428 @@
+package org.mitre.tdp.boogie.arinc.model;
+
+import java.util.Objects;
+import java.util.Optional;
+
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+
+/**
+ * Data class for representing structured/parsed content from within an ARINC format runway record.
+ * <br>
+ * Section/Subsection = PG
+ */
+public final class ArincRunway {
+
+  private final RecordType recordType;
+  private final CustomerAreaCode customerAreaCode;
+  private final SectionCode sectionCode;
+  private final String airportIdentifier;
+  private final String airportIcaoRegion;
+  private final String subSectionCode;
+  private final String runwayIdentifier;
+  private final String continuationRecordNumber;
+  private final Integer runwayLength;
+  private final Double runwayMagneticBearing;
+  private final Double latitude;
+  private final Double longitude;
+  private final Double runwayGradient;
+  private final Integer landingThresholdElevation;
+  private final Integer thresholdDisplacementDistance;
+  private final Integer thresholdCrossingHeight;
+  private final Integer runwayWidth;
+  private final String ilsMlsGlsIdentifier;
+  private final String ilsMlsGlsCategory;
+  private final Integer stopway;
+  private final String secondaryIlsMlsGlsIdentifier;
+  private final String secondaryIlsMlsGlsCategory;
+  private final String runwayDescription;
+  private final Integer fileRecordNumber;
+  private final String lastUpdateCycle;
+
+  private ArincRunway(Builder builder) {
+    this.recordType = builder.recordType;
+    this.customerAreaCode = builder.customerAreaCode;
+    this.sectionCode = builder.sectionCode;
+    this.airportIdentifier = builder.airportIdentifier;
+    this.airportIcaoRegion = builder.airportIcaoRegion;
+    this.subSectionCode = builder.subSectionCode;
+    this.runwayIdentifier = builder.runwayIdentifier;
+    this.continuationRecordNumber = builder.continuationRecordNumber;
+    this.runwayLength = builder.runwayLength;
+    this.runwayMagneticBearing = builder.runwayMagneticBearing;
+    this.latitude = builder.latitude;
+    this.longitude = builder.longitude;
+    this.runwayGradient = builder.runwayGradient;
+    this.landingThresholdElevation = builder.landingThresholdElevation;
+    this.thresholdDisplacementDistance = builder.thresholdDisplacementDistance;
+    this.thresholdCrossingHeight = builder.thresholdCrossingHeight;
+    this.runwayWidth = builder.runwayWidth;
+    this.ilsMlsGlsIdentifier = builder.ilsMlsGlsIdentifier;
+    this.ilsMlsGlsCategory = builder.ilsMlsGlsCategory;
+    this.stopway = builder.stopway;
+    this.secondaryIlsMlsGlsIdentifier = builder.secondaryIlsMlsGlsIdentifier;
+    this.secondaryIlsMlsGlsCategory = builder.secondaryIlsMlsGlsCategory;
+    this.runwayDescription = builder.runwayDescription;
+    this.fileRecordNumber = builder.fileRecordNumber;
+    this.lastUpdateCycle = builder.lastUpdateCycle;
+  }
+
+  public RecordType recordType() {
+    return recordType;
+  }
+
+  public Optional<CustomerAreaCode> customerAreaCode() {
+    return Optional.ofNullable(customerAreaCode);
+  }
+
+  public SectionCode sectionCode() {
+    return sectionCode;
+  }
+
+  public String airportIdentifier() {
+    return airportIdentifier;
+  }
+
+  public String airportIcaoRegion() {
+    return airportIcaoRegion;
+  }
+
+  public String subSectionCode() {
+    return subSectionCode;
+  }
+
+  public String runwayIdentifier() {
+    return runwayIdentifier;
+  }
+
+  public Optional<String> continuationRecordNumber() {
+    return Optional.ofNullable(continuationRecordNumber);
+  }
+
+  public Optional<Integer> runwayLength() {
+    return Optional.ofNullable(runwayLength);
+  }
+
+  public Optional<Double> runwayMagneticBearing() {
+    return Optional.ofNullable(runwayMagneticBearing);
+  }
+
+  public Double latitude() {
+    return latitude;
+  }
+
+  public Double longitude() {
+    return longitude;
+  }
+
+  public Optional<Double> runwayGradient() {
+    return Optional.ofNullable(runwayGradient);
+  }
+
+  public Optional<Integer> landingThresholdElevation() {
+    return Optional.ofNullable(landingThresholdElevation);
+  }
+
+  public Optional<Integer> thresholdDisplacementDistance() {
+    return Optional.ofNullable(thresholdDisplacementDistance);
+  }
+
+  public Optional<Integer> thresholdCrossingHeight() {
+    return Optional.ofNullable(thresholdCrossingHeight);
+  }
+
+  public Optional<Integer> runwayWidth() {
+    return Optional.ofNullable(runwayWidth);
+  }
+
+  public Optional<String> ilsMlsGlsIdentifier() {
+    return Optional.ofNullable(ilsMlsGlsIdentifier);
+  }
+
+  public Optional<String> ilsMlsGlsCategory() {
+    return Optional.ofNullable(ilsMlsGlsCategory);
+  }
+
+  public Optional<Integer> stopway() {
+    return Optional.ofNullable(stopway);
+  }
+
+  public Optional<String> secondaryIlsMlsGlsIdentifier() {
+    return Optional.ofNullable(secondaryIlsMlsGlsIdentifier);
+  }
+
+  public Optional<String> secondaryIlsMlsGlsCategory() {
+    return Optional.ofNullable(secondaryIlsMlsGlsCategory);
+  }
+
+  public Optional<String> runwayDescription() {
+    return Optional.ofNullable(runwayDescription);
+  }
+
+  public Integer fileRecordNumber() {
+    return fileRecordNumber;
+  }
+
+  public String lastUpdateCycle() {
+    return lastUpdateCycle;
+  }
+
+  public Builder toBuilder() {
+    return new Builder()
+        .recordType(recordType())
+        .customerAreaCode(customerAreaCode().orElse(null))
+        .sectionCode(sectionCode())
+        .airportIdentifier(airportIdentifier())
+        .airportIcaoRegion(airportIcaoRegion())
+        .subSectionCode(subSectionCode())
+        .runwayIdentifier(runwayIdentifier())
+        .continuationRecordNumber(continuationRecordNumber().orElse(null))
+        .runwayLength(runwayLength().orElse(null))
+        .runwayMagneticBearing(runwayMagneticBearing().orElse(null))
+        .latitude(latitude())
+        .longitude(longitude())
+        .runwayGradient(runwayGradient().orElse(null))
+        .landingThresholdElevation(landingThresholdElevation().orElse(null))
+        .thresholdDisplacementDistance(thresholdDisplacementDistance().orElse(null))
+        .thresholdCrossingHeight(thresholdCrossingHeight().orElse(null))
+        .runwayWidth(runwayWidth().orElse(null))
+        .ilsMlsGlsIdentifier(ilsMlsGlsIdentifier().orElse(null))
+        .ilsMlsGlsCategory(ilsMlsGlsCategory().orElse(null))
+        .stopway(stopway().orElse(null))
+        .secondaryIlsMlsGlsIdentifier(secondaryIlsMlsGlsIdentifier().orElse(null))
+        .secondaryIlsMlsGlsCategory(secondaryIlsMlsGlsCategory().orElse(null))
+        .runwayDescription(runwayDescription().orElse(null))
+        .fileRecordNumber(fileRecordNumber())
+        .lastUpdateCycle(lastUpdateCycle());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ArincRunway that = (ArincRunway) o;
+    return recordType == that.recordType &&
+        customerAreaCode == that.customerAreaCode &&
+        sectionCode == that.sectionCode &&
+        Objects.equals(airportIdentifier, that.airportIdentifier) &&
+        Objects.equals(airportIcaoRegion, that.airportIcaoRegion) &&
+        Objects.equals(subSectionCode, that.subSectionCode) &&
+        Objects.equals(runwayIdentifier, that.runwayIdentifier) &&
+        Objects.equals(continuationRecordNumber, that.continuationRecordNumber) &&
+        Objects.equals(runwayLength, that.runwayLength) &&
+        Objects.equals(runwayMagneticBearing, that.runwayMagneticBearing) &&
+        Objects.equals(latitude, that.latitude) &&
+        Objects.equals(longitude, that.longitude) &&
+        Objects.equals(runwayGradient, that.runwayGradient) &&
+        Objects.equals(landingThresholdElevation, that.landingThresholdElevation) &&
+        Objects.equals(thresholdDisplacementDistance, that.thresholdDisplacementDistance) &&
+        Objects.equals(thresholdCrossingHeight, that.thresholdCrossingHeight) &&
+        Objects.equals(runwayWidth, that.runwayWidth) &&
+        Objects.equals(ilsMlsGlsIdentifier, that.ilsMlsGlsIdentifier) &&
+        Objects.equals(ilsMlsGlsCategory, that.ilsMlsGlsCategory) &&
+        Objects.equals(stopway, that.stopway) &&
+        Objects.equals(secondaryIlsMlsGlsIdentifier, that.secondaryIlsMlsGlsIdentifier) &&
+        Objects.equals(secondaryIlsMlsGlsCategory, that.secondaryIlsMlsGlsCategory) &&
+        Objects.equals(runwayDescription, that.runwayDescription) &&
+        Objects.equals(fileRecordNumber, that.fileRecordNumber) &&
+        Objects.equals(lastUpdateCycle, that.lastUpdateCycle);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, runwayIdentifier, continuationRecordNumber, runwayLength, runwayMagneticBearing, latitude, longitude, runwayGradient, landingThresholdElevation, thresholdDisplacementDistance, thresholdCrossingHeight, runwayWidth, ilsMlsGlsIdentifier, ilsMlsGlsCategory, stopway, secondaryIlsMlsGlsIdentifier, secondaryIlsMlsGlsCategory, runwayDescription, fileRecordNumber, lastUpdateCycle);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincRunway2{" +
+        "recordType=" + recordType +
+        ", customerAreaCode=" + customerAreaCode +
+        ", sectionCode=" + sectionCode +
+        ", airportIdentifier='" + airportIdentifier + '\'' +
+        ", airportIcaoRegion='" + airportIcaoRegion + '\'' +
+        ", subSectionCode='" + subSectionCode + '\'' +
+        ", runwayIdentifier='" + runwayIdentifier + '\'' +
+        ", continuationRecordNumber='" + continuationRecordNumber + '\'' +
+        ", runwayLength=" + runwayLength +
+        ", runwayMagneticBearing=" + runwayMagneticBearing +
+        ", latitude=" + latitude +
+        ", longitude=" + longitude +
+        ", runwayGradient=" + runwayGradient +
+        ", landingThresholdElevation=" + landingThresholdElevation +
+        ", thresholdDisplacementDistance=" + thresholdDisplacementDistance +
+        ", thresholdCrossingHeight=" + thresholdCrossingHeight +
+        ", runwayWidth=" + runwayWidth +
+        ", ilsMlsGlsIdentifier='" + ilsMlsGlsIdentifier + '\'' +
+        ", ilsMlsGlsCategory='" + ilsMlsGlsCategory + '\'' +
+        ", stopway=" + stopway +
+        ", secondaryIlsMlsGlsIdentifier='" + secondaryIlsMlsGlsIdentifier + '\'' +
+        ", secondaryIlsMlsGlsCategory='" + secondaryIlsMlsGlsCategory + '\'' +
+        ", runwayDescription='" + runwayDescription + '\'' +
+        ", fileRecordNumber=" + fileRecordNumber +
+        ", lastUpdateCycle='" + lastUpdateCycle + '\'' +
+        '}';
+  }
+
+  public static final class Builder {
+    private RecordType recordType;
+    private CustomerAreaCode customerAreaCode;
+    private SectionCode sectionCode;
+    private String airportIdentifier;
+    private String airportIcaoRegion;
+    private String subSectionCode;
+    private String runwayIdentifier;
+    private String continuationRecordNumber;
+    private Integer runwayLength;
+    private Double runwayMagneticBearing;
+    private Double latitude;
+    private Double longitude;
+    private Double runwayGradient;
+    private Integer landingThresholdElevation;
+    private Integer thresholdDisplacementDistance;
+    private Integer thresholdCrossingHeight;
+    private Integer runwayWidth;
+    private String ilsMlsGlsIdentifier;
+    private String ilsMlsGlsCategory;
+    private Integer stopway;
+    private String secondaryIlsMlsGlsIdentifier;
+    private String secondaryIlsMlsGlsCategory;
+    private String runwayDescription;
+    private Integer fileRecordNumber;
+    private String lastUpdateCycle;
+
+    public Builder recordType(RecordType recordType) {
+      this.recordType = recordType;
+      return this;
+    }
+
+    public Builder customerAreaCode(CustomerAreaCode customerAreaCode) {
+      this.customerAreaCode = customerAreaCode;
+      return this;
+    }
+
+    public Builder sectionCode(SectionCode sectionCode) {
+      this.sectionCode = sectionCode;
+      return this;
+    }
+
+    public Builder airportIdentifier(String airportIdentifier) {
+      this.airportIdentifier = airportIdentifier;
+      return this;
+    }
+
+    public Builder airportIcaoRegion(String airportIcaoRegion) {
+      this.airportIcaoRegion = airportIcaoRegion;
+      return this;
+    }
+
+    public Builder subSectionCode(String subSectionCode) {
+      this.subSectionCode = subSectionCode;
+      return this;
+    }
+
+    public Builder runwayIdentifier(String runwayIdentifier) {
+      this.runwayIdentifier = runwayIdentifier;
+      return this;
+    }
+
+    public Builder continuationRecordNumber(String continuationRecordNumber) {
+      this.continuationRecordNumber = continuationRecordNumber;
+      return this;
+    }
+
+    public Builder runwayLength(Integer runwayLength) {
+      this.runwayLength = runwayLength;
+      return this;
+    }
+
+    public Builder runwayMagneticBearing(Double runwayMagneticBearing) {
+      this.runwayMagneticBearing = runwayMagneticBearing;
+      return this;
+    }
+
+    public Builder latitude(Double latitude) {
+      this.latitude = latitude;
+      return this;
+    }
+
+    public Builder longitude(Double longitude) {
+      this.longitude = longitude;
+      return this;
+    }
+
+    public Builder runwayGradient(Double runwayGradient) {
+      this.runwayGradient = runwayGradient;
+      return this;
+    }
+
+    public Builder landingThresholdElevation(Integer landingThresholdElevation) {
+      this.landingThresholdElevation = landingThresholdElevation;
+      return this;
+    }
+
+    public Builder thresholdDisplacementDistance(Integer thresholdDisplacementDistance) {
+      this.thresholdDisplacementDistance = thresholdDisplacementDistance;
+      return this;
+    }
+
+    public Builder thresholdCrossingHeight(Integer thresholdCrossingHeight) {
+      this.thresholdCrossingHeight = thresholdCrossingHeight;
+      return this;
+    }
+
+    public Builder runwayWidth(Integer runwayWidth) {
+      this.runwayWidth = runwayWidth;
+      return this;
+    }
+
+    public Builder ilsMlsGlsIdentifier(String ilsMlsGlsIdentifier) {
+      this.ilsMlsGlsIdentifier = ilsMlsGlsIdentifier;
+      return this;
+    }
+
+    public Builder ilsMlsGlsCategory(String ilsMlsGlsCategory) {
+      this.ilsMlsGlsCategory = ilsMlsGlsCategory;
+      return this;
+    }
+
+    public Builder stopway(Integer stopway) {
+      this.stopway = stopway;
+      return this;
+    }
+
+    public Builder secondaryIlsMlsGlsIdentifier(String secondaryIlsMlsGlsIdentifier) {
+      this.secondaryIlsMlsGlsIdentifier = secondaryIlsMlsGlsIdentifier;
+      return this;
+    }
+
+    public Builder secondaryIlsMlsGlsCategory(String secondaryIlsMlsGlsCategory) {
+      this.secondaryIlsMlsGlsCategory = secondaryIlsMlsGlsCategory;
+      return this;
+    }
+
+    public Builder runwayDescription(String runwayDescription) {
+      this.runwayDescription = runwayDescription;
+      return this;
+    }
+
+    public Builder fileRecordNumber(Integer fileRecordNumber) {
+      this.fileRecordNumber = fileRecordNumber;
+      return this;
+    }
+
+    public Builder lastUpdateCycle(String lastUpdateCycle) {
+      this.lastUpdateCycle = lastUpdateCycle;
+      return this;
+    }
+
+    public ArincRunway build() {
+      return new ArincRunway(this);
+    }
+  }
+}

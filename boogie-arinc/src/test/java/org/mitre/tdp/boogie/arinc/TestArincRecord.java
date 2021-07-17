@@ -31,7 +31,9 @@ class TestArincRecord {
         ImmutableMap.of("altitudeLimit", "")
     );
 
-    AltitudeLimit actual = record.specForField("altitudeLimit");
+    Optional<AltitudeLimit> limitSpec = record.specForField("altitudeLimit");
+    AltitudeLimit actual = limitSpec.orElseThrow(AssertionError::new);
+
     assertEquals(altitudeLimit, actual, "Returned field spec instance should be identical.");
   }
 

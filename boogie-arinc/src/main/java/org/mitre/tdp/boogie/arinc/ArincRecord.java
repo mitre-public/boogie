@@ -71,10 +71,10 @@ public final class ArincRecord implements Serializable {
    * Returns the {@link FieldSpec} for the provided (non-null) field name. This is the spec associated with the provided field
    * as declared in the {@link RecordSpec} which was associated with the contained raw ARINC record.
    */
-  public <T, A extends FieldSpec<T>> A specForField(String fieldName) {
+  public <T, A extends FieldSpec<T>> Optional<A> specForField(String fieldName) {
     requireNonNull(fieldName);
     A spec = (A) namedFields.get(fieldName);
-    return requireNonNull(spec, "Unable to lookup spec for field of name ".concat(fieldName));
+    return Optional.ofNullable(spec);
   }
 
   /**
@@ -95,8 +95,8 @@ public final class ArincRecord implements Serializable {
    * any hard exceptions due to bad input record content (e.g. NumberFormatException, etc.).
    */
   public <T> Optional<T> optionalField(String fieldName) {
-    FieldSpec<T> spec = specForField(fieldName);
-    return spec.parse(rawField(fieldName));
+    Optional<FieldSpec<T>> spec = specForField(fieldName);
+    return spec.flatMap(s -> s.parse(rawField(fieldName)));
   }
 
   /**

@@ -1,9 +1,17 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import java.util.Optional;
+
+import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.utils.ValidNumericDouble;
+
 /**
  * The elevation of the Airport/Heliport specified in the record is defined in the “Airport Elevation” and “Heliport Elevation” field.
+ * <br>
+ * This class trims the input field value - dropping any
  */
-public final class AirportHeliportElevation implements NumericDouble {
+public final class AirportHeliportElevation implements FieldSpec2<Double> {
+
   @Override
   public int fieldLength() {
     return 5;
@@ -12,5 +20,10 @@ public final class AirportHeliportElevation implements NumericDouble {
   @Override
   public String fieldCode() {
     return "5.55";
+  }
+
+  @Override
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).filter(ValidNumericDouble.INSTANCE).map(Double::parseDouble);
   }
 }

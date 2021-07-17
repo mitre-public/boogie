@@ -50,7 +50,11 @@ public final class ArincDatabaseFactory {
     }
   }
 
-  private static final class ArincRecordCollector{
+  private static final class ConvertedArincRecordCollection {
+
+  }
+
+  private static final class ArincRecordCollector {
 
   }
 
