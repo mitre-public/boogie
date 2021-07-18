@@ -23,7 +23,6 @@ import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
 import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
 import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
 import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
@@ -34,11 +33,12 @@ import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
 import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
 import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
+import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 
 class TestConvertingArincRecordConsumer {
 
   /**
-   * In implementation this could be done from {@link ArincVersion} - e.g. new ArincFileParser(ArincVersion.V18.parser());
+   * In implementation this could be done from {@link ArincVersion} - e.g. new ArincFileParser(ArincVersion.V19.parser());
    */
   private static final ArincFileParser fileParser = new ArincFileParser(
       new ArincRecordParser(
@@ -46,6 +46,7 @@ class TestConvertingArincRecordConsumer {
           new AirwayLegSpec(),
           new LocalizerGlideSlopeSpec(),
           new NdbNavaidSpec(),
+          // the V19 leg spec - thanks CIFP
           new ProcedureLegSpec(),
           new RunwaySpec(),
           new VhfNavaidSpec(),
@@ -84,14 +85,14 @@ class TestConvertingArincRecordConsumer {
   @Test
   void testConvertingArincRecordConsumer_V18() {
     assertAll(
-        () -> assertEquals(0, testV18Consumer.arincAirports().size()),
-        () -> assertEquals(0, testV18Consumer.arincAirwayLegs().size()),
-        () -> assertEquals(0, testV18Consumer.arincLocalizerGlideSlopes().size()),
-        () -> assertEquals(0, testV18Consumer.arincNdbNavaids().size()),
-        () -> assertEquals(0, testV18Consumer.arincProcedureLegs().size()),
-        () -> assertEquals(0, testV18Consumer.arincRunways().size()),
-        () -> assertEquals(0, testV18Consumer.arincVhfNavaids().size()),
-        () -> assertEquals(0, testV18Consumer.arincWaypoints().size())
+        () -> assertEquals(1, testV18Consumer.arincAirports().size(), "Airport count"),
+        () -> assertEquals(0, testV18Consumer.arincAirwayLegs().size(), "AirwayLeg count"),
+        () -> assertEquals(7, testV18Consumer.arincLocalizerGlideSlopes().size(), "LocalizerGlideSlope count"),
+        () -> assertEquals(0, testV18Consumer.arincNdbNavaids().size(), "NdbNavaid count"),
+        () -> assertEquals(364, testV18Consumer.arincProcedureLegs().size(), "ProcedureLeg count"),
+        () -> assertEquals(8, testV18Consumer.arincRunways().size(), "Runway count"),
+        () -> assertEquals(0, testV18Consumer.arincVhfNavaids().size(), "VhfNavaid count"),
+        () -> assertEquals(70, testV18Consumer.arincWaypoints().size(), "Waypoint count")
     );
   }
 }

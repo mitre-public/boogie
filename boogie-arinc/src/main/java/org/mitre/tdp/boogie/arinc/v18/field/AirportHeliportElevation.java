@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.utils.ValidNumericDouble;
 /**
  * The elevation of the Airport/Heliport specified in the record is defined in the “Airport Elevation” and “Heliport Elevation” field.
  * <br>
- * This class trims the input field value - dropping any
+ * This class trims the input field value - treating any strings which are empty when trimmed as "null/missing" values.
  */
 public final class AirportHeliportElevation implements FieldSpec2<Double> {
 

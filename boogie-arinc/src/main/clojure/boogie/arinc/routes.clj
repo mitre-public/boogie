@@ -6,6 +6,7 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.string :as str]
             [spec-tools.core :as st]
+            [cheshire.core :refer :all]
             [reitit.core]
             [reitit.ring :as ring]
             [reitit.swagger :as swagger]
@@ -30,11 +31,17 @@
             [ring.middleware.gzip :as gzip])
   ;; java dependencies
   (:import (org.mitre.tdp.boogie.arinc ArincRecord)
-           (org.mitre.tdp.boogie.arinc ArincVersion PatternBasedFileLocator ArincFileStore))
+           (org.mitre.tdp.boogie.arinc ArincVersion PatternBasedFileLocator ArincFileStore)
+           (org.apache.commons.lang3.exception ExceptionUtils)
+           (java.time Instant)
+           (org.mitre.tdp.boogie.arinc.utils AiracCycle))
   ;; required for clojurephant to work
   (:gen-class))
 
 (s/def ::cycle string?)
+
+;; the maximum number of cycles that can be cached at once
+(defonce cycle-cache-size (atom (if (System/getenv "CYCLE_CACHE_SIZE") (System/getenv "CYCLE_CACHE_SIZE") 5)))
 
 ;; The instance of the file-locator which will be used to locate ARINC424 files on a visible filesystem for the application to
 ;; load and serve data from
@@ -44,6 +51,23 @@
                               (new PatternBasedFileLocator (System/getenv "FILE_LOCATOR_PATH"))
                               (ArincFileStore/MITRE_LIDO))))
 
+(def exception-middleware
+  (exception/create-exception-middleware
+    (merge
+      exception/default-handlers
+      {::exception/default (fn [^Exception e _]
+                             {:status 500
+                              :body   {:type    "exception"
+                                       :class   (.getName (.getClass e))
+                                       :message (.getMessage e)
+                                       :stack   (ExceptionUtils/getStackTrace e)}})
+       ::exception/wrap    (fn [handler e request]
+                             (println "ERROR" (pr-str (:uri request)))
+                             (.printStackTrace e)
+                             (handler e request))})))
+
+(defn load-cycle [cycle])
+
 (def app-routes
   (ring/ring-handler
     (ring/router
@@ -51,7 +75,7 @@
        ["/swagger.json"
         {:get {:no-doc  true
                :swagger {:info {:title       "Boogie REST API for Navigation Data Access"
-                                :description "Rest endpoints for navigation data queries and route expansion."}}
+                                :description "Rest endpoint(s) for navigation data queries."}}
                :handler (swagger/create-swagger-handler)}}]
        ;["/startup-probe"] - may want to add one of these to pre-cache at least the latest cycles of navigation data
        ["/file"
@@ -59,9 +83,55 @@
                :parameters {:query (s/keys :req-un [::cycle])}
                :responses  {200 {:body any?}}
                :handler    (fn [{{{:keys [cycle]} :query} :parameters}]
-                             (.apply file-locator cycle))}}]
+                             (timbre/info (str "Locating file for cycle: " cycle))
+                             (let [file (.apply @file-locator cycle)]
+                               (-> {:path    (.getAbsolutePath file)
+                                    :exists? (.exists file)}
+                                   (cheshire.core/generate-string)
+                                   (response)
+                                   (content-type "text/json"))))}}]
+       ["/cached-cycles"
+        {:get {:summary  "Returns the list of all cached cycles currently maintained by the endpoint."
+               :response {200 {:body string?}}
+               :handler  (fn [_]
+                           (-> (clojure.string/join "," ["2001"])
+                               (response)
+                               (content-type "text/plain")
+                               ))}}]
+       ["/available-cycles"
+        {:get {:summary  "Returns the structured map of all available cycles and whether or not they are currently cached."
+               :response {200 {:body string?}}
+               :handler  (fn [_]
+                           {"cycle#" {:cached? false}})}}]
+       ["/latest-cycle"
+        {:get {:summary  "Returns all of the supported and assembled ARINC data types for the <i>current</i> cycle as a JSON mapping."
+               :response {200 {:body string?}}
+               :handler  (fn [_]
+                           (let [cycle (new AiracCycle (Instant/now))]))}}]
        ["/full-cycle"
         {:get {:summary    "Return all of the supported and assembled ARINC data types for a given cycle as a JSON mapping."
                :parameters {:query (s/keys :req-un [::cycle])}
                :responses  {200 {:body any?}}
-               :handler    (fn [{{{:keys [cycle]} :query} :parameters}])}}]])))
+               :handler    (fn [{{{:keys [cycle]} :query} :parameters}])}}]]
+      {:exception pretty/exception
+       ;; I don't know what any of this does and I don't want to find out - ask @aeckstein if anyone has questions or do some googling
+       :data      {:coercion   reitit.coercion.spec/coercion
+                   :muuntaja   m/instance
+                   :middleware [exception-middleware
+                                #(wrap-cors %
+                                            :access-control-allow-origin [#"http://localhost:([0-9]){4,5}"]
+                                            :access-control-allow-methods [:get :post])
+                                swagger/swagger-feature
+                                parameters/parameters-middleware
+                                muuntaja/format-middleware
+                                rrc/coerce-exceptions-middleware
+                                rrc/coerce-request-middleware
+                                rrc/coerce-response-middleware
+                                wrap-cookies]}})
+    (ring/routes
+      (swagger-ui/create-swagger-ui-handler
+        {:path   "/boogie-arinc/"
+         :url    "/boogie-arinc/swagger.json"
+         :config {:validatorUrl     nil
+                  :operationsSorter "alpha"}})
+      (ring/create-default-handler))))

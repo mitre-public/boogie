@@ -23,6 +23,6 @@ public class TestAltitudeDescription {
   @Test
   public void testAllowsAllAllowedValues() {
     AltitudeDescription spec = new AltitudeDescription();
-    spec.allowedValues().forEach(value -> assertEquals(value, spec.parseValue(value)));
+    spec.allowedValues.forEach(value -> assertEquals(value, spec.parseValue(value)));
   }
 }

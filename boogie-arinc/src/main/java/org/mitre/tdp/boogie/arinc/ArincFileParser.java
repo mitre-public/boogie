@@ -21,6 +21,10 @@ public final class ArincFileParser implements Function<File, Collection<ArincRec
 
   private final ArincRecordParser recordParser;
 
+  public ArincFileParser(RecordSpec... recordSpecs) {
+    this(new ArincRecordParser(recordSpecs));
+  }
+
   public ArincFileParser(ArincRecordParser recordParser) {
     this.recordParser = requireNonNull(recordParser);
   }

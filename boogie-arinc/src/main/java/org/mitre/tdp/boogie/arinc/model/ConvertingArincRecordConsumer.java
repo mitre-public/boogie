@@ -15,10 +15,15 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 /**
- * A non-thread-safe version of a {@link Consumer} class which can eat {@link ArincRecord}s from a collection or stream and
- * saves them as internal state within itself.
+ * A non-thread-safe version of a {@link Consumer} class which can eat {@link ArincRecord}s from a collection or stream and saves
+ * them as internal state within itself.
  * <br>
- * This class is provided for convenience but with known limitations.
+ * This class is built with a pre-configured set of record -> Java POJO delegators and a set of record -> POJO converters for a
+ * pre-configured set of data types. {@link ConvertingArincRecordConsumerFactory} provides some default implementations for a
+ * subset of {@link ArincRecord} versions.
+ * <br>
+ * This class is provided for convenience, but it's limitations (especially the thread-safety) should be taken into account before
+ * use.
  */
 public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord> {
 

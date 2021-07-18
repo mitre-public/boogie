@@ -2,23 +2,25 @@ package org.mitre.tdp.boogie.arinc.database;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 
-public final class TransitionStream<T> {
+public final class TransitionStream implements Function<Collection<ArincProcedureLeg>, Stream<Transition>> {
 
-  private final ArincDatabase arincDatabase;
-  private final Function<ArincRecord, T> converter;
+  private final TerminalAreaDatabase terminalAreaDatabase;
+  private final FixDatabase fixDatabase;
 
-  public TransitionStream(ArincDatabase arincDatabase, Function<ArincRecord, T> converter) {
-    this.arincDatabase = requireNonNull(arincDatabase);
-    this.converter = requireNonNull(converter);
+  public TransitionStream(TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
+    this.terminalAreaDatabase = requireNonNull(terminalAreaDatabase);
+    this.fixDatabase = requireNonNull(fixDatabase);
   }
 
-  public Stream<List<T>> streamTransitions() {
+  @Override
+  public Stream<Transition> apply(Collection<ArincProcedureLeg> arincProcedureLegs) {
     return Stream.empty();
   }
 }

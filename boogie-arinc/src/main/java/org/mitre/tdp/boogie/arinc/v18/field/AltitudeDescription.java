@@ -1,16 +1,20 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import static com.google.common.collect.Sets.newHashSet;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.mitre.tdp.boogie.arinc.FieldSpec2;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * The “Altitude Description” field will designate whether a waypoint should be crossed “at,” “at or above,” “at or below” or “at or above to at
  * or below” specified altitudes. The field is also used to designate recommended altitudes and cases where two distinct altitudes are provided
  * at a single fix.
  */
-public  final class AltitudeDescription implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class AltitudeDescription implements FieldSpec2<String> {
 
   @Override
   public int fieldLength() {
@@ -23,27 +27,24 @@ public  final class AltitudeDescription implements FreeFormString, FilterTrimEmp
   }
 
   @Override
-  public String parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, allowedValues().contains(fieldValue));
-    return FreeFormString.super.parseValue(fieldValue);
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).filter(allowedValues::contains);
   }
 
   /**
    * The list of allowed values for the field - refer to the ARINC spec for interpretation.
    */
-  public List<String> allowedValues() {
-    return Arrays.asList(
-        "+",
-        "-",
-        "@",
-        "B",
-        "C",
-        "G",
-        "H",
-        "I",
-        "J",
-        "V",
-        "X",
-        "Y");
-  }
+  static final Set<String> allowedValues = ImmutableSet.copyOf(newHashSet(
+      "+",
+      "-",
+      "@",
+      "B",
+      "C",
+      "G",
+      "H",
+      "I",
+      "J",
+      "V",
+      "X",
+      "Y"));
 }

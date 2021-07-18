@@ -2,51 +2,185 @@
 [![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-VOIC)](https://https://pandafood.mitre.org/browse/CDA-SHIM)
 [![Latest Release](https://img.shields.io/badge/version-0.0.91-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 
-## Module Overview
+# Module overview
 <p>This module within the Boogie software project provides a set of configurable and extensible parsers for ARINC424 formatted data.</p>
-<p>
-Currently this module supports standard parsing for multiple ARINC424 versions and a subset of the record types within those versions:
 
-1. <b>ARINC Version 18</b>
-   1. Airports
-   2. Runways
-   3. GlideSlopes
-   4. NDB Navaids
-   5. VHF Navaids
-   6. Waypoints
-   7. Procedures (PD/PE/PF - SID/STAR/Approach)
-   8. Airways
-2. <b>ARINC Version 19(a)</b>
-   1. Airports
-   2. Runways
-   3. GlideSlopes
-   4. NDB Navaids
-   5. VHF Navaids
-   6. Waypoints
-   7. Procedures (PD/PE/PF - SID/STAR/Approach)
-   8. Airways
-3. <b>ARINC Version 21</b> - TODO
-</p>
-<p>
-While the ARINC data models themselves (in the raw data) don't contain version indicators there are key <i>features</i> of the data in those models that can tip consumers off about which
-version of the data they're working with. <i>Most</i> ARINC data is V18 - but there are some key differences between 18, 19a, and 21 namely:
+# Quick start
 
-1. From 18 -> 19a: multiple new routeTypeQualifier values were added for approach types (e.g. F, H, I, etc.).
-2. From 19a -> 21: routeTypeQualifiers became allowed on SID/STAR records as opposed to only Approach records in previous versions. 
+## Parsing a 424 file
 
-Most of the ARINC data in MITRE is <i>allegedly</i> V18 - however in actuality a lot of our data providers have taken a degree of liberty with their interpretations of what that means 
-(even though there is <i>very</i> good documentation around what should be in that data). The most notable exception is CIFP - who uses the updated qualifiers (from 19a) as part of their
-standard publication even though it claims to be V18.
-</p>
+For users who don't really care to know that much about what goes into the 424 specs + versioning and other implementation details - here's to you:
+```java
+ArincFileParser parser = new ArincFileParser(ArincVersion.V19.parser());
 
-## Using the Library
-This portion will document common interaction patterns between users and the API as well as how to extend the API to parse additional record types.
+ConvertingArincRecordConsumer consumer = ConvertingArincRecordConsumerFactory.forArincVersion(ArincVersion.V19);
+parser.apply(new File(myArinc424File.dat)).forEach(consumer);
 
-### Setting up an in-memory database:
+// the consumer then contains the collections of various parsed 424 records - the consumer isn't the safest of classes
+// but it gets the job done from a convenience perspective and its limitations are well-documented
 
-The easiest entry-point into the system comes through interacting one of the various version-specific ```ArincDatabaseFactory``` classes. These factory classes allow users to instantiate a 
-new version of an ```ArincDatabase``` based through a collection of factory methods - the most standard use looks something like:
+Collection<ArincAirport> airports = consumer.arincAirports();
+Collection<ArincProcedureLeg> procedureLegs = consumer.arincProcedureLegs(); // etc. etc.
 ```
-ArincDatabase database = ArincDatabaseFactory.newDatabaseFromFile(databaseFile);
-``` 
-The ```ArincDatabase``` then allows users access to a variety of query-mechanisms for producing 
+As defined and implemented in Boogie the ```ArincVersion.V19``` pre-canned set of parsers should work reasonably well on most of the in-house datasets you'll come across whether they're
+of an older version or of some of the more recent ```V21``` versions - as Boogie is more focused on the <i>structure</i> of the record (with lightweight field-level validation) than on 
+the exact allowed content combinations therein.
+
+### Quick notes on what <i>is</i> explicitly checked...
+
+See the various [validator](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/v18/AirportValidator.java?at=main) classes
+within the V18 specification package. Most of them are lightweight and about what you would expect - the only heavier weight one is the ```ProcedureLegValidator``` which inspects both the
+path terminator (TF, RF, AF, VA, etc.) and the field contents of the record to ensure the required information is present in the record to model how the leg should be flown (e.g. VA legs need
+to have a valid specified min altitude and outbound course).
+
+## Indexing in provided database implementations
+The nature of most of the ARINC record types is to be referential towards other record types - take for example an ```ArincProcedureLeg``` record:
+<br>
+<img align="float: left;" height="80" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-arinc/arinc-procedure-leg-v18.png?at=refs%2Fheads%2Fmain"/>
+<br>
+There are three key groupings of fields we care about in there, namely:
+```java
+// Fix Identification Information
+private final String fixIdentifier;
+private final String fixIcaoRegion;
+private final SectionCode fixSectionCode;
+private final String fixSubSectionCode;
+
+// Recommended Navaid Identification Information
+private final String recommendedNavaidIdentifier;
+private final String recommendedNavaidIcaoRegion;
+private final SectionCode recommendedNavaidSectionCode;
+private final String recommendedNavaidSubSectionCode;
+
+// Center Fix Identification Information
+private final String centerFixIdentifier;
+private final String centerFixIcaoRegion;
+private final SectionCode centerFixSectionCode;
+private final String centerFixSubSectionCode;
+```
+These fields serve as references to other records within the ARINC 424 database file and can be used to uniquely identify them. In general for ```ArincProcedureLeg``` records these are pointers 
+to either NDB/VHF Navaids, Enroute/Terminal Waypoints, Airports, or even Runways. As this information is generally nice to have on hand when working with procedure information (among others) Boogie 
+provides a collection of easy-to-instantiate and pre-configured databases with the appropriate indexing for these records set-up.
+
+```java
+FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(ndbNavaids, vhfNavaids, waypoints, airports);
+
+// unique lookups (via) including the ICAO region in the query
+Optional<ArincWaypoint> jmack = fixDatabase.waypoint("JMACK", "K6");
+Optional<ArincNdbNavaid> dtw = fixDatabase.ndbNavaid("DTW", "K2");
+
+// queries purely by ID (return value only when there is a single match)
+Optional<ArincWaypoint> jmack = fixDatabase.waypoint("JMACK");  // etc. for other fix types
+ 
+// queries for all matches
+Optional<ArincWaypoint> jmacks = fixDatabase.waypoints("JMACK"); // etc. for other fix types
+```
+
+Most of the database implementations under ```org.mitre.tdp.boogie.database``` provide similar collections of methods for accessing pre-indexed data. The ```ArincDatabaseFactory``` is the de facto 
+entry point for creating most of these implementations.
+
+## Launching as a REST service
+
+As [clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/) is the non-Java language the majority of TDP developers prefer to use, Boogie presents a thin REST API wrapper 
+around a few of its data services which can be configured via a couple of environment variables to field requests without a direct API dependency. Boogie takes advantage of the 
+[clojurephant](https://github.com/clojurephant/clojurephant) library to compile the clojure REST API code from Gradle in-line with its Java code. Documentation for the REST API is configured
+via Swagger and is built into [reitit](https://github.com/metosin/reitit). Two things to note:
+
+1. The ARINC 424 data served by the REST API depends on the environment variable ```FILE_LOCATOR_PATH``` at the launch time of the API:
+   1. If overridden with a value it should match the path spec expected by [PatternBasedFileLocator](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/PatternBasedFileLocator.java?at=refs%2Fheads%2Fmain).
+   2. Otherwise it defaults to the [MITRE LIDO](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileStore.java?at=main#25) archive.
+2. When run locally the API documentation can be found under ```http://localhost:8087/boogie-arinc/``` (if run non-local, at the same path on your chosen host).
+
+Reading the Swagger docs from a local launch of the software is the easiest way to see what the API provides even if you're unfamiliar with Clojure as a language and is the recommended way 
+to check things out.
+
+## Containerized deployment
+
+*Sike* - not yet - someone needs to pay me (more) for this.
+
+# What is ARINC 424?
+<p>
+ARINC 424 is a data format primarily used to serialize navigation data and is generally the one used to package data before it is compressed and loaded in the FMS (flight management system) 
+on board an aircraft. At a high level ARINC data consists of a variety of field definitions (usable/composable across record types) - e.g. latitude/longitude (fields) that are defined 
+once but may be used in airport/navaid/waypoint/etc. records.
+
+The idea is you compose some invariant set of fields together in an ordered sequence to form a full ARINC 424 record string - a la the below:
+</p>
+<img align="float: left;" height="80" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-arinc/arinc-airway-v18.png?at=refs%2Fheads%2Fmain"/>
+<p>
+In the above, each of those traced out blocks has an associated number (e.g. 5.12, 5.13) which is a pointer to a specification for how that field should be interpreted within the ARINC ICD 
+(typically) a PDF for the appropriate version of ARINC data.
+
+Generally speaking the sequence of fields that make up a record are invariant across versions (with some known exceptions), and the set of available records is invariant in the sense that it
+has <i>typically</i> (post V18) only been added to - and no record types have been removed. These record types are organized in a dictionary-like format based on their section/subsection. 
+Each section acts as a high-level grouping with subsections within each section for specific kinds of records. As an example the set of high-level sections in ARINC as-of V18 are:
+
+1. <b>A - Grid MORA</b> (Minimum Off-Route Altitude) 
+2. <b>D - Navaid</b> (NDB, VHF) 
+3. <b>E - Enroute</b> (Airways, Enroute Waypoints, Enroute Communications, etc.)
+4. <b>H - Heliport</b> (Heliports, Helo SID/STAR/Approaches, etc.)
+5. <b>T - Tables</b> (Cruising Tables, Geographical Reference Tables, etc.)
+6. <b>R - Company Routes</b> (would need vendor-specific ARINC 424 data to see - not in general publications of things like LIDO/CIFP)
+7. <b>P - Airport</b> (Airports, SID/STAR/Approaches, Terminal Waypoints, Runways, Gates, etc.)
+8. <b>U - Airspace</b> (Restricted Airspaces, Controlled Airspaces, FIRs (Flight Information Regions), etc.)
+</p>
+<p>
+These sections help categorize and organize data within an ARINC file - and the section/subsection can be used in conjunction with an identifier and an ICAO region (e.g. K2, etc.) to uniquely 
+identify certain record types within the database (e.g. airports, waypoints, navaids).
+</p>
+
+# Current capabilities
+<p>
+Given the above, Boogie provides collections of these field-level specs pre-implemented with some tooling on top for composing them together as "records" and then applying those record-level 
+specifications to input ARINC 424 strings to produce semi-structured content (things that look like maps). Boogie also provides converters for taking that generated semi-structured content 
+and turning it into proper java data models (which should look almost identical to the ARINC 424 record definitions). These converters should work across versions so long as the layout of the 
+424 records haven't changed. 
+
+The current set of java POJO conversions are based on the V18 record <i>format</i> and primarily care about the field sequence within the records. On the whole they are generally less particular 
+about the specific contents of any field and should therefore be valid targets for data from any of the following versions and record types (i.e. the extracted content of a field may change - but 
+since the <i>structure</i> of the records has remained consistent the java POJOs have valid landing grounds for that info).
+
+| Version | Airport (PA) | Runway (PG) | Localizer/GlideSlope (PI) | NDB Navaid (DB, PN) | VHF Navaid (D) | Waypoints (EA, PC) | ProcedureLegs (PD, PE, PF) | Airways (ER) |
+|:-------:|:------------:|:-----------:|:-------------------------:|:-------------------:|:--------------:|:------------------:|:--------------------------:|:------------:|
+| 18      |y             |y            |y                          |y                    |y               |y                   |y                           |y             |
+| 19a     |y             |y            |y                          |y                    |y               |y                   |y                           |y             |
+| 21      |y             |y            |y                          |y                    |y               |y                   |y                           |y             |
+</p>
+<p>
+We'll go over how all of this is implemented in a later section of this README - but for now it should suffice to say this module supports standard <i>structured</i> parsing for multiple ARINC424 
+versions and a subset of the record types within those versions as above.
+
+While the ARINC data models themselves (in the raw data) don't contain version indicators there are key <i>features</i> of the data in those models that can tip consumers off about which
+version of the data they're working with downstream of the more robust parsing and lightweight field-level validation Boogie provides. These are:
+
+1. From <b>18 -> 19a</b>: multiple new routeTypeQualifier values were added for approach types (e.g. F, H, I, etc.).
+2. From <b>19a -> 21</b>: routeTypeQualifiers became allowed on SID/STAR records as opposed to only Approach records in previous versions. 
+
+<i>Most</i> ARINC data (we have in MITRE) is <i>allegedly</i> V18 - however in actuality a lot of our data providers have taken a degree of liberty with their interpretations of what that 
+means over the years (even though there is <i>very</i> good documentation around what should be in that data). (re-iterating) The most notable exception is CIFP - who uses the updated qualifiers 
+(from 19a) on Approach records (and the updated approach naming conventions - i.e. RNP approaches start with an H) as part of their standard publication even though it claims to be published 
+as V18.
+</p>
+
+# Implementing your own record specifications
+Hopefully the Quick start was able to get you up and running relatively easily - if it fails you that's what this section is for. Here we'll cover how to build out your own record specifications 
+and then use them in-situ with the provided `ArincFileParser` and ```Converter``` implementations.
+
+## Record specifications
+
+## Field specifications
+
+As a rule of thumb most of the field-level specifications try to be robust to potentially bad input data and generally return nothing when the input value doesn't meet the spec's expectations.
+There is one notable exception to this and that is categorical values. The assumption is that most categorical values where present <i>should</i> be represented exactly within the spec and
+cases where they are not or where values are received that are <i>outside</i> the specification should be considered exceptions and errors (FieldSpecParseException(s)) should be thrown.
+
+## Rules of thumb
+
+# REST API detailed overview
+
+For those who aren't familiar with Clojure and therefore don't want to spend a ton of time looking at the internals of the code itself this section is meant to provided a slightly more detailed 
+overview of some of the specifics of the REST API implementation.
+
+
+
+## 

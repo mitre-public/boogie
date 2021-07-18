@@ -1,6 +1,7 @@
 (ns boogie.arinc.server
   (:require [boogie.arinc.routes :refer [app-routes]]
-            [ring.adapter.jetty :refer [run-jetty]]))
+            [ring.adapter.jetty :refer [run-jetty]])
+  (:gen-class))
 
 (defonce server (atom nil))
 
