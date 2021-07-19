@@ -23,7 +23,7 @@ Collection<ArincAirport> airports = consumer.arincAirports();
 Collection<ArincProcedureLeg> procedureLegs = consumer.arincProcedureLegs(); // etc. etc.
 ```
 As defined and implemented in Boogie the ```ArincVersion.V19``` pre-canned set of parsers should work reasonably well on most of the in-house datasets you'll come across whether they're
-of an older version or of some of the more recent ```V21``` versions - as Boogie is more focused on the <i>structure</i> of the record (with lightweight field-level validation) than on 
+of an older version or of some of the more recent ```V21``` versions as Boogie is more focused on the <i>structure</i> of the record (with lightweight field-level validation) than on 
 the exact allowed content combinations therein.
 
 ### Quick notes on what <i>is</i> explicitly checked...
@@ -38,7 +38,7 @@ The nature of most of the ARINC record types is to be referential towards other 
 <br>
 <img align="float: left;" height="80" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-arinc/arinc-procedure-leg-v18.png?at=refs%2Fheads%2Fmain"/>
 <br>
-There are three key groupings of fields we care about in there, namely:
+There are three key groupings of fields we care about in there (as taken from the TDP POJO model), namely:
 ```java
 // Fix Identification Information
 private final String fixIdentifier;
@@ -60,7 +60,7 @@ private final String centerFixSubSectionCode;
 ```
 These fields serve as references to other records within the ARINC 424 database file and can be used to uniquely identify them. In general for ```ArincProcedureLeg``` records these are pointers 
 to either NDB/VHF Navaids, Enroute/Terminal Waypoints, Airports, or even Runways. As this information is generally nice to have on hand when working with procedure information (among others) Boogie 
-provides a collection of easy-to-instantiate and pre-configured databases with the appropriate indexing for these records set-up.
+provides a collection of easy-to-instantiate and pre-configured (and relatively simple) databases with the appropriate indexing for these records set-up.
 
 ```java
 FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(ndbNavaids, vhfNavaids, waypoints, airports);
@@ -77,7 +77,7 @@ Optional<ArincWaypoint> jmacks = fixDatabase.waypoints("JMACK"); // etc. for oth
 ```
 
 Most of the database implementations under ```org.mitre.tdp.boogie.database``` provide similar collections of methods for accessing pre-indexed data. The ```ArincDatabaseFactory``` is the de facto 
-entry point for creating most of these implementations.
+entry point for creating most of these implementations. See the javadocs on them for further details around usage.
 
 ## Launching as a REST service
 
@@ -89,10 +89,10 @@ via Swagger and is built into [reitit](https://github.com/metosin/reitit). Two t
 1. The ARINC 424 data served by the REST API depends on the environment variable ```FILE_LOCATOR_PATH``` at the launch time of the API:
    1. If overridden with a value it should match the path spec expected by [PatternBasedFileLocator](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/PatternBasedFileLocator.java?at=refs%2Fheads%2Fmain).
    2. Otherwise it defaults to the [MITRE LIDO](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileStore.java?at=main#25) archive.
-2. When run locally the API documentation can be found under ```http://localhost:8087/boogie-arinc/``` (if run non-local, at the same path on your chosen host).
+2. When run locally the API documentation (hosted by Swagger) can be found under ```http://localhost:8087/boogie-arinc/``` (if run non-local, at the same path on your chosen host).
 
 Reading the Swagger docs from a local launch of the software is the easiest way to see what the API provides even if you're unfamiliar with Clojure as a language and is the recommended way 
-to check things out.
+to check things out (if you need more information there is a later section in this readme which gives a bit more details about the internals of the API).
 
 ## Containerized deployment
 
@@ -130,7 +130,7 @@ identify certain record types within the database (e.g. airports, waypoints, nav
 </p>
 
 # Current capabilities
-<p>
+
 Given the above, Boogie provides collections of these field-level specs pre-implemented with some tooling on top for composing them together as "records" and then applying those record-level 
 specifications to input ARINC 424 strings to produce semi-structured content (things that look like maps). Boogie also provides converters for taking that generated semi-structured content 
 and turning it into proper java data models (which should look almost identical to the ARINC 424 record definitions). These converters should work across versions so long as the layout of the 
@@ -145,8 +145,10 @@ since the <i>structure</i> of the records has remained consistent the java POJOs
 | 18      |y             |y            |y                          |y                    |y               |y                   |y                           |y             |
 | 19a     |y             |y            |y                          |y                    |y               |y                   |y                           |y             |
 | 21      |y             |y            |y                          |y                    |y               |y                   |y                           |y             |
-</p>
-<p>
+
+It should be noted that the above *is not* a complete parsing of all of the available record types within the 424 spec - and is instead a focused (high value) subset for general use in aviation 
+research.
+
 We'll go over how all of this is implemented in a later section of this README - but for now it should suffice to say this module supports standard <i>structured</i> parsing for multiple ARINC424 
 versions and a subset of the record types within those versions as above.
 
@@ -157,16 +159,17 @@ version of the data they're working with downstream of the more robust parsing a
 2. From <b>19a -> 21</b>: routeTypeQualifiers became allowed on SID/STAR records as opposed to only Approach records in previous versions. 
 
 <i>Most</i> ARINC data (we have in MITRE) is <i>allegedly</i> V18 - however in actuality a lot of our data providers have taken a degree of liberty with their interpretations of what that 
-means over the years (even though there is <i>very</i> good documentation around what should be in that data). (re-iterating) The most notable exception is CIFP - who uses the updated qualifiers 
+means over the years (even though there is <i>very</i> good documentation around what should be in that data). The most notable exception is CIFP - who uses the updated qualifiers 
 (from 19a) on Approach records (and the updated approach naming conventions - i.e. RNP approaches start with an H) as part of their standard publication even though it claims to be published 
 as V18.
-</p>
 
-# Implementing your own record specifications
-Hopefully the Quick start was able to get you up and running relatively easily - if it fails you that's what this section is for. Here we'll cover how to build out your own record specifications 
-and then use them in-situ with the provided `ArincFileParser` and ```Converter``` implementations.
+# Implementing your own record specifications (or adding support for a new record type)
+Hopefully the Quick start was able to get you up and running relatively easily - however if you find that the currently supported set of record parsers doesn't meet your needs this section will 
+cover how to extend the API for new record types.
 
 ## Record specifications
+
+At a high level when extending the API for new ```RecordSpec``` 
 
 ## Field specifications
 
@@ -175,6 +178,9 @@ There is one notable exception to this and that is categorical values. The assum
 cases where they are not or where values are received that are <i>outside</i> the specification should be considered exceptions and errors (FieldSpecParseException(s)) should be thrown.
 
 ## Rules of thumb
+
+Ideally most record/field specifications should automatically reject data that aren't to spec. Most of the publicly available 424 data out there *isn't* exactly to spec and so it's important 
+that the parsers that are taking the raw records -> semi-structured data are robust to potentially bad/non-standard input.
 
 # REST API detailed overview
 

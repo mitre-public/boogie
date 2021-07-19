@@ -18,7 +18,7 @@ import com.google.common.base.Preconditions;
  * A merge is an object which knows how to combine two objects of the same type into a composite object containing features
  * from both inputs.
  */
-public class LeftMerger<T> {
+public final class LeftMerger<T> {
 
   /**
    * {@link BiPredicate} to use when determining whether subsequent elements should be merged.

@@ -9,6 +9,10 @@ import java.util.stream.Stream;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 
+/**
+ * Functional class for converting a collection of {@link ArincProcedureLeg} into a sequence of {@link Transition} records as
+ * would be expected in downstream data classes in packages like boogie-routes.
+ */
 public final class TransitionStream implements Function<Collection<ArincProcedureLeg>, Stream<Transition>> {
 
   private final TerminalAreaDatabase terminalAreaDatabase;
