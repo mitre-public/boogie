@@ -1,27 +1,25 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestCustomerAreaCode {
+class TestCustomerAreaCode {
 
   @Test
-  public void testParseValidCustomerAreaCode() {
-    assertEquals(CustomerAreaCode.USA, CustomerAreaCode.SPEC.parseValue("USA"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), CustomerAreaCode.SPEC.apply(""));
   }
 
   @Test
-  public void testThrowsParseExceptionOnBadCode() {
-    assertThrows(FieldSpecParseException.class, () -> CustomerAreaCode.SPEC.parseValue("NTX"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), CustomerAreaCode.SPEC.apply("   "));
   }
 
   @Test
-  public void testParsesAllValidCustomerAreaCodes() {
-    Arrays.stream(CustomerAreaCode.values()).filter(code -> !code.equals(CustomerAreaCode.SPEC)).forEach(code -> CustomerAreaCode.SPEC.parseValue(code.name()));
+  void testParserReturnsValidBoundaryCodeOnMatch() {
+    assertEquals(Optional.of(CustomerAreaCode.USA), CustomerAreaCode.SPEC.apply(" USA "));
   }
 }

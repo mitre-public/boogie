@@ -1,61 +1,79 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
+import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.FieldSpec2;
+
+import com.google.common.collect.ImmutableBiMap;
 
 /**
  * Definition/Description: The “Customer Area Code” field permits the categorization of standard records by geographical area
  * and of tailored records by the airlines for whom they are provided in the master file. Several record types do not adhere
  * to the established geographical boundaries. There is no “AREA” in such records.
  */
-public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode>, FilterTrimEmptyInput<CustomerAreaCode> {
-  SPEC(null),
+public enum CustomerAreaCode implements FieldSpec2<CustomerAreaCode> {
   /**
-   * United States of America.
+   * Intended to use to parse other boundary codes.
+   *
+   * e.g. BoundaryCode.USA == BoundaryCode.SPEC.parse("U").
    */
-  USA("U"),
+  SPEC,
+  /**
+   * The United States - CONUS
+   */
+  USA,
   /**
    * Canada and Alaska
    */
-  CAN("C"),
+  CAN,
   /**
    * Pacific
    */
-  PAC("P"),
+  PAC,
   /**
    * Latin America
    */
-  LAM("L"),
+  LAM,
   /**
    * South America
    */
-  SAM("S"),
+  SAM,
   /**
    * South Pacific
    */
-  SPA("1"),
+  SPA,
   /**
    * Europe
    */
-  EUR("E"),
+  EUR,
   /**
    * Eastern Europe
    */
-  EEU("2"),
+  EEU,
   /**
    * Middle East-South Asia
    */
-  MES("M"),
+  MES,
   /**
    * Africa
    */
-  AFR("A");
+  AFR;
 
-  private final String boundaryCode;
+  static final ImmutableBiMap<String, String> lookup = ImmutableBiMap.<String, String>builder()
+      .put("U", CustomerAreaCode.USA.name())
+      .put("C", CustomerAreaCode.CAN.name())
+      .put("P", CustomerAreaCode.PAC.name())
+      .put("L", CustomerAreaCode.LAM.name())
+      .put("S", CustomerAreaCode.SAM.name())
+      .put("1", CustomerAreaCode.SPA.name())
+      .put("E", CustomerAreaCode.EUR.name())
+      .put("2", CustomerAreaCode.EEU.name())
+      .put("M", CustomerAreaCode.MES.name())
+      .put("A", CustomerAreaCode.AFR.name())
+      .build();
 
-  CustomerAreaCode(String boundaryCode) {
-    this.boundaryCode = boundaryCode;
+  public String boundaryCode() {
+    return lookup.inverse().get(this.name());
   }
 
   @Override
@@ -69,11 +87,7 @@ public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode>, FilterTrimE
   }
 
   @Override
-  public CustomerAreaCode parseValue(String fieldValue) {
-    return toEnumValue(fieldValue, CustomerAreaCode.class);
-  }
-
-  public String boundaryCode() {
-    return boundaryCode;
+  public Optional<CustomerAreaCode> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).filter(lookup.inverse()::containsKey).map(CustomerAreaCode::valueOf);
   }
 }

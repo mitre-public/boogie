@@ -1,17 +1,17 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * The “Altitude Limitation” field is used to define the altitude(s) at which the limitation applies.
  * <br>
  * Used in conjunction with {@link AltitudeDescription}.
  */
-public final class AltitudeLimit implements FieldSpec<Pair<Double, Double>>, FilterTrimEmptyInput<Pair<Double, Double>> {
+public final class AltitudeLimit implements FieldSpec2<Pair<Double, Double>> {
 
   @Override
   public int fieldLength() {
@@ -24,10 +24,14 @@ public final class AltitudeLimit implements FieldSpec<Pair<Double, Double>>, Fil
   }
 
   @Override
-  public Pair<Double, Double> parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return Pair.of(
-        Double.parseDouble(fieldValue.substring(0, 3)) * 100.0d,
-        Double.parseDouble(fieldValue.substring(3)) * 100.0d);
+  public Optional<Pair<Double, Double>> apply(String fieldValue) {
+    return Optional.of(fieldValue)
+        .filter(ValidArincNumeric.INSTANCE)
+        .map(String::trim)
+        .filter(s -> s.length() == 6)
+        .map(s -> Pair.of(
+            Double.parseDouble(s.substring(0, 3)) * 100.0d,
+            Double.parseDouble(s.substring(3)) * 100.0d)
+        );
   }
 }

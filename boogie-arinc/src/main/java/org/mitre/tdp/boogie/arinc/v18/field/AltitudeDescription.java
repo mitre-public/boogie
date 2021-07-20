@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec2;
 
@@ -34,7 +33,7 @@ public final class AltitudeDescription implements FieldSpec2<String> {
   /**
    * The list of allowed values for the field - refer to the ARINC spec for interpretation.
    */
-  static final Set<String> allowedValues = ImmutableSet.copyOf(newHashSet(
+  static final ImmutableSet<String> allowedValues = ImmutableSet.copyOf(newHashSet(
       "+",
       "-",
       "@",

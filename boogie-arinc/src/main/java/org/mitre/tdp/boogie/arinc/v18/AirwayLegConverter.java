@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.BoundaryCode;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
 import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
 
@@ -34,7 +35,7 @@ public final class AirwayLegConverter implements Function<ArincRecord, Optional<
     Optional<String> fixSubSectionCode = arincRecord.optionalField("fixSubSectionCode");
     Optional<String> continuationRecordNumber = arincRecord.optionalField("continuationRecordNumber");
     Optional<String> waypointDescription = arincRecord.optionalField("waypointDescription");
-    Optional<BoundaryCode> boundaryCode = arincRecord.optionalField("boundaryCode");
+    Optional<CustomerAreaCode> boundaryCode = arincRecord.optionalField("boundaryCode");
     Optional<String> routeType = arincRecord.optionalField("routeType");
     Optional<Level> level = arincRecord.optionalField("level");
     Optional<String> directionRestriction = arincRecord.optionalField("directionRestriction");

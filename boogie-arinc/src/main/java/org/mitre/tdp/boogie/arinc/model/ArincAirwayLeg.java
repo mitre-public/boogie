@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.v18.field.BoundaryCode;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
@@ -33,7 +32,7 @@ public final class ArincAirwayLeg {
   private final String fixSubSectionCode;
   private final String continuationRecordNumber;
   private final String waypointDescription;
-  private final BoundaryCode boundaryCode;
+  private final CustomerAreaCode boundaryCode;
   private final String routeType;
   private final Level level;
   private final String directionRestriction;
@@ -146,7 +145,7 @@ public final class ArincAirwayLeg {
     return Optional.ofNullable(waypointDescription);
   }
 
-  public Optional<BoundaryCode> boundaryCode() {
+  public Optional<CustomerAreaCode> boundaryCode() {
     return Optional.ofNullable(boundaryCode);
   }
 
@@ -194,7 +193,7 @@ public final class ArincAirwayLeg {
     return Optional.ofNullable(outboundMagneticCourse);
   }
 
-  public Optional<String >routeHoldDistanceTime() {
+  public Optional<String> routeHoldDistanceTime() {
     return Optional.ofNullable(routeHoldDistanceTime);
   }
 
@@ -202,7 +201,7 @@ public final class ArincAirwayLeg {
     return Optional.ofNullable(holdTime);
   }
 
-  public Optional<Double >routeDistance() {
+  public Optional<Double> routeDistance() {
     return Optional.ofNullable(routeDistance);
   }
 
@@ -379,7 +378,7 @@ public final class ArincAirwayLeg {
     private String fixSubSectionCode;
     private String continuationRecordNumber;
     private String waypointDescription;
-    private BoundaryCode boundaryCode;
+    private CustomerAreaCode boundaryCode;
     private String routeType;
     private Level level;
     private String directionRestriction;
@@ -467,7 +466,7 @@ public final class ArincAirwayLeg {
       return this;
     }
 
-    public Builder boundaryCode(BoundaryCode boundaryCode) {
+    public Builder boundaryCode(CustomerAreaCode boundaryCode) {
       this.boundaryCode = boundaryCode;
       return this;
     }

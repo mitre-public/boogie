@@ -1,10 +1,19 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.FieldSpec2;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
-public final class ArcRadius implements NumericDouble {
+/**
+ * The “ARC Radius” field is used to define the radius of a precision turn. In Terminal Procedures, this is the “Constant Radius
+ * To A Fix” Path and Termination, for “RF” Leg. In Holding Patterns, this is the turning radius, inbound to outbound leg, for
+ * RNP Holding. The ARC Radius field is also used to specify the turn radius of RNP holding patterns included in SID, STAR, and
+ * Approach Records as HA, HF, and HM legs.
+ */
+public final class ArcRadius implements FieldSpec2<Double> {
+
   @Override
   public int fieldLength() {
     return 6;
@@ -15,12 +24,11 @@ public final class ArcRadius implements NumericDouble {
     return "5.204";
   }
 
-  /**
-   * The radius of the precision turn in NM.
-   */
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, validValue(fieldValue));
-    return ArincStrings.parseDoubleWithThousandths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue)
+        .filter(ValidArincNumeric.INSTANCE)
+        .map(String::trim)
+        .map(ArincStrings::parseDoubleWithThousandths);
   }
 }

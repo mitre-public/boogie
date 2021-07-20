@@ -61,7 +61,7 @@ public final class AirwayLegSpec implements RecordSpec {
         new RecordField<>("fixSubSectionCode", new SubSectionCode()),
         new RecordField<>("continuationRecordNumber", new ContinuationRecordNumber()),
         new RecordField<>(new WaypointDescription()),
-        new RecordField<>(BoundaryCode.SPEC),
+        new RecordField<>(new BoundaryCode()),
         new RecordField<>(new RouteType()),
         new RecordField<>(Level.SPEC),
         new RecordField<>(new DirectionRestriction()),

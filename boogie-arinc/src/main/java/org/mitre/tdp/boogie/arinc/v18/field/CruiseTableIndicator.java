@@ -5,7 +5,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * a modified table of cruising levels is prescribed for use. This field permits the enroute airway record to identify the Cruise Table record
  * that is to be used for cruise levels.
  */
-public final class CruiseTableIndicator implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class CruiseTableIndicator extends TrimmableString {
 
   @Override
   public int fieldLength() {

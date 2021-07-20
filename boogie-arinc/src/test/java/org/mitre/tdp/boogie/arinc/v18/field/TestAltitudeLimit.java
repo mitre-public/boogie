@@ -1,32 +1,38 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestAltitudeLimit {
+class TestAltitudeLimit {
+
+  private static final AltitudeLimit parser = new AltitudeLimit();
 
   @Test
-  public void testFiltersTrimmableInputs() {
-    assertTrue(new AltitudeLimit().filterInput("   "));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testFiltersTrimmableInput() {
-    assertTrue(new AltitudeLimit().filterInput("   "));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
   }
 
   @Test
-  public void testParseValidLimit() {
-    assertEquals(Pair.of(18000.0d, 60000.0d), new AltitudeLimit().parseValue("180600"));
+  void testParserFiltersNonNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("AAABBB"));
   }
 
   @Test
-  public void testParseExceptionInvalidLimit() {
-    assertThrows(FieldSpecParseException.class, () -> new AltitudeLimit().parseValue("18A60A"));
+  void testParserFiltersNumericInputsWithoutEnoughCharacters() {
+    assertEquals(Optional.empty(), parser.apply("123   "));
+  }
+
+  @Test
+  void testParserReturnsAppropriateAltitudeValues() {
+    assertEquals(Optional.of(Pair.of(30000.0, 0.0)), parser.apply("300000"));
   }
 }

@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-class TestArcRadius {
+class TestComponentElevation {
 
-  private static final ArcRadius parser = new ArcRadius();
+  private static final ComponentElevation parser = new ComponentElevation();
 
   @Test
   void testParserFiltersEmptyInputs() {
@@ -23,15 +23,15 @@ class TestArcRadius {
 
   @Test
   void testParserFiltersNonNumericInputs() {
-    assertEquals(Optional.empty(), parser.apply("ACB123"));
+    assertEquals(Optional.empty(), parser.apply("HI"));
   }
 
   @Test
-  void testParserReturnsValidDoublesIfPresent() {
+  void testParserReturnsValidDoubleIfPresent() {
     assertAll(
-        () -> assertEquals(Optional.of(.868), parser.apply("000868")),
-        () -> assertEquals(Optional.of(60.), parser.apply("060000")),
-        () -> assertEquals(Optional.of(91.231), parser.apply("091231"))
+        () -> assertEquals(Optional.of(-150.0), parser.apply("-150")),
+        () -> assertEquals(Optional.of(150.0), parser.apply(" 150")),
+        () -> assertEquals(Optional.of(150.0), parser.apply("+150"))
     );
   }
 }

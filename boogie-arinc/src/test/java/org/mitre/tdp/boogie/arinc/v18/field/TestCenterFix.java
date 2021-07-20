@@ -1,13 +1,32 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class TestCenterFix {
+class TestCenterFix {
+
+  private static final CenterFix parser = new CenterFix();
 
   @Test
-  public void testFiltersTrimmableInput() {
-    assertTrue(new CenterFix().filterInput("   "));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
+  }
+
+  @Test
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
+  }
+
+  @Test
+  void testParserReturnsNonEmptyInput() {
+    assertEquals(Optional.of("HI"), parser.apply("HI"));
+  }
+
+  @Test
+  void testParserReturnsTrimmedInput() {
+    assertEquals(Optional.of("HI"), parser.apply("   HI   "));
   }
 }

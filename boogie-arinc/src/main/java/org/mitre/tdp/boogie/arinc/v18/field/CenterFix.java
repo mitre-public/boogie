@@ -5,7 +5,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * that point (Navaid or Waypoint) on which the MSA is predicated. When used on Terminal Procedure Records incorporating an “RF” Path and
  * Termination, the field represents the point (Terminal Waypoint) which defines the center of the arc flight path.
  */
-public final class CenterFix implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class CenterFix extends TrimmableString {
+
   @Override
   public int fieldLength() {
     return 5;

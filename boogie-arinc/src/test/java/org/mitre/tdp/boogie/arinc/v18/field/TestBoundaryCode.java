@@ -1,27 +1,27 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestBoundaryCode {
+class TestBoundaryCode {
+
+  private static final BoundaryCode parser = new BoundaryCode();
 
   @Test
-  public void testParseValidBoundaryCode() {
-    assertEquals(BoundaryCode.USA, BoundaryCode.SPEC.parseValue("U"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testThrowsExceptionWhenBoundaryCodeNotFound() {
-    assertThrows(FieldSpecParseException.class, () -> BoundaryCode.SPEC.parse("I"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
   }
 
   @Test
-  public void testParsesAllValidBoundaryCodes() {
-    Arrays.stream(BoundaryCode.values()).filter(code -> !code.equals(BoundaryCode.SPEC)).forEach(code -> assertEquals(code, BoundaryCode.SPEC.parseValue(code.boundaryCode())));
+  void testParserReturnsValidBoundaryCodeOnMatch() {
+    assertEquals(Optional.of(CustomerAreaCode.USA), parser.apply(" U "));
   }
 }
