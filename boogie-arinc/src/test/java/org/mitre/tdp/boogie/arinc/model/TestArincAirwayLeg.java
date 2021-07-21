@@ -26,7 +26,7 @@ class TestArincAirwayLeg {
 
   @Test
   void testFieldAccess() {
-    ArincAirwayLeg airway = ArincVersion.V18.parser().apply(TestAirwayLegSpec.airway3).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincAirwayLeg airway = ArincVersion.V18.parser().apply(TestAirwayLegSpec.airway3).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, airway.recordType()),

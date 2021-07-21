@@ -8,7 +8,6 @@ import java.io.File;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
-import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
@@ -37,21 +36,41 @@ import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 
 class TestConvertingArincRecordConsumer {
 
+  private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-kjfk-v18.txt"));
+
+  @BeforeAll
+  static void setup() {
+    fileParser.apply(arincTestFile).forEach(testV18Consumer);
+  }
+
+  @Test
+  void testConvertingArincRecordConsumer_V18() {
+    assertAll(
+        () -> assertEquals(1, testV18Consumer.arincAirports().size(), "Airport count"),
+        () -> assertEquals(0, testV18Consumer.arincAirwayLegs().size(), "AirwayLeg count"),
+        () -> assertEquals(7, testV18Consumer.arincLocalizerGlideSlopes().size(), "LocalizerGlideSlope count"),
+        () -> assertEquals(0, testV18Consumer.arincNdbNavaids().size(), "NdbNavaid count"),
+        () -> assertEquals(364, testV18Consumer.arincProcedureLegs().size(), "ProcedureLeg count"),
+        () -> assertEquals(8, testV18Consumer.arincRunways().size(), "Runway count"),
+        () -> assertEquals(0, testV18Consumer.arincVhfNavaids().size(), "VhfNavaid count"),
+        () -> assertEquals(70, testV18Consumer.arincWaypoints().size(), "Waypoint count")
+    );
+  }
+
   /**
    * In implementation this could be done from {@link ArincVersion} - e.g. new ArincFileParser(ArincVersion.V19.parser());
    */
   private static final ArincFileParser fileParser = new ArincFileParser(
-      new ArincRecordParser(
-          new AirportSpec(),
-          new AirwayLegSpec(),
-          new LocalizerGlideSlopeSpec(),
-          new NdbNavaidSpec(),
-          // the V19 leg spec - thanks CIFP
-          new ProcedureLegSpec(),
-          new RunwaySpec(),
-          new VhfNavaidSpec(),
-          new WaypointSpec()
-      ));
+      new AirportSpec(),
+      new AirwayLegSpec(),
+      new LocalizerGlideSlopeSpec(),
+      new NdbNavaidSpec(),
+      // the V19 leg spec - thanks CIFP
+      new ProcedureLegSpec(),
+      new RunwaySpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec()
+  );
 
   /**
    * In implementation this could be done from the factory class {@link ConvertingArincRecordConsumerFactory}.
@@ -74,25 +93,4 @@ class TestConvertingArincRecordConsumer {
       .waypointDelegator(new WaypointValidator())
       .waypointConverter(new WaypointConverter())
       .build();
-
-  private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-kjfk-v18.txt"));
-
-  @BeforeAll
-  static void setup() {
-    fileParser.apply(arincTestFile).forEach(testV18Consumer);
-  }
-
-  @Test
-  void testConvertingArincRecordConsumer_V18() {
-    assertAll(
-        () -> assertEquals(1, testV18Consumer.arincAirports().size(), "Airport count"),
-        () -> assertEquals(0, testV18Consumer.arincAirwayLegs().size(), "AirwayLeg count"),
-        () -> assertEquals(7, testV18Consumer.arincLocalizerGlideSlopes().size(), "LocalizerGlideSlope count"),
-        () -> assertEquals(0, testV18Consumer.arincNdbNavaids().size(), "NdbNavaid count"),
-        () -> assertEquals(364, testV18Consumer.arincProcedureLegs().size(), "ProcedureLeg count"),
-        () -> assertEquals(8, testV18Consumer.arincRunways().size(), "Runway count"),
-        () -> assertEquals(0, testV18Consumer.arincVhfNavaids().size(), "VhfNavaid count"),
-        () -> assertEquals(70, testV18Consumer.arincWaypoints().size(), "Waypoint count")
-    );
-  }
 }

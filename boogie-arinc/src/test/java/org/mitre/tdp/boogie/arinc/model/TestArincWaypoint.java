@@ -27,7 +27,7 @@ class TestArincWaypoint {
 
   @Test
   void testEnrouteFieldAccess() {
-    ArincWaypoint waypoint = ArincVersion.V18.parser().apply(enrouteWaypoint).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincWaypoint waypoint = ArincVersion.V18.parser().apply(enrouteWaypoint).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, waypoint.recordType()),
@@ -54,7 +54,7 @@ class TestArincWaypoint {
 
   @Test
   void tesTerminalFieldAccess() {
-    ArincWaypoint waypoint = ArincVersion.V18.parser().apply(terminalWaypoint).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincWaypoint waypoint = ArincVersion.V18.parser().apply(terminalWaypoint).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, waypoint.recordType()),

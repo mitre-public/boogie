@@ -26,7 +26,7 @@ class TestArincLocalizerGlideSlope {
 
   @Test
   void testFieldAccess() {
-    ArincLocalizerGlideSlope localizer = ArincVersion.V18.parser().apply(glideslope1).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincLocalizerGlideSlope localizer = ArincVersion.V18.parser().apply(glideslope1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, localizer.recordType(), "RecordType"),

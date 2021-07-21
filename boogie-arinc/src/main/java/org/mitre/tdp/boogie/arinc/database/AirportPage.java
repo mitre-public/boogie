@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 
 /**
@@ -26,19 +27,22 @@ final class AirportPage {
   private final Map<String, List<ArincProcedureLeg>> procedureLegs;
   private final Map<String, ArincWaypoint> waypoints;
   private final Map<String, ArincNdbNavaid> ndbNavaids;
+  private final Map<String, ArincVhfNavaid> vhfNavaids;
 
   AirportPage(
       ArincAirport airport,
       Map<String, RunwayPage> runwayPages,
       Map<String, List<ArincProcedureLeg>> procedureLegs,
       Map<String, ArincWaypoint> waypoints,
-      Map<String, ArincNdbNavaid> ndbNavaids
+      Map<String, ArincNdbNavaid> ndbNavaids,
+      Map<String, ArincVhfNavaid> vhfNavaids
   ) {
     this.airport = requireNonNull(airport);
     this.runwayPages = runwayPages;
     this.procedureLegs = procedureLegs;
     this.waypoints = waypoints;
     this.ndbNavaids = ndbNavaids;
+    this.vhfNavaids = vhfNavaids;
   }
 
   public ArincAirport airport() {
@@ -87,5 +91,13 @@ final class AirportPage {
 
   public Collection<ArincNdbNavaid> ndbNavaids() {
     return ndbNavaids.values();
+  }
+
+  public Optional<ArincVhfNavaid> vhfNavaid(String identifier) {
+    return Optional.ofNullable(vhfNavaids.get(identifier));
+  }
+
+  public Collection<ArincVhfNavaid> vhfNavaids() {
+    return vhfNavaids.values();
   }
 }

@@ -25,7 +25,7 @@ class TestArincNdbNavaid {
 
   @Test
   void testFieldAccess() {
-    ArincNdbNavaid navaid = ArincVersion.V18.parser().apply(TestNdbNavaidSpec.navaid1).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincNdbNavaid navaid = ArincVersion.V18.parser().apply(TestNdbNavaidSpec.navaid1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),

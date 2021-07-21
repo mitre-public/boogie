@@ -25,7 +25,7 @@ class TestArincRunway {
 
   @Test
   void testFieldAccess() {
-    ArincRunway runway = ArincVersion.V18.parser().apply(TestRunwaySpec.runway1).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincRunway runway = ArincVersion.V18.parser().apply(TestRunwaySpec.runway1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, runway.recordType()),

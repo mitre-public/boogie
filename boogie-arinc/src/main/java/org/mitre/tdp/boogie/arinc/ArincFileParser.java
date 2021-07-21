@@ -31,7 +31,8 @@ public final class ArincFileParser implements Function<File, Collection<ArincRec
 
   @Override
   public Collection<ArincRecord> apply(File file) {
-    try (FileLineIterator lineIterator = new FileLineIterator(requireNonNull(file))) {
+    requireNonNull(file);
+    try (FileLineIterator lineIterator = new FileLineIterator(file)) {
 
       LinkedHashSet<ArincRecord> records = new LinkedHashSet<>();
       LOG.debug("Beginning scan of file {} for ARINC records.", file);

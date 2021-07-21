@@ -56,7 +56,7 @@ public final class FixDatabase {
   public Optional<ArincWaypoint> terminalWaypoint(String identifier) {
     Collection<ArincWaypoint> waypoints = castingLookup(
         ArincWaypoint.class,
-        new ArincKey(identifier, null, SectionCode.P, "N")
+        new ArincKey(identifier, null, SectionCode.P, "C")
     );
     return highlander(waypoints);
   }
@@ -75,7 +75,7 @@ public final class FixDatabase {
           Collection<ArincWaypoint> waypoints = castingLookup(
               ArincWaypoint.class,
               new ArincKey(identifier, null, SectionCode.E, "A"), // enroute
-              new ArincKey(identifier, null, SectionCode.P, "N")  // terminal
+              new ArincKey(identifier, null, SectionCode.P, "C")  // terminal
           );
           return waypoints.stream();
         })
@@ -85,7 +85,7 @@ public final class FixDatabase {
   public Optional<ArincWaypoint> terminalWaypoint(String identifier, String icaoRegion) {
     Collection<ArincWaypoint> waypoints = castingLookup(
         ArincWaypoint.class,
-        new ArincKey(identifier, icaoRegion, SectionCode.P, "N")
+        new ArincKey(identifier, icaoRegion, SectionCode.P, "C")
     );
     return highlander(waypoints);
   }

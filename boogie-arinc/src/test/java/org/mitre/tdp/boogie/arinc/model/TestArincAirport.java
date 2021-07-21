@@ -25,7 +25,7 @@ class TestArincAirport {
 
   @Test
   void testFieldAccess() {
-    ArincAirport airport = ArincVersion.V18.parser().apply(TestAirportSpec.KJFK).flatMap(new AirportConverter()).orElseThrow(AssertionError::new);
+    ArincAirport airport = ArincVersion.V18.parser().apply(TestAirportSpec.KJFK).flatMap(new AirportConverter()).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, airport.recordType()),

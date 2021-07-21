@@ -28,7 +28,7 @@ class TestArincProcedureLeg {
 
   @Test
   void testFieldAccessTF() {
-    ArincProcedureLeg procedureLeg = ArincVersion.V18.parser().apply(TF).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincProcedureLeg procedureLeg = ArincVersion.V18.parser().apply(TF).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, procedureLeg.recordType()),

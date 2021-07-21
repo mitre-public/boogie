@@ -26,7 +26,7 @@ class TestArincVhfNavaid {
 
   @Test
   void testFieldAccess() {
-    ArincVhfNavaid navaid = ArincVersion.V18.parser().apply(TestVhfNavaidSpec.navaid2).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincVhfNavaid navaid = ArincVersion.V18.parser().apply(TestVhfNavaidSpec.navaid2).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),
