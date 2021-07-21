@@ -1,10 +1,20 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
-public final class GlideSlopeAngle implements NumericDouble, FilterTrimEmptyInput<Double> {
+/**
+ * The “Glide Slope Angle” field defines the glide slope angle of an ILS facility/GLS approach. The “Minimum Elevation Angle”
+ * field defines the lowest elevation angle authorized for the MLS procedure.
+ * <br>
+ * Glide Slope and Elevation angles from official government sources are entered into the fields in degrees, tenths of a degree
+ * and hundredths of a degree with the decimal point suppressed.
+ */
+public final class GlideSlopeAngle implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 3;
@@ -16,8 +26,7 @@ public final class GlideSlopeAngle implements NumericDouble, FilterTrimEmptyInpu
   }
 
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, validValue(fieldValue));
-    return ArincStrings.parseDoubleWithHundredths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithHundredths);
   }
 }

@@ -3,7 +3,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * Enroute airway records have an optional sixth character on the route name.
  */
-public final class SixthCharacter implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class SixthCharacter extends TrimmableString {
+
   @Override
   public int fieldLength() {
     return 1;

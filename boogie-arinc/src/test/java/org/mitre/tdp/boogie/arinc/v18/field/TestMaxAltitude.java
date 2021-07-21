@@ -1,21 +1,49 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestMaxAltitude {
+class TestMaxAltitude {
+
+  private static final MaxAltitude parser = new MaxAltitude();
 
   @Test
-  public void testParseExceptionSpecialAltitude() {
-    assertThrows(FieldSpecParseException.class, () -> new MaxAltitude().parseValue("UNLTD"));
+  void testParserFiltersEmptyString() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testPreFiltersSpecialAltitudeCodes() {
-    MaxAltitude spec = new MaxAltitude();
-    spec.specialAltitudeCodes().forEach(code -> assertTrue(spec.filterInput(code)));
+  void testParserRemovesWhitespace() {
+    assertEquals(Optional.empty(), parser.apply("     "));
+  }
+
+  @Test
+  void testParserFiltersNonNumericFlightLevel() {
+    assertEquals(Optional.empty(), parser.apply("FLAVA"));
+  }
+
+  @Test
+  void testParserFiltersNonNumericFeet() {
+    assertEquals(Optional.empty(), parser.apply("1234A"));
+  }
+
+  /**
+   * For now - this may be updated at a later date.
+   */
+  @Test
+  void testParserFiltersUNLTD() {
+    assertEquals(Optional.empty(), parser.apply("UNLTD"));
+  }
+
+  @Test
+  void testParserReturnsValidMaxAltitudesInFeet() {
+    assertAll(
+        () -> assertEquals(Optional.of(18000.), parser.apply("FL180")),
+        () -> assertEquals(Optional.of(18000.), parser.apply("18000"))
+    );
   }
 }

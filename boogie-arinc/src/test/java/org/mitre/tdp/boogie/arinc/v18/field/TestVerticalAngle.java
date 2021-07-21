@@ -1,30 +1,32 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestVerticalAngle {
+class TestVerticalAngle {
+
+  private static final VerticalAngle parser = new VerticalAngle();
 
   @Test
-  public void testParseValidAngle() {
-    assertEquals(-9.69, new VerticalAngle().parseValue("-969"));
+  void testParseValidAngle() {
+    assertEquals(Optional.of(-9.69), parser.apply("-969"));
   }
 
   @Test
-  public void testParsesZeroVerticalAngle() {
-    assertEquals(0.0d, new VerticalAngle().parseValue(" 000"));
+  void testParsesZeroVerticalAngle() {
+    assertEquals(Optional.of(.0d), parser.apply(" 000"));
   }
 
   @Test
-  public void testParseExceptionAngleTooHigh() {
-    assertThrows(FieldSpecParseException.class, () -> new VerticalAngle().parseValue("-1045"));
+  void testParseExceptionAngleTooHigh() {
+    assertEquals(Optional.empty(), parser.apply("-1045"));
   }
 
   @Test
-  public void testParseExceptionBadAngle() {
-    assertThrows(FieldSpecParseException.class, () -> new VerticalAngle().parseValue("-12A"));
+  void testParseExceptionBadAngle() {
+    assertEquals(Optional.empty(), parser.apply("-12A"));
   }
 }

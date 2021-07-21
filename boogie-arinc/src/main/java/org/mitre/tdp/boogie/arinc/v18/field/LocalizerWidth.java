@@ -1,15 +1,16 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * The "Localizer Width" field specifies the localizer course width of the ILS facility defined in the record.
  */
-public final class LocalizerWidth implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class LocalizerWidth implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 4;
@@ -20,12 +21,8 @@ public final class LocalizerWidth implements FieldSpec<Double>, FilterTrimEmptyI
     return "5.51";
   }
 
-  /**
-   * The localizer width in degrees
-   */
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return ArincStrings.parseDoubleWithHundredths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithHundredths);
   }
 }

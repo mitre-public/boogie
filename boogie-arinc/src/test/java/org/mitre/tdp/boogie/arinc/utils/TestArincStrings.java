@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.copyWithBlanks;
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.isBlank;
@@ -9,9 +8,10 @@ import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.parseDoubleWithTenth
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.parseDoubleWithThousandths;
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
 class TestArincStrings {
 
@@ -59,19 +59,19 @@ class TestArincStrings {
     }
 
     @Override
-    public Dummy parseValue(String fieldValue) {
+    public Optional<Dummy> apply(String fieldValue) {
       return toEnumValue(fieldValue, Dummy.class);
     }
   }
 
   @Test
   void testToEnumValueWithValidString() {
-    assertEquals(Dummy.A, toEnumValue("A", Dummy.class));
+    assertEquals(Optional.of(Dummy.A), toEnumValue("A", Dummy.class));
   }
 
   @Test
-  void testToEnumValueThrowsParseExceptionWhenNameNotFound() {
-    assertThrows(FieldSpecParseException.class, () -> toEnumValue("C", Dummy.class));
+  void testToEnumValueReturnsEmptyWhenNameNotFound() {
+    assertEquals(Optional.empty(), toEnumValue("C", Dummy.class));
   }
 
   @Test

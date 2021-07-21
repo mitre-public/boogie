@@ -1,16 +1,15 @@
 package org.mitre.tdp.boogie.arinc.v19.field;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
 
+import java.util.Optional;
 import java.util.Set;
 
-import org.mitre.tdp.boogie.arinc.v18.field.FilterTrimEmptyInput;
-import org.mitre.tdp.boogie.arinc.v18.field.FreeFormString;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 import com.google.common.collect.Sets;
 
-public final class RouteTypeQualifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class RouteTypeQualifier implements FieldSpec<String> {
 
   @Override
   public int fieldLength() {
@@ -23,9 +22,8 @@ public final class RouteTypeQualifier implements FreeFormString, FilterTrimEmpty
   }
 
   @Override
-  public String parseValue(String rawField) {
-    checkSpec(this, rawField, allowedCodes.contains(rawField));
-    return rawField;
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(allowedCodes::contains);
   }
 
   /**

@@ -1,36 +1,32 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestStationDeclination {
+class TestStationDeclination {
+
+  private static final StationDeclination parser = new StationDeclination();
 
   @Test
-  public void testEastValidVariationIsPositive() {
-    assertEquals(14.0, new StationDeclination().parseValue("E0140"));
+  void testEastValidVariationIsPositive() {
+    assertEquals(Optional.of(14.), parser.apply("E0140"));
   }
 
   @Test
-  public void testWestValidVariationIsNegative() {
-    assertEquals(-14.0, new StationDeclination().parseValue("W0140"));
+  void testWestValidVariationIsNegative() {
+    assertEquals(Optional.of(-14.), parser.apply("W0140"));
   }
 
   @Test
-  public void testTrueVariationsAreSkipped() {
-    assertFalse(new StationDeclination().parse("T0140").isPresent());
+  void testTrueVariationsAreSkipped() {
+    assertEquals(Optional.empty(), parser.apply("T0140"));
   }
 
   @Test
-  public void testGridVariationsAreSkipped() {
-    assertFalse(new StationDeclination().parse("G0140").isPresent());
-  }
-
-  @Test
-  public void testTrueVariationThrowsParseException() {
-    assertThrows(FieldSpecParseException.class, () -> new StationDeclination().parseValue("T0140"));
+  void testGridVariationsAreSkipped() {
+    assertEquals(Optional.empty(), parser.apply("G0140"));
   }
 }

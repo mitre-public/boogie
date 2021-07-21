@@ -1,20 +1,37 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestFixRadiusTransitionIndicator {
+class TestFixRadiusTransitionIndicator {
+
+  private static final FixedRadiusTransitionIndicator parser = new FixedRadiusTransitionIndicator();
 
   @Test
-  public void testParseValidFixRadius() {
-    assertEquals(96.9d, new FixedRadiusTransitionIndicator().parseValue("969"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseExceptionInValidFixRadius() {
-    assertThrows(FieldSpecParseException.class, () -> new FixedRadiusTransitionIndicator().parseValue("9A5"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
+  }
+
+  @Test
+  void testParserFiltersNonNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("HI"));
+  }
+
+  @Test
+  void testParserReturnsValidDoubleIfPresent() {
+    assertAll(
+        () -> assertEquals(Optional.of(-15.0), parser.apply("-150")),
+        () -> assertEquals(Optional.of(15.0), parser.apply(" 150")),
+        () -> assertEquals(Optional.of(15.0), parser.apply("+150"))
+    );
   }
 }

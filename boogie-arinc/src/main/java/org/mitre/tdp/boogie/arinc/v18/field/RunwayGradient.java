@@ -1,10 +1,13 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
-public final class RunwayGradient implements NumericDouble {
+public final class RunwayGradient implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 5;
@@ -16,8 +19,7 @@ public final class RunwayGradient implements NumericDouble {
   }
 
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, validValue(fieldValue));
-    return ArincStrings.parseDoubleWithThousandths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithThousandths);
   }
 }

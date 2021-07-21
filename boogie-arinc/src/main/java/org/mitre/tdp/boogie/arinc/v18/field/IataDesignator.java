@@ -3,7 +3,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The “ATA/IATA” field contains the Airport/Heliport ATA/IATA designator code to which the data contained in the record relates.
  */
-public final class IataDesignator implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class IataDesignator extends TrimmableString {
+
   @Override
   public int fieldLength() {
     return 3;

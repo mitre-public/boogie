@@ -1,12 +1,15 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * The “EU Indicator” field is used to identify those Enroute Airway records that have an Airway Restriction record
  * without identifying the restriction.
+ * <br>
+ * The field will contain the alpha character “Y” when a restriction for the segment is contained in the restriction
+ * file or a blank when no restriction record exists.
  */
 public final class EuIndicator implements FieldSpec<Boolean> {
 
@@ -21,8 +24,7 @@ public final class EuIndicator implements FieldSpec<Boolean> {
   }
 
   @Override
-  public Boolean parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, fieldValue.trim().isEmpty() || fieldValue.equalsIgnoreCase("Y"));
-    return fieldValue.equalsIgnoreCase("Y");
+  public Optional<Boolean> apply(String fieldValue) {
+    return Optional.of(fieldValue).map("Y"::equalsIgnoreCase);
   }
 }

@@ -1,9 +1,12 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static java.lang.Math.abs;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
 
+import java.util.Optional;
+
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * The “Vertical Angle” field defines the vertical navigation path prescribed for the procedure. The vertical angle should cause
@@ -11,7 +14,8 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
  * for that fix at which the angle is coded. Vertical Angle information is provided only for descending vertical navigation. The
  * angle is preceded by a “–” (minus sign) to indicate the descending flight.
  */
-public final class VerticalAngle implements NumericDouble, FilterTrimEmptyInput<Double> {
+public final class VerticalAngle implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 4;
@@ -23,10 +27,11 @@ public final class VerticalAngle implements NumericDouble, FilterTrimEmptyInput<
   }
 
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, validValue(fieldValue));
-    double angle = ArincStrings.parseDoubleWithHundredths(fieldValue);
-    checkSpec(this, fieldValue, abs(angle) < 10.0);
-    return angle;
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        .filter(ValidArincNumeric.INSTANCE)
+        .map(ArincStrings::parseDoubleWithHundredths)
+        .filter(d -> abs(d) < 10.);
   }
 }

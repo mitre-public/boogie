@@ -7,7 +7,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * <br>
  * Note - Record numbers can be repeated, once the number hits 99999 the counter resets to 00000.
  */
-public final class FileRecordNumber implements NumericInteger {
+public final class FileRecordNumber extends ArincInteger {
 
   @Override
   public int fieldLength() {

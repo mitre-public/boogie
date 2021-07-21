@@ -87,7 +87,7 @@ public final class ArincRecord implements Serializable {
   }
 
   /**
-   * Returns the result of applying {@link FieldSpec#parse(String)} for the provided field to the raw field value as extracted
+   * Returns the result of applying {@link FieldSpec#apply(Object)} for the provided field to the raw field value as extracted
    * from the underlying ARINC record.
    * <br>
    * The {@link FieldSpec}s themselves should be responsible for rejecting bad input values which they don't know how to parse
@@ -96,7 +96,7 @@ public final class ArincRecord implements Serializable {
    */
   public <T> Optional<T> optionalField(String fieldName) {
     Optional<FieldSpec<T>> spec = specForField(fieldName);
-    return spec.flatMap(s -> s.parse(rawField(fieldName)));
+    return spec.flatMap(s -> s.apply(rawField(fieldName)));
   }
 
   /**

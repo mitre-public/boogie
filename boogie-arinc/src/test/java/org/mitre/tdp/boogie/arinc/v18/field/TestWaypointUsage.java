@@ -1,35 +1,37 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestWaypointUsage {
+class TestWaypointUsage {
+
+  private static final WaypointUsage parser = new WaypointUsage();
 
   @Test
-  public void testPassOnValidColumn12() {
-    assertEquals("RB", new WaypointUsage().parseValue("RB"));
+  void testPassOnValidColumn12() {
+    assertEquals(Optional.of("RB"), parser.apply("RB"));
   }
 
   @Test
-  public void testPassOnBlankColumn1() {
-    assertEquals(" B", new WaypointUsage().parseValue(" B"));
+  void testPassOnBlankColumn1() {
+    assertEquals(Optional.of(" B"), parser.apply(" B"));
   }
 
   @Test
-  public void testPassOnBlankColumn2() {
-    assertEquals("R ", new WaypointUsage().parseValue("R "));
+  void testPassOnBlankColumn2() {
+    assertEquals(Optional.of("R "), parser.apply("R "));
   }
 
   @Test
-  public void testParseExceptionOnNonRColumn1() {
-    assertThrows(FieldSpecParseException.class, () -> new WaypointUsage().parseValue("QB"));
+  void testParseEmptyOnNonRColumn1() {
+    assertEquals(Optional.empty(), parser.apply("QB"));
   }
 
   @Test
-  public void testParseExceptionOnInvalidColumn2() {
-    assertThrows(FieldSpecParseException.class, () -> new WaypointUsage().parseValue("RA"));
+  void testParseEmptyOnInvalidColumn2() {
+    assertEquals(Optional.empty(), parser.apply("RA"));
   }
 }

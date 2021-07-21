@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
  * <br>
  * This class trims the input field value - treating any strings which are empty when trimmed as "null/missing" values.
  */
-public final class AirportHeliportElevation implements FieldSpec2<Double> {
+public final class AirportHeliportElevation implements FieldSpec<Double> {
 
   @Override
   public int fieldLength() {

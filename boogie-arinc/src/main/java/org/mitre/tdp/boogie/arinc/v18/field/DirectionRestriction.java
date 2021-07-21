@@ -1,9 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import static com.google.common.collect.Sets.newHashSet;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
@@ -11,6 +11,12 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * The “Direction Restriction” field, when used on Enroute Airway records, will indicate the direction an Enroute Airway is to be flown.
  * The “Direction Restriction” field, when used on Preferred Route records, will indicate whether the routing is available only in the
  * direction of “from initial fix to terminus fix” or in both directions.
+ * <br>
+ * There are three candidate values for this field:
+ * <br>
+ * 1. F - only flyable forward
+ * 2. B - only flyable backwards
+ * 3. blank - no direction restriction
  */
 public final class DirectionRestriction implements FieldSpec<String> {
 
@@ -24,16 +30,10 @@ public final class DirectionRestriction implements FieldSpec<String> {
     return "5.115";
   }
 
-  @Override
-  public String parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, allowedValues().contains(fieldValue));
-    return fieldValue;
-  }
+  private static final HashSet<String> allowedValues = newHashSet(" ", "F", "B");
 
-  /**
-   * Allowed values for the field.
-   */
-  public List<String> allowedValues() {
-    return Arrays.asList(" ", "F", "B");
+  @Override
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).filter(allowedValues::contains);
   }
 }

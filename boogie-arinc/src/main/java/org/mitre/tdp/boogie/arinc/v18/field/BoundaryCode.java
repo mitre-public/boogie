@@ -2,13 +2,13 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * Routes of flight frequently cross geographical boundaries. The “Boundary Code” field identifies the area into, or from which
  * a continuous route passes when such a crossing occurs.
  */
-public final class BoundaryCode implements FieldSpec2<CustomerAreaCode> {
+public final class BoundaryCode implements FieldSpec<CustomerAreaCode> {
 
   @Override
   public int fieldLength() {

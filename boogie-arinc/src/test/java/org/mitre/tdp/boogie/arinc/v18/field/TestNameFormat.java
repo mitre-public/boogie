@@ -1,46 +1,42 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestNameFormat {
+class TestNameFormat {
+
+  private static final NameFormat parser = new NameFormat();
 
   @Test
-  public void testParserFiltersEmptyString() {
-    assertTrue(new NameFormat().filterInput("   "));
+  void testParserFiltersWhitespaceInput() {
+    assertEquals(Optional.of("   "), parser.apply("   "));
   }
 
   @Test
   public void testParseValidNameFormatColumn1() {
-    assertEquals("A  ", new NameFormat().parseValue("A  "));
+    assertAll(
+        () -> assertEquals(Optional.of("A  "), parser.apply("A  ")),
+        () -> assertEquals(Optional.of("   "), parser.apply("Z  "), "Invalid value should be returned as empty")
+    );
   }
 
   @Test
   public void testParseValidNameFormatColumn2() {
-    assertEquals(" O ", new NameFormat().parseValue(" O "));
+    assertAll(
+        () -> assertEquals(Optional.of(" O "), parser.apply(" O ")),
+        () -> assertEquals(Optional.of("   "), parser.apply(" Q "), "Invalid value should be returned as empty")
+    );
   }
 
   @Test
   public void testParseValidNameFormatColumn3() {
-    assertEquals("   ", new NameFormat().parseValue("   "));
-  }
-
-  @Test
-  public void testParseInvalidNameFormatColumn1(){
-    assertThrows(FieldSpecParseException.class, () -> new NameFormat().parseValue("Z  "));
-  }
-
-  @Test
-  public void testParseInvalidNameFormatColumn2(){
-    assertThrows(FieldSpecParseException.class, () -> new NameFormat().parseValue(" Q "));
-  }
-
-  @Test
-  public void testParseInvalidNameFormatColumn3(){
-    assertThrows(FieldSpecParseException.class, () -> new NameFormat().parseValue("  Z"));
+    assertAll(
+        () -> assertEquals(Optional.of("   "), parser.apply("   ")),
+        () -> assertEquals(Optional.of("   "), parser.apply("  Z"), "Invalid value should be returned as empty")
+    );
   }
 }

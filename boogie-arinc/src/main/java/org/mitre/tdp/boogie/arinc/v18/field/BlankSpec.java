@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
@@ -23,12 +25,12 @@ public final class BlankSpec implements FieldSpec<Void> {
     throw new UnsupportedOperationException("Cannot get field code for empty field.");
   }
 
-  @Override
-  public Void parseValue(String fieldValue) {
-    throw new UnsupportedOperationException("Unable to apply parsing logic to blank record portion.");
-  }
-
   public static BlankSpec ofLength(int fieldLength) {
     return new BlankSpec(fieldLength);
+  }
+
+  @Override
+  public Optional<Void> apply(String s) {
+    throw new UnsupportedOperationException("Cannot apply blank spec for field parsing.");
   }
 }

@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The “Datum Code” field defines the Local Horizontal Reference Datum to which a geographical position, expressed in latitude and longitude, is associated.
  */
-public final class DatumCode implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class DatumCode extends TrimmableString {
 
   @Override
   public int fieldLength() {

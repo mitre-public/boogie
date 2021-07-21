@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
-
-import java.time.Instant;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
@@ -26,13 +23,7 @@ public final class Cycle implements FieldSpec<String> {
   }
 
   @Override
-  public String parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, isNumeric(fieldValue));
-    checkSpec(this, fieldValue, () -> new AiracCycle(fieldValue));
-    return fieldValue;
-  }
-
-  public Instant asStartDate(String fieldString) {
-    return new AiracCycle(fieldString).startDate();
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).filter(AiracCycle::isValidCycle);
   }
 }

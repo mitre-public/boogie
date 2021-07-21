@@ -1,13 +1,17 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class TestRecommendedNavaid {
+class TestRecommendedNavaid {
+
+  private static final RecommendedNavaid parser = new RecommendedNavaid();
 
   @Test
-  public void testFiltersTrimmableInput() {
-    assertTrue(new RecommendedNavaid().filterInput("   "));
+  void testFiltersTrimmableInput() {
+    assertEquals(Optional.empty(), parser.apply("   "));
   }
 }

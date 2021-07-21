@@ -1,35 +1,35 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestSpeedLimitDescription {
+class TestSpeedLimitDescription {
 
   @Test
-  public void testBlankDescriptionIsAt() {
-    assertEquals(SpeedLimitDescription.AT, SpeedLimitDescription.SPEC.parseValue(" "));
+  void testBlankDescriptionIsAt() {
+    assertEquals(Optional.of(SpeedLimitDescription.AT), SpeedLimitDescription.SPEC.apply(" "));
   }
 
   @Test
-  public void testApersandDescriptionIsAt() {
-    assertEquals(SpeedLimitDescription.AT, SpeedLimitDescription.SPEC.parseValue("@"));
+  void testApersandDescriptionIsAt() {
+    assertEquals(Optional.of(SpeedLimitDescription.AT), SpeedLimitDescription.SPEC.apply("@"));
   }
 
   @Test
-  public void testPlusDescriptionIsAtOrAbove() {
-    assertEquals(SpeedLimitDescription.AT_OR_ABOVE, SpeedLimitDescription.SPEC.parseValue("+"));
+  void testPlusDescriptionIsAtOrAbove() {
+    assertEquals(Optional.of(SpeedLimitDescription.AT_OR_ABOVE), SpeedLimitDescription.SPEC.apply("+"));
   }
 
   @Test
-  public void testMinusDescriptionIsAtOrBelow() {
-    assertEquals(SpeedLimitDescription.AT_OR_BELOW, SpeedLimitDescription.SPEC.parseValue("-"));
+  void testMinusDescriptionIsAtOrBelow() {
+    assertEquals(Optional.of(SpeedLimitDescription.AT_OR_BELOW), SpeedLimitDescription.SPEC.apply("-"));
   }
 
   @Test
-  public void testFailOnUnsupportedInput() {
-    assertThrows(FieldSpecParseException.class, () -> SpeedLimitDescription.SPEC.parseValue("HI"));
+  void testFiltersUnsupportedInput() {
+    assertEquals(Optional.empty(), SpeedLimitDescription.SPEC.apply("HI"));
   }
 }

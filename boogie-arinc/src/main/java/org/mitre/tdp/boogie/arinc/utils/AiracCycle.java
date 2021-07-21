@@ -1,9 +1,13 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import org.mitre.caasd.commons.TimeWindow;
 
@@ -72,5 +76,11 @@ public final class AiracCycle {
    */
   public boolean fallsWithinCycle(Instant dt) {
     return asTimeWindow().contains(dt);
+  }
+
+  private static final Predicate<String> isAiracCycle = Pattern.compile("^(\\d{2})(\\d{2})$").asPredicate();
+
+  public static boolean isValidCycle(String cycle) {
+    return isAiracCycle.test(requireNonNull(cycle));
   }
 }

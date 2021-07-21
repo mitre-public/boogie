@@ -3,7 +3,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The elevation of the landing threshold of the runway described in a runway record is defined in the “Landing Threshold Elevation” field.
  */
-public final class LandingThresholdElevation implements NumericInteger {
+public final class LandingThresholdElevation extends ArincInteger {
+
   @Override
   public int fieldLength() {
     return 5;

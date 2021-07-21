@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
 /**
  * The “Speed Limit Description” field will designate whether the speed limit coded at a fix in a terminal procedure
@@ -33,15 +34,15 @@ public enum SpeedLimitDescription implements FieldSpec<SpeedLimitDescription> {
   }
 
   @Override
-  public SpeedLimitDescription parseValue(String fieldValue) {
+  public Optional<SpeedLimitDescription> apply(String fieldValue) {
     if (fieldValue.trim().isEmpty() || fieldValue.equals("@")) {
-      return SpeedLimitDescription.AT;
+      return Optional.of(SpeedLimitDescription.AT);
     } else if (fieldValue.equals("+")) {
-      return SpeedLimitDescription.AT_OR_ABOVE;
+      return Optional.of(SpeedLimitDescription.AT_OR_ABOVE);
     } else if (fieldValue.equals("-")) {
-      return SpeedLimitDescription.AT_OR_BELOW;
+      return Optional.of(SpeedLimitDescription.AT_OR_BELOW);
     } else {
-      throw new FieldSpecParseException(this, fieldValue);
+      return Optional.empty();
     }
   }
 }

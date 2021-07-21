@@ -1,25 +1,27 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestRunwayGradient {
+class TestRunwayGradient {
+
+  private static final RunwayGradient parser = new RunwayGradient();
 
   @Test
-  public void testParseValidRunwayGradient() {
-    assertEquals(0.45, new RunwayGradient().parseValue("+0450"));
+  void testParseValidRunwayGradient() {
+    assertEquals(Optional.of(.45), parser.apply("+0450"));
   }
 
   @Test
-  public void testParseNegativeRunwayGradient() {
-    assertEquals(-0.3, new RunwayGradient().parseValue("-0300"));
+  void testParseNegativeRunwayGradient() {
+    assertEquals(Optional.of(-.3), parser.apply("-0300"));
   }
 
   @Test
-  public void testParseExceptionOnInvalidRunwayGradient() {
-    assertThrows(FieldSpecParseException.class, () -> new RunwayGradient().parseValue("110AB"));
+  void testReturnsEmptyOnInvalidInput() {
+    assertEquals(Optional.empty(), parser.apply("110AB"));
   }
 }

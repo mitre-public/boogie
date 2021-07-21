@@ -1,13 +1,17 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class TestRouteType {
+class TestRouteType {
+
+  private static final RouteType parser = new RouteType();
 
   @Test
-  public void testFiltersTrimmableInputs() {
-    assertTrue(new RouteType().filterInput("  "));
+  void testFiltersTrimmableInputs() {
+    assertEquals(Optional.empty(), parser.apply("  "));
   }
 }

@@ -1,13 +1,16 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * The Level field defines the airway structure of which the record is an element.
  */
-public enum Level implements FieldSpec<Level>, FilterTrimEmptyInput<Level> {
+public enum Level implements FieldSpec<Level> {
   SPEC,
   /**
    * All altitudes
@@ -22,6 +25,8 @@ public enum Level implements FieldSpec<Level>, FilterTrimEmptyInput<Level> {
    */
   L;
 
+  static final Set<String> enumValues = Arrays.stream(Level.values()).filter(e -> !SPEC.equals(e)).map(Enum::name).collect(Collectors.toSet());
+
   @Override
   public int fieldLength() {
     return 1;
@@ -33,7 +38,7 @@ public enum Level implements FieldSpec<Level>, FilterTrimEmptyInput<Level> {
   }
 
   @Override
-  public Level parseValue(String fieldValue) {
-    return toEnumValue(fieldValue, Level.class);
+  public Optional<Level> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(enumValues::contains).map(Level::valueOf);
   }
 }

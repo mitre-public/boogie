@@ -2,6 +2,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
@@ -9,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * universal application, or “tailored,” i.e. included  on  the  master  file  for  a  single  user’s  specific  purpose (Section
  * 1.2 of this Specification refers).
  */
-public enum RecordType implements FieldSpec<RecordType>, FilterTrimEmptyInput<RecordType> {
+public enum RecordType implements FieldSpec<RecordType> {
   SPEC,
   /**
    * Standard record types used across all aircraft and airlines.
@@ -31,7 +33,7 @@ public enum RecordType implements FieldSpec<RecordType>, FilterTrimEmptyInput<Re
   }
 
   @Override
-  public RecordType parseValue(String fieldValue) {
+  public Optional<RecordType> apply(String fieldValue) {
     return toEnumValue(fieldValue, RecordType.class);
   }
 }

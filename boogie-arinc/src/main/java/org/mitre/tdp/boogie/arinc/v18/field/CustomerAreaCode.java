@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 import com.google.common.collect.ImmutableBiMap;
 
@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableBiMap;
  * and of tailored records by the airlines for whom they are provided in the master file. Several record types do not adhere
  * to the established geographical boundaries. There is no “AREA” in such records.
  */
-public enum CustomerAreaCode implements FieldSpec2<CustomerAreaCode> {
+public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode> {
   /**
    * Intended to use to parse other boundary codes.
    *

@@ -1,15 +1,16 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
- * The “Localizer Bearing” field defines the magnetic bearing of the localizer course of the ILS facility/GLS approach described in the record.
+ * The “Localizer Bearing” field defines the magnetic bearing of the localizer course of the ILS facility/GLS approach described
+ * in the record.
  */
-public final class MinorAxisBearing implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class MinorAxisBearing implements FieldSpec<Double> {
 
   @Override
   public int fieldLength() {
@@ -21,9 +22,9 @@ public final class MinorAxisBearing implements FieldSpec<Double>, FilterTrimEmpt
     return "5.100";
   }
 
+
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return ArincStrings.parseDoubleWithTenths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithTenths);
   }
 }

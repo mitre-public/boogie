@@ -3,7 +3,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * This field will be used to further define the record by name.
  */
-public final class NameField implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class NameField extends TrimmableString {
+
   @Override
   public int fieldLength() {
     return 30;

@@ -1,31 +1,45 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestInboundMagneticCourse {
+class TestInboundMagneticCourse {
+
+  private static final InboundMagneticCourse parser = new InboundMagneticCourse();
 
   @Test
-  public void testIsTrueCourse() {
-    assertTrue(new InboundMagneticCourse().isTrueCourse("123T"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseValidInboundMagneticCourse() {
-    assertEquals(27.6, new InboundMagneticCourse().parseValue("0276"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
   }
 
   @Test
-  public void testThrowsSpecExceptionOnTrueCourse() {
-    assertThrows(FieldSpecParseException.class, () -> new InboundMagneticCourse().parseValue("123T"));
+  void testParserFiltersNonNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("ACB1"));
+  }
+
+  /**
+   * We could add handling for these later.
+   */
+  @Test
+  void testParserFiltersTrueCourseInputs() {
+    assertEquals(Optional.empty(), parser.apply("123T"));
   }
 
   @Test
-  public void testParseValidInboundMagneticCourseNoPad() {
-    assertEquals(123.7, new InboundMagneticCourse().parseValue("1237"));
+  void testParserReturnsValidDoublesIfPresent() {
+    assertAll(
+        () -> assertEquals(Optional.of(123.4), parser.apply("1234")),
+        () -> assertEquals(Optional.of(.1), parser.apply("0001")),
+        () -> assertEquals(Optional.of(40.), parser.apply("0400"))
+    );
   }
 }

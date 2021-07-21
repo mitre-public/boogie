@@ -33,7 +33,7 @@ class TestContinuationRecordNumber {
   @Test
   void testParserReturnsNonEmptyCharacterInput() {
 
-    assertEquals(Optional.of("0"), parser.apply("A"));
+    assertEquals(Optional.of("A"), parser.apply("A"));
   }
 
   @Test

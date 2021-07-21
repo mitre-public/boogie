@@ -2,9 +2,11 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
-public enum TurnDirection implements FieldSpec<TurnDirection>, FilterTrimEmptyInput<TurnDirection> {
+public enum TurnDirection implements FieldSpec<TurnDirection> {
   SPEC,
   /**
    * Left
@@ -30,7 +32,7 @@ public enum TurnDirection implements FieldSpec<TurnDirection>, FilterTrimEmptyIn
   }
 
   @Override
-  public TurnDirection parseValue(String fieldValue) {
+  public Optional<TurnDirection> apply(String fieldValue) {
     return toEnumValue(fieldValue, TurnDirection.class);
   }
 }

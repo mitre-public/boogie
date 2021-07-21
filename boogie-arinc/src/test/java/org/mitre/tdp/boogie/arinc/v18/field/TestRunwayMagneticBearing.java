@@ -1,25 +1,27 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestRunwayMagneticBearing {
+class TestRunwayMagneticBearing {
+
+  private static final RunwayMagneticBearing parser = new RunwayMagneticBearing();
 
   @Test
-  public void testParseValidBearing() {
-    assertEquals(123.5f, new RunwayMagneticBearing().parseValue("1235"));
+  void testParseValidBearing() {
+    assertEquals(Optional.of(123.5), parser.apply("1235"));
   }
 
   @Test
-  public void testParseExceptionInvalidBearing() {
-    assertThrows(FieldSpecParseException.class, () -> new RunwayMagneticBearing().parseValue("123A"));
+  void testParseTrueBearing() {
+    assertEquals(Optional.empty(), parser.apply("123T"));
   }
 
   @Test
-  public void testParseTrueCourseBearingException() {
-    assertThrows(FieldSpecParseException.class, () -> new RunwayMagneticBearing().parseValue("123T"));
+  void testParseInvalidBearing() {
+    assertEquals(Optional.empty(), parser.apply("123A"));
   }
 }

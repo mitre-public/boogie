@@ -1,20 +1,32 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestLongestRunway {
+class TestLongestRunway {
+
+  private static final LongestRunway parser = new LongestRunway();
 
   @Test
-  public void testParseValidLength() {
-    assertEquals(40 * 100, new LongestRunway().parseValue("040"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseExceptionInvalidLength() {
-    assertThrows(FieldSpecParseException.class, () -> new LongestRunway().parseValue("04A"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
+  }
+
+  @Test
+  void testParserFiltersNonNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("AAA"));
+  }
+
+  @Test
+  void testParserReturnsValueInFeet() {
+    assertEquals(Optional.of(4000), parser.apply("040"));
   }
 }

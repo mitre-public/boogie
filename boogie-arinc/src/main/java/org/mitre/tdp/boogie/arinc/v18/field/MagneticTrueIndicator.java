@@ -1,6 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
@@ -10,7 +13,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * that airport are included in the data base with a reference to either Magnetic North or True North. The field is blank in Airport Record when the data
  * base contains a mix of magnetic and true information for the airport.
  */
-public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator>, FilterTrimEmptyInput<MagneticTrueIndicator> {
+public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator> {
   SPEC,
   M,
   T;
@@ -25,9 +28,10 @@ public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator>, F
     return "5.165";
   }
 
-  @Override
-  public MagneticTrueIndicator parseValue(String fieldValue) {
-    return toEnumValue(fieldValue, MagneticTrueIndicator.class);
-  }
+  static final Set<String> enumValues = Arrays.stream(MagneticTrueIndicator.values()).filter(e -> !SPEC.equals(e)).map(Enum::name).collect(Collectors.toSet());
 
+  @Override
+  public Optional<MagneticTrueIndicator> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(enumValues::contains).map(MagneticTrueIndicator::valueOf);
+  }
 }

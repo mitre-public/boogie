@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * When it is not possible to store all the information needed on a record within the 132 columns of the record itself, the
@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec2;
  * <br>
  * e.g. [0-9][A-Z]
  */
-public final class ContinuationRecordNumber implements FieldSpec2<String> {
+public final class ContinuationRecordNumber implements FieldSpec<String> {
 
   private static final Predicate<String> numberRegex = Pattern.compile("[0-9A-Z]").asPredicate();
 

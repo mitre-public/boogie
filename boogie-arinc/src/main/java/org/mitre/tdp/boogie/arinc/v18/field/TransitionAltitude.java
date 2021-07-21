@@ -7,7 +7,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * while departing aircraft climbing through the layer will be using standard altimeter setting (QNE) of 29.92 inches of mercury, 1013.2
  * millibars or 1013.2 hectopascals.
  */
-public final class TransitionAltitude implements NumericDouble {
+public final class TransitionAltitude extends ArincDouble {
+
   @Override
   public int fieldLength() {
     return 5;

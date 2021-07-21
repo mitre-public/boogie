@@ -1,31 +1,27 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestTurnDirectionValid {
+class TestTurnDirectionValid {
+
+  private static final TurnDirectionValid parser = new TurnDirectionValid();
 
   @Test
-  public void testParseTurnDirectionAllowsBlanks() {
-    assertFalse(new TurnDirectionValid().filterInput(" "));
+  void testParseValidTurnDirection() {
+    assertEquals(Optional.of(true), parser.apply("Y"));
   }
 
   @Test
-  public void testParseValidTurnDirection() {
-    assertEquals(true, new TurnDirectionValid().parseValue("Y"));
+  void testParseFalseIfBlank() {
+    assertEquals(Optional.of(false), parser.apply(" "));
   }
 
   @Test
-  public void testParseFalseIfBlank() {
-    assertEquals(false, new TurnDirectionValid().parseValue(" "));
-  }
-
-  @Test
-  public void testParseExceptionWhenInvalidDirection() {
-    assertThrows(FieldSpecParseException.class, () -> new TurnDirectionValid().parseValue("G"));
+  void testParserFalseForRandomCrap() {
+    assertEquals(Optional.of(false), parser.apply("G"));
   }
 }

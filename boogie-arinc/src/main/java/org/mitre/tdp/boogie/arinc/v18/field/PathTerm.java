@@ -2,12 +2,14 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * The Path and Termination defines the path geometry for a single record of an ATC terminal procedure.
  */
-public final class PathTerm implements FieldSpec<org.mitre.tdp.boogie.PathTerm>, FilterTrimEmptyInput<org.mitre.tdp.boogie.PathTerm> {
+public final class PathTerm implements FieldSpec<org.mitre.tdp.boogie.PathTerm> {
 
   @Override
   public int fieldLength() {
@@ -20,7 +22,7 @@ public final class PathTerm implements FieldSpec<org.mitre.tdp.boogie.PathTerm>,
   }
 
   @Override
-  public org.mitre.tdp.boogie.PathTerm parseValue(String fieldValue) {
-    return toEnumValue(fieldValue, org.mitre.tdp.boogie.PathTerm.class, getClass());
+  public Optional<org.mitre.tdp.boogie.PathTerm> apply(String fieldValue) {
+    return toEnumValue(fieldValue, org.mitre.tdp.boogie.PathTerm.class);
   }
 }

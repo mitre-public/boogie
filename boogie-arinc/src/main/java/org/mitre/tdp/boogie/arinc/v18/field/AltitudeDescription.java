@@ -1,10 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static com.google.common.collect.Sets.newHashSet;
-
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -13,7 +11,7 @@ import com.google.common.collect.ImmutableSet;
  * or below” specified altitudes. The field is also used to designate recommended altitudes and cases where two distinct altitudes are provided
  * at a single fix.
  */
-public final class AltitudeDescription implements FieldSpec2<String> {
+public final class AltitudeDescription implements FieldSpec<String> {
 
   @Override
   public int fieldLength() {
@@ -33,7 +31,7 @@ public final class AltitudeDescription implements FieldSpec2<String> {
   /**
    * The list of allowed values for the field - refer to the ARINC spec for interpretation.
    */
-  static final ImmutableSet<String> allowedValues = ImmutableSet.copyOf(newHashSet(
+  static final ImmutableSet<String> allowedValues = ImmutableSet.of(
       "+",
       "-",
       "@",
@@ -45,5 +43,5 @@ public final class AltitudeDescription implements FieldSpec2<String> {
       "J",
       "V",
       "X",
-      "Y"));
+      "Y");
 }

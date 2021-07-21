@@ -1,15 +1,15 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * Indicates that a specific turn radius from the inbound course to the outbound course is required by the airspace controlling agency.
  */
-public final class FixedRadiusTransitionIndicator implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class FixedRadiusTransitionIndicator implements FieldSpec<Double> {
 
   @Override
   public int fieldLength() {
@@ -22,8 +22,7 @@ public final class FixedRadiusTransitionIndicator implements FieldSpec<Double>, 
   }
 
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return ArincStrings.parseDoubleWithTenths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithTenths);
   }
 }

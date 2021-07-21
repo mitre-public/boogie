@@ -2,13 +2,15 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * Definition/Description: The “Section Code” field defines the major section of the navigation system data base in which the
  * record resides.
  */
-public enum SectionCode implements FieldSpec<SectionCode>, FilterTrimEmptyInput<SectionCode> {
+public enum SectionCode implements FieldSpec<SectionCode> {
   SPEC,
   /**
    * Grid MORA.
@@ -54,7 +56,7 @@ public enum SectionCode implements FieldSpec<SectionCode>, FilterTrimEmptyInput<
   }
 
   @Override
-  public SectionCode parseValue(String fieldValue) {
+  public Optional<SectionCode> apply(String fieldValue) {
     return toEnumValue(fieldValue, SectionCode.class);
   }
 }

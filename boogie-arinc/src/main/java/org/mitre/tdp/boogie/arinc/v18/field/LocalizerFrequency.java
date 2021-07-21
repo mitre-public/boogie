@@ -1,15 +1,16 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * The “Localizer Frequency” field specifies the VHF frequency of the facility identified in the “Localizer Identifier” field.
  */
-public final class LocalizerFrequency implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class LocalizerFrequency implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 5;
@@ -20,12 +21,8 @@ public final class LocalizerFrequency implements FieldSpec<Double>, FilterTrimEm
     return "5.45";
   }
 
-  /**
-   * The localizer frequency in MHz.
-   */
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return ArincStrings.parseDoubleWithHundredths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithHundredths);
   }
 }

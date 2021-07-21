@@ -1,31 +1,22 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestEuIndicator {
+class TestEuIndicator {
+
+  private static final EuIndicator parser = new EuIndicator();
 
   @Test
-  public void testAllowsBlankInputs() {
-    assertFalse(new EuIndicator().filterInput(" "));
+  void testYReturnsTrue() {
+    assertEquals(Optional.of(true), parser.apply("Y"));
   }
 
   @Test
-  public void testTrueWhenRestrictionRecordExists() {
-    assertTrue(new EuIndicator().parseValue("Y"));
-  }
-
-  @Test
-  public void testFalseWhenEmpty() {
-    assertFalse(new EuIndicator().parseValue(" "));
-  }
-
-  @Test
-  public void testParseExceptionInvalidValue() {
-    assertThrows(FieldSpecParseException.class, () -> new EuIndicator().parseValue("G"));
+  void testBlankReturnsFalse() {
+    assertEquals(Optional.of(false), parser.apply(" "));
   }
 }

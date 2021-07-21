@@ -1,24 +1,27 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class TestLatitude {
+class TestLatitude {
+
+  private static final Latitude parser = new Latitude();
 
   @Test
-  public void testParseValidLatitude() {
-    assertEquals(39.86078055, new Latitude().parseValue("N39513881"), 0.000001);
+  void testParseValidNorthernLatitude() {
+    assertEquals(39.86078055, parser.apply("N39513881").orElseThrow(AssertionError::new), 0.000001);
   }
 
   @Test
-  public void testParseValidSouthernLatitude() {
-    assertEquals(-39.86078055, new Latitude().parseValue("S39513881"), 0.000001);
+  void testParseValidSouthernLatitude() {
+    assertEquals(-39.86078055, parser.apply("S39513881").orElseThrow(AssertionError::new), 0.000001);
   }
 
   @Test
-  public void testExceptionOnInvalidLatitude() {
-    assertThrows(NumberFormatException.class, () -> new Latitude().parseValue("SA9513881"));
+  void testExceptionOnInvalidLatitude() {
+    assertEquals(Optional.empty(), parser.apply("SA9513881"));
   }
 }

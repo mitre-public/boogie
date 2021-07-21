@@ -5,7 +5,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * <br>
  * Any other designations (suffixes), such as North, South, East, West or STOL will not be included in the ARINC file.
  */
-public final class RunwayIdentifier implements FreeFormString {
+public final class RunwayIdentifier extends TrimmableString {
+
   @Override
   public int fieldLength() {
     return 5;

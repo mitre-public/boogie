@@ -1,38 +1,31 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestWaypointType {
+class TestWaypointType {
+
+  private static final WaypointType parser = new WaypointType();
 
   @Test
-  public void testParseDoesntTrimBlankInput() {
-    assertTrue(new WaypointType().filterInput("   "));
+  void testParserWithValidCodes() {
+    assertAll(
+        () -> assertEquals(Optional.of("R  "), parser.apply("R  ")),
+        () -> assertEquals(Optional.of(" A "), parser.apply(" A ")),
+        () -> assertEquals(Optional.of("  Z"), parser.apply("  Z"))
+    );
   }
 
   @Test
-  public void testParseWithValidCodes() {
-    assertEquals("R  ", new WaypointType().parseValue("R  "));
-    assertEquals(" A ", new WaypointType().parseValue(" A "));
-    assertEquals("  Z", new WaypointType().parseValue("  Z"));
-  }
-
-  @Test
-  public void testFailWithInvalidColumn1() {
-    assertThrows(FieldSpecParseException.class, () -> new WaypointType().parseValue("B  "));
-  }
-
-  @Test
-  public void testFailWithInvalidColumn2() {
-    assertThrows(FieldSpecParseException.class, () -> new WaypointType().parseValue(" Z "));
-  }
-
-  @Test
-  public void testFailWithInvalidColumn3() {
-    assertThrows(FieldSpecParseException.class, () -> new WaypointType().parseValue("  A"));
+  void testParserWithInvalidCodes() {
+    assertAll(
+        () -> assertEquals(Optional.of("   "), parser.apply("B  ")),
+        () -> assertEquals(Optional.of("   "), parser.apply(" Z ")),
+        () -> assertEquals(Optional.of("   "), parser.apply("  A"))
+    );
   }
 }

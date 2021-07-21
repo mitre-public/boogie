@@ -1,27 +1,34 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestIlsGlsMlsCategory {
+class TestIlsGlsMlsCategory {
+
+  private static final IlsMlsGlsCategory parser = new IlsMlsGlsCategory();
 
   @Test
-  public void testFiltersTrimmableInput() {
-    assertTrue(new IlsMlsGlsCategory().filterInput("  "));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseValidCategories() {
-    IlsMlsGlsCategory spec = new IlsMlsGlsCategory();
-    spec.allowedCategories().forEach(cat -> assertEquals(cat, spec.parseValue(cat), "Bad parse for valid cat value: " + cat));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
   }
 
   @Test
-  public void testParseExceptionInvalidCategories() {
-    assertThrows(FieldSpecParseException.class, () -> new IlsMlsGlsCategory().parseValue("Q"));
+  void testFiltersUnallowedValues() {
+    assertFalse(IlsMlsGlsCategory.allowedCategories.contains("Q"));
+    assertEquals(Optional.empty(), parser.apply("Q"));
+  }
+
+  @Test
+  void testReturnsAllAllowedValues() {
+    IlsMlsGlsCategory.allowedCategories.forEach(value -> assertEquals(Optional.of(value), parser.apply(value)));
   }
 }

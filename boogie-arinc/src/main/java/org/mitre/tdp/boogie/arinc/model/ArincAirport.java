@@ -7,6 +7,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
 import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
+import org.mitre.tdp.boogie.arinc.v18.field.LongestRunway;
 import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
 import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
@@ -56,6 +57,11 @@ public final class ArincAirport {
    * See {@link SpeedLimitAltitude}.
    */
   private final Double speedLimitAltitude;
+  /**
+   * Conversion to feet - raw data contains value in hundreds of feet.
+   * <br>
+   * See {@link LongestRunway}.
+   */
   private final Integer longestRunway;
   private final Boolean ifrCapability;
   private final LongestRunwaySurfaceCode longestRunwaySurfaceCode;

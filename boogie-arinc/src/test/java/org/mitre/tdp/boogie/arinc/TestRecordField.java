@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.v18.field.ComponentElevation;
 
@@ -44,8 +46,8 @@ class TestRecordField {
     }
 
     @Override
-    public Void parseValue(String fieldValue) {
-      return null;
+    public Optional<Void> apply(String fieldValue) {
+      return Optional.empty();
     }
   }
 
@@ -63,8 +65,8 @@ class TestRecordField {
     }
 
     @Override
-    public Void parseValue(String fieldValue) {
-      return null;
+    public Optional<Void> apply(String fieldValue) {
+      return Optional.empty();
     }
   }
 }

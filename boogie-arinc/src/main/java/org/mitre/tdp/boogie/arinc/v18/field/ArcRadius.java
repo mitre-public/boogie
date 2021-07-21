@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
  * RNP Holding. The ARC Radius field is also used to specify the turn radius of RNP holding patterns included in SID, STAR, and
  * Approach Records as HA, HF, and HM legs.
  */
-public final class ArcRadius implements FieldSpec2<Double> {
+public final class ArcRadius implements FieldSpec<Double> {
 
   @Override
   public int fieldLength() {

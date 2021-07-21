@@ -1,42 +1,56 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestMinimumAltitude {
+class TestMinimumAltitude {
+
+  private static final MinimumAltitude parser = new MinimumAltitude();
 
   @Test
-  public void testParseMinimumAltitudeNormal() {
-    assertEquals(29000.0f, new MinimumAltitude().parseValue("29000"));
+  void testParserFiltersEmptyString() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseMinimumAltitudePreFiltersSpecialCodes() {
-    MinimumAltitude spec = new MinimumAltitude();
-    spec.specialAltitudeCodes().forEach(code -> assertTrue(spec.filterInput(code)));
+  void testParserRemovesWhitespace() {
+    assertEquals(Optional.empty(), parser.apply("     "));
   }
 
   @Test
-  public void testParseMinimumAltitudeNegative() {
-    assertEquals(-9000.0f, new MinimumAltitude().parseValue("-9000"));
+  void testParserFiltersNonNumericFlightLevel() {
+    assertEquals(Optional.empty(), parser.apply("FLAVA"));
   }
 
   @Test
-  public void testParseMinimumAltitudeFlightLevel() {
-    assertEquals(10000.0f, new MinimumAltitude().parseValue("FL100"));
+  void testParserFiltersNonNumericFeet() {
+    assertEquals(Optional.empty(), parser.apply("1234A"));
   }
 
   @Test
-  public void testParseMinimumAltitudeThrowsParseExceptionOn_NESTB() {
-    assertThrows(FieldSpecParseException.class, () -> new MinimumAltitude().parseValue("NESTB"));
+  void testParserFiltersUNKNN() {
+    assertEquals(Optional.empty(), parser.apply("UNKNN"));
+  }
+
+  /**
+   * For now - this may be updated at a later date.
+   */
+  @Test
+  void testParserFiltersNESTB() {
+    assertEquals(Optional.empty(), parser.apply("NESTB"));
   }
 
   @Test
-  public void testParseMinimumAltitudeThrowsParseExceptionOn_UNKNN() {
-    assertThrows(FieldSpecParseException.class, () -> new MinimumAltitude().parseValue("UNKNN"));
+  void testParserReturnsValidMinimumAltitudes() {
+    assertAll(
+        () -> assertEquals(Optional.of(5000.), parser.apply("05000")),
+        () -> assertEquals(Optional.of(5000.), parser.apply("FL050")),
+        () -> assertEquals(Optional.of(-12.), parser.apply("-0012")),
+        () -> assertEquals(Optional.of(29000.), parser.apply("29000"))
+    );
   }
 }

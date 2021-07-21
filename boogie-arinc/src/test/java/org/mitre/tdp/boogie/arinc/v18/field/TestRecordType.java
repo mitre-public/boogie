@@ -1,20 +1,20 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestRecordType {
+class TestRecordType {
 
   @Test
-  public void testParseGoodRecordType() {
-    assertEquals(RecordType.T, RecordType.SPEC.parseValue("T"));
+  void testParseGoodRecordType() {
+    assertEquals(Optional.of(RecordType.T), RecordType.SPEC.apply("T"));
   }
 
   @Test
-  public void testThrowsParseExceptionOnBadRecordType() {
-    assertThrows(FieldSpecParseException.class, () -> RecordType.SPEC.parseValue("A"));
+  void testEmptyOnBadRecordType() {
+    assertEquals(Optional.empty(), RecordType.SPEC.apply("A"));
   }
 }

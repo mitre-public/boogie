@@ -1,14 +1,22 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
-import java.util.Collections;
-import java.util.List;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.utils.AltitudeFlightLevelParser;
 
 /**
  * The “Maximum Altitude” field is used to indicate the maximum altitude allowed.
+ * <br>
+ * Maximum altitudes should be derived from official government publications describing the upper limit of the airway in feet
+ * or flight level.
+ * <br>
+ * e.g. 17999, 08000, FL100, FL450, UNLTD
+ * <br>
+ * TDP returns all MaxAltitude values converted to feet. TDP also filters UNLTD values (for now) we could put in a placeholder
+ * but we'll wait to see if anyone cares.
  */
-public final class MaxAltitude implements AltitudeFlightLevel {
+public final class MaxAltitude implements FieldSpec<Double> {
 
   @Override
   public int fieldLength() {
@@ -21,22 +29,11 @@ public final class MaxAltitude implements AltitudeFlightLevel {
   }
 
   @Override
-  public Double parseValue(String fieldString) {
-    checkSpec(this, fieldString, !specialAltitudeCodes().contains(fieldString));
-    return AltitudeFlightLevel.super.parseValue(fieldString);
-  }
-
-  @Override
-  public boolean filterInput(String fieldString) {
-    return AltitudeFlightLevel.super.filterInput(fieldString) || specialAltitudeCodes().contains(fieldString);
-  }
-
-  /**
-   * There are two special codes for the {@link MinimumAltitude} which don't directly parse to altitude values - these are
-   * explicitly laid out in the ARINC spec and generally show up uncommonly.
-   */
-  public List<String> specialAltitudeCodes() {
-    return Collections.singletonList("UNLTD");
-
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        // this means there is no ceiling
+        .filter(s -> !"UNLTD".equalsIgnoreCase(s))
+        .flatMap(AltitudeFlightLevelParser.INSTANCE);
   }
 }

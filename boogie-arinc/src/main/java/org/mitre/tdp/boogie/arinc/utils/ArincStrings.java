@@ -1,9 +1,9 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
 /**
@@ -58,15 +58,11 @@ public final class ArincStrings {
    * Attempts to convert the given string field to the provided enum class - if the {@link Enum#valueOf(Class, String)} call
    * fails this method throws a {@link FieldSpecParseException} instead of an {@link IllegalArgumentException}.
    */
-  public static <E extends Enum<E> & FieldSpec<E>> E toEnumValue(String string, Class<E> clz) {
-    return toEnumValue(string, clz, clz);
-  }
-
-  public static <E extends Enum<E>> E toEnumValue(String string, Class<E> clz, Class<? extends FieldSpec<?>> spec) {
+  public static <E extends Enum<E>> Optional<E> toEnumValue(String string, Class<E> clz) {
     try {
-      return E.valueOf(clz, string);
+      return Optional.of(E.valueOf(clz, string));
     } catch (IllegalArgumentException e) {
-      throw new FieldSpecParseException(spec, string, e);
+      return Optional.empty();
     }
   }
 }

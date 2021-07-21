@@ -1,12 +1,15 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.util.CoordinateParser;
 
 /**
  * The Longitude field contains the longitude of the geographic position of the navigational feature identified in the record.
  */
-public final class Longitude implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class Longitude implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 10;
@@ -18,8 +21,11 @@ public final class Longitude implements FieldSpec<Double>, FilterTrimEmptyInput<
   }
 
   @Override
-  public Double parseValue(String fieldValue) {
-    String reformatted = fieldValue.substring(1).concat(fieldValue.substring(0, 1));
-    return CoordinateParser.convertToDegrees(CoordinateParser.reformatLonCoordinate(reformatted));
+  public Optional<Double> apply(String fieldSpec) {
+    return Optional.of(fieldSpec).map(String::trim)
+        // move the trailing N/S to the back as expected by the coordinate parser
+        .map(s -> s.substring(1).concat(s.substring(0, 1)))
+        .flatMap(CoordinateParser::reformatLonCoordinate)
+        .map(CoordinateParser::convertToDegrees);
   }
 }

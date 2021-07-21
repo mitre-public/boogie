@@ -1,14 +1,16 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * “RHO” is defined as the geodesic distance in nautical miles to the waypoint identified in the record’s “Fix Ident” field
  * from the NA V AID in the “Recommended NAVAID” field.
  */
-public final class Rho implements NumericDouble {
+public final class Rho implements FieldSpec<Double> {
 
   @Override
   public int fieldLength() {
@@ -21,8 +23,7 @@ public final class Rho implements NumericDouble {
   }
 
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, validValue(fieldValue));
-    return ArincStrings.parseDoubleWithTenths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithTenths);
   }
 }

@@ -1,14 +1,15 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * The “Waypoint Type” field defines both the “type” and function of IFR waypoints and also define a waypoint as being VFR.
  */
-public final class WaypointType implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class WaypointType implements FieldSpec<String> {
 
   @Override
   public int fieldLength() {
@@ -21,11 +22,13 @@ public final class WaypointType implements FreeFormString, FilterTrimEmptyInput<
   }
 
   @Override
-  public String parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, () -> Column1.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> Column2.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> Column3.SPEC.parse(fieldValue));
-    return fieldValue;
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).filter(s -> s.length() == 3)
+        .map(s -> new StringBuilder()
+            .append(Column1.SPEC.apply(s).map(Column1::name).orElse(" "))
+            .append(Column2.SPEC.apply(s).map(Column2::name).orElse(" "))
+            .append(Column3.SPEC.apply(s).map(Column3::name).orElse(" "))
+            .toString());
   }
 
   enum Column1 implements FieldSpec<Column1> {
@@ -42,12 +45,7 @@ public final class WaypointType implements FreeFormString, FilterTrimEmptyInput<
     }
 
     @Override
-    public boolean filterInput(String fieldValue) {
-      return fieldValue.substring(0, 1).trim().isEmpty();
-    }
-
-    @Override
-    public Column1 parseValue(String fieldValue) {
+    public Optional<Column1> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(0, 1), Column1.class);
     }
   }
@@ -66,12 +64,7 @@ public final class WaypointType implements FreeFormString, FilterTrimEmptyInput<
     }
 
     @Override
-    public boolean filterInput(String fieldValue) {
-      return fieldValue.substring(1, 2).trim().isEmpty();
-    }
-
-    @Override
-    public Column2 parseValue(String fieldValue) {
+    public Optional<Column2> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(1, 2), Column2.class);
     }
   }
@@ -90,12 +83,7 @@ public final class WaypointType implements FreeFormString, FilterTrimEmptyInput<
     }
 
     @Override
-    public boolean filterInput(String fieldValue) {
-      return fieldValue.substring(2, 3).trim().isEmpty();
-    }
-
-    @Override
-    public Column3 parseValue(String fieldValue) {
+    public Optional<Column3> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(2, 3), Column3.class);
     }
   }

@@ -1,20 +1,37 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestIlsDmeBias {
+class TestIlsDmeBias {
+
+  private static final IlsDmeBias parser = new IlsDmeBias();
 
   @Test
-  public void testParseValidBias() {
-    assertEquals(9.6d, new IlsDmeBias().parseValue("96"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseInvalidBias() {
-    assertThrows(FieldSpecParseException.class, () -> new IlsDmeBias().parseValue("A5"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
+  }
+
+  @Test
+  void testParserFiltersNonNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("A1"));
+  }
+
+  @Test
+  void testParserReturnsValidDoublesIfPresent() {
+    assertAll(
+        () -> assertEquals(Optional.of(9.1), parser.apply("91")),
+        () -> assertEquals(Optional.of(.1), parser.apply("01")),
+        () -> assertEquals(Optional.of(6.), parser.apply("60"))
+    );
   }
 }

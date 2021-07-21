@@ -1,20 +1,20 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestSectionCode {
+class TestSectionCode {
 
   @Test
-  public void testValidSectionCode() {
-    assertEquals(SectionCode.A, SectionCode.SPEC.parseValue("A"));
+  void testValidSectionCode() {
+    assertEquals(Optional.of(SectionCode.A), SectionCode.SPEC.apply("A"));
   }
 
   @Test
-  public void testParseExceptionOnInvalidCode() {
-    assertThrows(FieldSpecParseException.class, () -> SectionCode.SPEC.parseValue("Q"));
+  void testEmptyOnInvalidCode() {
+    assertEquals(Optional.empty(), SectionCode.SPEC.apply("Q"));
   }
 }

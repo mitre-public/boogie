@@ -1,20 +1,20 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestTurnDirection {
+class TestTurnDirection {
 
   @Test
-  public void testTurnDirectionValidValue() {
-    assertEquals(TurnDirection.R, TurnDirection.SPEC.parseValue("R"));
+  void testTurnDirectionValidValue() {
+    assertEquals(Optional.of(TurnDirection.R), TurnDirection.SPEC.apply("R"));
   }
 
   @Test
-  public void testInvalidTurnDirectionThrowsException() {
-    assertThrows(FieldSpecParseException.class, () -> TurnDirection.SPEC.parseValue("D"));
+  void testInvalidTurnDirectionReturnsEmpty() {
+    assertEquals(Optional.empty(), TurnDirection.SPEC.apply("D"));
   }
 }

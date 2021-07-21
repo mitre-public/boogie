@@ -1,31 +1,33 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class TestRouteHoldDistanceTime {
+class TestRouteHoldDistanceTime {
+
+  private static final RouteHoldDistanceTime parser = new RouteHoldDistanceTime();
 
   @Test
-  public void testRouteHoldDistance() {
-    assertEquals(107.6, new RouteHoldDistanceTime().asDistanceInNm("1076").get());
+  void testRouteHoldDistance() {
+    assertEquals(Optional.of(107.6), parser.asDistanceInNm("1076"));
   }
 
   @Test
-  public void testParseExceptionOnTimeAsDistance() {
-    assertFalse(new RouteHoldDistanceTime().asDistanceInNm("T103").isPresent());
+  void testParseExceptionOnTimeAsDistance() {
+    assertEquals(Optional.empty(), parser.asDistanceInNm("T103"));
   }
 
   @Test
-  public void testRouteHoldTime() {
-    assertEquals(Duration.ofMinutes(10), new RouteHoldDistanceTime().asDuration("T100").get());
+  void testRouteHoldTime() {
+    assertEquals(Optional.of(Duration.ofMinutes(10)), parser.asDuration("T100"));
   }
 
   @Test
-  public void testParseExceptionOnDistanceAsTime() {
-    assertFalse(new RouteHoldDistanceTime().asDuration("1076").isPresent());
+  void testParseExceptionOnDistanceAsTime() {
+    assertEquals(Optional.empty(), parser.asDuration("1076"));
   }
 }

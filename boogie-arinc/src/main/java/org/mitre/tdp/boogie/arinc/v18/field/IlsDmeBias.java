@@ -1,15 +1,19 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * This field is used to specify the DME offset.
+ * <br>
+ * The field contains a 2-digit bias term in nautical miles and tenths of a nautical mile with the decimal point suppressed.
+ * Field is blank for unbiased DME’s.
  */
-public final class IlsDmeBias implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class IlsDmeBias implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 2;
@@ -21,8 +25,7 @@ public final class IlsDmeBias implements FieldSpec<Double>, FilterTrimEmptyInput
   }
 
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, isNumeric(fieldValue));
-    return ArincStrings.parseDoubleWithTenths(fieldValue);
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(ArincStrings::parseDoubleWithTenths);
   }
 }

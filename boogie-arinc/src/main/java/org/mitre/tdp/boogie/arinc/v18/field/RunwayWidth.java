@@ -3,7 +3,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 /**
  * The width of the runway identified in the “Runway Identifier” field is specified in the “Runway Width” field.
  */
-public final class RunwayWidth implements NumericInteger {
+public final class RunwayWidth extends ArincInteger {
+
   @Override
   public int fieldLength() {
     return 3;

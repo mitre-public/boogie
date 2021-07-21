@@ -47,7 +47,7 @@ class TestArincLocalizerGlideSlope {
         () -> assertEquals(40.6253d, localizer.glideSlopeLatitude().orElseThrow(AssertionError::new), 0.02, "GlideSlopeLatitude"),
         () -> assertEquals(-73.76221d, localizer.glideSlopeLongitude().orElseThrow(AssertionError::new), 0.02, "GlideSlopeLongitude"),
         () -> assertEquals(Integer.valueOf(605), localizer.localizerPosition().orElseThrow(AssertionError::new), "LocalizerPosition"),
-        () -> assertEquals("", localizer.localizerPositionReference().orElseThrow(AssertionError::new), "LocalizerPositionReference"),
+        () -> assertEquals(" ", localizer.localizerPositionReference().orElseThrow(AssertionError::new), "LocalizerPositionReference"),
         () -> assertEquals(Integer.valueOf(1087), localizer.glideSlopePosition().orElseThrow(AssertionError::new), "GlideSlopePosition"),
         () -> assertEquals(3d, localizer.glideSlopeAngle().orElseThrow(AssertionError::new), 0.0001, "GlideSlopeAngle"),
         () -> assertEquals(-13d, localizer.stationDeclination().orElseThrow(AssertionError::new), 0.1, "StationDeclination"),

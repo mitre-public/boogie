@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.arinc.FieldSpec2;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
  * <br>
  * Used in conjunction with {@link AltitudeDescription}.
  */
-public final class AltitudeLimit implements FieldSpec2<Pair<Double, Double>> {
+public final class AltitudeLimit implements FieldSpec<Pair<Double, Double>> {
 
   @Override
   public int fieldLength() {

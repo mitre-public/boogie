@@ -7,7 +7,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * SID/STAR route identifier codes should be derived from official government publications describing the terminal procedures
  * structure.
  */
-public final class SidStarIdentifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class SidStarIdentifier extends TrimmableString {
 
   @Override
   public int fieldLength() {

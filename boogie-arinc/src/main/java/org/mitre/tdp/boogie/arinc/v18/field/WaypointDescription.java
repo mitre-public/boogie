@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
@@ -11,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * identified. The field provides information on the type of fix. As a single fix can be used in different route structures and
  * multiple times within a given structure, the field provides the function for each occurrence of a fix.
  */
-public final class WaypointDescription implements FieldSpec<String>, FilterTrimEmptyInput<String> {
+public final class WaypointDescription implements FieldSpec<String> {
 
   @Override
   public int fieldLength() {
@@ -24,12 +25,14 @@ public final class WaypointDescription implements FieldSpec<String>, FilterTrimE
   }
 
   @Override
-  public String parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, () -> Column1.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> Column2.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> Column3.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> Column4.SPEC.parse(fieldValue));
-    return fieldValue;
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).filter(s -> s.length() == 4)
+        .map(s -> new StringBuilder()
+            .append(Column1.SPEC.apply(s).map(Column1::name).orElse(" "))
+            .append(Column2.SPEC.apply(s).map(Column2::name).orElse(" "))
+            .append(Column3.SPEC.apply(s).map(Column3::name).orElse(" "))
+            .append(Column4.SPEC.apply(s).map(Column4::name).orElse(" "))
+            .toString());
   }
 
   enum Column1 implements FieldSpec<Column1> {
@@ -46,17 +49,12 @@ public final class WaypointDescription implements FieldSpec<String>, FilterTrimE
     }
 
     @Override
-    public boolean filterInput(String fieldValue) {
-      return fieldValue.substring(0, 1).trim().isEmpty();
-    }
-
-    @Override
-    public Column1 parseValue(String fieldValue) {
+    public Optional<Column1> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(0, 1), Column1.class);
     }
   }
 
-  enum Column2 implements FieldSpec<Column2>, FilterTrimEmptyInput<Column2> {
+  enum Column2 implements FieldSpec<Column2> {
     SPEC, B, E, U, Y;
 
     @Override
@@ -70,17 +68,12 @@ public final class WaypointDescription implements FieldSpec<String>, FilterTrimE
     }
 
     @Override
-    public boolean filterInput(String fieldValue) {
-      return fieldValue.substring(1, 2).trim().isEmpty();
-    }
-
-    @Override
-    public Column2 parseValue(String fieldValue) {
+    public Optional<Column2> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(1, 2), Column2.class);
     }
   }
 
-  enum Column3 implements FieldSpec<Column3>, FilterTrimEmptyInput<Column3> {
+  enum Column3 implements FieldSpec<Column3> {
     SPEC, A, B, C, G, M, P, R, S;
 
     @Override
@@ -94,17 +87,12 @@ public final class WaypointDescription implements FieldSpec<String>, FilterTrimE
     }
 
     @Override
-    public boolean filterInput(String fieldValue) {
-      return fieldValue.substring(2, 3).trim().isEmpty();
-    }
-
-    @Override
-    public Column3 parseValue(String fieldValue) {
+    public Optional<Column3> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(2, 3), Column3.class);
     }
   }
 
-  enum Column4 implements FieldSpec<Column4>, FilterTrimEmptyInput<Column4> {
+  enum Column4 implements FieldSpec<Column4> {
     SPEC, A, B, C, D, E, F, G, H, I, M, N;
 
     @Override
@@ -118,12 +106,7 @@ public final class WaypointDescription implements FieldSpec<String>, FilterTrimE
     }
 
     @Override
-    public boolean filterInput(String fieldValue) {
-      return fieldValue.substring(3).trim().isEmpty();
-    }
-
-    @Override
-    public Column4 parseValue(String fieldValue) {
+    public Optional<Column4> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(3), Column4.class);
     }
   }

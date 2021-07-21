@@ -1,28 +1,31 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.Assertions;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestDirectionRestriction {
+class TestDirectionRestriction {
+
+  private static final DirectionRestriction parser = new DirectionRestriction();
 
   @Test
-  public void testNoFilterOnEmptyInputs() {
-    Assertions.assertFalse(new DirectionRestriction().filterInput(" "));
+  void testEmptyOnInvalidValues() {
+    assertAll(
+        () -> assertEquals(Optional.empty(), parser.apply("A")),
+        () -> assertEquals(Optional.empty(), parser.apply("1")),
+        () -> assertEquals(Optional.empty(), parser.apply("@"))
+    );
   }
 
   @Test
-  public void testParsesAllValidInputStrings() {
-    DirectionRestriction spec = new DirectionRestriction();
-    spec.allowedValues().forEach(value -> assertEquals(value, spec.parseValue(value), "Error parsing allowed value: " + value));
-  }
-
-  @Test
-  public void testParseExceptionWhenInputBadDirection() {
-    assertThrows(FieldSpecParseException.class, () -> new DirectionRestriction().parseValue("Y"));
+  void testValidValues() {
+    assertAll(
+        () -> assertEquals(Optional.of("F"), parser.apply("F")),
+        () -> assertEquals(Optional.of("B"), parser.apply("B")),
+        () -> assertEquals(Optional.of(" "), parser.apply(" "))
+    );
   }
 }

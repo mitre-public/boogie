@@ -11,6 +11,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.CruiseTableIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
 import org.mitre.tdp.boogie.arinc.v18.field.DirectionRestriction;
+import org.mitre.tdp.boogie.arinc.v18.field.EnrouteRouteIdentifier;
 import org.mitre.tdp.boogie.arinc.v18.field.EuIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.FixIdentifier;
@@ -26,7 +27,6 @@ import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.Rho;
 import org.mitre.tdp.boogie.arinc.v18.field.Rnp;
 import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
-import org.mitre.tdp.boogie.arinc.v18.field.RouteIdentifier;
 import org.mitre.tdp.boogie.arinc.v18.field.RouteType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
@@ -51,7 +51,7 @@ public final class AirwayLegSpec implements RecordSpec {
         new RecordField<>(SectionCode.SPEC),
         new RecordField<>(new SubSectionCode()),
         new RecordField<>("blank1", new BlankSpec(7)),
-        new RecordField<>("routeIdentifier", RouteIdentifier.enroute()),
+        new RecordField<>("routeIdentifier", new EnrouteRouteIdentifier()),
         new RecordField<>(new SixthCharacter()),
         new RecordField<>("blank2", new BlankSpec(6)),
         new RecordField<>("sequenceNumber", new SequenceNumber(4)),

@@ -1,8 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.isBlank;
 import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * output power of the navaid, information carried on the navaid signal and collocation of navaids in both an electronic
  * and aeronautical sense. The field is made up of five columns of codes that define this information.
  */
-public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInput<String> {
+public final class NavaidClass implements FieldSpec<String> {
 
   @Override
   public int fieldLength() {
@@ -24,13 +24,15 @@ public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInpu
   }
 
   @Override
-  public String parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, () -> Type1.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> Type2.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> RangePower.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> AdditionalInfo.SPEC.parse(fieldValue));
-    checkSpec(this, fieldValue, () -> Collocation.SPEC.parse(fieldValue));
-    return fieldValue;
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).filter(s -> s.length() == 5)
+        .map(s -> new StringBuilder()
+            .append(Type1.SPEC.apply(s).map(Type1::name).orElse(" "))
+            .append(Type2.SPEC.apply(s).map(Type2::name).orElse(" "))
+            .append(RangePower.SPEC.apply(s).map(RangePower::name).orElse(" "))
+            .append(AdditionalInfo.SPEC.apply(s).map(AdditionalInfo::name).orElse(" "))
+            .append(Collocation.SPEC.apply(s).map(Collocation::name).orElse(" "))
+            .toString());
   }
 
   public enum Type1 implements FieldSpec<Type1> {
@@ -47,7 +49,7 @@ public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInpu
     }
 
     @Override
-    public Type1 parseValue(String fieldValue) {
+    public Optional<Type1> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(0, 1), Type1.class);
     }
   }
@@ -66,7 +68,7 @@ public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInpu
     }
 
     @Override
-    public Type2 parseValue(String fieldValue) {
+    public Optional<Type2> apply(String fieldValue) {
       return toEnumValue(fieldValue.substring(1, 2), Type2.class);
     }
   }
@@ -85,9 +87,9 @@ public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInpu
     }
 
     @Override
-    public RangePower parseValue(String fieldValue) {
+    public Optional<RangePower> apply(String fieldValue) {
       String subs = fieldValue.substring(2, 3);
-      return isBlank.test(subs) ? RangePower.BLANK : toEnumValue(subs, RangePower.class);
+      return Optional.of(subs).flatMap(s -> toEnumValue(s, RangePower.class));
     }
   }
 
@@ -105,9 +107,9 @@ public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInpu
     }
 
     @Override
-    public AdditionalInfo parseValue(String fieldValue) {
+    public Optional<AdditionalInfo> apply(String fieldValue) {
       String subs = fieldValue.substring(3, 4);
-      return isBlank.test(subs) ? AdditionalInfo.BLANK : toEnumValue(subs, AdditionalInfo.class);
+      return Optional.of(subs).flatMap(s -> toEnumValue(s, AdditionalInfo.class));
     }
   }
 
@@ -125,9 +127,9 @@ public final class NavaidClass implements FieldSpec<String>, FilterTrimEmptyInpu
     }
 
     @Override
-    public Collocation parseValue(String fieldValue) {
+    public Optional<Collocation> apply(String fieldValue) {
       String subs = fieldValue.substring(4);
-      return isBlank.test(subs) ? Collocation.BLANK : toEnumValue(subs, Collocation.class);
+      return Optional.of(subs).flatMap(s -> toEnumValue(s, Collocation.class));
     }
   }
 }

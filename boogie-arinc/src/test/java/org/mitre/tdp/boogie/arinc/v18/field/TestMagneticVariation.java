@@ -1,31 +1,46 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestMagneticVariation {
+class TestMagneticVariation {
+
+  private static final MagneticVariation parser = new MagneticVariation();
 
   @Test
-  public void testEastValidVariationIsPositive() {
-    assertEquals(14.0, new MagneticVariation().parseValue("E0140"));
+  void testParserFiltersEmptyString() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testWestValidVariationIsNegative() {
-    assertEquals(-14.0, new MagneticVariation().parseValue("W0140"));
+  void testParserRemovesWhitespace() {
+    assertEquals(Optional.empty(), parser.apply("     "));
   }
 
   @Test
-  public void testTrueVariationsAreSkipped(){
-    assertFalse(new MagneticVariation().parse("T0140").isPresent());
+  void testParserFiltersNonNumericSubstringsAfterStart() {
+    assertEquals(Optional.empty(), parser.apply("E013A"));
   }
 
   @Test
-  public void testTrueVariationThrowsParseException() {
-    assertThrows(FieldSpecParseException.class, () -> new MagneticVariation().parseValue("T0140"));
+  void testParserOnlyAllows_E_W_Variations() {
+    assertEquals(Optional.empty(), parser.apply("A0140"));
+  }
+
+  @Test
+  void testParserFiltersTrueNorthVariations() {
+    assertEquals(Optional.empty(), parser.apply("T0140"));
+  }
+
+  @Test
+  void testParserReturnsCorrectVariationValues() {
+    assertAll(
+        () -> assertEquals(Optional.of(14.), parser.apply("E0140")),
+        () -> assertEquals(Optional.of(-14.), parser.apply("W0140"))
+    );
   }
 }

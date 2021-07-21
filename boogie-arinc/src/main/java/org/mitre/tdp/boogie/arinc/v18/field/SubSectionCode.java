@@ -10,7 +10,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * Airway Restrictions, Preferred Routes and Alternate Records. The Section Code will define the major database section, the
  * Subsection Code permits the exact section (file) to be identified and the “fix” (record) can then be located within this file.
  */
-public final class SubSectionCode implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class SubSectionCode extends TrimmableString {
 
   @Override
   public int fieldLength() {

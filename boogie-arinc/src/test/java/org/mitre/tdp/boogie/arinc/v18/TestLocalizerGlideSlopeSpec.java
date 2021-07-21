@@ -44,7 +44,7 @@ class TestLocalizerGlideSlopeSpec {
         () -> assertEquals(40.6253d, record.requiredField("glideSlopeLatitude"), 0.02),
         () -> assertEquals(-73.76221d, record.requiredField("glideSlopeLongitude"), 0.02),
         () -> assertEquals(Integer.valueOf(605), record.requiredField("localizerPosition")),
-        () -> assertEquals("", record.requiredField("localizerPositionReference")),
+        () -> assertEquals(" ", record.requiredField("localizerPositionReference")),
         () -> assertEquals(Integer.valueOf(1087), record.requiredField("glideSlopePosition")),
         () -> assertEquals(3d, record.requiredField("glideSlopeAngle"), 0.0001),
         () -> assertEquals(-13d, record.requiredField("stationDeclination"), 0.1),

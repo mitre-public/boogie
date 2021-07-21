@@ -1,17 +1,27 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 import static org.mitre.tdp.boogie.util.CoordinateParser.sign;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
+
+import java.util.HashSet;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.util.Declinations;
 
 /**
  * The “Magnetic Variation” field specifies the angular difference between True North and Magnetic North at the location defined in the record.
  * “Dynamic Magnetic Variation” is a computer model derived value and takes location and date into consideration. For the “Station Declination”
  * used in some record types, refer to Section 5.66.
+ * <br>
+ * e.g. E0140, E0000, T0000
+ * <br>
+ * As in {@link InboundMagneticCourse} this class filters out variations listed as true north. Use {@link Declinations} instead for your work.
  */
-public final class MagneticVariation implements FieldSpec<Double>, FilterTrimEmptyInput<Double> {
+public final class MagneticVariation implements FieldSpec<Double> {
+
   @Override
   public int fieldLength() {
     return 5;
@@ -22,14 +32,16 @@ public final class MagneticVariation implements FieldSpec<Double>, FilterTrimEmp
     return "5.39";
   }
 
-  @Override
-  public boolean filterInput(String rawInput) {
-    return FilterTrimEmptyInput.super.filterInput(rawInput) || rawInput.startsWith("T");
-  }
+  private static final HashSet<String> allowedDirections = newHashSet("E", "W");
 
   @Override
-  public Double parseValue(String fieldValue) {
-    checkSpec(this, fieldValue, !fieldValue.startsWith("T"));
-    return sign(fieldValue.substring(0, 1)) * ArincStrings.parseDoubleWithTenths(fieldValue.substring(1));
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
+        .filter(s -> !s.startsWith("T"))
+        .filter(s -> isNumeric(s.substring(1)))
+        .filter(s -> allowedDirections.contains(s.substring(0, 1)))
+        .map(s -> sign(s.substring(0, 1)) * ArincStrings.parseDoubleWithTenths(s.substring(1)));
   }
 }

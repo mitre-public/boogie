@@ -1,20 +1,37 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestLocalizerFrequency {
+class TestLocalizerFrequency {
+
+  private static final LocalizerFrequency parser = new LocalizerFrequency();
 
   @Test
-  public void testParseValidFrequency() {
-    assertEquals(110.3, new LocalizerFrequency().parseValue("11030"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseExceptionOnInvalidFrequency() {
-    assertThrows(FieldSpecParseException.class, () -> new LocalizerFrequency().parseValue("110AB"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
+  }
+
+  @Test
+  void testParserFiltersNonNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("AC111"));
+  }
+
+  @Test
+  void testParserReturnsValidDoublesIfPresent() {
+    assertAll(
+        () -> assertEquals(Optional.of(129.12), parser.apply("12912")),
+        () -> assertEquals(Optional.of(.51), parser.apply("00051")),
+        () -> assertEquals(Optional.of(6.), parser.apply("00600"))
+    );
   }
 }

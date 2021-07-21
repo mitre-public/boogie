@@ -1,9 +1,11 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static org.mitre.tdp.boogie.arinc.utils.Preconditions.checkSpec;
 
 import java.util.HashSet;
+import java.util.Optional;
+
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * The “Route Type” field defines the type of Enroute Airway, Preferred Route, Airport and Heliport SID/STAR/Approach Routes of which
@@ -11,7 +13,7 @@ import java.util.HashSet;
  * <br>
  * For Airport and Heliport Approach Routes, “Route Type” includes a “primary route type”, and up to two “route type qualifiers”.
  */
-public final class RouteTypeQualifier implements FreeFormString, FilterTrimEmptyInput<String> {
+public final class RouteTypeQualifier implements FieldSpec<String> {
 
   @Override
   public int fieldLength() {
@@ -23,14 +25,13 @@ public final class RouteTypeQualifier implements FreeFormString, FilterTrimEmpty
     return "5.7a";
   }
 
-  @Override
-  public String parseValue(String rawField) {
-    checkSpec(this, rawField, allowedCodes.contains(rawField));
-    return rawField;
-  }
-
   /**
    * The collection of allowed route type qualifier codes.
    */
-  private static final HashSet<String> allowedCodes = newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "P", "R", "T", "U", "V", "W");
+  static final HashSet<String> allowedCodes = newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "P", "R", "T", "U", "V", "W");
+
+  @Override
+  public Optional<String> apply(String fieldValue) {
+    return Optional.of(fieldValue).map(String::trim).filter(allowedCodes::contains);
+  }
 }

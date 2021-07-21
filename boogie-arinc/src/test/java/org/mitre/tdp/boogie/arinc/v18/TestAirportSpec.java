@@ -6,14 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
 
 public class TestAirportSpec {
 
@@ -83,7 +84,7 @@ public class TestAirportSpec {
         () -> assertEquals("0", record.requiredField("continuationRecordNumber")),
         () -> assertEquals(10000.0d, record.requiredField("speedLimitAltitude")),
         () -> assertEquals(Integer.valueOf(0), record.requiredField("longestRunway")),
-        () -> assertFalse(record.optionalField("ifrCapability").isPresent()),
+        () -> assertEquals(Optional.of(false), record.optionalField("ifrCapability"), "IfrCapability"),
         () -> assertFalse(record.optionalField("longestRunwaySurfaceCode").isPresent()),
         () -> assertEquals(57.223955555555555d, record.requiredField("latitude")),
         () -> assertEquals(-111.41893611111112d, record.requiredField("longitude")),
@@ -95,8 +96,8 @@ public class TestAirportSpec {
         () -> assertEquals(18000.0d, record.requiredField("transitionAltitude")),
         () -> assertEquals(18000.0d, record.requiredField("transitionLevel")),
         () -> assertFalse(record.optionalField("publicMilitaryIndicator").isPresent()),
-        () -> assertFalse(record.optionalField("daylightTimeIndicator").isPresent()),
-        () -> assertFalse(record.optionalField("magneticTrueIndicator").isPresent()),
+        () -> assertEquals(false, record.requiredField("daylightTimeIndicator"), "DaylightTimeIndicator"),
+        () -> assertEquals(Optional.empty(), record.optionalField("magneticTrueIndicator"), "MagneticTrueIndicator"),
         () -> assertFalse(record.optionalField("datumCode").isPresent()),
         () -> assertEquals("ALBIAN", record.requiredField("airportFullName")),
         () -> assertEquals(Integer.valueOf(28), record.requiredField("fileRecordNumber")),

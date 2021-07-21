@@ -1,22 +1,41 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.Instant;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.FieldSpecParseException;
 
-public class TestCycle {
+class TestCycle {
+
+  private static final Cycle parser = new Cycle();
 
   @Test
-  public void testParseAsStartDate() {
-    assertEquals(Instant.parse("2019-01-03T00:00:00.00Z"), new Cycle().asStartDate("1901"));
+  void testParserFiltersEmptyInputs() {
+    assertEquals(Optional.empty(), parser.apply(""));
   }
 
   @Test
-  public void testParseExceptionNonNumericCycle() {
-    assertThrows(FieldSpecParseException.class, () -> new Cycle().parseValue("A001"));
+  void testParserFiltersWhitespaceInputs() {
+    assertEquals(Optional.empty(), parser.apply("   "));
+  }
+
+  @Test
+  void testParserFiltersNonNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("ABCD"));
+  }
+
+  @Test
+  void testParserFiltersIncorrectLengthNumericInputs() {
+    assertEquals(Optional.empty(), parser.apply("12345"));
+  }
+
+  @Test
+  void testParserReturnsValidCycleInput() {
+    assertAll(
+        () -> assertEquals(Optional.of("2001"), parser.apply("2001")),
+        () -> assertEquals(Optional.of("1701"), parser.apply("1701"))
+    );
   }
 }
