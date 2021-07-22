@@ -62,7 +62,7 @@ public final class ArincRecord implements Serializable {
   public boolean containsParsedField(String fieldName) {
     Optional<?> value = optionalField(fieldName);
     if (!value.isPresent()) {
-      LOG.debug("Unable find requested field '{}' in record '{}'", fieldName, rawRecord);
+      LOG.warn("Unable find requested field '{}' in record '{}'", fieldName, rawRecord);
     }
     return value.isPresent();
   }

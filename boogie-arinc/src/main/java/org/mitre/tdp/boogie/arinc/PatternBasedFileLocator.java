@@ -36,7 +36,7 @@ public final class PatternBasedFileLocator implements Function<String, File> {
   public File apply(String cycle) {
     Path path = filePathPattern.contains("{cc}") ? cycleReplacedPath(cycle) : dateReplacedPath(cycle);
 
-    LOG.debug("Resolved path {} for cycle {} and pattern {}.", path, cycle, filePathPattern);
+    LOG.info("Resolved path {} for cycle {} and pattern {}.", path, cycle, filePathPattern);
     return path.toFile();
   }
 

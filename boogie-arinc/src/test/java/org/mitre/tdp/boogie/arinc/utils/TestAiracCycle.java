@@ -1,11 +1,14 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
@@ -75,5 +78,17 @@ class TestAiracCycle {
   @Test
   void testCycleEndDoesNotFallWithinCycle() {
     assertFalse(local.fallsWithinCycle(Instant.parse("2019-01-31T00:00:00.00Z")));
+  }
+
+  @Test
+  void testCyclesBetween() {
+    Instant start = Instant.parse("2015-01-01T00:00:00Z");
+    Instant end1 = Instant.parse("2015-01-02T00:00:00Z");
+    Instant end2 = Instant.parse("2015-06-01T00:00:00Z");
+
+    assertAll(
+        () -> assertEquals(singletonList("1413"), AiracCycle.cyclesBetween(start, end1)),
+        () -> assertEquals(Arrays.asList("1413", "1501", "1502", "1503", "1504", "1505", "1506"), AiracCycle.cyclesBetween(start, end2))
+    );
   }
 }

@@ -73,7 +73,16 @@ Optional<ArincNdbNavaid> dtw = fixDatabase.ndbNavaid("DTW", "K2");
 Optional<ArincWaypoint> jmack = fixDatabase.waypoint("JMACK");  // etc. for other fix types
  
 // queries for all matches
-Optional<ArincWaypoint> jmacks = fixDatabase.waypoints("JMACK"); // etc. for other fix types
+Collection<ArincWaypoint> jmacks = fixDatabase.waypoints("JMACK", "DKUN1"); // etc. for other fix types
+
+// the other common database instantiation is:
+TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(airports, runways, localizerGlideSlopes, ndbNavaids, vhfNavaids, waypoints, procedureLegs);
+
+// the above is an airport-indexed view of all of the listed argument data and is useful for common queries 
+// about records which can be directly related to an airport
+Optional<ArincLocalizerGlideSlope> rw13RLocalizerGlideSlope = terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KFJK", "RW13R");
+
+Collection<ArincProcedureLeg> rober2Legs = terminalAreaDatabase.legsForProcedure("KFJK", "ROBER2"); // etc.
 ```
 
 Most of the database implementations under ```org.mitre.tdp.boogie.database``` provide similar collections of methods for accessing pre-indexed data. The ```ArincDatabaseFactory``` is the de facto 

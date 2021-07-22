@@ -29,6 +29,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.gzip :as gzip])
+  (:require [boogie.arinc.cycles :refer [cycle-file get-cycle-data get-available-cycles]])
   ;; java dependencies
   (:import (org.mitre.tdp.boogie.arinc ArincRecord)
            (org.mitre.tdp.boogie.arinc ArincVersion PatternBasedFileLocator ArincFileStore)
@@ -39,17 +40,6 @@
   (:gen-class))
 
 (s/def ::cycle string?)
-
-;; the maximum number of cycles that can be cached at once
-(defonce cycle-cache-size (atom (if (System/getenv "CYCLE_CACHE_SIZE") (System/getenv "CYCLE_CACHE_SIZE") 5)))
-
-;; The instance of the file-locator which will be used to locate ARINC424 files on a visible filesystem for the application to
-;; load and serve data from
-;; This will use a provided file path template if provided as an ENV variable at start-up, otherwise will default to the MITRE
-;; LIDO archive
-(defonce file-locator (atom (if (System/getenv "FILE_LOCATOR_PATH")
-                              (new PatternBasedFileLocator (System/getenv "FILE_LOCATOR_PATH"))
-                              (ArincFileStore/MITRE_LIDO))))
 
 (def exception-middleware
   (exception/create-exception-middleware
@@ -65,8 +55,6 @@
                              (println "ERROR" (pr-str (:uri request)))
                              (.printStackTrace e)
                              (handler e request))})))
-
-(defn load-cycle [cycle])
 
 (def app-routes
   (ring/ring-handler
@@ -84,35 +72,33 @@
                :responses  {200 {:body any?}}
                :handler    (fn [{{{:keys [cycle]} :query} :parameters}]
                              (timbre/info (str "Locating file for cycle: " cycle))
-                             (let [file (.apply @file-locator cycle)]
+                             (let [file (cycle-file cycle)]
                                (-> {:path    (.getAbsolutePath file)
                                     :exists? (.exists file)}
                                    (cheshire.core/generate-string)
                                    (response)
                                    (content-type "text/json"))))}}]
-       ["/cached-cycles"
-        {:get {:summary  "Returns the list of all cached cycles currently maintained by the endpoint."
-               :response {200 {:body string?}}
-               :handler  (fn [_]
-                           (-> (clojure.string/join "," ["2001"])
-                               (response)
-                               (content-type "text/plain")
-                               ))}}]
        ["/available-cycles"
         {:get {:summary  "Returns the structured map of all available cycles and whether or not they are currently cached."
                :response {200 {:body string?}}
                :handler  (fn [_]
-                           {"cycle#" {:cached? false}})}}]
+                           (-> (get-available-cycles)
+                               (cheshire.core/generate-string)
+                               (response)
+                               (content-type "text/json")))}}]
        ["/latest-cycle"
         {:get {:summary  "Returns all of the supported and assembled ARINC data types for the <i>current</i> cycle as a JSON mapping."
                :response {200 {:body string?}}
-               :handler  (fn [_]
-                           (let [cycle (new AiracCycle (Instant/now))]))}}]
+               :handler  (fn [_] (get-cycle-data (.cycle (new AiracCycle (Instant/now)))))}}]
        ["/full-cycle"
         {:get {:summary    "Return all of the supported and assembled ARINC data types for a given cycle as a JSON mapping."
                :parameters {:query (s/keys :req-un [::cycle])}
                :responses  {200 {:body any?}}
-               :handler    (fn [{{{:keys [cycle]} :query} :parameters}])}}]]
+               :handler    (fn [{{{:keys [cycle]} :query} :parameters}] (get-cycle-data cycle))}}]
+       ["/parse-record"
+        {:get {:summary  "Returns the partially decomposed and parsed verion of the provided ARINC record string."
+               :response {200 {:body string?}}
+               :handler  (fn [{{{:keys [record]} :query} :parameters}])}}]]
       {:exception pretty/exception
        ;; I don't know what any of this does and I don't want to find out - ask @aeckstein if anyone has questions or do some googling
        :data      {:coercion   reitit.coercion.spec/coercion

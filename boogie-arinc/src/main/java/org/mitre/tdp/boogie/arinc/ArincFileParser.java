@@ -35,11 +35,11 @@ public final class ArincFileParser implements Function<File, Collection<ArincRec
     try (FileLineIterator lineIterator = new FileLineIterator(file)) {
 
       LinkedHashSet<ArincRecord> records = new LinkedHashSet<>();
-      LOG.debug("Beginning scan of file {} for ARINC records.", file);
+      LOG.info("Beginning scan of file {} for ARINC records.", file);
 
       lineIterator.forEachRemaining(line -> recordParser.apply(line).ifPresent(records::add));
 
-      LOG.debug("Instantiating new in-memory ArincDatabase with {} total entries.", records.size());
+      LOG.info("Instantiating new in-memory ArincDatabase with {} total entries.", records.size());
       return records;
     } catch (Exception e) {
       throw new RuntimeException("Error during parse of ARINC file at: ".concat(file.getAbsolutePath()), e);

@@ -50,16 +50,16 @@ public final class ArincDatabaseFactory {
 
     LinkedHashMultimap<ArincKey, Object> lookup = LinkedHashMultimap.create();
 
-    LOG.debug("Indexing {} NDB Navaids in the FixDatabase.", ndbNavaids.size());
+    LOG.info("Indexing {} NDB Navaids in the FixDatabase.", ndbNavaids.size());
     ndbNavaids.forEach(ndb -> lookup.put(ndbNavaidToFixIndex.apply(ndb), ndb));
 
-    LOG.debug("Indexing {} VHF Navaids in the FixDatabase.", vhfNavaids.size());
+    LOG.info("Indexing {} VHF Navaids in the FixDatabase.", vhfNavaids.size());
     vhfNavaids.forEach(vhf -> lookup.put(vhfNavaidToFixIndex.apply(vhf), vhf));
 
-    LOG.debug("Indexing {} Waypoints in the FixDatabase.", waypoints.size());
+    LOG.info("Indexing {} Waypoints in the FixDatabase.", waypoints.size());
     waypoints.forEach(waypoint -> lookup.put(waypointToFixIndex.apply(waypoint), waypoint));
 
-    LOG.debug("Indexing {} Airports in the FixDatabase.", airports.size());
+    LOG.info("Indexing {} Airports in the FixDatabase.", airports.size());
     airports.forEach(airport -> lookup.put(airportToFixIndex.apply(airport), airport));
 
     return new FixDatabase(lookup);

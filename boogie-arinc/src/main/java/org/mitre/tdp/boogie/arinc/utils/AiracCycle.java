@@ -1,11 +1,14 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -82,5 +85,23 @@ public final class AiracCycle {
 
   public static boolean isValidCycle(String cycle) {
     return isAiracCycle.test(requireNonNull(cycle));
+  }
+
+  /**
+   * Returns a list containing all of the valid AIRAC cycles between the start and end date.
+   */
+  public static List<String> cyclesBetween(Instant startDate, Instant endDate) {
+    checkArgument(requireNonNull(startDate).isBefore(requireNonNull(endDate)));
+
+    List<String> cycles = new ArrayList<>();
+
+    Airac currentCycle = Airac.fromInstant(startDate);
+
+    while (currentCycle.getEffective().isBefore(endDate)) {
+      cycles.add(currentCycle.toString());
+      currentCycle = currentCycle.getNext();
+    }
+
+    return cycles;
   }
 }
