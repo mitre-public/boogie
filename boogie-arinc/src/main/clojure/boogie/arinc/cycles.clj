@@ -5,8 +5,7 @@
            (com.google.common.cache CacheBuilder CacheLoader)
            (java.time Instant)
            (org.mitre.tdp.boogie.arinc.utils AiracCycle)
-           (org.mitre.tdp.boogie.arinc.model ConvertingArincRecordConsumerFactory))
-  (:gen-class))
+           (org.mitre.tdp.boogie.arinc.model ConvertingArincRecordConsumerFactory)))
 
 ;; the maximum number of cycles that can be cached at once
 (defonce cycle-cache-size (atom (if (System/getenv "CYCLE_CACHE_SIZE") (System/getenv "CYCLE_CACHE_SIZE") 5)))
@@ -29,6 +28,7 @@
   "Returns a mapping from {cycle, filePath} for all files that exist within the date range based on the configured FILE_LOCATOR_PATH."
   []
   (let [earliest (Instant/parse "2015-01-01T00:00:00Z")]
+    (taoensso.timbre/info "Indexing available files.")
     (->> (AiracCycle/cyclesBetween earliest (Instant/now)) (filter #(.exists (cycle-file %))) (map #(assoc {} % (cycle-file %))) (reduce merge))))
 
 ;; the pre-indexed set of all available files

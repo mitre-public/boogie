@@ -90,15 +90,19 @@ entry point for creating most of these implementations. See the javadocs on them
 
 ## Launching as a REST service
 
-As [clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/) is the non-Java language the majority of TDP developers prefer to use, Boogie presents a thin REST API wrapper 
-around a few of its data services which can be configured via a couple of environment variables to field requests without a direct API dependency. Boogie takes advantage of the 
-[clojurephant](https://github.com/clojurephant/clojurephant) library to compile the clojure REST API code from Gradle in-line with its Java code. Documentation for the REST API is configured
-via Swagger and is built into [reitit](https://github.com/metosin/reitit). Two things to note:
+To build and launch the API from CLI you can run (from the base ```/boogie``` folder):
+
+1. ```./gradlew :boogie-arinc:shadowJar``` - to build the uberjar containing the REST API
+2. ```java -jar boogie-arinc/build/libs/boogie-arinc-<version>-all.jar``` - to run the mainClass from the jar i.e. the server start script
+
+Alternatively to do both in one step via Gradle for testing: ```./gradlew :boogie-arinc:runShadow``` 
+
+Two things to note:
 
 1. The ARINC 424 data served by the REST API depends on the environment variable ```FILE_LOCATOR_PATH``` at the launch time of the API:
    1. If overridden with a value it should match the path spec expected by [PatternBasedFileLocator](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/PatternBasedFileLocator.java?at=refs%2Fheads%2Fmain).
    2. Otherwise it defaults to the [MITRE LIDO](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileStore.java?at=main#25) archive.
-2. When run locally the API documentation (hosted by Swagger) can be found under ```http://localhost:8087/boogie-arinc/``` (if run non-local, at the same path on your chosen host).
+2. When run locally the API documentation (hosted by Swagger) can be found under ```http://localhost:8087/boogie-arinc/``` (if run non-local, otherwise at the same path on your chosen host).
 
 Reading the Swagger docs from a local launch of the software is the easiest way to see what the API provides even if you're unfamiliar with Clojure as a language and is the recommended way 
 to check things out (if you need more information there is a later section in this readme which gives a bit more details about the internals of the API).
@@ -172,30 +176,56 @@ means over the years (even though there is <i>very</i> good documentation around
 (from 19a) on Approach records (and the updated approach naming conventions - i.e. RNP approaches start with an H) as part of their standard publication even though it claims to be published 
 as V18.
 
-# Implementing your own record specifications (or adding support for a new record type)
-Hopefully the Quick start was able to get you up and running relatively easily - however if you find that the currently supported set of record parsers doesn't meet your needs this section will 
-cover how to extend the API for new record types.
+# Deeper dives
+Hopefully the Quick start was able to get you up and running relatively easily - however if you need to do more with the library this section is here to help.
 
-## Record specifications
+## Adding supported record types
+If you find that the currently supported set of record parsers doesn't meet your needs this section will cover how to extend the API for new record types.
 
-At a high level when extending the API for new ```RecordSpec``` 
+### The RecordSpec
+The high level abstraction for defining a record specification in Boogie is the [RecordSpec](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/RecordSpec.java?at=refs%2Fheads%2Fmain).
+These specifications define an ordered sequence of (named) fields within a high level ARINC record along with a matcher which is used to decide whether the given specification should be applied
+to a given raw text input string (substring of the overall raw text record). 
 
-## Field specifications
+Parsers a la [ArincFileParser](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileParser.java?at=main) are configured with 
+a collection of record specifications (which don't need to cover all possible record types within a file). These specs are used to convert the raw record strings to semi-structured [ArincRecord](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecord.java?at=main) 
+objects. This approach tends to work well as people often don't care about every record type (see TDP) and only having to implement parsing for a subset of records of interest is convenient.
 
-As a rule of thumb most of the field-level specifications try to be robust to potentially bad input data and generally return nothing when the input value doesn't meet the spec's expectations.
-There is one notable exception to this and that is categorical values. The assumption is that most categorical values where present <i>should</i> be represented exactly within the spec and
-cases where they are not or where values are received that are <i>outside</i> the specification should be considered exceptions and errors (FieldSpecParseException(s)) should be thrown.
+### Field specifications
 
-## Rules of thumb
+The above RecordSpecs are composed of sequences of well-defined ARINC field specifications. As a rule of thumb most of the field-level specifications try to be robust to potentially bad input data 
+and generally return nothing when the input value doesn't meet the spec's expectations. While there is value in expressing specific errors when field contents break the specification it's generally 
+the case that <i>most</i> input data sources take enough liberties with standard specs that your parser is more likely to blow up that not if you're overly particular.
+
+As such Boogie has generally chosen to fast-reject bad inputs fields - returning empty optionals when specific parsers are applied to out-of-spec data - and then layering on more advanced logic to 
+accept/reject the more structured/parsed record contents using the more advanced rules based on compositions of fields being present (e.g. using PathTerminator types to push expectations on which leg 
+fields must be present for a record to be considered "valid").
+
+In general the requirements for adding a new field specification to the library are in the [FieldSpec](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/FieldSpec.java?at=TDP-5508-boogie-arinc-refactor) 
+interface but re-iterated here are:
+
+1. The code of the field's specification in the appropriate ARINC ICD.
+2. The length of the field in a standard record (e.g. 4, 10, etc. characters).
+3. An implementation for converting the string (containing the subsection of the raw record representing that field) to the appropriate "parsed" output type.
+
+Once you have the above specified you can simply add it to the required/appropriate higher-level record specification.
+
+### Rules of thumb
 
 Ideally most record/field specifications should automatically reject data that aren't to spec. Most of the publicly available 424 data out there *isn't* exactly to spec and so it's important 
-that the parsers that are taking the raw records -> semi-structured data are robust to potentially bad/non-standard input.
+parsers converting the raw records -> semi-structured data are robust to potentially bad/non-standard input.
 
 # REST API detailed overview
 
-For those who aren't familiar with Clojure and therefore don't want to spend a ton of time looking at the internals of the code itself this section is meant to provided a slightly more detailed 
-overview of some of the specifics of the REST API implementation.
+For those who aren't familiar with Clojure and therefore don't want to spend a ton of time looking at the internals of the code itself this section exists to provide a slightly more detailed 
+overview of the specifics of the REST API implementation.
 
+[Clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/) is the non-Java language the majority of TDP developers prefer to use, so Boogie presents a thin REST API wrapper written 
+in it to provide access to structured version of the 424 data for requested cycles. The service can be configured via a pair of environment variables:
+ 
+1. ```CYCLE_CACHE_SIZE``` - this sets the maximum number of cycles to cache in the endpoint (default 5).
+2. ```FILE_LOCATOR_PATH``` - this is a templated path representing a collection of files containing 424 data into which we can substitute an airac cycle identifier to resolve a file (defaults to 
+pointing at the MITRE LIDO archive).
 
-
-## 
+To run the REST API Boogie takes advantage of the [clojurephant](https://github.com/clojurephant/clojurephant) library to compile the clojure REST API code from Gradle in-line with its Java code. 
+Documentation for the REST API is configured via Swagger and is built into [reitit](https://github.com/metosin/reitit) which is the clojure software used to functionally declare the endpoints. 

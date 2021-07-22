@@ -35,9 +35,7 @@
            (org.mitre.tdp.boogie.arinc ArincVersion PatternBasedFileLocator ArincFileStore)
            (org.apache.commons.lang3.exception ExceptionUtils)
            (java.time Instant)
-           (org.mitre.tdp.boogie.arinc.utils AiracCycle))
-  ;; required for clojurephant to work
-  (:gen-class))
+           (org.mitre.tdp.boogie.arinc.utils AiracCycle)))
 
 (s/def ::cycle string?)
 

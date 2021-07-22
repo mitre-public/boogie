@@ -1,5 +1,39 @@
 plugins {
     id("dev.clojurephant.clojure") version "0.6.0"
+    application
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    // allows ./gradlew :boogie-arinc:build :boogie-arinc:taskTree - to print the tree of tasks for a given target task
+    // the above prints the tree for the :boogie-arinc:build task and outputs the tree to CLI
+    id("com.dorongold.task-tree") version "2.1.0"
+}
+
+application {
+    // current supported method for setting the main class a la later gradle versions
+    mainClass.set("boogie.arinc.server.RestApi")
+
+    // clojurephant/shadow kind of old so we have to include this override - otherwise they barf even though its deprecated
+    mainClassName = "boogie.arinc.server.RestApi"
+}
+
+// the clojure code needs to be AOT compiled to end up as actually .class files (instead of .clj) files in the final
+// compiled boogie-arinc jar - by default clojurephant <i>doesnt</i> AOT compile any files in the clj source set so we
+// explicitly call it out here for the main build
+clojure {
+    builds.named("main") {
+        aotAll()
+    }
+}
+
+// what are my sourceSets names :sweatstiny:
+tasks.register("printSourceSets") {
+    doLast {
+        sourceSets.forEach { srcSet ->
+            println("[" + srcSet.name + "]")
+            print("-->Source directories: " + srcSet.allJava.srcDirs + "\n")
+            print("-->Output directories: " + srcSet.output.classesDirs.files + "\n")
+            println("")
+        }
+    }
 }
 
 dependencies {

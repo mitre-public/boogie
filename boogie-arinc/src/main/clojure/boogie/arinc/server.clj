@@ -1,7 +1,8 @@
 (ns boogie.arinc.server
   (:require [boogie.arinc.routes :refer [app-routes]]
             [ring.adapter.jetty :refer [run-jetty]])
-  (:gen-class))
+  ;; required to get clojurephant to do the right things
+  (:gen-class :name boogie.arinc.server.RestApi))
 
 (defonce server (atom nil))
 
@@ -20,4 +21,4 @@
     (.stop @server)
     (reset! server nil)))
 
-(def -main start-server!)
+(def -main (do (taoensso.timbre/info "Starting Boogie REST Server") start-server!))
