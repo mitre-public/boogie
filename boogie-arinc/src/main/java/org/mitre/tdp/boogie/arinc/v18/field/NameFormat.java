@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
+import static com.google.common.collect.Sets.newHashSet;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
@@ -24,67 +25,22 @@ public final class NameFormat implements FieldSpec<String> {
 
   @Override
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(s -> s.length() == 3)
-        .map(s -> Column1.SPEC.apply(s).map(Column1::name).orElse(" ")
-            .concat(Column2.SPEC.apply(s).map(Column2::name).orElse(" "))
-            .concat(Column3.SPEC.apply(s).map(Column3::name).orElse(" ")));
+    return Optional.of(fieldValue)
+        .filter(s -> s.length() == 3)
+        .map(s -> new String()
+            .concat(inSetOrBlank(s.substring(0, 1), allowedColumn1))
+            .concat(inSetOrBlank(s.substring(1, 2), allowedColumn2))
+            .concat(inSetOrBlank(s.substring(2, 3), allowedColumn3))
+        );
   }
 
-  enum Column1 implements FieldSpec<Column1> {
-    SPEC, A, B, D, F, H, I, L, M, N, P, Q, R, T, U;
-
-    @Override
-    public int fieldLength() {
-      return 3;
-    }
-
-    @Override
-    public String fieldCode() {
-      return "5.196a";
-    }
-
-
-    @Override
-    public Optional<Column1> apply(String fieldValue) {
-      return toEnumValue(fieldValue.substring(0, 1), Column1.class);
-    }
+  private String inSetOrBlank(String s, HashSet<String> set) {
+    return set.contains(s) ? s : " ";
   }
 
-  enum Column2 implements FieldSpec<Column2> {
-    SPEC, O, M;
+  private static final HashSet<String> allowedColumn1 = newHashSet("A", "B", "D", "F", "H", "I", "L", "M", "N", "P", "Q", "R", "T", "U");
 
-    @Override
-    public int fieldLength() {
-      return 3;
-    }
+  private static final HashSet<String> allowedColumn2 = newHashSet("O", "M");
 
-    @Override
-    public String fieldCode() {
-      return "5.196b";
-    }
-
-    @Override
-    public Optional<Column2> apply(String fieldValue) {
-      return toEnumValue(fieldValue.substring(1, 2), Column2.class);
-    }
-  }
-
-  enum Column3 implements FieldSpec<Column3> {
-    SPEC;
-
-    @Override
-    public int fieldLength() {
-      return 3;
-    }
-
-    @Override
-    public String fieldCode() {
-      return "5.196c";
-    }
-
-    @Override
-    public Optional<Column3> apply(String fieldValue) {
-      return toEnumValue(fieldValue.substring(2, 3), Column3.class);
-    }
-  }
+  private static final HashSet<String> allowedColumn3 = newHashSet();
 }

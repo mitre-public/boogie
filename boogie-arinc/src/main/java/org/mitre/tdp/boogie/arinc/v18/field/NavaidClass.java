@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
+import static com.google.common.collect.Sets.newHashSet;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
@@ -25,111 +26,28 @@ public final class NavaidClass implements FieldSpec<String> {
 
   @Override
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(s -> s.length() == 5)
-        .map(s -> new StringBuilder()
-            .append(Type1.SPEC.apply(s).map(Type1::name).orElse(" "))
-            .append(Type2.SPEC.apply(s).map(Type2::name).orElse(" "))
-            .append(RangePower.SPEC.apply(s).map(RangePower::name).orElse(" "))
-            .append(AdditionalInfo.SPEC.apply(s).map(AdditionalInfo::name).orElse(" "))
-            .append(Collocation.SPEC.apply(s).map(Collocation::name).orElse(" "))
-            .toString());
+    return Optional.of(fieldValue)
+        .filter(s -> s.length() == 5)
+        .map(s -> ""
+            .concat(inSetOrBlank(s.substring(0, 1), allowedType1))
+            .concat(inSetOrBlank(s.substring(1, 2), allowedType2))
+            .concat(inSetOrBlank(s.substring(2, 3), allowedRangePower))
+            .concat(inSetOrBlank(s.substring(3, 4), allowedAdditionalInfo))
+            .concat(inSetOrBlank(s.substring(4, 5), allowedCollocation))
+        );
   }
 
-  public enum Type1 implements FieldSpec<Type1> {
-    SPEC, V, H, S, M;
-
-    @Override
-    public int fieldLength() {
-      return 5;
-    }
-
-    @Override
-    public String fieldCode() {
-      return "5.35a";
-    }
-
-    @Override
-    public Optional<Type1> apply(String fieldValue) {
-      return toEnumValue(fieldValue.substring(0, 1), Type1.class);
-    }
+  private String inSetOrBlank(String s, HashSet<String> set) {
+    return set.contains(s) ? s : " ";
   }
 
-  public enum Type2 implements FieldSpec<Type2> {
-    SPEC, D, T, I, M, O, C, N, P;
+  private static final HashSet<String> allowedType1 = newHashSet("V", "H", "S", "M");
 
-    @Override
-    public int fieldLength() {
-      return 5;
-    }
+  private static final HashSet<String> allowedType2 = newHashSet("D", "T", "I", "M", "O", "C", "N", "P");
 
-    @Override
-    public String fieldCode() {
-      return "5.35b";
-    }
+  private static final HashSet<String> allowedRangePower = newHashSet("T", "U", "H", "M", "L", "C", " ");
 
-    @Override
-    public Optional<Type2> apply(String fieldValue) {
-      return toEnumValue(fieldValue.substring(1, 2), Type2.class);
-    }
-  }
+  private static final HashSet<String> allowedAdditionalInfo = newHashSet("D", "A", "B", "W", " ");
 
-  public enum RangePower implements FieldSpec<RangePower> {
-    SPEC, T, U, H, M, L, C, BLANK;
-
-    @Override
-    public int fieldLength() {
-      return 5;
-    }
-
-    @Override
-    public String fieldCode() {
-      return "5.35c";
-    }
-
-    @Override
-    public Optional<RangePower> apply(String fieldValue) {
-      String subs = fieldValue.substring(2, 3);
-      return Optional.of(subs).flatMap(s -> toEnumValue(s, RangePower.class));
-    }
-  }
-
-  public enum AdditionalInfo implements FieldSpec<AdditionalInfo> {
-    SPEC, D, A, B, W, BLANK;
-
-    @Override
-    public int fieldLength() {
-      return 5;
-    }
-
-    @Override
-    public String fieldCode() {
-      return "5.35d";
-    }
-
-    @Override
-    public Optional<AdditionalInfo> apply(String fieldValue) {
-      String subs = fieldValue.substring(3, 4);
-      return Optional.of(subs).flatMap(s -> toEnumValue(s, AdditionalInfo.class));
-    }
-  }
-
-  public enum Collocation implements FieldSpec<Collocation> {
-    SPEC, B, A, N, BLANK;
-
-    @Override
-    public int fieldLength() {
-      return 5;
-    }
-
-    @Override
-    public String fieldCode() {
-      return "5.35e";
-    }
-
-    @Override
-    public Optional<Collocation> apply(String fieldValue) {
-      String subs = fieldValue.substring(4);
-      return Optional.of(subs).flatMap(s -> toEnumValue(s, Collocation.class));
-    }
-  }
+  private static final HashSet<String> allowedCollocation = newHashSet("B", "A", "N", " ");
 }

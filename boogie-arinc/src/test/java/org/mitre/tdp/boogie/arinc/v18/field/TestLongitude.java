@@ -11,6 +11,11 @@ class TestLongitude {
   private static final Longitude parser = new Longitude();
 
   @Test
+  void testLongitudeFiltersEmptyStrings() {
+    assertEquals(Optional.empty(), parser.apply("          "));
+  }
+
+  @Test
   void testParseValidEasternLongitude() {
     assertEquals(104.7522055, parser.apply("E104450794").orElseThrow(AssertionError::new), 0.000001);
   }

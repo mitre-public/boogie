@@ -1,10 +1,10 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
-
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
+
+import com.google.common.collect.ImmutableBiMap;
 
 /**
  * Definition/Description: The “Section Code” field defines the major section of the navigation system data base in which the
@@ -45,6 +45,17 @@ public enum SectionCode implements FieldSpec<SectionCode> {
    */
   U;
 
+  private static final ImmutableBiMap<String, SectionCode> lookup = new ImmutableBiMap.Builder<String, SectionCode>()
+      .put(SectionCode.A.name(), SectionCode.A)
+      .put(SectionCode.D.name(), SectionCode.D)
+      .put(SectionCode.E.name(), SectionCode.E)
+      .put(SectionCode.H.name(), SectionCode.H)
+      .put(SectionCode.T.name(), SectionCode.T)
+      .put(SectionCode.R.name(), SectionCode.R)
+      .put(SectionCode.P.name(), SectionCode.P)
+      .put(SectionCode.U.name(), SectionCode.U)
+      .build();
+
   @Override
   public int fieldLength() {
     return 1;
@@ -57,6 +68,6 @@ public enum SectionCode implements FieldSpec<SectionCode> {
 
   @Override
   public Optional<SectionCode> apply(String fieldValue) {
-    return toEnumValue(fieldValue, SectionCode.class);
+    return Optional.ofNullable(lookup.get(fieldValue));
   }
 }

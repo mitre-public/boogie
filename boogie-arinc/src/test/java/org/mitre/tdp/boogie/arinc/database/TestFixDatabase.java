@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumerFactory;
+import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
@@ -95,7 +95,7 @@ class TestFixDatabase {
   );
 
   /**
-   * In implementation this could be done from the factory class {@link ConvertingArincRecordConsumerFactory}.
+   * In implementation this could be done from the factory class {@link ArincRecordConverterFactory}.
    */
   private static final ConvertingArincRecordConsumer testV18Consumer = new ConvertingArincRecordConsumer.Builder()
       .airportDelegator(new AirportValidator())

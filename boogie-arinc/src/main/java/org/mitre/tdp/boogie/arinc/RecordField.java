@@ -33,7 +33,7 @@ public final class RecordField<T> {
   }
 
   public RecordField(String fieldName, FieldSpec<T> fieldSpec) {
-    this.fieldName = requireNonNull(fieldName);
+    this.fieldName = requireNonNull(fieldName).intern();
     this.fieldSpec = requireNonNull(fieldSpec);
     checkArgument(isValidEnumSpec(), "Enum-based FieldSpecs must use reserved SPEC value for spec parsing.");
   }

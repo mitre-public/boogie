@@ -1,7 +1,10 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -19,8 +22,8 @@ import com.google.common.collect.ImmutableList;
  * them as internal state within itself.
  * <br>
  * This class is built with a pre-configured set of record -> Java POJO delegators and a set of record -> POJO converters for a
- * pre-configured set of data types. {@link ConvertingArincRecordConsumerFactory} provides some default implementations for a
- * subset of {@link ArincRecord} versions.
+ * pre-configured set of data types. {@link ArincRecordConverterFactory} provides some default implementations for a subset of
+ * {@link ArincRecord} versions.
  * <br>
  * This class is provided for convenience, but it's limitations (especially the thread-safety) should be taken into account before
  * use.
@@ -28,31 +31,44 @@ import com.google.common.collect.ImmutableList;
 public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord> {
 
   private final DelegatableCollection<ArincAirport> arincAirports;
-  private final DelegatableCollection<ArincAirwayLeg> arincAirwayLegs;
+  private final DelegatableCollection<ArincRunway> arincRunways;
   private final DelegatableCollection<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes;
   private final DelegatableCollection<ArincNdbNavaid> arincNdbNavaids;
-  private final DelegatableCollection<ArincProcedureLeg> arincProcedureLegs;
-  private final DelegatableCollection<ArincRunway> arincRunways;
   private final DelegatableCollection<ArincVhfNavaid> arincVhfNavaids;
   private final DelegatableCollection<ArincWaypoint> arincWaypoints;
+  private final DelegatableCollection<ArincAirwayLeg> arincAirwayLegs;
+  private final DelegatableCollection<ArincProcedureLeg> arincProcedureLegs;
+
+  private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;
 
   private ConvertingArincRecordConsumer(Builder builder) {
     this.arincAirports = new DelegatableCollection<>(builder.airportDelegator, builder.airportConverter);
-    this.arincAirwayLegs = new DelegatableCollection<>(builder.airwayDelegator, builder.airwayConverter);
+    this.arincRunways = new DelegatableCollection<>(builder.runwayDelegator, builder.runwayConverter);
     this.arincLocalizerGlideSlopes = new DelegatableCollection<>(builder.localizerGlideSlopeDelegator, builder.localizerGlideSlopeConverter);
     this.arincNdbNavaids = new DelegatableCollection<>(builder.ndbNavaidDelegator, builder.ndbNavaidConverter);
-    this.arincProcedureLegs = new DelegatableCollection<>(builder.procedureDelegator, builder.procedureConverter);
-    this.arincRunways = new DelegatableCollection<>(builder.runwayDelegator, builder.runwayConverter);
     this.arincVhfNavaids = new DelegatableCollection<>(builder.vhfNavaidDelegator, builder.vhfNavaidConverter);
     this.arincWaypoints = new DelegatableCollection<>(builder.waypointDelegator, builder.waypointConverter);
+    this.arincAirwayLegs = new DelegatableCollection<>(builder.airwayDelegator, builder.airwayConverter);
+    this.arincProcedureLegs = new DelegatableCollection<>(builder.procedureDelegator, builder.procedureConverter);
+
+    this.consumer = new MRUDequeConsumer<>(
+        this.arincAirports,
+        this.arincRunways,
+        this.arincLocalizerGlideSlopes,
+        this.arincNdbNavaids,
+        this.arincVhfNavaids,
+        this.arincWaypoints,
+        this.arincAirwayLegs,
+        this.arincProcedureLegs
+    );
   }
 
   public Collection<ArincAirport> arincAirports() {
     return arincAirports.records();
   }
 
-  public Collection<ArincAirwayLeg> arincAirwayLegs() {
-    return arincAirwayLegs.records();
+  public Collection<ArincRunway> arincRunways() {
+    return arincRunways.records();
   }
 
   public Collection<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes() {
@@ -63,14 +79,6 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     return arincNdbNavaids.records();
   }
 
-  public Collection<ArincProcedureLeg> arincProcedureLegs() {
-    return arincProcedureLegs.records();
-  }
-
-  public Collection<ArincRunway> arincRunways() {
-    return arincRunways.records();
-  }
-
   public Collection<ArincVhfNavaid> arincVhfNavaids() {
     return arincVhfNavaids.records();
   }
@@ -79,20 +87,42 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     return arincWaypoints.records();
   }
 
+  public Collection<ArincAirwayLeg> arincAirwayLegs() {
+    return arincAirwayLegs.records();
+  }
+
+  public Collection<ArincProcedureLeg> arincProcedureLegs() {
+    return arincProcedureLegs.records();
+  }
+
   @Override
   public void accept(ArincRecord arincRecord) {
     requireNonNull(arincRecord);
-    arincAirports.accept(arincRecord);
-    arincAirwayLegs.accept(arincRecord);
-    arincLocalizerGlideSlopes.accept(arincRecord);
-    arincNdbNavaids.accept(arincRecord);
-    arincProcedureLegs.accept(arincRecord);
-    arincRunways.accept(arincRecord);
-    arincVhfNavaids.accept(arincRecord);
-    arincWaypoints.accept(arincRecord);
+    this.consumer.accept(arincRecord);
   }
 
-  private static final class DelegatableCollection<T> implements Consumer<ArincRecord> {
+  private static final class MRUDequeConsumer<T, V extends Predicate<T> & Consumer<T>> implements Consumer<T> {
+
+    private final ArrayDeque<V> predicateDeque;
+
+    @SafeVarargs
+    private MRUDequeConsumer(V... predicates) {
+      this.predicateDeque = new ArrayDeque<>();
+      predicateDeque.addAll(Arrays.asList(predicates));
+    }
+
+    @Override
+    public void accept(T t) {
+      Optional<V> match = predicateDeque.stream().filter(p -> p.test(t)).findFirst();
+      match.ifPresent(m -> {
+        m.accept(t);
+        predicateDeque.remove(m);
+        predicateDeque.addFirst(m);
+      });
+    }
+  }
+
+  private static final class DelegatableCollection<T> implements Consumer<ArincRecord>, Predicate<ArincRecord> {
 
     private final Predicate<ArincRecord> delegator;
     private final Function<ArincRecord, Optional<T>> converter;
@@ -114,13 +144,18 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     @Override
     public void accept(ArincRecord arincRecord) {
-      if (delegator.test(arincRecord)) {
-        converter.apply(arincRecord).ifPresent(records::add);
-      }
+      checkArgument(delegator.test(arincRecord));
+      converter.apply(arincRecord).ifPresent(records::add);
+    }
+
+    @Override
+    public boolean test(ArincRecord arincRecord) {
+      return delegator.test(arincRecord);
     }
   }
 
   public static class Builder {
+
     private Predicate<ArincRecord> airportDelegator;
     private Function<ArincRecord, Optional<ArincAirport>> airportConverter;
     private Predicate<ArincRecord> airwayDelegator;

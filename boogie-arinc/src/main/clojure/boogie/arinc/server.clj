@@ -1,8 +1,10 @@
 (ns boogie.arinc.server
   (:require [boogie.arinc.routes :refer [app-routes]]
-            [ring.adapter.jetty :refer [run-jetty]])
+            [ring.adapter.jetty :refer [run-jetty]]
+            [boogie.arinc.cycles :refer [current-cycle get-cycle-data]]
+            [taoensso.timbre :as timbre])
   ;; required to get clojurephant to do the right things
-  (:gen-class :name boogie.arinc.server.RestApi))
+  (:gen-class))
 
 (defonce server (atom nil))
 
@@ -21,4 +23,8 @@
     (.stop @server)
     (reset! server nil)))
 
-(def -main (do (taoensso.timbre/info "Starting Boogie REST Server") start-server!))
+(def -main (do (timbre/info "Starting Boogie REST Server")
+               ;; start the server and then attempt to pre-index the navigational data in boogie.arinc.cycles with the current cycle of nav data
+               (timbre/info (str "Attempting to pre-index the LRU cache with the latest cycle of navigational data (cycle " (current-cycle) ")."))
+               (get-cycle-data (current-cycle))
+               start-server!))

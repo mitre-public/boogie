@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.mitre.caasd.commons.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public final class ArincRecordParser implements Function<String, Optional<ArincR
 
     // at the expense of more operations... how strongly do we want to enforce none of our specs both match the same record...
     Optional<RecordSpec> recordSpec = recordSpecs.stream().filter(rspec -> rspec.matchesRecord(rawRecord)).findFirst();
-    LOG.info("Associated spec {} with record {}.", recordSpec, rawRecord);
+    LOG.debug("Associated spec {} with record {}.", recordSpec, rawRecord);
 
     return recordSpec.map(spec -> createParsedRecord(rawRecord, spec));
   }
@@ -66,24 +67,24 @@ public final class ArincRecordParser implements Function<String, Optional<ArincR
    * substrings from the input raw record string which will be associated with those field names in the final {@link ArincRecord}.
    */
   ArincRecord createParsedRecord(String rawRecord, RecordSpec recordSpec) {
+    int capacity = recordSpec.recordFields().size();
 
-    LinkedHashMap<String, FieldSpec<?>> fieldMap = new LinkedHashMap<>();
-    LinkedHashMap<String, String> dataMap = new LinkedHashMap<>();
+    LinkedHashMap<String, Pair<FieldSpec<?>, String>> namedData = new LinkedHashMap<>(capacity);
 
     int i = 0;
     int offset = 0;
 
     while (i < recordSpec.recordFields().size()) {
+
       RecordField<?> field = recordSpec.recordFields().get(i);
-      fieldMap.put(field.fieldName(), field.fieldSpec());
 
       String value = rawRecord.substring(offset, offset + field.fieldSpec().fieldLength());
-      dataMap.put(field.fieldName(), value);
+      namedData.put(field.fieldName(), Pair.of(field.fieldSpec(), value));
 
       i++;
       offset += field.fieldSpec().fieldLength();
     }
 
-    return new ArincRecord(rawRecord, fieldMap, dataMap);
+    return new ArincRecord(namedData);
   }
 }

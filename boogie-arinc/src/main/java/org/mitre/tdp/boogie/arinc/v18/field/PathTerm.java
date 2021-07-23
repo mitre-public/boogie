@@ -1,8 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
-
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
@@ -21,8 +22,12 @@ public final class PathTerm implements FieldSpec<org.mitre.tdp.boogie.PathTerm> 
     return "5.21";
   }
 
+  private static final Set<String> allowedPathTerms = Arrays.stream(org.mitre.tdp.boogie.PathTerm.values())
+      .map(org.mitre.tdp.boogie.PathTerm::name)
+      .collect(Collectors.toSet());
+
   @Override
   public Optional<org.mitre.tdp.boogie.PathTerm> apply(String fieldValue) {
-    return toEnumValue(fieldValue, org.mitre.tdp.boogie.PathTerm.class);
+    return Optional.of(fieldValue).filter(allowedPathTerms::contains).map(org.mitre.tdp.boogie.PathTerm::valueOf);
   }
 }

@@ -73,7 +73,7 @@ class TestConvertingArincRecordConsumer {
   );
 
   /**
-   * In implementation this could be done from the factory class {@link ConvertingArincRecordConsumerFactory}.
+   * In implementation this could be done from the factory class {@link ArincRecordConverterFactory}.
    */
   private static final ConvertingArincRecordConsumer testV18Consumer = new ConvertingArincRecordConsumer.Builder()
       .airportDelegator(new AirportValidator())

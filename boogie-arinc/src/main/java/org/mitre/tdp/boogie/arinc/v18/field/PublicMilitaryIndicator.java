@@ -1,8 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.ArincStrings.toEnumValue;
-
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
@@ -39,8 +40,13 @@ public enum PublicMilitaryIndicator implements FieldSpec<PublicMilitaryIndicator
     return "5.177";
   }
 
+  private static final Set<String> allowedPubMil = Arrays.stream(PublicMilitaryIndicator.values())
+      .filter(v -> !SPEC.equals(v))
+      .map(PublicMilitaryIndicator::name)
+      .collect(Collectors.toSet());
+
   @Override
   public Optional<PublicMilitaryIndicator> apply(String fieldValue) {
-    return toEnumValue(fieldValue, PublicMilitaryIndicator.class);
+    return Optional.of(fieldValue).filter(allowedPubMil::contains).map(PublicMilitaryIndicator::valueOf);
   }
 }

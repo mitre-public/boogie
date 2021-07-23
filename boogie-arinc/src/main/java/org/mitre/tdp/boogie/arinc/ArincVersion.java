@@ -34,7 +34,7 @@ public enum ArincVersion {
    * there is no difference in any of the parsing logic for the V19 record contents other than for procedures where a few more
    * categorical {@link RouteTypeQualifier}s were added.
    */
-  V19(new AirwayLegSpec(),
+  V19(new AirportSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
       new AirwayLegSpec(),

@@ -10,26 +10,16 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.arinc.v18.field.AltitudeLimit;
 import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
-import org.mitre.tdp.boogie.arinc.v18.field.WaypointUsage;
 
 import com.google.common.collect.ImmutableMap;
 
 class TestArincRecord {
 
   @Test
-  void testRecordInstantiationFailsWithDifferentKeySetSizes() {
-    assertThrows(IllegalArgumentException.class, () -> new ArincRecord("", ImmutableMap.of("", new WaypointUsage()), ImmutableMap.of()));
-  }
-
-  @Test
   void testSpecRetrievalForField() {
     AltitudeLimit altitudeLimit = new AltitudeLimit();
 
-    ArincRecord record = new ArincRecord(
-        "ARINCRECORD",
-        ImmutableMap.of("altitudeLimit", altitudeLimit),
-        ImmutableMap.of("altitudeLimit", "")
-    );
+    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", Pair.of(altitudeLimit, "")));
 
     Optional<AltitudeLimit> limitSpec = record.specForField("altitudeLimit");
     AltitudeLimit actual = limitSpec.orElseThrow(AssertionError::new);
@@ -41,11 +31,7 @@ class TestArincRecord {
   void testRawFieldValueRetrieval() {
     AltitudeLimit altitudeLimit = new AltitudeLimit();
 
-    ArincRecord record = new ArincRecord(
-        "ARINCRECORD",
-        ImmutableMap.of("altitudeLimit", altitudeLimit),
-        ImmutableMap.of("altitudeLimit", "ALTITUDELIMIT")
-    );
+    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", Pair.of(altitudeLimit, "ALTITUDELIMIT")));
 
     String actual = record.rawField("altitudeLimit");
     assertEquals("ALTITUDELIMIT", actual, "Raw field should be the inserted value.");
@@ -53,10 +39,9 @@ class TestArincRecord {
 
   @Test
   void testOptionalFieldValueRetrieval() {
-    ArincRecord record = new ArincRecord(
-        "ARINCRECORD",
-        ImmutableMap.of("altitudeLimit", new AltitudeLimit(), "speedLimit", new SpeedLimit()),
-        ImmutableMap.of("altitudeLimit", "180600", "speedLimit", "")
+    ArincRecord record = new ArincRecord(ImmutableMap.of(
+        "altitudeLimit", Pair.of(new AltitudeLimit(), "180600"),
+        "speedLimit", Pair.of(new SpeedLimit(), ""))
     );
 
     assertAll(
@@ -67,10 +52,9 @@ class TestArincRecord {
 
   @Test
   void testRequiredFieldValueRetrieval() {
-    ArincRecord record = new ArincRecord(
-        "ARINCRECORD",
-        ImmutableMap.of("altitudeLimit", new AltitudeLimit(), "speedLimit", new SpeedLimit()),
-        ImmutableMap.of("altitudeLimit", "180600", "speedLimit", "")
+    ArincRecord record = new ArincRecord(ImmutableMap.of(
+        "altitudeLimit", Pair.of(new AltitudeLimit(), "180600"),
+        "speedLimit", Pair.of(new SpeedLimit(), ""))
     );
 
     assertAll(

@@ -24,6 +24,9 @@ public final class Cycle implements FieldSpec<String> {
 
   @Override
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).filter(AiracCycle::isValidCycle);
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
+        .filter(AiracCycle::isValidCycle);
   }
 }

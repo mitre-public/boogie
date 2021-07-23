@@ -65,6 +65,10 @@ subprojects {
         group = "verification"
         description = "Runs all unit tests"
 
+        failFast = true
+//        jvmArgs = "-Xmx2048m".split(" ")
+        maxHeapSize = "4096m"
+
         useJUnitPlatform { }
         filter {
             excludeTestsMatching("IT*")

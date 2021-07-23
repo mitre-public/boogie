@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.util;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -70,8 +68,6 @@ public class CoordinateParser {
 
   private static final Predicate<String> reformattableLongitudePattern = Pattern.compile("^[01][0-9]{6,8}[EW]$").asPredicate();
 
-  private static final String latitudeLongitudeFormat = "%s-%s-%s.%s";
-
   /**
    * Reformat coordinate to work with the CoordinateParser
    * @param latitude a coordinate of the form ddmmssnn[NS] || dddmmssnn[EW]
@@ -81,15 +77,13 @@ public class CoordinateParser {
     return Optional.ofNullable(latitude)
         .map(String::trim)
         .filter(reformattableLatitudePattern)
-        .filter(s -> isNumeric(s.substring(0, s.length() - 1)))
-        .map(s -> String.format(latitudeLongitudeFormat, s.substring(0, 2), s.substring(2, 4), s.substring(4, 6), s.substring(6)));
+        .map(s -> s.substring(0, 2).concat("-").concat(s.substring(2, 4)).concat("-").concat(s.substring(4, 6)).concat(".").concat(s.substring(6)));
   }
 
   public static Optional<String> reformatLonCoordinate(String longitude) {
     return Optional.ofNullable(longitude)
         .map(String::trim)
         .filter(reformattableLongitudePattern)
-        .filter(s -> isNumeric(s.substring(0, s.length() - 1)))
-        .map(s -> String.format(latitudeLongitudeFormat, s.substring(0, 3), s.substring(3, 5), s.substring(5, 7), s.substring(7)));
+        .map(s -> s.substring(0, 3).concat("-").concat(s.substring(3, 5)).concat("-").concat(s.substring(5, 7)).concat(".").concat(s.substring(7)));
   }
 }

@@ -1,17 +1,12 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
+import org.mitre.caasd.commons.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 /**
  * This class represents the most basic semi-structured view of an ARINC record. At this point the parser has been "applied" in
@@ -28,28 +23,13 @@ public final class ArincRecord implements Serializable {
   private static final Logger LOG = LoggerFactory.getLogger(ArincRecord.class);
 
   /**
-   * The raw record string used to generate this parsed data object.
-   * <br>
-   * Internally we maintain a copy of the raw record data - we could expose this to users if people want access to this value
-   * from within the API layer - for now we just carry it through for posterity.
+   * An map from the {@link RecordField#fieldName()} to a pair of the associated {@link RecordField#fieldSpec()} and to it's
+   * extracted substring of associated data from within the source raw ARINC record string.
    */
-  private final String rawRecord;
-  /**
-   * An immutable map from the {@link RecordField#fieldName()} to it's {@link RecordField#fieldSpec()} representing the mapping
-   * from internal named record field to parser/spec class.
-   */
-  private final ImmutableMap<String, FieldSpec<?>> namedFields;
-  /**
-   * An immutable map from the {@link RecordField#fieldName()} to it's extracted substring of associated data from within the
-   * source raw ARINC record string.
-   */
-  private final ImmutableMap<String, String> namedData;
+  private final Map<String, Pair<FieldSpec<?>, String>> namedData;
 
-  ArincRecord(String rawRecord, Map<String, FieldSpec<?>> namedFields, Map<String, String> namedData) {
-    this.rawRecord = requireNonNull(rawRecord);
-    this.namedFields = ImmutableMap.copyOf(namedFields);
-    this.namedData = ImmutableMap.copyOf(namedData);
-    checkArgument(Sets.symmetricDifference(namedFields.keySet(), namedData.keySet()).isEmpty());
+  ArincRecord(Map<String, Pair<FieldSpec<?>, String>> namedData) {
+    this.namedData = namedData;
   }
 
   /**
@@ -62,28 +42,20 @@ public final class ArincRecord implements Serializable {
   public boolean containsParsedField(String fieldName) {
     Optional<?> value = optionalField(fieldName);
     if (!value.isPresent()) {
-      LOG.warn("Unable find requested field '{}' in record '{}'", fieldName, rawRecord);
+      LOG.debug("Unable find requested field '{}' in record.", fieldName);
     }
     return value.isPresent();
   }
 
-  /**
-   * Returns the {@link FieldSpec} for the provided (non-null) field name. This is the spec associated with the provided field
-   * as declared in the {@link RecordSpec} which was associated with the contained raw ARINC record.
-   */
-  public <T, A extends FieldSpec<T>> Optional<A> specForField(String fieldName) {
-    requireNonNull(fieldName);
-    A spec = (A) namedFields.get(fieldName);
-    return Optional.ofNullable(spec);
+  public <U, T extends FieldSpec<U>> Optional<T> specForField(String fieldName) {
+    return Optional.ofNullable(namedData.get(fieldName)).map(p -> (T) p.first());
   }
 
   /**
    * Returns the substring of content from the associated raw ARINC record which is associated with this named field in the spec.
    */
   public String rawField(String fieldName) {
-    requireNonNull(fieldName);
-    checkArgument(namedData.containsKey(fieldName), "Unable to find field with name ".concat(fieldName));
-    return namedData.get(fieldName);
+    return Optional.ofNullable(namedData.get(fieldName)).map(Pair::second).orElseThrow(() -> new MissingRequiredFieldException(fieldName));
   }
 
   /**
@@ -95,8 +67,8 @@ public final class ArincRecord implements Serializable {
    * any hard exceptions due to bad input record content (e.g. NumberFormatException, etc.).
    */
   public <T> Optional<T> optionalField(String fieldName) {
-    Optional<FieldSpec<T>> spec = specForField(fieldName);
-    return spec.flatMap(s -> s.apply(rawField(fieldName)));
+    Optional<Pair<FieldSpec<?>, String>> spec = Optional.ofNullable(namedData.get(fieldName));
+    return spec.flatMap(pair -> (Optional<T>) pair.first().apply(pair.second()));
   }
 
   /**

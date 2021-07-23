@@ -1,6 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
+import static com.google.common.collect.Sets.newHashSet;
+
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -28,11 +31,13 @@ public final class ProcedureLegValidator implements Predicate<ArincRecord> {
         && legTypeValidator(arincRecord).test(arincRecord);
   }
 
+  private static final Set<String> allowedSubsections = newHashSet("D", "E", "F");
+
   boolean isCorrectSectionSubSection(ArincRecord arincRecord) {
     Optional<SectionCode> sectionCode = arincRecord.optionalField("sectionCode");
     Optional<String> subSectionCode = arincRecord.optionalField("subSectionCode");
 
-    return sectionCode.filter(SectionCode.P::equals).isPresent() && subSectionCode.filter(s -> Pattern.matches("D|E|F", s)).isPresent();
+    return sectionCode.filter(SectionCode.P::equals).isPresent() && subSectionCode.filter(allowedSubsections::contains).isPresent();
   }
 
   Predicate<ArincRecord> legTypeValidator(ArincRecord arincRecord) {

@@ -21,8 +21,10 @@ public final class Longitude implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldSpec) {
-    return Optional.of(fieldSpec).map(String::trim)
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
         // move the trailing N/S to the back as expected by the coordinate parser
         .map(s -> s.substring(1).concat(s.substring(0, 1)))
         .flatMap(CoordinateParser::reformatLonCoordinate)

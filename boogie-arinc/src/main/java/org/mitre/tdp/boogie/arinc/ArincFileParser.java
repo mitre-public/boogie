@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Wrapper class for applying a supplied {@link ArincRecordParser} to the contents of an input file - assumed to be data on the
  * ARINC 424 format.
+ * <br>
+ * With the standard parser implementations for the subset of currently supported record types parsing and then converting an
+ * entire cycle of data should only take a few seconds.
  */
 public final class ArincFileParser implements Function<File, Collection<ArincRecord>> {
 
@@ -39,7 +42,7 @@ public final class ArincFileParser implements Function<File, Collection<ArincRec
 
       lineIterator.forEachRemaining(line -> recordParser.apply(line).ifPresent(records::add));
 
-      LOG.info("Instantiating new in-memory ArincDatabase with {} total entries.", records.size());
+      LOG.info("Returning {} total ArincRecords from file.", records.size());
       return records;
     } catch (Exception e) {
       throw new RuntimeException("Error during parse of ARINC file at: ".concat(file.getAbsolutePath()), e);
