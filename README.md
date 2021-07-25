@@ -16,3 +16,6 @@ software project with the specific components and their expected usages laid out
 
 # Installation
 Boogie leverages Gradle for builds and compiles/runs on Java 8 (though there are plans to improve this going forward). 
+
+# Code Quality
+[caasd-sonar](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
