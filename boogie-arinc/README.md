@@ -110,7 +110,7 @@ to check things out (if you need more information there is a later section in th
 
 ## Containerized deployment
 
-*Sike* - not yet - someone needs to pay me (more) for this. For now it's a pain to sync the NFS-hosted 424 data from the netapp to one of our kubernetes clusters - in the future if we want  
+For now it's a pain to sync the NFS-hosted 424 data from the netapp to one of our kubernetes clusters - in the future if we want  
 to host an archive of the 424 data somewhere then this API can be containerized and the ENV variable can be configured to point to the file locations on the target server.
 
 # What is ARINC 424?
