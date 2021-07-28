@@ -40,12 +40,6 @@ that such material is not subject to copyright protection.
 //
 ////////////////////////////////////////////////////////////////////////////
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StreamTokenizer;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -177,7 +171,7 @@ import org.slf4j.LoggerFactory;
  * FAX: (303) 273-8600<br>
  * EMAIL:   quinn@ghtmail.cr.usgs.gov<br>
  */
-public class Geomagnetics {
+final class Geomagnetics {
   /**
    * A logger for this class. Every class MUST have this field, if you want to log from this class.
    * The class name is the fully qualified class name of the class, such as java.lang.String. If you're not going

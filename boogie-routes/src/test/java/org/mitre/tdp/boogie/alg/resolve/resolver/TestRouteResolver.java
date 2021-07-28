@@ -1,15 +1,17 @@
 package org.mitre.tdp.boogie.alg.resolve.resolver;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
 import static org.mitre.tdp.boogie.test.MockObjects.IF;
 import static org.mitre.tdp.boogie.test.MockObjects.airport;
 import static org.mitre.tdp.boogie.test.MockObjects.airway;
 import static org.mitre.tdp.boogie.test.MockObjects.fix;
 import static org.mitre.tdp.boogie.test.MockObjects.transition;
-import static org.mitre.tdp.boogie.util.Collections.allMatch;
+import static org.mitre.tdp.boogie.util.Preconditions.allMatch;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -29,10 +32,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.service.impl.AirportService;
-import org.mitre.tdp.boogie.service.impl.AirwayService;
-import org.mitre.tdp.boogie.service.impl.FixService;
-import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
+import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 class TestRouteResolver {
 
@@ -65,19 +65,34 @@ class TestRouteResolver {
     Transition cstl6 = transition("CSTL6", TransitionType.COMMON, ProcedureType.SID, singletonList(ifSherl));
     Transition jiims2 = transition("JIIMS2", TransitionType.COMMON, ProcedureType.STAR, singletonList(ifBrigs));
 
-    ProcedureResolver procedureResolver = new ProcedureResolver(ProcedureGraphService.withTransitions(Arrays.asList(cstl6, jiims2)));
+    ProcedureResolver procedureResolver = new ProcedureResolver(newLookupService(
+        Procedure::procedureIdentifier,
+        ProcedureFactory.newProcedures(newArrayList(cstl6, jiims2)))
+    );
 
     Airport kbdl = airport("KBDL", 0.0, 0.0);
     Airport kphl = airport("KPHL", 0.0, 0.0);
-    AirportResolver airportResolver = new AirportResolver(AirportService.with(Arrays.asList(kbdl, kphl)));
+
+    AirportResolver airportResolver = new AirportResolver(newLookupService(
+        Airport::airportIdentifier,
+        newArrayList(kbdl, kphl))
+    );
 
     Airway j121 = airway("J121", emptyList());
     Airway j122 = airway("J122", emptyList());
-    AirwayResolver airwayResolver = new AirwayResolver(AirwayService.with(Arrays.asList(j121, j122)));
+
+    AirwayResolver airwayResolver = new AirwayResolver(newLookupService(
+        Airway::airwayIdentifier,
+        Arrays.asList(j121, j122))
+    );
 
     Fix sherl = fix("SHERL", 0.0, 0.0);
     Fix brigs = fix("BRIGS", 0.0, 0.0);
-    FixResolver fixResolver = new FixResolver(FixService.with(Arrays.asList(sherl, brigs)));
+
+    FixResolver fixResolver = new FixResolver(newLookupService(
+        Fix::fixIdentifier,
+        Arrays.asList(sherl, brigs))
+    );
 
     return new RouteResolver(
         procedureResolver,

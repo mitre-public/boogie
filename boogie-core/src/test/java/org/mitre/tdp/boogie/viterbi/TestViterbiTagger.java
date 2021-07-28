@@ -1,16 +1,22 @@
 package org.mitre.tdp.boogie.viterbi;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
-
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mitre.tdp.boogie.viterbi.TestViterbiTagger.State.A;
 import static org.mitre.tdp.boogie.viterbi.TestViterbiTagger.State.B;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableSet;
+import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
+import org.junit.jupiter.api.Test;
 
 class TestViterbiTagger {
 
@@ -27,23 +33,29 @@ class TestViterbiTagger {
 
     Map<Integer, IntersectionStates> path = tagger.optimalPath();
 
-    assertEquals(Arrays.asList(
+    List<IntersectionStates> expected = Arrays.asList(
         IntersectionStates.B,
         IntersectionStates.B,
         IntersectionStates.B,
         IntersectionStates.B,
         IntersectionStates.C,
-        IntersectionStates.C), new ArrayList<>(path.values()));
+        IntersectionStates.C
+    );
 
-    assertEquals(-2.87, tagger.trellis().optimalPathScoreAt(5).logLikelihood(), 0.01);
+    assertAll(
+        () -> assertEquals(expected, new ArrayList<>(path.values())),
+        () -> assertEquals(-2.87, tagger.trellis().optimalPathScoreAt(5).logLikelihood(), 0.01)
+    );
   }
 
   @Test
   void testForwardMinMax() {
     ViterbiTagger<Long, State> tagger = ViterbiTagger.forHmmStates(stages, Arrays.asList(State.values()));
 
-    assertFalse(tagger.trellis().optimalPath().isEmpty());
-    assertEquals(Arrays.asList(A, B, A, B, B, B, B, B, B, B), new ArrayList<>(tagger.optimalPath().values()));
+    assertAll(
+        () -> assertFalse(tagger.trellis().optimalPath().isEmpty()),
+        () -> assertEquals(Arrays.asList(A, B, A, B, B, B, B, B, B, B), new ArrayList<>(tagger.optimalPath().values()))
+    );
   }
 
   enum State implements HmmState<Long> {

@@ -54,6 +54,6 @@ public final class ViFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
   }
 
   double deriveDistanceToNextFixFeature(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    return conformablePoint.distanceInNmTo(flyableLeg.next().map(Leg::pathTerminator).orElseThrow(supplier("Next Path Terminator")));
+    return conformablePoint.distanceInNmTo(flyableLeg.next().flatMap(Leg::associatedFix).orElseThrow(supplier("Next Path Terminator")));
   }
 }

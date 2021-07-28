@@ -10,9 +10,9 @@ import java.util.Optional;
 
 import org.mitre.caasd.commons.Spherical;
 
-public class Declinations {
+public final class Declinations {
 
-  private static Map<GeomagneticCoefficients, Geomagnetics> magnetics = new HashMap<>();
+  private static final Map<GeomagneticCoefficients, Geomagnetics> magnetics = new HashMap<>();
 
   private static Geomagnetics magnetics(Instant tau) {
     GeomagneticCoefficients coeffs = GeomagneticCoefficients.coefficientsAtTime(tau);

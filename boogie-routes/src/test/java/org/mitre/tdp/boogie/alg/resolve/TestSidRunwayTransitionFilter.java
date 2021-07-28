@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
@@ -42,7 +44,7 @@ class TestSidRunwayTransitionFilter {
     Transition transition = mock(Transition.class);
     when(transition.transitionType()).thenReturn(TransitionType.RUNWAY);
     when(transition.procedureType()).thenReturn(ProcedureType.SID);
-    when(transition.identifier()).thenReturn("RW25R");
+    when(transition.transitionIdentifier()).thenReturn(Optional.of("RW25R"));
     return transition;
   }
 }

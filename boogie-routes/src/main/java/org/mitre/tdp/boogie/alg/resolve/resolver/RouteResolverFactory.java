@@ -7,13 +7,11 @@ import java.util.Collection;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.service.LookupService;
-import org.mitre.tdp.boogie.service.ProcedureService;
-import org.mitre.tdp.boogie.service.impl.AirportService;
-import org.mitre.tdp.boogie.service.impl.AirwayService;
-import org.mitre.tdp.boogie.service.impl.FixService;
-import org.mitre.tdp.boogie.service.impl.ProcedureGraphService;
+import org.mitre.tdp.boogie.alg.DefaultLookupService;
+import org.mitre.tdp.boogie.alg.LookupService;
+import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 /**
  * Factory class for generating new instances of {@link RouteResolver}s with different arrival/departure runway predictions.
@@ -23,7 +21,7 @@ public final class RouteResolverFactory {
   private final LookupService<Fix> fixService;
   private final LookupService<Airway> airwayService;
   private final LookupService<Airport> airportService;
-  private final ProcedureService procedureService;
+  private final LookupService<Procedure> procedureService;
 
   /**
    * Creates a new {@link RouteResolverFactory} with the provided {@link LookupService}s for the infrastructure element types
@@ -33,7 +31,7 @@ public final class RouteResolverFactory {
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
-      ProcedureService procedureService
+      LookupService<Procedure> procedureService
   ) {
     this.fixService = checkNotNull(fixService);
     this.airwayService = checkNotNull(airwayService);
@@ -52,10 +50,11 @@ public final class RouteResolverFactory {
       Collection<? extends Transition> transitions
   ) {
     this(
-        FixService.with(fixes),
-        AirwayService.with(airways),
-        AirportService.with(airports),
-        ProcedureGraphService.withTransitions(transitions)
+        // ugh collection type casting... makes it nicer to use though...
+        (LookupService<Fix>) DefaultLookupService.newLookupService(Fix::fixIdentifier, fixes),
+        (LookupService<Airway>) DefaultLookupService.newLookupService(Airway::airwayIdentifier, airways),
+        (LookupService<Airport>) DefaultLookupService.newLookupService(Airport::airportIdentifier, airports),
+        DefaultLookupService.newLookupService(Procedure::procedureIdentifier, ProcedureFactory.newProcedures(transitions))
     );
   }
 

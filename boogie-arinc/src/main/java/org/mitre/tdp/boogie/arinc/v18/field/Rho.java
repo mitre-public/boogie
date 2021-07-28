@@ -9,6 +9,12 @@ import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 /**
  * “RHO” is defined as the geodesic distance in nautical miles to the waypoint identified in the record’s “Fix Ident” field
  * from the NA V AID in the “Recommended NAVAID” field.
+ * <br>
+ * Rho values derived from official government sources will be used when available. They are entered into the field in nautical
+ * miles and tenths of a nautical mile, with the decimal point suppressed. The content is controlled through requirements of
+ * the Path Terminator and coding rules contained in Attachment 5 of this specification.
+ * <br>
+ * e.g. 0000, 0216, 0142, 1074
  */
 public final class Rho implements FieldSpec<Double> {
 

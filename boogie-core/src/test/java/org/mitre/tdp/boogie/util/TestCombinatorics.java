@@ -12,10 +12,10 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 
-public class TestCombinatorics {
+class TestCombinatorics {
 
   @Test
-  public void testPairwiseCombos() {
+  void testPairwiseCombos() {
     List<Integer> ints = IntStream.rangeClosed(0, 10).boxed().collect(Collectors.toList());
     Iterator<Pair<Integer, Integer>> pairs = pairwiseCombos(ints);
 

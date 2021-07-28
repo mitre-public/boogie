@@ -1,57 +1,39 @@
 package org.mitre.tdp.boogie;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class TestMagneticVariation {
+import nl.jqno.equalsverifier.EqualsVerifier;
+
+class TestMagneticVariation {
 
   @Test
-  public void testMagneticToTruePublished() {
-    MagneticVariation localVariation = mock(MagneticVariation.class);
+  void testEqualsAndHashCode() {
+    EqualsVerifier.forClass(MagneticVariation.class).verify();
+  }
 
-    when(localVariation.published()).thenReturn(Optional.of(7.0d));
-    when(localVariation.modeled()).thenReturn(10.0d);
-    when(localVariation.magneticToTrue(anyDouble())).thenCallRealMethod();
-
+  @Test
+  void testMagneticToTruePublished() {
+    MagneticVariation localVariation = new MagneticVariation(7.0d, 10.0d);
     assertEquals(12.0d, localVariation.magneticToTrue(5.0));
   }
 
   @Test
-  public void testMagneticToTrueModeled() {
-    MagneticVariation localVariation = mock(MagneticVariation.class);
-
-    when(localVariation.published()).thenReturn(Optional.empty());
-    when(localVariation.modeled()).thenReturn(10.0d);
-    when(localVariation.magneticToTrue(anyDouble())).thenCallRealMethod();
-
+  void testMagneticToTrueModeled() {
+    MagneticVariation localVariation = new MagneticVariation(null, 10.0d);
     assertEquals(12.0d, localVariation.magneticToTrue(2.0));
   }
 
   @Test
-  public void testTrueToMagneticPublished() {
-    MagneticVariation localVariation = mock(MagneticVariation.class);
-
-    when(localVariation.published()).thenReturn(Optional.of(7.0d));
-    when(localVariation.modeled()).thenReturn(10.0d);
-    when(localVariation.trueToMagnetic(anyDouble())).thenCallRealMethod();
-
+  void testTrueToMagneticPublished() {
+    MagneticVariation localVariation = new MagneticVariation(7.0d, 10.0d);
     assertEquals(12.0d, localVariation.trueToMagnetic(19.0));
   }
 
   @Test
-  public void testTrueToMagneticModeled() {
-    MagneticVariation localVariation = mock(MagneticVariation.class);
-
-    when(localVariation.published()).thenReturn(Optional.empty());
-    when(localVariation.modeled()).thenReturn(10.0d);
-    when(localVariation.trueToMagnetic(anyDouble())).thenCallRealMethod();
-
+  void testTrueToMagneticModeled() {
+    MagneticVariation localVariation = new MagneticVariation(null, 10.0d);
     assertEquals(12.0d, localVariation.trueToMagnetic(22.0));
   }
 }

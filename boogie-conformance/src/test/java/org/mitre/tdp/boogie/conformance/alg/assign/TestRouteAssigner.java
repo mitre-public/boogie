@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -22,16 +23,19 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.NoopCombinationStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.SuppliedLinkStrategy;
+import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.mitre.tdp.boogie.viterbi.RuleBasedViterbiScoringStrategy;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 class TestRouteAssigner {
+
+  private static final PathTerminatorBasedLegValidator validator = new PathTerminatorBasedLegValidator();
 
   @Test
   void testScorerReturnsMaxValuePath() {
@@ -68,10 +72,10 @@ class TestRouteAssigner {
         linkingStrategy,
         new NoopCombinationStrategy(),
         RuleBasedViterbiScoringStrategy.<ConformablePoint, FlyableLeg>newBuilder()
-            .addStateDelegatedScorer(l -> l.current().equals(a) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(0), points.get(1)))
-            .addStateDelegatedScorer(l -> l.current().equals(b) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(2), points.get(3)))
-            .addStateDelegatedScorer(l -> l.current().equals(g) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(4), points.get(5), points.get(6)))
-            .addStateDelegatedScorer(l -> l.current().equals(h) && l.current().type().hasRequiredFields(l.current()), scorer(points.get(7), points.get(8), points.get(9)))
+            .addStateDelegatedScorer(l -> l.current().equals(a) && validator.test(l.current()), scorer(points.get(0), points.get(1)))
+            .addStateDelegatedScorer(l -> l.current().equals(b) && validator.test(l.current()), scorer(points.get(2), points.get(3)))
+            .addStateDelegatedScorer(l -> l.current().equals(g) && validator.test(l.current()), scorer(points.get(4), points.get(5), points.get(6)))
+            .addStateDelegatedScorer(l -> l.current().equals(h) && validator.test(l.current()), scorer(points.get(7), points.get(8), points.get(9)))
             .addStateDelegatedScorer(l -> true, scorer())
             .build(),
         (l1, l2) -> .1
@@ -104,7 +108,7 @@ class TestRouteAssigner {
           Instant time = entry.getKey().time();
           Leg leg = entry.getValue();
 
-          String ids = String.format("%s", leg.pathTerminator().identifier());
+          String ids = String.format("%s", leg.associatedFix().map(Fix::fixIdentifier).orElse("NONE"));
           return String.format("%s=%s", time.toString(), ids);
         })
         .collect(Collectors.joining(","));
@@ -125,23 +129,21 @@ class TestRouteAssigner {
 
   private Route route(List<Leg> legs) {
     Route route = mock(Route.class);
-    when(route.legs()).thenReturn((List) legs);
+    when(route.legs()).thenReturn(legs);
     return route;
   }
 
   private Leg leg(String identifier) {
-    PathTerm term = mock(PathTerm.class);
-    when(term.hasRequiredFields(any())).thenReturn(true);
     Fix fix = fix(identifier);
     Leg leg = mock(Leg.class, identifier);
-    when(leg.pathTerminator()).thenReturn(fix);
-    when(leg.type()).thenReturn(term);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(fix));
+    when(leg.pathTerminator()).thenReturn(PathTerminator.TF);
     return leg;
   }
 
   private Fix fix(String identifier) {
     Fix fix = mock(Fix.class);
-    when(fix.identifier()).thenReturn(identifier);
+    when(fix.fixIdentifier()).thenReturn(identifier);
     return fix;
   }
 }

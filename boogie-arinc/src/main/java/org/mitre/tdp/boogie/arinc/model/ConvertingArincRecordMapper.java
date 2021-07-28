@@ -11,13 +11,14 @@ import org.mitre.tdp.boogie.arinc.ArincRecord;
 /**
  * A simple pass-through mapper implementation for applying the appropriate POJO converter logic to the incoming ArincRecords.
  * <br>
- * This class is useful in applications which don't require that direct field-level access to the underlying data and instead
- * simply want to create POJOs and then ship them off for serialization, etc.
+ * This class is useful in applications which don't require direct field-level access to the underlying data and instead simply
+ * want to create POJOs and then ship them off for serialization, etc.
  * <br>
- * This class is explicitly used within the REST API for on-the-fly conversions of input ARINC 424 records.
+ * e.g. This class is explicitly used within the REST API for on-the-fly conversions of input ARINC 424 records.
  * <br>
- * If you really want to use this over the consumer in your application I recommend something like the pattern in the unit tests
- * for collection the output in a more structured way. It's not sexy but it'll do and you can make "safe" casts afterward.
+ * If this class is more desirable within some downstream application (than the consumer impl) the recommendation would be to
+ * use something like the pattern in the unit tests to collection the output in a more structured way. It's not sexy but it'll
+ * do and allows for "safe" casts afterward.
  */
 public final class ConvertingArincRecordMapper implements Function<ArincRecord, Optional<?>> {
 

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -17,13 +16,12 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 
+import com.google.common.collect.Range;
+
 class TestCaFeatureExtractor {
 
   @Test
   void testFeatureExtraction() {
-    AltitudeLimit altitudeLimit = mock(AltitudeLimit.class);
-    when(altitudeLimit.altitudeLimit()).thenReturn(Optional.of(8000.0));
-
     MagneticVariation magvar = mock(MagneticVariation.class);
     when(magvar.published()).thenReturn(Optional.empty());
     when(magvar.modeled()).thenReturn(0.);
@@ -33,8 +31,8 @@ class TestCaFeatureExtractor {
     when(navaid.magneticVariation()).thenReturn(magvar);
 
     Leg va = mock(Leg.class);
-    when(va.outboundMagneticCourse()).thenReturn(Optional.of(100.0));
-    when(va.altitudeConstraint()).thenReturn((Optional) Optional.of(altitudeLimit));
+    when(va.outboundMagneticCourse()).thenReturn(Optional.of(100.));
+    when(va.altitudeConstraint()).thenReturn(Range.atLeast(8000.));
     when(va.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
 
     FlyableLeg consecutiveLegs = mock(FlyableLeg.class);

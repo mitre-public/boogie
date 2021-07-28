@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.function.Function;
@@ -35,8 +36,10 @@ class TestTfFeatureScorer {
     Function<SegmentDistances, Double> extractor1 = distances -> distances.otd;
     Function<SegmentDistances, Double> extractor2 = distances -> TfFeatureScorer.prePostPenalizer(5, 3).apply(distances.otd, distances.ppd);
 
-    assertEquals(-10.0, extractor1.apply(segmentDistances), 0.0001);
-    assertEquals(-10.0, extractor2.apply(segmentDistances), 0.0001);
+    assertAll(
+        () -> assertEquals(-10.0, extractor1.apply(segmentDistances), 0.0001),
+        () -> assertEquals(-10.0, extractor2.apply(segmentDistances), 0.0001)
+    );
   }
 
   @Test
@@ -52,8 +55,10 @@ class TestTfFeatureScorer {
     Function<SegmentDistances, Double> extractor1 = distances -> distances.otd;
     Function<SegmentDistances, Double> extractor2 = distances -> TfFeatureScorer.prePostPenalizer(5, 3).apply(distances.otd, distances.ppd);
 
-    assertEquals(p1.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
-    assertEquals(5.0 * p1.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
+    assertAll(
+        () -> assertEquals(p1.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001),
+        () -> assertEquals(5.0 * p1.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001)
+    );
   }
 
   @Test
@@ -69,8 +74,10 @@ class TestTfFeatureScorer {
     Function<SegmentDistances, Double> extractor1 = distances -> distances.otd;
     Function<SegmentDistances, Double> extractor2 = distances -> TfFeatureScorer.prePostPenalizer(5, 3).apply(distances.otd, distances.ppd);
 
-    assertEquals(-1.0 * p1.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
-    assertEquals(-5.0 * p1.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
+    assertAll(
+        () -> assertEquals(-1.0 * p1.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001),
+        () -> assertEquals(-5.0 * p1.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001)
+    );
   }
 
   @Test
@@ -86,8 +93,10 @@ class TestTfFeatureScorer {
     Function<SegmentDistances, Double> extractor1 = distances -> distances.otd;
     Function<SegmentDistances, Double> extractor2 = distances -> TfFeatureScorer.prePostPenalizer(5, 3).apply(distances.otd, distances.ppd);
 
-    assertEquals(p2.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
-    assertEquals(3.0 * p2.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
+    assertAll(
+        () -> assertEquals(p2.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001),
+        () -> assertEquals(3.0 * p2.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001)
+    );
   }
 
   @Test
@@ -103,7 +112,9 @@ class TestTfFeatureScorer {
     Function<SegmentDistances, Double> extractor1 = distances -> distances.otd;
     Function<SegmentDistances, Double> extractor2 = distances -> TfFeatureScorer.prePostPenalizer(5, 3).apply(distances.otd, distances.ppd);
 
-    assertEquals(-1.0 * p2.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001);
-    assertEquals(-3.0 * p2.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001);
+    assertAll(
+        () -> assertEquals(-1.0 * p2.distanceInNmTo(pt), extractor1.apply(segmentDistances), 0.0001),
+        () -> assertEquals(-3.0 * p2.distanceInNmTo(pt), extractor2.apply(segmentDistances), 0.0001)
+    );
   }
 }

@@ -9,11 +9,12 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.mitre.tdp.boogie.alg.graph.MultiplyExpandedLegMerger;
+import org.mitre.tdp.boogie.alg.graph.LegMergerFactory;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.fn.LeftMerger;
 
 /**
  * Final output container for the expanded route information.
@@ -22,7 +23,7 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
  */
 public final class ExpandedRoute {
 
-  private static final MultiplyExpandedLegMerger merger = new MultiplyExpandedLegMerger();
+  private static final LeftMerger<GraphableLeg> merger = LegMergerFactory.newSimilarSubsequentGraphableLegMerger();
 
   /**
    * The input route string used to generate this expansion.
@@ -89,7 +90,7 @@ public final class ExpandedRoute {
   }
 
   public List<GraphableLeg> mergedLegs() {
-    return merger.mergeLegs(legs());
+    return merger.reduce(legs());
   }
 
   /**

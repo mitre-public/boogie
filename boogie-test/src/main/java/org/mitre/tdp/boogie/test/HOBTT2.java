@@ -13,27 +13,68 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * A mocked copy of the HOBTT2 Procedure at KATL from cycle 1913 for use in testing.
  */
-public final class HOBTT2 {
+public final class HOBTT2 implements Procedure {
+
+  public static final HOBTT2 INSTANCE = new HOBTT2();
 
   private final Map<String, Transition> transitions;
 
-  private HOBTT2(Map<String, Transition> transitions) {
-    this.transitions = transitions;
-  }
-
-  public static HOBTT2 build() {
-    Map<String, Transition> tmap = Stream.of(
+  private HOBTT2() {
+    Map<String, Transition> map  =Stream.of(
         DRSDN(), KHMYA(), COOUP(), BEORN(), FRDDO(), ENNTT(), ORRKK(),
         GOLLM(), STRDR(), SHYRE(), COMMON(), RW26B(), RW27B(), RW28())
-        .collect(Collectors.toMap(Transition::identifier, Function.identity()));
-    return new HOBTT2(tmap);
+        .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse(null), Function.identity()));
+    this.transitions = ImmutableMap.copyOf(map);
+  }
+
+  public Leg get(String fname, String tname) {
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.associatedFix().isPresent()).filter(l -> fname.equals(l.associatedFix().get().fixIdentifier())).findFirst().orElse(null);
+  }
+
+  public Transition get(String tname) {
+    return this.transitions.get(tname);
+  }
+
+  @Override
+  public String procedureIdentifier() {
+    return "HOBBT2";
+  }
+
+  @Override
+  public String airportIdentifier() {
+    return "KATL";
+  }
+
+  @Override
+  public String airportRegion() {
+    return "K2"; // ?
+  }
+
+  @Override
+  public ProcedureType procedureType() {
+    return ProcedureType.STAR;
+  }
+
+  @Override
+  public RequiredNavigationEquipage requiredNavigationEquipage() {
+    return RequiredNavigationEquipage.RNAV;
+  }
+
+  @Override
+  public Collection<Transition> transitions() {
+    return transitions.values();
   }
 
   private static Transition DRSDN() {
@@ -178,18 +219,5 @@ public final class HOBTT2 {
     Leg YURII2 = FM("YURII", 33.53713055555556, -84.03544166666667);
     return transition("RW28", "HOBTT2", "KATL", TransitionType.RUNWAY, ProcedureType.STAR,
         Arrays.asList(ENSLL, EAGYL, SHURT, FOGER, HITTT, YURII, YURII2));
-  }
-
-  public Leg get(String fname, String tname) {
-    Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator() != null).filter(l -> fname.equals(l.pathTerminator().identifier())).findFirst().orElse(null);
-  }
-
-  public Transition get(String tname) {
-    return this.transitions.get(tname);
-  }
-
-  public Collection<Transition> transitions() {
-    return transitions.values();
   }
 }

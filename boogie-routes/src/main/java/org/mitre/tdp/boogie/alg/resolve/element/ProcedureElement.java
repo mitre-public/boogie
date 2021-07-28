@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.alg.resolve.element;
 
+import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedure;
+import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -7,15 +10,15 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.graph.ProcedureGraph;
-import org.mitre.tdp.boogie.alg.resolve.resolver.CommonOrEnrouteTransitionFilter;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
-import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.alg.resolve.resolver.CommonOrEnrouteTransitionFilter;
+import org.mitre.tdp.boogie.model.ProcedureGraph;
 
 public final class ProcedureElement extends ResolvedElement<Procedure> {
 
@@ -29,7 +32,7 @@ public final class ProcedureElement extends ResolvedElement<Procedure> {
   private Predicate<Transition> transitionFilter;
 
   public ProcedureElement(Procedure ref) {
-    super(elementTypeFor(ref.type()), ref);
+    super(elementTypeFor(ref.procedureType()), ref);
     // by default drop all runway/approach transitions
     this.transitionFilter = DEFAULT_TRANSITION_FILTER;
   }
@@ -58,7 +61,7 @@ public final class ProcedureElement extends ResolvedElement<Procedure> {
       return new ArrayList<>();
     }
 
-    ProcedureGraph graph = ProcedureGraph.from(filteredTransitions);
+    ProcedureGraph graph = newProcedureGraph(newProcedure(filteredTransitions));
 
     graph.edgeSet().forEach(edge -> {
       Leg source = graph.getEdgeSource(edge);

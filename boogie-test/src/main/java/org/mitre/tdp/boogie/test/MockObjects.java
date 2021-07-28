@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.test;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -14,7 +15,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -28,77 +29,68 @@ public class MockObjects {
 
   public static Fix fix(String name, double lat, double lon) {
     Fix fix = spy(Fix.class);
-    when(fix.identifier()).thenReturn(name);
+    when(fix.fixIdentifier()).thenReturn(name);
     when(fix.latLong()).thenReturn(LatLong.of(lat, lon));
     when(fix.latitude()).thenCallRealMethod();
     when(fix.longitude()).thenCallRealMethod();
-    when(fix.magneticVariation()).thenReturn(new MagneticVariation() {
-      @Override
-      public Optional<Double> published() {
-        return Optional.empty();
-      }
-
-      @Override
-      public double modeled() {
-        return (float) Declinations.declination(lat, lon, Optional.empty(), Instant.parse("2019-01-01T00:00:00.00Z"));
-      }
-    });
+    when(fix.publishedVariation()).thenReturn(Optional.empty());
+    when(fix.modeledVariation()).thenReturn(Declinations.declination(lat, lon, Optional.empty(), Instant.parse("2019-01-01T00:00:00.00Z")));
     when(fix.toString()).thenReturn("Name: " + name);
+    when(fix.projectOut(any(), any())).thenCallRealMethod();
     return fix;
   }
 
   public static Leg TF(String name, double lat, double lon) {
-    return leg(name, lat, lon, PathTerm.TF);
+    return leg(name, lat, lon, PathTerminator.TF);
   }
 
   public static Leg IF(String name, double lat, double lon) {
-    return leg(name, lat, lon, PathTerm.IF);
+    return leg(name, lat, lon, PathTerminator.IF);
   }
 
   public static Leg DF(String name, double lat, double lon) {
-    return leg(name, lat, lon, PathTerm.DF);
+    return leg(name, lat, lon, PathTerminator.DF);
   }
 
   public static Leg CF(String name, double lat, double lon) {
-    return leg(name, lat, lon, PathTerm.CF);
+    return leg(name, lat, lon, PathTerminator.CF);
   }
 
   public static Leg FM(String name, double lat, double lon) {
-    return leg(name, lat, lon, PathTerm.FM);
+    return leg(name, lat, lon, PathTerminator.FM);
   }
 
   public static Leg HM(String name, double lat, double lon) {
-    return leg(name, lat, lon, PathTerm.HM);
+    return leg(name, lat, lon, PathTerminator.HM);
   }
 
   public static Leg CA() {
-    return nonConcreteLeg(PathTerm.CA);
+    return nonConcreteLeg(PathTerminator.CA);
   }
 
   public static Leg VA() {
-    return nonConcreteLeg(PathTerm.VA);
+    return nonConcreteLeg(PathTerminator.VA);
   }
 
   public static Leg VI() {
-    return nonConcreteLeg(PathTerm.VI);
+    return nonConcreteLeg(PathTerminator.VI);
   }
 
   public static Leg VM() {
-    return nonConcreteLeg(PathTerm.VM);
+    return nonConcreteLeg(PathTerminator.VM);
   }
 
-  public static Leg nonConcreteLeg(PathTerm type) {
+  public static Leg nonConcreteLeg(PathTerminator type) {
     Leg leg = mock(Leg.class);
-    when(leg.type()).thenReturn(type);
+    when(leg.pathTerminator()).thenReturn(type);
     return leg;
   }
 
-  public static Leg leg(String name, double lat, double lon, PathTerm type) {
+  public static Leg leg(String name, double lat, double lon, PathTerminator type) {
     Fix term = fix(name, lat, lon);
     Leg leg = mock(Leg.class);
-    when(leg.type()).thenReturn(type);
-    when(leg.pathTerminator()).thenReturn(term);
-
+    when(leg.pathTerminator()).thenReturn(type);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
     when(leg.toString()).thenReturn("Path Terminator: " + name);
     return leg;
   }
@@ -114,14 +106,13 @@ public class MockObjects {
   public static Transition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<? extends Leg> legs) {
     Transition transition = mock(Transition.class);
 
-    when(transition.identifier()).thenReturn(tname);
-    when(transition.airport()).thenReturn(aname);
+    when(transition.transitionIdentifier()).thenReturn(Optional.ofNullable(tname));
+    when(transition.airportIdentifier()).thenReturn(aname);
+    when(transition.airportRegion()).thenReturn("MOCK");
     when(transition.legs()).thenReturn((List) legs);
-    when(transition.concreteLegs()).thenCallRealMethod();
-    when(transition.procedure()).thenReturn(pname);
+    when(transition.procedureIdentifier()).thenReturn(pname);
     when(transition.procedureType()).thenReturn(ptype);
     when(transition.transitionType()).thenReturn(ttype);
-    when(transition.navigationSource()).thenReturn(() -> "MOCK");
     when(transition.toString()).thenReturn("Transition: " + (tname == null ? "common" : tname) + " Procedure: " + pname);
 
     return transition;
@@ -136,14 +127,15 @@ public class MockObjects {
 
   public static Airport airport(String name, double lat, double lon) {
     Airport airport = mock(Airport.class);
-    when(airport.identifier()).thenReturn(name);
+    when(airport.airportIdentifier()).thenReturn(name);
     when(airport.latLong()).thenReturn(LatLong.of(lat, lon));
+    when(airport.fixIdentifier()).thenCallRealMethod();
     return airport;
   }
 
   public static Airway airway(String name, List<? extends Leg> legs) {
     Airway airway = mock(Airway.class);
-    when(airway.identifier()).thenReturn(name);
+    when(airway.airwayIdentifier()).thenReturn(name);
     when(airway.legs()).thenReturn((List) legs);
     return airway;
   }

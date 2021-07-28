@@ -14,7 +14,7 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
@@ -30,7 +30,7 @@ class TestDfFeatureExtractor {
   void test15nmOnCourseScore() {
     ConformablePoint point = mock(ConformablePoint.class);
 
-    LatLong loc = DF().pathTerminator().projectOut(0.0, 20.0).latLong();
+    LatLong loc = DF().associatedFix().orElseThrow(AssertionError::new).projectOut(0.0, 20.0).latLong();
     when(point.latLong()).thenReturn(loc);
     when(point.latitude()).thenCallRealMethod();
     when(point.longitude()).thenCallRealMethod();
@@ -64,8 +64,8 @@ class TestDfFeatureExtractor {
     when(navaid.projectOut(any(), any())).thenCallRealMethod();
 
     Leg DF = mock(Leg.class);
-    when(DF.type()).thenReturn(PathTerm.DF);
-    when(DF.pathTerminator()).thenReturn(navaid);
+    when(DF.pathTerminator()).thenReturn(PathTerminator.DF);
+    when(DF.associatedFix()).thenReturn((Optional) Optional.of(navaid));
 
     return DF;
   }

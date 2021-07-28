@@ -7,7 +7,11 @@ import org.mitre.tdp.boogie.Airport;
 /**
  * Collection of mock airport objects and their actual locations for use in testing.
  */
-public class Airports {
+public final class Airports {
+
+  private Airports() {
+    throw new IllegalStateException("Unable to instantiate static factory class.");
+  }
 
   public static Airport KDEN() {
     return airport("KDEN", 39.861666666666665, -104.67316666666667);

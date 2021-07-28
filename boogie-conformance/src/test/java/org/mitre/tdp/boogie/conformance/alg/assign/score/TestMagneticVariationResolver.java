@@ -41,7 +41,7 @@ class TestMagneticVariationResolver {
   void testResolutionFailoverToPointMagvar() {
     Leg l = leg();
     when(l.recommendedNavaid()).thenReturn(Optional.empty());
-    when(l.pathTerminator()).thenReturn(null);
+    when(l.associatedFix()).thenReturn(Optional.empty());
 
     FlyableLeg leg = new FlyableLeg(null, l, null, Route.newRoute(Collections.emptyList(), new Object()));
     MagneticVariation magneticVariation = MagneticVariationResolver.getInstance().magneticVariation(point(), leg);
@@ -58,23 +58,17 @@ class TestMagneticVariationResolver {
     return conformablePoint;
   }
 
-  private MagneticVariation magvar(double modeled) {
-    MagneticVariation magneticVariation = mock(MagneticVariation.class);
-    when(magneticVariation.modeled()).thenReturn(modeled);
-    return magneticVariation;
-  }
-
   private Leg leg() {
-    MagneticVariation navVar = magvar(10.);
     Fix navaid = mock(Fix.class);
-    when(navaid.magneticVariation()).thenReturn(navVar);
+    when(navaid.modeledVariation()).thenReturn(10.);
+    when(navaid.magneticVariation()).thenCallRealMethod();
 
-    MagneticVariation termVar = magvar(0.);
     Fix pathTerm = mock(Fix.class);
-    when(pathTerm.magneticVariation()).thenReturn(termVar);
+    when(pathTerm.modeledVariation()).thenReturn(0.);
+    when(pathTerm.magneticVariation()).thenCallRealMethod();
 
     Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(pathTerm);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(pathTerm));
     when(leg.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
 
     return leg;

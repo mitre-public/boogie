@@ -8,7 +8,8 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 
 class TestAirportElement {
@@ -22,14 +23,14 @@ class TestAirportElement {
 
     assertAll(
         () -> assertEquals(1, element.legs().size()),
-        () -> assertEquals(airportLocation, linked.source().leg().pathTerminator().latLong()),
-        () -> assertEquals(airportLocation, linked.target().leg().pathTerminator().latLong()),
+        () -> assertEquals(airportLocation, linked.source().leg().associatedFix().map(Fix::latLong).orElse(null)),
+        () -> assertEquals(airportLocation, linked.target().leg().associatedFix().map(Fix::latLong).orElse(null)),
 
-        () -> assertEquals("KATL", linked.source().leg().pathTerminator().identifier()),
-        () -> assertEquals("KATL", linked.target().leg().pathTerminator().identifier()),
+        () -> assertEquals("KATL", linked.source().leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals("KATL", linked.target().leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
-        () -> assertEquals(PathTerm.IF, linked.source().leg().type()),
-        () -> assertEquals(PathTerm.IF, linked.source().leg().type())
+        () -> assertEquals(PathTerminator.IF, linked.source().leg().pathTerminator()),
+        () -> assertEquals(PathTerminator.IF, linked.source().leg().pathTerminator())
     );
   }
 
@@ -41,8 +42,8 @@ class TestAirportElement {
     LinkedLegs linked = element.legs().get(0);
 
     assertAll(
-        () -> assertEquals(PathTerm.DF, linked.source().leg().type()),
-        () -> assertEquals(PathTerm.DF, linked.source().leg().type())
+        () -> assertEquals(PathTerminator.DF, linked.source().leg().pathTerminator()),
+        () -> assertEquals(PathTerminator.DF, linked.source().leg().pathTerminator())
     );
   }
 
@@ -50,12 +51,9 @@ class TestAirportElement {
 
   private Airport testAirport() {
     Airport airport = mock(Airport.class);
-
-    String airportId = "KATL";
     when(airport.latLong()).thenReturn(airportLocation);
-    when(airport.identifier()).thenReturn(airportId);
-    when(airport.navigationSource()).thenReturn(() -> "CIFP");
-
+    when(airport.airportIdentifier()).thenReturn("KATL");
+    when(airport.fixIdentifier()).thenCallRealMethod();
     return airport;
   }
 }

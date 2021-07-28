@@ -13,6 +13,10 @@ import org.mitre.tdp.boogie.Leg;
  */
 public final class Airways {
 
+  private Airways() {
+    throw new IllegalStateException("Unable to instantiate static factory class.");
+  }
+
   public static Airway J121() {
     Leg CRG = TF("CRG", 30.338880555555555, -81.50992777777778);
     Leg MILIE = TF("MILIE", 31.328622222222222, -81.17371944444444);

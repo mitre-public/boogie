@@ -1,23 +1,23 @@
 package org.mitre.tdp.boogie.alg.resolve.resolver;
 
+import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
 import static org.mitre.tdp.boogie.test.MockObjects.fix;
-import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.service.impl.FixService;
 
 class TestFixResolver {
 
@@ -30,7 +30,13 @@ class TestFixResolver {
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
-        () -> assertEquals("JIMMY", resolved.get(0).reference().identifier()),
+        () -> assertTrue(resolved.get(0).reference() instanceof Fix)
+    );
+
+    Fix resolvedFix = (Fix) resolved.get(0).reference();
+
+    assertAll(
+        () -> assertEquals("JIMMY", resolvedFix.fixIdentifier()),
         () -> assertEquals(ElementType.FIX, resolved.get(0).type())
     );
   }
@@ -39,8 +45,8 @@ class TestFixResolver {
   void testSingleTailoredResolution() {
     Fix fix = fix("JIMMY", 0.0, 0.0);
 
-    MagneticVariation variation = magneticVariation(10.0f, 10.0f);
-    when(fix.magneticVariation()).thenReturn(variation);
+    when(fix.publishedVariation()).thenReturn(Optional.of(10.));
+    when(fix.modeledVariation()).thenReturn(10.);
 
     FixResolver resolver = resolver(fix);
 
@@ -48,9 +54,16 @@ class TestFixResolver {
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
-        () -> assertEquals("JIMMY", resolved.get(0).reference().identifier()),
+        () -> assertTrue(resolved.get(0).reference() instanceof Fix)
+    );
+
+    ResolvedElement<Fix> resolvedFix = (ResolvedElement<Fix>) resolved.get(0);
+    LatLong generatedLocation = resolvedFix.legs().get(0).source().leg().associatedFix().map(Fix::latLong).orElse(LatLong.of(0., 0.));
+
+    assertAll(
+        () -> assertEquals("JIMMY", resolvedFix.reference().fixIdentifier()),
         () -> assertEquals(ElementType.TAILORED, resolved.get(0).type()),
-        () -> assertNotEquals(LatLong.of(0.0, 0.0), resolved.get(0).legs().get(0).source().leg().pathTerminator().latLong())
+        () -> assertNotEquals(LatLong.of(0., 0.), generatedLocation, "Generated location in the final LinkedLegs should reflect the offset from the tailoring.")
     );
   }
 
@@ -60,6 +73,6 @@ class TestFixResolver {
   }
 
   private FixResolver resolver(Fix fix) {
-    return new FixResolver(FixService.with(Collections.singleton(fix)));
+    return new FixResolver(newLookupService(Fix::fixIdentifier, singleton(fix)));
   }
 }

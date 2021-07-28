@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.alg.graph;
 
-import static org.mitre.tdp.boogie.utils.Nulls.nonNullEquals;
-
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 
 public final class LinkedLegs {
@@ -30,9 +28,14 @@ public final class LinkedLegs {
 
   public Double linkWeight() {
     return nonNullEquals(source.split(), target.split())
-        || source.leg().pathTerminator() == null
-        || target.leg().pathTerminator() == null
+        || !source.leg().associatedFix().isPresent()
+        || !target.leg().associatedFix().isPresent()
         ? MATCH_WEIGHT
-        : source.leg().pathTerminator().latLong().distanceInNM(target.leg().pathTerminator().latLong());
+        : source.leg().associatedFix().orElseThrow(IllegalStateException::new).latLong().distanceInNM(target.leg().associatedFix().orElseThrow(IllegalStateException::new).latLong());
+  }
+
+  private static <T> boolean nonNullEquals(T u, T v) {
+    return u != null && u.equals(v);
   }
 }
+

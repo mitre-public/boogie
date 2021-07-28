@@ -4,27 +4,27 @@ import java.util.Optional;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.NavigationSource;
 
 final class LocationFix implements Fix {
 
-  private final String identifier;
+  private final String fixIdentifier;
+  private final String fixRegion;
   private final LatLong location;
 
-  LocationFix(String id, LatLong loc) {
-    this.identifier = id;
+  LocationFix(String fixIdentifier, String fixRegion, LatLong loc) {
+    this.fixIdentifier = fixIdentifier;
+    this.fixRegion = fixRegion;
     this.location = loc;
   }
 
   @Override
-  public String identifier() {
-    return identifier;
+  public String fixIdentifier() {
+    return fixIdentifier;
   }
 
   @Override
-  public NavigationSource navigationSource() {
-    return () -> "ANONYMOUS";
+  public String fixRegion() {
+    return fixRegion;
   }
 
   @Override
@@ -32,20 +32,14 @@ final class LocationFix implements Fix {
     return location;
   }
 
+  @Override
+  public Optional<Double> publishedVariation() {
+    return Optional.empty();
+  }
 
   @Override
-  public MagneticVariation magneticVariation() {
-    return new MagneticVariation() {
-      @Override
-      public Optional<Double> published() {
-        return Optional.empty();
-      }
-
-      @Override
-      public double modeled() {
-        return 0.0d;
-      }
-    };
+  public double modeledVariation() {
+    return 0.d;
   }
 
   @Override

@@ -10,10 +10,10 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.resolver.CommonOrEnrouteTransitionFilter;
 
-public class TestCommonOrEnrouteTransitionFilter {
+class TestCommonOrEnrouteTransitionFilter {
 
   @Test
-  public void testPassesCommonTransition() {
+  void testPassesCommonTransition() {
     Transition transition = mock(Transition.class);
     when(transition.transitionType()).thenReturn(TransitionType.COMMON);
 
@@ -21,7 +21,7 @@ public class TestCommonOrEnrouteTransitionFilter {
   }
 
   @Test
-  public void testPassesEnrouteTransition() {
+  void testPassesEnrouteTransition() {
     Transition transition = mock(Transition.class);
     when(transition.transitionType()).thenReturn(TransitionType.ENROUTE);
 
@@ -29,7 +29,7 @@ public class TestCommonOrEnrouteTransitionFilter {
   }
 
   @Test
-  public void testFailsRunwayTransition() {
+  void testFailsRunwayTransition() {
     Transition transition = mock(Transition.class);
     when(transition.transitionType()).thenReturn(TransitionType.RUNWAY);
 
@@ -37,7 +37,7 @@ public class TestCommonOrEnrouteTransitionFilter {
   }
 
   @Test
-  public void testFailsApproachTransition() {
+  void testFailsApproachTransition() {
     Transition transition = mock(Transition.class);
     when(transition.transitionType()).thenReturn(TransitionType.APPROACH);
 

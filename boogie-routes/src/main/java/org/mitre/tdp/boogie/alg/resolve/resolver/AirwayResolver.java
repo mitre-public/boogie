@@ -9,9 +9,9 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.alg.resolve.element.AirwayElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.service.LookupService;
+import org.mitre.tdp.boogie.alg.LookupService;
 
-public final class AirwayResolver implements SingleSectionResolver {
+public final class AirwayResolver implements SingleSplitSectionResolver {
 
   private final LookupService<Airway> lookupService;
 
@@ -21,7 +21,7 @@ public final class AirwayResolver implements SingleSectionResolver {
 
   @Override
   public List<ResolvedElement<?>> resolve(SectionSplit sectionSplit) {
-    return lookupService.allMatchingIdentifier(sectionSplit.value())
+    return lookupService.apply(sectionSplit.value())
         .stream()
         .map(AirwayElement::new)
         .collect(Collectors.toList());

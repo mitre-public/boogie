@@ -7,12 +7,11 @@ import java.util.Collection;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolverFactory;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
-import org.mitre.tdp.boogie.service.LookupService;
-import org.mitre.tdp.boogie.service.ProcedureService;
 
 /**
  * Factory class for generating instances of {@link RouteExpander}s. This class decorates a {@link RouteResolverFactory} to
@@ -33,7 +32,7 @@ public final class RouteExpanderFactory {
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
-      ProcedureService procedureService) {
+      LookupService<Procedure> procedureService) {
     return new RouteExpanderFactory(new RouteResolverFactory(fixService, airwayService, airportService, procedureService));
   }
 

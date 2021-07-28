@@ -5,10 +5,10 @@ import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.latLon;
 import java.util.Collections;
 import java.util.List;
 
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 import org.mitre.tdp.boogie.util.CoordinateParser;
 
 import com.google.common.base.Preconditions;
@@ -27,7 +27,7 @@ public final class LatLonElement extends ResolvedElement<LocationFix> {
    */
   public static LatLonElement from(String location, String wildcards) {
     Preconditions.checkArgument(location.matches(latLon().pattern()));
-    LocationFix floc = new LocationFix(location, CoordinateParser.parse(location));
+    LocationFix floc = new LocationFix(location, "ANONYMOUS", CoordinateParser.parse(location));
     return new LatLonElement(wildcards, floc);
   }
 

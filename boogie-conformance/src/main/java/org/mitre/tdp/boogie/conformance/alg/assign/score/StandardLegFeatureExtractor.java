@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
  * A functional class which given a {@link ConformablePoint},{@link FlyableLeg} pair can be used to return the appropriate
  * {@link ViterbiFeatureVectorExtractor} for the pair.
  *
- * Generally speaking this class delegates feature extraction to different extractors based on the {@link Leg#type()} of the
+ * Generally speaking this class delegates feature extraction to different extractors based on the {@link Leg#pathTerminator()} of the
  * {@link FlyableLeg#current()} leg of the provided flyable leg.
  */
 public final class StandardLegFeatureExtractor implements BiFunction<ConformablePoint, FlyableLeg, ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {

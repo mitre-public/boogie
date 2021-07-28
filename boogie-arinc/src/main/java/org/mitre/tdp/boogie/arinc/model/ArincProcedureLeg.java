@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -39,7 +39,7 @@ public final class ArincProcedureLeg {
   private final String waypointDescription;
   private final TurnDirection turnDirection;
   private final Double rnp;
-  private final PathTerm pathTerm;
+  private final PathTerminator pathTerminator;
   private final Boolean turnDirectionValid;
   private final String recommendedNavaidIdentifier;
   private final String recommendedNavaidIcaoRegion;
@@ -87,7 +87,7 @@ public final class ArincProcedureLeg {
     this.waypointDescription = builder.waypointDescription;
     this.turnDirection = builder.turnDirection;
     this.rnp = builder.rnp;
-    this.pathTerm = builder.pathTerm;
+    this.pathTerminator = builder.pathTerminator;
     this.turnDirectionValid = builder.turnDirectionValid;
     this.recommendedNavaidIdentifier = builder.recommendedNavaidIdentifier;
     this.recommendedNavaidIcaoRegion = builder.recommendedNavaidIcaoRegion;
@@ -189,8 +189,8 @@ public final class ArincProcedureLeg {
     return Optional.ofNullable(rnp);
   }
 
-  public PathTerm pathTerm() {
-    return pathTerm;
+  public PathTerminator pathTerm() {
+    return pathTerminator;
   }
 
   public Optional<Boolean> turnDirectionValid() {
@@ -378,7 +378,7 @@ public final class ArincProcedureLeg {
         Objects.equals(waypointDescription, that.waypointDescription) &&
         turnDirection == that.turnDirection &&
         Objects.equals(rnp, that.rnp) &&
-        Objects.equals(pathTerm, that.pathTerm) &&
+        Objects.equals(pathTerminator, that.pathTerminator) &&
         Objects.equals(turnDirectionValid, that.turnDirectionValid) &&
         Objects.equals(recommendedNavaidIdentifier, that.recommendedNavaidIdentifier) &&
         Objects.equals(recommendedNavaidIcaoRegion, that.recommendedNavaidIcaoRegion) &&
@@ -410,7 +410,7 @@ public final class ArincProcedureLeg {
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, sidStarIdentifier, routeType, transitionIdentifier, sequenceNumber, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubSectionCode, continuationRecordNumber, waypointDescription, turnDirection, rnp, pathTerm, turnDirectionValid, recommendedNavaidIdentifier, recommendedNavaidIcaoRegion, arcRadius, theta, rho, outboundMagneticCourse, routeHoldDistanceTime, holdTime, routeDistance, recommendedNavaidSectionCode, recommendedNavaidSubSectionCode, altitudeDescription, minAltitude1, minAltitude2, transitionAltitude, speedLimit, verticalAngle, centerFixIdentifier, centerFixIcaoRegion, centerFixSectionCode, centerFixSubSectionCode, speedLimitDescription, routeTypeQualifier1, routeTypeQualifier2, fileRecordNumber, lastUpdateCycle);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, sidStarIdentifier, routeType, transitionIdentifier, sequenceNumber, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubSectionCode, continuationRecordNumber, waypointDescription, turnDirection, rnp, pathTerminator, turnDirectionValid, recommendedNavaidIdentifier, recommendedNavaidIcaoRegion, arcRadius, theta, rho, outboundMagneticCourse, routeHoldDistanceTime, holdTime, routeDistance, recommendedNavaidSectionCode, recommendedNavaidSubSectionCode, altitudeDescription, minAltitude1, minAltitude2, transitionAltitude, speedLimit, verticalAngle, centerFixIdentifier, centerFixIcaoRegion, centerFixSectionCode, centerFixSubSectionCode, speedLimitDescription, routeTypeQualifier1, routeTypeQualifier2, fileRecordNumber, lastUpdateCycle);
   }
 
   @Override
@@ -434,7 +434,7 @@ public final class ArincProcedureLeg {
         ", waypointDescription='" + waypointDescription + '\'' +
         ", turnDirection=" + turnDirection +
         ", rnp=" + rnp +
-        ", pathTerm=" + pathTerm +
+        ", pathTerm=" + pathTerminator +
         ", turnDirectionValid=" + turnDirectionValid +
         ", recommendedNavaidIdentifier='" + recommendedNavaidIdentifier + '\'' +
         ", recommendedNavaidIcaoRegion='" + recommendedNavaidIcaoRegion + '\'' +
@@ -484,7 +484,7 @@ public final class ArincProcedureLeg {
     private String waypointDescription;
     private TurnDirection turnDirection;
     private Double rnp;
-    private PathTerm pathTerm;
+    private PathTerminator pathTerminator;
     private Boolean turnDirectionValid;
     private String recommendedNavaidIdentifier;
     private String recommendedNavaidIcaoRegion;
@@ -603,8 +603,8 @@ public final class ArincProcedureLeg {
       return this;
     }
 
-    public Builder pathTerm(PathTerm pathTerm) {
-      this.pathTerm = pathTerm;
+    public Builder pathTerm(PathTerminator pathTerminator) {
+      this.pathTerminator = pathTerminator;
       return this;
     }
 

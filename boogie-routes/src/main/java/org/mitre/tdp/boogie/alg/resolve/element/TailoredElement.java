@@ -6,10 +6,10 @@ import java.util.List;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
 
 public final class TailoredElement extends ResolvedElement<Fix> {
 
@@ -40,7 +40,7 @@ public final class TailoredElement extends ResolvedElement<Fix> {
     double distance = bearingDistance.second();
 
     LatLong projectedLocation = reference().latLong().projectOut(course, distance);
-    LocationFix asFix = new LocationFix(tailored, projectedLocation);
+    LocationFix asFix = new LocationFix(tailored, reference().fixRegion(), projectedLocation);
 
     FixTerminationLeg leg = Wildcard.TAILORED.test(wildcards)
         ? FixTerminationLeg.IF(asFix)
@@ -55,8 +55,7 @@ public final class TailoredElement extends ResolvedElement<Fix> {
    * included and the published may be null.
    */
   private Double convertToTrue(Double bearing) {
-    double magvar = reference.magneticVariation().published()
-        .orElse(reference.magneticVariation().modeled());
+    double magvar = reference.publishedVariation().orElse(reference.modeledVariation());
     return bearing + magvar;
   }
 }

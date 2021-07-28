@@ -16,7 +16,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class Combinatorics {
+public final class Combinatorics {
 
   private Combinatorics() {
     throw new IllegalStateException("Utility Class");

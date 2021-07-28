@@ -27,6 +27,8 @@ import com.google.common.collect.ImmutableList;
  * <br>
  * This class is provided for convenience, but it's limitations (especially the thread-safety) should be taken into account before
  * use.
+ * <br>
+ * If additional convertible record types are added this class can be extended relatively straightforwardly.
  */
 public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord> {
 
@@ -101,6 +103,15 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.consumer.accept(arincRecord);
   }
 
+  /**
+   * If run on hundreds of thousands of records making the collector apply each delegation predicate can start to take some time
+   * (especially if any of those delegators require partial parses).
+   * <br>
+   * Since the 424 records are <i>typically</i> fairly well sorted by record type, some time can be saved by first checking with
+   * the delegator which matched the previous record.
+   * <br>
+   * Plus the implementation is pretty lightweight.
+   */
   private static final class MRUDequeConsumer<T, V extends Predicate<T> & Consumer<T>> implements Consumer<T> {
 
     private final ArrayDeque<V> predicateDeque;
@@ -116,8 +127,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
       Optional<V> match = predicateDeque.stream().filter(p -> p.test(t)).findFirst();
       match.ifPresent(m -> {
         m.accept(t);
-        predicateDeque.remove(m);
-        predicateDeque.addFirst(m);
+        if (!predicateDeque.getFirst().equals(m)) {
+          predicateDeque.remove(m);
+          predicateDeque.addFirst(m);
+        }
       });
     }
   }
