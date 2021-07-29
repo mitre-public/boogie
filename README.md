@@ -14,6 +14,8 @@ software project with the specific components and their expected usages laid out
 
 [boogie-conformance](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-conformance) - Tools for evaluating how well trajectory data conformed with a physical path (generally as outlined by a procedure/airway).
 
+[boogie-rest](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-rest) - REST API wrapper around common Boogie services - utilizes pieces of multiple modules (e.g. ARINC parsing, Route Expansion).
+
 # Installation
 Boogie leverages Gradle for builds and compiles/runs on Java 8 (though there are plans to improve this going forward). 
 
