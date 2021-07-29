@@ -119,7 +119,8 @@ public final class RecordElectorFactory {
     requireNonNull(procedure.procedureIdentifier());
     requireNonNull(procedure.airportIdentifier());
     requireNonNull(procedure.airportRegion());
-    return procedure.procedureIdentifier().concat(procedure.airportIdentifier()).concat(procedure.airportRegion());
+    requireNonNull(procedure.procedureType());
+    return procedure.procedureIdentifier().concat(procedure.airportIdentifier()).concat(procedure.airportRegion()).concat(procedure.procedureType().name());
   }
 
   /**
