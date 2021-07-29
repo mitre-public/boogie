@@ -11,9 +11,9 @@ import org.mitre.tdp.boogie.alg.resolve.element.FixElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.element.TailoredElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.service.LookupService;
+import org.mitre.tdp.boogie.alg.LookupService;
 
-public final class FixResolver implements SingleSectionResolver {
+public final class FixResolver implements SingleSplitSectionResolver {
 
   private final LookupService<Fix> lookupService;
 
@@ -32,7 +32,7 @@ public final class FixResolver implements SingleSectionResolver {
         : section;
 
     return lookupService
-        .allMatchingIdentifier(s).stream()
+        .apply(s).stream()
         .map(fix -> section.equals(s)
             ? new FixElement(fix, sectionSplit.wildcards())
             : new TailoredElement(section, sectionSplit.wildcards(), fix))

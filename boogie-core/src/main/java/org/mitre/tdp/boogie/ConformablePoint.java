@@ -7,7 +7,7 @@ import org.mitre.caasd.commons.HasTime;
 
 /**
  * The top level interface for points which we can evaluate conformance against across the
- * various {@link PathTerm}s.
+ * various {@link PathTerminator}s.
  *
  * <p>Not all features are required to be populated to measure conformance to any particular
  * type of leg, but all conformable leg types will check for the existence of their required

@@ -8,7 +8,7 @@ import org.mitre.caasd.commons.LatLong;
 
 import com.google.common.base.Preconditions;
 
-public class CoordinateParser {
+public final class CoordinateParser {
 
   private CoordinateParser() {
     throw new IllegalStateException("Utility Class");

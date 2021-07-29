@@ -1,5 +1,10 @@
-## Purpose
-This analytic resolves the physical planned path of an aircraft through the NAS based on the route strings filed in it’s flightplans. Depending on the configured infrastructure data this route expansions can 
+# Boogie Routes
+[![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-VOIC)](https://https://pandafood.mitre.org/browse/CDA-SHIM)
+[![Latest Release](https://img.shields.io/badge/version-0.0.91-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
+
+# Module overview
+
+This module resolves the physical planned path of an aircraft through the NAS based on the route strings filed in it’s flightplans. Depending on the configured infrastructure data this route expansions can 
 be generated both domestically and internationally.
 
 <div class="img-with-text">
@@ -19,9 +24,40 @@ be generated both domestically and internationally.
 <img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
 <br />
 
-## Algorithm
+# Quick start
 
-### Quick review of route strings
+The entry point to the code is the ```RouteExpanderFactory.java``` class. This class provides a pair of methods for generating a ```RouteExpander``` based on either collections of cached infrastructure data 
+or based on a ```LookupService``` which can be used to identify infrastructure elements by their string identifier (as one would see them referenced by in the flightplan).
+
+Assuming you have a collection of infrastructure records on hand implementing the associated ```boogie-core``` interfaces instantiating a ```RouteExpander``` is as simple as:
+
+```
+Collection<Transition> transitions...
+Collection<Airway> airways...
+Collection<Fix> fixes...
+Collection<Airport> airports...
+
+String myRouteString....
+
+RouteExpander routeExpander = RouteExpanderFactory.newRouteExpander(fixes, airways, airports, transitions);
+
+Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString);
+```
+
+Where the expansion may not be performed in the case of insufficent information to match elements. The generated route expander can be re-used across route strings and performs expansion through the common 
+portion of the SID/STAR.
+ 
+For expansions looking to continue past the common portion and on to the runway there is an optional chainable transform to include the appropriate runway transitions, the ```RunwayTransitionAppender```. 
+This class is instantiated with a pair of runway predictions (one for arrival and one for departure) and will select the appropriate continuing transition beyond the common portion based on some (relatively) 
+simple string identifier matching (handing things like RW02B transitions, etc. for SIDs). One can be instantiated and chained with a route expander:
+
+```
+RunwayTransitionAppender appender = new RunwayTransitionAppender(() -> Optional.of("RW26B"), () -> Optional.of("RW34"));
+
+Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString).map(appender);
+```
+
+# What are route strings?
 
 What is a route string? Generally speaking it's a formatted string giving an indication of the path a flight intends to take to get from its origin to its destination. This route may be 
 updated several times over the course of the flight as the aircraft makes progress along its filed path or in response to changes in the current state of the NAS (e.g. severe weather, 
@@ -63,7 +99,7 @@ There is also a collection of wildcard characters that can appear in flightplans
 extremely uncommon to see filed, the two you're most likely to come across are (+ and *). * indicates that an ADR/ADAR (adapted arrival/departure route) has been suppressed in the 
 flightplan, while + can be either military in nature in which case it means to expect multiple flyovers of the associated fix or it may occur in pairs and indicate special route printing. 
 
-### The underlying algorithm
+# How the algorithm works
 
 The expansion algorithm itself is relatively simple and can be split into 3 primary parts:
 
@@ -79,36 +115,3 @@ The approach above allows us to keep the algorithm itself reasonable generic and
 resolved path generally does a good job of handling things like repeated airways in the route string, etc.
 
 Additionally boogie provides the legs within this path in a "flyable" form - this means the leg types accurately reflect the way the aircraft should actually fly them.
-
-### The code
-
-The entry point to the code is the ```RouteExpanderFactory.java``` class. This class provides a pair of methods for generating a ```RouteExpander``` based on either collections of cached infrastructure data 
-or based on a ```LookupService``` which can be used to identify infrastructure elements by their string identifier (as one would see them referenced by in the flightplan).
-
-Assuming you have a collection of infrastructure records on hand implementing the associated ```boogie-core``` interfaces instantiating a ```RouteExpander``` is as simple as:
-
-```
-Collection<Transition> transitions...
-Collection<Airway> airways...
-Collection<Fix> fixes...
-Collection<Airport> airports...
-
-String myRouteString....
-
-RouteExpander routeExpander = RouteExpanderFactory.newRouteExpander(fixes, airways, airports, transitions);
-
-Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString);
-```
-
-Where the expansion may not be performed in the case of insufficent information to match elements. The generated route expander can be re-used across route strings and performs expansion through the common 
-portion of the SID/STAR.
- 
-For expansions looking to continue past the common portion and on to the runway there is an optional chainable transform to include the appropriate runway transitions, the ```RunwayTransitionAppender```. 
-This class is instantiated with a pair of runway predictions (one for arrival and one for departure) and will select the appropriate continuing transition beyond the common portion based on some (relatively) 
-simple string identifier matching (handing things like RW02B transitions, etc. for SIDs). One can be instantiated and chained with a route expander:
-
-```
-RunwayTransitionAppender appender = new RunwayTransitionAppender(() -> Optional.of("RW26B"), () -> Optional.of("RW34"));
-
-Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString).map(appender);
-```

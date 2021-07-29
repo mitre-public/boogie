@@ -5,7 +5,6 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.MissingRequiredF
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.mitre.caasd.commons.HasPosition;
@@ -51,10 +50,10 @@ public final class TfFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
   }
 
   double deriveDegreesOffCourseFeature(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    Fix startFix = flyableLeg.previous().map(Leg::pathTerminator)
+    Fix startFix = flyableLeg.previous().flatMap(Leg::associatedFix)
         .orElseThrow(supplier("pathTerminator of from leg"));
 
-    Fix endFix = Optional.ofNullable(flyableLeg.current().pathTerminator())
+    Fix endFix = flyableLeg.current().associatedFix()
         .orElseThrow(supplier("pathTerminator of to leg"));
 
     double legCourse = startFix.courseInDegrees(endFix);
@@ -66,10 +65,10 @@ public final class TfFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
    * point and the {@link FlyableLeg} then returns those as a list of computed named features.
    */
   List<Pair<String, Double>> deriveDistanceFeatures(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    Fix startFix = flyableLeg.previous().map(Leg::pathTerminator)
+    Fix startFix = flyableLeg.previous().flatMap(Leg::associatedFix)
         .orElseThrow(supplier("pathTerminator of from leg"));
 
-    Fix endFix = Optional.ofNullable(flyableLeg.current().pathTerminator())
+    Fix endFix = flyableLeg.current().associatedFix()
         .orElseThrow(supplier("pathTerminator of to leg"));
 
     SegmentDistances segmentDistances = SegmentDistances.of(startFix, endFix, conformablePoint);

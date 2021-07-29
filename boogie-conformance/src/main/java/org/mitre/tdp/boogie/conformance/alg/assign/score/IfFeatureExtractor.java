@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
+import static org.mitre.tdp.boogie.conformance.alg.assign.score.MissingRequiredFieldException.supplier;
+
 import java.util.function.Supplier;
 
 import org.mitre.tdp.boogie.ConformablePoint;
@@ -32,6 +34,6 @@ public final class IfFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
   }
 
   double deriveDistanceFromFix(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    return conformablePoint.distanceInNmTo(flyableLeg.current().pathTerminator());
+    return conformablePoint.distanceInNmTo(flyableLeg.current().associatedFix().orElseThrow(supplier("Associated Fix")));
   }
 }

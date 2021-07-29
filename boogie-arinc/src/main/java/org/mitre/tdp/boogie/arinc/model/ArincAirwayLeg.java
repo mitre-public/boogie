@@ -4,10 +4,32 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.v18.field.BoundaryCode;
+import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.CruiseTableIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.DirectionRestriction;
+import org.mitre.tdp.boogie.arinc.v18.field.EnrouteRouteIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.EuIndicator;
+import org.mitre.tdp.boogie.arinc.v18.field.FixIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.FixedRadiusTransitionIndicator;
+import org.mitre.tdp.boogie.arinc.v18.field.InboundMagneticCourse;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
+import org.mitre.tdp.boogie.arinc.v18.field.MaxAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.MinimumAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.OutboundMagneticCourse;
+import org.mitre.tdp.boogie.arinc.v18.field.RecommendedNavaid;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.Rho;
+import org.mitre.tdp.boogie.arinc.v18.field.Rnp;
+import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
+import org.mitre.tdp.boogie.arinc.v18.field.RouteType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.SixthCharacter;
+import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.Theta;
+import org.mitre.tdp.boogie.arinc.v18.field.WaypointDescription;
 
 /**
  * Data class for representing structured/parsed content from within an ARINC format airway leg record.
@@ -19,38 +41,133 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  */
 public final class ArincAirwayLeg {
 
+  /**
+   * See {@link RecordType}.
+   */
   private final RecordType recordType;
+  /**
+   * See {@link CustomerAreaCode}.
+   */
   private final CustomerAreaCode customerAreaCode;
+  /**
+   * See {@link SectionCode} - always "E" for airway legs.
+   */
   private final SectionCode sectionCode;
+  /**
+   * See {@link SubSectionCode} - always "R" for airway legs.
+   */
   private final String subSectionCode;
+  /**
+   * See {@link EnrouteRouteIdentifier}.
+   */
   private final String routeIdentifier;
+  /**
+   * See {@link SixthCharacter}.
+   */
   private final String sixthCharacter;
+  /**
+   * See {@link SequenceNumber}.
+   */
   private final Integer sequenceNumber;
+  /**
+   * See {@link FixIdentifier}.
+   */
   private final String fixIdentifier;
   private final String fixIcaoRegion;
   private final SectionCode fixSectionCode;
   private final String fixSubSectionCode;
+  /**
+   * See {@link ContinuationRecordNumber}.
+   */
   private final String continuationRecordNumber;
+  /**
+   * See {@link WaypointDescription} - for high level documentation.
+   * <br>
+   * For specific code-level meanings see the appropriate field code in a ARINC 424 ICD.
+   */
   private final String waypointDescription;
+  /**
+   * See {@link BoundaryCode}.
+   */
   private final CustomerAreaCode boundaryCode;
+  /**
+   * See {@link RouteType}.
+   */
   private final String routeType;
+  /**
+   * See {@link Level}.
+   */
   private final Level level;
+  /**
+   * See {@link DirectionRestriction}.
+   */
   private final String directionRestriction;
+  /**
+   * See {@link CruiseTableIndicator}.
+   */
   private final String cruiseTableIndicator;
+  /**
+   * See {@link EuIndicator}.
+   */
   private final Boolean euIndicator;
+  /**
+   * See {@link RecommendedNavaid}.
+   */
   private final String recommendedNavaidIdentifier;
   private final String recommendedNavaidIcaoRegion;
+  /**
+   * This is the value in degrees (and tenths of a degree) in double format.
+   * <br>
+   * See {@link Theta}.
+   */
   private final Double theta;
+  /**
+   * The Required Navigational Performance required to fly the leg (in NM) as a double.
+   * <br>
+   * See {@link Rnp}.
+   */
   private final Double rnp;
+  /**
+   * This is the value in nautical miles (and tenths of a nautical mile) in double format.
+   * <br>
+   * See {@link Rho}.
+   */
   private final Double rho;
+  /**
+   * See {@link OutboundMagneticCourse}.
+   */
   private final Double outboundMagneticCourse;
+  /**
+   * See {@link RouteHoldDistanceTime}.
+   */
   private final String routeHoldDistanceTime;
+  /**
+   * The {@link Duration} as extracted from the {@link #routeHoldDistanceTime} field if present.
+   */
   private final Duration holdTime;
+  /**
+   * The distance (in NM) as extracted from the {@link #routeHoldDistanceTime} field if present.
+   */
   private final Double routeDistance;
+  /**
+   * See {@link InboundMagneticCourse}.
+   */
   private final Double inboundMagneticCourse;
+  /**
+   * See {@link MinimumAltitude}.
+   */
   private final Double minAltitude1;
+  /**
+   * See {@link MinimumAltitude}.
+   */
   private final Double minAltitude2;
+  /**
+   * See {@link MaxAltitude}.
+   */
   private final Double maxAltitude;
+  /**
+   * See {@link FixedRadiusTransitionIndicator}.
+   */
   private final Double fixedRadiusTransitionIndicator;
   private final Integer fileRecordNumber;
   private final String lastUpdateCycle;

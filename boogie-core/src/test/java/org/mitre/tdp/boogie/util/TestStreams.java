@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.util;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ class TestStreams {
 
   @Test
   void testPairwiseWithNullsLessThanTwoElements() {
-    int actual = Streams.pairwiseWithNulls(Arrays.asList(5), biSum).mapToInt(i -> i).sum();
+    int actual = Streams.pairwiseWithNulls(singletonList(5), biSum).mapToInt(i -> i).sum();
     assertEquals(10, actual);
   }
 
@@ -52,5 +53,6 @@ class TestStreams {
   private static final List<Integer> ints = IntStream.range(0, 5).boxed().collect(Collectors.toList());
 
   private static final BiFunction<Integer, Integer, Integer> biSum = (p, c) -> (p == null ? 0 : p) + (c == null ? 0 : c);
+
   private static final TriFunction<Integer, Integer, Integer, Integer> triSum = (p, c, n) -> (p == null ? 0 : p) + (c == null ? 0 : c) + (n == null ? 0 : n);
 }

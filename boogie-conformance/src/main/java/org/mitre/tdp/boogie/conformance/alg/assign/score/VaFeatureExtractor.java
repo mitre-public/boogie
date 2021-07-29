@@ -6,7 +6,6 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.MissingRequiredF
 
 import java.util.function.Supplier;
 
-import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
@@ -49,7 +48,7 @@ public final class VaFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
    * the listed target altitude and type in the leg.
    */
   double deriveFeetPastTargetAltitudeFeature(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    double targetAltitude = flyableLeg.current().altitudeConstraint().flatMap(AltitudeLimit::altitudeLimit).orElseThrow(supplier("Target Altitude"));
+    double targetAltitude = flyableLeg.current().altitudeConstraint().lowerEndpoint();
     double pressureAltitude = conformablePoint.pressureAltitude().orElseThrow(supplier("Pressure Altitude"));
     return pressureAltitude - targetAltitude;
   }

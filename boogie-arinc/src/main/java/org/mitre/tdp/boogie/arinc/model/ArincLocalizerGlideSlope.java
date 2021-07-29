@@ -3,7 +3,14 @@ package org.mitre.tdp.boogie.arinc.model;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.GlideSlopePosition;
+import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsCategory;
+import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.LocalizerBearing;
+import org.mitre.tdp.boogie.arinc.v18.field.LocalizerFrequency;
+import org.mitre.tdp.boogie.arinc.v18.field.LocalizerPosition;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
@@ -14,24 +21,66 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  */
 public final class ArincLocalizerGlideSlope {
 
+  /**
+   * See {@link RecordType}.
+   */
   private final RecordType recordType;
+  /**
+   * See {@link CustomerAreaCode}.
+   */
   private final CustomerAreaCode customerAreaCode;
+  /**
+   * See {@link SectionCode}.
+   */
   private final SectionCode sectionCode;
+  /**
+   * The identifier of the airport containing the runway the localizer/glideslope services.
+   */
   private final String airportIdentifier;
   private final String airportIcaoRegion;
   private final String subSectionCode;
+  /**
+   * See {@link IlsMlsGlsIdentifier}.
+   */
   private final String localizerIdentifier;
+  /**
+   * See {@link IlsMlsGlsCategory}.
+   */
   private final String ilsMlsGlsCategory;
+  /**
+   * See {@link ContinuationRecordNumber}.
+   */
   private final String continuationRecordNumber;
+  /**
+   * The frequency of the localizer/glideslope in MHz.
+   * <br>
+   * See {@link LocalizerFrequency}.
+   */
   private final Double localizerFrequency;
+  /**
+   * The identifier of the runway the facility services.
+   */
   private final String runwayIdentifier;
   private final Double localizerLatitude;
   private final Double localizerLongitude;
+  /**
+   * See {@link LocalizerBearing}.
+   */
   private final Double localizerBearing;
   private final Double glideSlopeLatitude;
   private final Double glideSlopeLongitude;
+  /**
+   * Distance from the localizer to the end of the runway in feet.
+   * <br>
+   * See {@link LocalizerPosition}.
+   */
   private final Integer localizerPosition;
   private final String localizerPositionReference;
+  /**
+   * Distance from the glideSlope to the end of the runway in feet.
+   * <br>
+   * See {@link GlideSlopePosition}.
+   */
   private final Integer glideSlopePosition;
   private final Double localizerWidth;
   private final Double glideSlopeAngle;

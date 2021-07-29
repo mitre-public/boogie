@@ -8,7 +8,8 @@ import org.mitre.tdp.boogie.alg.resolve.element.LatLonElement;
 import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
-public final class LatLonResolver implements SingleSectionResolver {
+public final class LatLonResolver implements SingleSplitSectionResolver {
+
   @Override
   public List<ResolvedElement<?>> resolve(SectionSplit sectionSplit) {
     String section = sectionSplit.value();

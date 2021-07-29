@@ -5,12 +5,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
@@ -22,8 +23,8 @@ class TestTfDelegator {
   void testTfScorerReturnsEmptyWithNoPreviousLeg() {
     Fix pathTerminator = mock(Fix.class);
     Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(pathTerminator);
-    when(leg.type()).thenReturn(PathTerm.TF);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(pathTerminator));
+    when(leg.pathTerminator()).thenReturn(PathTerminator.TF);
 
     FlyableLeg legs = new FlyableLeg(null, leg, null, dummyRoute());
 
@@ -35,8 +36,8 @@ class TestTfDelegator {
   void testTfScorerReturnsEmptyWithNoPreviousFix() {
     Fix pathTerminator = mock(Fix.class);
     Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(pathTerminator);
-    when(leg.type()).thenReturn(PathTerm.TF);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(pathTerminator));
+    when(leg.pathTerminator()).thenReturn(PathTerminator.TF);
 
     Leg prev = mock(Leg.class);
 
@@ -50,12 +51,12 @@ class TestTfDelegator {
   void testTfScorerReturnsEmptyWithNoPreviousFixLocation() {
     Fix pathTerminator = mock(Fix.class);
     Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(pathTerminator);
-    when(leg.type()).thenReturn(PathTerm.TF);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(pathTerminator));
+    when(leg.pathTerminator()).thenReturn(PathTerminator.TF);
 
     Leg prev = mock(Leg.class);
     Fix fix = mock(Fix.class);
-    when(prev.pathTerminator()).thenReturn(fix);
+    when(prev.associatedFix()).thenReturn((Optional) Optional.of(fix));
 
     FlyableLeg legs = new FlyableLeg(prev, leg, null, dummyRoute());
 

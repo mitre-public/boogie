@@ -3,24 +3,35 @@ package org.mitre.tdp.boogie.arinc.model;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportElevation;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
 import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
+import org.mitre.tdp.boogie.arinc.v18.field.DatumCode;
+import org.mitre.tdp.boogie.arinc.v18.field.DaylightTimeIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
+import org.mitre.tdp.boogie.arinc.v18.field.IfrCapability;
 import org.mitre.tdp.boogie.arinc.v18.field.LongestRunway;
 import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
 import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
+import org.mitre.tdp.boogie.arinc.v18.field.MagneticVariation;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
 import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitAltitude;
 import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.TransitionAltitude;
 
 /**
  * Data class for representing structured/parsed content from within an ARINC format airport record.
  * <br>
  * Section/Subsection = PA
+ * <br>
+ * Most field-level documentation exists on the explicit {@link FieldSpec} implementations used to populate the field within this
+ * POJO record. The field specs are linked in the field-level j-docs.
  */
 public final class ArincAirport {
 
@@ -48,6 +59,10 @@ public final class ArincAirport {
    * See {@link SubSectionCode}.
    */
   private final String subSectionCode;
+  /**
+   * The “ATA/IATA” field contains the Airport/Heliport ATA/IATA designator code to which the data contained in the record
+   * relates.
+   */
   private final String iataDesignator;
   /**
    * See {@link ContinuationRecordNumber}.
@@ -63,26 +78,75 @@ public final class ArincAirport {
    * See {@link LongestRunway}.
    */
   private final Integer longestRunway;
+  /**
+   * True if the raw field explicitly indicates 'Y' the airport has IFR capability - otherwise false.
+   * <br>
+   * See {@link IfrCapability}.
+   */
   private final Boolean ifrCapability;
+  /**
+   * See {@link LongestRunwaySurfaceCode}.
+   */
   private final LongestRunwaySurfaceCode longestRunwaySurfaceCode;
+  /**
+   * The latitude of the airport.
+   */
   private final Double latitude;
+  /**
+   * The longitude of the airport.
+   */
   private final Double longitude;
+  /**
+   * The published magnetic variation at the facility in degrees (+/-).
+   * <br>
+   * See {@link MagneticVariation}.
+   */
   private final Double magneticVariation;
+  /**
+   * See {@link AirportHeliportElevation}.
+   */
   private final Double airportElevation;
   /**
    * See {@link SpeedLimit}.
    */
   private final Integer speedLimit;
+  /**
+   * The string identifier of the recommended navaid associated with the airport.
+   */
   private final String recommendedNavaid;
   private final String recommendedNavaidIcaoRegion;
+  /**
+   * See {@link TransitionAltitude}.
+   */
   private final Double transitionAltitude;
+  /**
+   * See {@link TransitionAltitude}.
+   */
   private final Double transitionLevel;
+  /**
+   * See {@link PublicMilitaryIndicator}.
+   */
   private final PublicMilitaryIndicator publicMilitaryIndicator;
+  /**
+   * See {@link DaylightTimeIndicator}.
+   */
   private final Boolean daylightTimeIndicator;
+  /**
+   * See {@link MagneticTrueIndicator}.
+   */
   private final MagneticTrueIndicator magneticTrueIndicator;
+  /**
+   * See {@link DatumCode}.
+   */
   private final String datumCode;
+  /**
+   * The full name of the facility - e.g. JOHN F KENNEDY INTL.
+   */
   private final String airportFullName;
   private final Integer fileRecordNumber;
+  /**
+   * See {@link Cycle}.
+   */
   private final String lastUpdateCycle;
 
   private ArincAirport(Builder builder) {

@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
@@ -65,8 +65,8 @@ class TestCfFeatureExtractor {
     when(navaid.magneticVariation()).thenReturn(var);
 
     Leg CF = mock(Leg.class);
-    when(CF.pathTerminator()).thenReturn(navaid);
-    when(CF.type()).thenReturn(PathTerm.CF);
+    when(CF.associatedFix()).thenReturn((Optional)Optional.of(navaid));
+    when(CF.pathTerminator()).thenReturn(PathTerminator.CF);
     when(CF.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
     when(CF.outboundMagneticCourse()).thenReturn(Optional.of(199.4));
     when(CF.theta()).thenReturn(Optional.of(13.7));

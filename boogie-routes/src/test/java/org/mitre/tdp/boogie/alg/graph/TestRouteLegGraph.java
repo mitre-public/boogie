@@ -18,8 +18,9 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -60,24 +61,24 @@ class TestRouteLegGraph {
 
     assertAll(
         () -> assertEquals("KIND", legs.get(0).split().value(), "Incorrect initial section. " + message),
-        () -> assertEquals("KIND", legs.get(0).leg().pathTerminator().identifier(), "Incorrect initial leg terminator. " + message),
-        () -> assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect initial leg type. " + message),
+        () -> assertEquals("KIND", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null), "Incorrect initial leg terminator. " + message),
+        () -> assertEquals(PathTerminator.IF, legs.get(0).leg().pathTerminator(), "Incorrect initial leg type. " + message),
 
         () -> assertEquals("BLSTR1", legs.get(1).split().value()),
-        () -> assertEquals("BNDRR", legs.get(1).leg().pathTerminator().identifier()),
+        () -> assertEquals("BNDRR", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("BLSTR1", legs.get(2).split().value()),
-        () -> assertEquals("HRRDR", legs.get(2).leg().pathTerminator().identifier()),
+        () -> assertEquals("HRRDR", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("BLSTR1", legs.get(3).split().value()),
-        () -> assertEquals("GRRDR", legs.get(3).leg().pathTerminator().identifier()),
+        () -> assertEquals("GRRDR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("BLSTR1", legs.get(4).split().value()),
-        () -> assertEquals("VNY", legs.get(4).leg().pathTerminator().identifier()),
+        () -> assertEquals("VNY", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("VNY", legs.get(5).split().value(), "Incorrect final section. " + message),
-        () -> assertEquals("VNY", legs.get(5).leg().pathTerminator().identifier(), "Incorrect final leg terminator. " + message),
-        () -> assertEquals(PathTerm.IF, legs.get(0).leg().type(), "Incorrect final leg type. " + message),
+        () -> assertEquals("VNY", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null), "Incorrect final leg terminator. " + message),
+        () -> assertEquals(PathTerminator.IF, legs.get(0).leg().pathTerminator(), "Incorrect final leg type. " + message),
 
         () -> assertEquals(60.007, path.getWeight(), 0.01, "Incorrect resolved shortest path weight. Check leg weight functions.")
     );
@@ -92,7 +93,13 @@ class TestRouteLegGraph {
     Leg l4 = TF("VNY", 0.0, 3.0);
 
     Transition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
-    return new RouteResolverFactory(singletonList(l4.pathTerminator()), emptyList(), singletonList(kind), singletonList(t)).newResolver();
+
+    return new RouteResolverFactory(
+        singletonList(l4.associatedFix().orElseThrow(IllegalStateException::new)),
+        emptyList(),
+        singletonList(kind),
+        singletonList(t)
+    ).newResolver();
   }
 
   private static RouteLegGraph getGraph(String route, RouteResolver resolver) {

@@ -55,8 +55,8 @@ public final class LegGraphFactory {
     List<Pair<LinkedLegs, LinkedLegs>> lpairs = new ArrayList<>();
     pairs.forEachRemaining(lpairs::add);
 
-    boolean noLocations = lpairs.stream().noneMatch(pair -> pair.second().source().leg().type().isConcrete())
-        || lpairs.stream().noneMatch(pair -> pair.first().target().leg().type().isConcrete());
+    boolean noLocations = lpairs.stream().noneMatch(pair -> pair.second().source().leg().associatedFix().isPresent())
+        || lpairs.stream().noneMatch(pair -> pair.first().target().leg().associatedFix().isPresent());
 
     lpairs.forEach(pair -> {
       LinkedLegs ll1 = pair.first();
@@ -68,10 +68,10 @@ public final class LegGraphFactory {
       Leg tgt1 = ll1.target().leg();
       Leg src2 = ll2.source().leg();
 
-      if (tgt1.type().isConcrete() && src2.type().isConcrete() && !tgt1.equals(src2)) {
+      if (tgt1.associatedFix().isPresent() && src2.associatedFix().isPresent() && !tgt1.equals(src2)) {
 
-        LatLong lltgt = tgt1.pathTerminator().latLong();
-        LatLong llsrc = src2.pathTerminator().latLong();
+        LatLong lltgt = tgt1.associatedFix().orElseThrow(IllegalStateException::new).latLong();
+        LatLong llsrc = src2.associatedFix().orElseThrow(IllegalStateException::new).latLong();
         double distance = lltgt.distanceInNM(llsrc);
 
         setEdgeWeight(distance, ll1.target(), ll2.source(), graph);

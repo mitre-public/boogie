@@ -21,7 +21,7 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
@@ -33,16 +33,16 @@ import org.mitre.tdp.boogie.test.HOBTT2;
 
 /**
  * Route inflation tests (the full package) used to test specific component expansions.
- *
+ * <br>
  * Test names are abbreviated based on the composed infrastructure elements:
- *
+ * <br>
  * A - Airport
  * W - Airway
  * F - Fix
  * L - LatLon
  * P - Procedure
  * T - Tailored Fix
- *
+ * <br>
  * e.g. TestAPF would indicated a test for Airport.Procedure.Fix one of the more common
  * composite route elements.
  */
@@ -64,7 +64,7 @@ class TestRouteExpander {
         singletonList(fix("DBL", 39.439344444444444, -106.89468055555557)),
         emptyList(),
         singletonList(KDEN()),
-        CONNR5.build().transitions());
+        CONNR5.INSTANCE.transitions());
 
     RunwayTransitionAppender appender = new RunwayTransitionAppender(
         () -> Optional.of("RW16R"),
@@ -77,43 +77,43 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
-        () -> assertEquals("KDEN", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("KDEN", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(1).split().value()),
-        () -> assertEquals(PathTerm.VI, legs.get(1).leg().type()),
+        () -> assertEquals(PathTerminator.VI, legs.get(1).leg().pathTerminator()),
 
         () -> assertEquals("CONNR5", legs.get(2).split().value()),
-        () -> assertEquals("GOROC", legs.get(2).leg().pathTerminator().identifier()),
+        () -> assertEquals("GOROC", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(3).split().value()),
-        () -> assertEquals("HURDL", legs.get(3).leg().pathTerminator().identifier()),
+        () -> assertEquals("HURDL", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(4).split().value()),
-        () -> assertEquals("HAWPE", legs.get(4).leg().pathTerminator().identifier()),
+        () -> assertEquals("HAWPE", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(5).split().value()),
-        () -> assertEquals("TUNNN", legs.get(5).leg().pathTerminator().identifier()),
+        () -> assertEquals("TUNNN", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(6).split().value()),
-        () -> assertEquals("TAVRN", legs.get(6).leg().pathTerminator().identifier()),
+        () -> assertEquals("TAVRN", legs.get(6).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(7).split().value()),
-        () -> assertEquals("VONNN", legs.get(7).leg().pathTerminator().identifier()),
+        () -> assertEquals("VONNN", legs.get(7).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(8).split().value()),
-        () -> assertEquals("TEEBO", legs.get(8).leg().pathTerminator().identifier()),
+        () -> assertEquals("TEEBO", legs.get(8).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(9).split().value()),
-        () -> assertEquals("CONNR", legs.get(9).leg().pathTerminator().identifier()),
+        () -> assertEquals("CONNR", legs.get(9).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(10).split().value()),
-        () -> assertEquals("CONNR", legs.get(10).leg().pathTerminator().identifier()),
+        () -> assertEquals("CONNR", legs.get(10).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(11).split().value()),
-        () -> assertEquals("BULDG", legs.get(11).leg().pathTerminator().identifier()),
+        () -> assertEquals("BULDG", legs.get(11).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("CONNR5", legs.get(12).split().value()),
-        () -> assertEquals("DBL", legs.get(12).leg().pathTerminator().identifier()),
+        () -> assertEquals("DBL", legs.get(12).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(13, legs.size())
     );
@@ -127,7 +127,7 @@ class TestRouteExpander {
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
-        HOBTT2.build().transitions());
+        HOBTT2.INSTANCE.transitions());
 
     RunwayTransitionAppender appender = new RunwayTransitionAppender(
         RunwayPredictor.noop(),
@@ -140,43 +140,43 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).split().value()),
-        () -> assertEquals("DRSDN", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("DRSDN", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(1).split().value()),
-        () -> assertEquals("SMAWG", legs.get(1).leg().pathTerminator().identifier()),
+        () -> assertEquals("SMAWG", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(2).split().value()),
-        () -> assertEquals("HOBTT", legs.get(2).leg().pathTerminator().identifier()),
+        () -> assertEquals("HOBTT", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(3).split().value()),
-        () -> assertEquals("HOBTT", legs.get(3).leg().pathTerminator().identifier()),
+        () -> assertEquals("HOBTT", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(4).split().value()),
-        () -> assertEquals("ENSLL", legs.get(4).leg().pathTerminator().identifier()),
+        () -> assertEquals("ENSLL", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(5).split().value()),
-        () -> assertEquals("ENSLL", legs.get(5).leg().pathTerminator().identifier()),
+        () -> assertEquals("ENSLL", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(6).split().value()),
-        () -> assertEquals("RAIIN", legs.get(6).leg().pathTerminator().identifier()),
+        () -> assertEquals("RAIIN", legs.get(6).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(7).split().value()),
-        () -> assertEquals("KLOWD", legs.get(7).leg().pathTerminator().identifier()),
+        () -> assertEquals("KLOWD", legs.get(7).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(8).split().value()),
-        () -> assertEquals("SWEPT", legs.get(8).leg().pathTerminator().identifier()),
+        () -> assertEquals("SWEPT", legs.get(8).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(9).split().value()),
-        () -> assertEquals("KYMMY", legs.get(9).leg().pathTerminator().identifier()),
+        () -> assertEquals("KYMMY", legs.get(9).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(10).split().value()),
-        () -> assertEquals("KEAVY", legs.get(10).leg().pathTerminator().identifier()),
+        () -> assertEquals("KEAVY", legs.get(10).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(11).split().value()),
-        () -> assertEquals("KEAVY", legs.get(11).leg().pathTerminator().identifier()),
+        () -> assertEquals("KEAVY", legs.get(11).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("KATL", legs.get(12).split().value()),
-        () -> assertEquals("KATL", legs.get(12).leg().pathTerminator().identifier()),
+        () -> assertEquals("KATL", legs.get(12).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(13, legs.size())
     );
@@ -190,7 +190,7 @@ class TestRouteExpander {
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
-        HOBTT2.build().transitions());
+        HOBTT2.INSTANCE.transitions());
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
@@ -198,10 +198,10 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).split().value()),
-        () -> assertEquals("DRSDN", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("DRSDN", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("KATL", legs.get(1).split().value()),
-        () -> assertEquals("KATL", legs.get(1).leg().pathTerminator().identifier()),
+        () -> assertEquals("KATL", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(2, legs.size())
     );
@@ -225,25 +225,25 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("JMACK", legs.get(0).split().value()),
-        () -> assertEquals("JMACK", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("JMACK", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(1).split().value()),
-        () -> assertEquals("BARTL", legs.get(1).leg().pathTerminator().identifier()),
+        () -> assertEquals("BARTL", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(2).split().value()),
-        () -> assertEquals("ISO", legs.get(2).leg().pathTerminator().identifier()),
+        () -> assertEquals("ISO", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(3).split().value()),
-        () -> assertEquals("WEAVR", legs.get(3).leg().pathTerminator().identifier()),
+        () -> assertEquals("WEAVR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(4).split().value()),
-        () -> assertEquals("ORF", legs.get(4).leg().pathTerminator().identifier()),
+        () -> assertEquals("ORF", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(5).split().value()),
-        () -> assertEquals("SAWED", legs.get(5).leg().pathTerminator().identifier()),
+        () -> assertEquals("SAWED", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(6).split().value()),
-        () -> assertEquals("KALDA", legs.get(6).leg().pathTerminator().identifier())
+        () -> assertEquals("KALDA", legs.get(6).leg().associatedFix().map(Fix::fixIdentifier).orElse(null))
     );
   }
 
@@ -265,25 +265,25 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("KALDA", legs.get(0).split().value()),
-        () -> assertEquals("KALDA", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("KALDA", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(1).split().value()),
-        () -> assertEquals("SAWED", legs.get(1).leg().pathTerminator().identifier()),
+        () -> assertEquals("SAWED", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(2).split().value()),
-        () -> assertEquals("ORF", legs.get(2).leg().pathTerminator().identifier()),
+        () -> assertEquals("ORF", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(3).split().value()),
-        () -> assertEquals("WEAVR", legs.get(3).leg().pathTerminator().identifier()),
+        () -> assertEquals("WEAVR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(4).split().value()),
-        () -> assertEquals("ISO", legs.get(4).leg().pathTerminator().identifier()),
+        () -> assertEquals("ISO", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(5).split().value()),
-        () -> assertEquals("BARTL", legs.get(5).leg().pathTerminator().identifier()),
+        () -> assertEquals("BARTL", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(6).split().value()),
-        () -> assertEquals("JMACK", legs.get(6).leg().pathTerminator().identifier())
+        () -> assertEquals("JMACK", legs.get(6).leg().associatedFix().map(Fix::fixIdentifier).orElse(null))
     );
   }
 
@@ -306,25 +306,25 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).split().value()),
-        () -> assertEquals("MILIE", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("MILIE", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(1).split().value()),
-        () -> assertEquals("CHS", legs.get(1).leg().pathTerminator().identifier()),
+        () -> assertEquals("CHS", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(2).split().value()),
-        () -> assertEquals("JMACK", legs.get(2).leg().pathTerminator().identifier()),
+        () -> assertEquals("JMACK", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(3).split().value()),
-        () -> assertEquals("BARTL", legs.get(3).leg().pathTerminator().identifier()),
+        () -> assertEquals("BARTL", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(4).split().value()),
-        () -> assertEquals("ISO", legs.get(4).leg().pathTerminator().identifier()),
+        () -> assertEquals("ISO", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(5).split().value()),
-        () -> assertEquals("WEAVR", legs.get(5).leg().pathTerminator().identifier()),
+        () -> assertEquals("WEAVR", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(6).split().value()),
-        () -> assertEquals("ORF", legs.get(6).leg().pathTerminator().identifier())
+        () -> assertEquals("ORF", legs.get(6).leg().associatedFix().map(Fix::fixIdentifier).orElse(null))
     );
   }
 
@@ -346,15 +346,15 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).split().value()),
-        () -> assertEquals("MILIE", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("MILIE", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("5300N/14000W", legs.get(1).split().value()),
-        () -> assertEquals("5300N/14000W", legs.get(1).leg().pathTerminator().identifier()),
-        () -> assertEquals(PathTerm.DF, legs.get(1).leg().type()),
-        () -> assertEquals(LatLong.of(53.0, -140.0), legs.get(1).leg().pathTerminator().latLong()),
+        () -> assertEquals("5300N/14000W", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.DF, legs.get(1).leg().pathTerminator()),
+        () -> assertEquals(LatLong.of(53.0, -140.0), legs.get(1).leg().associatedFix().map(Fix::latLong).orElse(null)),
 
         () -> assertEquals("BARTL", legs.get(2).split().value()),
-        () -> assertEquals("BARTL", legs.get(2).leg().pathTerminator().identifier())
+        () -> assertEquals("BARTL", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null))
     );
   }
 
@@ -374,15 +374,15 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
-        () -> assertEquals("KDEN", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("KDEN", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("2200N/12000W", legs.get(1).split().value()),
         () -> assertTrue(Wildcard.TAILORED.test(legs.get(1).split().wildcards())),
-        () -> assertEquals("2200N/12000W", legs.get(1).leg().pathTerminator().identifier()),
-        () -> assertEquals(PathTerm.IF, legs.get(1).leg().type()),
+        () -> assertEquals("2200N/12000W", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.IF, legs.get(1).leg().pathTerminator()),
 
         () -> assertEquals("BARTL", legs.get(2).split().value()),
-        () -> assertEquals("BARTL", legs.get(2).leg().pathTerminator().identifier())
+        () -> assertEquals("BARTL", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null))
     );
   }
 
@@ -404,15 +404,15 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
-        () -> assertEquals("KDEN", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("KDEN", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("BARTL031018", legs.get(1).split().value()),
-        () -> assertEquals("BARTL031018", legs.get(1).leg().pathTerminator().identifier()),
-        () -> assertEquals(PathTerm.IF, legs.get(0).leg().type()),
-        () -> assertNotEquals(bartl.latLong(), legs.get(1).leg().pathTerminator().latLong()),
+        () -> assertEquals("BARTL031018", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.IF, legs.get(0).leg().pathTerminator()),
+        () -> assertNotEquals(bartl.latLong(), legs.get(1).leg().associatedFix().map(Fix::latLong).orElse(null)),
 
         () -> assertEquals("BARTL", legs.get(2).split().value()),
-        () -> assertEquals("BARTL", legs.get(2).leg().pathTerminator().identifier())
+        () -> assertEquals("BARTL", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null))
     );
   }
 
@@ -434,16 +434,15 @@ class TestRouteExpander {
 
     assertAll(
         () -> assertEquals("BARTL", legs.get(0).split().value()),
-        () -> assertEquals("BARTL", legs.get(0).leg().pathTerminator().identifier()),
+        () -> assertEquals("BARTL", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("BARTL125045", legs.get(1).split().value()),
-        () -> assertEquals("BARTL125045", legs.get(1).leg().pathTerminator().identifier()),
-        () -> assertEquals(PathTerm.DF, legs.get(1).leg().type()),
-        () -> assertNotEquals(bartl.latLong(), legs.get(1).leg().pathTerminator().latLong()),
+        () -> assertEquals("BARTL125045", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.DF, legs.get(1).leg().pathTerminator()),
+        () -> assertNotEquals(bartl.latLong(), legs.get(1).leg().associatedFix().map(Fix::latLong).orElse(null)),
 
         () -> assertEquals("BARTL", legs.get(2).split().value()),
-        () -> assertEquals("BARTL", legs.get(2).leg().pathTerminator().identifier())
-
+        () -> assertEquals("BARTL", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null))
     );
   }
 

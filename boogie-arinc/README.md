@@ -73,7 +73,7 @@ Optional<ArincNdbNavaid> dtw = fixDatabase.ndbNavaid("DTW", "K2");
 Optional<ArincWaypoint> jmack = fixDatabase.waypoint("JMACK");  // etc. for other fix types
  
 // queries for all matches
-Collection<ArincWaypoint> jmacks = fixDatabase.waypoints("JMACK", "DKUN1"); // etc. for other fix types
+Collection<ArincWaypoint> l254 = fixDatabase.waypoints("JMACK", "DKUN1"); // etc. for other fix types
 
 // the other common database instantiation is:
 TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(airports, runways, localizerGlideSlopes, ndbNavaids, vhfNavaids, waypoints, procedureLegs);
@@ -196,7 +196,7 @@ objects. This approach tends to work well as people often don't care about every
 
 The above RecordSpecs are composed of sequences of well-defined ARINC field specifications. As a rule of thumb most of the field-level specifications try to be robust to potentially bad input data 
 and generally return nothing when the input value doesn't meet the spec's expectations. While there is value in expressing specific errors when field contents break the specification it's generally 
-the case that <i>most</i> input data sources take enough liberties with standard specs that your parser is more likely to blow up that not if you're overly particular.
+the case that <i>most</i> input data sources take enough liberties with standard specs that your parser is more likely to blow up than not if you're overly particular.
 
 As such Boogie has generally chosen to fast-reject bad inputs fields - returning empty optionals when specific parsers are applied to out-of-spec data - and then layering on more advanced logic to 
 accept/reject the more structured/parsed record contents using the more advanced rules based on compositions of fields being present (e.g. using PathTerminator types to push expectations on which leg 

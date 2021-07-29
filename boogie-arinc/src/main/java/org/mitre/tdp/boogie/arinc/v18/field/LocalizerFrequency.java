@@ -8,6 +8,11 @@ import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
  * The “Localizer Frequency” field specifies the VHF frequency of the facility identified in the “Localizer Identifier” field.
+ * <br>
+ * The official government-source localizer frequency is entered into the field with a resolution of 50 kHz. The decimal point
+ * following the unit MHz entry is suppressed.
+ * <br>
+ * e.g. 11030, 11195
  */
 public final class LocalizerFrequency implements FieldSpec<Double> {
 

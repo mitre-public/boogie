@@ -44,7 +44,7 @@ public final class DfFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
    * fix and the current course of the aircraft.
    */
   double deriveProjectedDistanceOffset(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    Fix pathTerminator = flyableLeg.current().pathTerminator();
+    Fix pathTerminator = flyableLeg.current().associatedFix().orElseThrow(supplier("Associated Fix"));
 
     double distance = conformablePoint.distanceInNmTo(pathTerminator);
     double pointCourse = conformablePoint.trueCourse().orElseThrow(supplier("Point Course"));

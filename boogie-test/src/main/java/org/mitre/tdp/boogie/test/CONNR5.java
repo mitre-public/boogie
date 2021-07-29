@@ -17,25 +17,66 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * RNAV Departure SID out of Denver from cycle 1910 for use in testing.
  */
-public final class CONNR5 {
+public final class CONNR5 implements Procedure {
+
+  public static final CONNR5 INSTANCE = new CONNR5();
 
   private final Map<String, Transition> transitions;
 
-  private CONNR5(Map<String, Transition> transitions) {
-    this.transitions = transitions;
+  private CONNR5() {
+    Map<String, Transition> map = Stream.of(RW08(), RW16L(), RW16R(), RW17L(), RW17R(), RW25(), RW34B(), RW35B(), common())
+        .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse(null), Function.identity()));
+    this.transitions = ImmutableMap.copyOf(map);
   }
 
-  public static CONNR5 build() {
-    Map<String, Transition> tmap = Stream.of(RW08(), RW16L(), RW16R(), RW17L(), RW17R(), RW25(), RW34B(), RW35B(), common())
-        .collect(Collectors.toMap(Transition::identifier, Function.identity()));
-    return new CONNR5(tmap);
+  @Override
+  public String procedureIdentifier() {
+    return "CONNR5";
+  }
+
+  @Override
+  public String airportIdentifier() {
+    return "KDEN";
+  }
+
+  @Override
+  public String airportRegion() {
+    return "K4"; // ?
+  }
+
+  @Override
+  public ProcedureType procedureType() {
+    return ProcedureType.SID;
+  }
+
+  @Override
+  public RequiredNavigationEquipage requiredNavigationEquipage() {
+    return RequiredNavigationEquipage.RNAV;
+  }
+
+  @Override
+  public Collection<Transition> transitions() {
+    return transitions.values();
+  }
+
+  public Leg get(String fname, String tname) {
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.associatedFix().isPresent()).filter(l -> fname.equals(l.associatedFix().get().fixIdentifier())).findFirst().orElse(null);
+  }
+
+  public Transition get(String tname) {
+    return this.transitions.get(tname);
   }
 
   private static Transition RW17L() {
@@ -149,18 +190,5 @@ public final class CONNR5 {
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
     return transition("RW16L", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
-  }
-
-  public Leg get(String fname, String tname) {
-    Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator() != null).filter(l -> fname.equals(l.pathTerminator().identifier())).findFirst().orElse(null);
-  }
-
-  public Transition get(String tname) {
-    return this.transitions.get(tname);
-  }
-
-  public Collection<Transition> transitions() {
-    return transitions.values();
   }
 }

@@ -15,7 +15,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
@@ -33,8 +33,8 @@ class TestRfFeatureExtractor {
   void testRfScorerLeftNo0Crossing() {
     FlyableLeg consecutiveLegs = new FlyableLeg(TF(), RF(), null, dummyRoute());
 
-    Fix pathTerminator = consecutiveLegs.current().pathTerminator();
-    Fix centerFix = consecutiveLegs.current().centerFix().get();
+    Fix pathTerminator = consecutiveLegs.current().associatedFix().orElseThrow(AssertionError::new);
+    Fix centerFix = consecutiveLegs.current().centerFix().orElseThrow(AssertionError::new);
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
 
@@ -73,8 +73,8 @@ class TestRfFeatureExtractor {
 
     FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null, dummyRoute());
 
-    Fix pathTerminator = consecutiveLegs.current().pathTerminator();
-    Fix centerFix = consecutiveLegs.current().centerFix().get();
+    Fix pathTerminator = consecutiveLegs.current().associatedFix().orElseThrow(AssertionError::new);
+    Fix centerFix = consecutiveLegs.current().centerFix().orElseThrow(AssertionError::new);
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
 
@@ -113,12 +113,12 @@ class TestRfFeatureExtractor {
   @Test
   void testRfScorerRightNo0Crossing() {
     Leg rf = RF();
-    when(rf.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.right()));
+    when(rf.turnDirection()).thenReturn(Optional.of(TurnDirection.right()));
 
     FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null, dummyRoute());
 
-    Fix pathTerminator = consecutiveLegs.current().pathTerminator();
-    Fix centerFix = consecutiveLegs.current().centerFix().get();
+    Fix pathTerminator = consecutiveLegs.current().associatedFix().orElseThrow(AssertionError::new);
+    Fix centerFix = consecutiveLegs.current().centerFix().orElseThrow(AssertionError::new);
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
 
@@ -150,12 +150,12 @@ class TestRfFeatureExtractor {
   @Test
   void testRfScorerEitherAlwaysReturnsOffTrackScore() {
     Leg rf = RF();
-    when(rf.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.either()));
+    when(rf.turnDirection()).thenReturn(Optional.of(TurnDirection.either()));
 
     FlyableLeg consecutiveLegs = new FlyableLeg(TF(), rf, null, dummyRoute());
 
-    Fix pathTerminator = consecutiveLegs.current().pathTerminator();
-    Fix centerFix = consecutiveLegs.current().centerFix().get();
+    Fix pathTerminator = consecutiveLegs.current().associatedFix().orElseThrow(AssertionError::new);
+    Fix centerFix = consecutiveLegs.current().centerFix().orElseThrow(AssertionError::new);
 
     double radiusNm = centerFix.distanceInNmTo(pathTerminator);
 
@@ -209,18 +209,6 @@ class TestRfFeatureExtractor {
   }
 
   private Leg RF() {
-    MagneticVariation pathTermMagvar = new MagneticVariation() {
-      @Override
-      public Optional<Double> published() {
-        return Optional.of(-10.8);
-      }
-
-      @Override
-      public double modeled() {
-        return -10.829837;
-      }
-    };
-
     LatLong ptLoc = LatLong.of(38.875502777777776, -77.05605277777778);
     LatLong cfLoc = LatLong.of(38.838230555555555, -77.05605277777778);
 
@@ -228,61 +216,43 @@ class TestRfFeatureExtractor {
     when(pathTerminator.latLong()).thenReturn(ptLoc);
     when(pathTerminator.latitude()).thenCallRealMethod();
     when(pathTerminator.longitude()).thenCallRealMethod();
-    when(pathTerminator.magneticVariation()).thenReturn(pathTermMagvar);
+    when(pathTerminator.publishedVariation()).thenReturn(Optional.of(-10.8));
+    when(pathTerminator.modeledVariation()).thenReturn(-10.829837);
+    when(pathTerminator.magneticVariation()).thenCallRealMethod();
     when(pathTerminator.distanceInNmTo(any())).thenCallRealMethod();
     when(pathTerminator.courseInDegrees(any())).thenCallRealMethod();
     when(pathTerminator.projectOut(any(), any())).thenCallRealMethod();
-
-    MagneticVariation centerFixMagvar = new MagneticVariation() {
-      @Override
-      public Optional<Double> published() {
-        return Optional.of(-10.8);
-      }
-
-      @Override
-      public double modeled() {
-        return -10.794219;
-      }
-    };
 
     Fix centerFix = mock(Fix.class);
     when(centerFix.latLong()).thenReturn(cfLoc);
     when(centerFix.latitude()).thenCallRealMethod();
     when(centerFix.longitude()).thenCallRealMethod();
-    when(centerFix.magneticVariation()).thenReturn(centerFixMagvar);
+    when(centerFix.publishedVariation()).thenReturn(Optional.of(-10.8));
+    when(centerFix.modeledVariation()).thenReturn(-10.794219);
+    when(centerFix.magneticVariation()).thenCallRealMethod();
     when(centerFix.distanceInNmTo(any())).thenCallRealMethod();
     when(centerFix.courseInDegrees(any())).thenCallRealMethod();
     when(centerFix.projectOut(any(), any())).thenCallRealMethod();
 
     Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(pathTerminator);
-    when(leg.type()).thenReturn(PathTerm.RF);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(pathTerminator));
+    when(leg.pathTerminator()).thenReturn(PathTerminator.RF);
     when(leg.centerFix()).thenReturn((Optional) Optional.of(centerFix));
     when(leg.rnp()).thenReturn(Optional.of(0.5));
     when(leg.theta()).thenReturn(Optional.of(6.5));
     when(leg.routeDistance()).thenReturn(Optional.of(2.2));
     when(leg.outboundMagneticCourse()).thenReturn(Optional.of(326.6));
-    when(leg.turnDirection()).thenReturn((Optional) Optional.of(TurnDirection.left()));
+    when(leg.turnDirection()).thenReturn(Optional.of(TurnDirection.left()));
 
     return leg;
   }
 
   private Leg TF() {
-    MagneticVariation pathTermMagvar = new MagneticVariation() {
-      @Override
-      public Optional<Double> published() {
-        return Optional.of(-10.8);
-      }
-
-      @Override
-      public double modeled() {
-        return -10.829837;
-      }
-    };
+    MagneticVariation pathTermMagvar = new MagneticVariation(-10.8, -10.829837);
 
     Leg rf = RF();
-    LatLong ptLoc = rf.pathTerminator().latLong();
-    LatLong cfLoc = rf.centerFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
+    LatLong ptLoc = rf.associatedFix().map(Fix::latLong).orElseThrow(AssertionError::new);
+    LatLong cfLoc = rf.centerFix().map(Fix::latLong).orElseThrow(AssertionError::new);
 
     double effectiveRadius = cfLoc.distanceInNM(ptLoc);
 
@@ -293,14 +263,16 @@ class TestRfFeatureExtractor {
     when(pathTerminator.latLong()).thenReturn(loc);
     when(pathTerminator.latitude()).thenCallRealMethod();
     when(pathTerminator.longitude()).thenCallRealMethod();
-    when(pathTerminator.magneticVariation()).thenReturn(pathTermMagvar);
+    when(pathTerminator.publishedVariation()).thenReturn(Optional.of(-10.8));
+    when(pathTerminator.modeledVariation()).thenReturn(-10.829837);
+    when(pathTerminator.magneticVariation()).thenCallRealMethod();
     when(pathTerminator.distanceInNmTo(any())).thenCallRealMethod();
     when(pathTerminator.courseInDegrees(any())).thenCallRealMethod();
     when(pathTerminator.projectOut(any(), any())).thenCallRealMethod();
 
     Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(pathTerminator);
-    when(leg.type()).thenReturn(PathTerm.TF);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(pathTerminator));
+    when(leg.pathTerminator()).thenReturn(PathTerminator.TF);
     return leg;
   }
 

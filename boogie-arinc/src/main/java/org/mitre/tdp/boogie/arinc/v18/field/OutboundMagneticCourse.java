@@ -7,9 +7,14 @@ import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
 import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 /**
- * “Outbound Magnetic Course” is the published outbound magnetic course from the waypoint identified in the record’s
- * “Fix Ident” field. In addition, this field is used for Course/Heading/Radials on SID/STAR Approach Records through
- * requirements of the Path Terminator and coding rules contained in Attachment 5 of this specification.
+ * “Outbound Magnetic Course” is the published outbound magnetic course from the waypoint identified in the record’s “Fix Ident”
+ * field. In addition, this field is used for Course/Heading/Radials on SID/STAR Approach Records through requirements of the
+ * Path Terminator and coding rules contained in Attachment 5 of this specification.
+ * <br>
+ * Values from official government sources will be used when available. The field contains magnetic information expressed in
+ * degrees and tenths of a degree, with the decimal point suppressed.
+ * <br>
+ * e.g. 2760, 0231, 194T
  * <br>
  * Handling of field contents is similar to {@link InboundMagneticCourse}.
  */

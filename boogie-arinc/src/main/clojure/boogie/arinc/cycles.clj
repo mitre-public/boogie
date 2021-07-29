@@ -11,7 +11,7 @@
 
 
 ;; the maximum number of cycles that can be cached at once
-(defonce cycle-cache-size (atom (if (System/getenv "CYCLE_CACHE_SIZE") (System/getenv "CYCLE_CACHE_SIZE") 3)))
+(defonce cycle-cache-size (atom (if (System/getenv "CYCLE_CACHE_SIZE") (Integer/parseInt (System/getenv "CYCLE_CACHE_SIZE")) 3)))
 
 ;; The instance of the file-locator which will be used to locate ARINC424 files on a visible filesystem for the application to
 ;; load and serve data from

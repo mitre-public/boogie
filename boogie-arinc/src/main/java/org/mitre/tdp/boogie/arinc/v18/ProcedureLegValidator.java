@@ -5,15 +5,24 @@ import static com.google.common.collect.Sets.newHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * The {@link ProcedureLegValidator} represents a set of expectations on an {@link ArincRecord} for it to be considered eligible
+ * to be converted into an {@link ArincProcedureLeg}.
+ * <br>
+ * Generally speaking this class is checking that the fields outlined as required in the ARINC spec for each {@link PathTerminator}
+ * type exist in the leg definition. The goal is to not perform the conversion on any legs which by definition aren't flyable
+ * as per the 424 spec.
+ * <br>
+ * These expectations are (to a degree) mirrored in the implementation and method calls of the {@link ProcedureLegConverter}.
+ */
 public final class ProcedureLegValidator implements Predicate<ArincRecord> {
 
   @Override
@@ -41,91 +50,91 @@ public final class ProcedureLegValidator implements Predicate<ArincRecord> {
   }
 
   Predicate<ArincRecord> legTypeValidator(ArincRecord arincRecord) {
-    PathTerm pathTerm = arincRecord.requiredField("pathTerm");
-    return legValidators.get(pathTerm);
+    PathTerminator pathTerminator = arincRecord.requiredField("pathTerm");
+    return legValidators.get(pathTerminator);
   }
 
   /**
-   * The mapping of all leg-specific validators based on the derived {@link PathTerm} of the leg. Most ARINC 424 legs have
+   * The mapping of all leg-specific validators based on the derived {@link PathTerminator} of the leg. Most ARINC 424 legs have
    * different explicitly required field-level content in order for them to be flown properly by the aircraft FMS.
    * <br>
    * It doesn't take too long to toss these together on the raw record classes but it probably pays to have ones which operate
    * on the more structured form of these objects as well (e.g. {@link ArincProcedureLeg}).
    */
-  private static final ImmutableMap<PathTerm, Predicate<ArincRecord>> legValidators = ImmutableMap.<PathTerm, Predicate<ArincRecord>>builder()
-      .put(PathTerm.IF, ProcedureLegValidator::containsTerminalFixFields)
-      .put(PathTerm.TF, ProcedureLegValidator::containsTerminalFixFields)
-      .put(PathTerm.CF, arincRecord -> containsTerminalFixFields(arincRecord)
+  private static final ImmutableMap<PathTerminator, Predicate<ArincRecord>> legValidators = ImmutableMap.<PathTerminator, Predicate<ArincRecord>>builder()
+      .put(PathTerminator.IF, ProcedureLegValidator::containsTerminalFixFields)
+      .put(PathTerminator.TF, ProcedureLegValidator::containsTerminalFixFields)
+      .put(PathTerminator.CF, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("rho")
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))
-      .put(PathTerm.DF, ProcedureLegValidator::containsTerminalFixFields)
-      .put(PathTerm.FA, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.DF, ProcedureLegValidator::containsTerminalFixFields)
+      .put(PathTerminator.FA, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("rho")
           && arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.FC, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.FC, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("rho")
           && arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.FD, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.FD, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("rho")
           && arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.FM, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.FM, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("rho")
           && arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.CA, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.CD, arincRecord -> containsRecommendedNavaidFields(arincRecord)
+      .put(PathTerminator.CA, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
+      .put(PathTerminator.CD, arincRecord -> containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))
-      .put(PathTerm.CI, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.CR, arincRecord -> containsRecommendedNavaidFields(arincRecord)
+      .put(PathTerminator.CI, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
+      .put(PathTerminator.CR, arincRecord -> containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.RF, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.RF, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsCenterFixFields(arincRecord)
           && arincRecord.containsParsedField("turnDirection")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))
-      .put(PathTerm.AF, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.AF, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("turnDirection")
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("rho"))
-      .put(PathTerm.VA, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse")
+      .put(PathTerminator.VA, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("altitudeDescription")
           && arincRecord.containsParsedField("minAltitude1"))
-      .put(PathTerm.VD, arincRecord -> containsRecommendedNavaidFields(arincRecord)
+      .put(PathTerminator.VD, arincRecord -> containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))
-      .put(PathTerm.VI, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.VM, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
-      .put(PathTerm.VR, arincRecord -> containsRecommendedNavaidFields(arincRecord)
+      .put(PathTerminator.VI, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
+      .put(PathTerminator.VM, arincRecord -> arincRecord.containsParsedField("outboundMagneticCourse"))
+      .put(PathTerminator.VR, arincRecord -> containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("theta"))
-      .put(PathTerm.PI, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.PI, arincRecord -> containsTerminalFixFields(arincRecord)
           && containsRecommendedNavaidFields(arincRecord)
           && arincRecord.containsParsedField("turnDirection")
           && arincRecord.containsParsedField("theta")
           && arincRecord.containsParsedField("rho")
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))
-      .put(PathTerm.HA, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.HA, arincRecord -> containsTerminalFixFields(arincRecord)
           && arincRecord.containsParsedField("turnDirection")
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))
-      .put(PathTerm.HF, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.HF, arincRecord -> containsTerminalFixFields(arincRecord)
           && arincRecord.containsParsedField("turnDirection")
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))
-      .put(PathTerm.HM, arincRecord -> containsTerminalFixFields(arincRecord)
+      .put(PathTerminator.HM, arincRecord -> containsTerminalFixFields(arincRecord)
           && arincRecord.containsParsedField("turnDirection")
           && arincRecord.containsParsedField("outboundMagneticCourse")
           && arincRecord.containsParsedField("routeHoldDistanceTime"))

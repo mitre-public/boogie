@@ -8,7 +8,7 @@ import static org.mitre.tdp.boogie.arinc.v18.TestProcedureLegSpec.TF;
 import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -49,7 +49,7 @@ class TestArincProcedureLeg {
         () -> assertEquals("E  F", procedureLeg.waypointDescription().orElseThrow(AssertionError::new)),
         () -> assertFalse(procedureLeg.turnDirection().isPresent()),
         () -> assertFalse(procedureLeg.rnp().isPresent()),
-        () -> assertEquals(PathTerm.TF, procedureLeg.pathTerm()),
+        () -> assertEquals(PathTerminator.TF, procedureLeg.pathTerm()),
         () -> assertEquals(false, procedureLeg.turnDirectionValid().orElseThrow(AssertionError::new)),
         () -> assertEquals("IJOC", procedureLeg.recommendedNavaidIdentifier().orElseThrow(AssertionError::new)),
         () -> assertEquals("K6", procedureLeg.recommendedNavaidIcaoRegion().orElseThrow(AssertionError::new)),

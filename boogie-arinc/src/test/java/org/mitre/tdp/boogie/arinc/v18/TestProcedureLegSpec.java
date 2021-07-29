@@ -7,10 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -48,7 +47,7 @@ public class TestProcedureLegSpec {
         () -> assertEquals("E  D", record.requiredField("waypointDescription")),
         () -> assertFalse(record.optionalField("turnDirection").isPresent()),
         () -> assertFalse(record.optionalField("rnp").isPresent()),
-        () -> assertEquals(PathTerm.IF, record.requiredField("pathTerm")),
+        () -> assertEquals(PathTerminator.IF, record.requiredField("pathTerm")),
         () -> assertEquals(false, record.requiredField("turnDirectionValid")),
         () -> assertEquals("CRI", record.requiredField("recommendedNavaidIdentifier")),
         () -> assertEquals("K6", record.requiredField("recommendedNavaidIcaoRegion")),
@@ -106,7 +105,7 @@ public class TestProcedureLegSpec {
         () -> assertEquals("E  F", record.requiredField("waypointDescription")),
         () -> assertFalse(record.optionalField("turnDirection").isPresent()),
         () -> assertFalse(record.optionalField("rnp").isPresent()),
-        () -> assertEquals(PathTerm.TF, record.requiredField("pathTerm")),
+        () -> assertEquals(PathTerminator.TF, record.requiredField("pathTerm")),
         () -> assertEquals(false, record.requiredField("turnDirectionValid")),
         () -> assertEquals("IJOC", record.requiredField("recommendedNavaidIdentifier")),
         () -> assertEquals("K6", record.requiredField("recommendedNavaidIcaoRegion")),
@@ -162,7 +161,7 @@ public class TestProcedureLegSpec {
         () -> assertEquals("E   ", record.requiredField("waypointDescription")),
         () -> Assertions.assertEquals(TurnDirection.L, record.requiredField("turnDirection")),
         () -> assertEquals(0.3, record.requiredField("rnp")),
-        () -> assertEquals(PathTerm.RF, record.requiredField("pathTerm")),
+        () -> assertEquals(PathTerminator.RF, record.requiredField("pathTerm")),
         () -> assertEquals(false, record.requiredField("turnDirectionValid")),
         () -> assertFalse(record.optionalField("recommendedNavaidIdentifier").isPresent()),
         () -> assertFalse(record.optionalField("recommendedNavaidIcaoRegion").isPresent()),
@@ -216,7 +215,7 @@ public class TestProcedureLegSpec {
         () -> assertEquals("EE  ", record.requiredField("waypointDescription")),
         () -> assertEquals(TurnDirection.L, record.requiredField("turnDirection")),
         () -> assertFalse(record.optionalField("rnp").isPresent()),
-        () -> assertEquals(PathTerm.CF, record.requiredField("pathTerm")),
+        () -> assertEquals(PathTerminator.CF, record.requiredField("pathTerm")),
         () -> assertEquals(false, record.requiredField("turnDirectionValid")),
         () -> assertEquals("ACV", record.requiredField("recommendedNavaidIdentifier")),
         () -> assertEquals("K2", record.requiredField("recommendedNavaidIcaoRegion")),

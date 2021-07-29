@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.util.Declinations;
 
 /**
  * Local class for hierarchical lookup of the local magnetic variation given a point and a leg.
- *
+ * <br>
  * Note this class is really only meant for finding magvars for the purpose of scoring - the worst-case-scenario lookup is at
  * best a coarse grained look at the local magvar.
  */
@@ -29,25 +29,8 @@ public final class MagneticVariationResolver {
    */
   public MagneticVariation magneticVariation(ConformablePoint point, FlyableLeg flyableLeg) {
     return flyableLeg.current().recommendedNavaid().map(Fix::magneticVariation)
-        .orElseGet(() -> Optional.of(flyableLeg).map(FlyableLeg::current).map(Leg::pathTerminator).map(Fix::magneticVariation)
-            .orElseGet(() -> flyableLeg.next().map(Leg::pathTerminator).map(Fix::magneticVariation)
-                .orElseGet(() -> magneticVariation(Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude(), point.time())))));
-  }
-
-  /**
-   * Returns a new modeled {@link MagneticVariation} based on the WMM.
-   */
-  private static MagneticVariation magneticVariation(double modeled) {
-    return new MagneticVariation() {
-      @Override
-      public Optional<Double> published() {
-        return Optional.empty();
-      }
-
-      @Override
-      public double modeled() {
-        return modeled;
-      }
-    };
+        .orElseGet(() -> Optional.of(flyableLeg).map(FlyableLeg::current).flatMap(Leg::associatedFix).map(Fix::magneticVariation)
+            .orElseGet(() -> flyableLeg.next().flatMap(Leg::associatedFix).map(Fix::magneticVariation)
+                .orElseGet(() -> new MagneticVariation(null, Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude(), point.time())))));
   }
 }

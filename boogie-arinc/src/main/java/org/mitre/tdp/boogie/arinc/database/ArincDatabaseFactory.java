@@ -24,7 +24,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.LinkedHashMultimap;
 
 /**
- * Factory class for generating a variety of
+ * Factory class for generating a variety of multi-index databases over ARINC information.
+ * <br>
+ * These database instantiations rely on the format of the converted ARINC POJO data models and do <i>not</i> explicitly stitch
+ * records together (e.g. marrying the appropriate fix to a procedure leg). However these databases can be used to aid in those
+ * lookups.
  */
 public final class ArincDatabaseFactory {
 

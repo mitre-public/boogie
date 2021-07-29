@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
@@ -105,7 +105,7 @@ class TestProcedureLegValidator {
     when(record.containsParsedField(matches(Joiner.on("|").join(fields)))).thenReturn(true);
 
     // stuff to get us past the leg validators
-    when(record.requiredField(eq("pathTerm"))).thenReturn(PathTerm.VI);
+    when(record.requiredField(eq("pathTerm"))).thenReturn(PathTerminator.VI);
     when(record.containsParsedField(eq("outboundMagneticCourse"))).thenReturn(true);
     return record;
   }

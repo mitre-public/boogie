@@ -9,14 +9,14 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.PathTerm;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
 
 /**
- * Class for returning an appropriate {@link ViterbiFeatureVector} for a {@link PathTerm#AF} leg.
+ * Class for returning an appropriate {@link ViterbiFeatureVector} for a {@link PathTerminator#AF} leg.
  */
 public final class AfFeatureExtractor implements Supplier<ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {
 

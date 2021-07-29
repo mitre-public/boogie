@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.alg.resolve.element.ProcedureElement;
 /**
  * Filter to be applied to the internal transitions of {@link ProcedureElement}s to down-select the set of candidate
  * transitions to consider when resolving the final route of the flight.
- *
+ * <br>
  * This is essentially just down selecting the transitions based on whether the runway transition name contains the
  * provided runway identifier.
  */

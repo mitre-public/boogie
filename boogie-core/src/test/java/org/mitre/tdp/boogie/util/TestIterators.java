@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.util;
 
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -15,12 +17,8 @@ import org.junit.jupiter.api.Test;
 
 class TestIterators {
 
-  private boolean odd(Integer i) {
-    return i % 2 != 0;
-  }
-
   @Test
-   void testSkipEvens() {
+  void testSkipEvens() {
     List<Integer> ints = IntStream.range(0, 20).boxed().collect(Collectors.toList());
 
     List<Integer> odds = new ArrayList<>();
@@ -30,19 +28,29 @@ class TestIterators {
       odds.add(l);
     });
 
-    assertEquals(odds.size(), 9);
-    assertEquals(odds.get(0).intValue(), 1);
-    assertEquals(odds.get(8).intValue(), 17);
+    assertAll(
+        () -> assertEquals(odds.size(), 9),
+        () -> assertEquals(odds.get(0).intValue(), 1),
+        () -> assertEquals(odds.get(8).intValue(), 17)
+    );
   }
 
   @Test
   void testTriplesWithNulls() {
     ArrayList<Triple<String, String, String>> result = new ArrayList<>();
 
-    Iterators.triplesWithNulls(Arrays.asList("foo"), (x, y, z) -> result.add(ImmutableTriple.of(x, y, z)));
+    Iterators.triplesWithNulls(singletonList("foo"), (x, y, z) -> result.add(ImmutableTriple.of(x, y, z)));
 
-    List<ImmutableTriple<String, String, String>> expected = Arrays.asList(ImmutableTriple.of(null, null, "foo"), ImmutableTriple.of(null, "foo", null), ImmutableTriple.of("foo", null, null));
+    List<ImmutableTriple<String, String, String>> expected = Arrays.asList(
+        ImmutableTriple.of(null, null, "foo"),
+        ImmutableTriple.of(null, "foo", null),
+        ImmutableTriple.of("foo", null, null)
+    );
 
     assertEquals(expected, result);
+  }
+
+  private boolean odd(Integer i) {
+    return i % 2 != 0;
   }
 }

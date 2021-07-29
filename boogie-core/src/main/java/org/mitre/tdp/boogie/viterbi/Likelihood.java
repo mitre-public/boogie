@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.viterbi;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -37,6 +39,11 @@ public final class Likelihood implements Comparable<Likelihood> {
 
   public boolean isGreaterThan(Likelihood that) {
     return this.l > that.l;
+  }
+
+  public static Likelihood copyOf(Likelihood likelihood) {
+    requireNonNull(likelihood);
+    return new Likelihood(likelihood.l);
   }
 
   public static Likelihood valueOf(double d) {

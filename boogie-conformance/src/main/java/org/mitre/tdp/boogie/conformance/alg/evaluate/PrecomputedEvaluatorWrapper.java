@@ -1,12 +1,14 @@
 package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.Instant;
 import java.util.NavigableMap;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.ConformablePoint;
 
-public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
+public final class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
 
   private final PrecomputedEvaluator evaluator;
   private final NavigableMap<Instant, Boolean> conformanceTimes;
@@ -14,7 +16,7 @@ public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
   public PrecomputedEvaluatorWrapper(
       PrecomputedEvaluator evaluator,
       NavigableMap<Instant, Boolean> conformanceTimes) {
-    this.evaluator = evaluator;
+    this.evaluator = requireNonNull(evaluator);
     this.conformanceTimes = conformanceTimes;
   }
 
@@ -30,12 +32,8 @@ public class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
   /**
    * Wraps the given {@link PrecomputedEvaluator} as a {@link ConformanceEvaluator} for use in conformance estimation.
    */
-  public PrecomputedEvaluatorWrapper wrapAndPrecompute(
-      PrecomputedEvaluator evaluator,
-      NavigableMap<ConformablePoint, LegPair> pairs) {
-
-    return new PrecomputedEvaluatorWrapper(
-        evaluator,
-        evaluator.conformanceTimes(pairs));
+  public PrecomputedEvaluatorWrapper wrapAndPrecompute(PrecomputedEvaluator evaluator, NavigableMap<ConformablePoint, LegPair> pairs) {
+    requireNonNull(evaluator);
+    return new PrecomputedEvaluatorWrapper(evaluator, evaluator.conformanceTimes(pairs));
   }
 }

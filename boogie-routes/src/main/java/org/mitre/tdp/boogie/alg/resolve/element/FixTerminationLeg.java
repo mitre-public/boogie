@@ -3,12 +3,12 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 import java.time.Duration;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.AltitudeLimit;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerm;
-import org.mitre.tdp.boogie.SpeedLimit;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
+
+import com.google.common.collect.Range;
 
 /**
  * Simple class for a simple DF leg within the framework. We use these standard implementations
@@ -21,29 +21,29 @@ import org.mitre.tdp.boogie.TurnDirection;
  */
 final class FixTerminationLeg implements Leg {
 
-  private final Fix pathTerminator;
-  private final PathTerm pathTerm;
+  private final Fix associatedFix;
+  private final PathTerminator pathTerminator;
 
-  private FixTerminationLeg(Fix term, PathTerm pathTerm) {
-    this.pathTerminator = term;
-    this.pathTerm = pathTerm;
+  private FixTerminationLeg(Fix associatedFix, PathTerminator pathTerminator) {
+    this.associatedFix = associatedFix;
+    this.pathTerminator = pathTerminator;
   }
 
-  public static FixTerminationLeg from(Fix fix, PathTerm pathTerm) {
-    return new FixTerminationLeg(fix, pathTerm);
+  public static FixTerminationLeg from(Fix fix, PathTerminator pathTerminator) {
+    return new FixTerminationLeg(fix, pathTerminator);
   }
 
   public static FixTerminationLeg IF(Fix fix) {
-    return from(fix, PathTerm.IF);
+    return from(fix, PathTerminator.IF);
   }
 
   public static FixTerminationLeg DF(Fix fix) {
-    return from(fix, PathTerm.DF);
+    return from(fix, PathTerminator.DF);
   }
 
   @Override
-  public Fix pathTerminator() {
-    return pathTerminator;
+  public Optional<Fix> associatedFix() {
+    return Optional.of(associatedFix);
   }
 
   @Override
@@ -57,12 +57,12 @@ final class FixTerminationLeg implements Leg {
   }
 
   @Override
-  public PathTerm type() {
-    return pathTerm;
+  public PathTerminator pathTerminator() {
+    return pathTerminator;
   }
 
   @Override
-  public Integer sequenceNumber() {
+  public int sequenceNumber() {
     return 0;
   }
 
@@ -102,13 +102,13 @@ final class FixTerminationLeg implements Leg {
   }
 
   @Override
-  public Optional<SpeedLimit> speedConstraint() {
-    return Optional.empty();
+  public Range<Double> speedConstraint() {
+    return Range.all();
   }
 
   @Override
-  public Optional<AltitudeLimit> altitudeConstraint() {
-    return Optional.empty();
+  public Range<Double> altitudeConstraint() {
+    return Range.all();
   }
 
   @Override
@@ -117,7 +117,12 @@ final class FixTerminationLeg implements Leg {
   }
 
   @Override
-  public Optional<Boolean> overfly() {
-    return Optional.empty();
+  public boolean isFlyOverFix() {
+    return false;
+  }
+
+  @Override
+  public boolean isPublishedHoldingFix() {
+    return false;
   }
 }

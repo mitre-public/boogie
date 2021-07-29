@@ -6,6 +6,7 @@ import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
 import com.google.common.base.Preconditions;
@@ -24,13 +25,17 @@ public final class Streams {
    */
   public static <U, V> Stream<V> pairwise(List<U> list, BiFunction<U, U, V> fn) {
     Preconditions.checkArgument(list.size() >= 2);
-    return IntStream.range(1, list.size()).mapToObj(i -> fn.apply(list.get(i - 1), list.get(i)));
+    return pairwise(list).map(pair -> fn.apply(pair.first(), pair.second()));
+  }
+
+  public static <U> Stream<Pair<U, U>> pairwise(List<U> list) {
+    return list.size() < 2 ? Stream.empty() : IntStream.range(1, list.size()).mapToObj(i -> Pair.of(list.get(i - 1), list.get(i)));
   }
 
   /**
    * Returns a stream based on the input list via combining subsequent elements via the provided {@link BiFunction} using null
    * for elements outside the bounds of the stream.
-   *
+   * <br>
    * list.size()==0: fn is called once with two null args
    * list.size()==1: fn is called once with list.get(0), null
    * list.size()>1: fn is called pairwise with list.get(i), list.get(i+1)

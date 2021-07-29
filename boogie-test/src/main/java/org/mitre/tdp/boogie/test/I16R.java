@@ -16,25 +16,65 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Mock of I16R approach procedure for runway 16R at KDEN.
  */
-public final class I16R {
+public final class I16R implements Procedure {
+
+  public static final Procedure I16R = new I16R();
 
   private final Map<String, Transition> transitions;
 
-  private I16R(Map<String, Transition> transitions) {
-    this.transitions = transitions;
+  private I16R() {
+    Map<String, Transition> map = Stream.of(KIPPR(), KAILE(), TSHNR(), COMMON())
+        .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse(null), Function.identity()));
+    this.transitions = ImmutableMap.copyOf(map);
   }
 
-  public static I16R build() {
-    Map<String, Transition> tmap = Stream.of(KIPPR(), KAILE(), TSHNR(), COMMON())
-        .collect(Collectors.toMap(Transition::identifier, Function.identity()));
-    return new I16R(tmap);
+  public Leg get(String fname, String tname) {
+    Transition transition = get(tname);
+    return transition.legs().stream().filter(l -> l.associatedFix().isPresent()).filter(l -> fname.equals(l.associatedFix().get().fixIdentifier())).findFirst().orElse(null);
+  }
+
+  public Transition get(String tname) {
+    return this.transitions.get(tname);
+  }
+
+  @Override
+  public String procedureIdentifier() {
+    return "I16R";
+  }
+
+  @Override
+  public String airportIdentifier() {
+    return "KDEN";
+  }
+
+  @Override
+  public String airportRegion() {
+    return "K4";
+  }
+
+  @Override
+  public ProcedureType procedureType() {
+    return ProcedureType.APPROACH;
+  }
+
+  @Override
+  public RequiredNavigationEquipage requiredNavigationEquipage() {
+    return RequiredNavigationEquipage.CONV;
+  }
+
+  public Collection<Transition> transitions() {
+    return transitions.values();
   }
 
   private static Transition KIPPR() {
@@ -83,19 +123,6 @@ public final class I16R {
     Leg BREWS2 = HM("BREWS", 39.65445833333333, -105.18080277777779);
     return transition("", "I16R", "KDEN", TransitionType.APPROACH, ProcedureType.APPROACH,
         Arrays.asList(MERYN, JETSN, KDEN, CA, VI, BREWS, BREWS2));
-  }
-
-  public Leg get(String fname, String tname) {
-    Transition transition = get(tname);
-    return transition.legs().stream().filter(l -> l.pathTerminator() != null).filter(l -> fname.equals(l.pathTerminator().identifier())).findFirst().orElse(null);
-  }
-
-  public Transition get(String tname) {
-    return this.transitions.get(tname);
-  }
-
-  public Collection<Transition> transitions() {
-    return transitions.values();
   }
 }
 
