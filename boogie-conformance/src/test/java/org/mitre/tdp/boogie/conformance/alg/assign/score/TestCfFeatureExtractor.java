@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -59,13 +58,11 @@ class TestCfFeatureExtractor {
     when(navaid.distanceInNmTo(any())).thenCallRealMethod();
     when(navaid.projectOut(any(), any())).thenCallRealMethod();
 
-    MagneticVariation var = magneticVariation(13.0f, 11.482411518265646f);
-    when(var.magneticToTrue(any())).thenCallRealMethod();
-    when(var.trueToMagnetic(any())).thenCallRealMethod();
+    MagneticVariation var = new MagneticVariation(13.0, 11.482411518265646);
     when(navaid.magneticVariation()).thenReturn(var);
 
     Leg CF = mock(Leg.class);
-    when(CF.associatedFix()).thenReturn((Optional)Optional.of(navaid));
+    when(CF.associatedFix()).thenReturn((Optional) Optional.of(navaid));
     when(CF.pathTerminator()).thenReturn(PathTerminator.CF);
     when(CF.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
     when(CF.outboundMagneticCourse()).thenReturn(Optional.of(199.4));

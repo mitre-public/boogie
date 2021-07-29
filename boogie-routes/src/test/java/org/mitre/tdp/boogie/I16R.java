@@ -1,12 +1,12 @@
-package org.mitre.tdp.boogie.test;
+package org.mitre.tdp.boogie;
 
-import static org.mitre.tdp.boogie.test.MockObjects.CA;
-import static org.mitre.tdp.boogie.test.MockObjects.CF;
-import static org.mitre.tdp.boogie.test.MockObjects.HM;
-import static org.mitre.tdp.boogie.test.MockObjects.IF;
-import static org.mitre.tdp.boogie.test.MockObjects.TF;
-import static org.mitre.tdp.boogie.test.MockObjects.VI;
-import static org.mitre.tdp.boogie.test.MockObjects.transition;
+import static org.mitre.tdp.boogie.MockObjects.CA;
+import static org.mitre.tdp.boogie.MockObjects.CF;
+import static org.mitre.tdp.boogie.MockObjects.HM;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.VI;
+import static org.mitre.tdp.boogie.MockObjects.transition;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,13 +14,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.TransitionType;
 
 import com.google.common.collect.ImmutableMap;
 

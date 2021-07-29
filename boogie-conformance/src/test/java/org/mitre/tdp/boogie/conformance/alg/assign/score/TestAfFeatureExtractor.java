@@ -4,7 +4,6 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mitre.tdp.boogie.test.MockObjects.magneticVariation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -186,9 +185,7 @@ class TestAfFeatureExtractor {
     when(navaid.distanceInNmTo(any())).thenCallRealMethod();
     when(navaid.projectOut(any(), any())).thenCallRealMethod();
 
-    MagneticVariation var = magneticVariation(19.0f, 14.513932612651612f);
-    when(var.magneticToTrue(any())).thenCallRealMethod();
-    when(var.trueToMagnetic(any())).thenCallRealMethod();
+    MagneticVariation var = new MagneticVariation(19., 14.513932612651612);
     when(navaid.magneticVariation()).thenReturn(var);
 
     TurnDirection td = mock(TurnDirection.class);

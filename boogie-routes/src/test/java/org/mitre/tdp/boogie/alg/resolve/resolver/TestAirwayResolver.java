@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
-import static org.mitre.tdp.boogie.test.MockObjects.airway;
+import static org.mitre.tdp.boogie.MockObjects.airway;
 
 import java.util.List;
 

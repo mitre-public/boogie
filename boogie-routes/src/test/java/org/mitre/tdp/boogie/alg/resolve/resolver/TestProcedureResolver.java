@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedures;
-import static org.mitre.tdp.boogie.test.MockObjects.IF;
-import static org.mitre.tdp.boogie.test.MockObjects.transition;
+import static org.mitre.tdp.boogie.MockObjects.IF;
+import static org.mitre.tdp.boogie.MockObjects.transition;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.arinc;
+package org.mitre.tdp.boogie.test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 

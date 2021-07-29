@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.test;
+package org.mitre.tdp.boogie;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -25,7 +25,7 @@ import org.mitre.tdp.boogie.util.Declinations;
 /**
  * Class containing helper code for generating mock objects.
  */
-public class MockObjects {
+public final class MockObjects {
 
   public static Fix fix(String name, double lat, double lon) {
     Fix fix = spy(Fix.class);
@@ -38,6 +38,15 @@ public class MockObjects {
     when(fix.toString()).thenReturn("Name: " + name);
     when(fix.projectOut(any(), any())).thenCallRealMethod();
     return fix;
+  }
+
+  public static Leg leg(String name, double lat, double lon, PathTerminator type) {
+    Fix term = fix(name, lat, lon);
+    Leg leg = mock(Leg.class);
+    when(leg.pathTerminator()).thenReturn(type);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
+    when(leg.toString()).thenReturn("Path Terminator: " + name);
+    return leg;
   }
 
   public static Leg TF(String name, double lat, double lon) {
@@ -83,15 +92,6 @@ public class MockObjects {
   public static Leg nonConcreteLeg(PathTerminator type) {
     Leg leg = mock(Leg.class);
     when(leg.pathTerminator()).thenReturn(type);
-    return leg;
-  }
-
-  public static Leg leg(String name, double lat, double lon, PathTerminator type) {
-    Fix term = fix(name, lat, lon);
-    Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(type);
-    when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
-    when(leg.toString()).thenReturn("Path Terminator: " + name);
     return leg;
   }
 

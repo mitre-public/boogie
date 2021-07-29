@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.alg.resolve.element;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

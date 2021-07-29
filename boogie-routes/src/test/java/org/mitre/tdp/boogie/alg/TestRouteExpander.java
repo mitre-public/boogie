@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.test.Airports.KATL;
-import static org.mitre.tdp.boogie.test.Airports.KDEN;
-import static org.mitre.tdp.boogie.test.MockObjects.fix;
+import static org.mitre.tdp.boogie.Airports.KATL;
+import static org.mitre.tdp.boogie.Airports.KDEN;
+import static org.mitre.tdp.boogie.MockObjects.fix;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,10 +26,10 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
 import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
-import org.mitre.tdp.boogie.test.Airports;
-import org.mitre.tdp.boogie.test.Airways;
-import org.mitre.tdp.boogie.test.CONNR5;
-import org.mitre.tdp.boogie.test.HOBTT2;
+import org.mitre.tdp.boogie.Airports;
+import org.mitre.tdp.boogie.Airways;
+import org.mitre.tdp.boogie.CONNR5;
+import org.mitre.tdp.boogie.HOBTT2;
 
 /**
  * Route inflation tests (the full package) used to test specific component expansions.

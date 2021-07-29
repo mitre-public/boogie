@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
-import static org.mitre.tdp.boogie.test.MockObjects.airport;
+import static org.mitre.tdp.boogie.MockObjects.airport;
 
 import java.util.List;
 

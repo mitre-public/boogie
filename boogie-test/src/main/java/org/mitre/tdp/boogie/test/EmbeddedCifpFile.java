@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.arinc;
+package org.mitre.tdp.boogie.test;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +9,9 @@ import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

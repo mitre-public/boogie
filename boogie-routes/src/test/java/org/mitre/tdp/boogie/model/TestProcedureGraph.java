@@ -22,10 +22,13 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.test.CONNR5;
-import org.mitre.tdp.boogie.test.HOBTT2;
-import org.mitre.tdp.boogie.test.MockObjects;
+import org.mitre.tdp.boogie.CONNR5;
+import org.mitre.tdp.boogie.HOBTT2;
+import org.mitre.tdp.boogie.MockObjects;
 
+/**
+ * This lives in the boogie-core module - but we want some of the nice testing stuff from boogie-routes to exercise the code.
+ */
 class TestProcedureGraph {
 
   private static final ProcedureGraph nominalGraph = nominalGraph();

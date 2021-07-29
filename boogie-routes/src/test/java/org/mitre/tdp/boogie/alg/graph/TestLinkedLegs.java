@@ -1,8 +1,8 @@
 package org.mitre.tdp.boogie.alg.graph;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mitre.tdp.boogie.test.MockObjects.CA;
-import static org.mitre.tdp.boogie.test.MockObjects.TF;
+import static org.mitre.tdp.boogie.MockObjects.CA;
+import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

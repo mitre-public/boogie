@@ -17,9 +17,12 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.test.CONNR5;
-import org.mitre.tdp.boogie.test.HOBTT2;
+import org.mitre.tdp.boogie.CONNR5;
+import org.mitre.tdp.boogie.HOBTT2;
 
+/**
+ * This lives in the boogie-core module - but we want some of the nice testing stuff from boogie-routes to exercise the code.
+ */
 class TestQueryableProcedure {
 
   @Test
@@ -53,7 +56,7 @@ class TestQueryableProcedure {
   }
 
   @Test
-  void testQueryableSTARProcedure(){
+  void testQueryableSTARProcedure() {
     QueryableProcedure procedure = new QueryableProcedure(HOBTT2.INSTANCE);
 
     Set<String> initialLegIdentifiers = procedure.initialProcedureLegs().stream().map(leg -> leg.associatedFix().map(Fix::fixIdentifier).orElse(null)).collect(Collectors.toSet());
