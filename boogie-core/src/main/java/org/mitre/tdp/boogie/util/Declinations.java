@@ -7,9 +7,15 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.Spherical;
+import org.mitre.tdp.boogie.MagneticVariation;
 
+/**
+ * At some point in the future this should probably be swapped out with a standard 3rd part tool better able to support modeling
+ * both historically and in the future (e.g. OREKIT - WMM + IGRF).
+ */
 public final class Declinations {
 
   private static final Map<GeomagneticCoefficients, Geomagnetics> magnetics = new HashMap<>();
@@ -26,13 +32,14 @@ public final class Declinations {
 
   /**
    * Returns the declination at a position (degrees), elevation (ft), and time.
-   *
-   * For reference:
-   *
-   * Bearing + Declination = True Course
-   * True Course - Declination = Bearing
+   * <br>
+   * Elevation may optionally be provided - if it is not the elevation is taken to be sea level (0ft).
+   * <br>
+   * For reference: Bearing + Declination = True Course, True Course - Declination = Bearing.
+   * <br>
+   * See {@link MagneticVariation}.
    */
-  public static double declination(double lat, double lon, Optional<Double> elev, Instant tau) {
+  public static double declination(double lat, double lon, @Nullable Double elev, Instant tau) {
     Geomagnetics magnetics = magnetics(tau);
 
     // include the decimal year to actually get variation within the 20XX-20XX cycle
@@ -40,9 +47,8 @@ public final class Declinations {
     GregorianCalendar greg = GregorianCalendar.from(zdt);
     double year = magnetics.decimalYear(greg);
 
-    // if we get an elevation use it as well, otherwise default to 0.0
     // note the Geomagnetics class is expecting km for the vertical datum
-    return elev
+    return Optional.ofNullable(elev)
         // ft -> km
         .map(e -> (e * Spherical.METERS_PER_FOOT) / 1000.0d)
         .map(km -> magnetics.getDeclination(lat, lon, year, km))

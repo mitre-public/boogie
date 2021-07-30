@@ -2,8 +2,10 @@ package org.mitre.tdp.boogie.validate;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
@@ -27,7 +29,7 @@ public final class RecordElectorFactory {
    * This is generally more useful for checking expectations on input data than testing something out in production - when used
    * in prod it's more robust to provide your own elector.
    */
-  public static UniqueRecordElector<Airport> newUniqueAirportElector() {
+  public static UnaryOperator<Collection<Airport>> newUniqueAirportElector() {
     return new UniqueRecordElector<>(RecordElectorFactory::airportUuid);
   }
 
@@ -35,7 +37,7 @@ public final class RecordElectorFactory {
    * Returns a new {@link UniqueRecordElector} which will elect the {@link Airport} using the provided elector function when
    * multiple are encountered with the same UUID.
    */
-  public static UniqueRecordElector<Airport> newUniqueAirportElector(Function<List<Airport>, Airport> elector) {
+  public static UnaryOperator<Collection<Airport>> newUniqueAirportElector(Function<List<Airport>, Airport> elector) {
     requireNonNull(elector);
     return new UniqueRecordElector<>(RecordElectorFactory::airportUuid, elector);
   }
@@ -43,14 +45,14 @@ public final class RecordElectorFactory {
   /**
    * Similar implementation to {@link #newUniqueAirportElector()} but for {@link Fix}es.
    */
-  public static UniqueRecordElector<Fix> newUniqueFixElector() {
+  public static UnaryOperator<Collection<Fix>> newUniqueFixElector() {
     return new UniqueRecordElector<>(RecordElectorFactory::fixUuid);
   }
 
   /**
    * Similar implementation to {@link #newUniqueAirportElector(Function)} but for {@link Fix}es.
    */
-  public static UniqueRecordElector<Fix> newUniqueFixElector(Function<List<Fix>, Fix> elector) {
+  public static UnaryOperator<Collection<Fix>> newUniqueFixElector(Function<List<Fix>, Fix> elector) {
     requireNonNull(elector);
     return new UniqueRecordElector<>(RecordElectorFactory::fixUuid, elector);
   }
@@ -58,14 +60,14 @@ public final class RecordElectorFactory {
   /**
    * Similar implementation to {@link #newUniqueAirportElector()} but for {@link Procedure}s.
    */
-  public static UniqueRecordElector<Procedure> newUniqueProcedureElector() {
+  public static UnaryOperator<Collection<Procedure>> newUniqueProcedureElector() {
     return new UniqueRecordElector<>(RecordElectorFactory::procedureUuid);
   }
 
   /**
    * Similar implementation to {@link #newUniqueAirportElector(Function)} but for {@link Procedure}s.
    */
-  public static UniqueRecordElector<Procedure> newUniqueProcedureElector(Function<List<Procedure>, Procedure> elector) {
+  public static UnaryOperator<Collection<Procedure>> newUniqueProcedureElector(Function<List<Procedure>, Procedure> elector) {
     requireNonNull(elector);
     return new UniqueRecordElector<>(RecordElectorFactory::procedureUuid, elector);
   }
@@ -73,14 +75,14 @@ public final class RecordElectorFactory {
   /**
    * Similar implementation to {@link #newUniqueAirportElector()} but for {@link Procedure}s.
    */
-  public static UniqueRecordElector<Airway> newUniqueAirwayElector() {
+  public static UnaryOperator<Collection<Airway>> newUniqueAirwayElector() {
     return new UniqueRecordElector<>(RecordElectorFactory::airwayUuid);
   }
 
   /**
    * Similar implementation to {@link #newUniqueAirportElector(Function)} but for {@link Procedure}s.
    */
-  public static UniqueRecordElector<Airway> newUniqueAirwayElector(Function<List<Airway>, Airway> elector) {
+  public static UnaryOperator<Collection<Airway>> newUniqueAirwayElector(Function<List<Airway>, Airway> elector) {
     requireNonNull(elector);
     return new UniqueRecordElector<>(RecordElectorFactory::airwayUuid, elector);
   }

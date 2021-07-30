@@ -49,8 +49,11 @@ public final class PathTerminatorBasedLegValidator implements Predicate<Leg> {
         return leg.outboundMagneticCourse().isPresent()
             && leg.altitudeConstraint().hasLowerBound();
       case CR:
-      case CD:
       case VR:
+        return leg.recommendedNavaid().isPresent()
+            && leg.theta().isPresent()
+            && leg.outboundMagneticCourse().isPresent();
+      case CD:
       case VD:
         return leg.recommendedNavaid().isPresent()
             && leg.outboundMagneticCourse().isPresent()
@@ -84,7 +87,8 @@ public final class PathTerminatorBasedLegValidator implements Predicate<Leg> {
         return leg.associatedFix().isPresent()
             && leg.turnDirection().isPresent()
             && leg.outboundMagneticCourse().isPresent()
-            && leg.routeDistance().isPresent();
+            // only one or the other must be present on the record
+            && (leg.holdTime().isPresent() || leg.routeDistance().isPresent());
       default:
         throw new IllegalArgumentException("Unsupported leg type supplied to LegContentValidator: ".concat(leg.pathTerminator().name()));
     }

@@ -26,6 +26,11 @@ public class TestAirportSpec {
   }
 
   @Test
+  void testValidatorPasses_01GE() {
+    assertTrue(new AirportValidator().test(ArincVersion.V18.parser().apply(_01GE).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseAirport_01GE() {
     ArincRecord record = ArincVersion.V18.parser().apply(_01GE).orElseThrow(AssertionError::new);
     assertNotNull(record);
@@ -70,6 +75,11 @@ public class TestAirportSpec {
   }
 
   @Test
+  void testValidatorPasses_CAL4() {
+    assertTrue(new AirportValidator().test(ArincVersion.V18.parser().apply(_CAL4).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseAirport_CAL4() {
     ArincRecord record = ArincVersion.V18.parser().apply(_CAL4).orElseThrow(AssertionError::new);
 
@@ -110,6 +120,11 @@ public class TestAirportSpec {
   @Test
   void testSpecMatches_KJFK() {
     assertTrue(new AirportSpec().matchesRecord(KJFK));
+  }
+
+  @Test
+  void testValidatorPasses_KJFK() {
+    assertTrue(new AirportValidator().test(ArincVersion.V18.parser().apply(KJFK).orElseThrow(AssertionError::new)));
   }
 
   @Test

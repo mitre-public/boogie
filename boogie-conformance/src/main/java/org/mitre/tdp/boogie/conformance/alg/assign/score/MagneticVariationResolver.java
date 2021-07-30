@@ -31,6 +31,6 @@ public final class MagneticVariationResolver {
     return flyableLeg.current().recommendedNavaid().map(Fix::magneticVariation)
         .orElseGet(() -> Optional.of(flyableLeg).map(FlyableLeg::current).flatMap(Leg::associatedFix).map(Fix::magneticVariation)
             .orElseGet(() -> flyableLeg.next().flatMap(Leg::associatedFix).map(Fix::magneticVariation)
-                .orElseGet(() -> new MagneticVariation(null, Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude(), point.time())))));
+                .orElseGet(() -> new MagneticVariation(null, Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude().orElse(null), point.time())))));
   }
 }

@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
 import org.slf4j.Logger;
@@ -32,6 +33,10 @@ public final class ArincRecord implements Serializable {
     this.namedData = namedData;
   }
 
+  public String rawRecord() {
+    return namedData.values().stream().map(Pair::second).collect(Collectors.joining(""));
+  }
+
   /**
    * Allows users to check if the data class contains a parse-able version of the queried ARINC field within the record.
    * <br>
@@ -40,11 +45,7 @@ public final class ArincRecord implements Serializable {
    * multiple places.
    */
   public boolean containsParsedField(String fieldName) {
-    Optional<?> value = optionalField(fieldName);
-    if (!value.isPresent()) {
-      LOG.debug("Unable find requested field '{}' in record.", fieldName);
-    }
-    return value.isPresent();
+    return optionalField(fieldName).isPresent();
   }
 
   public <U, T extends FieldSpec<U>> Optional<T> specForField(String fieldName) {

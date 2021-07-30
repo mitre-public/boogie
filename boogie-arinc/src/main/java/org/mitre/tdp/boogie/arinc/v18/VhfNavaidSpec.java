@@ -54,7 +54,7 @@ public final class VhfNavaidSpec implements RecordSpec {
         new RecordField<>(new NavaidClass()),
         new RecordField<>(new Latitude()),
         new RecordField<>(new Longitude()),
-        new RecordField<>(new DmeIdentifier()),
+        new RecordField<>("dmeIdentifier", new DmeIdentifier()),
         new RecordField<>("dmeLatitude", new Latitude()),
         new RecordField<>("dmeLongitude", new Longitude()),
         new RecordField<>(new StationDeclination()),

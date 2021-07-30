@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * This class is <i>typically</i> used as a defensive pre-check in downstream metrics to exclude multiple definitions of the same
  * record which may have been provided either across sources or across different navigation cycles of information.
  */
-final class UniqueRecordElector<A> implements Function<Collection<A>, Collection<A>>, Predicate<Collection<A>> {
+final class UniqueRecordElector<A> implements UnaryOperator<Collection<A>>, Predicate<Collection<A>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(UniqueRecordElector.class);
 
@@ -47,7 +48,11 @@ final class UniqueRecordElector<A> implements Function<Collection<A>, Collection
   @Override
   public Collection<A> apply(Collection<A> records) {
     Map<String, List<A>> grouped = records.stream().collect(Collectors.groupingBy(uuidKeyer));
-    return grouped.values().stream().map(recordElector).collect(Collectors.toList());
+
+    Collection<A> elected = grouped.values().stream().map(recordElector).collect(Collectors.toList());
+    LOG.info("Elected {} total representatives from input set of {} total records.", elected.size(), records.size());
+
+    return elected;
   }
 
   @Override

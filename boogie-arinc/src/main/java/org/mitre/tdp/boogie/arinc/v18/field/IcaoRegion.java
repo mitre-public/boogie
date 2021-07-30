@@ -18,7 +18,12 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  */
 public final class IcaoRegion implements FieldSpec<String> {
 
-  private static final Predicate<String> matcher = Pattern.compile("^([0-9A-Z]{2})$").asPredicate();
+  /**
+   * The vast majority of waypoints will have a two-character ICAO region (as is standard) but a few thousand well-named fixes
+   * within CIFP <i>don't</i> and instead have single-character ones. In those cases however that is how those fixes are referenced
+   * in the other nav datasets (e.g. in procedure legs).
+   */
+  private static final Predicate<String> matcher = Pattern.compile("^([0-9A-Z]{1,2})$").asPredicate();
 
   @Override
   public int fieldLength() {

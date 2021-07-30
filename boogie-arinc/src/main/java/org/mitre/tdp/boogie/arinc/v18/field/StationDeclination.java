@@ -5,7 +5,7 @@ import static org.mitre.tdp.boogie.util.CoordinateParser.sign;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
 import com.google.common.collect.ImmutableSet;
@@ -49,6 +49,6 @@ public final class StationDeclination implements FieldSpec<Double> {
         .filter(s -> ValidArincNumeric.INSTANCE.test(s.substring(1)))
         // drop T/G because they're annoying and uncommon
         .filter(s -> s.substring(0, 1).matches("E|W"))
-        .map(s -> sign(s.substring(0, 1)) * ArincStrings.parseDoubleWithTenths(s.substring(1)));
+        .flatMap(s -> ArincDecimalParser.INSTANCE.parseDoubleWithTenths(s.substring(1)).map(value -> sign(s.substring(0, 1)) * value));
   }
 }

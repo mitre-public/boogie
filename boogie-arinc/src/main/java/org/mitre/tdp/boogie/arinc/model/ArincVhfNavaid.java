@@ -25,7 +25,15 @@ public final class ArincVhfNavaid {
   private final String continuationRecordNumber;
   private final Double vhfFrequency;
   private final String navaidClass;
+  /**
+   * For consistency of use - if these are not populated in the raw record but the {@link #dmeLatitude} is then this field will
+   * reflect that value (and the {@link #dmeLatitude} value will be identical).
+   */
   private final Double latitude;
+  /**
+   * For consistency of use - if these are not populated in the raw record but the {@link #dmeLongitude} is then this field will
+   * reflect that value (and the {@link #dmeLongitude} value will be identical).
+   */
   private final Double longitude;
   private final String dmeIdentifier;
   private final Double dmeLatitude;

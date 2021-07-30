@@ -3,8 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import java.time.Duration;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
-import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
+import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 
 /**
  * In Enroute Airways, “Route Distance From” is the distance in nautical miles from the waypoint identified in the records “Fix Ident”
@@ -31,8 +30,8 @@ public final class RouteHoldDistanceTime extends TrimmableString {
   public Optional<Duration> asDuration(String fieldString) {
     return Optional.of(fieldString)
         .filter(fs -> fs.startsWith("T"))
-        .filter(fs -> ValidArincNumeric.INSTANCE.test(fs.substring(1)))
-        .map(fs -> ArincStrings.parseDoubleWithTenths(fs.substring(1)))
+        .map(fs -> fs.substring(1))
+        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths)
         .map(mins -> Duration.ofSeconds((int) (mins * 60)));
   }
 
@@ -42,7 +41,6 @@ public final class RouteHoldDistanceTime extends TrimmableString {
   public Optional<Double> asDistanceInNm(String fieldString) {
     return Optional.of(fieldString)
         .filter(fs -> !fs.startsWith("T"))
-        .filter(ValidArincNumeric.INSTANCE)
-        .map(ArincStrings::parseDoubleWithTenths);
+        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
   }
 }

@@ -1,9 +1,10 @@
 package org.mitre.tdp.boogie.util;
 
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 
-import org.mitre.caasd.commons.TimeWindow;
+import com.google.common.collect.ImmutableSortedMap;
 
 /**
  * The input string array which contains each line of input for the
@@ -103,10 +104,7 @@ public enum GeomagneticCoefficients {
       " 12  9      -0.4       0.3        0.0       -0.0",
       " 12 10       0.2      -0.9        0.0       -0.0",
       " 12 11      -0.8      -0.2       -0.1        0.0",
-      " 12 12       0.0       0.9        0.1        0.0"},
-      new TimeWindow(
-          Instant.parse("2010-01-01T00:00:00.00Z"),
-          Instant.parse("2015-01-01T00:00:00.00Z"))),
+      " 12 12       0.0       0.9        0.1        0.0"}),
   WMM2015(new String[] {"    2015.0            WMM-2015        12/15/2014",
       "  1  0  -29438.5       0.0       10.7        0.0",
       "  1  1   -1501.1    4796.2       17.9      -26.8",
@@ -197,10 +195,7 @@ public enum GeomagneticCoefficients {
       " 12  9      -0.4       0.2        0.0        0.0",
       " 12 10       0.2      -0.9        0.0        0.0",
       " 12 11      -0.9      -0.2        0.0        0.0",
-      " 12 12       0.0       0.7        0.0        0.0"},
-      new TimeWindow(
-          Instant.parse("2015-01-01T00:00:00.00Z"),
-          Instant.parse("2020-01-01T00:00:00.00Z"))),
+      " 12 12       0.0       0.7        0.0        0.0"}),
   WMM2020(new String[] {"    2020.0            WMM-2020        12/10/2019",
       "  1  0  -29404.5       0.0        6.7        0.0",
       "  1  1   -1450.7    4652.9        7.7      -25.1",
@@ -291,28 +286,26 @@ public enum GeomagneticCoefficients {
       " 12  9      -0.5       0.2       -0.0       -0.0",
       " 12 10       0.1      -0.9       -0.0       -0.0",
       " 12 11      -1.1      -0.0       -0.0        0.0",
-      " 12 12      -0.3       0.5       -0.1       -0.1"},
-      new TimeWindow(
-          Instant.parse("2020-01-01T00:00:00.00Z"),
-          Instant.parse("2025-01-01T00:00:00.00Z")));
+      " 12 12      -0.3       0.5       -0.1       -0.1"});
+
+  private static final ImmutableSortedMap<Instant, GeomagneticCoefficients> timeToCoefficients = ImmutableSortedMap.of(
+      Instant.parse("2010-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2010,
+      Instant.parse("2015-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2015,
+      Instant.parse("2020-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2020
+  );
 
   private final String[] rawCoeffs;
-  private final TimeWindow effective_interval;
 
-  GeomagneticCoefficients(String[] coeffs, TimeWindow effItv) {
+  GeomagneticCoefficients(String[] coeffs) {
     this.rawCoeffs = coeffs;
-    this.effective_interval = effItv;
   }
 
   public static GeomagneticCoefficients coefficientsAtTime(Instant tau) {
-    return Arrays.stream(values()).filter(v -> v.effectiveInterval().contains(tau)).findFirst().orElseThrow(RuntimeException::new);
+    return Optional.ofNullable(timeToCoefficients.lowerEntry(tau)).map(Map.Entry::getValue)
+        .orElseGet(() -> Optional.ofNullable(timeToCoefficients.ceilingEntry(tau)).map(Map.Entry::getValue).orElseThrow(IllegalStateException::new));
   }
 
   public String[] rawCoefficients() {
     return rawCoeffs;
-  }
-
-  public TimeWindow effectiveInterval() {
-    return effective_interval;
   }
 }

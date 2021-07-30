@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
@@ -82,6 +83,13 @@ public final class FixDatabase {
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
+  public Optional<ArincWaypoint> waypoint(String identifier, String icaoRegion) {
+    return highlander(Stream.of(
+        terminalWaypoint(identifier, icaoRegion),
+        enrouteWaypoint(identifier, icaoRegion)
+    ).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet()));
+  }
+
   public Optional<ArincWaypoint> terminalWaypoint(String identifier, String icaoRegion) {
     Collection<ArincWaypoint> waypoints = castingLookup(
         ArincWaypoint.class,
@@ -153,6 +161,13 @@ public final class FixDatabase {
           return navaids.stream();
         })
         .collect(Collectors.toCollection(LinkedHashSet::new));
+  }
+
+  public Optional<ArincNdbNavaid> ndbNavaid(String identifier, String icaoRegion) {
+    return highlander(Stream.of(
+        terminalNdbNavaid(identifier, icaoRegion),
+        enrouteNdbNavaid(identifier, icaoRegion)
+    ).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet()));
   }
 
   public Optional<ArincNdbNavaid> terminalNdbNavaid(String identifier, String icaoRegion) {

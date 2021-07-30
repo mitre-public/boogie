@@ -7,7 +7,16 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * The waypoint usage field is employed to indicate the structure in which the waypoint is utilized.
+ * The usage code consists of two separate characters that jointly specify data conditions about how the waypoint is used.
+ * <br>
+ * <b>Column1:</b>
+ * R - RNAV
+ * <br>
+ * <b>Column2:</b>
+ * B - HI and LO Altitude
+ * H - HI Altitude
+ * L - LO Altitude
+ * Blank - Terminal
  */
 public final class WaypointUsage implements FieldSpec<String> {
 

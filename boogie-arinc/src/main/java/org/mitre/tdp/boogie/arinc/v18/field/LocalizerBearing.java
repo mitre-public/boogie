@@ -3,8 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
-import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
+import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 
 /**
  * The “Localizer Bearing” field defines the magnetic bearing of the localizer course of the ILS facility/GLS approach described
@@ -33,7 +32,6 @@ public final class LocalizerBearing implements FieldSpec<Double> {
     return Optional.of(fieldValue).map(String::trim)
         // explicitly drop true course localizer bearings
         .filter(s -> !s.endsWith("T"))
-        .filter(ValidArincNumeric.INSTANCE)
-        .map(ArincStrings::parseDoubleWithTenths);
+        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
   }
 }

@@ -85,14 +85,14 @@ class TestTerminalAreaDatabase {
   @Test
   void testLocalizerGlideSlopeQueries() {
     assertAll(
-        () -> assertEquals(Optional.of("IIWY"), terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "RW22L").map(ArincLocalizerGlideSlope::localizerIdentifier)),
-        () -> assertEquals(Optional.of("IIWY"), terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "K6", "RW22L").map(ArincLocalizerGlideSlope::localizerIdentifier)),
-        () -> assertEquals(Optional.empty(), terminalAreaDatabase.secondaryLocalizerGlideSlopeAt("KJFK", "RW22L")),
+        () -> assertEquals(Optional.of("IIWY"), terminalAreaDatabase.primaryLocalizerGlideSlopeOf("KJFK", "RW22L").map(ArincLocalizerGlideSlope::localizerIdentifier)),
+        () -> assertEquals(Optional.of("IIWY"), terminalAreaDatabase.primaryLocalizerGlideSlopeOf("KJFK", "K6", "RW22L").map(ArincLocalizerGlideSlope::localizerIdentifier)),
+        () -> assertEquals(Optional.empty(), terminalAreaDatabase.secondaryLocalizerGlideSlopeOf("KJFK", "RW22L")),
 
-        () -> assertEquals(Optional.of("IJOC"), terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "RW22R").map(ArincLocalizerGlideSlope::localizerIdentifier)),
-        () -> assertEquals(Optional.of("IJOC"), terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "K6", "RW22R").map(ArincLocalizerGlideSlope::localizerIdentifier)),
-        () -> assertEquals(Optional.empty(), terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "K4", "RW22R")),
-        () -> assertEquals(Optional.empty(), terminalAreaDatabase.secondaryLocalizerGlideSlopeAt("KJFK", "RW22R"))
+        () -> assertEquals(Optional.of("IJOC"), terminalAreaDatabase.primaryLocalizerGlideSlopeOf("KJFK", "RW22R").map(ArincLocalizerGlideSlope::localizerIdentifier)),
+        () -> assertEquals(Optional.of("IJOC"), terminalAreaDatabase.primaryLocalizerGlideSlopeOf("KJFK", "K6", "RW22R").map(ArincLocalizerGlideSlope::localizerIdentifier)),
+        () -> assertEquals(Optional.empty(), terminalAreaDatabase.primaryLocalizerGlideSlopeOf("KJFK", "K4", "RW22R")),
+        () -> assertEquals(Optional.empty(), terminalAreaDatabase.secondaryLocalizerGlideSlopeOf("KJFK", "RW22R"))
     );
   }
 
@@ -110,8 +110,8 @@ class TestTerminalAreaDatabase {
   @Test
   void testProcedureQueries() {
     assertAll(
-        () -> assertEquals(364, terminalAreaDatabase.allProcedureLegsAt("KJFK").size()),
-        () -> assertEquals(6, terminalAreaDatabase.legsForProcedure("KJFK", "ROBER2").size())
+        () -> assertEquals(454, terminalAreaDatabase.allProcedureLegsAt("KJFK").size()),
+        () -> assertEquals(11, terminalAreaDatabase.legsForProcedure("KJFK", "ROBER2").size())
     );
   }
 

@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
+import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 import org.mitre.tdp.boogie.util.Declinations;
 
 /**
@@ -42,6 +42,6 @@ public final class MagneticVariation implements FieldSpec<Double> {
         .filter(s -> !s.startsWith("T"))
         .filter(s -> isNumeric(s.substring(1)))
         .filter(s -> allowedDirections.contains(s.substring(0, 1)))
-        .map(s -> sign(s.substring(0, 1)) * ArincStrings.parseDoubleWithTenths(s.substring(1)));
+        .flatMap(s -> ArincDecimalParser.INSTANCE.parseDoubleWithTenths(s.substring(1)).map(value -> sign(s.substring(0, 1)) * value));
   }
 }

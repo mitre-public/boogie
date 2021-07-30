@@ -17,7 +17,7 @@ import org.mitre.caasd.commons.TimeWindow;
 import com.ko_sys.av.airac.Airac;
 
 /**
- * Decorator class for internal only dependency on the {@link Airac} project.
+ * Facade class for internal only dependency on the {@link Airac} project.
  */
 public final class AiracCycle {
 
@@ -79,6 +79,10 @@ public final class AiracCycle {
    */
   public boolean fallsWithinCycle(Instant dt) {
     return asTimeWindow().contains(dt);
+  }
+
+  public static Instant startDate(String cycle) {
+    return new AiracCycle(cycle).startDate();
   }
 
   private static final Predicate<String> isAiracCycle = Pattern.compile("^(\\d{2})(\\d{2})$").asPredicate();

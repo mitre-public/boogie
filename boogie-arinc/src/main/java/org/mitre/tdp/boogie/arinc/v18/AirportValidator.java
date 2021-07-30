@@ -1,6 +1,10 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
+import static java.util.Objects.requireNonNull;
+import static org.mitre.tdp.boogie.arinc.v18.ValidationHelper.containsParsedField;
+
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
@@ -17,17 +21,25 @@ public final class AirportValidator implements Predicate<ArincRecord> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AirportValidator.class);
 
+  private final BiConsumer<ArincRecord, String> missingFieldConsumer;
+
+  public AirportValidator() {
+    this((arincRecord, field) -> LOG.debug("Missing required field {} in record {}.", field, arincRecord.rawRecord()));
+  }
+
+  public AirportValidator(BiConsumer<ArincRecord, String> missingFieldConsumer) {
+    this.missingFieldConsumer = requireNonNull(missingFieldConsumer);
+  }
+
   @Override
   public boolean test(ArincRecord arincRecord) {
-    LOG.debug("Beginning Airport record validation.");
-
     return isCorrectSectionSubSection(arincRecord)
-        && arincRecord.containsParsedField("latitude")
-        && arincRecord.containsParsedField("longitude")
-        && arincRecord.containsParsedField("airportIdentifier")
-        && arincRecord.containsParsedField("airportIcaoRegion")
-        && arincRecord.containsParsedField("fileRecordNumber")
-        && arincRecord.containsParsedField("lastUpdateCycle");
+        && containsParsedField(arincRecord, "latitude", missingFieldConsumer)
+        && containsParsedField(arincRecord, "longitude", missingFieldConsumer)
+        && containsParsedField(arincRecord, "airportIdentifier", missingFieldConsumer)
+        && containsParsedField(arincRecord, "airportIcaoRegion", missingFieldConsumer)
+        && containsParsedField(arincRecord, "fileRecordNumber", missingFieldConsumer)
+        && containsParsedField(arincRecord, "lastUpdateCycle", missingFieldConsumer);
   }
 
   boolean isCorrectSectionSubSection(ArincRecord arincRecord) {

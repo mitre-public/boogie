@@ -52,9 +52,9 @@ class TestConvertingArincRecordMapper {
         () -> assertEquals(0, recordsByType.getOrDefault(ArincAirwayLeg.class, emptyList()).size(), "AirwayLeg count"),
         () -> assertEquals(7, recordsByType.getOrDefault(ArincLocalizerGlideSlope.class, emptyList()).size(), "LocalizerGlideSlope count"),
         () -> assertEquals(0, recordsByType.getOrDefault(ArincNdbNavaid.class, emptyList()).size(), "NdbNavaid count"),
-        () -> assertEquals(364, recordsByType.getOrDefault(ArincProcedureLeg.class, emptyList()).size(), "ProcedureLeg count"),
+        () -> assertEquals(454, recordsByType.getOrDefault(ArincProcedureLeg.class, emptyList()).size(), "ProcedureLeg count"),
         () -> assertEquals(8, recordsByType.getOrDefault(ArincRunway.class, emptyList()).size(), "Runway count"),
-        () -> assertEquals(0, recordsByType.getOrDefault(ArincVhfNavaid.class, emptyList()).size(), "VhfNavaid count"),
+        () -> assertEquals(6, recordsByType.getOrDefault(ArincVhfNavaid.class, emptyList()).size(), "VhfNavaid count"),
         () -> assertEquals(70, recordsByType.getOrDefault(ArincWaypoint.class, emptyList()).size(), "Waypoint count")
     );
   }

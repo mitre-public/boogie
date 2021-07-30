@@ -55,7 +55,6 @@ public final class ArincRecordParser implements Function<String, Optional<ArincR
 
     // at the expense of more operations... how strongly do we want to enforce none of our specs both match the same record...
     Optional<RecordSpec> recordSpec = recordSpecs.stream().filter(rspec -> rspec.matchesRecord(rawRecord)).findFirst();
-    LOG.debug("Associated spec {} with record {}.", recordSpec, rawRecord);
 
     return recordSpec.map(spec -> createParsedRecord(rawRecord, spec));
   }

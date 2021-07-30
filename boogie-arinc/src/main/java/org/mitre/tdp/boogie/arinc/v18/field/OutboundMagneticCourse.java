@@ -3,8 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincStrings;
-import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
+import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 
 /**
  * “Outbound Magnetic Course” is the published outbound magnetic course from the waypoint identified in the record’s “Fix Ident”
@@ -36,7 +35,6 @@ public final class OutboundMagneticCourse implements FieldSpec<Double> {
         .map(String::trim)
         // explicit drop true course values... we could add handling for these later
         .filter(s -> !s.endsWith("T"))
-        .filter(ValidArincNumeric.INSTANCE)
-        .map(ArincStrings::parseDoubleWithTenths);
+        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
   }
 }

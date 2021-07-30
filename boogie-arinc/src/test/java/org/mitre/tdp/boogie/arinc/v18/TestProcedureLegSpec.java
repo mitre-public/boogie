@@ -20,8 +20,13 @@ public class TestProcedureLegSpec {
   public static final String IF = "SUSAP KJFKK6FV13R  V      010ASALTK6EA1E  D    IF CRI K6      22480060        D     03000     18000                 3 DS   154932004";
 
   @Test
-  void testSpecMatchesIF_PE() {
+  void testSpecMatchesIF() {
     assertTrue(new ProcedureLegSpec().matchesRecord(IF));
+  }
+
+  @Test
+  void testValidatorPassesIF(){
+    assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(IF).orElseThrow(AssertionError::new)));
   }
 
   @Test
@@ -83,6 +88,11 @@ public class TestProcedureLegSpec {
   }
 
   @Test
+  void testValidatorPassesTF(){
+    assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(TF).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseTF() {
     ArincRecord record = ArincVersion.V18.parser().apply(TF).orElseThrow(AssertionError::new);
 
@@ -136,6 +146,11 @@ public class TestProcedureLegSpec {
   @Test
   void testSpecMatchesRF_PF() {
     assertTrue(new ProcedureLegSpec().matchesRecord(RF));
+  }
+
+  @Test
+  void testValidatorPassesRF(){
+    assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(RF).orElseThrow(AssertionError::new)));
   }
 
   @Test
@@ -193,6 +208,11 @@ public class TestProcedureLegSpec {
   }
 
   @Test
+  void testValidatorPassesCF(){
+    assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(CF).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseCF() {
     ArincRecord record = ArincVersion.V18.parser().apply(CF).orElseThrow(AssertionError::new);
 
@@ -237,5 +257,42 @@ public class TestProcedureLegSpec {
         () -> assertEquals(Integer.valueOf(74908), record.requiredField("fileRecordNumber")),
         () -> assertEquals("1713", record.requiredField("lastUpdateCycle"))
     );
+  }
+
+  private static final String CR = "SUSAP KROAK6FVDM-A D      040         0  M L   CR ODR K6      1640    1640    D   + 04000                           0  C   904921909";
+
+  @Test
+  void testSpecMatchesCR() {
+    assertTrue(new ProcedureLegSpec().matchesRecord(CR));
+  }
+
+  @Test
+  void testValidatorPassesCR(){
+    assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(CR).orElseThrow(AssertionError::new)));
+  }
+
+  private static final String PI = "SCANP PABEPAFI19RZ ABET   030KAYSEPAPC0EE AR   PI IBETPA      0125006432750100PI  + 01800                           0 DS   050461707";
+
+  @Test
+  void testSpecMatchesPI(){
+    assertTrue(new ProcedureLegSpec().matchesRecord(PI));
+  }
+
+  @Test
+  void testValidatorPassesPI(){
+    assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(PI).orElseThrow(AssertionError::new)));
+  }
+
+  private static final String PI2 = "SUSAP KDNLK7FN11   AEMR   030GARFIK7PC0EE AL   PI EMR K7              32860100DB  + 02100                           0  S   656342010";
+
+  @Test
+  void testSpecMatchesPI2(){
+    assertTrue(new ProcedureLegSpec().matchesRecord(PI2));
+  }
+
+  @Test
+  void testValidatorPassesPI2(){
+    ArincRecord arincRecord = ArincVersion.V18.parser().apply(PI2).orElseThrow(AssertionError::new);
+    assertFalse(new ProcedureLegValidator().test(arincRecord));
   }
 }

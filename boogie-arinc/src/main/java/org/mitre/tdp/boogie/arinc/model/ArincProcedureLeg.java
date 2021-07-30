@@ -10,6 +10,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
+import org.mitre.tdp.boogie.arinc.v18.field.WaypointDescription;
 
 /**
  * Data class for representing structured/parsed content from within an ARINC format airway leg record.
@@ -36,6 +37,9 @@ public final class ArincProcedureLeg {
   private final SectionCode fixSectionCode;
   private final String fixSubSectionCode;
   private final String continuationRecordNumber;
+  /**
+   * See {@link WaypointDescription}.
+   */
   private final String waypointDescription;
   private final TurnDirection turnDirection;
   private final Double rnp;

@@ -22,6 +22,18 @@ public final class VhfNavaidConverter implements Function<ArincRecord, Optional<
       return Optional.empty();
     }
 
+    // occasionally VHF Identifier wont be present - the DME identifier should be populated in those cases - though this
+    // is less common than the case where lat/lon is only at the DME level
+    Optional<String> vhfIdentifier = arincRecord.optionalField("vhfIdentifier");
+    Optional<String> dmeIdentifier = arincRecord.optionalField("dmeIdentifier");
+
+    // special case - for DME facilities it's not uncommon for the normal lat/lon to be unpopulated but for the DME lat/lon
+    // to be present - when this happens we take the DME lat/lon to be the lat/lon of the overall facility
+    Optional<Double> latitude = arincRecord.optionalField("latitude");
+    Optional<Double> longitude = arincRecord.optionalField("longitude");
+    Optional<Double> dmeLatitude = arincRecord.optionalField("dmeLatitude");
+    Optional<Double> dmeLongitude = arincRecord.optionalField("dmeLongitude");
+
     Optional<CustomerAreaCode> customerAreaCode = arincRecord.optionalField("customerAreaCode");
     Optional<String> subSectionCode = arincRecord.optionalField("subSectionCode");
     Optional<String> airportIdentifier = arincRecord.optionalField("airportIdentifier");
@@ -29,9 +41,6 @@ public final class VhfNavaidConverter implements Function<ArincRecord, Optional<
     Optional<String> continuationRecordNumber = arincRecord.optionalField("continuationRecordNumber");
     Optional<Double> vhfFrequency = arincRecord.optionalField("vhfFrequency");
     Optional<String> navaidClass = arincRecord.optionalField("navaidClass");
-    Optional<String> dmeIdentifier = arincRecord.optionalField("dmeIdentifier");
-    Optional<Double> dmeLatitude = arincRecord.optionalField("dmeLatitude");
-    Optional<Double> dmeLongitude = arincRecord.optionalField("dmeLongitude");
     Optional<Double> stationDeclination = arincRecord.optionalField("stationDeclination");
     Optional<Double> dmeElevation = arincRecord.optionalField("dmeElevation");
     Optional<Integer> figureOfMerit = arincRecord.optionalField("figureOfMerit");
@@ -47,13 +56,13 @@ public final class VhfNavaidConverter implements Function<ArincRecord, Optional<
         .subSectionCode(subSectionCode.orElse(null))
         .airportIdentifier(airportIdentifier.orElse(null))
         .airportIcaoRegion(airportIcaoRegion.orElse(null))
-        .vhfIdentifier(arincRecord.requiredField("vhfIdentifier"))
+        .vhfIdentifier(vhfIdentifier.orElseGet(() -> dmeIdentifier.orElseThrow(IllegalStateException::new)))
         .vhfIcaoRegion(arincRecord.requiredField("vhfIcaoRegion"))
         .continuationRecordNumber(continuationRecordNumber.orElse(null))
         .vhfFrequency(vhfFrequency.orElse(null))
         .navaidClass(navaidClass.orElse(null))
-        .latitude(arincRecord.requiredField("latitude"))
-        .longitude(arincRecord.requiredField("longitude"))
+        .latitude(latitude.orElseGet(() -> dmeLatitude.orElseThrow(IllegalStateException::new)))
+        .longitude(longitude.orElseGet(() -> dmeLongitude.orElseThrow(IllegalStateException::new)))
         .dmeIdentifier(dmeIdentifier.orElse(null))
         .dmeLatitude(dmeLatitude.orElse(null))
         .dmeLongitude(dmeLongitude.orElse(null))

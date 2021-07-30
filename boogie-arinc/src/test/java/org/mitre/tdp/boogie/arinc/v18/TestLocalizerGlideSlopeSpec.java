@@ -22,6 +22,11 @@ class TestLocalizerGlideSlopeSpec {
   }
 
   @Test
+  void testValidatorPasses_GlideSlope1(){
+    assertTrue(new LocalizerGlideSlopeValidator().test(ArincVersion.V18.parser().apply(glideslope1).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseGlideslope1() {
     ArincRecord record = ArincVersion.V18.parser().apply(glideslope1).orElseThrow(AssertionError::new);
 

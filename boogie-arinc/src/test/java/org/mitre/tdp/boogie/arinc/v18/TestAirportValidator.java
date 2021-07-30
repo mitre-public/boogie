@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import com.google.common.base.Joiner;
@@ -69,10 +68,13 @@ class TestAirportValidator {
   }
 
   private ArincRecord newArincRecord(String... fields) {
+    Optional presentOptional = mock(Optional.class);
+    when(presentOptional.isPresent()).thenReturn(true);
+
     ArincRecord record = mock(ArincRecord.class);
     when(record.optionalField(eq("sectionCode"))).thenReturn(Optional.of(SectionCode.P));
     when(record.optionalField(eq("subSectionCode"))).thenReturn(Optional.of("A"));
-    when(record.containsParsedField(matches(Joiner.on("|").join(fields)))).thenReturn(true);
+    when(record.optionalField(matches(Joiner.on("|").join(fields)))).thenReturn(presentOptional);
     return record;
   }
 }

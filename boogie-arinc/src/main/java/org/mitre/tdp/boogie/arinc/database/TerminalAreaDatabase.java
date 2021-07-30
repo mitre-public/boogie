@@ -61,19 +61,27 @@ public final class TerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::runways).orElse(Collections.emptySet());
   }
 
-  public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeAt(String airport, String runway) {
+  public Optional<ArincLocalizerGlideSlope> localizerGlideSlopeAt(String airport, String identifier){
+    return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.localizerGlideSlope(identifier));
+  }
+
+  public Collection<ArincLocalizerGlideSlope> localizerGlideSlopesAt(String airport){
+    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyList);
+  }
+
+  public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeOf(String airport, String runway) {
     return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.primaryLocalizerGlideSlopeForRunway(runway));
   }
 
-  public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeAt(String airport, String icaoRegion, String runway) {
+  public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeOf(String airport, String icaoRegion, String runway) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(page -> page.primaryLocalizerGlideSlopeForRunway(runway));
   }
 
-  public Optional<ArincLocalizerGlideSlope> secondaryLocalizerGlideSlopeAt(String airport, String runway) {
+  public Optional<ArincLocalizerGlideSlope> secondaryLocalizerGlideSlopeOf(String airport, String runway) {
     return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.secondaryLocalizerGlideSlopeForRunway(runway));
   }
 
-  public Optional<ArincLocalizerGlideSlope> secondaryLocalizerGlideSlopeAt(String airport, String icaoRegion, String runway) {
+  public Optional<ArincLocalizerGlideSlope> secondaryLocalizerGlideSlopeOf(String airport, String icaoRegion, String runway) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(page -> page.secondaryLocalizerGlideSlopeForRunway(runway));
   }
 

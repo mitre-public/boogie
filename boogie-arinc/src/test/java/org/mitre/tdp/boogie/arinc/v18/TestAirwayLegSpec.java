@@ -25,6 +25,11 @@ public class TestAirwayLegSpec {
   }
 
   @Test
+  void testValidatorPasses_Airway1(){
+    assertTrue(new AirwayLegValidator().test(ArincVersion.V18.parser().apply(airway1).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseAirway1() {
     ArincRecord record = ArincVersion.V18.parser().apply(airway1).orElseThrow(AssertionError::new);
 
@@ -73,6 +78,11 @@ public class TestAirwayLegSpec {
   }
 
   @Test
+  void testValidatorPasses_Airway2(){
+    assertTrue(new AirwayLegValidator().test(ArincVersion.V18.parser().apply(airway2).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseAirway2() {
     ArincRecord record = ArincVersion.V18.parser().apply(airway2).orElseThrow(AssertionError::new);
 
@@ -118,6 +128,11 @@ public class TestAirwayLegSpec {
   @Test
   void testSpecMatchesAirwayRecord3() {
     assertTrue(new AirwayLegSpec().matchesRecord(airway3));
+  }
+
+  @Test
+  void testValidatorPasses_Airway3(){
+    assertTrue(new AirwayLegValidator().test(ArincVersion.V18.parser().apply(airway3).orElseThrow(AssertionError::new)));
   }
 
   @Test

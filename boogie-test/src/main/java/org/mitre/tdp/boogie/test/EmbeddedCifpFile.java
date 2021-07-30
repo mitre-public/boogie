@@ -5,13 +5,23 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ContinuationRecordFilter;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,21 +32,60 @@ import com.google.common.io.Resources;
  * a singleton and will parse the contents of the file only once - and will lazily load the data - that is to say if no calls are
  * made to {@link #instance()} the file will never be loaded.
  */
-public final class EmbeddedCifpFile implements Supplier<Collection<ArincRecord>> {
+public final class EmbeddedCifpFile {
 
   private static final Logger LOG = LoggerFactory.getLogger(EmbeddedCifpFile.class);
 
   private static final String embeddedFileName = "cifp-2101.dat.gz";
 
-  private final Collection<ArincRecord> records;
+  private final ConvertingArincRecordConsumer records;
 
   private EmbeddedCifpFile() {
-    this.records = loadRecords();
+    this.records = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
+    loadRecords().forEach(records);
   }
 
-  @Override
-  public Collection<ArincRecord> get() {
-    return records;
+  public Collection<ArincAirport> arincAirports() {
+    return records.arincAirports();
+  }
+
+  public Collection<ArincRunway> arincRunways() {
+    return records.arincRunways();
+  }
+
+  public Collection<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes() {
+    return records.arincLocalizerGlideSlopes();
+  }
+
+  public Collection<ArincNdbNavaid> arincNdbNavaids() {
+    return records.arincNdbNavaids();
+  }
+
+  public Collection<ArincVhfNavaid> arincVhfNavaids() {
+    return records.arincVhfNavaids();
+  }
+
+  public Collection<ArincWaypoint> arincWaypoints() {
+    return records.arincWaypoints();
+  }
+
+  public Collection<ArincAirwayLeg> arincAirwayLegs() {
+    return records.arincAirwayLegs();
+  }
+
+  public Collection<ArincProcedureLeg> arincProcedureLegs() {
+    return records.arincProcedureLegs();
+  }
+
+  public int totalRecords() {
+    return arincAirports().size()
+        + arincRunways().size()
+        + arincLocalizerGlideSlopes().size()
+        + arincNdbNavaids().size()
+        + arincVhfNavaids().size()
+        + arincWaypoints().size()
+        + arincAirwayLegs().size()
+        + arincProcedureLegs().size();
   }
 
   /**
@@ -52,8 +101,9 @@ public final class EmbeddedCifpFile implements Supplier<Collection<ArincRecord>>
 
       LinkedHashSet<ArincRecord> records = new LinkedHashSet<>();
 
+      ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
       while (iterator.hasNext()) {
-        parser.apply(iterator.next()).ifPresent(records::add);
+        parser.apply(iterator.next()).filter(continuationRecordFilter).ifPresent(records::add);
       }
 
       LOG.info("Finished loading {} records from embedded file.", records.size());

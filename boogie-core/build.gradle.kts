@@ -1,5 +1,5 @@
 dependencies {
-    api("org.mitre.caasd:commons:0.0.27") {
+    api("org.mitre.caasd:commons:0.0.41") {
         exclude("com.github.davidmoten", "rtree")
         exclude("com.github.davidmoten", "guava-mini")
         exclude("com.github.davidmoten", "rxjava-extras")

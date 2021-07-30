@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -21,6 +20,11 @@ public class TestWaypointSpec {
   @Test
   void testSpecMatchesEnrouteRecord() {
     assertTrue(new WaypointSpec().matchesRecord(enrouteWaypoint));
+  }
+
+  @Test
+  void testValidatorPasses_EnrouteWaypoint() {
+    assertTrue(new WaypointValidator().test(ArincVersion.V18.parser().apply(enrouteWaypoint).orElseThrow(AssertionError::new)));
   }
 
   @Test
@@ -58,6 +62,11 @@ public class TestWaypointSpec {
   }
 
   @Test
+  void testValidatorPasses_TerminalWaypoint() {
+    assertTrue(new WaypointValidator().test(ArincVersion.V18.parser().apply(terminalWaypoint).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseTerminalWaypoint() {
     ArincRecord arincRecord = ArincVersion.V18.parser().apply(terminalWaypoint).orElseThrow(AssertionError::new);
 
@@ -83,5 +92,21 @@ public class TestWaypointSpec {
         () -> assertEquals(Integer.valueOf(52091), arincRecord.requiredField("fileRecordNumber")),
         () -> assertEquals("1902", arincRecord.requiredField("lastUpdateCycle"))
     );
+  }
+
+  /**
+   * PIRAT is one of the CIFP "no second character in my ICAO region" fixes - these should be passed through as they <i>are</i>
+   * consistently referenced as such in other datasets (e.g. procedure/airway legs).
+   */
+  private static final String PIRAT = "SPACEAENRT   PIRAT P 0    C   B N37152754W122514807                       E0133     NAR           PIRAT                    187162012";
+
+  @Test
+  void testSpecMatchesPIRAT() {
+    assertTrue(new WaypointSpec().matchesRecord(PIRAT));
+  }
+
+  @Test
+  void testValidatorPasses_PIRAT() {
+    assertTrue(new WaypointValidator().test(ArincVersion.V18.parser().apply(PIRAT).orElseThrow(AssertionError::new)));
   }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
@@ -55,6 +56,14 @@ final class AirportPage {
 
   public Optional<ArincRunway> runway(String identifier) {
     return Optional.ofNullable(runwayPages.get(identifier)).map(RunwayPage::runway);
+  }
+
+  public Optional<ArincLocalizerGlideSlope> localizerGlideSlope(String identifier) {
+    return localizerGlideSlopes().stream().filter(gs -> identifier.equals(gs.localizerIdentifier())).findFirst();
+  }
+
+  public Collection<ArincLocalizerGlideSlope> localizerGlideSlopes() {
+    return runwayPages.values().stream().flatMap(page -> Stream.of(page.primaryLocalizerGlideSlope(), page.secondaryLocalizerGlideSlope())).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeForRunway(String runwayId) {

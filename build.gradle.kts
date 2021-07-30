@@ -66,14 +66,31 @@ subprojects {
         description = "Runs all unit tests"
 
         failFast = true
-//        jvmArgs = "-Xmx2048m".split(" ")
-        maxHeapSize = "4096m"
 
-        useJUnitPlatform { }
+        useJUnitPlatform {
+            excludeTags("INTEGRATION")
+            includeEngines("junit-jupiter")
+            excludeEngines("junit-vintage")
+        }
+
         filter {
             excludeTestsMatching("IT*")
             isFailOnNoMatchingTests = false//allow modules to not have any tests
         }
+    }
+
+    tasks.register<Test>("testIntegration") {
+        group = "verification"
+        description = "Runs integration tests (tests named 'IT*')"
+        useJUnitPlatform {
+            includeTags("INTEGRATION")
+            includeEngines("junit-jupiter")
+            excludeEngines("junit-vintage")
+        }
+        failFast = true
+        maxHeapSize = "4096m"
+
+        jvmArgs = "-Xss256k -Dfile.encoding=UTF-8".split(" ")
     }
 
     /**

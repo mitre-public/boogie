@@ -13,6 +13,9 @@ import java.util.function.Predicate;
  * <br>
  * ARINC allows for (+/-/ ) prefixes on all numeric fields which act as modifiers for the actual field value - however all
  * trailing digits must be numeric.
+ * <br>
+ * If values pass this test they can be handed off to {@link Double#parseDouble(String)} or {@link Integer#parseInt(String)} w/o
+ * having to worry about NumberFormatExceptions, etc.
  */
 public final class ValidArincNumeric implements Predicate<String> {
 

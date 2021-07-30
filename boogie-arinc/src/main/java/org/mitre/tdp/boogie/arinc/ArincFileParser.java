@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
@@ -22,13 +23,18 @@ public final class ArincFileParser implements Function<File, Collection<ArincRec
 
   private static final Logger LOG = LoggerFactory.getLogger(ArincFileParser.class);
 
-  private final ArincRecordParser recordParser;
+  /**
+   * The function to be applied to the input raw record string to generate a semi-structured {@link ArincRecord} object.
+   * <br>
+   * The standard implementation of this is the {@link ArincRecordParser}.
+   */
+  private final Function<String, Optional<ArincRecord>> recordParser;
 
   public ArincFileParser(RecordSpec... recordSpecs) {
     this(new ArincRecordParser(recordSpecs));
   }
 
-  public ArincFileParser(ArincRecordParser recordParser) {
+  public ArincFileParser(Function<String, Optional<ArincRecord>> recordParser) {
     this.recordParser = requireNonNull(recordParser);
   }
 
@@ -45,7 +51,7 @@ public final class ArincFileParser implements Function<File, Collection<ArincRec
       LOG.info("Returning {} total ArincRecords from file.", records.size());
       return records;
     } catch (Exception e) {
-      throw new RuntimeException("Error during parse of ARINC file at: ".concat(file.getAbsolutePath()), e);
+      throw new IllegalArgumentException("Error during parse of ARINC file at: ".concat(file.getAbsolutePath()), e);
     }
   }
 }

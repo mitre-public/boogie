@@ -88,10 +88,13 @@ class TestAirwayLegValidator {
   }
 
   private ArincRecord newArincRecord(String... fields) {
+    Optional presentOptional = mock(Optional.class);
+    when(presentOptional.isPresent()).thenReturn(true);
+
     ArincRecord record = mock(ArincRecord.class);
     when(record.optionalField(eq("sectionCode"))).thenReturn(Optional.of(SectionCode.E));
     when(record.optionalField(eq("subSectionCode"))).thenReturn(Optional.of("R"));
-    when(record.containsParsedField(matches(Joiner.on("|").join(fields)))).thenReturn(true);
+    when(record.optionalField(matches(Joiner.on("|").join(fields)))).thenReturn(presentOptional);
     return record;
   }
 }

@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -19,6 +18,11 @@ public class TestNdbNavaidSpec {
   @Test
   void testSpecMatchesNavaidRecord1() {
     assertTrue(new NdbNavaidSpec().matchesRecord(navaid1));
+  }
+
+  @Test
+  void testValidatorPasses_Navaid1() {
+    assertTrue(new NdbNavaidValidator().test(ArincVersion.V18.parser().apply(navaid1).orElseThrow(AssertionError::new)));
   }
 
   @Test
@@ -45,5 +49,17 @@ public class TestNdbNavaidSpec {
         () -> assertEquals(Integer.valueOf(35303), record.requiredField("fileRecordNumber")),
         () -> assertEquals("2003", record.requiredField("lastUpdateCycle"))
     );
+  }
+
+  private static final String SU = "SUSAPNKRUQK7 RU    K7002750HO W N35435924W080292244                       W0060           NARROVDY                         417831605";
+
+  @Test
+  void testSpecMatchesRecordSU() {
+    assertTrue(new NdbNavaidSpec().matchesRecord(SU));
+  }
+
+  @Test
+  void testValidatorPasses_SU() {
+    assertTrue(new NdbNavaidValidator().test(ArincVersion.V18.parser().apply(SU).orElseThrow(AssertionError::new)));
   }
 }

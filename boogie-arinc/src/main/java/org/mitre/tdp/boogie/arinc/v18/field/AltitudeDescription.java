@@ -7,9 +7,36 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * The “Altitude Description” field will designate whether a waypoint should be crossed “at,” “at or above,” “at or below” or “at or above to at
- * or below” specified altitudes. The field is also used to designate recommended altitudes and cases where two distinct altitudes are provided
- * at a single fix.
+ * The “Altitude Description” field will designate whether a waypoint should be crossed “at,” “at or above,” “at or below” or
+ * “at or above to at or below” specified altitudes. The field is also used to designate recommended altitudes and cases where
+ * two distinct altitudes are provided at a single fix.
+ * <br>
+ * <b>Standard procedure altitude limits (e.g. SID/STARS)</b>
+ * (+) - “At or above” altitude specified in first “Altitude” field. Also used with Localizer Only Altitude field.
+ * (-) - “At or below” altitude specified in first “Altitude” field. Also used with Localizer Only Altitude field.
+ * (@) - “At” altitude specified in first “Altitude” field. Also used with Localizer Only Altitude field.
+ * (B) - “At or above to at or below” altitudes specified in the first and second “Altitude” fields.
+ * (C) - “At or above” altitude specified in second “Altitude” field.
+ * <br>
+ * The “B” entry may only appear in Airport and Heliport SID/STAR/Approach Route, Airport/Enroute/Heliport Communications, VHF
+ * Navaid Limitation and Preferred Route Records. The higher value will always appear first in records with two altitude fields,
+ * or as the first three digits of the Altitude Limitation field.
+ * <br>
+ * <b>Approach procedure-specific altitude limits</b>
+ * (G) - Glide Slope altitude (MSL) specified in the second “Altitude” field and “at” altitude specified in the first “Altitude”
+ * field on the FAF Waypoint in Precision Approach Coding with electronic Glide Slope.
+ * (H) - Glide Slope Altitude (MSL) specified in second “Altitude” field and “at or above” altitude specified in first “Altitude”
+ * field on the FAF Waypoint in Precision Approach Coding with electronic Glide Slope
+ * (I) - Glide Slope Intercept Altitude specified in second “Altitude” field and “at” altitude specified in first “Altitude” field
+ * on the FACF Waypoint in Precision Approach Coding with electronic Glide Slope
+ * (J) - Glide Slope Intercept Altitude specified in second “Altitude” field and “at or above” altitude specified in first “Altitude”
+ * field on the FACF Waypoint in Precision Approach Coding with electronic Glide Slope
+ * (V) - “At” altitude on the coded vertical angle in the second “Altitude” field and “at or above” altitude specified in first
+ * “Altitude” field on step-down fix waypoints.
+ * (X) - “At” altitude on the coded vertical angle in the second “Altitude” field and “at” altitude specified in the first “Altitude”
+ * field on step- down fix waypoints.
+ * (Y) - “At” altitude on the coded vertical angle in the second “Altitude” field and “at or below” altitude specified in the first
+ * “Altitude” field on step-down fix waypoints.
  */
 public final class AltitudeDescription implements FieldSpec<String> {
 

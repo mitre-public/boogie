@@ -99,14 +99,17 @@ class TestProcedureLegValidator {
   }
 
   private ArincRecord newArincRecord(SectionCode sectionCode, String subSectionCode, String... fields) {
+    Optional presentOptional = mock(Optional.class);
+    when(presentOptional.isPresent()).thenReturn(true);
+
     ArincRecord record = mock(ArincRecord.class);
     when(record.optionalField(eq("sectionCode"))).thenReturn(Optional.of(sectionCode));
     when(record.optionalField(eq("subSectionCode"))).thenReturn(Optional.of(subSectionCode));
-    when(record.containsParsedField(matches(Joiner.on("|").join(fields)))).thenReturn(true);
+    when(record.optionalField(matches(Joiner.on("|").join(fields)))).thenReturn(presentOptional);
 
     // stuff to get us past the leg validators
     when(record.requiredField(eq("pathTerm"))).thenReturn(PathTerminator.VI);
-    when(record.containsParsedField(eq("outboundMagneticCourse"))).thenReturn(true);
+    when(record.optionalField(eq("outboundMagneticCourse"))).thenReturn(presentOptional);
     return record;
   }
 }

@@ -10,15 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.util.Declinations;
 
 
@@ -34,7 +25,7 @@ public final class MockObjects {
     when(fix.latitude()).thenCallRealMethod();
     when(fix.longitude()).thenCallRealMethod();
     when(fix.publishedVariation()).thenReturn(Optional.empty());
-    when(fix.modeledVariation()).thenReturn(Declinations.declination(lat, lon, Optional.empty(), Instant.parse("2019-01-01T00:00:00.00Z")));
+    when(fix.modeledVariation()).thenReturn(Declinations.declination(lat, lon, null, Instant.parse("2019-01-01T00:00:00.00Z")));
     when(fix.toString()).thenReturn("Name: " + name);
     when(fix.projectOut(any(), any())).thenCallRealMethod();
     return fix;

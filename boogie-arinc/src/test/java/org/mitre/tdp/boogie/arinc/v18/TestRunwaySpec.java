@@ -24,6 +24,11 @@ public class TestRunwaySpec {
   }
 
   @Test
+  void testValidatorPasses_Runway1(){
+    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway1).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseRunway1() {
     ArincRecord record = ArincVersion.V18.parser().apply(runway1).orElseThrow(AssertionError::new);
 
@@ -64,6 +69,11 @@ public class TestRunwaySpec {
   }
 
   @Test
+  void testValidatorPasses_Runway2(){
+    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway2).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
   void testParseRunway2() {
     ArincRecord record = ArincVersion.V18.parser().apply(runway2).orElseThrow(AssertionError::new);
 
@@ -101,6 +111,11 @@ public class TestRunwaySpec {
   @Test
   void testSpecMatchesRunway3() {
     assertTrue(new RunwaySpec().matchesRecord(runway3));
+  }
+
+  @Test
+  void testValidatorPasses_Runway3(){
+    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway3).orElseThrow(AssertionError::new)));
   }
 
   @Test
