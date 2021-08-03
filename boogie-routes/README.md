@@ -26,35 +26,34 @@ be generated both domestically and internationally.
 
 # Quick start
 
-The entry point to the code is the ```RouteExpanderFactory.java``` class. This class provides a pair of methods for generating a ```RouteExpander``` based on either collections of cached infrastructure data 
-or based on a ```LookupService``` which can be used to identify infrastructure elements by their string identifier (as one would see them referenced by in the flightplan).
+The entry point to the code is the ```RouteExpanderFactory.java``` class. This class provides (among others) a pair of methods for generating a ```RouteExpander``` based on either 
+collections of cached infrastructure data or based on various ```LookupService(s)``` which can be used to lookup infrastructure elements by identifier (as one would see them 
+referenced by in a flightplan).
 
 Assuming you have a collection of infrastructure records on hand implementing the associated ```boogie-core``` interfaces instantiating a ```RouteExpander``` is as simple as:
 
 ```
-Collection<Transition> transitions...
+Collection<Procedure> procedures...
 Collection<Airway> airways...
 Collection<Fix> fixes...
 Collection<Airport> airports...
 
 String myRouteString....
 
-RouteExpander routeExpander = RouteExpanderFactory.newRouteExpander(fixes, airways, airports, transitions);
+RouteExpander routeExpander = RouteExpanderFactory.newGraphicalRouteExpander(fixes, airways, airports, procedures);
 
+// expansion through the common portion of the SID/STAR (if present)
 Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString);
-```
 
-Where the expansion may not be performed in the case of insufficent information to match elements. The generated route expander can be re-used across route strings and performs expansion through the common 
-portion of the SID/STAR.
- 
-For expansions looking to continue past the common portion and on to the runway there is an optional chainable transform to include the appropriate runway transitions, the ```RunwayTransitionAppender```. 
-This class is instantiated with a pair of runway predictions (one for arrival and one for departure) and will select the appropriate continuing transition beyond the common portion based on some (relatively) 
-simple string identifier matching (handing things like RW02B transitions, etc. for SIDs). One can be instantiated and chained with a route expander:
+// expansion through the appropriate runway transitions of the SID/STAR given the arr/dep runway
+Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway);
 
-```
-RunwayTransitionAppender appender = new RunwayTransitionAppender(() -> Optional.of("RW26B"), () -> Optional.of("RW34"));
+// expansion through the appropriate runway transitions and then onto the conventional approach serving the arrival runway
+Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway, CONV);
 
-Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString).map(appender);
+// expansion through the appropriate runway transitions and then onto the RNP approach (if one exists) or else the RNAV 
+// (if one exists) or else the CONV (if one exists)
+Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway, RNP, RNAV, CONV);
 ```
 
 # What are route strings?

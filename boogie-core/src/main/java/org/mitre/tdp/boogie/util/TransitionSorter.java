@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.ProcedureType;
@@ -26,27 +27,33 @@ import org.mitre.tdp.boogie.model.QueryableProcedure;
  * <br>
  * These are convenient to have when finding entry/exit fixes/legs - a la {@link QueryableProcedure}.
  */
-public final class TransitionSorter {
+public final class TransitionSorter implements Function<Collection<? extends Transition>, List<List<Transition>>> {
+
+  public static final TransitionSorter INSTANCE = new TransitionSorter();
+
+  private TransitionSorter() {
+  }
 
   /**
    * Sorts a generic collection of input transitions according to their natural ordering as traversed within a procedure.
    */
-  public List<List<Transition>> sort(Collection<? extends Transition> transitions) {
+  @Override
+  public List<List<Transition>> apply(Collection<? extends Transition> transitions) {
     checkMatching(transitions);
     Optional<? extends Transition> rep = transitions.stream().findAny();
     if (rep.filter(t -> t.procedureType().equals(ProcedureType.STAR)).isPresent()) {
-      return sortStars(transitions);
+      return sortStarTransitions(transitions);
     }
     if (rep.filter(t -> t.procedureType().equals(ProcedureType.SID)).isPresent()) {
-      return sortSids(transitions);
+      return sortSidTransitions(transitions);
     }
     if (rep.filter(t -> t.procedureType().equals(ProcedureType.APPROACH)).isPresent()) {
-      return sortApproaches(transitions);
+      return sortApproachTransitions(transitions);
     }
     throw new RuntimeException("Unsupported procedure type for sorting.");
   }
 
-  public List<List<Transition>> sortSids(Collection<? extends Transition> sids) {
+  public List<List<Transition>> sortSidTransitions(Collection<? extends Transition> sids) {
     checkMatching(sids);
     checkArgument(allMatch(sids, Transition::procedureType, ProcedureType.SID));
     Map<TransitionType, List<Transition>> byType = groupByType(sids);
@@ -57,7 +64,7 @@ public final class TransitionSorter {
     );
   }
 
-  public List<List<Transition>> sortStars(Collection<? extends Transition> stars) {
+  public List<List<Transition>> sortStarTransitions(Collection<? extends Transition> stars) {
     checkMatching(stars);
     checkArgument(allMatch(stars, Transition::procedureType, ProcedureType.STAR));
     Map<TransitionType, List<Transition>> byType = groupByType(stars);
@@ -68,7 +75,7 @@ public final class TransitionSorter {
     );
   }
 
-  public List<List<Transition>> sortApproaches(Collection<? extends Transition> approaches) {
+  public List<List<Transition>> sortApproachTransitions(Collection<? extends Transition> approaches) {
     checkMatching(approaches);
     checkArgument(allMatch(approaches, Transition::procedureType, ProcedureType.APPROACH));
     Map<TransitionType, List<Transition>> byType = groupByType(approaches);

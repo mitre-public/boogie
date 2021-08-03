@@ -21,6 +21,7 @@ public final class MockObjects {
   public static Fix fix(String name, double lat, double lon) {
     Fix fix = spy(Fix.class);
     when(fix.fixIdentifier()).thenReturn(name);
+    when(fix.fixRegion()).thenReturn("MOCK");
     when(fix.latLong()).thenReturn(LatLong.of(lat, lon));
     when(fix.latitude()).thenCallRealMethod();
     when(fix.longitude()).thenCallRealMethod();
@@ -36,7 +37,7 @@ public final class MockObjects {
     Leg leg = mock(Leg.class);
     when(leg.pathTerminator()).thenReturn(type);
     when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
-    when(leg.toString()).thenReturn("Path Terminator: " + name);
+    when(leg.toString()).thenReturn("Associated Fix: " + name + " - " + type.name());
     return leg;
   }
 
@@ -109,18 +110,10 @@ public final class MockObjects {
     return transition;
   }
 
-  public static MagneticVariation magneticVariation(double published, double modeled) {
-    MagneticVariation variation = mock(MagneticVariation.class);
-    when(variation.published()).thenReturn(Optional.of(published));
-    when(variation.modeled()).thenReturn(modeled);
-    return variation;
-  }
-
   public static Airport airport(String name, double lat, double lon) {
-    Airport airport = mock(Airport.class);
+    Airport airport = spy(Airport.class);
     when(airport.airportIdentifier()).thenReturn(name);
     when(airport.latLong()).thenReturn(LatLong.of(lat, lon));
-    when(airport.fixIdentifier()).thenCallRealMethod();
     return airport;
   }
 

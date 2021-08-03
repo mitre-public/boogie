@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import com.google.common.collect.LinkedHashMultimap;
@@ -27,15 +28,21 @@ public final class DefaultLookupService<T> implements LookupService<T> {
     return lookup.get(s);
   }
 
-  @SafeVarargs
-  public static <T> LookupService<T> newLookupService(Function<T, String> indexer, T... records) {
-    return newLookupService(indexer, Arrays.asList(records));
-  }
-
-  public static <T> LookupService<T> newLookupService(Function<T, String> indexer, Collection<T> records) {
+  public static <T> LookupService<T> newLookupService(Collection<T> records, Function<T, String> indexer) {
     requireNonNull(indexer);
     LinkedHashMultimap<String, T> lookup = LinkedHashMultimap.create();
     records.forEach(record -> lookup.put(indexer.apply(record), record));
+    return new DefaultLookupService<>(lookup);
+  }
+
+  @SafeVarargs
+  public static <T> LookupService<T> multiIndexLookupService(Collection<T> records, Function<T, String>... indexers) {
+    requireNonNull(indexers);
+    List<Function<T, String>> indexerList = Arrays.asList(indexers);
+
+    LinkedHashMultimap<String, T> lookup = LinkedHashMultimap.create();
+    records.forEach(record -> indexerList.forEach(indexer -> lookup.put(indexer.apply(record), record)));
+
     return new DefaultLookupService<>(lookup);
   }
 }

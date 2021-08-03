@@ -16,8 +16,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
    */
   private final String value;
   /**
-   * The extracted ETA (Estimated Time of Arrival) or EET (Estimated Enroute Time)
-   * if the route was tagged with one.
+   * The extracted ETA (Estimated Time of Arrival) or EET (Estimated Enroute Time) if the route was tagged with one.
    */
   private final String etaEet;
   /**
@@ -25,10 +24,9 @@ public final class SectionSplit implements Comparable<SectionSplit> {
    * <p>
    * Determined by String.split("\\.")
    */
-  private final int index;
+  private final double index;
   /**
-   * Concatenated string of any non-alphanumeric values associated with the split
-   * string section.
+   * Concatenated string of any non-alphanumeric values associated with the split string section.
    * <p>
    * e.g. "*+"
    */
@@ -49,7 +47,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
     return etaEet;
   }
 
-  public int index() {
+  public double index() {
     return index;
   }
 
@@ -62,7 +60,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
     return this;
   }
 
-  public Builder builder() {
+  public Builder toBuilder() {
     return new Builder()
         .setValue(value)
         .setEtaEet(etaEet)
@@ -89,7 +87,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
 
   @Override
   public int compareTo(SectionSplit that) {
-    return Comparator.comparingInt(SectionSplit::index).compare(this, that);
+    return Comparator.comparingDouble(SectionSplit::index).compare(this, that);
   }
 
   @Override
@@ -105,7 +103,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
   public static class Builder {
     private String value;
     private String etaEet;
-    private int index;
+    private double index;
     private String wildcards;
 
     public Builder setValue(String val) {
@@ -118,7 +116,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
       return this;
     }
 
-    public Builder setIndex(int index) {
+    public Builder setIndex(double index) {
       this.index = index;
       return this;
     }

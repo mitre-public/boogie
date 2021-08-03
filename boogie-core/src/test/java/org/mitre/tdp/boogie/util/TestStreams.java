@@ -33,9 +33,9 @@ class TestStreams {
   }
 
   @Test
-  void testTriplesWithLessThanThreeElements() {
+  void testTriplesWithNullsWithLessThanThreeElements() {
     int actual = Streams.triplesWithNulls(Arrays.asList(3, 4), triSum).mapToInt(i -> i).sum();
-    assertEquals(21, actual);
+    assertEquals(14, actual);
   }
 
   @Test
@@ -47,7 +47,7 @@ class TestStreams {
   @Test
   void testTriplesWithNulls() {
     int actual = Streams.triplesWithNulls(ints, triSum).mapToInt(i -> i).sum();
-    assertEquals(30, actual);
+    assertEquals(26, actual);
   }
 
   private static final List<Integer> ints = IntStream.range(0, 5).boxed().collect(Collectors.toList());

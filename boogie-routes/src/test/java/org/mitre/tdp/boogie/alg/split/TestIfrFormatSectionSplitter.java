@@ -19,7 +19,7 @@ class TestIfrFormatSectionSplitter {
 
   @Test
   void testRoute0_0() {
-    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE0.get(0));
+    List<SectionSplit> splits = IfrFormatSectionSplitter.INSTANCE.apply(ROUTE0.get(0));
 
     assertAll(
         () -> assertEquals("KBDL", splits.get(0).value()),
@@ -33,7 +33,7 @@ class TestIfrFormatSectionSplitter {
 
   @Test
   void testRoute0_1() {
-    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE0.get(2));
+    List<SectionSplit> splits = IfrFormatSectionSplitter.INSTANCE.apply(ROUTE0.get(2));
 
     assertAll(
         () -> assertEquals("KBDL", splits.get(0).value()),
@@ -48,7 +48,7 @@ class TestIfrFormatSectionSplitter {
 
   @Test
   void testRoute1_0() {
-    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE1.get(0));
+    List<SectionSplit> splits = IfrFormatSectionSplitter.INSTANCE.apply(ROUTE1.get(0));
 
     assertAll(
         () -> assertEquals("KDCA", splits.get(0).value()),
@@ -63,7 +63,7 @@ class TestIfrFormatSectionSplitter {
 
   @Test
   void testRoute2_0() {
-    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE2.get(0));
+    List<SectionSplit> splits = IfrFormatSectionSplitter.INSTANCE.apply(ROUTE2.get(0));
 
     assertAll(
         () -> assertEquals("KFRG", splits.get(0).value()),
@@ -79,7 +79,7 @@ class TestIfrFormatSectionSplitter {
 
   @Test
   void testRoute3_0() {
-    List<SectionSplit> splits = new IfrFormatSectionSplitter().splits(ROUTE3.get(0));
+    List<SectionSplit> splits = IfrFormatSectionSplitter.INSTANCE.apply(ROUTE3.get(0));
 
     assertAll(
         () -> assertEquals("4222N/10726W", splits.get(1).value()),

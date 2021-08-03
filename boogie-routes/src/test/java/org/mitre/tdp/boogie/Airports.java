@@ -18,4 +18,8 @@ public final class Airports {
   public static Airport KATL() {
     return airport("KATL", 33.6367, -84.4278638888889);
   }
+
+  public static Airport KMCO() {
+    return airport("KMCO", 28.4293889, -81.3090000);
+  }
 }

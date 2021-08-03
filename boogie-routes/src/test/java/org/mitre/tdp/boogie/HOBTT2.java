@@ -42,7 +42,7 @@ public final class HOBTT2 implements Procedure {
 
   @Override
   public String procedureIdentifier() {
-    return "HOBBT2";
+    return "HOBTT2";
   }
 
   @Override

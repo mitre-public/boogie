@@ -1,97 +1,187 @@
 package org.mitre.tdp.boogie.alg;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import org.jgrapht.GraphPath;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.mitre.tdp.boogie.alg.graph.LegGraphFactory;
-import org.mitre.tdp.boogie.alg.graph.RouteLegGraph;
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
-import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
+import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
+import org.mitre.tdp.boogie.alg.resolve.AirportResolver;
+import org.mitre.tdp.boogie.alg.resolve.AirwayResolver;
+import org.mitre.tdp.boogie.alg.resolve.ApproachResolver;
+import org.mitre.tdp.boogie.alg.resolve.FixResolver;
+import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionResolver;
+import org.mitre.tdp.boogie.alg.resolve.SidStarResolver;
+import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionResolver;
+import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.alg.split.SectionSplitter;
+import org.mitre.tdp.boogie.fn.QuadFunction;
+import org.mitre.tdp.boogie.fn.TriFunction;
 import org.mitre.tdp.boogie.util.Iterators;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+public final class RouteExpander implements
+    QuadFunction<String, String, String, RequiredNavigationEquipage[], Optional<ExpandedRoute>>,
+    TriFunction<String, String, String, Optional<ExpandedRoute>>,
+    Function<String, Optional<ExpandedRoute>> {
 
-/**
- * The core route inflation algorithm in TDP. This class is configured with a single
- * cycle of procedure data assumed to be overlapping with the date associated with
- * the provided route string.
- *
- * <p>The algorithm leverages the component algorithms present in order:
- *
- * <p>1) {@link SectionSplitter} to split the provided route string into its components
- *
- * <p>2) {@link RouteResolver} to associate split sections of the route with infrastructure
- * (e.g. procedures, waypoints, etc.)
- *
- * <p>3) {@link RouteLegGraph} to determine the path the flight most likely took through
- * the resolved infrastructure elements (e.g. resolving references to navaids that
- * appear with the same name in multiple ICAO regions)
- *
- * <p>The class then finishes by publishing the output to the {@link ExpandedRoute}
- * object which may then be tagged with more source specific information.
- *
- * <p>Note - This class does not try to do things like re-name or re-map route element names
- * that may be in error (e.g. filing GOLEM.GNDLF1.ATL instead of KATL) so some upstream
- * route string to infrastructure name standardization may be necessary on the user side
- * to get a more complete set of expansions.
- */
-public final class RouteExpander implements Function<String, Optional<ExpandedRoute>> {
+  private static final Logger LOG = LoggerFactory.getLogger(RouteExpander.class);
+
   /**
-   * The {@link SectionSplitter} to use in splitting the route string into {@link SectionSplit}.
+   * Function for converting an input route string into a sequence of {@link SectionSplit}s.
+   * <br>
+   * e.g. {@link IfrFormatSectionSplitter}.
    */
-  private final SectionSplitter sectionSplitter;
+  private final Function<String, List<SectionSplit>> sectionSplitter;
   /**
-   * The {@link RouteResolver} to use for matching section splits to infrastructure elements.
+   * Maintaining an internal instance of a {@link LookupService} for procedures which can be used to configure separate internal
+   * resolvers in the presence of arrival/departure runway information.
    */
-  private final RouteResolver routeResolver;
+  private final LookupService<Procedure> procedureService;
+  private final LookupService<Procedure> proceduresAtAirport;
+  /**
+   * Auto-configured composite {@link SectionResolver} for all of the standard section types.
+   * <br>
+   * 1. Fixes (Tailored/Waypoint/Navaids)
+   * 2. Procedures (SID/STAR)
+   * 3. Airways
+   * 4. Airports
+   * 5. Lat/Lon Literals
+   */
+  private final SectionResolver standardSectionResolver;
+  /**
+   * Function for turning a sequence of {@link ResolvedSection}s in to a sequence of legs - this is most commonly implemented as
+   * the {@link GraphBasedRouteChooser}.
+   */
+  private final Function<List<ResolvedSection>, List<ResolvedLeg>> routeChooser;
 
-  public RouteExpander(
-      SectionSplitter sectionSplitter,
-      RouteResolver routeResolver
+  RouteExpander(
+      Function<String, List<SectionSplit>> sectionSplitter,
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      LookupService<Procedure> procedureService,
+      LookupService<Procedure> proceduresAtAirport,
+      Function<List<ResolvedSection>, List<ResolvedLeg>> routeChooser
   ) {
-    this.sectionSplitter = checkNotNull(sectionSplitter);
-    this.routeResolver = checkNotNull(routeResolver);
+    this.sectionSplitter = requireNonNull(sectionSplitter);
+    this.procedureService = requireNonNull(procedureService);
+    this.proceduresAtAirport = requireNonNull(proceduresAtAirport);
+    this.standardSectionResolver = SectionResolver.composeAll(
+        new FixResolver(requireNonNull(fixService)),
+        new AirwayResolver(requireNonNull(airwayService)),
+        new AirportResolver(requireNonNull(airportService)),
+        new SidStarResolver(requireNonNull(procedureService)),
+        new LatLonResolver()
+    );
+    this.routeChooser = requireNonNull(routeChooser);
+  }
+
+  /**
+   * Returns the result of applying the route expander to the provided route string with no departure/arrival runway information.
+   * <br>
+   * @param route - the route to expand, SID/STAR expansion will start/stop at the beginning/end of the common portions of the
+   * procedures
+   * <br>
+   * This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
+   * build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
+   */
+  @Override
+  public Optional<ExpandedRoute> apply(String route) {
+    return apply(route, null, null);
   }
 
   /**
    * Takes the argument route string and expands it against the infrastructure data in the provided services.
-   *
-   * This class may occasionally return {@link Optional#empty()} when the input route cannot be resolved to two or more sections
-   * (enough to actually make a route).
+   * <br>
+   * @param route - the route to expand
+   * @param departureRunway - the departure runway used, if provided the appropriate departure runway transition will be included
+   * in the final expanded route
+   * @param arrivalRunway - the arrival runway used, if provided the appropriate arrival runway transition will be included in the
+   * final expanded route
+   * <br>
+   * This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
+   * build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
    */
   @Override
-  public Optional<ExpandedRoute> apply(@Nonnull String route) {
-    Preconditions.checkArgument(!route.isEmpty(), "Route cannot be empty.");
-
-    List<SectionSplit> splits = sectionSplitter.splits(route);
-
-    ResolvedRoute resolved = routeResolver.apply(splits);
-
-    if (!Iterators.checkMatchCount(resolved.sections(), s -> !s.allLegs().isEmpty())) {
-      return Optional.empty();
-    }
-
-    RouteLegGraph graph = graphFactory.newLegGraphFor(resolved);
-    GraphPath<GraphableLeg, DefaultWeightedEdge> shortestPath = graph.shortestPath();
-
-    if (shortestPath == null) {
-      return Optional.empty();
-    }
-
-    return Optional.of(ExpandedRoute.from(route, resolved, shortestPath.getVertexList()));
+  public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway) {
+    List<ResolvedSection> resolvedSections = resolveSections(route, departureRunway, arrivalRunway);
+    return chooseExpandedRoute(route, resolvedSections);
   }
 
   /**
-   * The {@link LegGraphFactory} to use within the route expander.
+   * Takes the argument route string and expands it against the infrastructure data in the provided services.
+   * <br>
+   * @param route - the route to expand
+   * @param departureRunway - the departure runway used, if provided the appropriate departure runway transition will be included
+   * in the final expanded route
+   * @param arrivalRunway - the arrival runway used, if provided the appropriate arrival runway transition will be included in the
+   * final expanded route
+   * @param equipage - the equipage of the aircraft, if provided (along with an arrival runway) this will determine the type of
+   * approach procedure included in the final expansion, the varargs list represents the preference order (e.g. RNP > RNAV), if
+   * the listing is incomplete (doesnt cover all options) procedures with unlisted equipages will be ignored (not returned as
+   * candidates) and not be included in the final expansion
+   * <br>
+   * This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
+   * build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
    */
-  private static final LegGraphFactory graphFactory = new LegGraphFactory();
+  @Override
+  public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway, @Nullable RequiredNavigationEquipage... equipage) {
+    List<ResolvedSection> resolvedSections = resolveSections(route, departureRunway, arrivalRunway);
+
+    if (arrivalRunway != null && equipage != null && !resolvedSections.isEmpty()) {
+      LOG.info("Attempting to resolve approach procedure with arrival runway {} and equipage {}.", arrivalRunway, equipage);
+      ApproachResolver approachResolver = new ApproachResolver(arrivalRunway, equipage, proceduresAtAirport);
+
+      ResolvedSection lastSection = resolvedSections.get(resolvedSections.size() - 1);
+      approachResolver.apply(lastSection).ifPresent(resolvedSections::add);
+    }
+
+    return chooseExpandedRoute(route, resolvedSections);
+  }
+
+  /**
+   * Attempts to resolve the sections based on the route, departure, and arrival runway including predictors for departure/arrival
+   * runway transitions.
+   */
+  private List<ResolvedSection> resolveSections(String route, @Nullable String departureRunway, @Nullable String arrivalRunway) {
+    checkArgument(route != null && !route.isEmpty(), "Route cannot be null or empty.");
+    LOG.info("Beginning expansion of route {} with departure runway {} and arrival runway {}.", route, departureRunway, arrivalRunway);
+
+    List<SectionSplit> sectionSplits = sectionSplitter.apply(route);
+    LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
+
+    SidRunwayTransitionResolver sidRunway = new SidRunwayTransitionResolver(departureRunway, procedureService);
+    StarRunwayTransitionResolver starRunway = new StarRunwayTransitionResolver(arrivalRunway, procedureService);
+
+    List<ResolvedSection> resolvedSections = standardSectionResolver.compose(sidRunway).compose(starRunway).applyTo(sectionSplits);
+    LOG.info("Returned {} ResolvedElements across {} ResolvedSections.", resolvedSections.stream().mapToInt(section -> section.elements().size()).sum(), resolvedSections.size());
+
+    return resolvedSections;
+  }
+
+  private Optional<ExpandedRoute> chooseExpandedRoute(String route, List<ResolvedSection> resolvedSections) {
+    if (!Iterators.checkMatchCount(resolvedSections, s -> !s.allLegs().isEmpty())) {
+      LOG.info("Returning empty - no ResolvedSections with legs in their ResolvedElements.");
+      return Optional.empty();
+    } else {
+      List<ResolvedSection> sortedByIndex = resolvedSections.stream().sorted(comparing(ResolvedSection::sectionSplit)).collect(toList());
+      return Optional.of(ExpandedRoute.from(route, resolvedSections, routeChooser.apply(sortedByIndex)));
+    }
+  }
 }

@@ -15,6 +15,8 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * The region code is generally the combination of the country code (e.g. K for USA) with some secondary notation indicating
  * a distinct regions within that area. Note because everyone hates everyone that the single character country code is not the
  * same as the {@link CustomerAreaCode#boundaryCode()} because why would it be.
+ * <br>
+ * https://upload.wikimedia.org/wikipedia/commons/3/3b/ICAO-countries.png
  */
 public final class IcaoRegion implements FieldSpec<String> {
 

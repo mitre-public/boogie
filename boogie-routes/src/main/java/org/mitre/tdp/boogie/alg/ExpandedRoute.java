@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.mitre.tdp.boogie.alg.graph.LegMergerFactory;
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedRoute;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.fn.LeftMerger;
@@ -23,7 +21,7 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
  */
 public final class ExpandedRoute {
 
-  private static final LeftMerger<GraphableLeg> merger = LegMergerFactory.newSimilarSubsequentGraphableLegMerger();
+  private static final LeftMerger<ResolvedLeg> merger = LegMergerFactory.newSimilarSubsequentGraphableLegMerger();
 
   /**
    * The input route string used to generate this expansion.
@@ -35,18 +33,18 @@ public final class ExpandedRoute {
    */
   private final TreeMap<SectionSplit, ResolvedSection> sectionMap;
   /**
-   * Mapping from {@link SectionSplit} to ordered list of traversed {@link GraphableLeg}s within that section of the route.
+   * Mapping from {@link SectionSplit} to ordered list of traversed {@link ResolvedLeg}s within that section of the route.
    */
-  private final TreeMap<SectionSplit, List<GraphableLeg>> legMap;
+  private final TreeMap<SectionSplit, List<ResolvedLeg>> legMap;
 
   // alternate view(s) of underlying data - don't want to have to copy the map values on each call
   private final List<ResolvedSection> sections;
-  private final List<GraphableLeg> legs;
+  private final List<ResolvedLeg> legs;
 
   public ExpandedRoute(
       String route,
       TreeMap<SectionSplit, ResolvedSection> sectionMap,
-      TreeMap<SectionSplit, List<GraphableLeg>> legMap) {
+      TreeMap<SectionSplit, List<ResolvedLeg>> legMap) {
     this.route = checkNotNull(route);
     this.sectionMap = checkNotNull(sectionMap);
     this.legMap = checkNotNull(legMap);
@@ -74,22 +72,22 @@ public final class ExpandedRoute {
    * Returns the collection of legs associated with the given {@link SectionSplit} or {@link Collections#emptyList()} if there
    * were none resolved in the expansion.
    */
-  public List<GraphableLeg> legsFor(SectionSplit split) {
+  public List<ResolvedLeg> legsFor(SectionSplit split) {
     return legMap.getOrDefault(split, Collections.emptyList());
   }
 
   /**
-   * Returns the list of {@link GraphableLeg}s for the given {@link ResolvedSection}, returning the empty list if none exist.
+   * Returns the list of {@link ResolvedLeg}s for the given {@link ResolvedSection}, returning the empty list if none exist.
    */
-  public List<GraphableLeg> legsFor(ResolvedSection section) {
+  public List<ResolvedLeg> legsFor(ResolvedSection section) {
     return legMap.getOrDefault(section.sectionSplit(), Collections.emptyList());
   }
 
-  public List<GraphableLeg> legs() {
+  public List<ResolvedLeg> legs() {
     return legs;
   }
 
-  public List<GraphableLeg> mergedLegs() {
+  public List<ResolvedLeg> mergedLegs() {
     return merger.reduce(legs());
   }
 
@@ -97,7 +95,7 @@ public final class ExpandedRoute {
    * Package-private method allowing for certain approved transforms to wholly replace the collection of legs underneath the
    * {@link ExpandedRoute}, e.g. via the {@link RunwayTransitionAppender}.
    */
-  final ExpandedRoute replaceLegs(List<GraphableLeg> legs) {
+  final ExpandedRoute replaceLegs(List<ResolvedLeg> legs) {
     this.legMap.clear();
     this.legMap.putAll(collectToMap(legs));
 
@@ -107,16 +105,16 @@ public final class ExpandedRoute {
   }
 
   /**
-   * Generates a new {@link ExpandedRoute} based on the provided resolved route and the given set of {@link GraphableLeg}s.
+   * Generates a new {@link ExpandedRoute} based on the provided resolved route and the given set of {@link ResolvedLeg}s.
    */
-  public static ExpandedRoute from(String route, ResolvedRoute resolvedRoute, List<GraphableLeg> graphableLegs) {
+  public static ExpandedRoute from(String route, List<ResolvedSection> resolvedSections, List<ResolvedLeg> resolvedLegs) {
     TreeMap<SectionSplit, ResolvedSection> sectionMap = new TreeMap<>();
-    resolvedRoute.sections().forEach(section -> sectionMap.put(section.sectionSplit(), section));
+    resolvedSections.forEach(section -> sectionMap.put(section.sectionSplit(), section));
 
-    return new ExpandedRoute(route, sectionMap, collectToMap(graphableLegs));
+    return new ExpandedRoute(route, sectionMap, collectToMap(resolvedLegs));
   }
 
-  private static TreeMap<SectionSplit, List<GraphableLeg>> collectToMap(List<GraphableLeg> graphableLegs) {
-    return graphableLegs.stream().collect(Collectors.groupingBy(GraphableLeg::split, TreeMap::new, Collectors.toList()));
+  private static TreeMap<SectionSplit, List<ResolvedLeg>> collectToMap(List<ResolvedLeg> resolvedLegs) {
+    return resolvedLegs.stream().collect(Collectors.groupingBy(ResolvedLeg::split, TreeMap::new, Collectors.toList()));
   }
 }

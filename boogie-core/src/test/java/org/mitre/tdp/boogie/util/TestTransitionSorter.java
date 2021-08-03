@@ -14,11 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.util.TransitionSorter;
 
 class TestTransitionSorter {
-
-  private final TransitionSorter sorter = new TransitionSorter();
 
   @Test
   void testStarTransitionOrdering() {
@@ -28,7 +25,7 @@ class TestTransitionSorter {
         transition(TransitionType.ENROUTE, ProcedureType.STAR)
     );
 
-    List<List<Transition>> grouped = sorter.sortStars(transitions);
+    List<List<Transition>> grouped = TransitionSorter.INSTANCE.sortStarTransitions(transitions);
 
     assertAll(
         () -> assertEquals(3, grouped.size()),
@@ -51,7 +48,7 @@ class TestTransitionSorter {
         transition(TransitionType.RUNWAY, ProcedureType.SID)
     );
 
-    List<List<Transition>> grouped = sorter.sortSids(transitions);
+    List<List<Transition>> grouped = TransitionSorter.INSTANCE.sortSidTransitions(transitions);
 
     assertAll(
         () -> assertEquals(3, grouped.size()),
@@ -75,7 +72,7 @@ class TestTransitionSorter {
         transition(TransitionType.APPROACH, ProcedureType.APPROACH)
     );
 
-    List<List<Transition>> grouped = sorter.sortApproaches(transitions);
+    List<List<Transition>> grouped = TransitionSorter.INSTANCE.sortApproachTransitions(transitions);
 
     assertAll(
         () -> assertEquals(4, grouped.size()),

@@ -52,7 +52,7 @@ public final class ProcedureFactory {
    * Note that procedures constructed in this way will have their {@link RequiredNavigationEquipage} set to 'UNKNOWN' as the
    * value cannot be inferred from the transitions alone.
    */
-  public static BoogieProcedure newProcedure(Collection<? extends Transition> transitions) {
+  public static BoogieProcedure newProcedureWithEquipage(Collection<? extends Transition> transitions, RequiredNavigationEquipage requiredNavigationEquipage) {
     checkArgument(Preconditions.allMatch(transitions, Transition::airportIdentifier), "All airport identifiers should match.");
     checkArgument(Preconditions.allMatch(transitions, Transition::airportRegion), "All airport regions should match.");
     checkArgument(Preconditions.allMatch(transitions, Transition::procedureIdentifier), "All procedure identifiers should match.");
@@ -64,9 +64,20 @@ public final class ProcedureFactory {
         .airportIdentifier(representative.airportIdentifier())
         .airportRegion(representative.airportRegion())
         .procedureType(representative.procedureType())
-        .requiredNavigationEquipage(RequiredNavigationEquipage.UNKNOWN)
+        .requiredNavigationEquipage(requiredNavigationEquipage)
         .transitions((Collection<Transition>) transitions)
         .build();
+  }
+
+  /**
+   * Constructs a new {@link Procedure} record from the input collection of associated transitions. If these transitions don't
+   * share the same {airportIdentifier, airportRegion, procedureIdentifier, procedureType} - this will throw an exception.
+   * <br>
+   * Note that procedures constructed in this way will have their {@link RequiredNavigationEquipage} set to 'UNKNOWN' as the
+   * value cannot be inferred from the transitions alone.
+   */
+  public static BoogieProcedure newProcedure(Collection<? extends Transition> transitions) {
+    return newProcedureWithEquipage(transitions, RequiredNavigationEquipage.UNKNOWN);
   }
 
   /**
@@ -86,7 +97,7 @@ public final class ProcedureFactory {
 
     // split the transitions by type and insert edges between initial/final legs of subsequent transitions as long
     // as they share a fix identifier (e.g. TF at end of ENROUTE transition -> IF at start of COMMON)
-    Streams.pairwise(transitionSorter.sort(procedure.transitions()))
+    Streams.pairwise(TransitionSorter.INSTANCE.apply(procedure.transitions()))
         .flatMap(transitionPair -> transitionLinks(transitionPair.first(), transitionPair.second()))
         .forEach(pair -> graph.addEdge(pair.first(), pair.second()));
 
@@ -118,6 +129,4 @@ public final class ProcedureFactory {
   private static Optional<Leg> finalLegOf(Transition transition) {
     return transition.legs().isEmpty() ? Optional.empty() : Optional.of(transition.legs().get(transition.legs().size() - 1));
   }
-
-  private static final TransitionSorter transitionSorter = new TransitionSorter();
 }

@@ -27,6 +27,7 @@ logs
 */docker/dist
  ### Gradle ###
 .gradle
+**/src/test/resources/log4j.properties
 **/build/
  # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle/wrapper/gradle-wrapper.jar

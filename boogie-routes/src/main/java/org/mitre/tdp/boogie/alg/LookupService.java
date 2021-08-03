@@ -1,10 +1,13 @@
 package org.mitre.tdp.boogie.alg;
 
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Returns the set of elements of type 'I' matching a provided string identifier (typically an identifier).
@@ -26,5 +29,20 @@ public interface LookupService<I> extends Function<String, Collection<I>> {
       lookedUp.addAll(other.apply(s));
       return lookedUp;
     };
+  }
+
+  default LookupService<I> thenFilterWith(Predicate<I> predicate) {
+    return s -> this.apply(s).stream().filter(predicate).collect(Collectors.toList());
+  }
+
+  default LookupService<I> thenApply(Function<Collection<I>, Collection<I>> function) {
+    return s -> function.apply(this.apply(s));
+  }
+
+  /**
+   * Returns a new {@link LookupService} which returns the empty collection on any query.
+   */
+  static <I> LookupService<I> noop() {
+    return s -> emptyList();
   }
 }

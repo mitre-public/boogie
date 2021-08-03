@@ -1,13 +1,11 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.mitre.tdp.boogie.alg.graph.LinkedLegs;
-import org.mitre.tdp.boogie.alg.resolve.element.ResolvedElement;
-import org.mitre.tdp.boogie.alg.resolve.resolver.RouteResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 /**
@@ -20,46 +18,28 @@ public final class ResolvedSection {
   /**
    * The split section with wildcards and etc associated with this collection of route elements.
    */
-  private SectionSplit sectionSplit;
+  private final SectionSplit sectionSplit;
   /**
    * List of resolved infrastructure elements.
    *
    * <p>This is the superset of all potential elements the filed section of the route string could possible be referring to.
    */
-  private List<ResolvedElement<?>> elements;
+  private final Collection<ResolvedElement> elements;
 
-  public ResolvedSection(SectionSplit split) {
-    this.sectionSplit = split;
-    this.elements = new ArrayList<>();
+  public ResolvedSection(SectionSplit split, Collection<ResolvedElement> resolvedElements) {
+    this.sectionSplit = requireNonNull(split);
+    this.elements = resolvedElements;
   }
 
   public SectionSplit sectionSplit() {
     return sectionSplit;
   }
 
-  public ResolvedSection setSectionSplit(SectionSplit split) {
-    this.sectionSplit = split;
-    return this;
-  }
-
-  public List<ResolvedElement<?>> elements() {
+  public Collection<ResolvedElement> elements() {
     return elements;
   }
 
-  public ResolvedSection setElements(List<ResolvedElement<?>> eles) {
-    this.elements = eles;
-    Comparator<ResolvedElement> compType = Comparator.comparing(ResolvedElement::type);
-    this.elements.sort(compType);
-    return this;
-  }
-
   public List<LinkedLegs> allLegs() {
-    return elements.stream()
-        // tag the generated legs with the section information on the way out
-        .flatMap(e -> e.legs().stream().peek(leg -> {
-          leg.source().setSplit(sectionSplit());
-          leg.target().setSplit(sectionSplit());
-        }))
-        .collect(Collectors.toList());
+    return elements.stream().flatMap(e -> e.toLinkedLegs().stream()).collect(Collectors.toList());
   }
 }

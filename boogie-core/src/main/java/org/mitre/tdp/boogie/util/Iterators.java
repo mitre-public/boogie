@@ -58,7 +58,7 @@ public final class Iterators {
   }
 
   /**
-   * Method for iterating through triples of elements within a list of size > 1.
+   * Method for iterating through triples of elements within a list of size >= 1.
    */
   public static <T> void triples2(List<T> list, TriConsumer<Optional<T>, T, Optional<T>> consumer) {
     Preconditions.checkArgument(!list.isEmpty());

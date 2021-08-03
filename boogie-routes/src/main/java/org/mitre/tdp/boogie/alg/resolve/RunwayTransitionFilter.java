@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.alg.RunwayNumberExtractor;
  * Configurable runway transition filter for use in down-selecting the set of available runway transitions for the flight to just
  * those servicing the arrival/departure runway.
  */
-public class RunwayTransitionFilter implements Predicate<Transition> {
+final class RunwayTransitionFilter implements Predicate<Transition> {
 
   private final String runwayId;
 

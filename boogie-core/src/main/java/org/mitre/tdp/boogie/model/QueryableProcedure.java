@@ -28,8 +28,6 @@ import com.google.common.collect.Multimap;
  */
 public final class QueryableProcedure {
 
-  private static final TransitionSorter sorter = new TransitionSorter();
-
   private final Procedure procedure;
 
   private final Map<String, TransitionPage> transitionsByName;
@@ -38,7 +36,7 @@ public final class QueryableProcedure {
   public QueryableProcedure(Procedure procedure) {
     this.procedure = requireNonNull(procedure);
 
-    List<Transition> sortedTransitions = sorter.sort(procedure.transitions()).stream().flatMap(Collection::stream).collect(Collectors.toList());
+    List<Transition> sortedTransitions = TransitionSorter.INSTANCE.apply(procedure.transitions()).stream().flatMap(Collection::stream).collect(Collectors.toList());
     List<TransitionPage> transitionPages = sortedTransitions.stream().map(TransitionPage::new).collect(Collectors.toList());
 
     this.transitionsByName = transitionPages.stream()

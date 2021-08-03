@@ -14,22 +14,23 @@ import static org.mitre.tdp.boogie.MockObjects.fix;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.resolve.GraphableLeg;
-import org.mitre.tdp.boogie.alg.resolve.RunwayPredictor;
-import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.Airports;
+import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Airways;
 import org.mitre.tdp.boogie.CONNR5;
+import org.mitre.tdp.boogie.COSTR3;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.HOBTT2;
+import org.mitre.tdp.boogie.KMCO_I17R;
+import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
  * Route inflation tests (the full package) used to test specific component expansions.
@@ -43,8 +44,7 @@ import org.mitre.tdp.boogie.HOBTT2;
  * P - Procedure
  * T - Tailored Fix
  * <br>
- * e.g. TestAPF would indicated a test for Airport.Procedure.Fix one of the more common
- * composite route elements.
+ * e.g. TestAPF would indicated a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class TestRouteExpander {
 
@@ -64,16 +64,11 @@ class TestRouteExpander {
         singletonList(fix("DBL", 39.439344444444444, -106.89468055555557)),
         emptyList(),
         singletonList(KDEN()),
-        CONNR5.INSTANCE.transitions());
+        singletonList(CONNR5.INSTANCE));
 
-    RunwayTransitionAppender appender = new RunwayTransitionAppender(
-        () -> Optional.of("RW16R"),
-        RunwayPredictor.noop()
-    );
+    ExpandedRoute expandedRoute = expander.apply(route, "RW16R", null).orElseThrow(IllegalStateException::new);
 
-    ExpandedRoute expandedRoute = expander.apply(route).map(appender).get();
-
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
@@ -127,16 +122,11 @@ class TestRouteExpander {
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
-        HOBTT2.INSTANCE.transitions());
+        singletonList(HOBTT2.INSTANCE));
 
-    RunwayTransitionAppender appender = new RunwayTransitionAppender(
-        RunwayPredictor.noop(),
-        () -> Optional.of("RW26B")
-    );
+    ExpandedRoute expandedRoute = expander.apply(route, null, "RW26B").orElseThrow(IllegalStateException::new);
 
-    ExpandedRoute expandedRoute = expander.apply(route).map(appender).get();
-
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).split().value()),
@@ -190,11 +180,11 @@ class TestRouteExpander {
         singletonList(fix("DRSDN", 33.06475, -86.183083)),
         emptyList(),
         singletonList(KATL()),
-        HOBTT2.INSTANCE.transitions());
+        singletonList(HOBTT2.INSTANCE));
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).split().value()),
@@ -221,7 +211,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("JMACK", legs.get(0).split().value()),
@@ -261,7 +251,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("KALDA", legs.get(0).split().value()),
@@ -302,7 +292,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).split().value()),
@@ -342,7 +332,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).split().value()),
@@ -370,7 +360,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
@@ -400,7 +390,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
@@ -430,7 +420,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<GraphableLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
 
     assertAll(
         () -> assertEquals("BARTL", legs.get(0).split().value()),
@@ -446,12 +436,160 @@ class TestRouteExpander {
     );
   }
 
+  /**
+   * The mocked COSTR3 procedure into KMCO has a common portion which looks identical to most runway transitions and is therefore
+   * vulnerable to many of the same issues (the closest fix the the airport is not the end of the common portion).
+   * <br>
+   * This test is to make sure we still resolve through the end of the common portion correctly.
+   */
+  @Test
+  void testFPA_Runway_Like_Common_Portion() {
+    String route = "RSW.COSTR3.KMCO";
+
+    Fix rsw = fix("RSW", 26.529875, -81.77576666666667);
+
+    RouteExpander expander = newExpander(
+        singletonList(rsw),
+        emptyList(),
+        singletonList(Airports.KMCO()),
+        singletonList(COSTR3.INSTANCE));
+
+    ExpandedRoute expandedRoute = expander.apply(route).get();
+
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+
+    assertAll(
+        () -> assertEquals("RSW", legs.get(0).split().value()),
+        () -> assertEquals("RSW", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(1).split().value()),
+        () -> assertEquals("DOWNN", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(2).split().value()),
+        () -> assertEquals("MOANS", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(3).split().value()),
+        () -> assertEquals("COSTR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(4).split().value()),
+        () -> assertEquals("COSTR", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(5).split().value()),
+        () -> assertEquals("BIGGR", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(6).split().value()),
+        () -> assertEquals("TINKR", legs.get(6).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(7).split().value()),
+        () -> assertEquals("KRAKN", legs.get(7).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(8).split().value()),
+        () -> assertEquals("TWONA", legs.get(8).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(9).split().value()),
+        () -> assertEquals("KNUKL", legs.get(9).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(10).split().value()),
+        () -> assertEquals("KNUKL", legs.get(10).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("KMCO", legs.get(11).split().value()),
+        () -> assertEquals("KMCO", legs.get(11).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals(12, legs.size())
+    );
+  }
+
+  @Test
+  void testFPApchA() {
+    String route = "RSW.COSTR3.KMCO";
+
+    Fix rsw = fix("RSW", 26.529875, -81.77576666666667);
+
+    RouteExpander expander = newExpander(
+        singletonList(rsw),
+        emptyList(),
+        singletonList(Airports.KMCO()),
+        Arrays.asList(COSTR3.INSTANCE, KMCO_I17R.I17R)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();
+
+    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+
+    assertAll(
+        () -> assertEquals("RSW", legs.get(0).split().value()),
+        () -> assertEquals("RSW", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(1).split().value()),
+        () -> assertEquals("DOWNN", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(2).split().value()),
+        () -> assertEquals("MOANS", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(3).split().value()),
+        () -> assertEquals("COSTR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(4).split().value()),
+        () -> assertEquals("COSTR", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(5).split().value()),
+        () -> assertEquals("BIGGR", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(6).split().value()),
+        () -> assertEquals("TINKR", legs.get(6).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(7).split().value()),
+        () -> assertEquals("KRAKN", legs.get(7).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(8).split().value()),
+        () -> assertEquals("TWONA", legs.get(8).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(9).split().value()),
+        () -> assertEquals("KNUKL", legs.get(9).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(10).split().value()),
+        () -> assertEquals("KNUKL", legs.get(10).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(11).split().value()),
+        () -> assertEquals("RATOY", legs.get(11).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(12).split().value()),
+        () -> assertEquals("SACRO", legs.get(12).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(13).split().value()),
+        () -> assertEquals("SACRO", legs.get(13).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(14).split().value()),
+        () -> assertEquals("TACOT", legs.get(14).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(15).split().value()),
+        () -> assertEquals("DALTY", legs.get(15).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(16).split().value()),
+        () -> assertEquals("ELLAN", legs.get(16).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(17).split().value()),
+        () -> assertEquals("GLOSI", legs.get(17).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(18).split().value()),
+        () -> assertEquals("MINCO", legs.get(18).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(19).split().value()),
+        () -> assertEquals("RW17R", legs.get(19).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("KMCO", legs.get(20).split().value()),
+        () -> assertEquals("KMCO", legs.get(20).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals(21, legs.size())
+    );
+  }
+
   private RouteExpander newExpander(
       Collection<? extends Fix> fixes,
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,
-      Collection<? extends Transition> transitions
+      Collection<? extends Procedure> procedures
   ) {
-    return RouteExpanderFactory.newFactory(fixes, airways, airports, transitions).newExpander();
+    return RouteExpanderFactory.newGraphicalRouteExpander(fixes, airways, airports, procedures);
   }
 }

@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.split;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -11,25 +12,21 @@ import com.google.common.base.Strings;
 
 /**
  * Section splitter for FAA IFR format route strings.
- *
+ * <br>
  * e.g. KATL.BOOVE4.DRSDN..AMF.J121.RPA..WYNDE.WYNDE8.KORD/0211
  */
-public final class IfrFormatSectionSplitter implements SectionSplitter {
+public final class IfrFormatSectionSplitter implements Function<String, List<SectionSplit>> {
 
-  static Pattern etaEet() {
-    return Pattern.compile("/[0-9]{4}$");
-  }
+  public static final IfrFormatSectionSplitter INSTANCE = new IfrFormatSectionSplitter();
 
-  static String etaEet(String val) {
-    Matcher matcher = etaEet().matcher(val);
-    return matcher.find() ? matcher.group(0).replace("/", "") : null;
+  private IfrFormatSectionSplitter() {
   }
 
   /**
    * Also performs cleaning to strip attached wildcard characters ("*", "+", etc.) and sequences "/0219" from the ID.
    */
   @Override
-  public List<SectionSplit> splits(String route) {
+  public List<SectionSplit> apply(String route) {
     String[] splits = route.split("\\.");
 
     return IntStream.range(0, splits.length)
@@ -68,4 +65,13 @@ public final class IfrFormatSectionSplitter implements SectionSplitter {
       (l1, l2) -> Strings.isNullOrEmpty(l1.value()),
       (l1, l2) -> l2.setWildcards(l2.wildcards().concat(l1.wildcards()))
   );
+
+  static Pattern etaEet() {
+    return Pattern.compile("/[0-9]{4}$");
+  }
+
+  static String etaEet(String val) {
+    Matcher matcher = etaEet().matcher(val);
+    return matcher.find() ? matcher.group(0).replace("/", "") : null;
+  }
 }
