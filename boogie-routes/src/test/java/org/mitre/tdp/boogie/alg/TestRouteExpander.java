@@ -14,6 +14,7 @@ import static org.mitre.tdp.boogie.MockObjects.fix;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
@@ -68,7 +69,18 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route, "RW16R", null).orElseThrow(IllegalStateException::new);
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+    assertAll(
+        "Check expanded SID summary statistics.",
+        () -> assertEquals("KDEN", routeSummary.departureAirport()),
+        () -> assertEquals(Optional.of("RW16R"), routeSummary.departureRunway()),
+        () -> assertEquals(Optional.of("CONNR5"), routeSummary.sid()),
+        () -> assertEquals(Optional.of("DBL"), routeSummary.sidExitFix()),
+        () -> assertEquals(Optional.of("CONNR"), routeSummary.departureFix()),
+        () -> assertEquals(Optional.of(RequiredNavigationEquipage.RNAV), routeSummary.requiredSidEquipage())
+    );
+
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
@@ -126,7 +138,18 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route, null, "RW26B").orElseThrow(IllegalStateException::new);
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+    assertAll(
+        "Check expanded STAR summary statistics.",
+        () -> assertEquals("KATL", routeSummary.arrivalAirport()),
+        () -> assertEquals(Optional.of("RW26B"), routeSummary.arrivalRunway()),
+        () -> assertEquals(Optional.of("HOBTT2"), routeSummary.star()),
+        () -> assertEquals(Optional.of("DRSDN"), routeSummary.starEntryFix()),
+        () -> assertEquals(Optional.of("HOBTT"), routeSummary.arrivalFix()),
+        () -> assertEquals(Optional.of(RequiredNavigationEquipage.RNAV), routeSummary.requiredStarEquipage())
+    );
+
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).split().value()),
@@ -184,7 +207,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).split().value()),
@@ -211,7 +234,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("JMACK", legs.get(0).split().value()),
@@ -251,7 +274,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KALDA", legs.get(0).split().value()),
@@ -292,7 +315,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).split().value()),
@@ -332,7 +355,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).split().value()),
@@ -360,7 +383,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
@@ -390,7 +413,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).split().value()),
@@ -420,7 +443,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("BARTL", legs.get(0).split().value()),
@@ -456,7 +479,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("RSW", legs.get(0).split().value()),
@@ -514,7 +537,25 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();
 
-    List<ResolvedLeg> legs = expandedRoute.mergedLegs();
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+    assertAll(
+        "Check expanded STAR/Approach summary statistics.",
+        () -> assertEquals("KMCO", routeSummary.arrivalAirport()),
+        () -> assertEquals(Optional.of("RW17R"), routeSummary.arrivalRunway()),
+
+        // STAR
+        () -> assertEquals(Optional.of("COSTR3"), routeSummary.star()),
+        () -> assertEquals(Optional.of("RSW"), routeSummary.starEntryFix()),
+        () -> assertEquals(Optional.of("COSTR"), routeSummary.arrivalFix()),
+        () -> assertEquals(Optional.of(RequiredNavigationEquipage.RNAV), routeSummary.requiredStarEquipage()),
+
+        // Approach
+        () -> assertEquals(Optional.of("I17R"), routeSummary.approach()),
+        () -> assertEquals(Optional.of("RATOY"), routeSummary.approachEntryFix()),
+        () -> assertEquals(Optional.of(RequiredNavigationEquipage.CONV), routeSummary.requiredApproachEquipage())
+    );
+
+    List<ResolvedLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("RSW", legs.get(0).split().value()),

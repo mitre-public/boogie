@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie;
+package org.mitre.tdp.boogie.test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -9,12 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.model.BoogieAirport;
-import org.mitre.tdp.boogie.model.BoogieAirway;
-import org.mitre.tdp.boogie.model.BoogieLeg;
-import org.mitre.tdp.boogie.model.BoogieProcedure;
-import org.mitre.tdp.boogie.model.BoogieRunway;
-import org.mitre.tdp.boogie.model.BoogieTransition;
+import org.mitre.tdp.boogie.alg.RouteSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +53,7 @@ public final class ReflectiveDataClassGenerator implements Function<Class, Strin
    */
   public static void main(String[] args) {
     ReflectiveDataClassGenerator generator = new ReflectiveDataClassGenerator();
-    String generated = generator.apply(BoogieTransition.class);
+    String generated = generator.apply(RouteSummary.class);
     System.out.println(generated);
     System.out.println("Successfully generated string class representation - check the console.");
   }

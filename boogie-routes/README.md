@@ -51,8 +51,7 @@ Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDep
 // expansion through the appropriate runway transitions and then onto the conventional approach serving the arrival runway
 Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway, CONV);
 
-// expansion through the appropriate runway transitions and then onto the RNP approach (if one exists) or else the RNAV 
-// (if one exists) or else the CONV (if one exists)
+// expansion through the appropriate runway transitions and then onto the RNP approach (if one exists) or else the RNAV (if one exists) or else the CONV (if one exists)
 Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway, RNP, RNAV, CONV);
 ```
 

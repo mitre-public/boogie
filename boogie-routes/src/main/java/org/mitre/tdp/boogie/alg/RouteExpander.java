@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.mitre.tdp.boogie.alg.LegMergerFactory.newSimilarSubsequentGraphableLegMerger;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.AirportResolver;
 import org.mitre.tdp.boogie.alg.resolve.AirwayResolver;
 import org.mitre.tdp.boogie.alg.resolve.ApproachResolver;
+import org.mitre.tdp.boogie.alg.resolve.ExpandedRouteSummarizer;
 import org.mitre.tdp.boogie.alg.resolve.FixResolver;
 import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
@@ -121,7 +123,7 @@ public final class RouteExpander implements
   @Override
   public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway) {
     List<ResolvedSection> resolvedSections = resolveSections(route, departureRunway, arrivalRunway);
-    return chooseExpandedRoute(route, resolvedSections);
+    return chooseExpandedRoute(route, resolvedSections, departureRunway, arrivalRunway);
   }
 
   /**
@@ -152,7 +154,7 @@ public final class RouteExpander implements
       approachResolver.apply(lastSection).ifPresent(resolvedSections::add);
     }
 
-    return chooseExpandedRoute(route, resolvedSections);
+    return chooseExpandedRoute(route, resolvedSections, departureRunway, arrivalRunway);
   }
 
   /**
@@ -175,13 +177,16 @@ public final class RouteExpander implements
     return resolvedSections;
   }
 
-  private Optional<ExpandedRoute> chooseExpandedRoute(String route, List<ResolvedSection> resolvedSections) {
+  private Optional<ExpandedRoute> chooseExpandedRoute(String route, List<ResolvedSection> resolvedSections, @Nullable String departureRunway, @Nullable String arrivalRunway) {
     if (!Iterators.checkMatchCount(resolvedSections, s -> !s.allLegs().isEmpty())) {
       LOG.info("Returning empty - no ResolvedSections with legs in their ResolvedElements.");
       return Optional.empty();
     } else {
       List<ResolvedSection> sortedByIndex = resolvedSections.stream().sorted(comparing(ResolvedSection::sectionSplit)).collect(toList());
-      return Optional.of(ExpandedRoute.from(route, resolvedSections, routeChooser.apply(sortedByIndex)));
+      List<ResolvedLeg> resolvedLegs = routeChooser.apply(sortedByIndex);
+
+      Optional<RouteSummary> routeSummary = ExpandedRouteSummarizer.INSTANCE.apply(resolvedLegs, route, departureRunway, arrivalRunway);
+      return Optional.of(new ExpandedRoute(routeSummary.orElse(null), newSimilarSubsequentGraphableLegMerger().reduce(resolvedLegs)));
     }
   }
 }
