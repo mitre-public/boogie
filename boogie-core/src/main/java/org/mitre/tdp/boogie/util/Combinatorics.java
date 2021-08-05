@@ -49,7 +49,7 @@ public final class Combinatorics {
   }
 
   public static <U, V> Iterator<Pair<U, V>> cartesianProduct(Iterable<U> first, Iterable<V> second) {
-    Set<List<Object>> sets = Sets.cartesianProduct(Sets.newHashSet(first), Sets.newHashSet(second));
+    Set<List<Object>> sets = Sets.cartesianProduct(Sets.newLinkedHashSet(first), Sets.newLinkedHashSet(second));
     return Iterators.transform(sets.iterator(), list -> Pair.of((U) list.get(0), (V) list.get(1)));
   }
 
