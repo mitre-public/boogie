@@ -1,4 +1,4 @@
-(ns boogie.arinc.server
+(ns boogie.server
   (:require [boogie.arinc.routes :refer [app-routes]]
             [ring.adapter.jetty :refer [run-jetty]]
             [boogie.arinc.cycles :refer [current-cycle get-cycle-data]]
