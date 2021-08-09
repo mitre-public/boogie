@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  * <br>
  * Section/Subsection = DB or PN
  */
-public final class ArincNdbNavaid {
+public final class ArincNdbNavaid implements ArincModel {
 
   private final RecordType recordType;
   private final CustomerAreaCode customerAreaCode;
@@ -62,12 +62,14 @@ public final class ArincNdbNavaid {
     return Optional.ofNullable(customerAreaCode);
   }
 
+  @Override
   public SectionCode sectionCode() {
     return sectionCode;
   }
 
-  public String subSectionCode() {
-    return subSectionCode;
+  @Override
+  public Optional<String> subSectionCode() {
+    return Optional.of(subSectionCode);
   }
 
   public Optional<String> airportIdentifier() {
@@ -131,7 +133,7 @@ public final class ArincNdbNavaid {
         .recordType(recordType())
         .customerAreaCode(customerAreaCode().orElse(null))
         .sectionCode(sectionCode())
-        .subSectionCode(subSectionCode())
+        .subSectionCode(subSectionCode().orElseThrow(IllegalStateException::new))
         .airportIdentifier(airportIdentifier().orElse(null))
         .airportIcaoRegion(airportIcaoRegion().orElse(null))
         .ndbIdentifier(ndbIdentifier())

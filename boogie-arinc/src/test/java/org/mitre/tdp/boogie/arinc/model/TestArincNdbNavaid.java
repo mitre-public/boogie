@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
@@ -31,7 +33,7 @@ class TestArincNdbNavaid {
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),
         () -> Assertions.assertEquals(CustomerAreaCode.EEU, navaid.customerAreaCode().orElseThrow(AssertionError::new)),
         () -> Assertions.assertEquals(SectionCode.P, navaid.sectionCode()),
-        () -> assertEquals("N", navaid.subSectionCode()),
+        () -> assertEquals(Optional.of("N"), navaid.subSectionCode()),
         () -> assertEquals("UUOL", navaid.airportIdentifier().orElseThrow(AssertionError::new)),
         () -> assertEquals("UU", navaid.airportIcaoRegion().orElseThrow(AssertionError::new)),
         () -> assertEquals("D", navaid.ndbIdentifier()),

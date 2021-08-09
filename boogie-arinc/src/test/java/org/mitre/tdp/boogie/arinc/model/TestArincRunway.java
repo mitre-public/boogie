@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
@@ -33,7 +35,7 @@ class TestArincRunway {
         () -> assertEquals(SectionCode.P, runway.sectionCode()),
         () -> assertEquals("KJFK", runway.airportIdentifier()),
         () -> assertEquals("K6", runway.airportIcaoRegion()),
-        () -> assertEquals("G", runway.subSectionCode()),
+        () -> assertEquals(Optional.of("G"), runway.subSectionCode()),
         () -> assertEquals("RW04L", runway.runwayIdentifier()),
         () -> assertEquals("1", runway.continuationRecordNumber().orElseThrow(AssertionError::new)),
         () -> assertEquals(Integer.valueOf(12079), runway.runwayLength().orElseThrow(AssertionError::new)),

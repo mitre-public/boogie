@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  * <br>
  * Section/Subsection = EA/PC
  */
-public final class ArincWaypoint {
+public final class ArincWaypoint implements ArincModel {
 
   private final RecordType recordType;
   private final CustomerAreaCode customerAreaCode;
@@ -66,6 +66,7 @@ public final class ArincWaypoint {
     return Optional.ofNullable(customerAreaCode);
   }
 
+  @Override
   public SectionCode sectionCode() {
     return sectionCode;
   }
@@ -84,6 +85,11 @@ public final class ArincWaypoint {
 
   public Optional<String> terminalSubSectionCode() {
     return Optional.ofNullable(terminalSubSectionCode);
+  }
+
+  @Override
+  public Optional<String> subSectionCode() {
+    return Optional.of(enrouteSubSectionCode().orElseGet(() -> terminalSubSectionCode().orElseThrow(IllegalStateException::new)));
   }
 
   public String waypointIdentifier() {

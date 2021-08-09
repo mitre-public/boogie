@@ -1,5 +1,5 @@
 (ns boogie.server
-  (:require [boogie.arinc.routes :refer [app-routes]]
+  (:require [boogie.routes :refer [app-routes]]
             [ring.adapter.jetty :refer [run-jetty]]
             [boogie.arinc.cycles :refer [current-cycle get-cycle-data]]
             [taoensso.timbre :as timbre])

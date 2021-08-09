@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
@@ -32,7 +34,7 @@ class TestArincAirwayLeg {
         () -> assertEquals(RecordType.S, airway.recordType()),
         () -> assertEquals(CustomerAreaCode.CAN, airway.customerAreaCode()),
         () -> assertEquals(SectionCode.E, airway.sectionCode()),
-        () -> assertEquals("R", airway.subSectionCode()),
+        () -> assertEquals(Optional.of("R"), airway.subSectionCode()),
         () -> assertEquals("A590", airway.routeIdentifier()),
         () -> assertFalse(airway.sixthCharacter().isPresent()),
         () -> assertEquals(Integer.valueOf(210), airway.sequenceNumber()),

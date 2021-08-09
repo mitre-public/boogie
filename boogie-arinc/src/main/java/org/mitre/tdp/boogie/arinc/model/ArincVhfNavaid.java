@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  * <br>
  * Section/Subsection = D
  */
-public final class ArincVhfNavaid {
+public final class ArincVhfNavaid implements ArincModel {
 
   private final RecordType recordType;
   private final CustomerAreaCode customerAreaCode;
@@ -84,10 +84,12 @@ public final class ArincVhfNavaid {
     return Optional.ofNullable(customerAreaCode);
   }
 
+  @Override
   public SectionCode sectionCode() {
     return sectionCode;
   }
 
+  @Override
   public Optional<String> subSectionCode() {
     return Optional.ofNullable(subSectionCode);
   }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mitre.tdp.boogie.arinc.v18.TestProcedureLegSpec.TF;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -36,7 +37,7 @@ class TestArincProcedureLeg {
         () -> assertEquals(SectionCode.P, procedureLeg.sectionCode()),
         () -> assertEquals("KJFK", procedureLeg.airportIdentifier()),
         () -> assertEquals("K6", procedureLeg.airportIcaoRegion()),
-        () -> assertEquals("F", procedureLeg.subSectionCode()),
+        () -> assertEquals(Optional.of("F"), procedureLeg.subSectionCode()),
         () -> assertEquals("L22R", procedureLeg.sidStarIdentifier()),
         () -> assertEquals("L", procedureLeg.routeType()),
         () -> assertFalse(procedureLeg.transitionIdentifier().isPresent()),

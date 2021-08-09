@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
@@ -122,5 +124,50 @@ public class TestRunwaySpec {
   void testParseRunway3() {
     ArincRecord record = ArincVersion.V18.parser().apply(runway3).orElseThrow(AssertionError::new);
     assertEquals(0.3, record.requiredField("runwayGradient"));
+  }
+
+  public static final String runway4 = "SCANP PAAQPAGRW16S   0015601640 N61355318W149051694               00239000050060D                                          049571812";
+
+  @Test
+  void testSpecMatchesRunway4() {
+    assertTrue(new RunwaySpec().matchesRecord(runway4));
+  }
+
+  @Test
+  void testValidatorPasses_Runway4(){
+    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway4).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
+  void testParseRunway4() {
+    ArincRecord record = ArincVersion.V18.parser().apply(runway4).orElseThrow(AssertionError::new);
+
+    assertAll(
+        () -> assertEquals(RecordType.S, record.requiredField("recordType")),
+        () -> assertEquals(CustomerAreaCode.CAN, record.requiredField("customerAreaCode")),
+        () -> assertEquals(SectionCode.P, record.requiredField("sectionCode")),
+        () -> assertEquals("PAAQ", record.requiredField("airportIdentifier")),
+        () -> assertEquals("PA", record.requiredField("airportIcaoRegion")),
+        () -> assertEquals("G", record.requiredField("subSectionCode")),
+        () -> assertEquals("RW16S", record.requiredField("runwayIdentifier")),
+        () -> assertEquals("0", record.requiredField("continuationRecordNumber")),
+        () -> assertEquals(Integer.valueOf(1560), record.requiredField("runwayLength")),
+        () -> assertEquals(164.0d, record.requiredField("runwayMagneticBearing")),
+        () -> assertEquals(61.598105555555556, record.requiredField("latitude")),
+        () -> assertEquals(-149.0880388888889, record.requiredField("longitude")),
+        () -> assertEquals(Optional.empty(), record.optionalField("runwayGradient")),
+        () -> assertEquals(Integer.valueOf(239), record.requiredField("landingThresholdElevation")),
+        () -> assertEquals(Integer.valueOf(0), record.requiredField("thresholdDisplacementDistance")),
+        () -> assertEquals(Integer.valueOf(50), record.requiredField("thresholdCrossingHeight")),
+        () -> assertEquals(Integer.valueOf(60), record.requiredField("runwayWidth")),
+        () -> assertEquals(Optional.empty(), record.optionalField("ilsMlsGlsIdentifier")),
+        () -> assertEquals(Optional.empty(), record.optionalField("ilsMlsGlsCategory")),
+        () -> assertEquals(Optional.empty(), record.optionalField("stopway")),
+        () -> assertFalse(record.optionalField("secondaryIlsMlsGlsIdentifier").isPresent()),
+        () -> assertFalse(record.optionalField("secondaryIlsMlsGlsCategory").isPresent()),
+        () -> assertEquals(Optional.empty(), record.optionalField("runwayDescription")),
+        () -> assertEquals(Integer.valueOf(4957), record.requiredField("fileRecordNumber")),
+        () -> assertEquals("1812", record.requiredField("lastUpdateCycle"))
+    );
   }
 }

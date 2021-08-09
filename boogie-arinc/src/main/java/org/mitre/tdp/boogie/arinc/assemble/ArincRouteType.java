@@ -302,7 +302,7 @@ public enum ArincRouteType {
 
     return ArincRouteType.valueOf(
         arincProcedureLeg.sectionCode().name()
-            .concat(arincProcedureLeg.subSectionCode())
+            .concat(arincProcedureLeg.subSectionCode().orElseThrow(IllegalStateException::new))
             .concat("_")
             .concat(arincProcedureLeg.routeType())
     );

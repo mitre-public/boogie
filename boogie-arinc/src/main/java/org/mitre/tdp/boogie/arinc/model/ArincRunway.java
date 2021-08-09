@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  * <br>
  * Section/Subsection = PG
  */
-public final class ArincRunway {
+public final class ArincRunway implements ArincModel {
 
   private final RecordType recordType;
   private final CustomerAreaCode customerAreaCode;
@@ -76,6 +76,7 @@ public final class ArincRunway {
     return Optional.ofNullable(customerAreaCode);
   }
 
+  @Override
   public SectionCode sectionCode() {
     return sectionCode;
   }
@@ -88,8 +89,9 @@ public final class ArincRunway {
     return airportIcaoRegion;
   }
 
-  public String subSectionCode() {
-    return subSectionCode;
+  @Override
+  public Optional<String> subSectionCode() {
+    return Optional.of(subSectionCode);
   }
 
   public String runwayIdentifier() {
@@ -175,7 +177,7 @@ public final class ArincRunway {
         .sectionCode(sectionCode())
         .airportIdentifier(airportIdentifier())
         .airportIcaoRegion(airportIcaoRegion())
-        .subSectionCode(subSectionCode())
+        .subSectionCode(subSectionCode().orElseThrow(IllegalStateException::new))
         .runwayIdentifier(runwayIdentifier())
         .continuationRecordNumber(continuationRecordNumber().orElse(null))
         .runwayLength(runwayLength().orElse(null))

@@ -178,7 +178,7 @@ public final class ArincDatabaseFactory {
       arincNdbNavaid.ndbIdentifier(),
       arincNdbNavaid.ndbIcaoRegion(),
       arincNdbNavaid.sectionCode(),
-      arincNdbNavaid.subSectionCode()
+      arincNdbNavaid.subSectionCode().orElse(null)
   );
 
   private static final Function<ArincVhfNavaid, ArincKey> vhfNavaidToFixIndex = arincVhfNavaid -> new ArincKey(
@@ -199,6 +199,6 @@ public final class ArincDatabaseFactory {
       arincAirport.airportIdentifier(),
       arincAirport.airportIcaoRegion(),
       arincAirport.sectionCode(),
-      arincAirport.subSectionCode()
+      arincAirport.subSectionCode().orElse(null)
   );
 }

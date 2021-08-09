@@ -20,7 +20,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.WaypointDescription;
  * ARINC stores airways as contiguous records with each record representing a leg within the top level airway structure - this
  * class then mimics a single line of an ARINC airway record. These legs can then be sequenced to produce a full airway definition.
  */
-public final class ArincProcedureLeg {
+public final class ArincProcedureLeg implements ArincModel {
 
   private final RecordType recordType;
   private final CustomerAreaCode customerAreaCode;
@@ -129,6 +129,7 @@ public final class ArincProcedureLeg {
     return Optional.ofNullable(customerAreaCode);
   }
 
+  @Override
   public SectionCode sectionCode() {
     return sectionCode;
   }
@@ -141,8 +142,9 @@ public final class ArincProcedureLeg {
     return airportIcaoRegion;
   }
 
-  public String subSectionCode() {
-    return subSectionCode;
+  @Override
+  public Optional<String> subSectionCode() {
+    return Optional.of(subSectionCode);
   }
 
   public String sidStarIdentifier() {
@@ -312,7 +314,7 @@ public final class ArincProcedureLeg {
         .sectionCode(sectionCode())
         .airportIdentifier(airportIdentifier())
         .airportIcaoRegion(airportIcaoRegion())
-        .subSectionCode(subSectionCode())
+        .subSectionCode(subSectionCode().orElseThrow(IllegalStateException::new))
         .sidStarIdentifier(sidStarIdentifier())
         .routeType(routeType())
         .transitionIdentifier(transitionIdentifier().orElse(null))

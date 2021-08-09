@@ -68,7 +68,7 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
         .sorted(comparing(ArincProcedureLeg::sequenceNumber))
         .collect(Collectors.toList());
 
-    if ("F".equals(sorted.get(0).subSectionCode())) {
+    if ("F".equals(sorted.get(0).subSectionCode().orElseThrow(IllegalStateException::new))) {
       return approachClassifier.apply(sorted);
     } else {
       return sidStarClassifier.apply(sorted);
@@ -137,7 +137,7 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
 
     @Override
     public TransitionType apply(List<ArincProcedureLeg> arincProcedureLegs) {
-      checkArgument("F".equals(arincProcedureLegs.get(0).subSectionCode()), "Legs must be from an APPROACH procedure.");
+      checkArgument("F".equals(arincProcedureLegs.get(0).subSectionCode().orElseThrow(IllegalStateException::new)), "Legs must be from an APPROACH procedure.");
 
       ArincProcedureLeg firstLeg = arincProcedureLegs.get(0);
       String adjustedTransitionName = StandardizedTransitionName.INSTANCE.apply(firstLeg.transitionIdentifier().orElse(null));

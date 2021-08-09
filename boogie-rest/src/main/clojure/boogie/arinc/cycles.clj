@@ -1,4 +1,5 @@
 (ns boogie.arinc.cycles
+  "The namespace for loading cycles of infrastructure data from disc."
   (:require [clojure.data.avl :as avl]
             [taoensso.timbre :as timbre :refer-macros [debug info warn]])
   (:require [clojure.core [cache :as cache]])
@@ -11,7 +12,7 @@
 
 
 ;; the maximum number of cycles that can be cached at once
-(defonce cycle-cache-size (atom (if (System/getenv "CYCLE_CACHE_SIZE") (Integer/parseInt (System/getenv "CYCLE_CACHE_SIZE")) 3)))
+(defonce cycle-cache-size (atom (if (System/getenv "CYCLE_CACHE_SIZE") (Integer/parseInt (System/getenv "CYCLE_CACHE_SIZE")) 1)))
 
 ;; The instance of the file-locator which will be used to locate ARINC424 files on a visible filesystem for the application to
 ;; load and serve data from
@@ -82,6 +83,18 @@
 ;; this cache pre-loads the current cycle of navigation data on instantiation
 (def cycle-cache (atom (cache/lru-cache-factory {} :threshold @cycle-cache-size)))
 
+(defn target-cycle-file
+  "Converts the input requested cycle to a target-cycle which we know exists and the file that would be loaded for that cycle"
+  [^String requested-cycle]
+  (let [^File expected-file (cycle-file requested-cycle)]
+    (nearest-available requested-cycle expected-file)))
+
+(defn is-cached?
+  "Returns whether the requested cycle is cached in the current cycle cache."
+  [^String requested-cycle]
+  (let [[^String target-cycle ^File target-file] (target-cycle-file requested-cycle)]
+    (cache/has? @cycle-cache target-cycle)))
+
 (defn get-available-cycles
   "Subsequent call to return all available files and update the listing of what's available explicitly. This also adds to the available file listing an
   indicator for whether the given file is currently in the cache."
@@ -95,11 +108,10 @@
 (defn get-cycle-data
   "Provides wrapped access to the underlying cycle-cache of the application."
   [^String requested-cycle]
-  (let [expected-file (cycle-file requested-cycle)
-        [^String target-cycle ^File target-file] (nearest-available requested-cycle expected-file)]
+  (let [[^String target-cycle ^File target-file] (target-cycle-file requested-cycle)]
     (timbre/info (str "Hitting cache for requested cycle: " requested-cycle))
     (if (nil? target-cycle)
-      (do (timbre/info (str "Unable find available data for requested cycle " requested-cycle)) {requested-cycle {}})
+      (do (timbre/info (str "Unable find available data for requested cycle " requested-cycle)) {"cycle" requested-cycle})
       ;; if there is a valid target cycle which we can map the request to look it up
       (do (timbre/info (str "Targeting cycle " target-cycle " based on requested cycle " requested-cycle ", load initializing."))
           (if (cache/has? @cycle-cache target-cycle)

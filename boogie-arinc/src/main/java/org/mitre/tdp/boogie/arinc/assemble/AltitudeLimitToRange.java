@@ -23,6 +23,11 @@ import com.google.common.collect.Range;
  */
 public final class AltitudeLimitToRange implements TriFunction<String, Double, Double, Range<Double>> {
 
+  public static final AltitudeLimitToRange INSTANCE = new AltitudeLimitToRange();
+
+  private AltitudeLimitToRange() {
+  }
+
   @Override
   public Range<Double> apply(String altitudeDescription, @Nullable Double altitude1, @Nullable Double altitude2) {
     requireNonNull(altitudeDescription, "The description code must be provided to interpret the provided altitude values.");

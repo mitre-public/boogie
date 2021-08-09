@@ -4,6 +4,9 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static org.mitre.caasd.commons.util.Partitioners.splitOnPairwiseChange;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory.newLegFrom;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory.newProcedureFrom;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory.toProcedureType;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,21 +19,16 @@ import java.util.stream.Stream;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.model.BoogieLeg;
-import org.mitre.tdp.boogie.model.BoogieProcedure;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Range;
 
 /**
  * Functional class for converting a collection of {@link ArincProcedureLeg}s into a sequence of {@link Procedure} records as
@@ -53,7 +51,7 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
   private final ArincProcedureLegConverter inflator;
   /**
    * Predicate for determining whether there should be any special splitting logic applied to sequential legs within a procedure
-   * transition (e.g. to split the missed approach off of the final approach).
+   * transition (e.g. to split the missed approach off of the final approach see - {@link IsFirstLegOfMissedApproach}).
    */
   private final BiPredicate<ArincProcedureLeg, ArincProcedureLeg> shouldSplitTransition;
 
@@ -113,22 +111,6 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
   }
 
   /**
-   * Converts the list of related {@link Transition}s into a {@link Procedure} which downstream algorithms can consume and operate
-   * on more easily.
-   */
-  private Procedure newProcedureFrom(RequiredNavigationEquipage equipage, List<Transition> transitions) {
-    Transition representative = transitions.get(0);
-    return new BoogieProcedure.Builder()
-        .procedureIdentifier(representative.procedureIdentifier())
-        .airportIdentifier(representative.airportIdentifier())
-        .airportRegion(representative.airportRegion())
-        .procedureType(representative.procedureType())
-        .requiredNavigationEquipage(equipage)
-        .transitions(transitions)
-        .build();
-  }
-
-  /**
    * Generates a new transition of the given type from the collection of input legs. {@link TransitionType#MISSED} transitions
    * will be given the name "MISSED".
    */
@@ -141,32 +123,17 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
         .transitionIdentifier(TransitionType.MISSED.equals(transitionType)
             ? "MISSED"
             : StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null)))
-        .procedureType(toProcedureType(representative.subSectionCode()))
+        .procedureType(toProcedureType(representative.subSectionCode().orElseThrow(IllegalStateException::new)))
         .transitionType(transitionType)
         .legs(procedureLegs.stream().map(inflator).collect(Collectors.toList()))
         .build();
-  }
-
-  /**
-   * The subSection within the database determines whether the procedure is a SID/STAR/APPROACH record.
-   */
-  private ProcedureType toProcedureType(String subSectionCode) {
-    if ("F".equals(subSectionCode)) {
-      return ProcedureType.APPROACH;
-    } else if ("E".equals(subSectionCode)) {
-      return ProcedureType.STAR;
-    } else if ("D".equals(subSectionCode)) {
-      return ProcedureType.SID;
-    } else {
-      throw new IllegalArgumentException("Unable to classify subSectionCode as a ProcedureType: ".concat(subSectionCode));
-    }
   }
 
   private String procedureGroupKey(ArincProcedureLeg arincProcedureLeg) {
     return arincProcedureLeg.airportIdentifier()
         .concat(arincProcedureLeg.airportIcaoRegion())
         .concat(arincProcedureLeg.sidStarIdentifier())
-        .concat(arincProcedureLeg.subSectionCode());
+        .concat(arincProcedureLeg.subSectionCode().orElseThrow(IllegalStateException::new));
   }
 
   /**
@@ -178,10 +145,6 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
    * identify and dereference these.
    */
   static final class ArincProcedureLegConverter implements Function<ArincProcedureLeg, Leg> {
-
-    private static final SpeedLimitToRange speedLimitToRange = new SpeedLimitToRange();
-
-    private static final AltitudeLimitToRange altitudeLimitToRange = new AltitudeLimitToRange();
 
     private final LegFixDereferencer legFixDereferencer;
 
@@ -195,27 +158,7 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
       Optional<Fix> recommendedNavaid = recommendedNavaid(arincProcedureLeg);
       Optional<Fix> centerFix = centerFix(arincProcedureLeg);
 
-      return new BoogieLeg.Builder()
-          .associatedFix(associatedFix.orElse(null))
-          .recommendedNavaid(recommendedNavaid.orElse(null))
-          .centerFix(centerFix.orElse(null))
-          .pathTerminator(arincProcedureLeg.pathTerm())
-          .sequenceNumber(arincProcedureLeg.sequenceNumber())
-          .speedConstraint(arincProcedureLeg.speedLimitDescription()
-              .map(s -> speedLimitToRange.apply(s, arincProcedureLeg.speedLimit().map(Integer::doubleValue).orElse(null))).orElse(Range.all()))
-          .altitudeConstraint(arincProcedureLeg.altitudeDescription()
-              .map(s -> altitudeLimitToRange.apply(s, arincProcedureLeg.minAltitude1().orElse(null), arincProcedureLeg.minAltitude2().orElse(null))).orElse(Range.all()))
-          .outboundMagneticCourse(arincProcedureLeg.outboundMagneticCourse().orElse(null))
-          .theta(arincProcedureLeg.theta().orElse(null))
-          .rho(arincProcedureLeg.rho().orElse(null))
-          .rnp(arincProcedureLeg.rnp().orElse(null))
-          .verticalAngle(arincProcedureLeg.verticalAngle().orElse(null))
-          .routeDistance(arincProcedureLeg.routeDistance().orElse(null))
-          .holdTime(arincProcedureLeg.holdTime().orElse(null))
-          .turnDirection(arincProcedureLeg.turnDirection().map(this::toTurnDirection).orElse(TurnDirection.either()))
-          .isPublishedHoldingFix(IsPublishedHoldingFix.INSTANCE.test(arincProcedureLeg))
-          .isFlyOverFix(IsFlyOverFix.INSTANCE.test(arincProcedureLeg))
-          .build();
+      return newLegFrom(arincProcedureLeg, associatedFix.orElse(null), recommendedNavaid.orElse(null), centerFix.orElse(null));
     }
 
     Optional<Fix> associatedFix(ArincProcedureLeg arincProcedureLeg) {
@@ -255,17 +198,6 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
         );
       }
       return Optional.empty();
-    }
-
-    TurnDirection toTurnDirection(org.mitre.tdp.boogie.arinc.v18.field.TurnDirection turnDirection) {
-      switch (turnDirection) {
-        case L:
-          return TurnDirection.left();
-        case R:
-          return TurnDirection.right();
-        default:
-          return TurnDirection.either();
-      }
     }
   }
 }

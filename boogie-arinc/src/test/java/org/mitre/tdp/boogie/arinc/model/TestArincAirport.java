@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
@@ -33,7 +35,7 @@ class TestArincAirport {
         () -> Assertions.assertEquals(SectionCode.P, airport.sectionCode()),
         () -> assertEquals("KJFK", airport.airportIdentifier()),
         () -> assertEquals("K6", airport.airportIcaoRegion()),
-        () -> assertEquals("A", airport.subSectionCode()),
+        () -> assertEquals(Optional.of("A"), airport.subSectionCode()),
         () -> assertEquals("JFK", airport.iataDesignator().orElseThrow(AssertionError::new)),
         () -> assertEquals("1", airport.continuationRecordNumber().orElseThrow(AssertionError::new)),
         () -> assertEquals(10000.0d, airport.speedLimitAltitude().orElseThrow(AssertionError::new)),

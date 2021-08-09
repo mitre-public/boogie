@@ -30,6 +30,7 @@
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.gzip :as gzip])
   (:require [boogie.arinc.cycles :refer [cycle-file get-cycle-data get-available-cycles current-cycle]])
+  (:require [boogie.arinc.latest :refer [airports runways localizers waypoints ndb-navaids vhf-navaids procedure-legs terminal-areas]])
   (:require [boogie.arinc.parse :refer [arinc->pojo]])
   ;; java dependencies
   (:import (org.apache.commons.lang3.exception ExceptionUtils)
@@ -40,6 +41,11 @@
 
 (s/def ::cycle string?)
 (s/def ::records string?)
+(s/def ::identifiers string?)
+(s/def ::airport string?)
+(s/def ::airports string?)
+(s/def ::procedures string?)
+(s/def ::route string?)
 
 (s/def ::arrival-airport string?)
 (s/def ::departure-airport string?)
@@ -78,14 +84,17 @@
           :responses  {200 {:body any?}}
           :handler    (fn [{{{:keys [route departure-airport arrival-airport equipage]} :query} :parameters}]
                         ())}]
-        ["/airports"
-         {:get {:summary "Returns the composite version of Airport(s) as seen by the Boogie software."}}]
-        ["/fixes"
-         {:get {:summary "Returns the composite version of Fix(es) (waypoint, vhf/ndb navaid) as seen by the Boogie software."}}]
-        ["/procedures"
-         {:get {:summary "Returns the composite version of Procedure(s) as seen by the Boogie software."}}]
-        ["/airways"]
-        {:get {:summary "Returs the composite version of Airway(s) as seen by the Boogie software."}}]
+        ;["/airports"
+        ; {:get {:summary    "Returns the composite version of Airport(s) as seen by the Boogie software."
+        ;        :parameters {:query (s/keys :req-un [::identifiers])}
+        ;        :responses  {200 {:body any?}}}}]
+        ;["/fixes"
+        ; {:get {:summary "Returns the composite version of Fix(es) (waypoint, vhf/ndb navaid) as seen by the Boogie software."}}]
+        ;["/procedures"
+        ; {:get {:summary "Returns the composite version of Procedure(s) as seen by the Boogie software."}}]
+        ;["/airways"
+        ; {:get {:summary "Returs the composite version of Airway(s) as seen by the Boogie software."}}]]
+        ]
        ["/arinc"
         ["/file"
          {:get {:summary    "Returns the path to the resolved file that would targeted for load given the provided cycle. If this file doesn't exist the nearest
@@ -131,22 +140,71 @@
                 :handler    (fn [{{{:keys [records]} :query} :parameters}]
                               (-> (.toJson @gson (arinc->pojo records))
                                   (response)
-                                  (content-type "text/json")))}}]]
-       ["/airports"
-        {:get {:summary "Returns the ARINC airport record(s) matching the provided query parameters."}}]
-       ["/runways"
-        {:get {:summary "Returns the ARINC runway record(s) matching the provided query parameters."}}]
-       ["/localizers"
-        {:get {:summary "Returns the ARINC localizer/glideslope record(s) matching the provided query parameters."}}]
-       ["/waypoints"
-        {:get {:summary ""}}]
-       ["/navaids"
-        {:get {:summary "Returns the ARINC vhf/ndb navaid record(s) matching the provided query parameters."}}]
-       ["/procedures"
-        {:get {:summary "Returns the ARINC procedure (leg) record(s) matching the provided query parameters."}}]
-       ["/airways"
-        {:get {:summary "Returns the ARINC airway (leg) record(s) matching the provided query parameters."}}]
-       ]
+                                  (content-type "text/json")))}}]
+        ["/airports"
+         {:get {:summary    "Returns the ARINC airport record(s) matching the provided query parameters."
+                :parameters {:query (s/keys :req-un [::identifiers])}
+                :response   {200 {:body string?}}
+                :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
+                              (-> (.toJson @gson (airports identifiers))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/runways"
+         {:get {:summary    "Returns the ARINC runway record(s) at the provided airports."
+                :parameters {:query (s/keys :req-un [::airports])}
+                :response   {200 {:body string?}}
+                :handler    (fn [{{{:keys [airports]} :query} :parameters}]
+                              (-> (.toJson @gson (runways airports))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/localizers"
+         {:get {:summary    "Returns the ARINC localizer/glideslope record(s) at the provided airports."
+                :parameters {:query (s/keys :req-un [::airports])}
+                :response   {200 {:body string?}}
+                :handler    (fn [{{{:keys [airports]} :query} :parameters}]
+                              (-> (.toJson @gson (localizers airports))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/waypoints"
+         {:get {:summary    "Returns the ARINC waypoint record(s) matching the provided identifiers."
+                :parameters {:query (s/keys :req-un [::identifiers])}
+                :response   {200 {:body string?}}
+                :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
+                              (-> (.toJson @gson (waypoints identifiers))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/navaids"
+         {:get {:summary    "Returns the ARINC vhf/ndb navaid record(s) matching the provided identifiers."
+                :parameters {:query (s/keys :req-un [::identifiers])}
+                :response   {200 {:body string?}}
+                :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
+                              (-> (.toJson @gson {"ndb" (ndb-navaids identifiers)
+                                                  "vhf" (vhf-navaids identifiers)})
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/procedures"
+         {:get {:summary    "Returns the ARINC procedure (leg) record(s) matching the given procedure identifier at the provided airport."
+                :parameters {:query (s/keys :req-un [::airport ::procedures])}
+                :response   {200 {:body string?}}
+                :handler    (fn [{{{:keys [airport procedures]} :query} :parameters}]
+                              (-> (.toJson @gson (procedure-legs procedures airport))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ;["/airways"
+        ; {:get {:summary    "Returns the ARINC airway (leg) record(s) matching the provided query parameters."
+        ;        :parameters {:query (s/keys :req-un [::identifiers])}
+        ;        :response   {200 {:body string?}}
+        ;        :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
+        ;                      )}}]
+        ["/terminal-areas"
+         {:get {:summary    "Returns all of the parsed ARINC records related to a given terminal area. (Airport, Runway, Localizers, Waypoints, Navaids, Procedure Legs)"
+                :parameters {:query (s/keys :req-un [::airports])}
+                :response   {200 {:body string?}}
+                :handler    (fn [{{{:keys [airports]} :query} :parameters}]
+                              (-> (.toJson @gson (terminal-areas airports))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ]]
       {:exception pretty/exception
        ;; I don't know what any of this does and I don't want to find out - ask @aeckstein if anyone has questions - or do some googling
        :data      {:coercion   reitit.coercion.spec/coercion
@@ -164,8 +222,8 @@
                                 wrap-cookies]}})
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
-        {:path   "/boogie-arinc/"
-         :url    "/boogie-arinc/swagger.json"
+        {:path   "/boogie/"
+         :url    "/boogie/swagger.json"
          :config {:validatorUrl     nil
                   :operationsSorter "alpha"}})
       (ring/create-default-handler))))

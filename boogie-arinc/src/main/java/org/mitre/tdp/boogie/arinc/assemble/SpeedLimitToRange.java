@@ -22,6 +22,11 @@ import com.google.common.collect.Range;
  */
 public final class SpeedLimitToRange implements BiFunction<SpeedLimitDescription, Double, Range<Double>> {
 
+  public static final SpeedLimitToRange INSTANCE = new SpeedLimitToRange();
+
+  private SpeedLimitToRange() {
+  }
+
   @Override
   public Range<Double> apply(SpeedLimitDescription speedLimitDescription, @Nullable Double speedLimit) {
     requireNonNull(speedLimitDescription, "Description code for speed limits ");

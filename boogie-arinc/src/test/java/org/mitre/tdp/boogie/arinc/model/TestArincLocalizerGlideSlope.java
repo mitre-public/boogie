@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
@@ -34,7 +36,7 @@ class TestArincLocalizerGlideSlope {
         () -> assertEquals(SectionCode.P, localizer.sectionCode(), "SectionCode"),
         () -> assertEquals("KJFK", localizer.airportIdentifier(), "AirportIdentifier"),
         () -> assertEquals("K6", localizer.airportIcaoRegion(), "AirportIcaoRegion"),
-        () -> assertEquals("I", localizer.subSectionCode(), "SubSectionCode"),
+        () -> assertEquals(Optional.of("I"), localizer.subSectionCode(), "SubSectionCode"),
         // https://airportnavfinder.com/charts/tpp/KJFK/00610IL4L.PDF
         () -> assertEquals("IHIQ", localizer.localizerIdentifier(), "LocalizerIdentifier"),
         () -> assertEquals("1", localizer.ilsMlsGlsCategory().orElseThrow(AssertionError::new), "IlsMlsGlsCategory"),

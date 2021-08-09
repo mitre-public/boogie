@@ -19,7 +19,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  * <br>
  * Section/Subsection = PI
  */
-public final class ArincLocalizerGlideSlope {
+public final class ArincLocalizerGlideSlope implements ArincModel {
 
   /**
    * See {@link RecordType}.
@@ -135,6 +135,7 @@ public final class ArincLocalizerGlideSlope {
     return Optional.ofNullable(customerAreaCode);
   }
 
+  @Override
   public SectionCode sectionCode() {
     return sectionCode;
   }
@@ -147,8 +148,9 @@ public final class ArincLocalizerGlideSlope {
     return airportIcaoRegion;
   }
 
-  public String subSectionCode() {
-    return subSectionCode;
+  @Override
+  public Optional<String> subSectionCode() {
+    return Optional.of(subSectionCode);
   }
 
   public String localizerIdentifier() {
@@ -254,7 +256,7 @@ public final class ArincLocalizerGlideSlope {
         .sectionCode(sectionCode())
         .airportIdentifier(airportIdentifier())
         .airportIcaoRegion(airportIcaoRegion())
-        .subSectionCode(subSectionCode())
+        .subSectionCode(subSectionCode().orElseThrow(IllegalStateException::new))
         .localizerIdentifier(localizerIdentifier())
         .ilsMlsGlsCategory(ilsMlsGlsCategory().orElse(null))
         .continuationRecordNumber(continuationRecordNumber().orElse(null))

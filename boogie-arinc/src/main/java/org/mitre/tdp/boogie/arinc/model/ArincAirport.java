@@ -33,7 +33,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.TransitionAltitude;
  * Most field-level documentation exists on the explicit {@link FieldSpec} implementations used to populate the field within this
  * POJO record. The field specs are linked in the field-level j-docs.
  */
-public final class ArincAirport {
+public final class ArincAirport implements ArincModel{
 
   /**
    * See {@link RecordType}.
@@ -188,6 +188,7 @@ public final class ArincAirport {
     return Optional.ofNullable(customerAreaCode);
   }
 
+  @Override
   public SectionCode sectionCode() {
     return sectionCode;
   }
@@ -200,8 +201,9 @@ public final class ArincAirport {
     return airportIcaoRegion;
   }
 
-  public String subSectionCode() {
-    return subSectionCode;
+  @Override
+  public Optional<String> subSectionCode() {
+    return Optional.of(subSectionCode);
   }
 
   public Optional<String> iataDesignator() {
@@ -299,7 +301,7 @@ public final class ArincAirport {
         .sectionCode(sectionCode())
         .airportIdentifier(airportIdentifier())
         .airportIcaoRegion(airportIcaoRegion())
-        .subSectionCode(subSectionCode())
+        .subSectionCode(subSectionCode().orElseThrow(IllegalStateException::new))
         .iataDesignator(iataDesignator().orElse(null))
         .continuationRecordNumber(continuationRecordNumber().orElse(null))
         .speedLimitAltitude(speedLimitAltitude().orElse(null))

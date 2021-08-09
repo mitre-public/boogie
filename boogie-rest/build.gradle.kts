@@ -9,10 +9,10 @@ plugins {
 
 application {
     // current supported method for setting the main class a la later gradle versions
-    mainClass.set("boogie.arinc.server")
+    mainClass.set("boogie.server")
 
     // clojurephant/shadow kind of old so we have to include this override - otherwise they barf even though its deprecated
-    mainClassName = "boogie.arinc.server"
+    mainClassName = "boogie.server"
 }
 
 // the clojure code needs to be AOT compiled to end up as actually .class files (instead of .clj) files in the final
@@ -22,7 +22,7 @@ clojure {
     builds.named("main") {
         // exclude the check on the server namespace - its simple, small, and adds a bit of time to tests since its standing
         // up a ring server during the check... lol
-        setCheckNamespaces(listOf("boogie.arinc.routes", "boogie.arinc.cycles"))
+        setCheckNamespaces(listOf("boogie.routes", "boogie.arinc.cycles", "boogie.arinc.latest", "boogie.routes.expand"))
         aotAll()
     }
 }
@@ -34,7 +34,6 @@ tasks.register("printSourceSets") {
             println("[" + srcSet.name + "]")
             print("-->Source directories: " + srcSet.allJava.srcDirs + "\n")
             print("-->Output directories: " + srcSet.output.classesDirs.files + "\n")
-            println("")
         }
     }
 }
