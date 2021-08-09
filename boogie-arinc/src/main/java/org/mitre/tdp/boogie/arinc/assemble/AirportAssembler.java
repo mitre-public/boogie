@@ -21,7 +21,7 @@ import org.mitre.tdp.boogie.model.BoogieAirport;
 
 /**
  * Functional class for converting a {@link ArincAirport} record into an implementation of the {@link Airport} interface with
- * injectible functionality for constructing that concrete data class.
+ * injectable functionality for constructing that concrete data class.
  * <br>
  * This class provides a default implementation of that conversion targeting the {@link BoogieAirport} data model.
  */

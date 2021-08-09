@@ -34,7 +34,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * <br>
  * 4 characters - Enroute Airways, Preferred Routes, FIR/UIR and Restrictive Airspace.
  * <br>
- * 3 characters - SID/ST AR/Approach and Company Routes.
+ * 3 characters - SID/STAR/Approach and Company Routes.
  * <br>
  * Examples - 0010, 0135, 2076, 120, 030, 01, 84, 3.
  */

@@ -13,6 +13,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
@@ -20,6 +21,7 @@ import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -279,5 +281,30 @@ public final class ArincToBoogieConverterFactory {
       default:
         return TurnDirection.either();
     }
+  }
+
+  static Leg newLegFrom(ArincAirwayLeg arincAirwayLeg, Fix associatedFix, @Nullable Fix recommendedNavaid) {
+    return new BoogieLeg.Builder()
+        .associatedFix(associatedFix)
+        .recommendedNavaid(recommendedNavaid)
+        .pathTerminator(PathTerminator.TF)
+        .sequenceNumber(arincAirwayLeg.sequenceNumber())
+        .speedConstraint(Range.all())
+        // we're making some choices here... for bi-directional airways each direction of travel can have a different minimums in min1/min2
+        .altitudeConstraint(
+            arincAirwayLeg.maxAltitude().isPresent()
+                // use range if max is present [min1, max]
+                ? AltitudeLimitToRange.INSTANCE.apply("B", arincAirwayLeg.maxAltitude().orElse(null), arincAirwayLeg.minAltitude1().orElse(null))
+                // use at or above if only min1 is present
+                : AltitudeLimitToRange.INSTANCE.apply("+", arincAirwayLeg.minAltitude1().orElse(null), null))
+        .outboundMagneticCourse(arincAirwayLeg.outboundMagneticCourse().orElse(null))
+        .theta(arincAirwayLeg.theta().orElse(null))
+        .rho(arincAirwayLeg.rho().orElse(null))
+        .rnp(arincAirwayLeg.rnp().orElse(null))
+        .routeDistance(arincAirwayLeg.routeDistance().orElse(null))
+        .holdTime(arincAirwayLeg.holdTime().orElse(null))
+        .isPublishedHoldingFix(arincAirwayLeg.waypointDescription().map(IsPublishedHoldingFix.INSTANCE::isPublishedHoldingFix).orElse(false))
+        .isFlyOverFix(arincAirwayLeg.waypointDescription().map(IsFlyOverFix.INSTANCE::isFlyOverFix).orElse(false))
+        .build();
   }
 }

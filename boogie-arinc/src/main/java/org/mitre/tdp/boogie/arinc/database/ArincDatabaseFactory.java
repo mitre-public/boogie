@@ -69,6 +69,10 @@ public final class ArincDatabaseFactory {
     return new FixDatabase(lookup);
   }
 
+  public static TerminalAreaDatabase emptyTerminalAreaDatabase() {
+    return new TerminalAreaDatabase(LinkedHashMultimap.create());
+  }
+
   /**
    * Factory method for generating a new {@link TerminalAreaDatabase} which indexes various ARINC records native to Airports by
    * their associated airport identifier and ICAO region.

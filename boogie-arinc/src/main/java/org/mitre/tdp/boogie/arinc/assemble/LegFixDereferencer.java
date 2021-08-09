@@ -42,6 +42,13 @@ final class LegFixDereferencer {
     this.fixDatabase = requireNonNull(fixDatabase);
   }
 
+  Optional<Fix> dereferenceNavaid(String identifier, String icaoRegion) {
+    Fix navaid = dereference(identifier, null, icaoRegion, SectionCode.D, null)
+        .orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.D, "B")
+            .orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.P, "n").orElse(null)));
+    return Optional.ofNullable(navaid);
+  }
+
   /**
    * We allow the airport to be nullable so this signature can be used in conjunction with the {@link AirwayAssembler}.
    */

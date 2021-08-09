@@ -1,6 +1,7 @@
 # Boogie
 [![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-VOIC)](https://https://pandafood.mitre.org/browse/CDA-SHIM)
 [![Latest Release](https://img.shields.io/badge/version-0.0.91-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
+[![Coverage](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=coverage)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 
 # Project Overview
 Boogie serves as an entry point for navigation data parsing, route expansion, route conformance, and eventually flight modeling in a dependency-light software project. Boogie is a multi-module
