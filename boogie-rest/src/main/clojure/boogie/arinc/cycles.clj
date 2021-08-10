@@ -31,7 +31,7 @@
   [cycle] (.apply @file-locator cycle))
 
 (defn find-available-files
-  "Returns a mapping from {cycle, filePath} for all files that exist within the date range based on the configured FILE_LOCATOR_PATH.
+  "Returns a mapping from {cycle, {:path filePath}} for all files that exist within the date range based on the configured FILE_LOCATOR_PATH.
   The underlying map implementation is from the clojure AVL library - and gives access to features similar to a java NavigableMap."
   []
   (let [earliest (Instant/parse "2015-01-01T00:00:00Z")]
@@ -46,15 +46,17 @@
 (defonce available-files (atom (find-available-files)))
 
 (defn nearest-available
-  "Returns the nearest cycle/file to the requested cycle. If the file/cycle combination don't exist in the list of available file/cycle
-  combinations but the input file exists it will be added to the list of available files."
+  "Returns the nearest cycle/file to the requested cycle as [^String cycle ^File file] or [nil nil] if there are none available.
+  If the file/cycle combination don't exist in the list of available file/cycle combinations but the input file exists it will be
+  added to the list of available files."
   [cycle file]
   (if (.exists file)
     (do (swap! available-files (fn [m] (assoc m cycle {:path (.getAbsolutePath file)})))
         [cycle file])
-    (let [lower (avl/nearest @available-files < cycle)
-          upper (avl/nearest @available-files > cycle)
+    (let [lower (avl/nearest @available-files <= cycle)
+          upper (avl/nearest @available-files >= cycle)
           entry (if (nil? lower) upper lower)]
+      (timbre/debug (str "Finding nearest to cycle " cycle " in " (keys @available-files)))
       (if (nil? entry) [nil nil] [(key entry) (new File (:path (val entry)))]))))
 
 (defn load-cycle
@@ -111,7 +113,16 @@
   (let [[^String target-cycle ^File target-file] (target-cycle-file requested-cycle)]
     (timbre/info (str "Hitting cache for requested cycle: " requested-cycle))
     (if (nil? target-cycle)
-      (do (timbre/info (str "Unable find available data for requested cycle " requested-cycle)) {"cycle" requested-cycle})
+      (do (timbre/info (str "Unable find available data for requested cycle " requested-cycle))
+          {"cycle"                                 requested-cycle
+           (.getTypeName ArincAirport)             []
+           (.getTypeName ArincRunway)              []
+           (.getTypeName ArincLocalizerGlideSlope) []
+           (.getTypeName ArincAirwayLeg)           []
+           (.getTypeName ArincProcedureLeg)        []
+           (.getTypeName ArincNdbNavaid)           []
+           (.getTypeName ArincVhfNavaid)           []
+           (.getTypeName ArincWaypoint)            []})
       ;; if there is a valid target cycle which we can map the request to look it up
       (do (timbre/info (str "Targeting cycle " target-cycle " based on requested cycle " requested-cycle ", load initializing."))
           (if (cache/has? @cycle-cache target-cycle)

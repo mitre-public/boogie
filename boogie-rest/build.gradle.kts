@@ -39,6 +39,7 @@ tasks.register("printSourceSets") {
 }
 
 dependencies {
+
     // Clojure dependencies for the thin REST API wrapper around the Boogie software
     implementation("org.clojure:clojure:1.10.1")
     implementation("compojure:compojure:1.6.1")
@@ -68,4 +69,9 @@ dependencies {
     api(project(":boogie-arinc"))
 
     implementation("com.ko-sys.av:airac:1.0.0")
+}
+
+// needed for test integration
+tasks.withType<Test>() {
+    useJUnitPlatform()
 }
