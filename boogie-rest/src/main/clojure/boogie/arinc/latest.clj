@@ -78,7 +78,8 @@
          (reduce merge))))
 
 (defn runways
-  "Returns the mapping of {AirportIdentifier, {RunwayIdentifier, ArincRunway}} matching the input set of comma-delimited airport identifiers."
+  "Returns the mapping of {AirportIdentifier, {RunwayIdentifier, ArincRunway}} matching the input set of comma-delimited airport
+  identifiers."
   [airport-csv]
   (timbre/info (str "Querying runways at airport(s): " airport-csv))
   (->> (clojure.string/split airport-csv #",")
@@ -88,7 +89,8 @@
        (reduce merge)))
 
 (defn localizers
-  "Returns the mapping of {AirportIdentifier, {LocalizerIdentifier, ArincLocalizerGlideSlope}} matching the input set of comma-delimited airport identifiers."
+  "Returns the mapping of {AirportIdentifier, {LocalizerIdentifier, ArincLocalizerGlideSlope}} matching the input set of comma
+  delimited airport identifiers."
   [airport-csv]
   (timbre/info (str "Querying localizers at airport(s): " airport-csv))
   (->> (clojure.string/split airport-csv #",")
@@ -98,7 +100,7 @@
        (reduce merge)))
 
 (defn waypoints
-  "Returns all terminal and enroute waypoints matching the provided identifiers as a mapping of {Terminal/Enroute, {IcaoRegion, ArincWaypoint}}"
+  "Returns all terminal and enroute waypoints matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincWaypoint}}"
   [identifiers-csv]
   (timbre/info (str "Querying waypoints with identifier(s): " identifiers-csv))
   (let [waypoints (clojure.string/split identifiers-csv #",")]
@@ -107,6 +109,7 @@
          (reduce {} deep-merge))))
 
 (defn vhf-navaids
+  "Returns all vhf navaids matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincWaypoint}}"
   [identifiers-csv]
   (timbre/info (str "Querying VHF navaids with identifier(s): " identifiers-csv))
   (let [vhf-navaids (clojure.string/split identifiers-csv #",")]
@@ -115,6 +118,7 @@
          (reduce {} deep-merge))))
 
 (defn ndb-navaids
+  "Returns all ndb navaids matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincWaypoint}}"
   [identifiers-csv]
   (timbre/info (str "Querying NDB navaids with identifier(s): " identifiers-csv))
   (let [ndb-navaids (clojure.string/split identifiers-csv #",")]
@@ -123,6 +127,7 @@
          (reduce {} deep-merge))))
 
 (defn procedure-legs
+  "Returns all procedure legs at the given airport as {ProcedureName, List[ProcedureLegs]}"
   [procedures-csv airport]
   (timbre/info (str "Querying procedures with identifier(s): " procedures-csv))
   (->> (clojure.string/split procedures-csv #",")
@@ -130,6 +135,8 @@
        (reduce merge)))
 
 (defn terminal-areas
+  "Returns all ARINC data objects related to the given terminal area(s) as {Airport/TerminalArea, {TypeClassName, List[Records]}}.
+   Note all values are lists except the airport record which is a singleton."
   [terminal-areas-csv]
   (->> (clojure.string/split terminal-areas-csv #",")
        (map #(assoc {} % {(.getTypeName ArincAirport)             (.airport (get-terminal-database) %)

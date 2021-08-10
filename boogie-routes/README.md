@@ -1,28 +1,9 @@
 # Boogie Routes
-[![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-VOIC)](https://https://pandafood.mitre.org/browse/CDA-SHIM)
-[![Latest Release](https://img.shields.io/badge/version-0.0.91-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 
 # Module overview
 
 This module resolves the physical planned path of an aircraft through the NAS based on the route strings filed in it’s flightplans. Depending on the configured infrastructure data this route expansions can 
 be generated both domestically and internationally.
-
-<div class="img-with-text">
-<p>Domestic routes by arrival airport (<span style="color: red;">KLAX</span>, <span style="color: lime;">KSEA</span>, <span style="color: purple;">KORD</span>,
- <span style="color: cyan;">KJFK</span>, <span style="color: gold;">KDFW</span>):</p>
-</div>
-<br />
-
-<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmain"/>
-<br />
-<div class="img-with-text">
-<p>International expansions  (<span style="color: red;">WSSS</span>, <span style="color: lime;">EGLL</span>, <span style="color: purple;">EHAM</span>,
- <span style="color: cyan;">RJAA</span>, <span style="color: gold;">LEMD</span>):</p>
-</div>
-<br />
-<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain"/>
-<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
-<br />
 
 # Quick start
 
@@ -96,6 +77,23 @@ there is no indication of the day of arrival.
 There is also a collection of wildcard characters that can appear in flightplans next to the elements outlined above. There are a reasonable number of them but the vast majority are 
 extremely uncommon to see filed, the two you're most likely to come across are (+ and *). * indicates that an ADR/ADAR (adapted arrival/departure route) has been suppressed in the 
 flightplan, while + can be either military in nature in which case it means to expect multiple flyovers of the associated fix or it may occur in pairs and indicate special route printing. 
+
+<div class="img-with-text">
+<p>Domestic routes by arrival airport (<span style="color: red;">KLAX</span>, <span style="color: lime;">KSEA</span>, <span style="color: purple;">KORD</span>,
+ <span style="color: cyan;">KJFK</span>, <span style="color: gold;">KDFW</span>):</p>
+</div>
+<br />
+
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmain"/>
+<br />
+<div class="img-with-text">
+<p>International expansions  (<span style="color: red;">WSSS</span>, <span style="color: lime;">EGLL</span>, <span style="color: purple;">EHAM</span>,
+ <span style="color: cyan;">RJAA</span>, <span style="color: gold;">LEMD</span>):</p>
+</div>
+<br />
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
+<br />
 
 # How the algorithm works
 

@@ -1,6 +1,4 @@
 # Boogie Core
-[![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-VOIC)](https://https://pandafood.mitre.org/browse/CDA-SHIM)
-[![Latest Release](https://img.shields.io/badge/version-0.0.91-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 
 # Module overview
 <p>This module defines the core set of navigation interfaces used throughout the Boogie software as well as a collection of utility classes for commonly 

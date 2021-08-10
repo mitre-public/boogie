@@ -1,6 +1,4 @@
 # Boogie ARINC
-[![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-VOIC)](https://https://pandafood.mitre.org/browse/CDA-SHIM)
-[![Latest Release](https://img.shields.io/badge/version-0.0.91-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 
 # Module overview
 <p>This module within the Boogie software project provides a set of configurable and extensible parsers for ARINC424 formatted data.</p>
@@ -80,9 +78,9 @@ TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalArea
 
 // the above is an airport-indexed view of all of the listed argument data and is useful for common queries 
 // about records which can be directly related to an airport
-Optional<ArincLocalizerGlideSlope> rw13RLocalizerGlideSlope = terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KFJK", "RW13R");
+Optional<ArincLocalizerGlideSlope> rw13RLocalizerGlideSlope = terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "RW13R");
 
-Collection<ArincProcedureLeg> rober2Legs = terminalAreaDatabase.legsForProcedure("KFJK", "ROBER2"); // etc.
+Collection<ArincProcedureLeg> rober2Legs = terminalAreaDatabase.legsForProcedure("KJFK", "ROBER2"); // etc.
 ```
 
 Most of the database implementations under ```org.mitre.tdp.boogie.database``` provide similar collections of methods for accessing pre-indexed data. The ```ArincDatabaseFactory``` is the de facto 
