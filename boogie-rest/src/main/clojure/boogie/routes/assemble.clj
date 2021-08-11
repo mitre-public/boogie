@@ -1,7 +1,8 @@
 (ns boogie.routes.assemble
   "Namespace for assembling the records loaded in cycles.clj such that they match the Boogie interfaces for Fixes/Airports/Airways/Procedures."
   (:require [boogie.arinc.cycles :refer [get-cycle-data current-cycle is-cached? target-cycle-file]])
-  (:require [boogie.arinc.latest :refer [get-fix-database get-terminal-database deep-merge]])
+  (:require [boogie.arinc.latest :refer [get-fix-database get-terminal-database deep-merge]]
+            [taoensso.timbre :as timbre])
   (:import (org.mitre.tdp.boogie.arinc.assemble ProcedureAssembler AirwayAssembler AirportAssembler FixAssembler)
            (org.mitre.tdp.boogie.arinc.model ArincProcedureLeg ArincAirwayLeg ArincWaypoint ArincVhfNavaid ArincNdbNavaid ArincAirport ArincModel)
            (java.util.stream Collectors)))
@@ -84,20 +85,29 @@
   []
   (if (is-cached? (current-cycle)) @airports (re-initialize-airports)))
 
-;; TODO - Tomorrow
 (defn procedures-by-identifier
   "Returns the collection of assembled procedures matching the provided CSV list of procedure names."
-  [identifiers-csv]
-  )
+  ([identifiers-csv]
+   (procedures-by-identifier identifiers-csv nil))
+  ([identifiers-csv airport-identifiers]
+   (let [prcs (clojure.string/split identifiers-csv #",")
+         apts (if (= nil airport-identifiers) [] (do (timbre/debug airport-identifiers) (clojure.string/split airport-identifiers #",")))]
+     (->> prcs (map #(assoc {} % (let [pmap (get (get-procedures) %)] (if (empty? apts) pmap (select-keys pmap apts))))) (reduce merge)))))
 
 (defn airways-by-identifier
   "Returns the collection of assembled airways matching the provided CSV list of airway names."
-  [identifiers-csv])
+  [identifiers-csv]
+  (let [awys (clojure.string/split identifiers-csv #",")]
+    (->> awys (map #(assoc {} % (get (get-airways) %))) (reduce merge))))
 
 (defn fixes-by-identifier
   "Returns the collection of assembled fixes matching the provided CSV list of fix names."
-  [identifiers-csv])
+  [identifiers-csv]
+  (let [fxs (clojure.string/split identifiers-csv #",")]
+    (->> fxs (map #(assoc {} % (get (get-fixes) %))) (reduce merge))))
 
-(defn airport-by-identifier
+(defn airports-by-identifier
   "Returns to collection of assembled airports matching the provided CSV list of airport names."
-  [identifiers-csv])
+  [identifiers-csv]
+  (let [apts (clojure.string/split identifiers-csv #",")]
+    (->> apts (map #(assoc {} % (get (get-airports) %))) (reduce merge))))

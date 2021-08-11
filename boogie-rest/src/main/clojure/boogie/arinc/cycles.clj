@@ -45,6 +45,8 @@
 ;; the pre-indexed set of all available files
 (defonce available-files (atom (find-available-files)))
 
+(defn initialize-available-files [] (swap! available-files (fn [f] (find-available-files))))
+
 (defn nearest-available
   "Returns the nearest cycle/file to the requested cycle as [^String cycle ^File file] or [nil nil] if there are none available.
   If the file/cycle combination don't exist in the list of available file/cycle combinations but the input file exists it will be

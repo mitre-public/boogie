@@ -116,11 +116,11 @@ public final class RouteSummary implements Serializable {
   }
 
   public Optional<String> arrivalRunway() {
-    return Optional.of(arrivalRunway);
+    return Optional.ofNullable(arrivalRunway);
   }
 
   public Optional<String> arrivalFix() {
-    return Optional.of(arrivalFix);
+    return Optional.ofNullable(arrivalFix);
   }
 
   public String departureAirport() {
@@ -128,47 +128,47 @@ public final class RouteSummary implements Serializable {
   }
 
   public Optional<String> departureRunway() {
-    return Optional.of(departureRunway);
+    return Optional.ofNullable(departureRunway);
   }
 
   public Optional<String> departureFix() {
-    return Optional.of(departureFix);
+    return Optional.ofNullable(departureFix);
   }
 
   public Optional<String> star() {
-    return Optional.of(star);
+    return Optional.ofNullable(star);
   }
 
   public Optional<String> starEntryFix() {
-    return Optional.of(starEntryFix);
+    return Optional.ofNullable(starEntryFix);
   }
 
   public Optional<RequiredNavigationEquipage> requiredStarEquipage() {
-    return Optional.of(requiredStarEquipage);
+    return Optional.ofNullable(requiredStarEquipage);
   }
 
   public Optional<String> sid() {
-    return Optional.of(sid);
+    return Optional.ofNullable(sid);
   }
 
   public Optional<String> sidExitFix() {
-    return Optional.of(sidExitFix);
+    return Optional.ofNullable(sidExitFix);
   }
 
   public Optional<RequiredNavigationEquipage> requiredSidEquipage() {
-    return Optional.of(requiredSidEquipage);
+    return Optional.ofNullable(requiredSidEquipage);
   }
 
   public Optional<String> approach() {
-    return Optional.of(approach);
+    return Optional.ofNullable(approach);
   }
 
   public Optional<String> approachEntryFix() {
-    return Optional.of(approachEntryFix);
+    return Optional.ofNullable(approachEntryFix);
   }
 
   public Optional<RequiredNavigationEquipage> requiredApproachEquipage() {
-    return Optional.of(requiredApproachEquipage);
+    return Optional.ofNullable(requiredApproachEquipage);
   }
 
   public Builder toBuilder() {

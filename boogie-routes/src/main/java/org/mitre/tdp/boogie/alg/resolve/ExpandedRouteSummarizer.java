@@ -3,11 +3,14 @@ package org.mitre.tdp.boogie.alg.resolve;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
@@ -24,6 +27,7 @@ import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.RouteSummary;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.fn.QuadFunction;
+import org.mitre.tdp.boogie.util.TransitionSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,9 +132,10 @@ public final class ExpandedRouteSummarizer implements QuadFunction<List<Resolved
     }
 
     private Map<Leg, Transition> transitionEmbedding(Procedure star) {
-      return star.transitions().stream()
+      return TransitionSorter.INSTANCE.sortStarTransitions(star.transitions()).stream()
+          .flatMap(Collection::stream)
           .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)))
-          .collect(Collectors.toMap(Pair::first, Pair::second));
+          .collect(elidingCollector(Pair::first, Pair::second));
     }
   }
 
@@ -161,10 +166,20 @@ public final class ExpandedRouteSummarizer implements QuadFunction<List<Resolved
     }
 
     private Map<Leg, Transition> transitionEmbedding(Procedure sid) {
-      return sid.transitions().stream()
+      return TransitionSorter.INSTANCE.sortSidTransitions(sid.transitions()).stream()
+          .flatMap(Collection::stream)
           .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)))
-          .collect(Collectors.toMap(Pair::first, Pair::second));
+          .collect(elidingCollector(Pair::first, Pair::second));
     }
+  }
+
+  /**
+   * Collector which (in the case of key conflicts) elides subsequent encounters of a given key.
+   */
+  private static <T, K, U> Collector<T, ?, LinkedHashMap<K, U>> elidingCollector(
+      Function<? super T, ? extends K> keyMapper,
+      Function<? super T, ? extends U> valueMapper) {
+    return Collectors.toMap(keyMapper, valueMapper, (a, b) -> a, LinkedHashMap::new);
   }
 
   /**

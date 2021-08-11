@@ -2,8 +2,7 @@
   (:require [clojure.test :refer :all]
             [boogie.arinc.cycles :refer [cycle-file find-available-files file-locator nearest-available get-available-cycles load-cycle]]
             [boogie.environment-test :refer [setup-and-teardown test-file-subpath]])
-  (:import (org.mitre.tdp.boogie.arinc PatternBasedFileLocator)
-           (java.io File)
+  (:import (java.io File)
            (org.mitre.tdp.boogie.arinc.model ArincAirport ArincRunway ArincLocalizerGlideSlope ArincAirwayLeg ArincProcedureLeg ArincNdbNavaid ArincVhfNavaid ArincWaypoint)))
 
 (use-fixtures :once setup-and-teardown)

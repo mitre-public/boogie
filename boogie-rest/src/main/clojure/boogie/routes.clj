@@ -29,6 +29,8 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.gzip :as gzip])
+  (:require [boogie.routes.assemble :refer [procedures-by-identifier airways-by-identifier fixes-by-identifier airports-by-identifier]])
+  (:require [boogie.routes.expand :refer [expand-route]])
   (:require [boogie.arinc.cycles :refer [cycle-file get-cycle-data get-available-cycles current-cycle]])
   (:require [boogie.arinc.latest :refer [airports runways localizers waypoints ndb-navaids vhf-navaids procedure-legs terminal-areas]])
   (:require [boogie.arinc.parse :refer [arinc->pojo]])
@@ -48,6 +50,8 @@
 (s/def ::route string?)
 
 (s/def ::arrival-airport string?)
+(s/def ::arrival-runway string?)
+(s/def ::departure-runway string?)
 (s/def ::departure-airport string?)
 (s/def ::equipage #{(.name (RequiredNavigationEquipage/RNP)) (.name (RequiredNavigationEquipage/RNAV)) (.name (RequiredNavigationEquipage/CONV))})
 
@@ -79,21 +83,47 @@
                :handler (swagger/create-swagger-handler)}}]
        ["/routes"
         ["/expand"
-         {:get        {:summary "Returns the expanded route for the given flight plan route string (with some additional context)."}
-          :parameters {:query (s/keys :req-un [::route] :opt-un [::departure-airport ::arrival-airport ::equipage])}
-          :responses  {200 {:body any?}}
-          :handler    (fn [{{{:keys [route departure-airport arrival-airport equipage]} :query} :parameters}]
-                        ())}]
-        ;["/airports"
-        ; {:get {:summary    "Returns the composite version of Airport(s) as seen by the Boogie software."
-        ;        :parameters {:query (s/keys :req-un [::identifiers])}
-        ;        :responses  {200 {:body any?}}}}]
-        ;["/fixes"
-        ; {:get {:summary "Returns the composite version of Fix(es) (waypoint, vhf/ndb navaid) as seen by the Boogie software."}}]
-        ;["/procedures"
-        ; {:get {:summary "Returns the composite version of Procedure(s) as seen by the Boogie software."}}]
-        ;["/airways"
-        ; {:get {:summary "Returs the composite version of Airway(s) as seen by the Boogie software."}}]]
+         {:get {:summary    "Returns the expanded route for the given flight plan route string (with some additional context)."
+                :parameters {:query (s/keys :req-un [::route] :opt-un [::departure-runway ::arrival-runway ::equipage])}
+                :responses  {200 {:body any?}}
+                :handler    (fn [{{{:keys [route departure-runway arrival-runway equipage]} :query} :parameters}]
+                              (-> (.toJson @gson (if (= nil equipage)
+                                                   (expand-route route departure-runway arrival-runway)
+                                                   (expand-route route departure-runway arrival-runway equipage)))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/airports"
+         {:get {:summary    "Returns the composite version of Airport(s) as seen by the Boogie software."
+                :parameters {:query (s/keys :req-un [::identifiers])}
+                :responses  {200 {:body any?}}
+                :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
+                              (-> (.toJson @gson (airports-by-identifier identifiers))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/fixes"
+         {:get {:summary    "Returns the composite version of Fix(es) (waypoint, vhf/ndb navaid) as seen by the Boogie software."
+                :parameters {:query (s/keys :req-un [::identifiers])}
+                :responses  {200 {:body any?}}
+                :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
+                              (-> (.toJson @gson (fixes-by-identifier identifiers))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/procedures"
+         {:get {:summary    "Returns the composite version of Procedure(s) as seen by the Boogie software."
+                :parameters {:query (s/keys :req-un [::identifiers] :opt-un [::airports])}
+                :responses  {200 {:body any?}}
+                :handler    (fn [{{{:keys [identifiers airports]} :query} :parameters}]
+                              (-> (.toJson @gson (procedures-by-identifier identifiers airports))
+                                  (response)
+                                  (content-type "text/json")))}}]
+        ["/airways"
+         {:get {:summary    "Returns the composite version of Airway(s) as seen by the Boogie software."
+                :parameters {:query (s/keys :req-un [::identifiers])}
+                :responses  {200 {:body any?}}
+                :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
+                              (-> (.toJson @gson (airways-by-identifier identifiers))
+                                  (response)
+                                  (content-type "text/json")))}}]
         ]
        ["/arinc"
         ["/file"
@@ -204,7 +234,8 @@
                               (-> (.toJson @gson (terminal-areas airports))
                                   (response)
                                   (content-type "text/json")))}}]
-        ]]
+        ]
+       ]
       {:exception pretty/exception
        ;; I don't know what any of this does and I don't want to find out - ask @aeckstein if anyone has questions - or do some googling
        :data      {:coercion   reitit.coercion.spec/coercion
