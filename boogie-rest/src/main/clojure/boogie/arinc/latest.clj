@@ -2,7 +2,8 @@
   "Namespace for performing more targeted queries for infrastructure data."
   (:require [boogie.arinc.cycles :refer [get-cycle-data current-cycle is-cached? target-cycle-file]])
   (:require [taoensso.timbre :as timbre :refer-macros [debug info warn]])
-  (:import (org.mitre.tdp.boogie.arinc.database ArincDatabaseFactory TerminalAreaDatabase FixDatabase)
+  (:import (org.mitre.tdp.boogie.arinc.assemble StandardizedTransitionName)
+           (org.mitre.tdp.boogie.arinc.database ArincDatabaseFactory TerminalAreaDatabase FixDatabase)
            (org.mitre.tdp.boogie.arinc.model ArincNdbNavaid ArincVhfNavaid ArincWaypoint ArincAirport ArincRunway ArincLocalizerGlideSlope ArincProcedureLeg)
            (java.util Collections)))
 
@@ -54,19 +55,25 @@
 
 (defonce ^FixDatabase fix-database (atom (new-fix-database (current-cycle))))
 
+(defn re-initialize-fix-database []
+  (swap! fix-database (fn [atm] (new-fix-database (current-cycle)))))
+
 (defn get-fix-database
   "Returns the instance of the FixDatabase appropriate for the current cycle given the set of available files configured at launch time.
   If the current fix-database isn't up-to-date with the latest available cycle then this loads the current cycle and re-indexes it."
   []
-  (if (is-cached? (current-cycle)) @fix-database (swap! fix-database (fn [atm] (new-fix-database (current-cycle))))))
+  (if (is-cached? (current-cycle)) @fix-database (re-initialize-fix-database)))
 
 (defonce ^TerminalAreaDatabase terminal-database (atom (new-terminal-database (current-cycle))))
+
+(defn re-initialize-terminal-database []
+  (swap! terminal-database (fn [atm] (new-terminal-database (current-cycle)))))
 
 (defn get-terminal-database
   "Returns the instance of the TerminalAreaDatabase appropriate for the current cycle given the set of available files configured at launch time.
   If the current terminal-database isn't up-to-date with the latest available cycle then this loads the current cycle and re-indexes it."
   []
-  (if (is-cached? (current-cycle)) @terminal-database (swap! terminal-database (fn [atm] (new-terminal-database (current-cycle))))))
+  (if (is-cached? (current-cycle)) @terminal-database (re-initialize-terminal-database)))
 
 (defn airports
   "Returns the mapping of {AirportIdentifier, ArincAirport} matching the input set of comma-delimited airport identifiers."
@@ -102,36 +109,42 @@
 (defn waypoints
   "Returns all terminal and enroute waypoints matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincWaypoint}}"
   [identifiers-csv]
-  (timbre/info (str "Querying waypoints with identifier(s): " identifiers-csv))
   (let [waypoints (clojure.string/split identifiers-csv #",")]
+    (timbre/info (str "Querying waypoints with identifier(s): " waypoints))
     (->> (.waypoints (get-fix-database) (into-array String waypoints))
          (map #(assoc {} (.waypointIdentifier %) (assoc {} (.waypointIcaoRegion %) %)))
-         (reduce {} deep-merge))))
+         (reduce deep-merge {})
+         )))
 
 (defn vhf-navaids
-  "Returns all vhf navaids matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincWaypoint}}"
+  "Returns all vhf navaids matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincVhfNavaid}}"
   [identifiers-csv]
   (timbre/info (str "Querying VHF navaids with identifier(s): " identifiers-csv))
   (let [vhf-navaids (clojure.string/split identifiers-csv #",")]
     (->> (.vhfNavaids (get-fix-database) (into-array String vhf-navaids))
          (map #(assoc {} (.vhfIdentifier %) (assoc {} (.vhfIcaoRegion %) %)))
-         (reduce {} deep-merge))))
+         (reduce deep-merge {}))))
 
 (defn ndb-navaids
-  "Returns all ndb navaids matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincWaypoint}}"
+  "Returns all ndb navaids matching the provided identifiers as a mapping of {Identifier, {IcaoRegion, ArincNdbNavaid}}"
   [identifiers-csv]
   (timbre/info (str "Querying NDB navaids with identifier(s): " identifiers-csv))
   (let [ndb-navaids (clojure.string/split identifiers-csv #",")]
     (->> (.ndbNavaids (get-fix-database) (into-array String ndb-navaids))
          (map #(assoc {} (.ndbIdentifier %) (assoc {} (.ndbIcaoRegion %) %)))
-         (reduce {} deep-merge))))
+         (reduce deep-merge {}))))
 
 (defn procedure-legs
-  "Returns all procedure legs at the given airport as {ProcedureName, List[ProcedureLegs]}"
+  "Returns all procedure legs at the given airport as {ProcedureName, {TransitionName, List[ProcedureLegs}} and the legs per transition
+  are sorted by their sequence number."
   [procedures-csv airport]
   (timbre/info (str "Querying procedures with identifier(s): " procedures-csv))
   (->> (clojure.string/split procedures-csv #",")
-       (map #(assoc {} % (.legsForProcedure (get-terminal-database) airport %)))
+       (map #(assoc {} % (->> (.legsForProcedure (get-terminal-database) airport %)
+                              (sort-by (fn [leg] (.sequenceNumber leg)))
+                              (group-by (fn [leg] (-> (.transitionIdentifier leg)
+                                                      (.map StandardizedTransitionName/INSTANCE)
+                                                      (.orElse "ALL")))))))
        (reduce merge)))
 
 (defn terminal-areas
@@ -144,4 +157,5 @@
                           (.getTypeName ArincLocalizerGlideSlope) (.localizerGlideSlopesAt (get-terminal-database) %)
                           (.getTypeName ArincNdbNavaid)           (.ndbNavaidsAt (get-terminal-database) %)
                           (.getTypeName ArincWaypoint)            (.waypointsAt (get-terminal-database) %)
-                          (.getTypeName ArincProcedureLeg)        (.allProcedureLegsAt (get-terminal-database) %)}))))
+                          (.getTypeName ArincProcedureLeg)        (.allProcedureLegsAt (get-terminal-database) %)}))
+       (reduce merge)))

@@ -33,7 +33,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.TransitionAltitude;
  * Most field-level documentation exists on the explicit {@link FieldSpec} implementations used to populate the field within this
  * POJO record. The field specs are linked in the field-level j-docs.
  */
-public final class ArincAirport implements ArincModel{
+public final class ArincAirport implements ArincModel {
 
   /**
    * See {@link RecordType}.
@@ -372,7 +372,7 @@ public final class ArincAirport implements ArincModel{
 
   @Override
   public String toString() {
-    return "ArincAirport2{" +
+    return "ArincAirport{" +
         "recordType=" + recordType +
         ", customerAreaCode=" + customerAreaCode +
         ", sectionCode='" + sectionCode + '\'' +

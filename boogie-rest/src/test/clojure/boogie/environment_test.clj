@@ -1,6 +1,8 @@
 (ns boogie.environment-test
   (:require [clojure.test :refer :all]
-            [boogie.arinc.cycles :refer [file-locator get-available-cycles]])
+            [boogie.arinc.cycles :refer [file-locator get-available-cycles get-cycle-data current-cycle]]
+            [boogie.arinc.latest :refer [re-initialize-fix-database re-initialize-terminal-database]]
+            [boogie.routes.assemble :refer [re-initialize-procedures re-initialize-airways re-initialize-fixes re-initialize-airports]])
   (:import (org.mitre.tdp.boogie.arinc PatternBasedFileLocator)
            (java.nio.file Paths)))
 
@@ -27,11 +29,24 @@
 
 (defn setup-and-teardown
   "Performs the setup and teardown of the namespace prior to running the tests.
+  <br>
+  This method is mirroring the (initialize-backend-resources) function in the boogie.server class - which ensures the backend resources
+  are initialized in the appropriate order on start-up.
+  <br>
   This function should be configured in all of the Boogie test namespaces prior to running tests: (use-fixtures :once setup-and-teardown)"
   [f]
   (let [default-locator @file-locator]
-    (swap! file-locator (fn [loc] (new PatternBasedFileLocator (test-file-path))))
-    ;; make sure we update the available files states now that we've update the locator path
-    (get-available-cycles)
-    (f)
-    (swap! file-locator (fn [loc] default-locator))))
+    (do (taoensso.timbre/debug (str "Swapping to test file path: " (test-file-path)))
+        (swap! file-locator (fn [loc] (new PatternBasedFileLocator (test-file-path))))
+        ;; make sure we update the available files states now that we've update the locator path
+        (taoensso.timbre/debug "Pre-indexing available cycles.")
+        (get-available-cycles)
+        (taoensso.timbre/debug "Pre-indexing data.")
+        (get-cycle-data (current-cycle))
+        (taoensso.timbre/debug "Initialize the fix/terminal databases.")
+        (re-initialize-fix-database) (re-initialize-terminal-database)
+        (taoensso.timbre/debug "Initializing assembled records.")
+        (re-initialize-fixes) (re-initialize-airports) (re-initialize-airways) (re-initialize-procedures)
+        (f)
+        (taoensso.timbre/debug "Swapping back to original application classpath.")
+        (swap! file-locator (fn [loc] default-locator)))))

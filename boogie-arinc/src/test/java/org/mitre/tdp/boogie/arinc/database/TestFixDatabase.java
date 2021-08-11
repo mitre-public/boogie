@@ -12,9 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
@@ -42,7 +43,7 @@ import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 
 class TestFixDatabase {
 
-  private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-kjfk-v18.txt"));
+  private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
   private static FixDatabase fixDatabase;
 
@@ -66,6 +67,15 @@ class TestFixDatabase {
         () -> assertEquals(Optional.empty(), fixDatabase.enrouteWaypoint("AROKE"), "AROKE is a terminal waypoint - it's indexed in the database but should not be returned by this call."),
         () -> assertEquals(Optional.of("AROKE"), fixDatabase.terminalWaypoint("AROKE").map(ArincWaypoint::waypointIdentifier), "AROKE is a terminal waypoint - and therefore should be returned."),
         () -> assertEquals("AROKE,CAXUN", fixDatabase.waypoints("AROKE", "CAXUN").stream().map(ArincWaypoint::waypointIdentifier).collect(Collectors.joining(",")), "Both waypoints exist in the database and so both should be returned.")
+    );
+  }
+
+  @Test
+  void testDatabaseNavaidFunctionality() {
+    assertAll(
+        () -> assertEquals(Optional.of("LGA"), fixDatabase.vhfNavaid("LGA").map(ArincVhfNavaid::vhfIdentifier), "VHF LGA should be in the database."),
+        () -> assertEquals(Optional.of("SIE"), fixDatabase.vhfNavaid("SIE").map(ArincVhfNavaid::vhfIdentifier), "VHF SIE should be in the database."),
+        () -> assertEquals("LGA,SIE", fixDatabase.vhfNavaids("LGA", "SIE").stream().map(ArincVhfNavaid::vhfIdentifier).collect(Collectors.joining(",")))
     );
   }
 

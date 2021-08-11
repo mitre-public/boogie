@@ -103,8 +103,9 @@ final class ArincRequiredEquipageClassifier implements Function<Multimap<Transit
     } else if (requiresRnavEquip(arincRouteType, qualifier1, qualifier2)) {
       return RequiredNavigationEquipage.RNAV;
     } else {
+      // we could throw a hard exception here - but our tests quantify how often this can happen and it should be uncommon enough as to not matter
       LOG.warn("Unable to classify equipage based on routeType {} qualifier1 {} qualifier2 {}.", arincRouteType, qualifier1, qualifier2);
-      throw new IllegalStateException("Unable to classify RequiredNavigationEquipage of leg: ".concat(representative.toString()));
+      return RequiredNavigationEquipage.UNKNOWN;
     }
   }
 

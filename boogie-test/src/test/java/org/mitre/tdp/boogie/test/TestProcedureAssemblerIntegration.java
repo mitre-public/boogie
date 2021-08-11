@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssembler;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
@@ -75,6 +77,19 @@ class TestProcedureAssemblerIntegration {
         () -> assertEquals(39, proceduresByAirport.get("KJFK").size(), "KJFK counts"),
         () -> assertEquals(29, proceduresByAirport.get("KEWR").size(), "KEWR counts"),
         () -> assertEquals(41, proceduresByAirport.get("KSFO").size(), "KSFO counts")
+    );
+  }
+
+  @Test
+  void testCountsByRequiredNavigationEquipage() {
+    Map<RequiredNavigationEquipage, Long> countsByEquip = proceduresByAirport.values().stream()
+        .flatMap(Collection::stream).map(Procedure::requiredNavigationEquipage).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+    assertAll(
+        () -> assertEquals(410, countsByEquip.getOrDefault(RequiredNavigationEquipage.RNP, 0L), "RNP"),
+        () -> assertEquals(8660, countsByEquip.getOrDefault(RequiredNavigationEquipage.RNAV, 0L), "RNAV"),
+        () -> assertEquals(5188, countsByEquip.getOrDefault(RequiredNavigationEquipage.CONV, 0L), "CONV"),
+        () -> assertEquals(0, countsByEquip.getOrDefault(RequiredNavigationEquipage.UNKNOWN, 0L), "UNKNOWN")
     );
   }
 
