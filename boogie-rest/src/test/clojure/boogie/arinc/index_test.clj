@@ -1,10 +1,9 @@
-(ns boogie.arinc.latest-test
+(ns boogie.arinc.index-test
   (:require [clojure.test :refer :all]
-            [boogie.environment-test :refer [setup-and-teardown test-file-subpath]]
-            [boogie.arinc.latest :refer [deep-merge airports runways localizers waypoints ndb-navaids vhf-navaids procedure-legs terminal-areas get-fix-database get-terminal-database]]
+            [boogie.environment-test :refer [setup-and-teardown]]
+            [boogie.arinc.index :refer [deep-merge airports runways localizers waypoints ndb-navaids vhf-navaids procedure-legs terminal-areas]]
             [taoensso.timbre :as timbre])
-  (:import (java.util Optional)
-           (org.mitre.tdp.boogie.arinc.model ArincAirport ArincRunway ArincLocalizerGlideSlope ArincWaypoint ArincNdbNavaid ArincVhfNavaid ArincProcedureLeg)))
+  (:import (org.mitre.tdp.boogie.arinc.model ArincAirport ArincRunway ArincLocalizerGlideSlope ArincWaypoint ArincNdbNavaid ArincVhfNavaid ArincProcedureLeg)))
 
 (use-fixtures :once setup-and-teardown)
 

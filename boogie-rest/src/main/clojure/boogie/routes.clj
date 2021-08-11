@@ -29,15 +29,14 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.gzip :as gzip])
-  (:require [boogie.routes.assemble :refer [procedures-by-identifier airways-by-identifier fixes-by-identifier airports-by-identifier]])
-  (:require [boogie.routes.expand :refer [expand-route]])
-  (:require [boogie.arinc.cycles :refer [cycle-file get-cycle-data get-available-cycles current-cycle]])
-  (:require [boogie.arinc.latest :refer [airports runways localizers waypoints ndb-navaids vhf-navaids procedure-legs terminal-areas]])
-  (:require [boogie.arinc.parse :refer [arinc->pojo]])
+  (:require [boogie.state :refer [get-arinc-cycle]]
+            [boogie.arinc.cycles :refer [cycle-file current-cycle]]
+            [boogie.routes.assemble :refer [procedures-by-identifier airways-by-identifier fixes-by-identifier airports-by-identifier]]
+            [boogie.routes.expand :refer [expand-route]]
+            [boogie.arinc.index :refer [airports runways localizers waypoints ndb-navaids vhf-navaids procedure-legs terminal-areas]]
+            [boogie.arinc.parse :refer [arinc->pojo]])
   ;; java dependencies
   (:import (org.apache.commons.lang3.exception ExceptionUtils)
-           (java.time Instant)
-           (org.mitre.tdp.boogie.arinc.utils AiracCycle)
            (com.google.gson Gson)
            (org.mitre.tdp.boogie RequiredNavigationEquipage)))
 
@@ -53,7 +52,7 @@
 (s/def ::arrival-runway string?)
 (s/def ::departure-runway string?)
 (s/def ::departure-airport string?)
-(s/def ::equipage #{(.name (RequiredNavigationEquipage/RNP)) (.name (RequiredNavigationEquipage/RNAV)) (.name (RequiredNavigationEquipage/CONV))})
+(s/def ::equipage string?)
 
 (defonce gson (atom (new Gson)))
 
@@ -79,7 +78,7 @@
        ["/swagger.json"
         {:get {:no-doc  true
                :swagger {:info {:title       "Boogie REST API for Navigation Data Access"
-                                :description "Rest endpoint(s) for navigation data queries. Endpoints currently all return full cycles of navigational data when queried."}}
+                                :description "Rest endpoint(s) for navigation data queries."}}
                :handler (swagger/create-swagger-handler)}}]
        ["/routes"
         ["/expand"
@@ -87,9 +86,10 @@
                 :parameters {:query (s/keys :req-un [::route] :opt-un [::departure-runway ::arrival-runway ::equipage])}
                 :responses  {200 {:body any?}}
                 :handler    (fn [{{{:keys [route departure-runway arrival-runway equipage]} :query} :parameters}]
-                              (-> (.toJson @gson (if (= nil equipage)
-                                                   (expand-route route departure-runway arrival-runway)
-                                                   (expand-route route departure-runway arrival-runway equipage)))
+                              (-> (.toJson @gson (.orElse (if (= nil equipage)
+                                                            (expand-route route departure-runway arrival-runway)
+                                                            (expand-route route departure-runway arrival-runway equipage))
+                                                          (cheshire.core/generate-string {"error" "unable to expand route" "route" route})))
                                   (response)
                                   (content-type "text/json")))}}]
         ["/airports"
@@ -139,27 +139,13 @@
                                     (cheshire.core/generate-string)
                                     (response)
                                     (content-type "text/json"))))}}]
-        ["/available-cycles"
-         {:get {:summary  "Returns the structured map of all available cycles and whether or not they are currently cached."
-                :response {200 {:body string?}}
-                :handler  (fn [_]
-                            (-> (.toJson @gson (get-available-cycles))
-                                (response)
-                                (content-type "text/json")))}}]
-        ["/latest-cycle"
-         {:get {:summary  "Returns all of the supported and assembled ARINC data types for the current (most recent) cycle as a JSON mapping.
-        Note if you run this from swagger you'll crash it your browser - so I would hit the endpoint directly: <host>:8087/boogie-arinc/latest-cycle?"
-                :response {200 {:body string?}}
-                :handler  (fn [_] (-> (.toJson @gson (get-cycle-data (current-cycle)))
-                                      (response)
-                                      (content-type "text/json")))}}]
         ["/full-cycle"
          {:get {:summary    "Return all of the supported and assembled ARINC data types for the provided cycle as a JSON mapping.
         Note if you run this from swagger you'll crash it your browser - so I would hit the endpoint directly: <host>:8087/boogie-arinc/full-cycle?cycle=2001"
                 :parameters {:query (s/keys :req-un [::cycle])}
                 :responses  {200 {:body any?}}
                 :handler    (fn [{{{:keys [cycle]} :query} :parameters}]
-                              (-> (.toJson @gson (get-cycle-data cycle))
+                              (-> (.toJson @gson (get-arinc-cycle))
                                   (response)
                                   (content-type "text/json")))}}]
         ["/parse-records"
@@ -237,7 +223,6 @@
         ]
        ]
       {:exception pretty/exception
-       ;; I don't know what any of this does and I don't want to find out - ask @aeckstein if anyone has questions - or do some googling
        :data      {:coercion   reitit.coercion.spec/coercion
                    :muuntaja   m/instance
                    :middleware [exception-middleware

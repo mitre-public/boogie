@@ -1,79 +1,15 @@
-(ns boogie.arinc.latest
+(ns boogie.arinc.index
   "Namespace for performing more targeted queries for infrastructure data."
-  (:require [boogie.arinc.cycles :refer [get-cycle-data current-cycle is-cached? target-cycle-file]])
-  (:require [taoensso.timbre :as timbre :refer-macros [debug info warn]])
+  (:require [boogie.state :refer [get-fix-database get-terminal-database]]
+            [taoensso.timbre :as timbre :refer-macros [debug info warn]])
   (:import (org.mitre.tdp.boogie.arinc.assemble StandardizedTransitionName)
-           (org.mitre.tdp.boogie.arinc.database ArincDatabaseFactory TerminalAreaDatabase FixDatabase)
-           (org.mitre.tdp.boogie.arinc.model ArincNdbNavaid ArincVhfNavaid ArincWaypoint ArincAirport ArincRunway ArincLocalizerGlideSlope ArincProcedureLeg)
-           (java.util Collections)))
+           (org.mitre.tdp.boogie.arinc.model ArincNdbNavaid ArincWaypoint ArincAirport ArincRunway ArincLocalizerGlideSlope ArincProcedureLeg)))
 
 ;; taken from the clojure docs for merging nested maps
 (defn deep-merge [a & maps]
   (if (map? a)
     (apply merge-with deep-merge a maps)
     (apply merge-with deep-merge maps)))
-
-(defn new-fix-database [cycle]
-  (let [[target-cycle target-file] (target-cycle-file cycle)
-        cycle-data (get-cycle-data cycle)]
-    (timbre/info (str "Generating fix database for target cycle " target-cycle))
-    (if (not (contains? cycle-data "file"))
-      (do (timbre/warn (str "Instantiating empty FixDatabase: " target-cycle))
-          (ArincDatabaseFactory/newFixDatabase
-            (Collections/emptyList)
-            (Collections/emptyList)
-            (Collections/emptyList)
-            (Collections/emptyList)))
-      (ArincDatabaseFactory/newFixDatabase
-        (get cycle-data (.getTypeName ArincNdbNavaid))
-        (get cycle-data (.getTypeName ArincVhfNavaid))
-        (get cycle-data (.getTypeName ArincWaypoint))
-        (get cycle-data (.getTypeName ArincAirport))))))
-
-(defn new-terminal-database [cycle]
-  (let [[target-cycle target-file] (target-cycle-file cycle)
-        cycle-data (get-cycle-data cycle)]
-    (timbre/info (str "Generating terminal database for target cycle " target-cycle))
-    (if (not (contains? cycle-data "file"))
-      (do (timbre/warn (str "Instantiating empty TerminalAreaDatabase: " target-cycle))
-          (ArincDatabaseFactory/newTerminalAreaDatabase
-            (Collections/emptyList)
-            (Collections/emptyList)
-            (Collections/emptyList)
-            (Collections/emptyList)
-            (Collections/emptyList)
-            (Collections/emptyList)
-            (Collections/emptyList)))
-      (ArincDatabaseFactory/newTerminalAreaDatabase
-        (get cycle-data (.getTypeName ArincAirport))
-        (get cycle-data (.getTypeName ArincRunway))
-        (get cycle-data (.getTypeName ArincLocalizerGlideSlope))
-        (get cycle-data (.getTypeName ArincNdbNavaid))
-        (get cycle-data (.getTypeName ArincVhfNavaid))
-        (get cycle-data (.getTypeName ArincWaypoint))
-        (get cycle-data (.getTypeName ArincProcedureLeg))))))
-
-(defonce ^FixDatabase fix-database (atom (new-fix-database (current-cycle))))
-
-(defn re-initialize-fix-database []
-  (swap! fix-database (fn [atm] (new-fix-database (current-cycle)))))
-
-(defn get-fix-database
-  "Returns the instance of the FixDatabase appropriate for the current cycle given the set of available files configured at launch time.
-  If the current fix-database isn't up-to-date with the latest available cycle then this loads the current cycle and re-indexes it."
-  []
-  (if (is-cached? (current-cycle)) @fix-database (re-initialize-fix-database)))
-
-(defonce ^TerminalAreaDatabase terminal-database (atom (new-terminal-database (current-cycle))))
-
-(defn re-initialize-terminal-database []
-  (swap! terminal-database (fn [atm] (new-terminal-database (current-cycle)))))
-
-(defn get-terminal-database
-  "Returns the instance of the TerminalAreaDatabase appropriate for the current cycle given the set of available files configured at launch time.
-  If the current terminal-database isn't up-to-date with the latest available cycle then this loads the current cycle and re-indexes it."
-  []
-  (if (is-cached? (current-cycle)) @terminal-database (re-initialize-terminal-database)))
 
 (defn airports
   "Returns the mapping of {AirportIdentifier, ArincAirport} matching the input set of comma-delimited airport identifiers."

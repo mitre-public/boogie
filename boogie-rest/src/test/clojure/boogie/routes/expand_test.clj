@@ -1,6 +1,6 @@
 (ns boogie.routes.expand-test
   (:require [clojure.test :refer :all]
-            [boogie.environment-test :refer [setup-and-teardown test-file-subpath]]
+            [boogie.environment-test :refer [setup-and-teardown]]
             [boogie.routes.expand :refer [expand-route]])
   (:import (org.mitre.tdp.boogie.alg RouteSummary)))
 

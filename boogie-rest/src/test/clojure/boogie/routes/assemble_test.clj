@@ -1,6 +1,6 @@
 (ns boogie.routes.assemble-test
   (:require [clojure.test :refer :all]
-            [boogie.environment-test :refer [setup-and-teardown test-file-subpath]]
+            [boogie.environment-test :refer [setup-and-teardown]]
             [boogie.routes.assemble :refer [procedures-by-identifier airways-by-identifier fixes-by-identifier airports-by-identifier]]
             [taoensso.timbre :as timbre]))
 

@@ -1,9 +1,7 @@
 (ns boogie.environment-test
   (:require [clojure.test :refer :all]
-            [boogie.arinc.cycles :refer [file-locator get-available-cycles get-cycle-data current-cycle]]
-            [boogie.arinc.latest :refer [re-initialize-fix-database re-initialize-terminal-database]]
-            [boogie.routes.assemble :refer [re-initialize-procedures re-initialize-airways re-initialize-fixes re-initialize-airports]]
-            [boogie.server :refer [initialize-backend-resources]])
+            [boogie.arinc.cycles :refer [file-locator]]
+            [boogie.state :refer [initialize-application-state]])
   (:import (org.mitre.tdp.boogie.arinc PatternBasedFileLocator)
            (java.nio.file Paths)))
 
@@ -40,7 +38,7 @@
     (do (taoensso.timbre/debug (str "Swapping to test file path: " (test-file-path)))
         (swap! file-locator (fn [loc] (new PatternBasedFileLocator (test-file-path))))
         ;; make sure we update the available files states now that we've update the locator path
-        (initialize-backend-resources)
+        (initialize-application-state)
         (f)
         (taoensso.timbre/debug "Swapping back to original application classpath.")
         (swap! file-locator (fn [loc] default-locator)))))

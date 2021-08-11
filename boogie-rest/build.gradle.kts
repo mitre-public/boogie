@@ -22,7 +22,11 @@ clojure {
     builds.named("main") {
         // exclude the check on the server namespace - its simple, small, and adds a bit of time to tests since its standing
         // up a ring server during the check... lol
-        setCheckNamespaces(listOf("boogie.routes", "boogie.arinc.cycles", "boogie.arinc.latest", "boogie.routes.expand"))
+        setCheckNamespaces(listOf(
+                "boogie.arinc.cycles", "boogie.arinc.index", "boogie.arinc.load", "boogie.arinc.parse",
+                "boogie.routes.assemble", "boogie.routes.expand",
+                "boogie.routes", "boogie.server", "boogie.state"
+        ))
         aotAll()
     }
 }
