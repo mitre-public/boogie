@@ -20,41 +20,41 @@ import org.slf4j.LoggerFactory;
  * Intermediate representation of the Viterbi algorithm, containing all information
  * needed to obtain the maximum-likelihood path to arrive at each state in a stage.
  */
-public final class ViterbiTrellis<Stage, State> extends LinkedHashMap<Stage, ScoredStage<Stage, State>> {
+public final class ViterbiTrellis<STAGE, STATE> extends LinkedHashMap<STAGE, ScoredStage<STAGE, STATE>> {
 
-  private final List<Stage> stages;
-  private final Set<State> states;
+  private final List<STAGE> stages;
+  private final Set<STATE> states;
 
-  public ViterbiTrellis(List<Stage> stages, Set<State> states) {
+  public ViterbiTrellis(List<STAGE> stages, Set<STATE> states) {
     this.stages = stages;
     this.states = states;
   }
 
-  public Map<Stage, State> optimalPath() {
-    return mapValues(optimalScoredPath(), (ScoredStage.ScoredState<State> x) -> x.state());
+  public Map<STAGE, STATE> optimalPath() {
+    return mapValues(optimalScoredPath(), (ScoredStage.ScoredState<STATE> x) -> x.state());
   }
 
-  public Likelihood optimalPathScoreAt(Stage stage) {
+  public Likelihood optimalPathScoreAt(STAGE stage) {
     return optimalScoredPath().get(stage).likelihood();
   }
 
-  public void initializeStage(Stage toStage) {
+  public void initializeStage(STAGE toStage) {
     this.put(toStage, ScoredStage.intermediateStage());
   }
 
-  public Set<State> statesInStage(Stage fromStage) {
-    ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(fromStage), "ViterbiTrellis missing stage");
+  public Set<STATE> statesInStage(STAGE fromStage) {
+    ScoredStage<STAGE, STATE> scoredStage = Objects.requireNonNull(this.get(fromStage), "ViterbiTrellis missing stage");
     return scoredStage.states();
   }
 
-  public void updateTransitionLikelihood(Stage fromStage, Stage toStage, State fromState, State toState, Likelihood transitionScore) {
-    ScoredStage<Stage, State> fromScoredStage = Objects.requireNonNull(this.get(fromStage), "ViterbiTrellis missing expected previous stage");
-    ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(toStage), "ViterbiTrellis missing expected stage");
+  public void updateTransitionLikelihood(STAGE fromStage, STAGE toStage, STATE fromState, STATE toState, Likelihood transitionScore) {
+    ScoredStage<STAGE, STATE> fromScoredStage = Objects.requireNonNull(this.get(fromStage), "ViterbiTrellis missing expected previous stage");
+    ScoredStage<STAGE, STATE> scoredStage = Objects.requireNonNull(this.get(toStage), "ViterbiTrellis missing expected stage");
     Likelihood cumulativeTransitionlikelihood = fromScoredStage.stateLikelihood(fromState).times(transitionScore);
     scoredStage.updateTransitionLikelihood(fromState, toState, cumulativeTransitionlikelihood);
   }
 
-  public void updateStateLikelihood(Stage toStage, State toState, Likelihood stateScore) {
+  public void updateStateLikelihood(STAGE toStage, STATE toState, Likelihood stateScore) {
     this.get(toStage).updateStateLikelihood(toState, stateScore);
   }
 
@@ -62,19 +62,19 @@ public final class ViterbiTrellis<Stage, State> extends LinkedHashMap<Stage, Sco
     this.put(stages.get(0), ScoredStage.initialStage(states));
   }
 
-  private Map<Stage, ScoredStage.ScoredState<State>> optimalScoredPath() {
+  private Map<STAGE, ScoredStage.ScoredState<STATE>> optimalScoredPath() {
     checkOptimalPath();
-    return mapValues(stages, (Stage x) -> this.get(x).viterbiPathScoredState());
+    return mapValues(stages, (STAGE x) -> this.get(x).viterbiPathScoredState());
   }
 
   private void checkOptimalPath() {
-    State optimalState = null;
-    ListIterator<Stage> iterator = stages.listIterator(stages.size());
+    STATE optimalState = null;
+    ListIterator<STAGE> iterator = stages.listIterator(stages.size());
     while (iterator.hasPrevious()) {
-      Stage stage = iterator.previous();
-      ScoredStage<Stage, State> scoredStage = Objects.requireNonNull(this.get(stage), "ViterbiTrellis missing stage");
+      STAGE stage = iterator.previous();
+      ScoredStage<STAGE, STATE> scoredStage = Objects.requireNonNull(this.get(stage), "ViterbiTrellis missing stage");
       if (optimalState == null) {
-        ScoredStage.ScoredState<State> optimalScoredState = scoredStage.scoredStates().stream().max(Comparator.comparing(x -> x.likelihood())).orElseThrow(() -> new IllegalStateException());
+        ScoredStage.ScoredState<STATE> optimalScoredState = scoredStage.scoredStates().stream().max(Comparator.comparing(x -> x.likelihood())).orElseThrow(() -> new IllegalStateException());
         scoredStage.setViterbiPathState(optimalScoredState.state());
         optimalState = optimalScoredState.fromState();
       } else {
@@ -102,8 +102,8 @@ public final class ViterbiTrellis<Stage, State> extends LinkedHashMap<Stage, Sco
   /**
    * Visitor methods allow extracting information about the trellis without granting direct access to the internal data structures.
    */
-  public <T> void visit(StateVisitor<State, T> stateVisitor, StageVisitor<Stage, T> stageVisitor) {
-    for (Map.Entry<Stage, ScoredStage<Stage, State>> e : this.entrySet()) {
+  public <T> void visit(StateVisitor<STATE, T> stateVisitor, StageVisitor<STAGE, T> stageVisitor) {
+    for (Map.Entry<STAGE, ScoredStage<STAGE, STATE>> e : this.entrySet()) {
       List<T> stageResults = e.getValue().scoredStates().stream()
           .map(x -> stateVisitor.visit(x.state(), x.stateScore(), x.likelihood(), x.fromState()))
           .collect(Collectors.toList());
@@ -129,20 +129,20 @@ public final class ViterbiTrellis<Stage, State> extends LinkedHashMap<Stage, Sco
   public void dump() {
     LOG.info("Stages");
     int i = 0;
-    for (Stage stage : stages) {
+    for (STAGE stage : stages) {
       LOG.info("  {}: {}", i++, stage);
     }
     LOG.info("States");
     int j = 0;
-    for (State state : states) {
+    for (STATE state : states) {
       LOG.info("  {}: {}", j++, state);
     }
 
     i = 0;
-    for (Stage stage : stages) {
-      ScoredStage<Stage, State> scoredStage = this.get(stage);
+    for (STAGE stage : stages) {
+      ScoredStage<STAGE, STATE> scoredStage = this.get(stage);
       j = 0;
-      for (State state : states) {
+      for (STATE state : states) {
         String likelihoods = Stream.of(scoredStage.transitionScores().get(j), scoredStage.stateScores().get(j), scoredStage.likelihoods().get(j)).map(x -> Optional.ofNullable(x).map(y -> Double.toString(y.value())).orElse("?")).collect(Collectors.joining(", "));
         LOG.info("  {} / {}: {}", i, j, likelihoods);
         j++;

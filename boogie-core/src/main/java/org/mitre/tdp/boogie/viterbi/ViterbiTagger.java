@@ -24,21 +24,21 @@ import org.slf4j.LoggerFactory;
  * <p>
  * All output likelihood values are expressed in
  */
-public final class ViterbiTagger<Stage, State> {
+public final class ViterbiTagger<STAGE, STATE> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ViterbiTagger.class);
 
-  private final List<Stage> stages;
-  private final Set<State> states;
-  private final BiFunction<Stage, State, Double> stateScorer;
-  private final Function<State, Collection<State>> validTransitions;
-  private final BiFunction<State, State, Double> transitionScorer;
+  private final List<STAGE> stages;
+  private final Set<STATE> states;
+  private final BiFunction<STAGE, STATE, Double> stateScorer;
+  private final Function<STATE, Collection<STATE>> validTransitions;
+  private final BiFunction<STATE, STATE, Double> transitionScorer;
 
   /**
    * The output of the algorithm is the "trellis" of maximum-likelihood paths from the initial stage through each valid
    * state/stage combination
    */
-  private final ViterbiTrellis<Stage, State> trellis;
+  private final ViterbiTrellis<STAGE, STATE> trellis;
 
   /**
    * Indicates whether the process was interrupted while executing. If it was then the result of any optimal path calls will
@@ -50,17 +50,17 @@ public final class ViterbiTagger<Stage, State> {
    * This function can take a long time to execute since its basically a m x n^2 computation where m is the number of stages
    * and n is the number of available states - assuming all transitions are valid.
    */
-  private Supplier<ViterbiTrellis<Stage, State>> interruptedReturnSupplier = ViterbiTrellis::empty;
+  private Supplier<ViterbiTrellis<STAGE, STATE>> interruptedReturnSupplier = ViterbiTrellis::empty;
 
   /**
    * Creates a new dynamic programmer with the given stages, states, and optimization function.
    */
   private ViterbiTagger(
-      List<Stage> stages,
-      Set<State> states,
-      BiFunction<Stage, State, Double> stateScorer,
-      Function<State, Collection<State>> validTransitions,
-      BiFunction<State, State, Double> transitionScorer
+      List<STAGE> stages,
+      Set<STATE> states,
+      BiFunction<STAGE, STATE, Double> stateScorer,
+      Function<STATE, Collection<STATE>> validTransitions,
+      BiFunction<STATE, STATE, Double> transitionScorer
   ) {
     this.stages = stages;
     this.states = states;
@@ -74,11 +74,11 @@ public final class ViterbiTagger<Stage, State> {
    * Instantiates a new {@link ViterbiTagger} but with stage/state scoring and state->state transition scoring taken from a
    * provided {@link ViterbiScoringStrategy}.
    */
-  public static <Stage, State> ViterbiTagger<Stage, State> with(
-      Collection<? extends Stage> stages,
-      Collection<? extends State> states,
-      ViterbiScoringStrategy<Stage, State> scoringStrategy,
-      ViterbiTransitionStrategy<Stage, State> transitionStrategy
+  public static <STAGE, STATE> ViterbiTagger<STAGE, STATE> with(
+      Collection<? extends STAGE> stages,
+      Collection<? extends STATE> states,
+      ViterbiScoringStrategy<STAGE, STATE> scoringStrategy,
+      ViterbiTransitionStrategy<STAGE, STATE> transitionStrategy
   ) {
     requireNonNull(scoringStrategy);
     requireNonNull(transitionStrategy);
@@ -94,12 +94,12 @@ public final class ViterbiTagger<Stage, State> {
   /**
    * Instantiate a ViterbiTagger with the specified stages, states, and scoring functions.
    */
-  public static <Stage, State> ViterbiTagger<Stage, State> with(
-      Collection<? extends Stage> stages,
-      Collection<? extends State> states,
-      BiFunction<Stage, State, Double> stateScorer,
-      Function<State, Collection<State>> validTransitions,
-      BiFunction<State, State, Double> transitionScorer
+  public static <STAGE, STATE> ViterbiTagger<STAGE, STATE> with(
+      Collection<? extends STAGE> stages,
+      Collection<? extends STATE> states,
+      BiFunction<STAGE, STATE, Double> stateScorer,
+      Function<STATE, Collection<STATE>> validTransitions,
+      BiFunction<STATE, STATE, Double> transitionScorer
   ) {
     return new ViterbiTagger<>(new ArrayList<>(stages), new LinkedHashSet<>(states), stateScorer, validTransitions, transitionScorer);
   }
@@ -108,7 +108,7 @@ public final class ViterbiTagger<Stage, State> {
    * Configures an interruption return supplier. Given the potential long runtime of the algorithm it supports interruptions
    * where the return of {@link #optimalPath()} will be given by this supplier if it was interrupted during computation.
    */
-  public ViterbiTagger<Stage, State> setInterruptedReturnSupplier(Supplier<ViterbiTrellis<Stage, State>> supplier) {
+  public ViterbiTagger<STAGE, STATE> setInterruptedReturnSupplier(Supplier<ViterbiTrellis<STAGE, STATE>> supplier) {
     this.interruptedReturnSupplier = supplier;
     return this;
   }
@@ -129,12 +129,12 @@ public final class ViterbiTagger<Stage, State> {
     return totalStates() * totalStates() * totalStages();
   }
 
-  public ViterbiTrellis<Stage, State> trellis() {
+  public ViterbiTrellis<STAGE, STATE> trellis() {
     checkComputeOptimals();
     return interrupted ? this.interruptedReturnSupplier.get() : trellis;
   }
 
-  public Map<Stage, State> optimalPath() {
+  public Map<STAGE, STATE> optimalPath() {
     return trellis().optimalPath();
   }
 
@@ -167,22 +167,22 @@ public final class ViterbiTagger<Stage, State> {
    * other available states at the provided stage.
    */
   private void updateTrellis(int toStageIndex) {
-    Stage toStage = stages.get(toStageIndex);
+    STAGE toStage = stages.get(toStageIndex);
     trellis.initializeStage(toStage);
     if (toStageIndex == 0) {
       trellis.setInitialStageLikelihoods();
     } else {
-      Stage fromStage = stages.get(toStageIndex - 1);
+      STAGE fromStage = stages.get(toStageIndex - 1);
       // identify best transition to each state in toStage
-      for (State fromState : trellis.statesInStage(fromStage)) {
+      for (STATE fromState : trellis.statesInStage(fromStage)) {
         // for each fromState, get all non-zero transition scores
-        for (State toState : validTransitions.apply(fromState)) {
+        for (STATE toState : validTransitions.apply(fromState)) {
           Likelihood transitionScore = Likelihood.valueOf(transitionScorer.apply(fromState, toState));
           trellis.updateTransitionLikelihood(fromStage, toStage, fromState, toState, transitionScore);
         }
       }
     }
-    for (State toState : trellis.statesInStage(toStage)) {
+    for (STATE toState : trellis.statesInStage(toStage)) {
       try {
         Likelihood stateScore = Likelihood.valueOf(stateScorer.apply(toStage, toState));
         trellis.updateStateLikelihood(toStage, toState, stateScore);
@@ -192,10 +192,10 @@ public final class ViterbiTagger<Stage, State> {
     }
   }
 
-  public static <Stage extends Comparable<? super Stage>, State extends HmmState<Stage>> ViterbiTagger<Stage, State> forHmmStates(Collection<? extends Stage> stages, Collection<? extends State> states) {
-    BiFunction<Stage, State, Double> scorer = (Stage stage, State s) -> s.getValue(stage);
-    Function<State, Collection<State>> validTransitions = (State s) -> s.getPossibleTransitions().stream().map(x -> (State) x.getTransition()).collect(Collectors.toList());
-    BiFunction<State, State, Double> transitionScorer = (State s, State s2) -> s.getPossibleTransitions().stream().filter(x -> x.getTransition().equals(s2)).map(x -> x.getTransitionProbability()).findFirst().orElse(0.0);
+  public static <STAGE extends Comparable<? super STAGE>, STATE extends HmmState<STAGE>> ViterbiTagger<STAGE, STATE> forHmmStates(Collection<? extends STAGE> stages, Collection<? extends STATE> states) {
+    BiFunction<STAGE, STATE, Double> scorer = (STAGE stage, STATE s) -> s.getValue(stage);
+    Function<STATE, Collection<STATE>> validTransitions = (STATE s) -> s.getPossibleTransitions().stream().map(x -> (STATE) x.getTransition()).collect(Collectors.toList());
+    BiFunction<STATE, STATE, Double> transitionScorer = (STATE s, STATE s2) -> s.getPossibleTransitions().stream().filter(x -> x.getTransition().equals(s2)).map(x -> x.getTransitionProbability()).findFirst().orElse(0.0);
     return ViterbiTagger.with(stages, states, scorer, validTransitions, transitionScorer);
   }
 

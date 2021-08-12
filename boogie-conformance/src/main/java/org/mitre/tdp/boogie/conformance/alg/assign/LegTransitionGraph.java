@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class LegTransitionGraph extends SimpleDirectedWeightedGraph<FlyableLeg, DefaultWeightedEdge> {
 
-  private final Logger LOG = LoggerFactory.getLogger(LegTransitionGraph.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LegTransitionGraph.class);
 
   /**
    * The mapping from the representative {@link FlyableLeg} which was inserted into the graph as a vertex to it's union cohort.
@@ -29,17 +29,19 @@ public final class LegTransitionGraph extends SimpleDirectedWeightedGraph<Flyabl
    * This mapping is maintained here for applications which want traceability from the assigned representative legs to their
    * explicit sources.
    */
-  private final Map<FlyableLeg, CompositeLeg> representativeMap;
+  private final transient Map<FlyableLeg, CompositeLeg> representativeMap;
 
-  private ConnectivityInspector<FlyableLeg, DefaultWeightedEdge> connectivityInspector;
-  private AllDirectedPaths<FlyableLeg, DefaultWeightedEdge> allDirectedPaths;
+  private transient ConnectivityInspector<FlyableLeg, DefaultWeightedEdge> connectivityInspector;
+  private transient AllDirectedPaths<FlyableLeg, DefaultWeightedEdge> allDirectedPaths;
 
   public LegTransitionGraph(Map<FlyableLeg, CompositeLeg> representativeMap) {
     super(DefaultWeightedEdge.class);
     this.representativeMap = representativeMap;
   }
 
-  /** Returns the {@link } */
+  /**
+   * Returns the {@link }
+   */
   public CompositeLeg unionFor(FlyableLeg flyableLeg) {
     return checkNotNull(representativeMap.get(flyableLeg));
   }
@@ -74,5 +76,15 @@ public final class LegTransitionGraph extends SimpleDirectedWeightedGraph<Flyabl
    */
   public List<List<FlyableLeg>> allDirectedPaths(FlyableLeg start, FlyableLeg end, boolean simple) {
     return allDirectedPaths().getAllPaths(start, end, simple, vertexSet().size()).stream().map(GraphPath::getVertexList).collect(Collectors.toList());
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    return super.equals(that);
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 }

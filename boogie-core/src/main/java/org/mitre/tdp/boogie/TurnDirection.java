@@ -2,12 +2,13 @@ package org.mitre.tdp.boogie;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Interface representing a turn direction as either left, right, or either (isLeft == isRight == true).
  */
-public final class TurnDirection {
+public final class TurnDirection implements Serializable {
 
   private final boolean isLeft;
   private final boolean isRight;

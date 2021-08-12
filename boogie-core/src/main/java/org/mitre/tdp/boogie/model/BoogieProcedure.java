@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.model;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -14,7 +13,7 @@ import org.mitre.tdp.boogie.Transition;
 /**
  * Immutable, buildable implementation of the {@link Procedure} interface provided for convenience.
  */
-public final class BoogieProcedure implements Serializable, Procedure {
+public final class BoogieProcedure implements Procedure {
 
   private final String procedureIdentifier;
   private final String airportIdentifier;

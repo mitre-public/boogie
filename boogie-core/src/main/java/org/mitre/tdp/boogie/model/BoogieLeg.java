@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.model;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,7 +14,7 @@ import com.google.common.collect.Range;
 /**
  * Immutable, buildable implementation of the boogie {@link Leg} interface - provided for convenience.
  */
-public final class BoogieLeg implements Serializable, Leg {
+public final class BoogieLeg implements Leg {
 
   private final Fix associatedFix;
   private final Fix recommendedNavaid;

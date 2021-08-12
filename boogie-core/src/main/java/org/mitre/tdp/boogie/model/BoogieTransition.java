@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.model;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,7 +14,7 @@ import org.mitre.tdp.boogie.TransitionType;
 /**
  * Immutable, buildable implementation of the {@link Transition} interface provided for convenience.
  */
-public final class BoogieTransition implements Serializable, Transition {
+public final class BoogieTransition implements Transition {
 
   private final String transitionIdentifier;
   private final String procedureIdentifier;

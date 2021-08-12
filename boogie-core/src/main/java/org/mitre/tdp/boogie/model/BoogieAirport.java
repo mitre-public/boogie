@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.model;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +13,7 @@ import org.mitre.tdp.boogie.Runway;
 /**
  * Immutable, buildable implementation of the boogie {@link Airport} provided for convenience.
  */
-public final class BoogieAirport implements Serializable, Airport {
+public final class BoogieAirport implements Airport {
 
   private final String airportIdentifier;
   private final String airportRegion;

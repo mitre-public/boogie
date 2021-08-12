@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.model;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,7 +11,7 @@ import org.mitre.tdp.boogie.Leg;
 /**
  * Immutable, buildable implementation of the {@link Airway} interface provided for convenience.
  */
-public final class BoogieAirway implements Serializable, Airway {
+public final class BoogieAirway implements Airway {
 
   private final String airwayIdentifier;
   private final String airwayRegion;

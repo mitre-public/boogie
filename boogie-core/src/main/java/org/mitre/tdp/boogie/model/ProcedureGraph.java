@@ -36,9 +36,9 @@ import org.mitre.tdp.boogie.Transition;
  */
 public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implements Procedure {
 
-  private final Procedure procedure;
+  private transient final Procedure procedure;
 
-  private final DOTExporter<Leg, DefaultEdge> exporter;
+  private transient final DOTExporter<Leg, DefaultEdge> exporter;
 
   ProcedureGraph(Procedure procedure) {
     super(DefaultEdge.class);
@@ -46,7 +46,7 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
     this.exporter = new DOTExporter<>(this::legSignature, null, null);
   }
 
-  private final AllDirectedPaths<Leg, DefaultEdge> allDirectedPaths = new AllDirectedPaths<>(this);
+  private transient final AllDirectedPaths<Leg, DefaultEdge> allDirectedPaths = new AllDirectedPaths<>(this);
 
   public List<List<Leg>> pathsBetween(Leg start, Leg end) {
     return allDirectedPaths.getAllPaths(start, end, false, 100)
@@ -61,7 +61,7 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
       exporter.exportGraph(this, writer);
       return writer.toString();
     } catch (IOException e) {
-      throw new RuntimeException("Error encountered exporting graph as DOT string.", e);
+      throw new IllegalStateException("Error encountered exporting graph as DOT string.", e);
     }
   }
 
