@@ -1,8 +1,6 @@
-This is the boogie module primarily centered around dynamic programming 
-concepts. In the case of boogie this is typically used to evaluate the
-conformance of an aircraft to a particular set of legs. These legs could
- be from multiple or a single procedure, include airway legs or etc. All 
- that matters is they implement the boogie-conformance scorable interface.
- 
-The algorithm itself is a simple two-step computation:
-1) Each individual ConformablePoint is scored against the set of 
+# Boogie conformance
+
+# Module overview
+
+<p>This module within the Boogie software project provides collection of interfaces for understanding the conformance of flights to particular 
+leg types as well as models for how those different legs should be flown.</p>

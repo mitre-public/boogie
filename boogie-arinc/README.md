@@ -86,6 +86,49 @@ Collection<ArincProcedureLeg> rober2Legs = terminalAreaDatabase.legsForProcedure
 Most of the database implementations under ```org.mitre.tdp.boogie.database``` provide similar collections of methods for accessing pre-indexed data. The ```ArincDatabaseFactory``` is the de facto 
 entry point for creating most of these implementations. See the javadocs on them for further details around usage.
 
+## Assembling Boogie-like records
+
+Boogie-core provides a collection of interfaces for common navigational objects (e.g. Airways, Procedures, Fixes, etc.) as well as concrete model implementations for all of those interfaces. It's a 
+common pattern to want to go from the parsed 424 data to assembled versions of these interfaces (i.e. for things like route expansion), to help with this Boogie provides a collection of assembly classes 
+which can be used to construct concrete implementations of these models.
+
+```java
+// database implementations are used to dereference fixes, etc. as referenced in procedures and airways as part of the assembly process
+FixDatabase fixDatabase;
+TermialAreaDatabase terminalDatabase;
+
+// procedure legs are sequenced by transition and then composed into overall procedure records adding transition type (COMMON, ENROUTE, etc.) indicators
+// as well as inferring high-level equipage categories (RNP, RNAV, CONV) - in approach procedures the Missed Approach portion of the final is split off 
+// as a different transition within the approach procedure with TransitionType.MISSED
+List<ArincProcedureLeg> allProcedureLegs;
+
+// because the conversion to a procedure involves an aggregation step internally - the assembler must be applied to all the available legs at once
+List<Procedure> procedures = new ProcedureAssembler(terminalDatabase, fixDatabase).apply(allProcedureLegs);
+
+// airway legs are sequenced by identifier and sequence number and split in accordance with the 424 airways sequencing logic
+List<ArincAirwayLeg> allAirwayLegs;
+
+// similar to the procedure assembler there is an internal aggregation and sequencing step - so the assembler must be applied to all available legs at once
+List<Airway> airways = new AirwayAssembler(fixDatabase).apply(allAirwayLegs);
+
+// airports are zipped together with their runways and potentially runway localizer information as composite records
+List<ArincAirport> allAirports;
+
+AirportAssembler airportAssembler = new AirportAssembler(terminalDatabase);
+
+// airport assembly is an automated lookup of related record types (e.g. runways) and so can be applied to one airport at a time
+List<Airport> airports = allAirports.stream().map(airportAssembler).collect(Collectors.toList());
+
+// all of VHF/NDB navaids and waypoint records can be converted to implementations of Fix records in Boogie, primarily this is adding modeled magnetic variations as a fallback for converting magnetic 
+// headings to true courses downstream
+List<ArincVhfNavaid> allNdbNavaids;
+List<ArincNdbNavaid> allVhfNavaids;
+List<ArincWaypoint> allWaypoints;
+
+// fix assembly is a straightforward transform of the input data models - and so can be applied to one fix-like type at a tiem
+List<Fix> fixes = Stream.concat(allNdbNavaids, allVhfNavaids, allWaypoints).map(FixAssembler.INSTANCE).collect(Collectors.toList());
+```
+
 # What is ARINC 424?
 <p>
 ARINC 424 is a data format primarily used to serialize navigation data and is generally the one used to package data before it is compressed and loaded in the FMS (flight management system) 
