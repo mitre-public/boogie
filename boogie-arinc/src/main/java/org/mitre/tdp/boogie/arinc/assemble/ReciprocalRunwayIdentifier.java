@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * <br>
  * If a reciprocal identifier cannot be constructed from the input runway name this class returns {@link Optional#empty()}.
  */
-final class ReciprocalRunwayIdentifier implements Function<String, Optional<String>> {
+public final class ReciprocalRunwayIdentifier implements Function<String, Optional<String>> {
 
   public static final ReciprocalRunwayIdentifier INSTANCE = new ReciprocalRunwayIdentifier();
 
@@ -30,7 +30,7 @@ final class ReciprocalRunwayIdentifier implements Function<String, Optional<Stri
    * <br>
    * The above are consistently called out in the CIFP cycle release notes/readme.
    */
-  static final Pattern RUNWAY_ID = Pattern.compile("(0[1-9]|[1-2]\\d|3[0-6])[LCRSWUG]?");
+  public static final Pattern RUNWAY_ID = Pattern.compile("(0[1-9]|[1-2]\\d|3[0-6])[LCRSWUG]?");
 
   private ReciprocalRunwayIdentifier() {
   }

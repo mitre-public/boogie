@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.latLon;
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.LATLON;
 
 import java.time.Instant;
 import java.util.List;
@@ -42,7 +42,7 @@ public final class LatLonElement implements ResolvedElement {
    * Generates a new LatLonElement from the given string location.
    */
   public static LatLonElement from(String location, String wildcards) {
-    Preconditions.checkArgument(location.matches(latLon().pattern()));
+    Preconditions.checkArgument(location.matches(LATLON.pattern()));
 
     LatLong latLong = CoordinateParser.parse(location);
 

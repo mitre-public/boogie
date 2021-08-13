@@ -38,21 +38,31 @@
   ;; java dependencies
   (:import (org.apache.commons.lang3.exception ExceptionUtils)
            (com.google.gson Gson)
-           (org.mitre.tdp.boogie RequiredNavigationEquipage)))
+           (org.mitre.tdp.boogie RequiredNavigationEquipage)
+           (org.mitre.tdp.boogie.arinc.assemble ReciprocalRunwayIdentifier)
+           (org.mitre.tdp.boogie.arinc.utils AiracCycle)))
 
-(s/def ::cycle string?)
-(s/def ::records string?)
-(s/def ::identifiers string?)
-(s/def ::airport string?)
-(s/def ::airports string?)
-(s/def ::procedures string?)
+(def airport-pattern "[A-Z0-9]{3,4}")
+(def procedure-pattern "[A-Z0-9-]{3,8}")
+
+(s/def ::airport #(.matches % (str airport-pattern "$")))
+(s/def ::runway #(-> (ReciprocalRunwayIdentifier/RUNWAY_ID) (.asPredicate) (.test %)))
+(s/def ::procedure #(.matches % (str procedure-pattern "$")))
+(s/def ::cycle #(AiracCycle/isValidCycle %))
+(s/def ::equipage #(.matches % "(RNP|RNAV|CONV)(,(RNP|RNAV|CONV))?(,(RNP|RNAV|CONV))?$"))
 (s/def ::route string?)
 
-(s/def ::arrival-airport string?)
-(s/def ::arrival-runway string?)
-(s/def ::departure-runway string?)
-(s/def ::departure-airport string?)
-(s/def ::equipage string?)
+(s/def ::csv #(.matches % "([A-Z0-9]+)?(,[A-Z0-9]+)*"))
+
+(s/def ::records string?)
+(s/def ::identifiers ::csv)
+
+(s/def ::airports #(.matches % (str "(" airport-pattern ")(,(" airport-pattern "))*$")))
+(s/def ::procedures #(.matches % (str "(" procedure-pattern ")(,(" procedure-pattern "))*$")))
+
+;; annoying but we need them by name for reitit
+(s/def ::arrival-runway ::runway)
+(s/def ::departure-runway ::runway)
 
 (defonce gson (atom (new Gson)))
 
@@ -94,7 +104,7 @@
                                   (content-type "text/json")))}}]
         ["/airports"
          {:get {:summary    "Returns the composite version of Airport(s) as seen by the Boogie software."
-                :parameters {:query (s/keys :req-un [::identifiers])}
+                :parameters {:query (s/keys :req-un [::airports])}
                 :responses  {200 {:body any?}}
                 :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
                               (-> (.toJson @gson (airports-by-identifier identifiers))
@@ -110,7 +120,7 @@
                                   (content-type "text/json")))}}]
         ["/procedures"
          {:get {:summary    "Returns the composite version of Procedure(s) as seen by the Boogie software."
-                :parameters {:query (s/keys :req-un [::identifiers] :opt-un [::airports])}
+                :parameters {:query (s/keys :req-un [::procedures] :opt-un [::airports])}
                 :responses  {200 {:body any?}}
                 :handler    (fn [{{{:keys [identifiers airports]} :query} :parameters}]
                               (-> (.toJson @gson (procedures-by-identifier identifiers airports))

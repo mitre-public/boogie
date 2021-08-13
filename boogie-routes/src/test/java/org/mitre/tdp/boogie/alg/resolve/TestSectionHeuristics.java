@@ -3,11 +3,11 @@ package org.mitre.tdp.boogie.alg.resolve;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.airport;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.airway;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.latLon;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.waypoint;
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.ICAO_AIRPORT;
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.DOMESTIC_AIRWAY;
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.LATLON;
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.TAILORED;
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.WAYPOINT;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,10 +21,10 @@ class TestSectionHeuristics {
   @Test
   void testAirportMatching() {
     assertAll(
-        () -> assertTrue(airports.get(0).matches(airport().pattern())),
-        () -> assertTrue(airports.get(1).matches(airport().pattern())),
-        () -> assertFalse(airports.get(2).matches(airport().pattern())),
-        () -> assertFalse(airports.get(3).matches(airport().pattern()))
+        () -> assertTrue(airports.get(0).matches(ICAO_AIRPORT.pattern())),
+        () -> assertTrue(airports.get(1).matches(ICAO_AIRPORT.pattern())),
+        () -> assertFalse(airports.get(2).matches(ICAO_AIRPORT.pattern())),
+        () -> assertFalse(airports.get(3).matches(ICAO_AIRPORT.pattern()))
     );
   }
 
@@ -33,11 +33,11 @@ class TestSectionHeuristics {
   @Test
   void testAirwayMatching() {
     assertAll(
-        () -> assertTrue(airways.get(0).matches(airway().pattern())),
-        () -> assertTrue(airways.get(1).matches(airway().pattern())),
-        () -> assertTrue(airways.get(2).matches(airway().pattern())),
-        () -> assertFalse(airways.get(3).matches(airway().pattern())),
-        () -> assertFalse(airways.get(4).matches(airway().pattern()))
+        () -> assertTrue(airways.get(0).matches(DOMESTIC_AIRWAY.pattern())),
+        () -> assertTrue(airways.get(1).matches(DOMESTIC_AIRWAY.pattern())),
+        () -> assertTrue(airways.get(2).matches(DOMESTIC_AIRWAY.pattern())),
+        () -> assertFalse(airways.get(3).matches(DOMESTIC_AIRWAY.pattern())),
+        () -> assertFalse(airways.get(4).matches(DOMESTIC_AIRWAY.pattern()))
     );
   }
 
@@ -46,10 +46,10 @@ class TestSectionHeuristics {
   @Test
   void testWaypointMatching() {
     assertAll(
-        () -> assertTrue(waypoints.get(0).matches(waypoint().pattern())),
-        () -> assertTrue(waypoints.get(1).matches(waypoint().pattern())),
-        () -> assertFalse(waypoints.get(2).matches(waypoint().pattern())),
-        () -> assertFalse(waypoints.get(3).matches(waypoint().pattern()))
+        () -> assertTrue(waypoints.get(0).matches(WAYPOINT.pattern())),
+        () -> assertTrue(waypoints.get(1).matches(WAYPOINT.pattern())),
+        () -> assertFalse(waypoints.get(2).matches(WAYPOINT.pattern())),
+        () -> assertFalse(waypoints.get(3).matches(WAYPOINT.pattern()))
     );
   }
 
@@ -58,10 +58,10 @@ class TestSectionHeuristics {
   @Test
   void testLatLonMatching() {
     assertAll(
-        () -> assertTrue(latlons.get(0).matches(latLon().pattern())),
-        () -> assertTrue(latlons.get(1).matches(latLon().pattern())),
-        () -> assertTrue(latlons.get(2).matches(latLon().pattern())),
-        () -> assertFalse(latlons.get(3).matches(latLon().pattern()))
+        () -> assertTrue(latlons.get(0).matches(LATLON.pattern())),
+        () -> assertTrue(latlons.get(1).matches(LATLON.pattern())),
+        () -> assertTrue(latlons.get(2).matches(LATLON.pattern())),
+        () -> assertFalse(latlons.get(3).matches(LATLON.pattern()))
     );
   }
 
@@ -70,10 +70,10 @@ class TestSectionHeuristics {
   @Test
   void testTailoredMatching() {
     assertAll(
-        () -> assertTrue(tailoreds.get(0).matches(tailored().pattern())),
-        () -> assertTrue(tailoreds.get(1).matches(tailored().pattern())),
-        () -> assertTrue(tailoreds.get(2).matches(tailored().pattern())),
-        () -> assertTrue(tailoreds.get(3).matches(tailored().pattern()))
+        () -> assertTrue(tailoreds.get(0).matches(TAILORED.pattern())),
+        () -> assertTrue(tailoreds.get(1).matches(TAILORED.pattern())),
+        () -> assertTrue(tailoreds.get(2).matches(TAILORED.pattern())),
+        () -> assertTrue(tailoreds.get(3).matches(TAILORED.pattern()))
     );
   }
 }

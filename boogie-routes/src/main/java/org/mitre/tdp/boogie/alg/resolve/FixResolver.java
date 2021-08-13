@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.tailored;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ public final class FixResolver implements SingleSplitSectionResolver {
 
     // check to see if the parsed section is a tailored waypoint reference
     // if so extract the course/distance suffix from the fix identifier
-    String s = section.matches(tailored().pattern())
+    String s = section.matches(SectionHeuristics.TAILORED.pattern())
         ? section.substring(0, section.length() - 6)
         : section;
 

@@ -10,7 +10,7 @@ public final class LatLonResolver implements SingleSplitSectionResolver {
   @Override
   public List<ResolvedElement> resolve(SectionSplit sectionSplit) {
     String section = sectionSplit.value();
-    boolean match = section.matches(SectionHeuristics.latLon().pattern());
+    boolean match = section.matches(SectionHeuristics.LATLON.pattern());
     return match ? Collections.singletonList(LatLonElement.from(section, sectionSplit.wildcards())) : Collections.emptyList();
   }
 }
