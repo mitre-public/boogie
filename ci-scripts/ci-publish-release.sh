@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script releases the new stable CDA artifacts. You need to provide the maven credentials:
+# This script releases the new stable Boogie artifacts. You need to provide the maven credentials:
 #
 # ./ci-publish-release.sh -PmavenUser=username -PmavenPassword=pass
 #

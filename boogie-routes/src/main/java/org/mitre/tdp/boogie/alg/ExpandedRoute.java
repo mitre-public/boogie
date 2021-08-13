@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -30,7 +31,7 @@ public final class ExpandedRoute implements Serializable {
   private final RouteSummary routeSummary;
   private final List<ExpandedRouteLeg> legs;
 
-  public ExpandedRoute(RouteSummary routeSummary, List<ResolvedLeg> resolvedLegs) {
+  public ExpandedRoute(@Nullable RouteSummary routeSummary, List<ResolvedLeg> resolvedLegs) {
     this.routeSummary = routeSummary;
     this.legs = resolvedLegs.stream()
         .map(resolvedLeg -> new ExpandedRouteLeg(
@@ -42,7 +43,7 @@ public final class ExpandedRoute implements Serializable {
   }
 
   public Optional<RouteSummary> routeSummary() {
-    return Optional.of(routeSummary);
+    return Optional.ofNullable(routeSummary);
   }
 
   public List<ExpandedRouteLeg> legs() {
