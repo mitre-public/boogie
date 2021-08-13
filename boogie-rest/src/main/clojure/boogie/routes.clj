@@ -16,7 +16,6 @@
             [reitit.dev.pretty :as pretty]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.middleware.exception :as exception]
-            [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.parameters :as parameters]
             [muuntaja.core :as m]
             [ring.util.response :refer [response resource-response content-type redirect]]
@@ -38,7 +37,6 @@
   ;; java dependencies
   (:import (org.apache.commons.lang3.exception ExceptionUtils)
            (com.google.gson Gson)
-           (org.mitre.tdp.boogie RequiredNavigationEquipage)
            (org.mitre.tdp.boogie.arinc.assemble ReciprocalRunwayIdentifier)
            (org.mitre.tdp.boogie.arinc.utils AiracCycle)))
 
@@ -106,8 +104,8 @@
          {:get {:summary    "Returns the composite version of Airport(s) as seen by the Boogie software."
                 :parameters {:query (s/keys :req-un [::airports])}
                 :responses  {200 {:body any?}}
-                :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
-                              (-> (.toJson @gson (airports-by-identifier identifiers))
+                :handler    (fn [{{{:keys [airports]} :query} :parameters}]
+                              (-> (.toJson @gson (airports-by-identifier airports))
                                   (response)
                                   (content-type "text/json")))}}]
         ["/fixes"
@@ -122,8 +120,8 @@
          {:get {:summary    "Returns the composite version of Procedure(s) as seen by the Boogie software."
                 :parameters {:query (s/keys :req-un [::procedures] :opt-un [::airports])}
                 :responses  {200 {:body any?}}
-                :handler    (fn [{{{:keys [identifiers airports]} :query} :parameters}]
-                              (-> (.toJson @gson (procedures-by-identifier identifiers airports))
+                :handler    (fn [{{{:keys [procedures airports]} :query} :parameters}]
+                              (-> (.toJson @gson (procedures-by-identifier procedures airports))
                                   (response)
                                   (content-type "text/json")))}}]
         ["/airways"
@@ -150,14 +148,12 @@
                                     (response)
                                     (content-type "text/json"))))}}]
         ["/full-cycle"
-         {:get {:summary    "Return all of the supported and assembled ARINC data types for the provided cycle as a JSON mapping.
-        Note if you run this from swagger you'll crash it your browser - so I would hit the endpoint directly: <host>:8087/boogie-arinc/full-cycle?cycle=2001"
-                :parameters {:query (s/keys :req-un [::cycle])}
-                :responses  {200 {:body any?}}
-                :handler    (fn [{{{:keys [cycle]} :query} :parameters}]
-                              (-> (.toJson @gson (get-arinc-cycle))
-                                  (response)
-                                  (content-type "text/json")))}}]
+         {:get {:summary   "Return all of the supported and parsed ARINC data types for the provided cycle as a JSON mapping.
+        Note if you run this from swagger you'll crash it your browser - so I would hit the endpoint directly: <host>:8087/boogie/arinc/full-cycle?"
+                :responses {200 {:body any?}}
+                :handler   (fn [_] (-> (.toJson @gson (get-arinc-cycle))
+                                       (response)
+                                       (content-type "text/json")))}}]
         ["/parse-records"
          {:get {:summary    "Returns the parsed and converted version of the input 424 record string(s) (CSV-delimited) as JSON.
         Not all records may be returned as some may be unsupported in the deployed version of the parsing logic. If this is the case the"
