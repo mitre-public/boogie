@@ -1,5 +1,5 @@
 # Boogie
-[![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/CDA-SHIM)](https://https://pandafood.mitre.org/browse/CDA-SHIM)
+[![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/CDA-SHIM)](https://pandafood.mitre.org/browse/CDA-SHIM)
 <br>
 [![Latest Release](https://img.shields.io/badge/version-0.0.91-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 <br>

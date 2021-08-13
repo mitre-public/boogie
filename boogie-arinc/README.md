@@ -125,8 +125,8 @@ List<ArincVhfNavaid> allNdbNavaids;
 List<ArincNdbNavaid> allVhfNavaids;
 List<ArincWaypoint> allWaypoints;
 
-// fix assembly is a straightforward transform of the input data models - and so can be applied to one fix-like type at a tiem
-List<Fix> fixes = Stream.concat(allNdbNavaids, allVhfNavaids, allWaypoints).map(FixAssembler.INSTANCE).collect(Collectors.toList());
+// fix assembly is a straightforward transform of the input data models - and so can be applied to one fix-like type at a time
+List<Fix> fixes = Stream.concat(allNdbNavaids.stream(), allVhfNavaids.stream(), allWaypoints.stream()).map(FixAssembler.INSTANCE).collect(Collectors.toList());
 ```
 
 # What is ARINC 424?
