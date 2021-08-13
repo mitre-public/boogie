@@ -16,6 +16,7 @@ import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SidStarResolver;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
+import org.mitre.tdp.boogie.validate.EnforceSequentiallyOrderedLegs;
 
 public final class RouteExpanderFactory {
 
@@ -79,6 +80,11 @@ public final class RouteExpanderFactory {
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,
       Collection<? extends Procedure> procedures) {
+
+    // check expectations on leg ordering before they're handed off to the RouteExpander
+    airways.forEach(airway -> EnforceSequentiallyOrderedLegs.INSTANCE.accept(airway.legs()));
+    procedures.forEach(procedure -> procedure.transitions().forEach(transition -> EnforceSequentiallyOrderedLegs.INSTANCE.accept(transition.legs())));
+
     return newGraphicalRouteExpander(
         // ugh collection type casting... makes it nicer to use though...
         (LookupService<Fix>) DefaultLookupService.newLookupService(fixes, Fix::fixIdentifier),
