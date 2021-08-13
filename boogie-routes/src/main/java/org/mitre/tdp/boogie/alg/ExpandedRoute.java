@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
@@ -14,7 +13,6 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
@@ -31,15 +29,9 @@ public final class ExpandedRoute implements Serializable {
   private final RouteSummary routeSummary;
   private final List<ExpandedRouteLeg> legs;
 
-  public ExpandedRoute(@Nullable RouteSummary routeSummary, List<ResolvedLeg> resolvedLegs) {
+  public ExpandedRoute(@Nullable RouteSummary routeSummary, List<ExpandedRouteLeg> expandedRouteLegs) {
     this.routeSummary = routeSummary;
-    this.legs = resolvedLegs.stream()
-        .map(resolvedLeg -> new ExpandedRouteLeg(
-            resolvedLeg.split().value(),
-            ElementType.fromResolvedElement(resolvedLeg.sourceElement()),
-            resolvedLeg.split().wildcards(),
-            resolvedLeg.leg())
-        ).collect(Collectors.toList());
+    this.legs = expandedRouteLegs;
   }
 
   public Optional<RouteSummary> routeSummary() {
@@ -66,7 +58,7 @@ public final class ExpandedRoute implements Serializable {
      */
     private final Leg leg;
 
-    private ExpandedRouteLeg(String section, ElementType elementType, String wildcards, Leg leg) {
+    ExpandedRouteLeg(String section, ElementType elementType, String wildcards, Leg leg) {
       this.section = requireNonNull(section);
       this.elementType = requireNonNull(elementType);
       this.wildcards = requireNonNull(wildcards);
@@ -83,6 +75,13 @@ public final class ExpandedRoute implements Serializable {
 
     public String wildcards() {
       return wildcards;
+    }
+
+    /**
+     * Return the delegate leg.
+     */
+    public Leg leg() {
+      return leg;
     }
 
     @Override

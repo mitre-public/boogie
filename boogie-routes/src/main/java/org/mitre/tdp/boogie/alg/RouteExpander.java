@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.mitre.tdp.boogie.alg.LegMergerFactory.newSimilarSubsequentGraphableLegMerger;
 
 import java.util.List;
 import java.util.Optional;
@@ -186,7 +185,7 @@ public final class RouteExpander implements
       List<ResolvedLeg> resolvedLegs = routeChooser.apply(sortedByIndex);
 
       Optional<RouteSummary> routeSummary = ExpandedRouteSummarizer.INSTANCE.apply(resolvedLegs, route, departureRunway, arrivalRunway);
-      return Optional.of(new ExpandedRoute(routeSummary.orElse(null), newSimilarSubsequentGraphableLegMerger().reduce(resolvedLegs)));
+      return Optional.of(ExpandedRouteFactory.newExpandedRouteFrom(routeSummary.orElse(null), resolvedLegs));
     }
   }
 }
