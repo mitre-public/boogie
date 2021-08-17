@@ -1,0 +1,82 @@
+---
+version: 2
+plan:
+  project-key: TTFS
+  key: SHIM
+  name: boogie-specs
+
+branches:
+  create: for-new-branch
+  delete:
+    after-deleted-days: 3
+    after-inactive-days: 14
+  link-to-jira: true
+
+notifications:
+  - recipients:
+      - webhook:
+          name: "Slack Build Webhook"
+          url: "https://hooks.slack.com/services/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"
+    events:
+      - plan-status-changed
+
+variables:
+  # The production artifactory instance - can't push the same image+version there more than once (hence scripts including version + commit
+  # hash in the image version)
+  artifactory_base: "artifacts.mitre.org:8200"
+  artifactory_namespace: tdp
+  artifactory_user: acramer
+  # API key (encrypted) -> https://pandafood.mitre.org/specs/encryption.action
+  artifactory_password: BAMSCRT@0@0@qBAFC3WqBi89IPjiFfDwxjy/4bOAYOP8pDNtI6upAc1iPQM+f72NBpLEwdfbSSy9M/rP6Q8OSumH1pVDdOr8HCdpj4LNsX3usF0S7N0WRdQ=
+  webhook.slackUsername: "Boogie Bot"
+  webhook.slackChannel: "@acramer"
+
+labels:
+  - ttfs
+
+stages:
+  - Test:
+      # Configure standard test and integration tests as part of the same stage but as different jobs so they can be run in parallel
+      jobs:
+        - Gradle Standard Test
+        - Gradle Integration Test
+  - Build Docker Image: [Build Image]
+
+Gradle Standard Test:
+  tasks:
+    - checkout:
+        force-clean-build: 'false'
+    - script:
+        file: ci-scripts/ci-build.sh
+        # Export a location that doesn't exist so the locator doesn't attempt to parse a cycle of data that may be visible at the
+        # default file location from the host machine
+        environment: FILE_LOCATOR_PATH="/idont/exist"
+  requirements:
+    - system.name: rhizome[456]
+
+Gradle Integration Test:
+  tasks:
+    - checkout:
+        force-clean-build: 'false'
+    - script:
+        file: ci-scripts/ci-testIntegration.sh
+        environment: FILE_LOCATOR_PATH="/idont/exist"
+  requirements:
+    - system.name: rhizome[456]
+
+Build Image:
+  tasks:
+    - script: bamboo-specs/ci-build-and-push.sh
+  requirements:
+    - system.name: rhizome[\d]
+    - Docker
+
+branch-overrides:
+  - ^((?!main).)*$:
+      notifications:
+        - recipients:
+            - responsible
+            - watchers
+            - committers
+          events:
+            - plan-failed

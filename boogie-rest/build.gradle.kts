@@ -42,6 +42,13 @@ tasks.register("printSourceSets") {
     }
 }
 
+val runtimeLibDir = "${project.buildDir}/libs/lib/"
+
+tasks.register<Copy>("copyDeps") {
+    from(configurations.runtimeClasspath)
+    into(runtimeLibDir)
+}
+
 dependencies {
 
     // Clojure dependencies for the thin REST API wrapper around the Boogie software

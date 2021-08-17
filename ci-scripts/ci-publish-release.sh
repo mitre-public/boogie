@@ -1,7 +1,8 @@
 #!/bin/bash
 # This script releases the new stable Boogie artifacts. You need to provide the maven credentials:
 #
-# ./ci-publish-release.sh -PmavenUser=username -PmavenPassword=pass
+# ./ci-scripts/ci-publish-release.sh -PmavenUser=username -PmavenPassword=pass
+# (or have mavenUser/mavenPassword set in your global gradle.properties, typically in you ~/.gradle folder)
 #
 # This script will:
 # 1. Ensure you're on a clean working copy of git

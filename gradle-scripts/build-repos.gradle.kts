@@ -29,22 +29,6 @@ allprojects {
             name = "dali-mitre-caasd-releases"
             url = uri("https://dali.mitre.org/nexus/content/groups/mitre-caasd")
         }
-        maven {
-            name = "dali-hortonworks-releases"
-            url = uri("https://repo.hortonworks.com/content/repositories/releases")
-        }
-        maven {
-            name = "dali-jetty-hadoop"
-            url = uri("https://repo.hortonworks.com/content/repositories/jetty-hadoop")
-        }
-        maven {
-            name = "dali-jetty-hadoop"
-            url = uri("https://dali.mitre.org/nexus/content/repositories/atlassian/")
-        }
-        maven {
-            name = "dynamodb-local"
-            url = uri("https://s3-us-west-2.amazonaws.com/dynamodb-local/release")
-        }
     }
 }
 
