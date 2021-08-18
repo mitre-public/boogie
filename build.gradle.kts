@@ -7,10 +7,10 @@ plugins {
 
 val gradleScriptsDir = "./gradle-scripts/"
 
-val mockitoVersion by extra("3.2.4")
-
 /* import/apply our repo and dependencies declared in other scripts for modularity */
 apply(from = "${gradleScriptsDir}build-repos.gradle.kts")
+
+val mockitoVersion by extra("3.2.4")
 
 /* documentation tasks */
 apply(from = "${gradleScriptsDir}build-docs.gradle.kts")

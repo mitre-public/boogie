@@ -20,4 +20,6 @@
 
 (defn stop-server! [] (when @server (.stop @server) (reset! server nil)))
 
-(def -main (do (timbre/info "Starting Boogie REST Server") (initialize-application-state) start-server!))
+(def -main (do (timbre/info "Starting Boogie REST Server")
+               (timbre/info "FILE_LOCATOR_PATH=" (str (if (System/getenv "FILE_LOCATOR_PATH") (System/getenv "FILE_LOCATOR_PATH") "NONE")))
+               (initialize-application-state) start-server!))

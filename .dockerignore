@@ -1,0 +1,7 @@
+*.jar
+
+Dockerfile
+.dockerignore
+*.gitignore
+config/
+bin/
