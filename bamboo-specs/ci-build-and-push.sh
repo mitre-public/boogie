@@ -13,7 +13,7 @@ echo "Image Name: $IMAGE_NAME"
 BOOGIE_VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
 echo "Boogie Version: $BOOGIE_VERSION"
 
-CURRENT_COMMIT=$(git rev-parse HEAD)
+CURRENT_COMMIT=$(git rev-parse --short HEAD)
 echo "Current Commit: $CURRENT_COMMIT"
 
 IMAGE_VERSION=${BOOGIE_VERSION}-${CURRENT_COMMIT}
