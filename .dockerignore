@@ -1,8 +1,15 @@
 *.jar
 *.class
 
+# avoid deployment scripts - don't want them to bust the build cache
+boogie-kube-deploy.sh
+boogie-kube-deployment.yaml
 Dockerfile
+docker-compose.yml
+
+build/
 .dockerignore
 *.gitignore
+*.md
 config/
 bin/

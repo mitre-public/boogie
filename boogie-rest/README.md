@@ -28,12 +28,32 @@ to check things out (if you need more information there is a later section in th
 
 ## Containerized deployment
 
-For now it's a pain to sync the NFS-hosted 424 data from the netapp to one of our kubernetes clusters - in the future if we want to host an archive of the 424 data somewhere then this API can be 
-containerized and the ENV variable can be configured to point to the file locations on the target server.
+Boogie provides a docker image for the containerized version of the REST API within [MITRE artifactory](https://artifacts.mitre.org/artifactory/webapp/#/artifacts/browse/tree/Properties/docker/tdp/boogie-rest). The image version is 
+the short name of the git commit it was built off of plus the current version of the boogie software project. The image needs to be deployed with a mounted cycle of infrastructure data as per the `Launching a REST service` portion of 
+the README. Locally the docker container can be launched via:
+```shell script
+# build the image
+docker-compose build
+
+# launch the image
+docker-compose up
+```
+Which will launch the container and make the service available on `localhost:24567` with a small collection of infrastructure data around/related to KJFK for testing/etc.
+
+Boogie also hosts a deployment of the REST service on the internal MITRE EPIC-OSC cluster. This API always hosts the latest cycle of (CIFP) procedure data within the endpoint - as soon as new data enters the 
+building a KubeJob takes the new file and loads it onto the cluster - behind the scenes Openshift tears down the active endpoint and re-deploys the container pointed at the newest data - the old container 
+isn't removed until the new one has been stood up, so API downtime should be minimal between the infrequent updates.
+
+The EPIC-OSC deployment can be updated via running:
+```shell script
+./boogie-kube-deploy.sh
+```
+Which will re-build the docker images and push them to the EPIC-OSC container registry and then update the deployment configuration outlined in the `boogie-kube-deployment.yaml` file. The actual container is hosted at `boogie-rest.apps.epic-osc.mitre.org/boogie/` 
+which will be the swagger documentation of the API.
 
 Generally Boogie views the ingest and availability of cycles of infrastructure data to be outside its scope. The recommendation for scaling out the service is to have an external process handle the 
-ingest and availability of the data - and then use kubernetes to handle tearing down and standing up a new container pointed at the latest cycle of infrastructure data (rather than forcing the application 
-to handle swapping out its cache internally and be forced to watch directories, etc.).
+ingest and availability of the data (as outlined above) - and then use kubernetes to handle tearing down and standing up a new container pointed at the latest cycle of infrastructure data (rather than forcing the 
+application to handle swapping out its cache internally and be forced to watch directories, etc.).
 
 # Context
 
