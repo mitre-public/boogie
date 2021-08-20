@@ -40,20 +40,19 @@ docker-compose up
 ```
 Which will launch the container and make the service available on `localhost:24567` with a small collection of infrastructure data around/related to KJFK for testing/etc.
 
-Boogie also hosts a deployment of the REST service on the internal MITRE EPIC-OSC cluster. This API always hosts the latest cycle of (CIFP) procedure data within the endpoint - as soon as new data enters the 
-building a KubeJob takes the new file and loads it onto the cluster - behind the scenes Openshift tears down the active endpoint and re-deploys the container pointed at the newest data - the old container 
-isn't removed until the new one has been stood up, so API downtime should be minimal between the infrequent updates.
+Boogie also hosts a deployment of the REST service on the internal MITRE EPIC-OSC cluster. The kubernetes service itself is deployable standalone and expects to be able to find a cycle of ARINC 424 data in a 
+pre-configured PVC (persistent volume claim) that will be read only once and indexed by the REST endpoint on start up. The PVC should be mounted at `/data/db/arinc` and the service will index any file matching the 
+name `arinc-data.dat`.
 
-The EPIC-OSC deployment can be updated via running:
+This deployment can be updated by running:
 ```shell script
-./boogie-kube-deploy.sh
+./deploy-boogie-rest.sh
 ```
-Which will re-build the docker images and push them to the EPIC-OSC container registry and then update the deployment configuration outlined in the `boogie-kube-deployment.yaml` file. The actual container is hosted at `boogie-rest.apps.epic-osc.mitre.org/boogie/` 
-which will be the swagger documentation of the API.
+This will re-build the docker images, push them to the EPIC-OSC container registry, and then update the deployment configuration outlined in the `boogie-kube-deployment.yaml` file. The actual container is hosted at 
+`boogie-rest.apps.epic-osc.mitre.org/boogie/` which will be the swagger documentation of the API.
 
-Generally Boogie views the ingest and availability of cycles of infrastructure data to be outside its scope. The recommendation for scaling out the service is to have an external process handle the 
-ingest and availability of the data (as outlined above) - and then use kubernetes to handle tearing down and standing up a new container pointed at the latest cycle of infrastructure data (rather than forcing the 
-application to handle swapping out its cache internally and be forced to watch directories, etc.).
+Provided alongside this deployment in the `./cifp-download` directory is a separate scheduled KubeJob which is configured to pull the latest cycle of CIFP data from the FAA web servers every day at midnight and sync it to 
+the PVC mounted on the REST server. Since the rest server only re-reads data from disk on initialization in order to reflect updates in the PVC data it needs to be restarted once the sync has occurred.
 
 # Context
 

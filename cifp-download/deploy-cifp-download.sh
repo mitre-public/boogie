@@ -1,3 +1,7 @@
+# Similar to boogie-kube-deploy.sh this class registers the kube-copy arinc data job with
+# the epic cluster and uploads the docker image to cluster registry that performs the copy
+# task
+
 set -e
 
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
@@ -15,15 +19,15 @@ fi
 
 docker login -u $(oc whoami) -p $(oc whoami -t) $REGISTRY_URL
 
-echo "Using dockerfiles $SCRIPTPATH/docker/Dockerfile..."
+echo "Using dockerfiles $SCRIPTPATH/Dockerfile..."
 
 # Build and tag the frontend image for deployment
-docker build -f $SCRIPTPATH/Dockerfile -t boogie-rest .
-docker tag boogie-rest $REGISTRY_URL/tdp/boogie-rest
+docker build -f $SCRIPTPATH/Dockerfile -t cifp-download .
+docker tag cifp-download $REGISTRY_URL/tdp/cifp-download
 
 # Push to docker repository triggering and auto redeploy
-docker push $REGISTRY_URL/tdp/boogie-rest
+docker push $REGISTRY_URL/tdp/cifp-download
 
 # Apply openshift config changes
 oc project tdp
-oc apply -f $SCRIPTPATH/boogie-kube-deployment.yaml
+oc apply -f $SCRIPTPATH/cifp-download-kubejob.yaml

@@ -23,16 +23,47 @@ spec:
           image: image-registry.openshift-image-registry.svc:5000/tdp/boogie-rest
           imagePullPolicy: Always
           ports:
-            - name: rest-port
-              protocol: TCP
-              containerPort: 8087
+            - containerPort: 8087
+          envFrom:
+            - configMapRef:
+                name: boogie-rest-config
           resources:
             requests:
               cpu: 200m
-              memory: 1Gi
+              memory: 5Gi
             limits:
               cpu: 400m
-              memory: 2Gi
+              memory: 10Gi
+          volumeMounts:
+            - name: boogie-arinc-db
+              mountPath: /data/db/arinc
+      # Claim to a volume which we assume will have a loaded cycle of procedure data in it
+      volumes:
+        - name: boogie-arinc-db
+          persistentVolumeClaim:
+            claimName: boogie-arinc-db
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: boogie-arinc-db
+spec:
+  # We need to be able to update the data stored in this volume periodically from a different
+  accessModes:
+    - ReadWriteMany
+  storageClassName: basic
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: boogie-rest-config
+  namespace: tdp
+data:
+  # Assume the data exists in the persistent volume attached to the container - a separate process will populate this
+  FILE_LOCATOR_PATH: '/data/db/arinc/arinc-data.dat'
 ---
 apiVersion: v1
 kind: Service

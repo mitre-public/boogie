@@ -148,8 +148,8 @@
                                     (response)
                                     (content-type "text/json"))))}}]
         ["/full-cycle"
-         {:get {:summary   "Return all of the supported and parsed ARINC data types for the provided cycle as a JSON mapping.
-        Note if you run this from swagger you'll crash it your browser - so I would hit the endpoint directly: <host>:8087/boogie/arinc/full-cycle?"
+         {:get {:summary   "Return all of the supported and parsed ARINC data types for the provided cycle as a JSON mapping. Note the return size of this method can
+         get larger than swagger can render in the browser - to see a sample its recommended to hit the endpoint directly."
                 :responses {200 {:body any?}}
                 :handler   (fn [_] (-> (.toJson @gson (get-arinc-cycle))
                                        (response)
@@ -219,7 +219,8 @@
         ;        :handler    (fn [{{{:keys [identifiers]} :query} :parameters}]
         ;                      )}}]
         ["/terminal-areas"
-         {:get {:summary    "Returns all of the parsed ARINC records related to a given terminal area. (Airport, Runway, Localizers, Waypoints, Navaids, Procedure Legs)"
+         {:get {:summary    "Returns all of the parsed ARINC records related to a given terminal area. (Airport, Runway, Localizers, Waypoints, Navaids, Procedure Legs). Note that
+         the return size of this method can get larger than swagger can render in the browser - to see a sample its recommended to hit the endpoint directly."
                 :parameters {:query (s/keys :req-un [::airports])}
                 :response   {200 {:body string?}}
                 :handler    (fn [{{{:keys [airports]} :query} :parameters}]
