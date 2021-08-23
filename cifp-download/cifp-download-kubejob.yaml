@@ -1,0 +1,27 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cifp-download
+spec:
+  # Runs once daily at midnight
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: cifp-download
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: cifp-download
+              image: image-registry.openshift-image-registry.svc:5000/tdp/cifp-download
+              volumeMounts:
+                - name: boogie-arinc-db
+                  mountPath: /data/db/arinc
+          # Claim to a volume which we assume will have a loaded cycle of procedure data in it - this is mounted to the
+          # boogie-rest container however this script also mounts it so data can be copied into it
+          volumes:
+            - name: boogie-arinc-db
+              persistentVolumeClaim:
+                claimName: boogie-arinc-db

@@ -3,7 +3,7 @@ version: 2
 plan:
   project-key: TTFS
   key: SHIM
-  name: boogie-specs
+  name: boogie
 
 branches:
   create: for-new-branch

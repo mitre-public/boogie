@@ -107,7 +107,7 @@ identifier, while allowing for some simple filters to be applied on top (e.g. SI
 to determine edge weights between adjacent sections (e.g. distance to nearest fix) and the shortest path is computed. The shortest path through the candidate sequence of infrastructure elements 
 is then taken to be the assigned route.
 
-The approach above allows us to keep the algorithm itself reasonable generic and relatively robust without needing to add too many rules/special cases to the underlying code as the graphically 
+The approach above allows us to keep the algorithm itself reasonably generic and relatively robust without needing to add too many rules/special cases to the underlying code as the graphically 
 resolved path generally does a good job of handling things like repeated airways in the route string, etc.
 
 Additionally boogie provides the legs within this path in a "flyable" form - this means the leg types accurately reflect the way the aircraft should actually fly them.
