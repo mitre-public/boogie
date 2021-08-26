@@ -13,6 +13,7 @@ import static org.mitre.tdp.boogie.MockObjects.fix;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.COSTR3;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.HOBTT2;
+import org.mitre.tdp.boogie.JIIMS3;
 import org.mitre.tdp.boogie.KMCO_I17R;
 import org.mitre.tdp.boogie.PLMMR2;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -620,7 +622,7 @@ class TestRouteExpander {
         singletonList(spa),
         emptyList(),
         singletonList(Airports.KATL()),
-        Arrays.asList(PLMMR2.INSTANCE)
+        Collections.singletonList(PLMMR2.INSTANCE)
     );
 
     ExpandedRoute expandedRoute = expander.apply(route, "RW09", null).get();
@@ -628,11 +630,11 @@ class TestRouteExpander {
     RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
 
     assertAll(
-        "Check expanded STAR/Approach summary statistics.",
+        "Check expanded SID summary statistics.",
         () -> assertEquals("KATL", routeSummary.departureAirport()),
         () -> assertEquals(Optional.of("RW09"), routeSummary.departureRunway()),
 
-        () -> assertEquals(Optional.of("PLMMR2") , routeSummary.sid()),
+        () -> assertEquals(Optional.of("PLMMR2"), routeSummary.sid()),
         () -> assertEquals(Optional.of("SPA"), routeSummary.sidExitFix())
     );
 
@@ -664,6 +666,62 @@ class TestRouteExpander {
         () -> assertEquals("SPA", legs.get(7).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(8, legs.size())
+    );
+  }
+
+  /**
+   * JIIMS3 STAR into KPHL has no common portion (and also has runway transitions serving multiple runways).
+   */
+  @Test
+  void testAPF_STAR_No_Common_Portion() {
+    String route = "BRIGS.JIIMS3.KPHL";
+
+    Fix spa = fix("BRIGS", 39.52353333333333, -74.13879722222222);
+
+    RouteExpander expander = newExpander(
+        singletonList(spa),
+        emptyList(),
+        singletonList(Airports.KPHL()),
+        Collections.singletonList(JIIMS3.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, "RW35").get();
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+
+    assertAll(
+        "Check expanded STAR summary statistics.",
+        () -> assertEquals("KPHL", routeSummary.arrivalAirport()),
+        () -> assertEquals(Optional.of("RW35"), routeSummary.arrivalRunway()),
+
+        () -> assertEquals(Optional.of("JIIMS3"), routeSummary.star()),
+        () -> assertEquals(Optional.of("BRIGS"), routeSummary.starEntryFix())
+    );
+
+    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals("BRIGS", legs.get(0).section()),
+        () -> assertEquals("BRIGS", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(1).section()),
+        () -> assertEquals("IROKT", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(2).section()),
+        () -> assertEquals("JIIMS", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(3).section()),
+        () -> assertEquals("SNEDE", legs.get(3).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(3).pathTerminator()),
+
+        () -> assertEquals("JIIMS3", legs.get(4).section()),
+        () -> assertEquals("SNEDE", legs.get(4).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.FM, legs.get(4).pathTerminator()),
+
+        () -> assertEquals("KPHL", legs.get(5).section()),
+        () -> assertEquals("KPHL", legs.get(5).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals(6, legs.size())
     );
   }
 

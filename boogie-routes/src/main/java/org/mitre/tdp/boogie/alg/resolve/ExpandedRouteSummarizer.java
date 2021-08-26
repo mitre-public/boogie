@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.Pair;
@@ -117,7 +118,7 @@ public final class ExpandedRouteSummarizer implements QuadFunction<List<Resolved
       return legsFromElement(resolvedLegs, StarElement.class).stream().reduce((l1, l2) -> l2)
           .map(starLegs -> {
             Procedure star = ((StarElement) starLegs.get(0).sourceElement()).procedure();
-            Map<Leg, Transition> transitionEmbedding = transitionEmbedding(star);
+            Map<Leg, Transition> transitionEmbedding = transitionEmbeddingFor(starLegs);
 
             Optional<String> arrivalFix = starLegs.stream().filter(leg -> TransitionType.COMMON.equals(transitionEmbedding.get(leg.leg()).transitionType()))
                 .findFirst().map(ResolvedLeg::leg).flatMap(Leg::associatedFix).map(Fix::fixIdentifier);
@@ -131,11 +132,18 @@ public final class ExpandedRouteSummarizer implements QuadFunction<List<Resolved
           });
     }
 
-    private Map<Leg, Transition> transitionEmbedding(Procedure star) {
+    private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
+      return resolvedLegs.stream()
+          .filter(resolvedLeg -> resolvedLeg.sourceElement() instanceof StarElement)
+          .map(resolvedLeg -> (StarElement) resolvedLeg.sourceElement())
+          .flatMap(starElement -> transitionEmbeddingFor(starElement.procedure()))
+          .collect(elidingCollector(Pair::first, Pair::second));
+    }
+
+    private Stream<Pair<Leg, Transition>> transitionEmbeddingFor(Procedure star) {
       return TransitionSorter.INSTANCE.sortStarTransitions(star.transitions()).stream()
           .flatMap(Collection::stream)
-          .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)))
-          .collect(elidingCollector(Pair::first, Pair::second));
+          .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)));
     }
   }
 
@@ -151,7 +159,7 @@ public final class ExpandedRouteSummarizer implements QuadFunction<List<Resolved
       return legsFromElement(resolvedLegs, SidElement.class).stream().findFirst()
           .map(sidLegs -> {
             Procedure sid = ((SidElement) sidLegs.get(0).sourceElement()).procedure();
-            Map<Leg, Transition> transitionEmbedding = transitionEmbedding(sid);
+            Map<Leg, Transition> transitionEmbedding = transitionEmbeddingFor(sidLegs);
 
             Optional<String> departureFix = sidLegs.stream().filter(leg -> TransitionType.COMMON.equals(transitionEmbedding.get(leg.leg()).transitionType()))
                 .findFirst().map(ResolvedLeg::leg).flatMap(Leg::associatedFix).map(Fix::fixIdentifier);
@@ -165,11 +173,18 @@ public final class ExpandedRouteSummarizer implements QuadFunction<List<Resolved
           });
     }
 
-    private Map<Leg, Transition> transitionEmbedding(Procedure sid) {
+    private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
+      return resolvedLegs.stream()
+          .filter(resolvedLeg -> resolvedLeg.sourceElement() instanceof SidElement)
+          .map(resolvedLeg -> (SidElement) resolvedLeg.sourceElement())
+          .flatMap(sidElement -> transitionEmbeddingFor(sidElement.procedure()))
+          .collect(elidingCollector(Pair::first, Pair::second));
+    }
+
+    private Stream<Pair<Leg, Transition>> transitionEmbeddingFor(Procedure sid) {
       return TransitionSorter.INSTANCE.sortSidTransitions(sid.transitions()).stream()
           .flatMap(Collection::stream)
-          .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)))
-          .collect(elidingCollector(Pair::first, Pair::second));
+          .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)));
     }
   }
 
