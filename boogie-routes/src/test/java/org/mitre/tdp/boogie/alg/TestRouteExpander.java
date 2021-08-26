@@ -27,10 +27,10 @@ import org.mitre.tdp.boogie.COSTR3;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.HOBTT2;
 import org.mitre.tdp.boogie.KMCO_I17R;
+import org.mitre.tdp.boogie.PLMMR2;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
@@ -604,6 +604,66 @@ class TestRouteExpander {
         () -> assertEquals("KMCO", legs.get(18).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(19, legs.size())
+    );
+  }
+
+  /**
+   * Test for a SID departure without a common portion.
+   */
+  @Test
+  void testAPF_No_Common_Portion() {
+    String route = "KATL.PLMMR2.SPA";
+
+    Fix spa = fix("SPA", 35.033625, -81.92701111111111);
+
+    RouteExpander expander = newExpander(
+        singletonList(spa),
+        emptyList(),
+        singletonList(Airports.KATL()),
+        Arrays.asList(PLMMR2.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, "RW09", null).get();
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+
+    assertAll(
+        "Check expanded STAR/Approach summary statistics.",
+        () -> assertEquals("KATL", routeSummary.departureAirport()),
+        () -> assertEquals(Optional.of("RW09"), routeSummary.departureRunway()),
+
+        () -> assertEquals(Optional.of("PLMMR2") , routeSummary.sid()),
+        () -> assertEquals(Optional.of("SPA"), routeSummary.sidExitFix())
+    );
+
+    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals("KATL", legs.get(0).section()),
+        () -> assertEquals("KATL", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("PLMMR2", legs.get(1).section()),
+        () -> assertEquals(PathTerminator.VA, legs.get(1).pathTerminator()),
+
+        () -> assertEquals("PLMMR2", legs.get(2).section()),
+        () -> assertEquals("LIDAS", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("PLMMR2", legs.get(3).section()),
+        () -> assertEquals("ERWIN", legs.get(3).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("PLMMR2", legs.get(4).section()),
+        () -> assertEquals("PLMMR", legs.get(4).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("PLMMR2", legs.get(5).section()),
+        () -> assertEquals("TENSE", legs.get(5).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("PLMMR2", legs.get(6).section()),
+        () -> assertEquals("NWANT", legs.get(6).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("PLMMR2", legs.get(7).section()),
+        () -> assertEquals("SPA", legs.get(7).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals(8, legs.size())
     );
   }
 

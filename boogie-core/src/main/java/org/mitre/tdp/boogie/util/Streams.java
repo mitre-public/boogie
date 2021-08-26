@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.util;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 

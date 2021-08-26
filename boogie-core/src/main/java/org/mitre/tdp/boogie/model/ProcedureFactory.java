@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -16,6 +17,7 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.util.Combinatorics;
+import org.mitre.tdp.boogie.util.Iterators;
 import org.mitre.tdp.boogie.util.Preconditions;
 import org.mitre.tdp.boogie.util.Streams;
 import org.mitre.tdp.boogie.util.TransitionSorter;
@@ -97,9 +99,14 @@ public final class ProcedureFactory {
 
     // split the transitions by type and insert edges between initial/final legs of subsequent transitions as long
     // as they share a fix identifier (e.g. TF at end of ENROUTE transition -> IF at start of COMMON)
-    Streams.pairwise(TransitionSorter.INSTANCE.apply(procedure.transitions()))
-        .flatMap(transitionPair -> transitionLinks(transitionPair.first(), transitionPair.second()))
-        .forEach(pair -> graph.addEdge(pair.first(), pair.second()));
+    List<List<Transition>> sortedTransitions = TransitionSorter.INSTANCE.apply(procedure.transitions());
+    if (Iterators.checkMatchCount(sortedTransitions, col -> !col.isEmpty())) {
+      Iterators.fastslow(
+          sortedTransitions,
+          col -> !col.isEmpty(),
+          (prev, next, skip) -> transitionLinks(prev, next).forEach(pair -> graph.addEdge(pair.first(), pair.second()))
+      );
+    }
 
     return graph;
   }

@@ -16,15 +16,16 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultEdge;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
+import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.HOBTT2;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MockObjects;
+import org.mitre.tdp.boogie.PLMMR2;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.CONNR5;
-import org.mitre.tdp.boogie.HOBTT2;
-import org.mitre.tdp.boogie.MockObjects;
 
 /**
  * This lives in the boogie-core module - but we want some of the nice testing stuff from boogie-routes to exercise the code.
@@ -184,6 +185,23 @@ class TestProcedureGraph {
         () -> assertTrue(ci.pathExists(CONNR5.INSTANCE.get("RW17L").legs().get(0), CONNR5.INSTANCE.get("DBL", "")), "Single VI leg reference as path start failed."),
         () -> assertTrue(ci.pathExists(CONNR5.INSTANCE.get("RW08").legs().get(0), CONNR5.INSTANCE.get("DBL", "")), "Multiple non-concrete leg as path start failed."),
         () -> assertTrue(ci.pathExists(CONNR5.INSTANCE.get("RW16L").legs().get(0), CONNR5.INSTANCE.get("DBL", "")), "VI into CF leg chain start failure.")
+    );
+  }
+
+  /**
+   * PLMMR2 has no common portion - we want to ensure the runway transitions are still connected to the enroute transitions though
+   * through their shared fix(es) PLMMR.
+   */
+  @Test
+  void testPLMMR2Connections() {
+    ProcedureGraph pg = ProcedureFactory.newProcedureGraph(PLMMR2.INSTANCE);
+
+    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
+
+    assertAll(
+        () -> assertTrue(ci.pathExists(PLMMR2.INSTANCE.get("RW09B").legs().get(0), PLMMR2.INSTANCE.get("SPA", "SPA"))),
+        () -> assertTrue(ci.pathExists(PLMMR2.INSTANCE.get("RW28").legs().get(0), PLMMR2.INSTANCE.get("SPA", "SPA"))),
+        () -> assertTrue(ci.pathExists(PLMMR2.INSTANCE.get("RW26R").legs().get(0), PLMMR2.INSTANCE.get("SPA", "SPA")))
     );
   }
 
