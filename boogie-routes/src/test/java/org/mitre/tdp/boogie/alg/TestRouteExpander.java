@@ -673,7 +673,7 @@ class TestRouteExpander {
    * JIIMS3 STAR into KPHL has no common portion (and also has runway transitions serving multiple runways).
    */
   @Test
-  void testAPF_STAR_No_Common_Portion() {
+  void testAPF_STAR_No_Common_Portion1() {
     String route = "BRIGS.JIIMS3.KPHL";
 
     Fix spa = fix("BRIGS", 39.52353333333333, -74.13879722222222);
@@ -722,6 +722,68 @@ class TestRouteExpander {
         () -> assertEquals("KPHL", legs.get(5).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(6, legs.size())
+    );
+  }
+
+  /**
+   * JIIMS3 STAR into KPHL has no common portion (and also has runway transitions serving multiple runways).
+   */
+  @Test
+  void testAPF_STAR_No_Common_Portion2() {
+    String route = "SWL.JIIMS3.KPHL";
+
+    Fix spa = fix("SWL", 38.05659444444444, -75.46390000000001);
+
+    RouteExpander expander = newExpander(
+        singletonList(spa),
+        emptyList(),
+        singletonList(Airports.KPHL()),
+        Collections.singletonList(JIIMS3.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, "RW35").get();
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+
+    assertAll(
+        "Check expanded STAR summary statistics.",
+        () -> assertEquals("KPHL", routeSummary.arrivalAirport()),
+        () -> assertEquals(Optional.of("RW35"), routeSummary.arrivalRunway()),
+
+        () -> assertEquals(Optional.of("JIIMS3"), routeSummary.star()),
+        () -> assertEquals(Optional.of("SWL"), routeSummary.starEntryFix())
+    );
+
+    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals("SWL", legs.get(0).section()),
+        () -> assertEquals("SWL", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(1).section()),
+        () -> assertEquals("RADDS", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(2).section()),
+        () -> assertEquals("WNSTN", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(3).section()),
+        () -> assertEquals("HEKMN", legs.get(3).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(4).section()),
+        () -> assertEquals("JIIMS", legs.get(4).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(5).section()),
+        () -> assertEquals("SNEDE", legs.get(5).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(5).pathTerminator()),
+
+        () -> assertEquals("JIIMS3", legs.get(6).section()),
+        () -> assertEquals("SNEDE", legs.get(6).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.FM, legs.get(6).pathTerminator()),
+
+        () -> assertEquals("KPHL", legs.get(7).section()),
+        () -> assertEquals("KPHL", legs.get(7).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals(8, legs.size())
     );
   }
 

@@ -11,9 +11,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.util.TransitionSorter;
+import org.mitre.tdp.boogie.TransitionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +70,12 @@ final class StarToAirportLinker implements BiFunction<StarElement, AirportElemen
         .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
 
     // longer transitions are better :shrug: - this should have minimal effect
-    return distanceScore / locationLeg.map(transition.legs()::indexOf).map(i -> i + 1.).orElse(1.);
+    return (distanceScore * transitionTypeModifier(transition.transitionType()))
+        / locationLeg.map(transition.legs()::indexOf).map(i -> i + 1.).orElse(1.);
+  }
+
+  private double transitionTypeModifier(TransitionType transitionType) {
+    return TransitionType.RUNWAY.equals(transitionType) ? .01 : 1.;
   }
 
   /**

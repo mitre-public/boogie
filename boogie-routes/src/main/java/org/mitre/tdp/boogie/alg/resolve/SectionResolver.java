@@ -2,16 +2,25 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.mitre.tdp.boogie.util.Streams.triplesWithNulls;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
+import org.mitre.tdp.boogie.util.Combinatorics;
+
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * A {@link SectionResolver} exists to resolve infrastructure elements which are considered to be associated with an input
@@ -43,12 +52,13 @@ public interface SectionResolver {
   default SectionResolver compose(SectionResolver that) {
     checkNotNull(that, "Input resolver cannot be null.");
     return (p, c, n) -> {
-      List<ResolvedElement> allElements = new ArrayList<>();
+      LinkedHashSet<ResolvedElement> allElements = new LinkedHashSet<>();
 
       ResolvedSection thisSection = this.resolve(p, c, n);
       ResolvedSection thatSection = that.resolve(p, c, n);
 
       checkArgument(thisSection.sectionSplit().equals(thatSection.sectionSplit()));
+
       allElements.addAll(thisSection.elements());
       allElements.addAll(thatSection.elements());
 

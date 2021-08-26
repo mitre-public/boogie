@@ -65,7 +65,12 @@ public final class AirportToSidLinker implements BiFunction<AirportElement, SidE
         .map(fix -> airportLeg.associatedFix().orElseThrow(IllegalStateException::new).distanceInNmTo(fix))
         .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
 
-    return distanceScore / locationLeg.map(transition.legs()::indexOf).map(i -> i + 1.).orElse(1.);
+    return (distanceScore * transitionTypeModifier(transition.transitionType()))
+        / locationLeg.map(transition.legs()::indexOf).map(i -> i + 1.).orElse(1.);
+  }
+
+  private double transitionTypeModifier(TransitionType transitionType) {
+    return TransitionType.RUNWAY.equals(transitionType) ? .01 : 1.;
   }
 
   /**
