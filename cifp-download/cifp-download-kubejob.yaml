@@ -25,3 +25,5 @@ spec:
             - name: boogie-arinc-db
               persistentVolumeClaim:
                 claimName: boogie-arinc-db
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
