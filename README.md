@@ -1,7 +1,7 @@
 # Boogie
 [![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-SHIM)](https://pandafood.mitre.org/browse/TTFS-SHIM)
 <br>
-[![Latest Release](https://img.shields.io/badge/version-1.0.0-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
+[![Latest Release](https://img.shields.io/badge/version-1.0.1-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 <br>
 [![Coverage](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=coverage)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 
