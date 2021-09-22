@@ -38,6 +38,24 @@ class DirectToFixPostProcessorTest {
         () -> assertEquals(PathTerminator.TF, alteredRoute.legs().get(alteredRoute.legs().size() - 1).pathTerminator()));
   }
 
+  @Test
+  void applyWithoutCondition() {
+    String route = "KDEN.CONNR5.DBL";
+
+    RouteExpander expander = newExpander(
+        Lists.newArrayList(fix("DBL", 39.439344444444444, -106.89468055555557), fix("OTHER", 39.439344444444444, -106.89478055555557)),
+        emptyList(),
+        singletonList(KDEN()),
+        singletonList(CONNR5.INSTANCE));
+
+    ExpandedRoute expandedRoute = expander.apply(route, "RW16R", null).orElseThrow(IllegalStateException::new);
+    ExpandedRoute alteredRoute = expandedRoute.postProcess(DirectToFixPostProcessor.INSTANCE);
+
+    assertEquals(expandedRoute, alteredRoute);
+  }
+
+
+
   private RouteExpander newExpander(
       Collection<? extends Fix> fixes,
       Collection<? extends Airway> airways,
