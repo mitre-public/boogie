@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
@@ -34,12 +35,31 @@ public final class ExpandedRoute implements Serializable {
     this.legs = expandedRouteLegs;
   }
 
+  public ExpandedRoute(ExpandedRouteBuilder builder) {
+    this.routeSummary = builder.routeSummary;
+    this.legs = builder.legs;
+  }
+
+  public static ExpandedRouteBuilder builder() {
+    return new ExpandedRouteBuilder();
+  }
+
+  public static ExpandedRouteBuilder toBuilder(ExpandedRoute route) {
+    return builder()
+        .routeSummary(route.routeSummary)
+        .legs(route.legs);
+  }
+
   public Optional<RouteSummary> routeSummary() {
     return Optional.ofNullable(routeSummary);
   }
 
   public List<ExpandedRouteLeg> legs() {
     return legs;
+  }
+
+  public ExpandedRoute postProcess(UnaryOperator<ExpandedRoute> postProcessor) {
+    return postProcessor.apply(this);
   }
 
   public static final class ExpandedRouteLeg implements Serializable, Leg {
@@ -167,6 +187,28 @@ public final class ExpandedRoute implements Serializable {
     @Override
     public boolean isPublishedHoldingFix() {
       return leg.isPublishedHoldingFix();
+    }
+  }
+
+  public static class ExpandedRouteBuilder {
+    private RouteSummary routeSummary = null;
+    private List<ExpandedRouteLeg> legs = null;
+
+    private ExpandedRouteBuilder() {
+    }
+
+    public ExpandedRouteBuilder routeSummary(RouteSummary routeSummary) {
+      this.routeSummary = routeSummary;
+      return this;
+    }
+
+    public ExpandedRouteBuilder legs(List<ExpandedRouteLeg> legs) {
+      this.legs = legs;
+      return this;
+    }
+
+    public ExpandedRoute build() {
+      return new ExpandedRoute(this);
     }
   }
 }
