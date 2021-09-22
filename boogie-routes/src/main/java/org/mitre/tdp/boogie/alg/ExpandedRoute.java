@@ -36,8 +36,7 @@ public final class ExpandedRoute implements Serializable {
   }
 
   public ExpandedRoute(ExpandedRouteBuilder builder) {
-    this.routeSummary = builder.routeSummary;
-    this.legs = builder.legs;
+    this(builder.routeSummary, builder.legs);
   }
 
   public static ExpandedRouteBuilder builder() {
