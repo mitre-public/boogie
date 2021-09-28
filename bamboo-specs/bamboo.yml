@@ -1,9 +1,9 @@
 ---
 version: 2
 plan:
-  project-key: CDA
+  project-key: TDP
   key: SHIM
-  name: boogie
+  name: TDP Boogie
 
 branches:
   create: for-new-branch
