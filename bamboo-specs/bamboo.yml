@@ -3,7 +3,7 @@ version: 2
 plan:
   project-key: CDA
   key: SHIM
-  name: shimmy
+  name: boogie
 
 branches:
   create: for-new-branch
