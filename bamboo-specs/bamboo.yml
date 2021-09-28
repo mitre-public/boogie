@@ -1,9 +1,9 @@
 ---
 version: 2
 plan:
-  project-key: TTFS
+  project-key: CDA
   key: SHIM
-  name: boogie
+  name: shimmy
 
 branches:
   create: for-new-branch
@@ -40,7 +40,7 @@ stages:
       jobs:
         - Gradle Standard Test
         - Gradle Integration Test
-  - Build Docker Image: [Build Image]
+  - Build Docker Image: [ Build Image ]
 
 Gradle Standard Test:
   tasks:
