@@ -1,7 +1,7 @@
 plugins {
     `java-platform`
     jacoco
-    id("com.adarshr.test-logger") version "3.0.0" apply false
+    id("com.adarshr.test-logger") version "2.0.0" apply false
     id("net.researchgate.release") version "2.8.1" // used to emulate mvn release: https://github.com/researchgate/gradle-release
 }
 

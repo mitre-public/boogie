@@ -24,8 +24,12 @@ docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 if [ ${bamboo_repository_branch_name} = "main" ]; then
 	echo "${GREEN}publishing a docker image...$NONE"
 	docker login -u ${bamboo_artifactory_user} -p ${bamboo_artifactory_password} ${bamboo_artifactory_base}
-
-	docker push ${IMAGE_NAME}:${IMAGE_VERSION}
+  if docker manifest inspect ${IMAGE_NAME}:${IMAGE_VERSION} > /dev/null ; echo $?; then
+    echo "Image - ${IMAGE_NAME}:${IMAGE_VERSION} already exists"
+  else
+    echo "Pushing Image - ${IMAGE_NAME}:${IMAGE_VERSION}"
+    docker push ${IMAGE_NAME}:${IMAGE_VERSION}
+  fi
 else
 	echo "not on ${YELLOW}main${NONE} (${BLUE}$bamboo_repository_branch_name${NONE}) branch... ${RED}NOT PUBLISHING!${NONE}"
 fi
