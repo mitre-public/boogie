@@ -24,6 +24,7 @@ docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 if [ ${bamboo_repository_branch_name} = "main" ]; then
 	echo "${GREEN}publishing a docker image...$NONE"
 	docker login -u ${bamboo_artifactory_user} -p ${bamboo_artifactory_password} ${bamboo_artifactory_base}
+
 	docker push ${IMAGE_NAME}:${IMAGE_VERSION}
 else
 	echo "not on ${YELLOW}main${NONE} (${BLUE}$bamboo_repository_branch_name${NONE}) branch... ${RED}NOT PUBLISHING!${NONE}"
