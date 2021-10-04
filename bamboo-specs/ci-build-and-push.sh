@@ -24,7 +24,7 @@ docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 if [ ${bamboo_repository_branch_name} = "main" ]; then
 	echo "${GREEN}publishing a docker image...$NONE"
 	docker login -u ${bamboo_artifactory_user} -p ${bamboo_artifactory_password} ${bamboo_artifactory_base}
-  if docker manifest inspect ${IMAGE_NAME}:${IMAGE_VERSION} > /dev/null ; echo $?; then
+  if docker manifest inspect ${IMAGE_NAME}:${IMAGE_VERSION}  > /dev/null 2>&1; then
     echo "Image - ${IMAGE_NAME}:${IMAGE_VERSION} already exists"
   else
     echo "Pushing Image - ${IMAGE_NAME}:${IMAGE_VERSION}"
