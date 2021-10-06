@@ -21,10 +21,14 @@ echo "Image Version: $IMAGE_VERSION"
 
 docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 
+function check_if_image_tag_exists() {
+    curl -sSf -u ${bamboo_artifactory_user}:${bamboo_artifactory_password} https://artifacts.mitre.org:443/artifactory/api/storage/docker/tdp/boogie-rest/$1/ > /dev/null 2>&1
+}
+
 if [ ${bamboo_repository_branch_name} = "main" ]; then
 	echo "${GREEN}publishing a docker image...$NONE"
 	docker login -u ${bamboo_artifactory_user} -p ${bamboo_artifactory_password} ${bamboo_artifactory_base}
-  if docker manifest inspect ${IMAGE_NAME}:${IMAGE_VERSION}  > /dev/null 2>&1; then
+  if check_if_image_tag_exists ${IMAGE_VERSION}; then
     echo "Image - ${IMAGE_NAME}:${IMAGE_VERSION} already exists"
   else
     echo "Pushing Image - ${IMAGE_NAME}:${IMAGE_VERSION}"
