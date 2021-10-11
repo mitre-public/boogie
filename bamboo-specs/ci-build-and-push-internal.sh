@@ -21,10 +21,20 @@ echo "Image Version: $IMAGE_VERSION"
 
 docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 
+# This needs to be updated to check against the templated namespace (instead of hardcoded as of right now)
+function check_if_image_tag_exists() {
+    curl -sSf -u ${internal_artifactory_user}:${internal_artifactory_password} https://artifacts.mitre.org:443/artifactory/api/storage/docker/tdp/boogie-rest/$1/ > /dev/null 2>&1
+}
+
 if [ ${bamboo_repository_branch_name} = "main" ]; then
-	echo "${GREEN}publishing a docker image...$NONE"
+	echo "${GREEN}publishing docker image...$NONE"
 	docker login -u ${internal_artifactory_user} -p ${internal_artifactory_password} ${internal_artifactory}
-	docker push ${IMAGE_NAME}:${IMAGE_VERSION}
+  if check_if_image_tag_exists ${IMAGE_VERSION}; then
+    echo "Image - ${IMAGE_NAME}:${IMAGE_VERSION} already exists"
+  else
+    echo "Pushing Image - ${IMAGE_NAME}:${IMAGE_VERSION}"
+    docker push ${IMAGE_NAME}:${IMAGE_VERSION}
+  fi
 else
 	echo "not on ${YELLOW}main${NONE} (${BLUE}$bamboo_repository_branch_name${NONE}) branch... ${RED}NOT PUBLISHING!${NONE}"
 fi
