@@ -22,7 +22,8 @@ spec:
         - name: artifactory-image-pull-codev
       containers:
         - name: boogie-rest
-          image: repo.codev.mitre.org/idaass-docker/tdp/boogie-rest/
+          # Use the image built from the release version of the boogie software in the prod deployment
+          image: repo.codev.mitre.org/idaass-docker/tdp/boogie-rest:1.0.2-58bc2e9
           imagePullPolicy: Always
           ports:
             - containerPort: 8087
