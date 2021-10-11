@@ -23,7 +23,8 @@ docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 
 # This needs to be updated to check against the templated namespace (instead of hardcoded as of right now)
 function check_if_image_tag_exists() {
-    curl -sSf -u ${bamboo_internal_artifactory_user}:${bamboo_internal_artifactory_password} https://artifacts.mitre.org:443/artifactory/api/storage/docker/tdp/boogie-rest/$1/ > /dev/null 2>&1
+  REST_URL="https://artifacts.mitre.org/${bamboo_internal_artifactory_namespace}/boogie-rest/$1/"
+  curl -sSf -u ${bamboo_internal_artifactory_user}:${bamboo_internal_artifactory_password} ${REST_URL} > /dev/null 2>&1
 }
 
 if [ ${bamboo_repository_branch_name} = "main" ]; then
