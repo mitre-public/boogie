@@ -23,9 +23,10 @@ echo "Image Version: $IMAGE_VERSION"
 
 docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 
-# This needs to be updated to check against the templated namespace (instead of hardcoded as of right now)
+# hit the remote artifactory rest API to see if an image in the correct namespace with a matching tag already exists
 function check_if_image_tag_exists() {
-    curl -sSf -u ${external_artifactory_user}:${external_artifactory_password} https://artifacts.mitre.org:443/artifactory/api/storage/docker/tdp/boogie-rest/$1/ > /dev/null 2>&1
+  REST_URL="https://repo.codev.mitre.org/${external_artifactory_namespace}/${external_artifactory_prefix}/boogie-rest/$1/"
+  curl -sSf -u ${external_artifactory_user}:${external_artifactory_password} ${REST_URL} > /dev/null 2>&1
 }
 
 if [ ${bamboo_repository_branch_name} = "main" ]; then
