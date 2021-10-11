@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: boogie-rest
-  namespace: tdp
+  namespace: tfm-analytics
   labels:
     app: boogie-rest
   annotations:
@@ -18,9 +18,11 @@ spec:
       labels:
         app: boogie-rest
     spec:
+      imagePullSecrets:
+        - name: artifactory-image-pull-codev
       containers:
         - name: boogie-rest
-          image: image-registry.openshift-image-registry.svc:5000/tdp/boogie-rest
+          image: repo.codev.mitre.org/idaass-docker/tdp/boogie-rest/
           imagePullPolicy: Always
           ports:
             - containerPort: 8087
@@ -60,7 +62,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: boogie-rest-config
-  namespace: tdp
+  namespace: tfm-analytics
 data:
   # Assume the data exists in the persistent volume attached to the container - a separate process will populate this
   FILE_LOCATOR_PATH: '/data/db/arinc/arinc-data.dat'
@@ -69,7 +71,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: boogie-rest
-  namespace: tdp
+  namespace: tfm-analytics
 spec:
   selector:
     app: boogie-rest
@@ -84,7 +86,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: boogie-rest
-  namespace: tdp
+  namespace: tfm-analytics
 spec:
   # The routes spec determines where on the EPIC cluster (and under what name) the app will be deployed - this hostname should be resolvable in the browser
   host: boogie-rest.apps.epic-osc.mitre.org
@@ -97,4 +99,3 @@ spec:
   tls:
     termination: edge
   wildcardPolicy: None
-
