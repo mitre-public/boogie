@@ -49,7 +49,10 @@ stages:
       jobs:
         - Gradle Standard Test
         - Gradle Integration Test
-  - Build Docker Image: [ Build Image ]
+  - Deploy:
+      jobs:
+        - Deploy Image Internal
+        - Deploy Image External
 
 Gradle Standard Test:
   tasks:
