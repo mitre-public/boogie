@@ -9,7 +9,7 @@ BLUE="$(echo -e "\033[34m")"
 
 # Unlike the internal deploy there is no TDP namespace on codev right now (which is what we're targeting) so we're
 # using a sub-space under IDAASS for TDP-related artifacts
-IMAGE_NAME=${external_artifactory}/${external_artifactory_namespace}/${external_artifactory_prefix}/boogie-rest
+IMAGE_NAME=${bamboo_external_artifactory}/${bamboo_external_artifactory_namespace}/${bamboo_external_artifactory_prefix}/boogie-rest
 echo "Image Name: $IMAGE_NAME"
 
 BOOGIE_VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
@@ -25,13 +25,13 @@ docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 
 # hit the remote artifactory rest API to see if an image in the correct namespace with a matching tag already exists
 function check_if_image_tag_exists() {
-  REST_URL="https://repo.codev.mitre.org/${external_artifactory_namespace}/${external_artifactory_prefix}/boogie-rest/$1/"
-  curl -sSf -u ${external_artifactory_user}:${external_artifactory_password} ${REST_URL} > /dev/null 2>&1
+  REST_URL="https://repo.codev.mitre.org/${bamboo_external_artifactory_namespace}/${bamboo_external_artifactory_prefix}/boogie-rest/$1/"
+  curl -sSf -u ${bamboo_external_artifactory_user}:${bamboo_external_artifactory_password} ${REST_URL} > /dev/null 2>&1
 }
 
 if [ ${bamboo_repository_branch_name} = "main" ]; then
 	echo "${GREEN}publishing docker image...$NONE"
-	docker login -u ${external_artifactory_user} -p ${external_artifactory_password} ${external_artifactory}
+	docker login -u ${bamboo_external_artifactory_user} -p ${bamboo_external_artifactory_password} ${bamboo_external_artifactory}
   if check_if_image_tag_exists ${IMAGE_VERSION}; then
     echo "Image - ${IMAGE_NAME}:${IMAGE_VERSION} already exists"
   else

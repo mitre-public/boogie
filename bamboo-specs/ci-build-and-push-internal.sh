@@ -7,7 +7,7 @@ GREEN="$(echo -e "\033[32m")"
 YELLOW="$(echo -e "\033[33m")"
 BLUE="$(echo -e "\033[34m")"
 
-IMAGE_NAME=${internal_artifactory}/${internal_artifactory_namespace}/boogie-rest
+IMAGE_NAME=${bamboo_internal_artifactory}/${bamboo_internal_artifactory_namespace}/boogie-rest
 echo "Image Name: $IMAGE_NAME"
 
 BOOGIE_VERSION=$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
@@ -23,12 +23,12 @@ docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 
 # This needs to be updated to check against the templated namespace (instead of hardcoded as of right now)
 function check_if_image_tag_exists() {
-    curl -sSf -u ${internal_artifactory_user}:${internal_artifactory_password} https://artifacts.mitre.org:443/artifactory/api/storage/docker/tdp/boogie-rest/$1/ > /dev/null 2>&1
+    curl -sSf -u ${bamboo_internal_artifactory_user}:${bamboo_internal_artifactory_password} https://artifacts.mitre.org:443/artifactory/api/storage/docker/tdp/boogie-rest/$1/ > /dev/null 2>&1
 }
 
 if [ ${bamboo_repository_branch_name} = "main" ]; then
 	echo "${GREEN}publishing docker image...$NONE"
-	docker login -u ${internal_artifactory_user} -p ${internal_artifactory_password} ${internal_artifactory}
+	docker login -u ${bamboo_internal_artifactory_user} -p ${bamboo_internal_artifactory_password} ${bamboo_internal_artifactory}
   if check_if_image_tag_exists ${IMAGE_VERSION}; then
     echo "Image - ${IMAGE_NAME}:${IMAGE_VERSION} already exists"
   else
