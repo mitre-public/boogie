@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mitre.tdp.boogie.arinc.v18.TestProcedureLegSpec.AF;
 import static org.mitre.tdp.boogie.arinc.v18.TestProcedureLegSpec.TF;
 
 import java.time.Duration;
@@ -15,6 +16,7 @@ import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -81,6 +83,12 @@ class TestArincProcedureLeg {
   @Test
   void testFieldAccessHF() {
     ArincProcedureLeg procedureLeg = ArincVersion.V18.parser().apply(HF).flatMap(converter).orElseThrow(AssertionError::new);
-    assertEquals(Duration.ofSeconds(318), procedureLeg.holdTime().orElseThrow(AssertionError::new));
+    assertEquals(Optional.of(Duration.ofSeconds(318)), procedureLeg.holdTime(), "HoldTime");
+  }
+
+  @Test
+  void testFieldAccessAF() {
+    ArincProcedureLeg procedureLeg = ArincVersion.V18.parser().apply(AF).flatMap(converter).orElseThrow(AssertionError::new);
+    assertEquals(Optional.of(TurnDirection.L), procedureLeg.turnDirection(), "TurnDirection");
   }
 }

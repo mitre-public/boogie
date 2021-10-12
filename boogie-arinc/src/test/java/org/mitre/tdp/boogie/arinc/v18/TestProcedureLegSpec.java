@@ -25,7 +25,7 @@ public class TestProcedureLegSpec {
   }
 
   @Test
-  void testValidatorPassesIF(){
+  void testValidatorPassesIF() {
     assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(IF).orElseThrow(AssertionError::new)));
   }
 
@@ -88,7 +88,7 @@ public class TestProcedureLegSpec {
   }
 
   @Test
-  void testValidatorPassesTF(){
+  void testValidatorPassesTF() {
     assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(TF).orElseThrow(AssertionError::new)));
   }
 
@@ -149,7 +149,7 @@ public class TestProcedureLegSpec {
   }
 
   @Test
-  void testValidatorPassesRF(){
+  void testValidatorPassesRF() {
     assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(RF).orElseThrow(AssertionError::new)));
   }
 
@@ -208,7 +208,7 @@ public class TestProcedureLegSpec {
   }
 
   @Test
-  void testValidatorPassesCF(){
+  void testValidatorPassesCF() {
     assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(CF).orElseThrow(AssertionError::new)));
   }
 
@@ -267,32 +267,91 @@ public class TestProcedureLegSpec {
   }
 
   @Test
-  void testValidatorPassesCR(){
+  void testValidatorPassesCR() {
     assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(CR).orElseThrow(AssertionError::new)));
   }
 
   private static final String PI = "SCANP PABEPAFI19RZ ABET   030KAYSEPAPC0EE AR   PI IBETPA      0125006432750100PI  + 01800                           0 DS   050461707";
 
   @Test
-  void testSpecMatchesPI(){
+  void testSpecMatchesPI() {
     assertTrue(new ProcedureLegSpec().matchesRecord(PI));
   }
 
   @Test
-  void testValidatorPassesPI(){
+  void testValidatorPassesPI() {
     assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(PI).orElseThrow(AssertionError::new)));
   }
 
   private static final String PI2 = "SUSAP KDNLK7FN11   AEMR   030GARFIK7PC0EE AL   PI EMR K7              32860100DB  + 02100                           0  S   656342010";
 
   @Test
-  void testSpecMatchesPI2(){
+  void testSpecMatchesPI2() {
     assertTrue(new ProcedureLegSpec().matchesRecord(PI2));
   }
 
   @Test
-  void testValidatorPassesPI2(){
+  void testValidatorPassesPI2() {
     ArincRecord arincRecord = ArincVersion.V18.parser().apply(PI2).orElseThrow(AssertionError::new);
     assertFalse(new ProcedureLegValidator().test(arincRecord));
+  }
+
+  public static final String AF = "SLAMP MKJSMKEOMAXI51ENARI 050SIA13MKPC0EE  L   AF SIA MK      252301303430    D                                            533482014";
+
+  @Test
+  void testSpecMatchesAF() {
+    assertTrue(new ProcedureLegSpec().matchesRecord(AF));
+  }
+
+  @Test
+  void testValidatorPassesAF() {
+    assertTrue(new ProcedureLegValidator().test(ArincVersion.V18.parser().apply(AF).orElseThrow(AssertionError::new)));
+  }
+
+  @Test
+  void testParseAF() {
+    ArincRecord record = ArincVersion.V18.parser().apply(AF).orElseThrow(AssertionError::new);
+
+    assertAll(
+        () -> assertEquals(RecordType.S, record.requiredField("recordType"), "recordType"),
+        () -> assertEquals(CustomerAreaCode.LAM, record.requiredField("customerAreaCode"), "customerAreaCode"),
+        () -> assertEquals(SectionCode.P, record.requiredField("sectionCode"), "sectionCode"),
+        () -> assertEquals("MKJS", record.requiredField("airportIdentifier"), "airportIdentifier"),
+        () -> assertEquals("MK", record.requiredField("airportIcaoRegion"), "airportIcaoRegion"),
+        () -> assertEquals("E", record.requiredField("subSectionCode"), "subSectionCode"),
+        () -> assertEquals("OMAXI5", record.requiredField("sidStarIdentifier"), "sidStarIdentifier"),
+        () -> assertEquals("1", record.requiredField("routeType"), "routeType"),
+        () -> assertEquals("ENARI", record.requiredField("transitionIdentifier"), "transitionIdentifier"),
+        () -> assertEquals(Integer.valueOf(50), record.requiredField("sequenceNumber"), "sequenceNumber"),
+        () -> assertEquals("SIA13", record.requiredField("fixIdentifier"), "fixIdentifier"),
+        () -> assertEquals("MK", record.requiredField("fixIcaoRegion"), "fixIcaoRegion"),
+        () -> assertEquals(SectionCode.P, record.requiredField("fixSectionCode"), "fixSectionCode"),
+        () -> assertEquals("C", record.requiredField("fixSubSectionCode"), "fixSubSectionCode"),
+        () -> assertEquals("0", record.requiredField("continuationRecordNumber"), "continuationRecordNumber"),
+        () -> assertEquals("EE  ", record.requiredField("waypointDescription"), "waypointDescription"),
+        () -> assertEquals(TurnDirection.L, record.requiredField("turnDirection"), "turnDirection"),
+        () -> assertFalse(record.optionalField("rnp").isPresent()),
+        () -> assertEquals(PathTerminator.AF, record.requiredField("pathTerm"), "pathTerm"),
+        () -> assertEquals(false, record.requiredField("turnDirectionValid"), "turnDirectionValid"),
+        () -> assertEquals("SIA", record.requiredField("recommendedNavaidIdentifier"), "recommendedNavaidIdentifier"),
+        () -> assertEquals("MK", record.requiredField("recommendedNavaidIcaoRegion"), "recommendedNavaidIcaoRegion"),
+        () -> assertFalse(record.optionalField("arcRadius").isPresent()),
+        () -> assertEquals(252.3d, record.requiredField("theta"), "theta"),
+        () -> assertEquals(13.0d, record.requiredField("rho"), "rho"),
+        () -> assertEquals(343.0d, record.requiredField("outboundMagneticCourse"), "outboundMagneticCourse"),
+        () -> assertFalse(record.optionalField("routeHoldDistanceTime").isPresent(), "routeHoldDistanceTime"),
+        () -> assertFalse(record.optionalField("altitudeDescription").isPresent(), "altitudeDescription"),
+        () -> assertFalse(record.optionalField("minAltitude1").isPresent(), "minAltitude1"),
+        () -> assertFalse(record.optionalField("minAltitude2").isPresent(), "minAltitude2"),
+        () -> assertFalse(record.optionalField("transitionAltitude").isPresent(), "transitionAltitude"),
+        () -> assertFalse(record.optionalField("speedLimit").isPresent(), "speedLimit"),
+        () -> assertFalse(record.optionalField("verticalAngle").isPresent(), "verticalAngle"),
+        () -> assertFalse(record.optionalField("centerFixIdentifier").isPresent(), "centerFixIdentifier"),
+        () -> assertFalse(record.optionalField("centerFixIcaoRegion").isPresent(), "centerFixIcaoRegion"),
+        () -> assertFalse(record.optionalField("centerFixSectionCode").isPresent(), "centerFixSectionCode"),
+        () -> assertFalse(record.optionalField("centerFixSubSectionCode").isPresent(), "centerFixSubSectionCode"),
+        () -> assertEquals(Integer.valueOf(53348), record.requiredField("fileRecordNumber"), "fileRecordNumber"),
+        () -> assertEquals("2014", record.requiredField("lastUpdateCycle"), "lastUpdateCycle")
+    );
   }
 }
