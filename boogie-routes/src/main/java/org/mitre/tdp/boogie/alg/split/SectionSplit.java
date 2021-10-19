@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.alg.split;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -33,7 +35,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
   private String wildcards;
 
   private SectionSplit(Builder bldr) {
-    this.value = bldr.value;
+    this.value = requireNonNull(bldr.value);
     this.etaEet = bldr.etaEet;
     this.index = bldr.index;
     this.wildcards = bldr.wildcards;

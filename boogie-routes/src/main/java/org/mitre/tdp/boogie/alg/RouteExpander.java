@@ -5,6 +5,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -22,7 +23,6 @@ import org.mitre.tdp.boogie.alg.resolve.ApproachResolver;
 import org.mitre.tdp.boogie.alg.resolve.ExpandedRouteSummarizer;
 import org.mitre.tdp.boogie.alg.resolve.FixResolver;
 import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionResolver;
@@ -69,16 +69,20 @@ public final class RouteExpander implements
    * Function for turning a sequence of {@link ResolvedSection}s in to a sequence of legs - this is most commonly implemented as
    * the {@link GraphBasedRouteChooser}.
    */
-  private final Function<List<ResolvedSection>, List<ResolvedLeg>> routeChooser;
+  private final Function<List<ResolvedSection>, List<ExpandedRouteLeg>> routeChooser;
 
-  RouteExpander(
+  /**
+   * Pre-canned implementations can be found here: {@link RouteExpanderFactory}. Otherwise this method is left public for others
+   * to inject and override specific functionality.
+   */
+  public RouteExpander(
       Function<String, List<SectionSplit>> sectionSplitter,
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
       LookupService<Procedure> procedureService,
       LookupService<Procedure> proceduresAtAirport,
-      Function<List<ResolvedSection>, List<ResolvedLeg>> routeChooser
+      Function<List<ResolvedSection>, List<ExpandedRouteLeg>> routeChooser
   ) {
     this.sectionSplitter = requireNonNull(sectionSplitter);
     this.procedureService = requireNonNull(procedureService);
@@ -182,10 +186,10 @@ public final class RouteExpander implements
       return Optional.empty();
     } else {
       List<ResolvedSection> sortedByIndex = resolvedSections.stream().sorted(comparing(ResolvedSection::sectionSplit)).collect(toList());
-      List<ResolvedLeg> resolvedLegs = routeChooser.apply(sortedByIndex);
+      List<ExpandedRouteLeg> expandedLegs = routeChooser.apply(sortedByIndex);
 
-      Optional<RouteSummary> routeSummary = ExpandedRouteSummarizer.INSTANCE.apply(resolvedLegs, route, departureRunway, arrivalRunway);
-      return Optional.of(ExpandedRouteFactory.newExpandedRouteFrom(routeSummary.orElse(null), resolvedLegs));
+      Optional<RouteSummary> routeSummary = ExpandedRouteSummarizer.INSTANCE.apply(new ArrayList<>(), route, departureRunway, arrivalRunway);
+      return Optional.of(new ExpandedRoute(routeSummary.orElse(null), expandedLegs));
     }
   }
 }

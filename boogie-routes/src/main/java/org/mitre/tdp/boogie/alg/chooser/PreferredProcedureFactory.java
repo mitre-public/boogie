@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg.chooser;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,7 +27,7 @@ public final class PreferredProcedureFactory {
    * 3. And so on...
    * 4. If no procedures match the provided equipages then the empty list is returned
    */
-  public static Function<Collection<Procedure>, Collection<Procedure>> withPreferredEquipage(RequiredNavigationEquipage... equipages) {
+  public static UnaryOperator<Collection<Procedure>> withPreferredEquipage(RequiredNavigationEquipage... equipages) {
     return new PreferredProcedures(Stream.of(equipages).map(PreferredProcedureFactory::newEquipageFilter).collect(Collectors.toList()));
   }
 

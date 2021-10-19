@@ -82,7 +82,7 @@ class TestRouteExpander {
         () -> assertEquals(Optional.of(RequiredNavigationEquipage.RNAV), routeSummary.requiredSidEquipage())
     );
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).section()),
@@ -148,7 +148,7 @@ class TestRouteExpander {
         () -> assertEquals(Optional.of(RequiredNavigationEquipage.RNAV), routeSummary.requiredStarEquipage())
     );
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).section()),
@@ -200,7 +200,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("DRSDN", legs.get(0).section()),
@@ -227,7 +227,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("JMACK", legs.get(0).section()),
@@ -267,7 +267,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KALDA", legs.get(0).section()),
@@ -308,7 +308,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).section()),
@@ -348,7 +348,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("MILIE", legs.get(0).section()),
@@ -376,7 +376,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).section()),
@@ -406,7 +406,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KDEN", legs.get(0).section()),
@@ -436,7 +436,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("BARTL", legs.get(0).section()),
@@ -472,7 +472,7 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("RSW", legs.get(0).section()),
@@ -545,7 +545,7 @@ class TestRouteExpander {
         () -> assertEquals(Optional.of(RequiredNavigationEquipage.CONV), routeSummary.requiredApproachEquipage())
     );
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("RSW", legs.get(0).section()),
@@ -638,7 +638,7 @@ class TestRouteExpander {
         () -> assertEquals(Optional.of("SPA"), routeSummary.sidExitFix())
     );
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("KATL", legs.get(0).section()),
@@ -698,7 +698,7 @@ class TestRouteExpander {
         () -> assertEquals(Optional.of("BRIGS"), routeSummary.starEntryFix())
     );
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("BRIGS", legs.get(0).section()),
@@ -754,7 +754,7 @@ class TestRouteExpander {
         () -> assertEquals(Optional.of("SWL"), routeSummary.starEntryFix())
     );
 
-    List<ExpandedRoute.ExpandedRouteLeg> legs = expandedRoute.legs();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
         () -> assertEquals("SWL", legs.get(0).section()),

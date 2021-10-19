@@ -21,6 +21,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
@@ -31,14 +32,30 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 
-public final class GraphBasedRouteChooser implements Function<List<ResolvedSection>, List<ResolvedLeg>> {
+public final class GraphBasedRouteChooser implements Function<List<ResolvedSection>, List<ExpandedRouteLeg>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(GraphBasedRouteChooser.class);
 
   private static final Predicate<ResolvedSection> sectionIsNonEmpty = resolvedSection -> !resolvedSection.allLegs().isEmpty();
 
+  /**
+   * Fixer class to address the shortcomings of the current resolution strategy and make the route look more like one a FMS
+   * would generate.
+   * <br>
+   * See the actual docs on {@link SubsequentDfToTfConverter} for motivation/details.
+   */
+  private static final SubsequentDfToTfConverter subsequentDFToTFConverter = new SubsequentDfToTfConverter();
+
+  /**
+   * Fixer class to merge leg definitions in combinations like TF->IF to remove the final IF from the leg sequence but persist
+   * the lower of any restrictions between the two legs.
+   * <br>
+   * See the actual docs on the {@link SequentialLegCollapser} for further motivation/details.
+   */
+  private static final SequentialLegCollapser sequentialLegCollapser = new SequentialLegCollapser();
+
   @Override
-  public List<ResolvedLeg> apply(List<ResolvedSection> resolvedSections) {
+  public List<ExpandedRouteLeg> apply(List<ResolvedSection> resolvedSections) {
     Preconditions.checkArgument(resolvedSections.stream().filter(sectionIsNonEmpty).count() >= 2,
         "At least two resolved sections must provide leg-level information.");
 
@@ -62,7 +79,13 @@ public final class GraphBasedRouteChooser implements Function<List<ResolvedSecti
         .orElseGet(Collections::emptyList);
 
     LegEmbedding legEmbedding = newLegEmbedding(resolvedSections);
-    return shortestPath.stream().map(legEmbedding).collect(Collectors.toList());
+
+    List<ExpandedRouteLeg> expandedLegs = shortestPath.stream()
+        .map(legEmbedding)
+        .map(ExpandedRouteLeg::fromResolvedLeg)
+        .collect(Collectors.toList());
+
+    return subsequentDFToTFConverter.andThen(sequentialLegCollapser).apply(expandedLegs);
   }
 
   /**

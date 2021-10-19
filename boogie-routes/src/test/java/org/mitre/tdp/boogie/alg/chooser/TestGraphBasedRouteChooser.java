@@ -24,8 +24,8 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
@@ -52,28 +52,28 @@ class TestGraphBasedRouteChooser {
 
   @Test
   void testShortestPath() {
-    List<ResolvedLeg> legs = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).andThen(routeChooser).apply("KIND.BLSTR1.VNY");
+    List<ExpandedRouteLeg> legs = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).andThen(routeChooser).apply("KIND.BLSTR1.VNY");
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
 
     assertAll(
-        () -> assertEquals("KIND", legs.get(0).split().value(), "Incorrect initial section. " + message),
+        () -> assertEquals("KIND", legs.get(0).section(), "Incorrect initial section. " + message),
         () -> assertEquals("KIND", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null), "Incorrect initial leg terminator. " + message),
         () -> assertEquals(PathTerminator.IF, legs.get(0).leg().pathTerminator(), "Incorrect initial leg type. " + message),
 
-        () -> assertEquals("BLSTR1", legs.get(1).split().value()),
+        () -> assertEquals("BLSTR1", legs.get(1).section()),
         () -> assertEquals("BNDRR", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
-        () -> assertEquals("BLSTR1", legs.get(2).split().value()),
+        () -> assertEquals("BLSTR1", legs.get(2).section()),
         () -> assertEquals("HRRDR", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
-        () -> assertEquals("BLSTR1", legs.get(3).split().value()),
+        () -> assertEquals("BLSTR1", legs.get(3).section()),
         () -> assertEquals("GRRDR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
-        () -> assertEquals("BLSTR1", legs.get(4).split().value()),
+        () -> assertEquals("BLSTR1", legs.get(4).section()),
         () -> assertEquals("VNY", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
-        () -> assertEquals("VNY", legs.get(5).split().value(), "Incorrect final section. " + message),
+        () -> assertEquals("VNY", legs.get(5).section(), "Incorrect final section. " + message),
         () -> assertEquals("VNY", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null), "Incorrect final leg terminator. " + message),
         () -> assertEquals(PathTerminator.IF, legs.get(0).leg().pathTerminator(), "Incorrect final leg type. " + message)
     );

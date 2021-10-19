@@ -1,9 +1,5 @@
 package org.mitre.tdp.boogie;
 
-import static com.google.common.collect.Sets.newHashSet;
-
-import java.util.Set;
-
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 
 /**
@@ -164,5 +160,9 @@ public enum PathTerminator {
    * <br>
    * HM = Manual Termination
    */
-  HM
+  HM;
+
+  public boolean isFixTerminating() {
+    return name().endsWith("F");
+  }
 }

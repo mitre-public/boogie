@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.LookupService;
@@ -20,7 +21,7 @@ import org.mitre.tdp.boogie.alg.LookupService;
  * This paradigm is generally used in conjunction with other functions (e.g. {@link LookupService#thenApply(Function)}) to select
  * on return to a subset of options (e.g. return RNP > RNAV > CONV approaches).
  */
-final class PreferredProcedures implements Function<Collection<Procedure>, Collection<Procedure>> {
+final class PreferredProcedures implements UnaryOperator<Collection<Procedure>> {
 
   private final List<Predicate<Procedure>> tieredPredicates;
 

@@ -14,6 +14,7 @@ import org.mitre.caasd.commons.HasTime;
  * fields.
  */
 public interface ConformablePoint extends HasPosition, HasTime, Comparable<ConformablePoint> {
+
   /**
    * The true course of the aircraft - this is required instead of magnetic as for most
    * users this is easier that deriving the magnetic bearing, at least in the context of
