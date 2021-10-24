@@ -45,7 +45,7 @@ abstract class ProcedureElement implements ResolvedElement {
    * <br>
    * e.g. {@link StarToAirportLinker}.
    */
-  Procedure procedure() {
+  public Procedure procedure() {
     return procedure;
   }
 

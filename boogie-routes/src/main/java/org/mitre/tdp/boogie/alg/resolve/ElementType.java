@@ -13,34 +13,34 @@ public enum ElementType {
   TAILORED,
   SID,
   STAR,
-  APPROACH;
+  APPROACH,
+  /**
+   * A special element type representing a leg who's lateral path was defined as part of a SID but who's altitude and speed
+   * limits come from a joined-to STAR.
+   */
+  SID_TO_STAR,
+  /**
+   * A special element type representing a leg who's lateral path was defined as part of an AIRWAY but who's altitude and speed
+   * limits come from a joined-to STAR.
+   */
+  AIRWAY_TO_STAR,
+  /**
+   * A special element type representing a leg who's lateral path was defined as part of a STAR but who's altitude and speed
+   * limits come from a joined-to APPROACH.
+   */
+  STAR_TO_APPROACH,
+  /**
+   * A special element type representing a leg who's lateral path was defined as part of an AIRWAY but who's altitude and speed
+   * limits come from a joined-to APPROACH.
+   */
+  AIRWAY_TO_APPROACH,
+  /**
+   * A special element type representing a leg who's lateral path was defined as part of a SID but who's altitude and speed
+   * limits come from a joined-to APPROACH.
+   */
+  SID_TO_APPROACH;
 
   public boolean isProcedure() {
     return Arrays.asList(SID, STAR, APPROACH).contains(this);
-  }
-
-  /**
-   * This isn't a best practice implementation but this class as a whole is mainly provided for ease-of-use in downstream apps.
-   */
-  public static ElementType fromResolvedElement(ResolvedElement resolvedElement) {
-    if (resolvedElement instanceof AirportElement) {
-      return AIRPORT;
-    } else if (resolvedElement instanceof AirwayElement) {
-      return AIRWAY;
-    } else if (resolvedElement instanceof FixElement) {
-      return FIX;
-    } else if (resolvedElement instanceof SidElement) {
-      return SID;
-    } else if (resolvedElement instanceof StarElement) {
-      return STAR;
-    } else if (resolvedElement instanceof ApproachElement) {
-      return APPROACH;
-    } else if (resolvedElement instanceof LatLonElement) {
-      return LATLON;
-    } else if (resolvedElement instanceof TailoredElement) {
-      return TAILORED;
-    } else {
-      throw new IllegalArgumentException("Unknown how to map input ResolvedElement to ElementType. ResolvedElement class was: ".concat(resolvedElement.getClass().getSimpleName()));
-    }
   }
 }

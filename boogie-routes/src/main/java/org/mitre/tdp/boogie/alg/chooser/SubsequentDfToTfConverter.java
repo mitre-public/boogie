@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.model.BoogieLeg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,10 @@ final class SubsequentDfToTfConverter implements UnaryOperator<List<ExpandedRout
    * 2. The next leg is a DF leg type - and the section name (from the route string) matches the name of the terminal fix
    */
   Pair<ExpandedRouteLeg, ExpandedRouteLeg> updateSequentialDFLegsToTF(ExpandedRouteLeg previous, ExpandedRouteLeg next) {
-    if (previous.leg().pathTerminator().isFixTerminating() && sectionMatchesFix(next) && PathTerminator.DF.equals(next.leg().pathTerminator())) {
+    if (previous.leg().pathTerminator().isFixTerminating() &&
+        !Wildcard.TAILORED.test(previous.wildcards()) &&
+        sectionMatchesFix(next) &&
+        PathTerminator.DF.equals(next.leg().pathTerminator())) {
 
       LOG.debug("Found leg matching criteria {} - updating type to TF from DF. Previous leg was {}", next, previous);
       return Pair.of(next, new ExpandedRouteLeg(next.section(), next.elementType(), next.wildcards(), makeIntoTfLeg(next.leg())));

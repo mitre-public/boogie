@@ -5,7 +5,6 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -20,7 +19,6 @@ import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.AirportResolver;
 import org.mitre.tdp.boogie.alg.resolve.AirwayResolver;
 import org.mitre.tdp.boogie.alg.resolve.ApproachResolver;
-import org.mitre.tdp.boogie.alg.resolve.ExpandedRouteSummarizer;
 import org.mitre.tdp.boogie.alg.resolve.FixResolver;
 import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
@@ -69,7 +67,7 @@ public final class RouteExpander implements
    * Function for turning a sequence of {@link ResolvedSection}s in to a sequence of legs - this is most commonly implemented as
    * the {@link GraphBasedRouteChooser}.
    */
-  private final Function<List<ResolvedSection>, List<ExpandedRouteLeg>> routeChooser;
+  private final Function<List<ResolvedSection>, ExpandedRoute> routeChooser;
 
   /**
    * Pre-canned implementations can be found here: {@link RouteExpanderFactory}. Otherwise this method is left public for others
@@ -82,7 +80,7 @@ public final class RouteExpander implements
       LookupService<Airport> airportService,
       LookupService<Procedure> procedureService,
       LookupService<Procedure> proceduresAtAirport,
-      Function<List<ResolvedSection>, List<ExpandedRouteLeg>> routeChooser
+      Function<List<ResolvedSection>, ExpandedRoute> routeChooser
   ) {
     this.sectionSplitter = requireNonNull(sectionSplitter);
     this.procedureService = requireNonNull(procedureService);
@@ -185,11 +183,23 @@ public final class RouteExpander implements
       LOG.info("Returning empty - no ResolvedSections with legs in their ResolvedElements.");
       return Optional.empty();
     } else {
-      List<ResolvedSection> sortedByIndex = resolvedSections.stream().sorted(comparing(ResolvedSection::sectionSplit)).collect(toList());
-      List<ExpandedRouteLeg> expandedLegs = routeChooser.apply(sortedByIndex);
 
-      Optional<RouteSummary> routeSummary = ExpandedRouteSummarizer.INSTANCE.apply(new ArrayList<>(), route, departureRunway, arrivalRunway);
-      return Optional.of(new ExpandedRoute(routeSummary.orElse(null), expandedLegs));
+      List<ResolvedSection> sortedByIndex = resolvedSections.stream()
+          .sorted(comparing(ResolvedSection::sectionSplit))
+          .collect(toList());
+
+      ExpandedRoute expandedRoute = routeChooser.apply(sortedByIndex);
+
+      // tag-on user-supplied expansion information (which may not have been summarized internally)
+      ExpandedRoute updated = expandedRoute
+          .updateSummary(routeSummary -> routeSummary.toBuilder()
+              .route(route)
+              .departureRunway(departureRunway)
+              .arrivalRunway(arrivalRunway)
+              .build()
+          );
+
+      return Optional.of(updated);
     }
   }
 }

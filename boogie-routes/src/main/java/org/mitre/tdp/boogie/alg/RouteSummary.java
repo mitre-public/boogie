@@ -88,7 +88,7 @@ public final class RouteSummary implements Serializable {
   private final RequiredNavigationEquipage requiredApproachEquipage;
 
   private RouteSummary(Builder builder) {
-    this.route = requireNonNull(builder.route);
+    this.route = builder.route;
     this.arrivalAirport = builder.arrivalAirport;
     this.arrivalRunway = builder.arrivalRunway;
     this.arrivalFix = builder.arrivalFix;

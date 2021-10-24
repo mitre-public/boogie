@@ -52,7 +52,7 @@ class TestGraphBasedRouteChooser {
 
   @Test
   void testShortestPath() {
-    List<ExpandedRouteLeg> legs = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).andThen(routeChooser).apply("KIND.BLSTR1.VNY");
+    List<ExpandedRouteLeg> legs = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).andThen(routeChooser).apply("KIND.BLSTR1.VNY").legs();
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
 
@@ -63,19 +63,19 @@ class TestGraphBasedRouteChooser {
 
         () -> assertEquals("BLSTR1", legs.get(1).section()),
         () -> assertEquals("BNDRR", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.IF, legs.get(1).pathTerminator()),
 
         () -> assertEquals("BLSTR1", legs.get(2).section()),
         () -> assertEquals("HRRDR", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(2).pathTerminator()),
 
         () -> assertEquals("BLSTR1", legs.get(3).section()),
         () -> assertEquals("GRRDR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(3).pathTerminator()),
 
         () -> assertEquals("BLSTR1", legs.get(4).section()),
-        () -> assertEquals("VNY", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-
-        () -> assertEquals("VNY", legs.get(5).section(), "Incorrect final section. " + message),
-        () -> assertEquals("VNY", legs.get(5).leg().associatedFix().map(Fix::fixIdentifier).orElse(null), "Incorrect final leg terminator. " + message),
-        () -> assertEquals(PathTerminator.IF, legs.get(0).leg().pathTerminator(), "Incorrect final leg type. " + message)
+        () -> assertEquals("VNY", legs.get(4).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(4).pathTerminator())
     );
   }
 

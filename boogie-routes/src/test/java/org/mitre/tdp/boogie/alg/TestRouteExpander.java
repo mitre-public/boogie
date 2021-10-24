@@ -151,7 +151,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("DRSDN", legs.get(0).section()),
+        () -> assertEquals("HOBTT2", legs.get(0).section()),
         () -> assertEquals("DRSDN", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("HOBTT2", legs.get(1).section()),
@@ -230,7 +230,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("JMACK", legs.get(0).section()),
+        () -> assertEquals("J121", legs.get(0).section()),
         () -> assertEquals("JMACK", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(1).section()),
@@ -270,7 +270,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("KALDA", legs.get(0).section()),
+        () -> assertEquals("J121", legs.get(0).section()),
         () -> assertEquals("KALDA", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(1).section()),
@@ -311,7 +311,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("MILIE", legs.get(0).section()),
+        () -> assertEquals("J121", legs.get(0).section()),
         () -> assertEquals("MILIE", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("J121", legs.get(1).section()),
@@ -356,7 +356,7 @@ class TestRouteExpander {
 
         () -> assertEquals("5300N/14000W", legs.get(1).section()),
         () -> assertEquals("5300N/14000W", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.DF, legs.get(1).pathTerminator()),
+        () -> assertEquals(PathTerminator.TF, legs.get(1).pathTerminator()),
         () -> assertEquals(LatLong.of(53.0, -140.0), legs.get(1).associatedFix().map(Fix::latLong).orElse(null)),
 
         () -> assertEquals("BARTL", legs.get(2).section()),
@@ -418,7 +418,8 @@ class TestRouteExpander {
         () -> assertNotEquals(bartl.latLong(), legs.get(1).associatedFix().map(Fix::latLong).orElse(null)),
 
         () -> assertEquals("BARTL", legs.get(2).section()),
-        () -> assertEquals("BARTL", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null))
+        () -> assertEquals("BARTL", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.DF, legs.get(2).pathTerminator(), "Path Terminator for direct-to after tailored should be DF.")
     );
   }
 
@@ -444,7 +445,7 @@ class TestRouteExpander {
 
         () -> assertEquals("BARTL125045", legs.get(1).section()),
         () -> assertEquals("BARTL125045", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.DF, legs.get(1).pathTerminator()),
+        () -> assertEquals(PathTerminator.TF, legs.get(1).pathTerminator()),
         () -> assertNotEquals(bartl.latLong(), legs.get(1).associatedFix().map(Fix::latLong).orElse(null)),
 
         () -> assertEquals("BARTL", legs.get(2).section()),
@@ -475,7 +476,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("RSW", legs.get(0).section()),
+        () -> assertEquals("COSTR3", legs.get(0).section()),
         () -> assertEquals("RSW", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("COSTR3", legs.get(1).section()),
@@ -548,7 +549,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("RSW", legs.get(0).section()),
+        () -> assertEquals("COSTR3", legs.get(0).section()),
         () -> assertEquals("RSW", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("COSTR3", legs.get(1).section()),
@@ -701,7 +702,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("BRIGS", legs.get(0).section()),
+        () -> assertEquals("JIIMS3", legs.get(0).section()),
         () -> assertEquals("BRIGS", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("JIIMS3", legs.get(1).section()),
@@ -757,7 +758,7 @@ class TestRouteExpander {
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("SWL", legs.get(0).section()),
+        () -> assertEquals("JIIMS3", legs.get(0).section()),
         () -> assertEquals("SWL", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("JIIMS3", legs.get(1).section()),

@@ -23,15 +23,6 @@ class TestSubsequentDfToTfConverter {
   private static final SubsequentDfToTfConverter converter = new SubsequentDfToTfConverter();
 
   @Test
-  void testIsxFLeg() {
-    assertAll(
-        () -> assertTrue(converter.isxFLeg(mockLeg("", PathTerminator.TF)), "TF is xF"),
-        () -> assertTrue(converter.isxFLeg(mockLeg("", PathTerminator.RF)), "RF is xF"),
-        () -> assertFalse(converter.isxFLeg(mockLeg("", PathTerminator.FA)), "FA is not xF")
-    );
-  }
-
-  @Test
   void testSectionMatchesFix() {
     assertAll(
         () -> assertTrue(converter.sectionMatchesFix(newExpandedRouteLeg("MARCO", mockLeg("MARCO", PathTerminator.DF))), "Section (MARCO) matches name (MARCO)"),

@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -21,7 +22,9 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
+import org.mitre.tdp.boogie.alg.RouteSummary;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
@@ -32,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 
-public final class GraphBasedRouteChooser implements Function<List<ResolvedSection>, List<ExpandedRouteLeg>> {
+public final class GraphBasedRouteChooser implements Function<List<ResolvedSection>, ExpandedRoute> {
 
   private static final Logger LOG = LoggerFactory.getLogger(GraphBasedRouteChooser.class);
 
@@ -54,8 +57,28 @@ public final class GraphBasedRouteChooser implements Function<List<ResolvedSecti
    */
   private static final SequentialLegCollapser sequentialLegCollapser = new SequentialLegCollapser();
 
+  /**
+   * Pseudo-BiFunction implementation (interface clashes with functional) which allows clients to pass in a summarizer class
+   * which will be called on the initial {@link ResolvedLeg} output of the chooser.
+   */
   @Override
-  public List<ExpandedRouteLeg> apply(List<ResolvedSection> resolvedSections) {
+  public ExpandedRoute apply(List<ResolvedSection> resolvedSections) {
+
+    List<ResolvedLeg> resolvedLegs = resolvedLegSequence(resolvedSections);
+    LOG.debug("Generated {} total resolved legs.", resolvedLegs.size());
+
+    List<ExpandedRouteLeg> expandedRouteLegs = subsequentDFToTFConverter.andThen(sequentialLegCollapser)
+        .apply(resolvedLegs.stream().map(ResolvedLegConverter.INSTANCE).collect(Collectors.toList()));
+    LOG.debug("Generated {} final expanded route legs.", expandedRouteLegs.size());
+
+    Optional<RouteSummary> routeSummary = GraphicalRouteSummarizer.INSTANCE.apply(resolvedLegs);
+    return new ExpandedRoute(routeSummary.orElse(null), expandedRouteLegs);
+  }
+
+  /**
+   * Returns the sequence of {@link ResolvedLeg}s as returned from the graphical resolution of the route.
+   */
+  public List<ResolvedLeg> resolvedLegSequence(List<ResolvedSection> resolvedSections) {
     Preconditions.checkArgument(resolvedSections.stream().filter(sectionIsNonEmpty).count() >= 2,
         "At least two resolved sections must provide leg-level information.");
 
@@ -79,13 +102,7 @@ public final class GraphBasedRouteChooser implements Function<List<ResolvedSecti
         .orElseGet(Collections::emptyList);
 
     LegEmbedding legEmbedding = newLegEmbedding(resolvedSections);
-
-    List<ExpandedRouteLeg> expandedLegs = shortestPath.stream()
-        .map(legEmbedding)
-        .map(ExpandedRouteLeg::fromResolvedLeg)
-        .collect(Collectors.toList());
-
-    return subsequentDFToTFConverter.andThen(sequentialLegCollapser).apply(expandedLegs);
+    return shortestPath.stream().map(legEmbedding).collect(Collectors.toList());
   }
 
   /**

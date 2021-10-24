@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
@@ -33,9 +34,7 @@ public final class ExpandedRoute implements Serializable {
   }
 
   public static Builder toBuilder(ExpandedRoute route) {
-    return builder()
-        .routeSummary(route.routeSummary)
-        .legs(route.legs);
+    return builder().routeSummary(route.routeSummary).legs(route.legs);
   }
 
   public Optional<RouteSummary> routeSummary() {
@@ -48,6 +47,10 @@ public final class ExpandedRoute implements Serializable {
 
   public ExpandedRoute postProcess(UnaryOperator<ExpandedRoute> postProcessor) {
     return postProcessor.apply(this);
+  }
+
+  public ExpandedRoute updateSummary(Function<RouteSummary, RouteSummary> summarizer){
+    return routeSummary().isPresent() ? new ExpandedRoute(summarizer.apply(routeSummary), legs) : this;
   }
 
   public static class Builder {

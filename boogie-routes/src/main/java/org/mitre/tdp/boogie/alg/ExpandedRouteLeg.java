@@ -4,15 +4,15 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
@@ -24,6 +24,9 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
    * The section of the route string that was used to resolve this leg.
    */
   private final String section;
+  /**
+   * A higher-level semantic tag for the type of {@link ResolvedElement} that the given expanded leg came from.
+   */
   private final ElementType elementType;
   /**
    * Any of the {@link Wildcard}s from the {@link SectionSplit#wildcards()} characters.
@@ -39,18 +42,6 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
     this.elementType = requireNonNull(elementType);
     this.wildcards = requireNonNull(wildcards);
     this.leg = requireNonNull(leg);
-  }
-
-  /**
-   * Provided for convenience across route chooser implementations e.g. {@link GraphBasedRouteChooser}.
-   */
-  public static ExpandedRouteLeg fromResolvedLeg(ResolvedLeg resolvedLeg) {
-    return new ExpandedRouteLeg(
-        resolvedLeg.split().value(),
-        ElementType.fromResolvedElement(resolvedLeg.sourceElement()),
-        resolvedLeg.split().wildcards(),
-        resolvedLeg.leg()
-    );
   }
 
   public String section() {
@@ -155,5 +146,35 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
   @Override
   public boolean isPublishedHoldingFix() {
     return leg.isPublishedHoldingFix();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ExpandedRouteLeg that = (ExpandedRouteLeg) o;
+    return Objects.equals(section, that.section) &&
+        elementType == that.elementType &&
+        Objects.equals(wildcards, that.wildcards) &&
+        Objects.equals(leg, that.leg);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(section, elementType, wildcards, leg);
+  }
+
+  @Override
+  public String toString() {
+    return "ExpandedRouteLeg{" +
+        "section='" + section + '\'' +
+        ", elementType=" + elementType +
+        ", wildcards='" + wildcards + '\'' +
+        ", leg=" + leg +
+        '}';
   }
 }
