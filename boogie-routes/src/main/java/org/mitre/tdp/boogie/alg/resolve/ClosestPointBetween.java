@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
 /**
@@ -19,8 +18,8 @@ final class ClosestPointBetween implements BiFunction<ResolvedElement, ResolvedE
 
   @Override
   public List<LinkedLegs> apply(ResolvedElement resolvedElement1, ResolvedElement resolvedElement2) {
-    Optional<LinkedLegs> bestLink = pointsWithinRange.apply(resolvedElement1, resolvedElement2).stream().findFirst();
-    return bestLink.map(Collections::singletonList).orElseGet(Collections::emptyList);
+    List<LinkedLegs> withinRange = pointsWithinRange.apply(resolvedElement1, resolvedElement2);
+    return withinRange.stream().findFirst().map(Collections::singletonList).orElseGet(Collections::emptyList);
   }
 
   private static final PointsWithinRange pointsWithinRange = new PointsWithinRange(Double.MAX_VALUE);

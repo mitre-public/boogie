@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,6 +34,7 @@ import org.mitre.tdp.boogie.PLMMR2;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.SUMMA2;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
@@ -218,7 +220,7 @@ class TestRouteExpander {
     String route = "JMACK.J121.KALDA";
 
     RouteExpander expander = newExpander(
-        Arrays.asList(
+        asList(
             fix("JMACK", 33.98850277777778, -78.96658333333333),
             fix("KALDA", 37.84195833333334, -75.62648333333333)),
         singletonList(Airways.J121()),
@@ -258,7 +260,7 @@ class TestRouteExpander {
     String route = "KALDA.J121.JMACK";
 
     RouteExpander expander = newExpander(
-        Arrays.asList(
+        asList(
             fix("JMACK", 33.98850277777778, -78.96658333333333),
             fix("KALDA", 37.84195833333334, -75.62648333333333)),
         singletonList(Airways.J121()),
@@ -298,7 +300,7 @@ class TestRouteExpander {
     String route = "MILIE.J121.BARTL.J121.ORF";
 
     RouteExpander expander = newExpander(
-        Arrays.asList(
+        asList(
             fix("MILIE", 31.328622222222222, -81.17371944444444),
             fix("BARTL", 34.303177777777776, -78.65149444444445),
             fix("ORF", 36.89190555555555, -76.20032777777779)),
@@ -339,7 +341,7 @@ class TestRouteExpander {
     String route = "MILIE..5300N/14000W..BARTL";
 
     RouteExpander expander = newExpander(
-        Arrays.asList(
+        asList(
             fix("MILIE", 31.328622222222222, -81.17371944444444),
             fix("BARTL", 34.303177777777776, -78.65149444444445)),
         emptyList(),
@@ -523,7 +525,7 @@ class TestRouteExpander {
         singletonList(rsw),
         emptyList(),
         singletonList(Airports.KMCO()),
-        Arrays.asList(COSTR3.INSTANCE, KMCO_I17R.I17R)
+        asList(COSTR3.INSTANCE, KMCO_I17R.I17R)
     );
 
     ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();
@@ -733,10 +735,10 @@ class TestRouteExpander {
   void testAPF_STAR_No_Common_Portion2() {
     String route = "SWL.JIIMS3.KPHL";
 
-    Fix spa = fix("SWL", 38.05659444444444, -75.46390000000001);
+    Fix swl = fix("SWL", 38.05659444444444, -75.46390000000001);
 
     RouteExpander expander = newExpander(
-        singletonList(spa),
+        singletonList(swl),
         emptyList(),
         singletonList(Airports.KPHL()),
         Collections.singletonList(JIIMS3.INSTANCE)
@@ -785,6 +787,103 @@ class TestRouteExpander {
         () -> assertEquals("KPHL", legs.get(7).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(8, legs.size())
+    );
+  }
+
+  /** TDP-5731, TDP-5562 */
+  @Test
+  void testStarExpansionExtraLeg() {
+    String route = "KMCO./.SBY057030..JIIMS.JIIMS3.KPHL/1243";
+
+    Fix sby = fix("SBY", 38.34500555555556, -75.510575);
+    Fix jiims = fix("JIIMS", 39.53767222222222, -74.96714444444444);
+
+    RouteExpander expander = newExpander(
+        asList(sby, jiims),
+        emptyList(),
+        asList(Airports.KPHL(), Airports.KMCO()),
+        Collections.singletonList(JIIMS3.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, null).get();
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+
+    assertAll(
+        "Check expanded STAR summary statistics.",
+        () -> assertEquals("KMCO", routeSummary.departureAirport()),
+        () -> assertEquals(Optional.empty(), routeSummary.departureRunway()),
+
+        () -> assertEquals("KPHL", routeSummary.arrivalAirport()),
+        () -> assertEquals(Optional.empty(), routeSummary.arrivalRunway()),
+
+        () -> assertEquals(Optional.of("JIIMS3"), routeSummary.star()),
+        () -> assertEquals(Optional.of("JIIMS"), routeSummary.starEntryFix())
+    );
+
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals("KMCO", legs.get(0).section()),
+        () -> assertEquals("KMCO", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("SBY057030", legs.get(1).section()),
+        () -> assertEquals("SBY057030", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("JIIMS3", legs.get(2).section()),
+        () -> assertEquals("JIIMS", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.DF, legs.get(2).pathTerminator()),
+
+        () -> assertEquals("KPHL", legs.get(3).section()),
+        () -> assertEquals("KPHL", legs.get(3).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals(4, legs.size())
+    );
+  }
+
+  /** TDP-5731, TDP-5562 */
+  @Test
+  void testSidExpansionExtraLeg() {
+    String route = "KSEA.SUMMA2.SUMMA..JINMO";
+
+    Fix summa = fix("SUMMA", 46.61785833333333, -121.98832222222222);
+    Fix jinmo = fix("JINMO", 46.37138888888889, -122.12527777777777);
+
+    RouteExpander expander = newExpander(
+        asList(summa, jinmo),
+        emptyList(),
+        singletonList(Airports.KSEA()),
+        Collections.singletonList(SUMMA2.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, null).get();
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+
+    assertAll(
+        "Check expanded STAR summary statistics.",
+        () -> assertEquals("KSEA", routeSummary.departureAirport()),
+        () -> assertEquals(Optional.empty(), routeSummary.departureRunway()),
+
+        () -> assertEquals(Optional.of("SUMMA2"), routeSummary.sid()),
+        () -> assertEquals(Optional.of("SUMMA"), routeSummary.sidExitFix())
+    );
+
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals("KSEA", legs.get(0).section()),
+        () -> assertEquals("KSEA", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("SUMMA2", legs.get(1).section()),
+        () -> assertEquals("SUMMA", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.IF, legs.get(1).pathTerminator()),
+
+        () -> assertEquals("JINMO", legs.get(2).section()),
+        () -> assertEquals("JINMO", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(2).pathTerminator()),
+
+        () -> assertEquals(3, legs.size())
     );
   }
 

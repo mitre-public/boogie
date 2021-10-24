@@ -5,8 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
@@ -60,9 +58,5 @@ final class LinkingUtils {
   static double distanceBetween(Pair<Leg, Leg> pair) {
     return pair.first().associatedFix().orElseThrow(IllegalStateException::new)
         .distanceInNmTo(pair.second().associatedFix().orElseThrow(IllegalStateException::new));
-  }
-
-  static List<Leg> withLocation(List<LinkedLegs> linkedLegs, Function<LinkedLegs, Leg> ext) {
-    return linkedLegs.stream().map(ext).filter(leg -> leg.associatedFix().isPresent()).collect(Collectors.toList());
   }
 }

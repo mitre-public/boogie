@@ -26,4 +26,8 @@ public final class Airports {
   public static Airport KPHL() {
     return airport("KPHL", 39.872084, -75.240663);
   }
+
+  public static Airport KSEA(){
+    return airport("KSEA", 47.449888888888886, -122.31177777777778);
+  }
 }
