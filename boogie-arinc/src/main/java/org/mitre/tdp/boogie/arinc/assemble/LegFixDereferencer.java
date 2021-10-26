@@ -19,7 +19,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  * This class is hitting NDB/VHF navaids, waypoints, airports, runways, and localizers to find the appropriate database entry to
  * populate the leg fields and returns the result of those lookups as {@link Fix} records.
  */
-final class LegFixDereferencer {
+public final class LegFixDereferencer {
 
   /**
    * Function to use to convert the selected {@link ArincModel} to the appropriate {@link Fix} implementation.

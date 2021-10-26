@@ -4,9 +4,6 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static org.mitre.caasd.commons.util.Partitioners.splitOnPairwiseChange;
-import static org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory.newLegFrom;
-import static org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory.newProcedureFrom;
-import static org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory.toProcedureType;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,8 +21,10 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.model.BoogieTransition;
+import org.mitre.tdp.boogie.fn.QuadFunction;
+import org.mitre.tdp.boogie.fn.TriFunction;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -54,17 +53,55 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
    * transition (e.g. to split the missed approach off of the final approach see - {@link IsFirstLegOfMissedApproach}).
    */
   private final BiPredicate<ArincProcedureLeg, ArincProcedureLeg> shouldSplitTransition;
-
-  public ProcedureAssembler(TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
-    this(terminalAreaDatabase, fixDatabase, (l1, l2) -> IsFirstLegOfMissedApproach.INSTANCE.test(l2));
-  }
+  private final TriFunction<ArincProcedureLeg, TransitionType, List<Leg>, Transition> transitionConverter;
+  private final TriFunction<ArincProcedureLeg, RequiredNavigationEquipage, List<Transition>, Procedure> procedureConverter;
 
   public ProcedureAssembler(
       TerminalAreaDatabase terminalAreaDatabase,
+      FixDatabase fixDatabase
+  ) {
+    this(
+        terminalAreaDatabase,
+        fixDatabase,
+        FixAssembler.INSTANCE,
+        ArincToBoogieConverterFactory::newLegFrom,
+        ArincToBoogieConverterFactory::newTransitionFrom,
+        ArincToBoogieConverterFactory::newProcedureFrom
+    );
+  }
+
+  /**
+   * Injectable constructor to allow users to generate their own concrete data models for:
+   * <br>
+   * 1. {@link Fix}s
+   * 2. {@link Leg}s
+   * 3. {@link Transition}s
+   * 4. {@link Procedure}s
+   * <br>
+   * as part of the assembly process.
+   * <br>
+   * This class will handle grouping and sequencing the 424 legs by transition and then procedure - providing some value-add
+   * classifiers along the way, (e.g. {@link TransitionType} and {@link RequiredNavigationEquipage}).
+   * <br>
+   * One special note is the:
+   * <br>
+   * @param fixConverter - this attempts to delegate the multiple "fix-like" reference-able objects to explicit converters to the
+   * common "Fix" interface. Basically procedures can reference navaids, waypoints, runways, etc. as "Fixes" in the procedure def.
+   * The easiest thing to do here is inject custom "to-fix" converters into the {@link FixAssembler} which will handle delegation
+   * by the section and subsection code of the incoming record.
+   */
+  public ProcedureAssembler(
+      TerminalAreaDatabase terminalAreaDatabase,
       FixDatabase fixDatabase,
-      BiPredicate<ArincProcedureLeg, ArincProcedureLeg> shouldSplitTransition) {
-    this.inflator = new ArincProcedureLegConverter(terminalAreaDatabase, fixDatabase);
-    this.shouldSplitTransition = requireNonNull(shouldSplitTransition);
+      Function<ArincModel, Fix> fixConverter,
+      QuadFunction<ArincProcedureLeg, Fix, Fix, Fix, Leg> legConverter,
+      TriFunction<ArincProcedureLeg, TransitionType, List<Leg>, Transition> transitionConverter,
+      TriFunction<ArincProcedureLeg, RequiredNavigationEquipage, List<Transition>, Procedure> procedureConverter
+  ) {
+    this.inflator = new ArincProcedureLegConverter(terminalAreaDatabase, fixDatabase, legConverter, fixConverter);
+    this.shouldSplitTransition = (l1, l2) -> IsFirstLegOfMissedApproach.INSTANCE.test(l2);
+    this.transitionConverter = requireNonNull(transitionConverter);
+    this.procedureConverter = requireNonNull(procedureConverter);
   }
 
   @Override
@@ -97,10 +134,14 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
     RequiredNavigationEquipage equipage = requiredEquipageClassifier.apply(byType);
 
     List<Transition> transitions = byType.entries().stream()
-        .map(entry -> newTransitionFrom(entry.getKey(), entry.getValue()))
+        .map(entry -> transitionConverter.apply(
+            entry.getValue().get(0),
+            entry.getKey(),
+            entry.getValue().stream().map(inflator).collect(Collectors.toList())
+        ))
         .collect(Collectors.toList());
 
-    return newProcedureFrom(equipage, transitions);
+    return procedureConverter.apply(arincProcedureLegs.get(0), equipage, transitions);
   }
 
   /**
@@ -108,25 +149,6 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
    */
   private List<List<ArincProcedureLeg>> repartition(List<ArincProcedureLeg> procedureLegs) {
     return splitOnPairwiseChange(procedureLegs, (ls, next) -> shouldSplitTransition.negate().test(ls.get(ls.size() - 1), next));
-  }
-
-  /**
-   * Generates a new transition of the given type from the collection of input legs. {@link TransitionType#MISSED} transitions
-   * will be given the name "MISSED".
-   */
-  private Transition newTransitionFrom(TransitionType transitionType, List<ArincProcedureLeg> procedureLegs) {
-    ArincProcedureLeg representative = procedureLegs.get(0);
-    return new BoogieTransition.Builder()
-        .procedureIdentifier(representative.sidStarIdentifier())
-        .airportIdentifier(representative.airportIdentifier())
-        .airportRegion(representative.airportIcaoRegion())
-        .transitionIdentifier(TransitionType.MISSED.equals(transitionType)
-            ? "MISSED"
-            : StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null)))
-        .procedureType(toProcedureType(representative.subSectionCode().orElseThrow(IllegalStateException::new)))
-        .transitionType(transitionType)
-        .legs(procedureLegs.stream().map(inflator).collect(Collectors.toList()))
-        .build();
   }
 
   private String procedureGroupKey(ArincProcedureLeg arincProcedureLeg) {
@@ -146,10 +168,23 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
    */
   static final class ArincProcedureLegConverter implements Function<ArincProcedureLeg, Leg> {
 
+    private final QuadFunction<ArincProcedureLeg, Fix, Fix, Fix, Leg> legConverter;
     private final LegFixDereferencer legFixDereferencer;
 
-    ArincProcedureLegConverter(TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
-      this.legFixDereferencer = new LegFixDereferencer(terminalAreaDatabase, fixDatabase);
+    ArincProcedureLegConverter(
+        TerminalAreaDatabase terminalAreaDatabase,
+        FixDatabase fixDatabase
+    ) {
+      this(terminalAreaDatabase, fixDatabase, ArincToBoogieConverterFactory::newLegFrom, FixAssembler.INSTANCE);
+    }
+
+    ArincProcedureLegConverter(
+        TerminalAreaDatabase terminalAreaDatabase,
+        FixDatabase fixDatabase,
+        QuadFunction<ArincProcedureLeg, Fix, Fix, Fix, Leg> legConverter,
+        Function<ArincModel, Fix> fixConverter) {
+      this.legConverter = requireNonNull(legConverter);
+      this.legFixDereferencer = new LegFixDereferencer(fixConverter, terminalAreaDatabase, fixDatabase);
     }
 
     @Override
@@ -158,7 +193,7 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
       Optional<Fix> recommendedNavaid = recommendedNavaid(arincProcedureLeg);
       Optional<Fix> centerFix = centerFix(arincProcedureLeg);
 
-      return newLegFrom(arincProcedureLeg, associatedFix.orElse(null), recommendedNavaid.orElse(null), centerFix.orElse(null));
+      return legConverter.apply(arincProcedureLeg, associatedFix.orElse(null), recommendedNavaid.orElse(null), centerFix.orElse(null));
     }
 
     Optional<Fix> associatedFix(ArincProcedureLeg arincProcedureLeg) {
