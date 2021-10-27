@@ -21,7 +21,7 @@ public final class IsFlyOverFix implements Predicate<ArincProcedureLeg> {
   /**
    * See {@link WaypointDescription}.
    */
-  boolean isFlyOverFix(String waypointDescription) {
+  public boolean isFlyOverFix(String waypointDescription) {
     return waypointDescription.charAt(2) == 'B'
         || waypointDescription.charAt(2) == 'Y';
   }

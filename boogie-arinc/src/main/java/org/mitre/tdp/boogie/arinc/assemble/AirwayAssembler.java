@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory.newLegFrom;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -19,7 +18,9 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
+import org.mitre.tdp.boogie.fn.TriFunction;
 import org.mitre.tdp.boogie.model.BoogieAirway;
 
 /**
@@ -35,7 +36,22 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
 
   private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway;
 
+  private final Function<List<ArincAirwayLeg>, Airway> airwayConverter;
+
+  public AirwayAssembler(
+      FixDatabase fixDatabase,
+      Function<ArincModel, Fix> fixConverter,
+      TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter,
+      Function<List<ArincAirwayLeg>, Airway> airwayConverter) {
+    this.airwayConverter = airwayConverter;
+    this.inflator = new ArincAirwayLegConverter(fixDatabase, fixConverter, legConverter);
+    this.shouldSplitAirway = (previous, next) -> isSequenceNumberJump(previous, next)
+        || isSequenceNumberReset(previous, next)
+        || !previous.routeIdentifier().equals(next.routeIdentifier());
+  }
+
   public AirwayAssembler(FixDatabase fixDatabase) {
+    this.airwayConverter = this::toAirway;
     this.inflator = new ArincAirwayLegConverter(requireNonNull(fixDatabase));
     this.shouldSplitAirway = (previous, next) -> isSequenceNumberJump(previous, next)
         || isSequenceNumberReset(previous, next)
@@ -48,7 +64,7 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
         .sorted(Comparator.comparing(ArincAirwayLeg::fileRecordNumber))
         .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
         .stream()
-        .map(this::toAirway);
+        .map(airwayConverter::apply);
   }
 
   boolean isSequenceNumberReset(ArincAirwayLeg previous, ArincAirwayLeg next) {
@@ -83,17 +99,27 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
    * Converter logic for transforming an {@link ArincAirwayLeg} to a {@link Leg} implementation - handling the complex parts of
    * looking up the associated fix and recommended navaid for the leg.
    */
-  static final class ArincAirwayLegConverter implements Function<ArincAirwayLeg, Leg> {
+  public static final class ArincAirwayLegConverter implements Function<ArincAirwayLeg, Leg> {
 
     private final LegFixDereferencer legFixDereferencer;
 
+    private final TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter;
+
+    ArincAirwayLegConverter(
+        FixDatabase fixDatabase,
+        Function<ArincModel, Fix> fixConverter,
+        TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter) {
+      this.legFixDereferencer = new LegFixDereferencer(fixConverter, ArincDatabaseFactory.emptyTerminalAreaDatabase(), fixDatabase);
+      this.legConverter = requireNonNull(legConverter);
+    }
+
     ArincAirwayLegConverter(FixDatabase fixDatabase) {
-      this.legFixDereferencer = new LegFixDereferencer(ArincDatabaseFactory.emptyTerminalAreaDatabase(), fixDatabase);
+      this(fixDatabase, FixAssembler.INSTANCE, ArincToBoogieConverterFactory::newLegFrom);
     }
 
     @Override
     public Leg apply(ArincAirwayLeg arincAirwayLeg) {
-      return newLegFrom(arincAirwayLeg, associatedFix(arincAirwayLeg).orElse(null), recommendedNavaid(arincAirwayLeg).orElse(null));
+      return legConverter.apply(arincAirwayLeg, associatedFix(arincAirwayLeg).orElse(null), recommendedNavaid(arincAirwayLeg).orElse(null));
     }
 
     Optional<Fix> associatedFix(ArincAirwayLeg arincAirwayLeg) {
