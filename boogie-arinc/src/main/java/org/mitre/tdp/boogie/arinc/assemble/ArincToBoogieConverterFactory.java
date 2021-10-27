@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
@@ -35,7 +36,9 @@ import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.model.BoogieLeg;
 import org.mitre.tdp.boogie.model.BoogieProcedure;
 import org.mitre.tdp.boogie.model.BoogieRunway;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 
 /**
@@ -217,22 +220,6 @@ public final class ArincToBoogieConverterFactory {
         .build();
   }
 
-  /**
-   * Converts the list of related {@link Transition}s into a {@link Procedure} which downstream algorithms can consume and operate
-   * on more easily.
-   */
-  static Procedure newProcedureFrom(RequiredNavigationEquipage equipage, List<Transition> transitions) {
-    Transition representative = transitions.get(0);
-    return new BoogieProcedure.Builder()
-        .procedureIdentifier(representative.procedureIdentifier())
-        .airportIdentifier(representative.airportIdentifier())
-        .airportRegion(representative.airportRegion())
-        .procedureType(representative.procedureType())
-        .requiredNavigationEquipage(equipage)
-        .transitions(transitions)
-        .build();
-  }
-
   static Leg newLegFrom(ArincProcedureLeg arincProcedureLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix) {
     return new BoogieLeg.Builder()
         .associatedFix(associatedFix)
@@ -254,6 +241,52 @@ public final class ArincToBoogieConverterFactory {
         .turnDirection(arincProcedureLeg.turnDirection().map(ArincToBoogieConverterFactory::toTurnDirection).orElse(TurnDirection.either()))
         .isPublishedHoldingFix(IsPublishedHoldingFix.INSTANCE.test(arincProcedureLeg))
         .isFlyOverFix(IsFlyOverFix.INSTANCE.test(arincProcedureLeg))
+        .build();
+  }
+
+  /**
+   * Generates a new {@link BoogieTransition} from:
+   * <br>
+   * 1. The given representative 424 leg
+   * 2. The inferred type of transition {@link TransitionType}
+   * 3. The collection of legs associated with that transition.
+   * <br>
+   * This method performs some additional standardization on the transition names mapping:
+   * <br>
+   * 1. {@link TransitionType#MISSED} -> "MISSED"
+   * 2. Using the {@link StandardizedTransitionName} for the rest
+   */
+  static Transition newTransitionFrom(
+      ArincProcedureLeg representative,
+      TransitionType transitionType,
+      List<Leg> legs
+  ) {
+    return new BoogieTransition.Builder()
+        .procedureIdentifier(representative.sidStarIdentifier())
+        .airportIdentifier(representative.airportIdentifier())
+        .airportRegion(representative.airportIcaoRegion())
+        .transitionIdentifier(TransitionType.MISSED.equals(transitionType)
+            ? "MISSED"
+            : StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null)))
+        .procedureType(toProcedureType(representative.subSectionCode().orElseThrow(IllegalStateException::new)))
+        .transitionType(transitionType)
+        .legs(legs)
+        .build();
+  }
+
+  static Procedure newProcedureFrom(
+      ArincProcedureLeg representative,
+      RequiredNavigationEquipage requiredNavigationEquipage,
+      List<Transition> transitions
+  ) {
+    Preconditions.checkArgument(representative.subSectionCode().isPresent());
+    return new BoogieProcedure.Builder()
+        .procedureIdentifier(representative.sidStarIdentifier())
+        .airportIdentifier(representative.airportIdentifier())
+        .airportRegion(representative.airportIcaoRegion())
+        .procedureType(toProcedureType(representative.subSectionCode().get()))
+        .requiredNavigationEquipage(requiredNavigationEquipage)
+        .transitions(transitions)
         .build();
   }
 
