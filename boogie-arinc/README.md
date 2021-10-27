@@ -129,6 +129,48 @@ List<ArincWaypoint> allWaypoints;
 List<Fix> fixes = Stream.concat(allNdbNavaids.stream(), allVhfNavaids.stream(), allWaypoints.stream()).map(FixAssembler.INSTANCE).collect(Collectors.toList());
 ```
 
+## Assembling 424 into your own models
+
+Tagging onto the above section - all of the `*Assembler` classes allow users to inject their own concrete sub-object construction 
+methods into the assemblers. That is to say there are two constructor entry points into all of the assemblers - one which under 
+the hood constructs the concrete `Boogie{Airway, Fix, Procedure, Runway, Leg, etc.}` implementations, and another which allows 
+clients to inject their own construction logic.
+
+```java
+// database implementations are still needed as above to dereference the appropriate objects from the 424
+FixDatabase fixDatabase;
+TermialAreaDatabase terminalDatabase;
+
+// all parsed procedure legs
+List<ArincProcedureLeg> procedureLegs = ...;
+
+// my custom Arinc{Waypoint, Navaid, Runway, etc.} -> "implements Fix" conversions
+FixAssembler myCustomFixAssembler = new FixAssembler(
+    myCustomWaypointConverter,
+    myCustomNavaidConverter
+    // ... etc...
+);
+
+// my composite procedure assembler with custom assembly logic
+// to see how the Boogie ones work see ArincToBoogieConverterFactory, these are the default injected ones used in the previous section
+ProcedureAssembler myCustomProcedureAssembler = new ProcedureAssembler(
+   fixDatabase,
+   terminalDatabase,
+   myCustomFixAssembler,
+   // the generic Fixes provided to this are the concrete ones built by myCustomFixAssembler
+   myCustomLegAssembler,
+   // the generic Legs provided to this are the concrete ones built by myCustomLegAssembler
+   myCustomTransitionAssembler,
+   // the generic Transitions provided to this are the concrete ones build by myCustomTransitionAssembler
+   myCustomProcedureAssembler
+);
+
+List<Procedure> procedures = myCustomProcedureAssembler.apply(procedureLegs);
+
+// similarly overridable things exist for the Airway and Airport assemblers - and are conceptually identical to the procedure one 
+// in terms of how they function
+```   
+
 # What is ARINC 424?
 <p>
 ARINC 424 is a data format primarily used to serialize navigation data and is generally the one used to package data before it is compressed and loaded in the FMS (flight management system) 
