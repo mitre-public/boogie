@@ -3,8 +3,8 @@ kind: CronJob
 metadata:
   name: cifp-download
 spec:
-  # Runs once daily at midnight
-  schedule: "0 0 * * *"
+  # Runs once an hour on the half-hour
+  schedule: "30 * * * *"
   jobTemplate:
     spec:
       template:
@@ -15,7 +15,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: cifp-download
-              image: image-registry.openshift-image-registry.svc:5000/tdp/cifp-download
+              image: image-registry.openshift-image-registry.svc:5000/tfm-analytics/cifp-download
               volumeMounts:
                 - name: boogie-arinc-db
                   mountPath: /data/db/arinc

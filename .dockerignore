@@ -3,7 +3,8 @@
 *.ipynb
 
 # avoid deployment scripts - don't want them to bust the build cache
-kube/
+deploy/
+bamboo-specs/
 deploy-boogie-rest.sh
 boogie-rest-deployment.yaml
 Dockerfile

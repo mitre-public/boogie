@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: boogie-arinc-db
+spec:
+  # We need to be able to update the data stored in this volume periodically from a different
+  accessModes:
+    - ReadWriteMany
+  storageClassName: basic
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: boogie-rest-config
+  namespace: tfm-analytics
+data:
+  # Assume the data exists in the persistent volume attached to the container - a separate process will populate this
+  FILE_LOCATOR_PATH: '/data/db/arinc/arinc-data.dat'

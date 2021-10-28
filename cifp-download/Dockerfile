@@ -7,7 +7,7 @@ RUN apt-get update \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /script
-COPY ./cifp-download.sh .
+COPY ../../cifp-download/cifp-download.sh .
 
 WORKDIR /data/db/arinc
 CMD ["bash", "/script/cifp-download.sh"]

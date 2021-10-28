@@ -20,39 +20,18 @@ notifications:
     events:
       - plan-status-changed
 
-variables:
-  # The production artifactory instance - can't push the same image+version there more than once (hence scripts including version + commit
-  # hash in the image version)
-  internal_artifactory: "artifacts.mitre.org:8200"
-  internal_artifactory_namespace: tdp
-  # TDP Service account for pushing images to artifactory and the encrypted API key (https://pandafood.mitre.org/specs/encryption.action)
-  internal_artifactory_user: tdp_artifact_deploy
-  internal_artifactory_password: BAMSCRT@0@0@9V7pyvCoqkRM3Ek57BoM+l0gfbzl3LG+7LVdHOT4f3DFB5yIgdNFvRI8VJ5EHz8DVCfF8G08N0DG9dtdVlRnyx95OekMhcfCB0wW1TboER0=
-
-  # Codev repositories location/namespace
-  external_artifactory: repo.codev.mitre.org
-  external_artifactory_namespace: idaass-docker
-  external_artifactory_prefix: tdp
-  # Codev credentials - service account and
-  external_artifactory_user: svc-idaass-developers
-  external_artifactory_password: BAMSCRT@0@0@zG9jNuBSNWZuIP/LVU1Covg9ERDkZsMdE1iZeLYOZtDfZWy2ZFjXyDtToZtEQhmBE9GjYuD0UkFfLzm95SpOIW3lGqPxc3xViwfSTL9BYkkyAceM7m6EaMWIkMZ94fkyAFWqnrk1rpTSbqpVAfj/VkNBWNhQjzW4jC2pSS12ji0iwHL37K8wfKEefd8EghvLLz7QTF7SGKucEr1hWr9GSYPYvhzBpSkSCFH79SKo2W7p0jRoOccNBp4z8HzLR+r4WW9p0idPwV/RpyRb89tMNayh9i7t3J39n0ZanFpYDhPuOTytvNKwJ1s/hyHE+VdB3X29by1BEhwS2o91el0ToiEBGCk4YYVPxy8nyR09Kfv9Fvrum/lATdgqhLJMNB+B/a8yAjCjPGCrd3tNVIV9pYeUiiSXF9Lf+K0UImRKWQl5yhxgEQfHS+5kfDk3oFtkCNGDbCJN8mJYagggA4LHmSHM9cQNr5jpQR+y3BLmms6UasnHL1DnvMlZCrTGSN5qGhKkWkOVC75QGKTVghd/8TKl54BkAVZ9szSjXJ/Q7ep4ELvERVbmsULT3jHCcmsfhZ/6RVWIuR3aC+wRIwyAn3T8PDUgrC/unkI7kjQ2U/k87fg19gBWrqcf6+i03Ar8WDO+gY7nQAINSJYR80VZVnRBkAOOyi9hacpUIDS5hnTxmTnvWFnStqGXkoAj55MVt10X+6ioyQQkMYhQeYxbQHhuG6m48B8wE9Ce7NL9xhTFXvGwEklvIag0ZvVvlSEk7u5GXzwkyASTpMJefQOpWgFDP+KgL53imiYQ2fFmQZGqu7d4+WIpnY2qUaPZBofzlUBENzGu13DjolYhC1OYRhSSB8uftTFfEZhde0BDL64jVbFGs3bdvyHUxeCuL+upTPFfoR3hYATgaqkVFiImqWQkg2jsDmqC4qjgOueLgqsjGokVcTXZ68airINgxkLsEW4YqbeL8n6sRS4YkucQ0N5yMOmWBKmWdriB3ePWohdW6cI950wbscRYnnn3CgKlDgOP2MbQouGdSW4KRTCtwJReR1I6DOZb0SQ4pFOZWpyCIc6EoS7su+W97oWnMUm6Ry8SMvk9uDtj5AGbEXKv4Q==
-
-  webhook.slackUsername: "Boogie Bot"
-  webhook.slackChannel: "@acramer"
+variables: !include 'variables.yml'
 
 labels:
   - ttfs
 
 stages:
-  - Test:
-      # Configure standard test and integration tests as part of the same stage but as different jobs so they can be run in parallel
-      jobs:
-        - Gradle Standard Test
-        - Gradle Integration Test
+  # Configure standard test and integration tests as part of the same stage but as different jobs so they can be run in parallel
+  - Test: [ Gradle Standard Test, Gradle Integration Test ]
+  - Push: [ Push Image Internal, Push Image External ]
   - Deploy:
-      jobs:
-        - Deploy Image Internal
-        - Deploy Image External
+      manual: true
+      jobs: [ Deploy Internal Application ]
 
 Gradle Standard Test:
   tasks:
@@ -76,19 +55,35 @@ Gradle Integration Test:
   requirements:
     - system.name: rhizome[456]
 
-Deploy Image Internal:
+Push Image Internal:
   tasks:
-    - script: bamboo-specs/ci-build-and-push-internal.sh
+    - script:
+        file: bamboo-specs/ci-build-and-push-internal-artifactory.sh
+        conditions: &only-run-main
+          - variable:
+              matches:
+                bamboo.planRepository.branchDisplayName: 'main'
   requirements:
     - system.name: rhizome[\d]
     - Docker
 
-Deploy Image External:
+Push Image External:
   tasks:
-    - script: bamboo-specs/ci-build-and-push-external.sh
+    - script:
+        file: bamboo-specs/ci-build-and-push-external-artifactory.sh
+        conditions: *only-run-main
   requirements:
     - system.name: rhizome[\d]
     - Docker
+
+Deploy Internal Application:
+  tasks:
+    - script:
+        file: bamboo-specs/deploy-service-internal-kubernetes.sh
+        conditions: *only-run-main
+  # Run the internal deployment job from a docker container which has kubectl installed
+  # The standard bamboo agents don't have this available
+  docker: centos:7
 
 branch-overrides:
   - ^((?!main).)*$:

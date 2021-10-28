@@ -22,7 +22,7 @@ docker login -u $(oc whoami) -p $(oc whoami -t) $REGISTRY_URL
 echo "Using dockerfiles $SCRIPTPATH/Dockerfile..."
 
 # Build and tag the frontend image for deployment
-docker build -f $SCRIPTPATH/Dockerfile -t cifp-download .
+docker build -f $SCRIPTPATH/../../cifp-download/Dockerfile -t cifp-download .
 docker tag cifp-download $REGISTRY_URL/tfm-analytics/cifp-download
 
 # Push to docker repository triggering and auto redeploy
@@ -30,4 +30,4 @@ docker push $REGISTRY_URL/tfm-analytics/cifp-download
 
 # Apply openshift config changes
 oc project tfm-analytics
-oc apply -f $SCRIPTPATH/cifp-download-kubejob.yaml
+oc apply -f $SCRIPTPATH/../kubernetes/cifp-download-kubejob.yaml

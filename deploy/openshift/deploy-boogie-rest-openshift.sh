@@ -1,7 +1,7 @@
-# Builds the baseline boogie rest endpoint deployment on the EPIC cluster
-#
-# This class builds and registers the images with the openshift container registry
-# before applying local change set in the boogie-kube-deployment.yaml file
+# Runs the deployment of the boogie rest endpoint to the internal openshift cluster
+
+# This script should be run from CLI only and will ensure the image is pushed to the right namespace
+# on the remote cluster
 set -e
 
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
@@ -18,4 +18,6 @@ fi
 
 # Apply openshift config changes
 oc project tfm-analytics
-oc apply -f $SCRIPTPATH/boogie-rest-deployment.yaml
+kubectl apply -f $SCRIPTPATH/../kubernetes/boogie-rest-config.yaml
+kubectl apply -f $SCRIPTPATH/../kubernetes/boogie-rest-deployment.yaml
+kubectl apply -f $SCRIPTPATH/../kubernetes/boogie-rest-service.yaml
