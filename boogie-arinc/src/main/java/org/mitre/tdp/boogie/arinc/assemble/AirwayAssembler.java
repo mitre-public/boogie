@@ -105,7 +105,7 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
 
     private final TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter;
 
-    ArincAirwayLegConverter(
+    public ArincAirwayLegConverter(
         FixDatabase fixDatabase,
         Function<ArincModel, Fix> fixConverter,
         TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter) {
