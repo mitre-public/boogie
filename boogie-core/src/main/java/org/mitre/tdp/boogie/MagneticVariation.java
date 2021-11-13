@@ -28,6 +28,14 @@ public final class MagneticVariation implements Serializable {
    */
   private final double modeled;
 
+  /**
+   * Serialization...
+   */
+  private MagneticVariation() {
+    this.published = null;
+    this.modeled = 0.0;
+  }
+
   public MagneticVariation(@Nullable Double published, double modeled) {
     checkArgument(published == null || abs(published) < 180);
     checkArgument(abs(modeled) < 180);
