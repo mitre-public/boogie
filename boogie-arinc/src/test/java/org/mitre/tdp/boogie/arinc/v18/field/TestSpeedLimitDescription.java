@@ -8,28 +8,30 @@ import org.junit.jupiter.api.Test;
 
 class TestSpeedLimitDescription {
 
+  private static final SpeedLimitDescription parser = new SpeedLimitDescription();
+
   @Test
-  void testBlankDescriptionIsAt() {
-    assertEquals(Optional.of(SpeedLimitDescription.AT), SpeedLimitDescription.SPEC.apply(" "));
+  void testBlankDescriptionIsAllowed() {
+    assertEquals(Optional.of(" "), parser.apply(" "), "Space should be allowed");
   }
 
   @Test
-  void testApersandDescriptionIsAt() {
-    assertEquals(Optional.of(SpeedLimitDescription.AT), SpeedLimitDescription.SPEC.apply("@"));
+  void testApersandDescriptionIsAllowed() {
+    assertEquals(Optional.of("@"), parser.apply("@"));
   }
 
   @Test
-  void testPlusDescriptionIsAtOrAbove() {
-    assertEquals(Optional.of(SpeedLimitDescription.AT_OR_ABOVE), SpeedLimitDescription.SPEC.apply("+"));
+  void testPlusDescriptionIsAllowed() {
+    assertEquals(Optional.of("+"), parser.apply("+"));
   }
 
   @Test
-  void testMinusDescriptionIsAtOrBelow() {
-    assertEquals(Optional.of(SpeedLimitDescription.AT_OR_BELOW), SpeedLimitDescription.SPEC.apply("-"));
+  void testMinusDescriptionIsAllowed() {
+    assertEquals(Optional.of("-"), parser.apply("-"));
   }
 
   @Test
   void testFiltersUnsupportedInput() {
-    assertEquals(Optional.empty(), SpeedLimitDescription.SPEC.apply("HI"));
+    assertEquals(Optional.empty(), parser.apply("HI"));
   }
 }

@@ -8,7 +8,6 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 import org.mitre.tdp.boogie.arinc.v18.field.WaypointDescription;
 
@@ -66,7 +65,7 @@ public final class ArincProcedureLeg implements ArincModel {
   private final String centerFixIcaoRegion;
   private final SectionCode centerFixSectionCode;
   private final String centerFixSubSectionCode;
-  private final SpeedLimitDescription speedLimitDescription;
+  private final String speedLimitDescription;
   private final String routeTypeQualifier1;
   private final String routeTypeQualifier2;
   private final Integer fileRecordNumber;
@@ -287,7 +286,7 @@ public final class ArincProcedureLeg implements ArincModel {
     return Optional.ofNullable(centerFixSubSectionCode);
   }
 
-  public Optional<SpeedLimitDescription> speedLimitDescription() {
+  public Optional<String> speedLimitDescription() {
     return Optional.ofNullable(speedLimitDescription);
   }
 
@@ -407,7 +406,7 @@ public final class ArincProcedureLeg implements ArincModel {
         Objects.equals(centerFixIcaoRegion, that.centerFixIcaoRegion) &&
         centerFixSectionCode == that.centerFixSectionCode &&
         Objects.equals(centerFixSubSectionCode, that.centerFixSubSectionCode) &&
-        speedLimitDescription == that.speedLimitDescription &&
+        Objects.equals(speedLimitDescription, that.speedLimitDescription) &&
         Objects.equals(routeTypeQualifier1, that.routeTypeQualifier1) &&
         Objects.equals(routeTypeQualifier2, that.routeTypeQualifier2) &&
         Objects.equals(fileRecordNumber, that.fileRecordNumber) &&
@@ -513,7 +512,7 @@ public final class ArincProcedureLeg implements ArincModel {
     private String centerFixIcaoRegion;
     private SectionCode centerFixSectionCode;
     private String centerFixSubSectionCode;
-    private SpeedLimitDescription speedLimitDescription;
+    private String speedLimitDescription;
     private String routeTypeQualifier1;
     private String routeTypeQualifier2;
     private Integer fileRecordNumber;
@@ -724,7 +723,7 @@ public final class ArincProcedureLeg implements ArincModel {
       return this;
     }
 
-    public Builder speedLimitDescription(SpeedLimitDescription speedLimitDescription) {
+    public Builder speedLimitDescription(String speedLimitDescription) {
       this.speedLimitDescription = speedLimitDescription;
       return this;
     }

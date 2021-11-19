@@ -12,7 +12,6 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 
 public final class ProcedureLegConverter implements Function<ArincRecord, Optional<ArincProcedureLeg>> {
@@ -62,7 +61,7 @@ public final class ProcedureLegConverter implements Function<ArincRecord, Option
     Optional<String> centerFixIcaoRegion = arincRecord.optionalField("centerFixIcaoRegion");
     Optional<SectionCode> centerFixSectionCode = arincRecord.optionalField("centerFixSectionCode");
     Optional<String> centerFixSubSectionCode = arincRecord.optionalField("centerFixSubSectionCode");
-    Optional<SpeedLimitDescription> speedLimitDescription = arincRecord.optionalField("speedLimitDescription");
+    Optional<String> speedLimitDescription = arincRecord.optionalField("speedLimitDescription");
     Optional<String> routeTypeQualifier1 = arincRecord.optionalField("routeTypeQualifier1");
     Optional<String> routeTypeQualifier2 = arincRecord.optionalField("routeTypeQualifier2");
 
