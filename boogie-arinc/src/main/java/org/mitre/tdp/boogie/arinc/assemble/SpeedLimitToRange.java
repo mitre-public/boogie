@@ -20,7 +20,7 @@ import com.google.common.collect.Range;
  * <br>
  * If no speedLimit value is provided this class will map the range to "unconstrained" regardless of the descriptor.
  */
-public final class SpeedLimitToRange implements BiFunction<SpeedLimitDescription, Double, Range<Double>> {
+public final class SpeedLimitToRange implements BiFunction<String, Double, Range<Double>> {
 
   public static final SpeedLimitToRange INSTANCE = new SpeedLimitToRange();
 
@@ -28,21 +28,21 @@ public final class SpeedLimitToRange implements BiFunction<SpeedLimitDescription
   }
 
   @Override
-  public Range<Double> apply(SpeedLimitDescription speedLimitDescription, @Nullable Double speedLimit) {
+  public Range<Double> apply(String speedLimitDescription, @Nullable Double speedLimit) {
     requireNonNull(speedLimitDescription, "Description code for speed limits ");
 
     if (speedLimit == null) {
       return Range.all();
     }
 
-    if (SpeedLimitDescription.AT.equals(speedLimitDescription)) {
+    if (speedLimitDescription.trim().isEmpty() || "@".equals(speedLimitDescription)) {
       return Range.closed(speedLimit, speedLimit);
-    } else if (SpeedLimitDescription.AT_OR_ABOVE.equals(speedLimitDescription)) {
+    } else if ("+".equals(speedLimitDescription)) {
       return Range.atLeast(speedLimit);
-    } else if (SpeedLimitDescription.AT_OR_BELOW.equals(speedLimitDescription)) {
+    } else if ("-".equals(speedLimitDescription)) {
       return Range.atMost(speedLimit);
     } else {
-      throw new IllegalArgumentException("Unknown SpeedLimitDescription: ".concat(speedLimitDescription.name()));
+      throw new IllegalArgumentException("Unknown SpeedLimitDescription: ".concat(speedLimitDescription));
     }
   }
 }

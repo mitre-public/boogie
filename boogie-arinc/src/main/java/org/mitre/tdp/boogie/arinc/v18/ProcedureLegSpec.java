@@ -96,7 +96,7 @@ public final class ProcedureLegSpec implements RecordSpec {
         new RecordField<>("centerFixSectionCode", SectionCode.SPEC),
         new RecordField<>("centerFixSubSectionCode", new SubSectionCode()),
         new RecordField<>("unk", new BlankSpec(1)), // 5.222
-        new RecordField<>(SpeedLimitDescription.SPEC),
+        new RecordField<>(new SpeedLimitDescription()),
         new RecordField<>("routeTypeQualifier1", new RouteTypeQualifier()),
         new RecordField<>("routeTypeQualifier2", new RouteTypeQualifier()),
         new RecordField<>("blank4", new BlankSpec(3)),
