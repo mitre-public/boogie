@@ -1,20 +1,26 @@
 FROM gradle:6.9.0-jdk8 AS base
 
-WORKDIR /usr/share/ca-certificates
+WORKDIR /certs
 
 ADD http://pki.mitre.org/MITRE%20BA%20Root.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-1.crt \
-    http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt ./
+    http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt \
+    http://pki.mitre.org/ZScaler_Root.crt /certs/
 
-RUN for cert in "MITRE BA Root.crt" "MITRE BA NPE CA-1.crt" "MITRE BA NPE CA-3.crt" "MITRE BA NPE CA-4.crt"; \
+RUN for cert in "MITRE BA Root.crt" "MITRE BA NPE CA-1.crt" "MITRE BA NPE CA-3.crt" "MITRE BA NPE CA-4.crt" "ZScaler_Root.crt"; \
     do keytool -import -alias "${cert}" -file "${cert}" -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit -noprompt; done
 
 FROM base AS gradle-files
 
-# grab everything from the source directory
-# remove everything that isn't a relevant gradle.kts file containing dependencies
 WORKDIR /boogie
+
+# grab everything from the source directory
 COPY . .
+
+# remove everything that isn't a relevant gradle.kts file containing dependencies from the sub-projects
 RUN find . \! -name "*.gradle.kts" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
+
+# add back in the scripts/gradle directory containing helper gradle files (alternatively updating the find command may be possible)
+COPY ./scripts/gradle ./scripts/gradle
 
 FROM base AS dependencies
 
