@@ -9,18 +9,26 @@
 *.secret
 *.gitignore
 *.md
+*.png
 
 .git
 .gradle
 .ipynb_checkpoints
+.idea
 
-config/
-deploy/ci/
-bin/
-gradle/wrapper/
-bamboo-specs/
+bin
+gradle
+target
+bamboo-specs
+
+config
+deploy
+scripts/ci
+cifp-download
+
 gradlew*
 sonar*
+
 */Dockerfile
 */src/test/resources/*
 */build/*

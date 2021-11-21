@@ -14,7 +14,7 @@ FROM base AS gradle-files
 # remove everything that isn't a relevant gradle.kts file containing dependencies
 WORKDIR /boogie
 COPY . .
-RUN find . \! -name "build*.gradle.kts" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
+RUN find . \! -name "*.gradle.kts" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
 
 FROM base AS dependencies
 
