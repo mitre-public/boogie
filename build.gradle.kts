@@ -5,26 +5,44 @@ plugins {
     id("net.researchgate.release") version "2.8.1" // used to emulate mvn release: https://github.com/researchgate/gradle-release
 }
 
-val gradleScriptsDir = "./gradle-scripts/"
-
-/* import/apply our repo and dependencies declared in other scripts for modularity */
-apply(from = "${gradleScriptsDir}build-repos.gradle.kts")
-
-val mockitoVersion by extra("3.2.4")
-
-/* documentation tasks */
-apply(from = "${gradleScriptsDir}build-docs.gradle.kts")
-
-//only apply jacoco/sonar reporting settings if explicitly running
-if (project.hasProperty("reporting")) {
-    apply(from = "${gradleScriptsDir}build-reporting.gradle.kts")
+/** Explicitly declare referenced/used repositories which host the artifact necessary to build the software */
+allprojects {
+    repositories {
+        // only uncomment to test a build that depends on locally installed maven artifacts
+        // mavenLocal()
+        maven {
+            name = "clojars"
+            url = uri("https://repo.clojars.org/")
+        }
+        maven {
+            name = "dali-mirror"
+            url = uri("https://dali.mitre.org/nexus/content/groups/mirror")
+            content {
+                excludeGroup("org.jacoco")// dali's: mirror/org/jacoco doesn't have all the agent jar's, just runtime which breaks the build
+            }
+        }
+        maven {
+            name = "dali-proxied-repositories"
+            url = uri("https://dali.mitre.org/nexus/content/groups/proxied-repositories")
+        }
+        maven {
+            name = "dali-external"
+            url = uri("https://dali.mitre.org/nexus/content/groups/external")
+        }
+        maven {
+            name = "mitre-caasd-releases"
+            url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-releases/")
+        }
+        maven {
+            name = "dali-mitre-caasd-releases"
+            url = uri("https://dali.mitre.org/nexus/content/groups/mitre-caasd")
+        }
+    }
 }
 
-/**
- * create a ~/.gradle/gradle.properties file which defines mavenUser and mavenPassword (copy from ~/.m2/settings.xml
- * @see: https://github.com/gradle/gradle/issues/1236
- */
-//TODO investigate using https://github.com/etiennestuder/gradle-credentials-plugin
+/** Add gradle tasks for releasing a new version of the software to MITRE internal DALI */
+apply(from = "./scripts/gradle/dali-releasing.gradle.kts")
+
 val mavenUser: String? by project
 val mavenPassword: String? by project
 
@@ -35,6 +53,15 @@ release {
     val git: net.researchgate.release.GitAdapter.GitConfig = getProperty("git") as net.researchgate.release.GitAdapter.GitConfig
     git.requireBranch = "main"
 }
+
+/** Add gradle tasks for deploying updated code quality and coverage reports to MITRE SONAR */
+apply(from = "./scripts/gradle/build-reporting.gradle.kts")
+
+/** Add gradle tasks for packaging javadocs */
+apply(from = "./scripts/gradle/build-docs.gradle.kts")
+
+val mockitoVersion by extra("3.2.4")
+
 
 subprojects {
     apply(plugin = "java-library")

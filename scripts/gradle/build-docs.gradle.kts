@@ -2,7 +2,7 @@ val javadocDir = "$buildDir/docs/java-doc"
 val javadocZipDir = "$buildDir/dist"
 fun javadocZipName(): String {
     var dateString = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd").format(java.time.LocalDate.now())
-    return "${dateString}-cda-$version.zip"
+    return "${dateString}-boogie-$version.zip"
 }
 val javadocZipPath = "$javadocZipDir/${javadocZipName()}"
 

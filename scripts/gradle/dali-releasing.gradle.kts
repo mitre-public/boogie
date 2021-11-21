@@ -1,37 +1,3 @@
-allprojects {
-    repositories {
-        // only uncomment to test a build that depends on locally installed maven artifacts
-//        mavenLocal()
-        maven {
-            name = "clojars"
-            url = uri("https://repo.clojars.org/")
-        }
-        maven {
-            name = "dali-mirror"
-            url = uri("https://dali.mitre.org/nexus/content/groups/mirror")
-            content {
-                excludeGroup("org.jacoco")// dali's: mirror/org/jacoco doesn't have all the agent jar's, just runtime which breaks the build
-            }
-        }
-        maven {
-            name = "dali-proxied-repositories"
-            url = uri("https://dali.mitre.org/nexus/content/groups/proxied-repositories")
-        }
-        maven {
-            name = "dali-external"
-            url = uri("https://dali.mitre.org/nexus/content/groups/external")
-        }
-        maven {
-            name = "mitre-caasd-releases"
-            url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-releases/")
-        }
-        maven {
-            name = "dali-mitre-caasd-releases"
-            url = uri("https://dali.mitre.org/nexus/content/groups/mitre-caasd")
-        }
-    }
-}
-
 /* *******************************
  * configure artifact publishing *
  *********************************/

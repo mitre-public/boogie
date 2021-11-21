@@ -3,8 +3,6 @@ subprojects {
     apply(plugin = "jacoco")
 }
 
-
-
 buildscript {
     repositories {
         //use our proxied Gradle Plugin Portal (https://plugins.gradle.org/) to find this plugin
@@ -15,7 +13,6 @@ buildscript {
         classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion")
     }
 }
-
 
 /**
  * https://docs.gradle.org/6.4-rc-1/samples/sample_jvm_multi_project_with_code_coverage.html

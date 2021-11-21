@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script releases the new stable Boogie artifacts. You need to provide the maven credentials:
 #
-# ./ci-scripts/ci-publish-release.sh -PmavenUser=username -PmavenPassword=pass
+# ./scripts/ci/ci-publish-release.sh -PmavenUser=username -PmavenPassword=pass
 # (or have mavenUser/mavenPassword set in your global gradle.properties, typically in you ~/.gradle folder)
 #
 # This script will:
@@ -13,6 +13,10 @@
 # 6. Publish artifacts to Nexus from the stable commit
 #
 # See: https://github.com/researchgate/gradle-release for details on the Gradle release plugin
+#
+# Note that this script is also configured to be runnable from CI via an optional task, you can see the ./bamboo-specs CI plan
+# spec for additional information
+
 NONE="$(echo -e "\033[0m")"
 RED="$(echo -e "\033[31m")"
 GREEN="$(echo -e "\033[32m")"

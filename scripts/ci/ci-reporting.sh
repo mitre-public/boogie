@@ -15,7 +15,7 @@ echo "Running ${GREEN}$0${NONE} on ${GREEN}$branchName${NONE} at ${GREEN}$myProj
 # run clean set of tests with jacoco reports configured
 ./gradlew clean test -Preporting --no-build-cache
 
-## generate code coverage aggregate report (explictly depends on testSmall+testLarge)
+## generate code coverage aggregate report
 ./gradlew codeCoverageReport -Preporting --no-build-cache --no-parallel
 
 # run  sonarqube scanner, which by default depends on the 'test' task

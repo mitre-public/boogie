@@ -6,8 +6,6 @@ metadata:
   namespace: tfm-analytics
   labels:
     app: boogie-rest
-  annotations:
-    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"boogie-rest:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"boogie-rest\")].image"}]'
 spec:
   revisionHistoryLimit: 0
   selector:
@@ -23,7 +21,7 @@ spec:
       containers:
         - name: boogie-rest
           # Use the image built from the release version of the boogie software in the prod deployment
-          image: repo.codev.mitre.org/idaass-docker/tdp/boogie-rest:1.0.3-SNAPSHOT-e372203
+          image: repo.codev.mitre.org/idaass-docker/tdp/boogie-rest:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8087

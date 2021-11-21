@@ -30,4 +30,4 @@ docker push $REGISTRY_URL/tfm-analytics/cifp-download
 
 # Apply openshift config changes
 oc project tfm-analytics
-oc apply -f $SCRIPTPATH/../kubernetes/cifp-download-kubejob.yaml
+oc apply -f kubejob.cifp-download.yaml
