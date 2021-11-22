@@ -1,13 +1,13 @@
-# Boogie REST
+## Boogie REST
 
-# Module overview
+## Module overview
 
 This module serves as a REST API wrapper around the collection of services provided in the other modules. The goal of this API is to facility queries for ARINC-formatted navigation data as well as 
 on-the-fly route expansion. 
 
-# Quick start
+## Quick start
 
-## Launching a REST service
+### Launching a REST service
 
 To build and launch the API from CLI you can run (from the base ```/boogie``` folder):
 
@@ -26,7 +26,7 @@ Two things to note:
 Reading the Swagger docs from a local launch of the software is the easiest way to see what the API provides even if you're unfamiliar with Clojure as a language and is the recommended way 
 to check things out (if you need more information there is a later section in this readme which gives a bit more details about the internals of the API).
 
-## Containerized deployment
+### Containerized deployment
 
 Boogie provides a docker image for the containerized version of the REST API within [MITRE artifactory](https://artifacts.mitre.org/artifactory/webapp/#/artifacts/browse/tree/Properties/docker/tdp/boogie-rest). The image version is 
 the short name of the git commit it was built off of plus the current version of the boogie software project. The image needs to be deployed with a mounted cycle of infrastructure data as per the `Launching a REST service` portion of 
@@ -54,9 +54,9 @@ This will re-build the docker images, push them to the EPIC-OSC container regist
 Provided alongside this deployment in the `./cifp-download` directory is a separate scheduled KubeJob which is configured to pull the latest cycle of CIFP data from the FAA web servers every day at midnight and sync it to 
 the PVC mounted on the REST server. Since the rest server only re-reads data from disk on initialization in order to reflect updates in the PVC data it needs to be restarted once the sync has occurred.
 
-# Context
+## Context
 
-## Build details
+### Build details
 
 [Clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/) is the non-Java language the majority of TDP developers prefer to use (since its still a JVM language). Boogie takes advantage of 
 the [clojurephant](https://github.com/clojurephant/clojurephant) library to compile the clojure REST API code from Gradle in-line with its Java code. Documentation for the REST API is configured via Swagger 

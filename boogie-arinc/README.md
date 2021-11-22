@@ -1,11 +1,11 @@
-# Boogie ARINC
+## Boogie ARINC
 
-# Module overview
+## Module overview
 <p>This module within the Boogie software project provides a set of configurable and extensible parsers for ARINC424 formatted data.</p>
 
-# Quick start
+## Quick start
 
-## Parsing a 424 file
+### Parsing a 424 file
 
 For users who don't really care to know that much about what goes into the 424 specs + versioning and other implementation details - here's to you:
 ```java
@@ -24,14 +24,14 @@ As defined and implemented in Boogie the ```ArincVersion.V19``` pre-canned set o
 of an older version or of some of the more recent ```V21``` versions as Boogie is more focused on the <i>structure</i> of the record (with lightweight field-level validation) than on 
 the exact allowed content combinations therein.
 
-### Quick notes on what <i>is</i> explicitly checked...
+#### Quick notes on what <i>is</i> explicitly checked...
 
 See the various [validator](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/v18/AirportValidator.java?at=main) classes
 within the V18 specification package. Most of them are lightweight and about what you would expect - the only heavier weight one is the ```ProcedureLegValidator``` which inspects both the
 path terminator (TF, RF, AF, VA, etc.) and the field contents of the record to ensure the required information is present in the record to model how the leg should be flown (e.g. VA legs need
 to have a valid specified min altitude and outbound course).
 
-## Indexing in provided database implementations
+### Indexing in provided database implementations
 The nature of most of the ARINC record types is to be referential towards other record types - take for example an ```ArincProcedureLeg``` record:
 <br>
 <img align="float: left;" height="80" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-arinc/arinc-procedure-leg-v18.png?at=refs%2Fheads%2Fmain"/>
@@ -86,7 +86,7 @@ Collection<ArincProcedureLeg> rober2Legs = terminalAreaDatabase.legsForProcedure
 Most of the database implementations under ```org.mitre.tdp.boogie.database``` provide similar collections of methods for accessing pre-indexed data. The ```ArincDatabaseFactory``` is the de facto 
 entry point for creating most of these implementations. See the javadocs on them for further details around usage.
 
-## Assembling Boogie-like records
+### Assembling Boogie-like records
 
 Boogie-core provides a collection of interfaces for common navigational objects (e.g. Airways, Procedures, Fixes, etc.) as well as concrete model implementations for all of those interfaces. It's a 
 common pattern to want to go from the parsed 424 data to assembled versions of these interfaces (i.e. for things like route expansion), to help with this Boogie provides a collection of assembly classes 
@@ -129,7 +129,7 @@ List<ArincWaypoint> allWaypoints;
 List<Fix> fixes = Stream.concat(allNdbNavaids.stream(), allVhfNavaids.stream(), allWaypoints.stream()).map(FixAssembler.INSTANCE).collect(Collectors.toList());
 ```
 
-## Assembling 424 into your own models
+### Assembling 424 into your own models
 
 Tagging onto the above section - all of the `*Assembler` classes allow users to inject their own concrete sub-object construction 
 methods into the assemblers. That is to say there are two constructor entry points into all of the assemblers - one which under 
@@ -171,7 +171,7 @@ List<Procedure> procedures = myCustomProcedureAssembler.apply(procedureLegs);
 // in terms of how they function
 ```   
 
-# What is ARINC 424?
+## What is ARINC 424?
 <p>
 ARINC 424 is a data format primarily used to serialize navigation data and is generally the one used to package data before it is compressed and loaded in the FMS (flight management system) 
 on board an aircraft. At a high level ARINC data consists of a variety of field definitions (usable/composable across record types) - e.g. latitude/longitude (fields) that are defined 
@@ -202,7 +202,7 @@ These sections help categorize and organize data within an ARINC file - and the 
 identify certain record types within the database (e.g. airports, waypoints, navaids).
 </p>
 
-# Current capabilities
+## Current capabilities
 
 Given the above, Boogie provides collections of these field-level specs pre-implemented with some tooling on top for composing them together as "records" and then applying those record-level 
 specifications to input ARINC 424 strings to produce semi-structured content (things that look like maps). Boogie also provides converters for taking that generated semi-structured content 
@@ -236,13 +236,13 @@ means over the years (even though there is <i>very</i> good documentation around
 (from 19a) on Approach records (and the updated approach naming conventions - i.e. RNP approaches start with an H) as part of their standard publication even though it claims to be published 
 as V18.
 
-# Deeper dives
+## Deeper dives
 Hopefully the Quick start was able to get you up and running relatively easily - however if you need to do more with the library this section is here to help.
 
-## Adding supported record types
+### Adding supported record types
 If you find that the currently supported set of record parsers doesn't meet your needs this section will cover how to extend the API for new record types.
 
-### The RecordSpec
+#### The RecordSpec
 The high level abstraction for defining a record specification in Boogie is the [RecordSpec](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/RecordSpec.java?at=refs%2Fheads%2Fmain).
 These specifications define an ordered sequence of (named) fields within a high level ARINC record along with a matcher which is used to decide whether the given specification should be applied
 to a given raw text input string (substring of the overall raw text record). 
@@ -251,7 +251,7 @@ Parsers a la [ArincFileParser](https://mustache.mitre.org/projects/TTFS/repos/bo
 a collection of record specifications (which don't need to cover all possible record types within a file). These specs are used to convert the raw record strings to semi-structured [ArincRecord](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecord.java?at=main) 
 objects. This approach tends to work well as people often don't care about every record type (see TDP) and only having to implement parsing for a subset of records of interest is convenient.
 
-### Field specifications
+#### Field specifications
 
 The above RecordSpecs are composed of sequences of well-defined ARINC field specifications. As a rule of thumb most of the field-level specifications try to be robust to potentially bad input data 
 and generally return nothing when the input value doesn't meet the spec's expectations. While there is value in expressing specific errors when field contents break the specification it's generally 
@@ -270,7 +270,7 @@ interface but re-iterated here are:
 
 Once you have the above specified you can simply add it to the required/appropriate higher-level record specification.
 
-### Rules of thumb
+#### Rules of thumb
 
 Ideally most record/field specifications should automatically reject data that aren't to spec. Most of the publicly available 424 data out there *isn't* exactly to spec and so it's important 
 parsers converting the raw records -> semi-structured data are robust to potentially bad/non-standard input.
