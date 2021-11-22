@@ -20,3 +20,6 @@ The stages and their responsibilities are outlined in the table below.
 
 Together this gives us essentially continuous releasing of main for images and internal REST API deployments, while allowing us 
 to still perform more punctuated software and image releases for projects which want to leverage stable versions of either.
+
+**Note** that all of the various `bash` scripts run by this CI process can be found [under scripts/ci](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/scripts/ci) 
+and that most of them should be adaptable to the needs of other projects if they want to do something similar.
