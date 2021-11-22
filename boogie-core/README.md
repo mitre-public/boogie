@@ -71,10 +71,9 @@ Stream<Pair<Leg, Leg>> pairStream = Streams.pairwise(legs);
 The `Iterators` interface also provides methods for `fastSlow` iteration of lists given provided element predicates e.g.
 
 ```java
-List<Leg> legs = ...;
-
 Predicate<Leg> isTf = leg -> PathTerminator.TF.equals(leg.pathTerminator());
 
+// between may be empty if TFs are sequential
 TriPredicate<Leg, Leg, List<Leg>> legConsumer = (first, last, between) -> ...;
 
 Iterators.fastSlow(legs, isTf, legConsumer);
@@ -83,9 +82,26 @@ Iterators.fastSlow(legs, isTf, legConsumer);
 as well as additional ones where the open/close criteria may be different. Taken all-together these provide a convenient set of 
 methods for iterating through collections of navigation elements, particularly legs.
 
-### Viterbi algorithm 
+### Viterbi algorithm
+
+All source code lives within the [org.mitre.tdp.boogie.viterbi](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-core/src/main/java/org/mitre/tdp/boogie/viterbi) 
+package with the main entrypoint being via the [ViterbiTagger](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-core/src/main/java/org/mitre/tdp/boogie/viterbi/ViterbiTagger.java).
+
+**Note**: more holistic documentation for the tagger and how it works is a WIP.
 
 ### Procedure utilities
+
+Boogie (core) provides a pair of patterns for accessing and working with procedures more sensibly - these are:
+
+1. [QueryableProcedure]()
+1. [ProcedureGraph]()
+
+Both are simple decorators for `Procedure` implementing classes which implement `Procedure` themselves. There are others decorators 
+introduced in downstream modules but the general programmatic way to use these is something like:
+
+```java
+
+```
 
 ### Validation utilities
 

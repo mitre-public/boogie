@@ -1,11 +1,11 @@
 # Boogie Routes
 
-# Module overview
+## Module overview
 
 This module resolves the physical planned path of an aircraft through the NAS based on the route strings filed in it’s flightplans. Depending on the configured infrastructure data this route expansions can 
 be generated both domestically and internationally.
 
-# Quick start
+## Quick start
 
 The entry point to the code is the ```RouteExpanderFactory.java``` class. This class provides (among others) a pair of methods for generating a ```RouteExpander``` based on either 
 collections of cached infrastructure data or based on various ```LookupService(s)``` which can be used to lookup infrastructure elements by identifier (as one would see them 
@@ -36,7 +36,7 @@ Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDep
 Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway, RNP, RNAV, CONV);
 ```
 
-# What are route strings?
+## What are route strings?
 
 What is a route string? Generally speaking it's a formatted string giving an indication of the path a flight intends to take to get from its origin to its destination. This route may be 
 updated several times over the course of the flight as the aircraft makes progress along its filed path or in response to changes in the current state of the NAS (e.g. severe weather, 
@@ -95,7 +95,7 @@ flightplan, while + can be either military in nature in which case it means to e
 <img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
 <br />
 
-# How the algorithm works
+## How the algorithm works
 
 The expansion algorithm itself is relatively simple and can be split into 3 primary parts:
 
