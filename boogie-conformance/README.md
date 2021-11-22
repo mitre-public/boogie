@@ -1,4 +1,4 @@
-## Boogie conformance
+# Boogie conformance
 
 ## Module overview
 

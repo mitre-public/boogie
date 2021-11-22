@@ -1,4 +1,4 @@
-## Boogie ARINC
+# Boogie ARINC
 
 ## Module overview
 <p>This module within the Boogie software project provides a set of configurable and extensible parsers for ARINC424 formatted data.</p>
