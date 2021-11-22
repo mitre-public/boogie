@@ -15,6 +15,8 @@ import javax.annotation.Nullable;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.util.TransitionSorter;
@@ -26,7 +28,7 @@ import com.google.common.collect.Multimap;
  * Decorates a {@link Procedure} record with a more "query-friendly" interface - supporting a variety of transition/leg/fix level
  * lookup queries.
  */
-public final class QueryableProcedure {
+public final class QueryableProcedure implements Procedure {
 
   private final Procedure procedure;
 
@@ -107,6 +109,36 @@ public final class QueryableProcedure {
    */
   private static <T> Optional<T> highlander(Collection<T> col) {
     return col.size() == 1 ? Optional.of(col.iterator().next()) : Optional.empty();
+  }
+
+  @Override
+  public String procedureIdentifier() {
+    return procedure.procedureIdentifier();
+  }
+
+  @Override
+  public String airportIdentifier() {
+    return procedure.airportIdentifier();
+  }
+
+  @Override
+  public String airportRegion() {
+    return procedure.airportRegion();
+  }
+
+  @Override
+  public ProcedureType procedureType() {
+    return procedure.procedureType();
+  }
+
+  @Override
+  public RequiredNavigationEquipage requiredNavigationEquipage() {
+    return procedure.requiredNavigationEquipage();
+  }
+
+  @Override
+  public Collection<? extends Transition> transitions() {
+    return procedure.transitions();
   }
 
   private static final class TransitionPage {

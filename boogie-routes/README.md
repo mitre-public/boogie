@@ -84,15 +84,15 @@ flightplan, while + can be either military in nature in which case it means to e
 </div>
 <br />
 
-<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/domestic-filed-routes.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/docs/domestic-filed-routes.png?at=refs%2Fheads%2Fmain"/>
 <br />
 <div class="img-with-text">
 <p>International expansions  (<span style="color: red;">WSSS</span>, <span style="color: lime;">EGLL</span>, <span style="color: purple;">EHAM</span>,
  <span style="color: cyan;">RJAA</span>, <span style="color: gold;">LEMD</span>):</p>
 </div>
 <br />
-<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-1.png?at=refs%2Fheads%2Fmain"/>
-<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/docs/international-filed-routes-1.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-routes/docs/international-filed-routes-2.png?at=refs%2Fheads%2Fmain"/>
 <br />
 
 ## How the algorithm works
