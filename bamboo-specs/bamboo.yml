@@ -100,7 +100,7 @@ Deploy Latest Internal Openshift:
   tasks:
     - script:
         # This script will download and configure kubectl CLI for deployment to kubernetes clusters with the provided credentialing arguments
-        file: ./scripts/ci/deploy-boogie-rest.sh
+        file: ./scripts/ci/ci-deploy-boogie-rest.sh
         argument: ${bamboo.internal_kubernetes_cluster_server} ${bamboo.internal_kubernetes_tfm_analytics_deployment_secret} tfm-analytics
         conditions: *only-run-main
   docker: centos:7

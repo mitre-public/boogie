@@ -63,9 +63,9 @@ if [ ${bamboo_repository_branch_name} = "main" ]; then
 	echo "${GREEN}publishing docker image...$NONE"
 	docker login -u $USER -p $SECRET $ARTIFACTORY
   if check_if_image_tag_exists ${IMAGE_VERSION}; then
-    echo "Image - ${IMAGE_NAME}:${IMAGE_VERSION} already exists"
+    echo "Image - ${YELLOW}${IMAGE_NAME}:${IMAGE_VERSION}${NONE} already exists - ${RED}SKIPPING PUBLISHING${NONE}."
   else
-    echo "Pushing Image - ${IMAGE_NAME}:${IMAGE_VERSION}"
+    echo "Pushing Image - ${GREEN}${IMAGE_NAME}:${IMAGE_VERSION}${NONE}"
     docker push ${IMAGE_NAME}:${IMAGE_VERSION}
   fi
 else
