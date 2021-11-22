@@ -51,6 +51,7 @@ fi
 IMAGE_NAME=$ARTIFACTORY/$IMAGE
 echo "Image Name: $IMAGE_NAME"
 
+echo "Final image tag for publication is: ${GREEN}${IMAGE_NAME}:${IMAGE_VERSION}${NONE}"
 docker build . -t ${IMAGE_NAME}:${IMAGE_VERSION} --format docker
 
 # hit the remote artifactory rest API to see if an image in the correct namespace with a matching tag already exists

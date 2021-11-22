@@ -1,23 +1,22 @@
-## Boogie CI
+### Boogie CI
 
 The current Boogie CI pipeline is orchestrated via Bamboo Specs, a declarative way of defining a standard Bamboo plan as a single 
-(or small collection of) YML files. This allows us to declare our CI pipeline as code within the software repo in hopes of 
-increasing visibility into how it works and ease of review when changes are made.
+(or small collection of) YML files. Allowing us to declare our CI pipeline as code within the software repo in hopes of increasing 
+visibility into how it works and ease of review when changes are made.
 
-### Outlining the current tasks
+### Current process
 
-Currently there are three primary Stages in the Boogie CI pipeline:
+The [Boogie CI plan](https://pandafood.mitre.org/browse/TTFS-SHIM) is hosted on the mitre-caasd pandafood. 
 
-1. Running the unit and integration-level tests
-2. Updating [Sonar](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie), publishing new snapshots, and publishing a new 
-image for the REST endpoint
-3. Updating the [internal deployment of the REST endpoint](https://boogie-rest.apps.epic-osc.mitre.org/boogie/index.html) to be 
-backed by this latest image (i.e. the internal deployment is always using the latest code)  
+Currently there are three primary <b>Stages</b> in the Boogie CI pipeline which always occur, and one manually launch-able release one. 
+The stages and their responsibilities are outlined in the table below.
 
-on top of those there is a final manually-triggerable stage which kicks off a release stage which:
+| Stage | Jobs |
+|:------|:-----|
+| Test  | Unit Tests, Integration Tests |
+| Push Latest | [Snapshot Jars](http://dali.mitre.org/nexus/#welcome), [Publish Docker Image](https://repo.codev.mitre.org/artifactory/webapp/#/artifacts/browse/tree/General/idaass-docker/tdp/boogie-rest/latest) |
+| Deploy Latest | [Image to Internal Openshift](https://boogie-rest.apps.epic-osc.mitre.org/boogie/index.html) |
+| <b>*(Optional)*</b> Push Release | [Release Jars](http://dali.mitre.org/nexus/#welcome), [Publish Docker Image](https://repo.codev.mitre.org/artifactory/webapp/#/artifacts/browse/tree/General/idaass-docker/tdp/boogie-rest/1.0.4-release-7b7be9c), [Update Code Quality](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 
-1. Bumps the software version to a release version and publishes release jars to MITRE DALI
-2. Creates and publishes a new image with a concrete image version tied to the software release version and the release commit
-
-Together these CI tasks ensure whenever changes are made to the codebase or releases go live all Boogie controlled and owned 
-downstream resources which clients may be depending on are updated. 
+Together this gives us essentially continuous releasing of main for images and internal REST API deployments, while allowing us 
+to still perform more punctuated software and image releases for projects which want to leverage stable versions of either.

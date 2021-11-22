@@ -1,0 +1,43 @@
+---
+version: 2
+plan:
+  key: TTFS-TTFSPARENT
+plan-permissions:
+  - users:
+      - srezaei
+      - ganand
+      - justinw
+      - kray
+      - jiparker
+      - dstauffer
+      - aeckstein
+      - emcclain
+      - esaijan
+      - rhoang
+      - kjmcgough
+      - mpollock
+      - rsgorcea
+      - dpalyca
+      - dbaker
+      - dlarsen
+    permissions:
+      - view
+      - build
+  - users:
+      - dkun
+      - vhare
+      - acramer
+      - ggroover
+      - ttfs
+      - madelfio
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin
+  - roles:
+      - logged-in
+      - anonymous
+    permissions:
+      - view

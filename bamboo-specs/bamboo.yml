@@ -144,3 +144,5 @@ branch-overrides:
             - committers
           events:
             - plan-failed
+---
+!include 'permissions.yml'
