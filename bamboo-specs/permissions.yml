@@ -1,7 +1,7 @@
 ---
 version: 2
 plan:
-  key: TTFS-TTFSPARENT
+  key: TTFS-SHIM
 plan-permissions:
   - users:
       - srezaei
@@ -19,7 +19,7 @@ plan-permissions:
       - rsgorcea
       - dpalyca
       - dbaker
-      - dlarsen
+      - dalarsen
     permissions:
       - view
       - build
