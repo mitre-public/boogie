@@ -28,19 +28,19 @@ labels:
 
 stages:
   # Configure standard test and integration tests as part of the same stage but as different jobs so they can be run in parallel
-  - Test: [ Gradle Standard Test, Gradle Integration Test ]
+  - Test: [ Gradle Unit Test, Gradle Integration Test ]
   - Push Latest: [ Publish Snapshots, Push Latest Image Codev Artifactory ]
   - Deploy Latest: [ Deploy Latest Internal Openshift ]
   - Push Release:
       manual: true
       jobs: [ Report Updated Code Quality, Publish Release, Push Release Image Codev Artifactory ]
 
-Gradle Standard Test:
+Gradle Unit Test:
   tasks:
     - checkout:
         force-clean-build: 'false'
     - script:
-        file: ./scripts/ci/ci-build.sh
+        file: ./scripts/ci/ci-testUnit.sh
         # Export a location that doesn't exist so the locator doesn't attempt to parse a cycle of data that may be visible at the
         # default file location from the host machine
         environment: FILE_LOCATOR_PATH="/idont/exist"

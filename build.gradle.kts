@@ -1,7 +1,7 @@
 plugins {
     `java-platform`
     jacoco
-    id("com.adarshr.test-logger") version "2.0.0" apply false
+    id("com.adarshr.test-logger") version "2.0.0"// https://github.com/radarsh/gradle-test-logger-plugin
     id("net.researchgate.release") version "2.8.1" // used to emulate mvn release: https://github.com/researchgate/gradle-release
 }
 
@@ -73,7 +73,7 @@ subprojects {
         sourceCompatibility = JavaVersion.VERSION_1_8
     }
 
-// declare dependencies used in every child module
+    // declare dependencies used in every child module
     dependencies {
 
         val slf4jVersion = "1.7.25"//"implementation"("org.slf4j:slf4j-simple:1.7.7")
@@ -87,50 +87,9 @@ subprojects {
         "testImplementation"("org.mockito:mockito-core:$mockitoVersion")
     }
 
-    /** configure main test task to ignore desired tags and integration tests by default */
-    tasks.named<Test>("test") {
-        group = "verification"
-        description = "Runs all unit tests"
-
-        failFast = true
-
-        useJUnitPlatform {
-            excludeTags("INTEGRATION")
-            includeEngines("junit-jupiter")
-            excludeEngines("junit-vintage")
-        }
-
-        filter {
-            excludeTestsMatching("IT*")
-            isFailOnNoMatchingTests = false//allow modules to not have any tests
-        }
-    }
-
-    tasks.register<Test>("testIntegration") {
-        group = "verification"
-        description = "Runs integration tests (tests named 'IT*')"
-        useJUnitPlatform {
-            includeTags("INTEGRATION")
-            includeEngines("junit-jupiter")
-            excludeEngines("junit-vintage")
-        }
-        failFast = true
-        maxHeapSize = "4096m"
-
-        jvmArgs = "-Xss256k -Dfile.encoding=UTF-8".split(" ")
-    }
-
-    /**
-     * configure javadoc
-     */
-    tasks.named<Javadoc>("javadoc") {
-        (options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
-    }
-
-    /** create/publish source and javadoc jars */
-    configure<JavaPluginExtension> {
-        withSourcesJar()
-        withJavadocJar()
+    testlogger {
+        theme = com.adarshr.gradle.testlogger.theme.ThemeType.fromName("standard-parallel")
+        showFullStackTraces = true
     }
 
     /**
@@ -146,5 +105,81 @@ subprojects {
             html.isEnabled = true
             html.stylesheet = resources.text.fromFile("${rootProject.rootDir}/config/xsl/checkstyle-report-stylesheet.xml")
         }
+    }
+    configure<CheckstyleExtension> {
+        setShowViolations(false) // don't want to clutter console; violations will be in html reports anyway
+        toolVersion = "8.42" // lock down the version. checkstyle has frequent backwards-incompatible changes
+    }
+    tasks.get("checkstyleTest").enabled = false // for now, we won't inspect tests
+
+    val integrationMaxHeap = "4096m"
+    val integrationJvmArgs = "-Xss256k -Dfile.encoding=UTF-8".split(" ")
+
+    /** Main test task should run all tests regardless of whether they're "INTEGRATION" or "UNIT" level. */
+    tasks.named<Test>("test") {
+        group = "verification"
+        description = "Runs ALL tests regardless of tagged category within the project."
+        useJUnitPlatform {
+            includeEngines("junit-jupiter")
+            excludeEngines("junit-vintage")
+        }
+        failFast = false
+
+        // need to inherit JVM
+        maxHeapSize = integrationMaxHeap
+        jvmArgs = integrationJvmArgs
+    }
+
+    /** Specific task for "unit-level" tests within the Boogie project - these tests should be short, sweet, small and mostly
+     * comprehensive. */
+    tasks.register<Test>("testUnit") {
+        group = "verification"
+        description = "Runs all UNIT (or untagged) tests"
+
+        failFast = true
+
+        useJUnitPlatform {
+            excludeTags("INTEGRATION")
+            includeEngines("junit-jupiter")
+            excludeEngines("junit-vintage")
+        }
+
+        testlogger {
+            slowThreshold = 1000 // log in red if exceeds 1 sec
+            showSummary = false
+        }
+
+        filter {
+            excludeTestsMatching("IT*")
+            isFailOnNoMatchingTests = false//allow modules to not have any tests
+        }
+    }
+
+    /** Specific task for "integration-level" tests within the Boogie project - these tests can take longer, be larger, but should
+     * be utilized sparingly. */
+    tasks.register<Test>("testIntegration") {
+        group = "verification"
+        description = "Runs integration tests (tests named 'IT*') or tagged as 'INTEGRATION'"
+        useJUnitPlatform {
+            includeTags("INTEGRATION")
+            includeEngines("junit-jupiter")
+            excludeEngines("junit-vintage")
+        }
+        failFast = false
+        maxHeapSize = integrationMaxHeap
+        jvmArgs = integrationJvmArgs
+    }
+
+    /**
+     * configure javadoc
+     */
+    tasks.named<Javadoc>("javadoc") {
+        (options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
+    }
+
+    /** create/publish source and javadoc jars */
+    configure<JavaPluginExtension> {
+        withSourcesJar()
+        withJavadocJar()
     }
 }
