@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 /**
  * Conceptual sibling of {@link DelegatingFeatureVectorExtractor} but for the {@link ViterbiFeatureVector} scoring process.
  */
-public final class DelegatingFeatureVectorScorer<Stage, State> implements BiFunction<Stage, State, ViterbiFeatureVectorScorer> {
+public final class DelegatingFeatureVectorScorer<STAGE, STATE> implements BiFunction<STAGE, STATE, ViterbiFeatureVectorScorer> {
 
   /**
    * The ordered list of feature scorers to apply to the underlying state/stages - the first scorer who's delegation method
@@ -20,14 +20,14 @@ public final class DelegatingFeatureVectorScorer<Stage, State> implements BiFunc
    *
    * If there are no matches at the end an {@link IllegalStateException} will be thrown.
    */
-  private final List<DelegateableFeatureVectorScorer<Stage, State>> featureScorers;
+  private final List<DelegateableFeatureVectorScorer<STAGE, STATE>> featureScorers;
 
-  public DelegatingFeatureVectorScorer(Builder<Stage, State> builder) {
+  public DelegatingFeatureVectorScorer(Builder<STAGE, STATE> builder) {
     this.featureScorers = builder.scorers;
   }
 
   @Override
-  public ViterbiFeatureVectorScorer apply(Stage stage, State state) {
+  public ViterbiFeatureVectorScorer apply(STAGE stage, STATE state) {
     return featureScorers.stream()
         .filter(scorer -> scorer.test(stage, state))
         .findFirst().orElseThrow(IllegalStateException::new).get();

@@ -10,6 +10,10 @@ public final class FieldSpecParseException extends RuntimeException {
     this(spec.getClass(), value);
   }
 
+  public FieldSpecParseException(FieldSpec<?> spec, String value, Exception e) {
+    this(spec.getClass(), value, e);
+  }
+
   public FieldSpecParseException(Class<? extends FieldSpec> specClz, String value) {
     super(message(specClz, value));
   }

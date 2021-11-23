@@ -25,7 +25,7 @@ import com.google.common.base.Joiner;
  * allowing for an assessment of {@link #isValidAssociation}s this class can generate a set of labeled feature vectors based on
  * the scoring strategy and the labeler.
  */
-public final class ViterbiStateScoreTrainingDataGenerator<Stage, State> {
+public final class ViterbiStateScoreTrainingDataGenerator<STAGE, STATE> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ViterbiStateScoreTrainingDataGenerator.class);
 
@@ -34,7 +34,7 @@ public final class ViterbiStateScoreTrainingDataGenerator<Stage, State> {
   /**
    * The {@link FeatureBasedViterbiScoringStrategy} to use when generating feature vectors for all stage/state combinations.
    */
-  private final FeatureBasedViterbiScoringStrategy<Stage, State> scoringStrategy;
+  private final FeatureBasedViterbiScoringStrategy<STAGE, STATE> scoringStrategy;
   /**
    * Function for labeling the provided stage/state combinations as "valid" associations - this is essentially the labeling
    * function for the stage/state pairs and will be used to add a isCorrectAssociation feature to the output vectors.
@@ -42,35 +42,35 @@ public final class ViterbiStateScoreTrainingDataGenerator<Stage, State> {
    * Note this function can return <i>null</i> if there is no known valid state association for the provided stage. This is
    * handled internally by the trainer and results in not generating and returning a vector for that stage.
    */
-  private final BiFunction<Stage, State, Optional<Boolean>> isValidAssociation;
+  private final BiFunction<STAGE, STATE, Optional<Boolean>> isValidAssociation;
   /**
    * Optional print function of errors encountered related to specific stages, defaults to Object.toString().
    */
-  private final Function<Stage, String> stagePrinter;
+  private final Function<STAGE, String> stagePrinter;
   /**
    * Optional print function of errors encountered related to specific states, defaults to Object.toString().
    */
-  private final Function<State, String> statePrinter;
+  private final Function<STATE, String> statePrinter;
 
   public ViterbiStateScoreTrainingDataGenerator(
-      FeatureBasedViterbiScoringStrategy<Stage, State> scoringStrategy,
-      BiPredicate<Stage, State> isValidAssociation
+      FeatureBasedViterbiScoringStrategy<STAGE, STATE> scoringStrategy,
+      BiPredicate<STAGE, STATE> isValidAssociation
   ) {
     this(scoringStrategy, (stage, state) -> Optional.of(isValidAssociation.test(stage, state)), Objects::toString, Objects::toString);
   }
 
   public ViterbiStateScoreTrainingDataGenerator(
-      FeatureBasedViterbiScoringStrategy<Stage, State> scoringStrategy,
-      BiFunction<Stage, State, Optional<Boolean>> isValidAssociation
+      FeatureBasedViterbiScoringStrategy<STAGE, STATE> scoringStrategy,
+      BiFunction<STAGE, STATE, Optional<Boolean>> isValidAssociation
   ) {
     this(scoringStrategy, isValidAssociation, Object::toString, Object::toString);
   }
 
   public ViterbiStateScoreTrainingDataGenerator(
-      FeatureBasedViterbiScoringStrategy<Stage, State> scoringStrategy,
-      BiFunction<Stage, State, Optional<Boolean>> isValidAssociation,
-      Function<Stage, String> stagePrinter,
-      Function<State, String> statePrinter
+      FeatureBasedViterbiScoringStrategy<STAGE, STATE> scoringStrategy,
+      BiFunction<STAGE, STATE, Optional<Boolean>> isValidAssociation,
+      Function<STAGE, String> stagePrinter,
+      Function<STATE, String> statePrinter
   ) {
     this.scoringStrategy = requireNonNull(scoringStrategy);
     this.isValidAssociation = requireNonNull(isValidAssociation);
@@ -83,14 +83,14 @@ public final class ViterbiStateScoreTrainingDataGenerator<Stage, State> {
    * provided. This class also appends a state to the {@link ViterbiFeatureVector}s generated via the {@link #scoringStrategy}
    * indicating whether the stage/state combo is a valid
    */
-  public List<ViterbiFeatureVector> generateAllFeatureVectorCombinations(Collection<Stage> stages, Collection<State> states) {
+  public List<ViterbiFeatureVector> generateAllFeatureVectorCombinations(Collection<STAGE> stages, Collection<STATE> states) {
     requireNonNull(stages);
     requireNonNull(states);
     checkArgument(!stages.isEmpty(), "Cannot generate all feature vector combinations with no provided stages.");
     checkArgument(!states.isEmpty(), "Cannot generate all feature vector combinations with no provided states.");
     checkNoStagesAssignedToMultipleStates(stages, states);
 
-    Collection<Pair<Stage, State>> allCombos = Combinatorics.cartesianProduct(stages, states);
+    Collection<Pair<STAGE, STATE>> allCombos = Combinatorics.cartesianProduct(stages, states);
     LOG.info("Generated {} total combinations of stage/state combinations for evaluation.", allCombos.size());
 
     return allCombos.stream()
@@ -102,7 +102,7 @@ public final class ViterbiStateScoreTrainingDataGenerator<Stage, State> {
   /**
    * Generates a new labeled {@link ViterbiFeatureVector} for the given stage/state combination.
    */
-  private ViterbiFeatureVector labeledVectorFor(Stage stage, State state) {
+  private ViterbiFeatureVector labeledVectorFor(STAGE stage, STATE state) {
     ViterbiFeatureVector baseVector = scoringStrategy.featureExtractor(stage, state).apply(stage, state);
     checkArgument(!baseVector.containsFeature(IS_ASSIGNED), "IsAssigned is a reserved feature in the data generation process.");
 
@@ -120,7 +120,7 @@ public final class ViterbiStateScoreTrainingDataGenerator<Stage, State> {
    * This function does <i>not</i> check that all stages have at least 1 state associated with them - as that is not something
    * required by the contract of the training data generator.
    */
-  private void checkNoStagesAssignedToMultipleStates(Collection<Stage> stages, Collection<State> states) {
+  private void checkNoStagesAssignedToMultipleStates(Collection<STAGE> stages, Collection<STATE> states) {
     String multiplyAssignedStages = stages.stream()
         .map(stage -> isMultiplyAssignedStage(stage, states))
         .filter(Optional::isPresent)
@@ -134,7 +134,7 @@ public final class ViterbiStateScoreTrainingDataGenerator<Stage, State> {
    * Returns a optional string of "stage:state1,state2,..." if the state was flagged as assignable to multiple states via the
    * configured {@link #isValidAssociation} function.
    */
-  private Optional<String> isMultiplyAssignedStage(Stage stage, Collection<State> states) {
+  private Optional<String> isMultiplyAssignedStage(STAGE stage, Collection<STATE> states) {
     List<String> matchedStates = states.stream()
         .filter(state -> isValidAssociation.apply(stage, state).orElse(false))
         .map(statePrinter).collect(Collectors.toList());

@@ -36,9 +36,9 @@ import org.mitre.tdp.boogie.Transition;
  */
 public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> implements Procedure {
 
-  private transient final Procedure procedure;
+  private final transient Procedure procedure;
 
-  private transient final DOTExporter<Leg, DefaultEdge> exporter;
+  private final transient DOTExporter<Leg, DefaultEdge> exporter;
 
   ProcedureGraph(Procedure procedure) {
     super(DefaultEdge.class);
@@ -46,7 +46,7 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
     this.exporter = new DOTExporter<>(this::legSignature, null, null);
   }
 
-  private transient final AllDirectedPaths<Leg, DefaultEdge> allDirectedPaths = new AllDirectedPaths<>(this);
+  private final transient AllDirectedPaths<Leg, DefaultEdge> allDirectedPaths = new AllDirectedPaths<>(this);
 
   public List<List<Leg>> pathsBetween(Leg start, Leg end) {
     return allDirectedPaths.getAllPaths(start, end, false, 100)

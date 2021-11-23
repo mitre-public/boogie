@@ -29,6 +29,6 @@ public final class IfrCapability implements FieldSpec<Boolean> {
 
   @Override
   public Optional<Boolean> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(BooleanStringParser.INSTANCE);
+    return Optional.of(fieldValue).map(BooleanStringParser.INSTANCE::test);
   }
 }

@@ -36,7 +36,7 @@ public final class EmbeddedCifpFile {
 
   private static final Logger LOG = LoggerFactory.getLogger(EmbeddedCifpFile.class);
 
-  private static final String embeddedFileName = "cifp-2101.dat.gz";
+  private static final String EMBEDDED_FILE_NAME = "cifp-2101.dat.gz";
 
   private final ConvertingArincRecordConsumer records;
 
@@ -95,21 +95,21 @@ public final class EmbeddedCifpFile {
     ArincRecordParser parser = ArincVersion.V19.parser();
     LOG.info("Loading records from embedded CIFP file.");
 
-    URL resourceUrl = Resources.getResource(embeddedFileName);
+    URL resourceUrl = Resources.getResource(EMBEDDED_FILE_NAME);
     try (InputStreamReader reader = new InputStreamReader(new GZIPInputStream(resourceUrl.openStream()))) {
       FileLineIterator iterator = new FileLineIterator(reader);
 
-      LinkedHashSet<ArincRecord> records = new LinkedHashSet<>();
+      LinkedHashSet<ArincRecord> parsedRecords = new LinkedHashSet<>();
 
       ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
       while (iterator.hasNext()) {
-        parser.apply(iterator.next()).filter(continuationRecordFilter).ifPresent(records::add);
+        parser.apply(iterator.next()).filter(continuationRecordFilter).ifPresent(parsedRecords::add);
       }
 
-      LOG.info("Finished loading {} records from embedded file.", records.size());
-      return records;
+      LOG.info("Finished loading {} records from embedded file.", parsedRecords.size());
+      return parsedRecords;
     } catch (IOException e) {
-      throw new RuntimeException("Error opening embedded resource file.", e);
+      throw new IllegalArgumentException("Error opening embedded resource file.", e);
     }
   }
 

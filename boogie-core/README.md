@@ -101,11 +101,11 @@ Both are simple decorators for `Procedure` implementing classes which implement 
 introduced in downstream modules but the general programmatic way to use these is something like (taking for example with the 
 HOBTT2 procedure shown below):
 
-<a href="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-core/docs/hobtt2-1.png?at=refs%2Fheads%2Fmain">
-<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-core/docs/hobtt2-1.png?at=refs%2Fheads%2Fmain"/>
-</a>
 <a href="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-core/docs/hobtt2-2.png?at=refs%2Fheads%2Fmain">
 <img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-core/docs/hobtt2-2.png?at=refs%2Fheads%2Fmain"/>
+</a>
+<a href="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-core/docs/hobtt2-1.png?at=refs%2Fheads%2Fmain">
+<img align="float: left;" height="500" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-core/docs/hobtt2-1.png?at=refs%2Fheads%2Fmain"/>
 </a>
 
 ```java

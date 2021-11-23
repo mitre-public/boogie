@@ -4,20 +4,20 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.WeightFunctions.simpleLogistic;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
 
 public final class AfFeatureScorer implements ViterbiFeatureVectorScorer {
 
-  private final Function<Double, Double> offTrackWeight;
+  private final UnaryOperator<Double> offTrackWeight;
 
   public AfFeatureScorer() {
     this(simpleLogistic(0.5, 1.0));
   }
 
-  public AfFeatureScorer(Function<Double, Double> offTrackWeight) {
+  public AfFeatureScorer(UnaryOperator<Double> offTrackWeight) {
     this.offTrackWeight = requireNonNull(offTrackWeight);
   }
 

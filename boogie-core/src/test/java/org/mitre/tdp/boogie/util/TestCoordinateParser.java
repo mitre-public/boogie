@@ -22,20 +22,35 @@ class TestCoordinateParser {
     String loc = "1500S/12000W";
     LatLong res = parse(loc);
 
-    assertEquals(res.latitude(), -15.0, 0.0001);
-    assertEquals(res.longitude(), -120.0, 0.0001);
+    assertAll(
+        loc,
+        () -> assertEquals(-15.0, res.latitude(), 0.0001, "latitude"),
+        () -> assertEquals(-120.0, res.longitude(), 0.0001, "longitude")
+    );
+  }
 
-    loc = "3000N/09000E";
-    res = parse(loc);
+  @Test
+  void testParseNE() {
+    String loc = "3000N/09000E";
+    LatLong res = parse(loc);
 
-    assertEquals(res.latitude(), 30.0, 0.0001);
-    assertEquals(res.longitude(), 90.0, 0.0001);
+    assertAll(
+        loc,
+        () -> assertEquals(30.0, res.latitude(), 0.0001, "latitude"),
+        () -> assertEquals(90.0, res.longitude(), 0.0001, "longitude")
+    );
+  }
 
-    loc = "3030N/12045E";
-    res = parse(loc);
+  @Test
+  void testParseNE2() {
+    String loc = "3030N/12045E";
+    LatLong res = parse(loc);
 
-    assertEquals(res.latitude(), 30.5, 0.0001);
-    assertEquals(res.longitude(), 120.75, 0.0001);
+    assertAll(
+        loc,
+        () -> assertEquals(30.5, res.latitude(), 0.0001, "latitude"),
+        () -> assertEquals(120.75, res.longitude(), 0.0001, "longitude")
+    );
   }
 
   @Test

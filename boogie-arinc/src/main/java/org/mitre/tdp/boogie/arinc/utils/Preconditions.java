@@ -25,17 +25,15 @@ public final class Preconditions {
   }
 
   /**
-   * If the callable throws an exception other than a {@link FieldSpecParseException}.
+   * If the callable throws an exception other than a {@link FieldSpecParseException} throw the .
    */
   public static void checkSpec(FieldSpec<?> spec, String field, Callable<?> callable) {
     try {
       callable.call();
+    } catch (FieldSpecParseException e) {
+      throw e;
     } catch (Exception e) {
-      if (e instanceof FieldSpecParseException) {
-        throw ((FieldSpecParseException) e);
-      } else {
-        throw new FieldSpecParseException(spec, field);
-      }
+      throw new FieldSpecParseException(spec, field, e);
     }
   }
 }

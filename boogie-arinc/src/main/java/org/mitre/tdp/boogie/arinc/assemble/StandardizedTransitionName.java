@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Transition;
@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.Transition;
  * Standardization function for {@link Transition} names across sources - ENROUTE/RUNWAY/APPROACH transitions should generally
  * all be consistently named but most COMMON portions of procedures are named any of null, "", or "ALL" -> "ALL" with this.
  */
-public final class StandardizedTransitionName implements Function<String, String> {
+public final class StandardizedTransitionName implements UnaryOperator<String> {
 
   public static final StandardizedTransitionName INSTANCE = new StandardizedTransitionName();
 

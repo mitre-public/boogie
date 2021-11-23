@@ -42,20 +42,20 @@ import com.google.common.collect.ImmutableList;
  * From there this class operates as a {@link BiFunction} itself taking input stage/state combinations and generating viterbi
  * feature vectors for use elsewhere.
  */
-public final class ViterbiFeatureVectorExtractor<Stage, State> implements BiFunction<Stage, State, ViterbiFeatureVector> {
+public final class ViterbiFeatureVectorExtractor<STAGE, STATE> implements BiFunction<STAGE, STATE, ViterbiFeatureVector> {
 
   /**
    * The immutable list of all individual feature extractors we want to apply to the input data to generate the final output
    * {@link ViterbiFeatureVector}.
    */
-  private final ImmutableList<BiFunction<Stage, State, List<Pair<String, Double>>>> featureExtractors;
+  private final ImmutableList<BiFunction<STAGE, STATE, List<Pair<String, Double>>>> featureExtractors;
 
-  public ViterbiFeatureVectorExtractor(Builder<Stage, State> builder) {
+  public ViterbiFeatureVectorExtractor(Builder<STAGE, STATE> builder) {
     this.featureExtractors = ImmutableList.copyOf(new LinkedHashSet<>(builder.extractors.values()));
   }
 
   @Override
-  public ViterbiFeatureVector apply(Stage stage, State state) {
+  public ViterbiFeatureVector apply(STAGE stage, STATE state) {
     return featureExtractors.stream().flatMap(extractor -> extractor.apply(stage, state).stream()).collect(new FeatureCollector());
   }
 

@@ -4,15 +4,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.WeightFunctions.simpleLogistic;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
 
 public final class VmFeatureScorer implements ViterbiFeatureVectorScorer {
 
-  private final Function<Double, Double> offCourseWeight;
-  private final Function<Double, Double> nextFixDistanceWeight;
+  private final UnaryOperator<Double> offCourseWeight;
+  private final UnaryOperator<Double> nextFixDistanceWeight;
 
   public VmFeatureScorer() {
     this(
@@ -22,8 +22,8 @@ public final class VmFeatureScorer implements ViterbiFeatureVectorScorer {
   }
 
   public VmFeatureScorer(
-      Function<Double, Double> offCourseWeight,
-      Function<Double, Double> nextFixDistanceWeight
+      UnaryOperator<Double> offCourseWeight,
+      UnaryOperator<Double> nextFixDistanceWeight
   ) {
     this.offCourseWeight = requireNonNull(offCourseWeight);
     this.nextFixDistanceWeight = requireNonNull(nextFixDistanceWeight);

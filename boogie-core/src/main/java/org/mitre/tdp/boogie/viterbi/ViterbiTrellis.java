@@ -112,13 +112,13 @@ public final class ViterbiTrellis<STAGE, STATE> extends LinkedHashMap<STAGE, Sco
   }
 
   @FunctionalInterface
-  public interface StateVisitor<State, T> {
-    T visit(State state, Likelihood stateScore, Likelihood cumulativeStateLikelihood, State fromState);
+  public interface StateVisitor<STATE, T> {
+    T visit(STATE state, Likelihood stateScore, Likelihood cumulativeStateLikelihood, STATE fromState);
   }
 
   @FunctionalInterface
-  public interface StageVisitor<Stage, T> {
-    void visit(Stage stage, List<T> stageResults);
+  public interface StageVisitor<STAGE, T> {
+    void visit(STAGE stage, List<T> stageResults);
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(ViterbiTrellis.class);

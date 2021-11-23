@@ -14,8 +14,6 @@ public final class CoordinateParser {
     throw new IllegalStateException("Utility Class");
   }
 
-  private static final Predicate<String> validLatLon = Pattern.compile("^[0-9]{4}[NS]/[01]{1}[0-9]{4}[EW]{1}$").asPredicate();
-
   public static boolean isNegative(String s) {
     return s.equals("S") || s.endsWith("S") || s.equals("W") || s.endsWith("W");
   }

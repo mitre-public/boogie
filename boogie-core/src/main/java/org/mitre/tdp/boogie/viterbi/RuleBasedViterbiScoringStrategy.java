@@ -12,20 +12,20 @@ import java.util.function.Supplier;
 /**
  * Simple class for building up a rules-based strategy for scoring with the {@link ViterbiTagger}.
  */
-public final class RuleBasedViterbiScoringStrategy<Stage, State> implements ViterbiScoringStrategy<Stage, State> {
+public final class RuleBasedViterbiScoringStrategy<STAGE, STATE> implements ViterbiScoringStrategy<STAGE, STATE> {
 
   /**
    * The list of all configured scorers and their associated delegation functions wrapped as {@link DelegatableScorer}s.
    */
-  private final List<DelegatableScorer<Stage, State>> scorers;
+  private final List<DelegatableScorer<STAGE, STATE>> scorers;
 
-  private RuleBasedViterbiScoringStrategy(Builder<Stage, State> builder) {
+  private RuleBasedViterbiScoringStrategy(Builder<STAGE, STATE> builder) {
     this.scorers = builder.scorers;
   }
 
   @Override
-  public Double scoreStateGivenStage(Stage stage, State state) {
-    DelegatableScorer<Stage, State> scorer = scorers.stream()
+  public Double scoreStateGivenStage(STAGE stage, STATE state) {
+    DelegatableScorer<STAGE, STATE> scorer = scorers.stream()
         .filter(s -> s.test(stage, state))
         .findFirst()
         .orElseThrow(IllegalStateException::new);

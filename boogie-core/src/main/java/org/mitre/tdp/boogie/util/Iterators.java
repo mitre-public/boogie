@@ -40,7 +40,7 @@ public final class Iterators {
    * Iterates through the provided {@link HashedLinkedSequence} in a pairwise fashion.
    */
   public static <T> void pairwise(HashedLinkedSequence<T> sequence, BiConsumer<T, T> consumer) {
-    Preconditions.checkArgument(sequence.size() >= 1);
+    Preconditions.checkArgument(sequence.size() >= 2);
     sequence.stream().skip(1).forEach(entry -> consumer.accept(sequence.getElementBefore(entry), entry));
   }
 

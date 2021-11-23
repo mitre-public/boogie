@@ -29,9 +29,9 @@ class TestIterators {
     });
 
     assertAll(
-        () -> assertEquals(odds.size(), 9),
-        () -> assertEquals(odds.get(0).intValue(), 1),
-        () -> assertEquals(odds.get(8).intValue(), 17)
+        () -> assertEquals(9, odds.size()),
+        () -> assertEquals(1, odds.get(0).intValue()),
+        () -> assertEquals(17, odds.get(8).intValue())
     );
   }
 

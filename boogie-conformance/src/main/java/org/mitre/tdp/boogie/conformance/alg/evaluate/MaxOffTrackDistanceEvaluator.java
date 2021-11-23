@@ -67,7 +67,16 @@ public final class MaxOffTrackDistanceEvaluator implements ConformanceEvaluator,
     double alongTrackDistance = Spherical.alongTrackDistanceNM(previousTerminator, currentTerminator, point, crossTrackDistance);
 
     double legLength = previousTerminator.distanceInNmTo(currentTerminator);
-    double modifiedOffTrackDistance = alongTrackDistance < 0.0 ? previousTerminator.distanceInNmTo(point) : alongTrackDistance > legLength ? currentTerminator.distanceInNmTo(point) : crossTrackDistance;
+
+    double modifiedOffTrackDistance;
+
+    if (alongTrackDistance < 0.) {
+      modifiedOffTrackDistance = previousTerminator.distanceInNmTo(point);
+    } else if (alongTrackDistance > legLength) {
+      modifiedOffTrackDistance = currentTerminator.distanceInNmTo(point);
+    } else {
+      modifiedOffTrackDistance = crossTrackDistance;
+    }
 
     return Optional.of(Distance.ofNauticalMiles(modifiedOffTrackDistance));
   }

@@ -1,15 +1,8 @@
 package org.mitre.tdp.boogie.util;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -67,11 +60,5 @@ public final class Streams {
   public static <U, V> Stream<V> triplesWithNulls(List<U> list, TriFunction<U, U, U, V> fn) {
     IntFunction<U> getOrNull = i -> i >= 0 && i < list.size() ? list.get(i) : null;
     return IntStream.range(0, list.size()).mapToObj(i -> fn.apply(getOrNull.apply(i - 1), getOrNull.apply(i), getOrNull.apply(i + 1)));
-  }
-
-  public static <I, K, V> Collector<I, ?, LinkedHashMap<K, V>> toLinkedHashMap(Function<I, K> keyFn, Function<I, V> valFn) {
-    requireNonNull(keyFn);
-    requireNonNull(valFn);
-    return Collectors.toMap(keyFn, valFn, (a, b) -> {throw new IllegalStateException();}, LinkedHashMap::new);
   }
 }

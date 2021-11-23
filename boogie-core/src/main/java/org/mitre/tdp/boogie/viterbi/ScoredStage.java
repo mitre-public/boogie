@@ -12,21 +12,21 @@ import java.util.stream.Collectors;
  * Values here are only meant to be exposed via the {@link ViterbiTrellis}, so all
  * classes and members are package-private.
  */
-class ScoredStage<Stage, State> {
+class ScoredStage<STAGE, STATE> {
 
-  private final LinkedHashMap<State, ScoredState<State>> scoredStates;
+  private final LinkedHashMap<STATE, ScoredState<STATE>> scoredStates;
 
-  private State viterbiPathState;
+  private STATE viterbiPathState;
 
-  ScoredStage(LinkedHashMap<State, ScoredState<State>> scoredStates) {
+  ScoredStage(LinkedHashMap<STATE, ScoredState<STATE>> scoredStates) {
     this.scoredStates = scoredStates;
   }
 
-  Collection<ScoredState<State>> scoredStates() {
+  Collection<ScoredState<STATE>> scoredStates() {
     return scoredStates.values();
   }
 
-  Set<State> states() {
+  Set<STATE> states() {
     return scoredStates.keySet();
   }
 
@@ -42,8 +42,8 @@ class ScoredStage<Stage, State> {
     return scoredStates().stream().map(x -> x.likelihood()).collect(Collectors.toList());
   }
 
-  void updateTransitionLikelihood(State fromState, State toState, Likelihood l) {
-    ScoredState<State> s = scoredStates.get(toState);
+  void updateTransitionLikelihood(STATE fromState, STATE toState, Likelihood l) {
+    ScoredState<STATE> s = scoredStates.get(toState);
     if (s != null) {
       if (s.cumulativeTransitionScore == null || l.compareTo(s.cumulativeTransitionLikelihood()) > 0) {
         this.scoredStates.put(toState, new ScoredState<>(toState, fromState, l, s.stateScore));
@@ -53,8 +53,8 @@ class ScoredStage<Stage, State> {
     }
   }
 
-  void updateStateLikelihood(State toState, Likelihood stateScore) {
-    ScoredState<State> s = scoredStates.get(toState);
+  void updateStateLikelihood(STATE toState, Likelihood stateScore) {
+    ScoredState<STATE> s = scoredStates.get(toState);
     this.scoredStates.put(toState, new ScoredState<>(toState, s.fromState(), s.cumulativeTransitionLikelihood(), stateScore));
   }
 
@@ -62,36 +62,36 @@ class ScoredStage<Stage, State> {
     return viterbiPathScoredState().likelihood();
   }
 
-  ScoredState<State> viterbiPathScoredState() {
+  ScoredState<STATE> viterbiPathScoredState() {
     return scoredStates.get(viterbiPathState);
   }
 
-  static <Stage, State> ScoredStage<Stage, State> initialStage(Set<State> states) {
-    LinkedHashMap<State, ScoredState<State>> scoredStates = states.stream()
+  static <STAGE, STATE> ScoredStage<STAGE, STATE> initialStage(Set<STATE> states) {
+    LinkedHashMap<STATE, ScoredState<STATE>> scoredStates = states.stream()
         .collect(Collectors.toMap(s -> s, s -> ScoredState.initialState(s),
             (u, v) -> { throw new IllegalStateException();}, LinkedHashMap::new));
     return new ScoredStage<>(scoredStates);
   }
 
-  static <Stage, State> ScoredStage<Stage, State> intermediateStage() {
+  static <STAGE, STATE> ScoredStage<STAGE, STATE> intermediateStage() {
     return new ScoredStage<>(new LinkedHashMap<>());
   }
 
-  void setViterbiPathState(State state) {
+  void setViterbiPathState(STATE state) {
     this.viterbiPathState = state;
   }
 
-  Likelihood stateLikelihood(State fromState) {
+  Likelihood stateLikelihood(STATE fromState) {
     return scoredStates.get(fromState).likelihood();
   }
 
-  static class ScoredState<State> {
-    private final State state;
-    private final State fromState;
+  static class ScoredState<STATE> {
+    private final STATE state;
+    private final STATE fromState;
     private final Likelihood cumulativeTransitionScore;
     private final Likelihood stateScore;
 
-    ScoredState(State state, State fromState, Likelihood cumulativeTransitionScore, Likelihood stateScore) {
+    ScoredState(STATE state, STATE fromState, Likelihood cumulativeTransitionScore, Likelihood stateScore) {
       this.state = state;
       this.fromState = fromState;
       this.cumulativeTransitionScore = cumulativeTransitionScore;
@@ -102,11 +102,11 @@ class ScoredStage<Stage, State> {
       return cumulativeTransitionScore == null ? stateScore : cumulativeTransitionScore.times(stateScore);
     }
 
-    State state() {
+    STATE state() {
       return state;
     }
 
-    State fromState() {
+    STATE fromState() {
       return fromState;
     }
 
@@ -118,7 +118,7 @@ class ScoredStage<Stage, State> {
       return stateScore;
     }
 
-    static <State> ScoredState<State> initialState(State state) {
+    static <STATE> ScoredState<STATE> initialState(STATE state) {
       return new ScoredState<>(state, null, null, null);
     }
   }

@@ -3,9 +3,8 @@ package org.mitre.tdp.boogie.util;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.EnumMap;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -18,16 +17,15 @@ import org.mitre.tdp.boogie.MagneticVariation;
  */
 public final class Declinations {
 
-  private static final Map<GeomagneticCoefficients, Geomagnetics> magnetics = new HashMap<>();
+  private Declinations() {
+    throw new IllegalStateException("Cannot instantiate static utility class.");
+  }
+
+  private static final EnumMap<GeomagneticCoefficients, Geomagnetics> magnetics = new EnumMap<>(GeomagneticCoefficients.class);
 
   private static Geomagnetics magnetics(Instant tau) {
     GeomagneticCoefficients coeffs = GeomagneticCoefficients.coefficientsAtTime(tau);
-    Geomagnetics mags = magnetics.get(coeffs);
-    if (null == mags) {
-      magnetics.put(coeffs, new Geomagnetics(coeffs));
-      return magnetics.get(coeffs);
-    }
-    return mags;
+    return magnetics.computeIfAbsent(coeffs, Geomagnetics::new);
   }
 
   /**

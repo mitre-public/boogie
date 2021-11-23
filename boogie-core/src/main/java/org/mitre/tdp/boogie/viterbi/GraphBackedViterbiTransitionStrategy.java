@@ -32,34 +32,34 @@ import org.slf4j.LoggerFactory;
  * state in the set of transition targets unless the provided graph contains a self loop A->A. This is done to maintain simplicity
  * in the interpretation logic on top of the graph.
  */
-public final class GraphBackedViterbiTransitionStrategy<Stage, State> implements ViterbiTransitionStrategy<Stage, State> {
+public final class GraphBackedViterbiTransitionStrategy<STAGE, STATE> implements ViterbiTransitionStrategy<STAGE, STATE> {
 
   private static final Logger LOG = LoggerFactory.getLogger(GraphBackedViterbiTransitionStrategy.class);
 
   /**
    * The directed + weighted graph backing the set of transitions for the {@link ViterbiTagger}.
    */
-  private final Graph<State, DefaultWeightedEdge> stateGraph;
+  private final Graph<STATE, DefaultWeightedEdge> stateGraph;
   /**
    * Simple {@link ConnectivityInspector} on top of the {@link #stateGraph} allowing us to easily grab the connected set of
    * states from any given provided state.
    */
-  private final ConnectivityInspector<State, DefaultWeightedEdge> connectivityInspector;
+  private final ConnectivityInspector<STATE, DefaultWeightedEdge> connectivityInspector;
 
-  public GraphBackedViterbiTransitionStrategy(Graph<State, DefaultWeightedEdge> stateGraph) {
+  public GraphBackedViterbiTransitionStrategy(Graph<STATE, DefaultWeightedEdge> stateGraph) {
     this.stateGraph = requireNonNull(stateGraph);
     this.connectivityInspector = new ConnectivityInspector<>(stateGraph);
   }
 
   @Override
-  public Collection<State> validTransitionsFrom(State state) {
-    Set<State> undirectedLinks = connectivityInspector.connectedSetOf(state);
+  public Collection<STATE> validTransitionsFrom(STATE state) {
+    Set<STATE> undirectedLinks = connectivityInspector.connectedSetOf(state);
     LOG.debug("Considering {} undirected links.", undirectedLinks.size());
 
     // connectivity inspector returns the undirected connections - so we need to check the directional edge exists between
     // the weekly connected target vertex and the provided state (to handle the cases where we've been provided a directed
     // graph)
-    List<State> finalLinks = undirectedLinks.stream()
+    List<STATE> finalLinks = undirectedLinks.stream()
         .filter(target -> stateGraph.containsEdge(state, target))
         .collect(Collectors.toList());
 
@@ -68,7 +68,7 @@ public final class GraphBackedViterbiTransitionStrategy<Stage, State> implements
   }
 
   @Override
-  public Double scoreTransitionFrom(State current, State next) {
+  public Double scoreTransitionFrom(STATE current, STATE next) {
     Optional<DefaultWeightedEdge> edge = Optional.ofNullable(stateGraph.getEdge(current, next));
     return edge.map(stateGraph::getEdgeWeight).orElseThrow(() -> new IllegalStateException("Cannot get weight for edge not in graph (or with unset weight)."));
   }

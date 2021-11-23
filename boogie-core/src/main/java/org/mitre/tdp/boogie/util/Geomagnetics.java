@@ -44,9 +44,6 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * <p>
  * <p>
@@ -173,17 +170,11 @@ import org.slf4j.LoggerFactory;
  */
 final class Geomagnetics {
   /**
-   * A logger for this class. Every class MUST have this field, if you want to log from this class.
-   * The class name is the fully qualified class name of the class, such as java.lang.String. If you're not going
-   * to use log4j, then comment all references to the logger, and uncomment the System.***.println statements.
-   */
-  private static Logger logger = LoggerFactory.getLogger(Geomagnetics.class);
-  /**
    * Added in version 5.  In earlier versions the altitude for the calculation was held as a
    * constant at 0.  In version 5, if no altitude is specified in the calculation, this
    * altitude is used by default.
    */
-  private final double defaultAltitude = 0;
+  private static final double defaultAltitude = 0;
   private final GeomagneticCoefficients coeffs;
   /**
    * Geodetic altitude in km. An input,
@@ -212,11 +203,6 @@ final class Geomagnetics {
   private double dec = 0;
 
   /**
-   *	Geomagnetic grid variation, referenced to
-   *	grid North.  Not calculated or output in version 5.0.
-   */
-  //private double gv = 0;
-  /**
    * Geomagnetic inclination in deg.
    * Down is positive, up is negative.
    */
@@ -242,38 +228,38 @@ final class Geomagnetics {
   /**
    * The Gauss coefficients of main geomagnetic model (nt).
    */
-  private double c[][] = new double[13][13];
+  private final double[][] c = new double[13][13];
   /**
    * The Gauss coefficients of secular geomagnetic model (nt/yr).
    */
-  private double cd[][] = new double[13][13];
+  private final double[][] cd = new double[13][13];
   /**
    * The time adjusted geomagnetic gauss coefficients (nt).
    */
-  private double tc[][] = new double[13][13];
+  private final double[][] tc = new double[13][13];
   /**
    * The theta derivative of p(n,m) (unnormalized).
    */
-  private double dp[][] = new double[13][13];
+  private final double[][] dp = new double[13][13];
   /**
    * The Schmidt normalization factors.
    */
-  private double snorm[] = new double[169];
+  private final double[] snorm = new double[169];
   /**
    * The sine of (m*spherical coord. longitude).
    */
-  private double sp[] = new double[13];
+  private final double[] sp = new double[13];
   /**
    * The cosine of (m*spherical coord. longitude).
    */
-  private double cp[] = new double[13];
-  private double fn[] = new double[13];
-  private double fm[] = new double[13];
+  private final double[] cp = new double[13];
+  private final double[] fn = new double[13];
+  private final double[] fm = new double[13];
   /**
    * The associated Legendre polynomials for m=1 (unnormalized).
    */
-  private double pp[] = new double[13];
-  private double k[][] = new double[13][13];
+  private final double[] pp = new double[13];
+  private final double[][] k = new double[13][13];
   /**
    * The variables otime (old time), oalt (old altitude),
    * olat (old latitude), olon (old longitude), are used to
@@ -323,10 +309,6 @@ final class Geomagnetics {
   private void initModel() {
     glat = 0;
     glon = 0;
-    //bOutDated = false;
-    //String strModel = new String();
-    //String strFile = new String("WMM.COF");
-    //		String strFile = new String("wmm-95.dat");
 
     // INITIALIZE CONSTANTS
     maxord = maxdeg;
@@ -483,13 +465,6 @@ final class Geomagnetics {
     time = year;
 
     double dt = time - epoch;
-    //if (otime < 0.0 && (dt < 0.0 || dt > 5.0))
-    //		if(bCurrent){
-    //			if (dt < 0.0 || dt > 5.0)
-    //				bOutDated = true;
-    //			else
-    //				bOutDated = false;
-    //		}
 
     double pi = Math.PI;
     double dtr = (pi / 180.0);
@@ -628,24 +603,6 @@ final class Geomagnetics {
     // Grid North is referenced to the 0 Meridian of a polar
     // stereographic projection.
 
-    //OTHERWISE, SET MAGNETIC GRID VARIATION TO -999.0
-        /*
-         gv = -999.0;
-         if (Math.abs(glat) >= 55.){
-         if (glat > 0.0 && glon >= 0.0)
-         gv = dec-glon;
-         if (glat > 0.0 && glon < 0.0)
-         gv = dec + Math.abs(glon);
-         if (glat < 0.0 && glon >= 0.0)
-         gv = dec+glon;
-         if (glat < 0.0 && glon < 0.0)
-         gv = dec - Math.abs(glon);
-         if (gv > +180.0)
-         gv -= 360.0;
-         if (gv < -180.0)
-         gv += 360.0;
-         }
-         */
     otime = time;
     oalt = alt;
     olat = glat;

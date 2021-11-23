@@ -6,7 +6,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.WeightFunctions.simpleLogistic;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
@@ -17,8 +17,8 @@ import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
  */
 public final class TfFeatureScorer implements ViterbiFeatureVectorScorer {
 
-  private final Function<Double, Double> offTrackWeight;
-  private final Function<Double, Double> offCourseWeight;
+  private final UnaryOperator<Double> offTrackWeight;
+  private final UnaryOperator<Double> offCourseWeight;
   private final BiFunction<Double, Double, Double> prePostPenalizer;
 
   public TfFeatureScorer() {
@@ -30,15 +30,15 @@ public final class TfFeatureScorer implements ViterbiFeatureVectorScorer {
   }
 
   public TfFeatureScorer(
-      Function<Double, Double> offTrackWeight,
-      Function<Double, Double> offCourseWeight
+      UnaryOperator<Double> offTrackWeight,
+      UnaryOperator<Double> offCourseWeight
   ) {
     this(offTrackWeight, offCourseWeight, prePostPenalizer(2, 2));
   }
 
   public TfFeatureScorer(
-      Function<Double, Double> offTrackWeight,
-      Function<Double, Double> offCourseWeight,
+      UnaryOperator<Double> offTrackWeight,
+      UnaryOperator<Double> offCourseWeight,
       BiFunction<Double, Double, Double> prePostPenalizer
   ) {
     this.offTrackWeight = requireNonNull(offTrackWeight);

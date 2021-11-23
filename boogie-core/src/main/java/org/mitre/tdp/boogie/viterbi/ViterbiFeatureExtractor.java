@@ -14,7 +14,7 @@ import org.mitre.caasd.commons.Pair;
  *
  * This is most easily accomplished by wrapping the function with {@link ViterbiTagger#memoize(BiFunction)}.
  */
-public final class ViterbiFeatureExtractor<Stage, State> implements BiFunction<Stage, State, Pair<String, Double>> {
+public final class ViterbiFeatureExtractor<STAGE, STATE> implements BiFunction<STAGE, STATE, Pair<String, Double>> {
 
   /**
    * The string name of the feature.
@@ -26,9 +26,9 @@ public final class ViterbiFeatureExtractor<Stage, State> implements BiFunction<S
   /**
    * The function to apply to extract the feature value.
    */
-  private final BiFunction<Stage, State, Double> featureComputer;
+  private final BiFunction<STAGE, STATE, Double> featureComputer;
 
-  public ViterbiFeatureExtractor(String featureName, BiFunction<Stage, State, Double> featureComputer) {
+  public ViterbiFeatureExtractor(String featureName, BiFunction<STAGE, STATE, Double> featureComputer) {
     this.featureName = requireNonNull(featureName);
     this.featureComputer = requireNonNull(featureComputer);
   }
@@ -38,7 +38,7 @@ public final class ViterbiFeatureExtractor<Stage, State> implements BiFunction<S
   }
 
   @Override
-  public Pair<String, Double> apply(Stage stage, State state) {
+  public Pair<String, Double> apply(STAGE stage, STATE state) {
     return Pair.of(featureName, featureComputer.apply(requireNonNull(stage), requireNonNull(state)));
   }
 }

@@ -68,7 +68,7 @@ class TestNameLocationService {
     NameLocationService<Fix> nls = abcService();
     Fix nearest = nls.nearest(LatLong.of(0.0, 0.3));
 
-    assertEquals(nearest.fixIdentifier(), "A");
+    assertEquals("A", nearest.fixIdentifier());
   }
 
   @Test
@@ -76,7 +76,7 @@ class TestNameLocationService {
     NameLocationService<Fix> nls = abcService();
     Fix nearest = nls.nearest(LatLong.of(0.0, -1.5));
 
-    assertEquals(nearest.fixIdentifier(), "C");
+    assertEquals("C", nearest.fixIdentifier());
   }
 
   @Test
@@ -85,10 +85,10 @@ class TestNameLocationService {
     LatLong locationA = LatLong.of(0.0, 0.0);
 
     Fix nearest = nls.nearest(locationA);
-    assertEquals(nearest.fixIdentifier(), "A");
+    assertEquals("A", nearest.fixIdentifier());
 
     nearest = nls.nearest(nearest.latLong());
-    assertEquals(nearest.fixIdentifier(), "A");
+    assertEquals("A", nearest.fixIdentifier());
   }
 
   private NameLocationService<Fix> abcService() {

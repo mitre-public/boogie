@@ -67,7 +67,7 @@ public class LinearSplitErrorEvaluator implements PrecomputedEvaluator {
     return piecewiseSlopes.entrySet().stream().collect(Collectors.toMap(
         e -> t0.plus(e.getKey()),
         e -> isLevelAndNotOffset(e.getValue()),
-        (k1, k2) -> {throw new RuntimeException();},
+        (k1, k2) -> {throw new IllegalStateException("Key collision in map. K1: ".concat(k1.toString()).concat(" K2: ".concat(k2.toString())));},
         TreeMap::new
     ));
   }

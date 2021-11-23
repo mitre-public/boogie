@@ -11,11 +11,13 @@ import java.util.Set;
 
 import org.mitre.caasd.commons.Pair;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * Most of this class can be replace when we are able to bump guava deps in dependent libs from 18->21 with powerset logic.
+ */
 public final class Combinatorics {
 
   private Combinatorics() {
@@ -27,8 +29,6 @@ public final class Combinatorics {
     final LinkedList<T> collList = Lists.newLinkedList(coll);
 
     Iterator<int[]> iter;
-    // commons math 3 method - scrape out for now - BOO - SPARK
-    // iter = CombinatoricsUtils.combinationsIterator(collList.size(), 2);
     if (collList.size() == 2) {
       iter = new SingletonIterator(new int[] {0, 1});
     } else if (collList.size() > 2) {
@@ -37,8 +37,7 @@ public final class Combinatorics {
       iter = Collections.emptyIterator();
     }
 
-    Function<int[], Pair<T, T>> function = input -> new Pair<>(collList.get(input[0]), collList.get(input[1]));
-    return Iterators.transform(iter, function);
+    return Iterators.transform(iter, input -> new Pair<>(collList.get(input[0]), collList.get(input[1])));
   }
 
   public static <U, V> Collection<Pair<U, V>> cartesianProduct(Collection<U> first, Collection<V> second) {
@@ -119,6 +118,7 @@ public final class Combinatorics {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
       return more;
     }
@@ -126,6 +126,7 @@ public final class Combinatorics {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int[] next() {
       if (!more) {
         throw new NoSuchElementException();
@@ -175,6 +176,7 @@ public final class Combinatorics {
     /**
      * Not supported.
      */
+    @Override
     public void remove() {
       throw new UnsupportedOperationException();
     }
@@ -205,6 +207,7 @@ public final class Combinatorics {
     /**
      * @return True until next is called the first time, then false
      */
+    @Override
     public boolean hasNext() {
       return more;
     }
@@ -212,6 +215,7 @@ public final class Combinatorics {
     /**
      * @return the singleton in first activation; throws NSEE thereafter
      */
+    @Override
     public int[] next() {
       if (more) {
         more = false;
@@ -224,6 +228,7 @@ public final class Combinatorics {
     /**
      * Not supported
      */
+    @Override
     public void remove() {
       throw new UnsupportedOperationException();
     }

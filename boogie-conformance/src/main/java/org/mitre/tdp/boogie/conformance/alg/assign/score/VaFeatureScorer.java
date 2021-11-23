@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.WeightFunctions.simpleLogistic;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
@@ -17,12 +17,12 @@ public final class VaFeatureScorer implements ViterbiFeatureVectorScorer {
    * VA/CA legs have no internal magvar which can be used to compare the point true course to the specified magnetic heading in
    * a direct fashion - so we recommend adding some fudge factor here as variations can be up to 15 degrees in some areas.
    */
-  private final Function<Double, Double> offCourseWeight;
+  private final UnaryOperator<Double> offCourseWeight;
   /**
    * Returns a weighted score based on the signed distance to the target altitude in feet. The input to this method is always
    * taken to be the point altitude - the target altitude from the leg.
    */
-  private final Function<Double, Double> pastTargetAltitudeWeight;
+  private final UnaryOperator<Double> pastTargetAltitudeWeight;
 
   public VaFeatureScorer() {
     this(
@@ -32,8 +32,8 @@ public final class VaFeatureScorer implements ViterbiFeatureVectorScorer {
   }
 
   public VaFeatureScorer(
-      Function<Double, Double> offCourseWeight,
-      Function<Double, Double> pastTargetAltitudeWeight
+      UnaryOperator<Double> offCourseWeight,
+      UnaryOperator<Double> pastTargetAltitudeWeight
   ) {
     this.offCourseWeight = requireNonNull(offCourseWeight);
     this.pastTargetAltitudeWeight = requireNonNull(pastTargetAltitudeWeight);

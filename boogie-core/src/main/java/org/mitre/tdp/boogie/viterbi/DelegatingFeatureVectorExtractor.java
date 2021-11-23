@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  *
  * (think using this explicitly in) {@link FeatureBasedViterbiScoringStrategy#featureExtractor(Object, Object)}
  */
-public final class DelegatingFeatureVectorExtractor<Stage, State> implements BiFunction<Stage, State, ViterbiFeatureVectorExtractor<Stage, State>> {
+public final class DelegatingFeatureVectorExtractor<STAGE, STATE> implements BiFunction<STAGE, STATE, ViterbiFeatureVectorExtractor<STAGE, STATE>> {
 
   /**
    * The ordered list of feature extractors to apply to the underlying state/stages - the first extractor who's delegation method
@@ -30,14 +30,14 @@ public final class DelegatingFeatureVectorExtractor<Stage, State> implements BiF
    *
    * If there are no matches at the end an {@link IllegalStateException} will be thrown.
    */
-  private final List<DelegatableFeatureExtractor<Stage, State>> featureExtractors;
+  private final List<DelegatableFeatureExtractor<STAGE, STATE>> featureExtractors;
 
-  private DelegatingFeatureVectorExtractor(Builder<Stage, State> builder) {
+  private DelegatingFeatureVectorExtractor(Builder<STAGE, STATE> builder) {
     this.featureExtractors = builder.extractors;
   }
 
   @Override
-  public ViterbiFeatureVectorExtractor<Stage, State> apply(Stage stage, State state) {
+  public ViterbiFeatureVectorExtractor<STAGE, STATE> apply(STAGE stage, STATE state) {
     return featureExtractors.stream()
         .filter(extractor -> extractor.test(stage, state))
         .findFirst().orElseThrow(IllegalStateException::new).get();

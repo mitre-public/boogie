@@ -31,7 +31,7 @@ final class GraphExporter implements Function<SimpleDirectedWeightedGraph<Leg, D
       graphExporter.exportGraph(graph, writer);
       return writer.toString();
     } catch (IOException e) {
-      throw new RuntimeException("Error while attempting to export graph.", e);
+      throw new IllegalArgumentException("Error while attempting to export graph.", e);
     }
   }
 

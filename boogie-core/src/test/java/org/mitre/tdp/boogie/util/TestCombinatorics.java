@@ -22,6 +22,6 @@ class TestCombinatorics {
     List<Pair<Integer, Integer>> pairList = new ArrayList<>();
     pairs.forEachRemaining(pairList::add);
 
-    assertEquals(pairList.size(), 55);
+    assertEquals(55, pairList.size());
   }
 }
