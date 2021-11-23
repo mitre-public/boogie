@@ -1,4 +1,8 @@
 ---
+git_username: ttfs
+git_tokenpassword: BAMSCRT@0@0@aFSWy/UtfpFhnsUp29ApiGs98lSstLbTi6jUPlPLu82vLcHV8jSbguX5KY1+flQ0
+git_email: bamboo@tdp.mitre.org
+
 # Encrypted Bamboo DALI permissions for publishing snapshot jars to internal MITRE nexus repo
 dali_user: ci-bamboo
 dali_password: BAMSCRT@0@0@+xD0UA5WFPEe8zHQ/E47QA==

@@ -23,6 +23,22 @@ GREEN="$(echo -e "\033[32m")"
 YELLOW="$(echo -e "\033[33m")"
 BLUE="$(echo -e "\033[34m")"
 
+if [ $bamboo_planRepository_branchName != "main" ] ; then
+  echo "Not on main - skipping release"
+  exit 1
+fi
+
+echo "Shallow cloning source repo..."
+
+git remote set-url origin "https://${bamboo_git_username}:${bamboo_git_tokenpassword}@mustache.mitre.org/scm/ttfs/boogie.git"
+git remote -v
+
+cd boogie
+
+# Service account login
+git config user.name "${bamboo_git_username}"
+git config user.email "${bamboo_git_email}"
+
 branchName=$(git rev-parse --abbrev-ref HEAD)
 myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
 echo "Running ${BLUE}$0${NONE} on branch ${BLUE}$branchName${NONE} at version: ${BLUE}$myProjVersion${NONE}"
