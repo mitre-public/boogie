@@ -3,6 +3,8 @@
 <br>
 [![Latest Release](https://img.shields.io/badge/version-1.0.4-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 <br>
+[![Quality Gate Status](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=alert_status)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
+<br>
 [![Coverage](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=coverage)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 [![Lines of Code](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=ncloc)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 <br>

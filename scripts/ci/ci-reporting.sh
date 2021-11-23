@@ -12,8 +12,10 @@ branchName=$(git rev-parse --abbrev-ref HEAD)
 myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
 echo "Running ${GREEN}$0${NONE} on ${GREEN}$branchName${NONE} at ${GREEN}$myProjVersion${NONE}"
 
-# run clean set of tests with jacoco reports configured
-./gradlew clean test -Preporting --no-build-cache
+# run clean set of tests with jacoco reports configured - note we only count unit tests
+# for coverage as we don't want integration tests to "cheat" coverage that should be
+# doable solely with standard unit testing (also keeps build suite size down)
+./gradlew clean testUnit -Preporting --no-build-cache
 
 ## generate code coverage aggregate report
 ./gradlew codeCoverageReport -Preporting --no-build-cache --no-parallel
