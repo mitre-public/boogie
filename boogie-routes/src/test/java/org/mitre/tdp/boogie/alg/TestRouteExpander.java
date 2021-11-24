@@ -26,6 +26,8 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Airways;
 import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.COSTR3;
+import org.mitre.tdp.boogie.CUN;
+import org.mitre.tdp.boogie.CZM;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.HOBTT2;
 import org.mitre.tdp.boogie.JIIMS3;
@@ -886,6 +888,53 @@ class TestRouteExpander {
         () -> assertEquals(3, legs.size())
     );
   }
+
+  /** TDP-5708 */
+  @Test
+  void testStarIncorrectlyUsedAsAirwayEntryAndExitFix() {
+    String route = "UG521.CZM.UB881.CUN.UM219";
+
+    Fix czm = fix("CZM", 20.507472222222223, -86.912);
+    Fix cun = fix("CUN", 21.025108333333332, -86.85871666666667);
+
+    RouteExpander expander = newExpander(
+        asList(czm, cun),
+        asList(Airways.UG521(), Airways.UB881(), Airways.UM219()),
+        emptyList(),
+        asList(CZM.INSTANCE, CUN.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, null).get();
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+
+    assertAll(
+        "Check expanded STAR summary statistics.",
+        () -> assertEquals("KSEA", routeSummary.departureAirport()),
+        () -> assertEquals(Optional.empty(), routeSummary.departureRunway()),
+
+        () -> assertEquals(Optional.of("SUMMA2"), routeSummary.sid()),
+        () -> assertEquals(Optional.of("SUMMA"), routeSummary.sidExitFix())
+    );
+
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals("KSEA", legs.get(0).section()),
+        () -> assertEquals("KSEA", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("SUMMA2", legs.get(1).section()),
+        () -> assertEquals("SUMMA", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.IF, legs.get(1).pathTerminator()),
+
+        () -> assertEquals("JINMO", legs.get(2).section()),
+        () -> assertEquals("JINMO", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(2).pathTerminator()),
+
+        () -> assertEquals(3, legs.size())
+    );
+  }
+
 
   private RouteExpander newExpander(
       Collection<? extends Fix> fixes,

@@ -5,6 +5,8 @@ import static org.mitre.tdp.boogie.MockObjects.airway;
 
 import java.util.Arrays;
 
+import com.sun.org.apache.bcel.internal.generic.LAND;
+
 /**
  * A mocked copy of the J121 airway over the US for use in unit testing.
  */
@@ -47,5 +49,46 @@ public final class Airways {
     return airway("J121", Arrays.asList(
         CRG, MILIE, CHS, JMACK, BARTL, ISO, WEAVR, ORF, SAWED, KALDA, DUNFE, SWL, RADDS, SIE, AVALO,
         BRIGS, DRIFT, MANTA, PLUME, SHERL, DUNEE, SARDI, SHLEP, HOFFI, HTO, SEY, BURDY, ENE));
+  }
+
+  public static Airway UB881() {
+    Leg CUN= TF( "CUN" , 21.025108333333332 , -86.85871666666667);
+    Leg LIDEK= TF( "LIDEK" , 20.76638888888889 , -86.88527777777779);
+    Leg CZM= TF( "CZM" , 20.507472222222223 , -86.912);
+    Leg OBTAM= TF( "OBTAM" , 20.089277777777777 , -86.90769444444445);
+    Leg ANIKO= TF( "ANIKO" , 19.048611111111114 , -86.9063888888889);
+    Leg URIOS= TF( "URIOS" , 18.42527777777778 , -86.89833333333334);
+    Leg LANDA= TF( "LANDA" , 17.921666666666667 , -86.89166666666668);
+    Leg TIGES= TF( "TIGES" , 16.92092777777778 , -86.87594722222221);
+    Leg UTILA= TF( "UTILA" , 16.110000000000003 , -86.86333333333333);
+    Leg BTO= TF( "BTO" , 15.736691666666665 , -86.86416944444444);
+
+    return airway("UB881", Arrays.asList(
+       CUN, LIDEK, CZM, OBTAM, ANIKO, URIOS, LANDA, TIGES, UTILA, BTO));
+  }
+
+  public static Airway UG521() {
+    Leg CZM= TF( "CZM" , 20.507472222222223 , -86.912);
+    Leg ITPIG= TF( "ITPIG" , 20.09675 , -86.99552777777778);
+    Leg AMIDA= TF( "AMIDA" , 18.629444444444445 , -87.30166666666666);
+    Leg KIRAP= TF( "KIRAP" , 17.05638888888889 , -87.60638888888889);
+    Leg KORTI= TF( "KORTI" , 16.121547222222222 , -87.78929166666667);
+    Leg SAP= TF( "SAP" , 15.4636 , -87.91696111111112);
+
+    return airway("UG521", Arrays.asList(
+        CZM, ITPIG, AMIDA, KIRAP, KORTI, SAP));
+  }
+
+  public static Airway UM219() {
+    Leg MYDIA= TF( "MYDIA" , 24.04066388888889 , -86.15824166666667);
+    Leg ALPUK= TF( "ALPUK" , 23.296111111111113 , -86.33416666666666);
+    Leg RAKAR= TF( "RAKAR" , 22.765555555555554 , -86.45833333333334);
+    Leg XOPGI= TF( "XOPGI" , 22.391944444444444 , -86.545);
+    Leg ROTGI= TF( "ROTGI" , 21.842916666666664 , -86.67180555555557);
+    Leg OMSUK= TF( "OMSUK" , 21.434166666666666 , -86.76555555555555);
+    Leg CUN= TF( "CUN" , 21.025108333333332 , -86.85871666666667);
+
+    return airway("UM219", Arrays.asList(
+       MYDIA, ALPUK, RAKAR, XOPGI, ROTGI, OMSUK, CUN));
   }
 }
