@@ -13,6 +13,8 @@ import com.google.common.collect.ImmutableSet;
  * " " or "@" - indicate the limit value should be interpreted as the speed to be AT (if provided)
  * "+" - AT OR ABOVE
  * "-" - AT OR BELOW
+ * <br>
+ * NOTE: This class will remap "blank" to "@".
  */
 public final class SpeedLimitDescription implements FieldSpec<String> {
 
@@ -28,7 +30,7 @@ public final class SpeedLimitDescription implements FieldSpec<String> {
 
   @Override
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(allowedValues::contains);
+    return Optional.of(fieldValue).filter(allowedValues::contains).map(s -> s.replace(' ', '@'));
   }
 
   static final ImmutableSet<String> allowedValues = ImmutableSet.of(

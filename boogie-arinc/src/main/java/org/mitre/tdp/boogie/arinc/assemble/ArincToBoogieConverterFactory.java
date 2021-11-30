@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.util.Declinations.declination;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
@@ -32,6 +34,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
 import org.mitre.tdp.boogie.model.BoogieAirport;
+import org.mitre.tdp.boogie.model.BoogieAirway;
 import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.model.BoogieLeg;
 import org.mitre.tdp.boogie.model.BoogieProcedure;
@@ -217,10 +220,42 @@ public final class ArincToBoogieConverterFactory {
                 end.longitude()
             )).map(Course::inDegrees).orElse(null)
         ))
+        .ilsGlsMls1(Optional.ofNullable(primaryLocalizer).map(ArincLocalizerGlideSlope::localizerIdentifier).orElse(null))
+        .ilsGlsMls2(Optional.ofNullable(secondaryLocalizer).map(ArincLocalizerGlideSlope::localizerIdentifier).orElse(null))
         .build();
   }
 
-  static Leg newLegFrom(ArincProcedureLeg arincProcedureLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix) {
+  static Leg newAirwayLegFrom(ArincAirwayLeg arincAirwayLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid) {
+    return new BoogieLeg.Builder()
+        .associatedFix(associatedFix)
+        .recommendedNavaid(recommendedNavaid)
+        .pathTerminator(PathTerminator.TF)
+        .sequenceNumber(arincAirwayLeg.sequenceNumber())
+        .altitudeConstraint(AirwayAltitudeRange.INSTANCE.apply(
+            arincAirwayLeg.minAltitude1().orElse(null),
+            arincAirwayLeg.minAltitude2().orElse(null),
+            arincAirwayLeg.maxAltitude().orElse(null))
+        )
+        .outboundMagneticCourse(arincAirwayLeg.outboundMagneticCourse().orElse(null))
+        .theta(arincAirwayLeg.theta().orElse(null))
+        .rho(arincAirwayLeg.rho().orElse(null))
+        .rnp(arincAirwayLeg.rnp().orElse(null))
+        .routeDistance(arincAirwayLeg.routeDistance().orElse(null))
+        .holdTime(arincAirwayLeg.holdTime().orElse(null))
+        .isPublishedHoldingFix(false)
+        .isFlyOverFix(false)
+        .build();
+  }
+
+  static Airway newAirwayFrom(ArincAirwayLeg arincAirwayLeg, List<Leg> legs) {
+    return new BoogieAirway.Builder()
+        .airwayIdentifier(arincAirwayLeg.routeIdentifier())
+        .airwayRegion(arincAirwayLeg.customerAreaCode().name())
+        .legs(legs)
+        .build();
+  }
+
+  static Leg newProcedureLegFrom(ArincProcedureLeg arincProcedureLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix) {
     return new BoogieLeg.Builder()
         .associatedFix(associatedFix)
         .recommendedNavaid(recommendedNavaid)
@@ -316,7 +351,7 @@ public final class ArincToBoogieConverterFactory {
     }
   }
 
-  static Leg newLegFrom(ArincAirwayLeg arincAirwayLeg, Fix associatedFix, @Nullable Fix recommendedNavaid) {
+  static Leg newProcedureLegFrom(ArincAirwayLeg arincAirwayLeg, Fix associatedFix, @Nullable Fix recommendedNavaid) {
     return new BoogieLeg.Builder()
         .associatedFix(associatedFix)
         .recommendedNavaid(recommendedNavaid)

@@ -64,7 +64,7 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
         terminalAreaDatabase,
         fixDatabase,
         FixAssembler.INSTANCE,
-        ArincToBoogieConverterFactory::newLegFrom,
+        ArincToBoogieConverterFactory::newProcedureLegFrom,
         ArincToBoogieConverterFactory::newTransitionFrom,
         ArincToBoogieConverterFactory::newProcedureFrom
     );
@@ -175,7 +175,7 @@ public final class ProcedureAssembler implements Function<Collection<ArincProced
         TerminalAreaDatabase terminalAreaDatabase,
         FixDatabase fixDatabase
     ) {
-      this(terminalAreaDatabase, fixDatabase, ArincToBoogieConverterFactory::newLegFrom, FixAssembler.INSTANCE);
+      this(terminalAreaDatabase, fixDatabase, ArincToBoogieConverterFactory::newProcedureLegFrom, FixAssembler.INSTANCE);
     }
 
     ArincProcedureLegConverter(

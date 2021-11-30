@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -63,7 +65,7 @@ public class TestProcedureLegSpec {
         () -> assertFalse(record.optionalField("routeHoldDistanceTime").isPresent()),
         () -> assertEquals(SectionCode.D, record.requiredField("recommendedNavaidSectionCode")),
         () -> assertFalse(record.optionalField("recommendedNavaidSubSectionCode").isPresent()),
-        () -> assertFalse(record.optionalField("altitudeDescription").isPresent()),
+        () -> assertEquals(Optional.of("@"),record.optionalField("altitudeDescription")),
         () -> assertEquals(3000.0d, record.requiredField("minAltitude1")),
         () -> assertFalse(record.optionalField("minAltitude2").isPresent()),
         () -> assertEquals(18000.0d, record.requiredField("transitionAltitude")),
@@ -244,7 +246,7 @@ public class TestProcedureLegSpec {
         () -> assertEquals(0.0d, record.requiredField("rho")),
         () -> assertEquals(250.0d, record.requiredField("outboundMagneticCourse")),
         () -> assertEquals("0050", record.requiredField("routeHoldDistanceTime")),
-        () -> assertFalse(record.optionalField("altitudeDescription").isPresent()),
+        () -> assertEquals(Optional.of("@"),record.optionalField("altitudeDescription")),
         () -> assertFalse(record.optionalField("minAltitude1").isPresent()),
         () -> assertFalse(record.optionalField("minAltitude2").isPresent()),
         () -> assertFalse(record.optionalField("transitionAltitude").isPresent()),
@@ -340,7 +342,7 @@ public class TestProcedureLegSpec {
         () -> assertEquals(13.0d, record.requiredField("rho"), "rho"),
         () -> assertEquals(343.0d, record.requiredField("outboundMagneticCourse"), "outboundMagneticCourse"),
         () -> assertFalse(record.optionalField("routeHoldDistanceTime").isPresent(), "routeHoldDistanceTime"),
-        () -> assertFalse(record.optionalField("altitudeDescription").isPresent(), "altitudeDescription"),
+        () -> assertEquals(Optional.of("@"),record.optionalField("altitudeDescription")),
         () -> assertFalse(record.optionalField("minAltitude1").isPresent(), "minAltitude1"),
         () -> assertFalse(record.optionalField("minAltitude2").isPresent(), "minAltitude2"),
         () -> assertFalse(record.optionalField("transitionAltitude").isPresent(), "transitionAltitude"),
