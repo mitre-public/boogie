@@ -66,7 +66,7 @@ public final class AirwayElement implements ResolvedElement {
 
   @Override
   public List<LinkedLegs> visit(StarElement starElement) {
-    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(starElement, this);
+    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(starElement, this).stream().map(leg -> new LinkedLegs(leg.source(), leg.target(), leg.linkWeight() + 0.001)).collect(Collectors.toList());
   }
 
   @Override

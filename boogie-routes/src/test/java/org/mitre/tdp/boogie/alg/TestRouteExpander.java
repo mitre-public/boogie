@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.Airports.KATL;
 import static org.mitre.tdp.boogie.Airports.KDEN;
@@ -37,6 +38,7 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.SUMMA2;
+import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
@@ -892,13 +894,15 @@ class TestRouteExpander {
   /** TDP-5708 */
   @Test
   void testStarIncorrectlyUsedAsAirwayEntryAndExitFix() {
-    String route = "UG521.CZM.UB881.CUN.UM219";
+    String route = "SAP.UG521.CZM.UB881.CUN.UM219.MYDIA";
 
+    Fix sap = fix("SAP", 15.4636, -87.91696111111112);
     Fix czm = fix("CZM", 20.507472222222223, -86.912);
     Fix cun = fix("CUN", 21.025108333333332, -86.85871666666667);
+    Fix mydia = fix("MYDIA", 24.04066388888889, -86.15824166666667);
 
     RouteExpander expander = newExpander(
-        asList(czm, cun),
+        asList(sap, czm, cun, mydia),
         asList(Airways.UG521(), Airways.UB881(), Airways.UM219()),
         emptyList(),
         asList(CZM.INSTANCE, CUN.INSTANCE)
@@ -906,32 +910,64 @@ class TestRouteExpander {
 
     ExpandedRoute expandedRoute = expander.apply(route, null, null).get();
 
-    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
-
-    assertAll(
-        "Check expanded STAR summary statistics.",
-        () -> assertEquals("KSEA", routeSummary.departureAirport()),
-        () -> assertEquals(Optional.empty(), routeSummary.departureRunway()),
-
-        () -> assertEquals(Optional.of("SUMMA2"), routeSummary.sid()),
-        () -> assertEquals(Optional.of("SUMMA"), routeSummary.sidExitFix())
-    );
-
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
 
     assertAll(
-        () -> assertEquals("KSEA", legs.get(0).section()),
-        () -> assertEquals("KSEA", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals("UG521", legs.get(0).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(0).elementType()),
+        () -> assertEquals("SAP", legs.get(0).associatedFix().get().fixIdentifier()),
 
-        () -> assertEquals("SUMMA2", legs.get(1).section()),
-        () -> assertEquals("SUMMA", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.IF, legs.get(1).pathTerminator()),
+        () -> assertEquals("UG521", legs.get(1).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(1).elementType()),
+        () -> assertEquals("SAP", legs.get(0).associatedFix().get().fixIdentifier()),
 
-        () -> assertEquals("JINMO", legs.get(2).section()),
-        () -> assertEquals("JINMO", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.TF, legs.get(2).pathTerminator()),
+        () -> assertEquals("UG521", legs.get(2).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(2).elementType()),
+        () -> assertEquals("KIRAP", legs.get(2).associatedFix().get().fixIdentifier()),
 
-        () -> assertEquals(3, legs.size())
+        () -> assertEquals("UG521", legs.get(3).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(3).elementType()),
+        () -> assertEquals("AMIDA", legs.get(3).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UG521", legs.get(4).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(4).elementType()),
+        () -> assertEquals("ITPIG", legs.get(4).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UB881", legs.get(5).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(5).elementType()),
+        () -> assertEquals("CZM", legs.get(5).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UB881", legs.get(6).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(6).elementType()),
+        () -> assertEquals("LIDEK", legs.get(6).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UM219", legs.get(7).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(7).elementType()),
+        () -> assertEquals("CUN", legs.get(7).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UM219", legs.get(8).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(8).elementType()),
+        () -> assertEquals("OMSUK", legs.get(8).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UM219", legs.get(9).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(9).elementType()),
+        () -> assertEquals("ROTGI", legs.get(9).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UM219", legs.get(10).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(10).elementType()),
+        () -> assertEquals("XOPGI", legs.get(10).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UM219", legs.get(11).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(11).elementType()),
+        () -> assertEquals("RAKAR", legs.get(11).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UM219", legs.get(12).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(12).elementType()),
+        () -> assertEquals("ALPUK", legs.get(12).associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals("UM219", legs.get(13).section()),
+        () -> assertEquals(ElementType.AIRWAY, legs.get(13).elementType()),
+        () -> assertEquals("MYDIA", legs.get(13).associatedFix().get().fixIdentifier())
     );
   }
 
