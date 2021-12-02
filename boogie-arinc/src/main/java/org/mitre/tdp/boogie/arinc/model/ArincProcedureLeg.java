@@ -5,9 +5,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.arinc.v18.field.AltitudeDescription;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitDescription;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 import org.mitre.tdp.boogie.arinc.v18.field.WaypointDescription;
 
@@ -55,6 +57,9 @@ public final class ArincProcedureLeg implements ArincModel {
   private final Double routeDistance;
   private final SectionCode recommendedNavaidSectionCode;
   private final String recommendedNavaidSubSectionCode;
+  /**
+   * See {@link AltitudeDescription} for options - and note "blank"s are mapped to "@"s.
+   */
   private final String altitudeDescription;
   private final Double minAltitude1;
   private final Double minAltitude2;
@@ -65,6 +70,9 @@ public final class ArincProcedureLeg implements ArincModel {
   private final String centerFixIcaoRegion;
   private final SectionCode centerFixSectionCode;
   private final String centerFixSubSectionCode;
+  /**
+   * See {@link SpeedLimitDescription} for options - and note "blank"s are mapped to "@"s.
+   */
   private final String speedLimitDescription;
   private final String routeTypeQualifier1;
   private final String routeTypeQualifier2;

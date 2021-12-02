@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableSet;
  * (+) - “At or above” altitude specified in first “Altitude” field. Also used with Localizer Only Altitude field.
  * (-) - “At or below” altitude specified in first “Altitude” field. Also used with Localizer Only Altitude field.
  * (@) - “At” altitude specified in first “Altitude” field. Also used with Localizer Only Altitude field.
+ * ( ) - "At" ^ same as above - blank implies "At".
  * (B) - “At or above to at or below” altitudes specified in the first and second “Altitude” fields.
  * (C) - “At or above” altitude specified in second “Altitude” field.
  * <br>
@@ -37,6 +38,8 @@ import com.google.common.collect.ImmutableSet;
  * field on step- down fix waypoints.
  * (Y) - “At” altitude on the coded vertical angle in the second “Altitude” field and “at or below” altitude specified in the first
  * “Altitude” field on step-down fix waypoints.
+ * <br>
+ * NOTE: This class will remap all blanks to '@'s for ease of use downstream.
  */
 public final class AltitudeDescription implements FieldSpec<String> {
 
@@ -52,7 +55,7 @@ public final class AltitudeDescription implements FieldSpec<String> {
 
   @Override
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).filter(allowedValues::contains);
+    return Optional.of(fieldValue).filter(allowedValues::contains).map(s -> s.replace(' ', '@'));
   }
 
   /**
@@ -61,7 +64,8 @@ public final class AltitudeDescription implements FieldSpec<String> {
   static final ImmutableSet<String> allowedValues = ImmutableSet.of(
       "+",
       "-",
-      "@",
+      "@", // at
+      " ", // at
       "B",
       "C",
       "G",

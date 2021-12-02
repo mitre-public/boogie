@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.RunwayLength;
+import org.mitre.tdp.boogie.arinc.v18.field.RunwayWidth;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.ThresholdDisplacementDistance;
 
 /**
  * Data class for representing structured/parsed content from within an ARINC format runway record.
@@ -22,14 +25,30 @@ public final class ArincRunway implements ArincModel {
   private final String subSectionCode;
   private final String runwayIdentifier;
   private final String continuationRecordNumber;
+  /**
+   * The length of the runway (with no regard to displaced thresholds, so the full physical length) in feet with a resolution
+   * of one foot.
+   * <br>
+   * See {@link RunwayLength}
+   */
   private final Integer runwayLength;
   private final Double runwayMagneticBearing;
   private final Double latitude;
   private final Double longitude;
   private final Double runwayGradient;
   private final Integer landingThresholdElevation;
+  /**
+   * Distance from the displaced threshold of the runway to its physical extent in feet.
+   * <br>
+   * See {@link ThresholdDisplacementDistance}
+   */
   private final Integer thresholdDisplacementDistance;
   private final Integer thresholdCrossingHeight;
+  /**
+   * Width of the runway (in feet), resolution is 1 foot.
+   * <br>
+   * See {@link RunwayWidth}
+   */
   private final Integer runwayWidth;
   private final String ilsMlsGlsIdentifier;
   private final String ilsMlsGlsCategory;

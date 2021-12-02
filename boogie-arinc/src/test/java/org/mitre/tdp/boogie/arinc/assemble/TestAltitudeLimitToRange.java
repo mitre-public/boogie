@@ -24,6 +24,11 @@ class TestAltitudeLimitToRange {
   }
 
   @Test
+  void testValueForAt_Blank() {
+    assertEquals(Range.closed(10000., 10000.), AltitudeLimitToRange.INSTANCE.apply(" ", 10000., null));
+  }
+
+  @Test
   void testValueForBetween() {
     assertEquals(Range.closed(6000., 10000.), AltitudeLimitToRange.INSTANCE.apply("B", 10000., 6000.));
   }

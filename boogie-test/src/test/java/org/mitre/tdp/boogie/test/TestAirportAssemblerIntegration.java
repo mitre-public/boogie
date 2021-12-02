@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.assemble.AirportAssembler;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ class TestAirportAssemblerIntegration {
 
   @BeforeAll
   static void setup() {
-    TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+     TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         EmbeddedCifpFile.instance().arincAirports(),
         EmbeddedCifpFile.instance().arincRunways(),
         EmbeddedCifpFile.instance().arincLocalizerGlideSlopes(),
@@ -51,13 +52,15 @@ class TestAirportAssemblerIntegration {
   }
 
   @Test
-  void testCommonAirportsLookReasonable() {
+  void testCommonAirportsHaveSingleImplementations() {
     assertAll(
         () -> assertEquals(1, airports.get("KJFK").size(), "KJFK"),
         () -> assertEquals(1, airports.get("KORD").size(), "KORD"),
         () -> assertEquals(1, airports.get("KSEA").size(), "KSEA"),
         () -> assertEquals(1, airports.get("KATL").size(), "KATL"),
-        () -> assertEquals(1, airports.get("KDFW").size(), "KDFW")
+        () -> assertEquals(1, airports.get("KDFW").size(), "KDFW"),
+        () -> assertEquals(1, airports.get("KSFO").size(), "KSFO"),
+        () -> assertEquals(1, airports.get("KMSP").size(), "KMSP")
     );
   }
 

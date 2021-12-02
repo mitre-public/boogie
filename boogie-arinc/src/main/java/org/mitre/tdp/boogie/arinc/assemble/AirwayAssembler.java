@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,7 +22,6 @@ import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
 import org.mitre.tdp.boogie.fn.TriFunction;
-import org.mitre.tdp.boogie.model.BoogieAirway;
 
 /**
  * Functional class for converting a collection of {@link ArincAirwayLeg}s into grouped and sequenced {@link Airway} records for
@@ -32,27 +32,32 @@ import org.mitre.tdp.boogie.model.BoogieAirway;
  */
 public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg>, Stream<Airway>> {
 
+  /**
+   * Functional class for transforming a {@link ArincAirwayLeg} and a pair of matched fixes as AssociatedFix and RecommendedNavaid
+   * for the leg with the
+   */
   private final ArincAirwayLegConverter inflator;
 
   private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway;
 
-  private final Function<List<ArincAirwayLeg>, Airway> airwayConverter;
+  private final BiFunction<ArincAirwayLeg, List<Leg>, Airway> airwayConverter;
+
+  public AirwayAssembler(FixDatabase fixDatabase) {
+    this(
+        fixDatabase,
+        FixAssembler.INSTANCE,
+        ArincToBoogieConverterFactory::newAirwayLegFrom,
+        ArincToBoogieConverterFactory::newAirwayFrom
+    );
+  }
 
   public AirwayAssembler(
       FixDatabase fixDatabase,
       Function<ArincModel, Fix> fixConverter,
       TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter,
-      Function<List<ArincAirwayLeg>, Airway> airwayConverter) {
+      BiFunction<ArincAirwayLeg, List<Leg>, Airway> airwayConverter) {
     this.airwayConverter = airwayConverter;
     this.inflator = new ArincAirwayLegConverter(fixDatabase, fixConverter, legConverter);
-    this.shouldSplitAirway = (previous, next) -> isSequenceNumberJump(previous, next)
-        || isSequenceNumberReset(previous, next)
-        || !previous.routeIdentifier().equals(next.routeIdentifier());
-  }
-
-  public AirwayAssembler(FixDatabase fixDatabase) {
-    this.airwayConverter = this::toAirway;
-    this.inflator = new ArincAirwayLegConverter(requireNonNull(fixDatabase));
     this.shouldSplitAirway = (previous, next) -> isSequenceNumberJump(previous, next)
         || isSequenceNumberReset(previous, next)
         || !previous.routeIdentifier().equals(next.routeIdentifier());
@@ -64,7 +69,7 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
         .sorted(Comparator.comparing(ArincAirwayLeg::fileRecordNumber))
         .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
         .stream()
-        .map(airwayConverter::apply);
+        .map(this::toAirway);
   }
 
   boolean isSequenceNumberReset(ArincAirwayLeg previous, ArincAirwayLeg next) {
@@ -88,11 +93,9 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
 
   private Airway toAirway(List<ArincAirwayLeg> arincAirwayLegs) {
     ArincAirwayLeg representative = arincAirwayLegs.get(0);
-    return new BoogieAirway.Builder()
-        .airwayIdentifier(representative.routeIdentifier())
-        .airwayRegion(representative.customerAreaCode().name())
-        .legs(arincAirwayLegs.stream().map(inflator).collect(Collectors.toList()))
-        .build();
+
+    List<Leg> legs = arincAirwayLegs.stream().map(inflator).collect(Collectors.toList());
+    return airwayConverter.apply(representative, legs);
   }
 
   /**
@@ -111,10 +114,6 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
         TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter) {
       this.legFixDereferencer = new LegFixDereferencer(fixConverter, ArincDatabaseFactory.emptyTerminalAreaDatabase(), fixDatabase);
       this.legConverter = requireNonNull(legConverter);
-    }
-
-    ArincAirwayLegConverter(FixDatabase fixDatabase) {
-      this(fixDatabase, FixAssembler.INSTANCE, ArincToBoogieConverterFactory::newLegFrom);
     }
 
     @Override

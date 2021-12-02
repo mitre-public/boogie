@@ -38,6 +38,10 @@ public final class ArincDatabaseFactory {
     throw new IllegalStateException("Cannot instantiate static factory class.");
   }
 
+  public static FixDatabase emptyFixDatabase() {
+    return new FixDatabase(LinkedHashMultimap.create());
+  }
+
   /**
    * Factory method for generating a new {@link FixDatabase} which indexes various fix-like ARINC data models by:
    * <br>

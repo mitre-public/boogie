@@ -12,23 +12,28 @@ class TestAltitudeDescription {
   private static final AltitudeDescription parser = new AltitudeDescription();
 
   @Test
-  void testParserFiltersEmptyInputs() {
-    assertEquals(Optional.empty(), parser.apply(""));
-  }
-
-  @Test
-  void testParserFiltersWhitespaceInputs() {
-    assertEquals(Optional.empty(), parser.apply("   "));
-  }
-
-  @Test
   void testFiltersUnallowedValues() {
     assertFalse(AltitudeDescription.allowedValues.contains("Q"));
     assertEquals(Optional.empty(), parser.apply("Q"));
   }
 
   @Test
-  void testReturnsAllAllowedValues() {
-    AltitudeDescription.allowedValues.forEach(value -> assertEquals(Optional.of(value), parser.apply(value)));
+  void testBlankDescriptionIsAllowed() {
+    assertEquals(Optional.of("@"), parser.apply(" "), "Space should be allowed and mapped to '@'");
+  }
+
+  @Test
+  void testApersandDescriptionIsAllowed() {
+    assertEquals(Optional.of("@"), parser.apply("@"));
+  }
+
+  @Test
+  void testPlusDescriptionIsAllowed() {
+    assertEquals(Optional.of("+"), parser.apply("+"));
+  }
+
+  @Test
+  void testMinusDescriptionIsAllowed() {
+    assertEquals(Optional.of("-"), parser.apply("-"));
   }
 }

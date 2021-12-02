@@ -12,7 +12,7 @@ class TestSpeedLimitDescription {
 
   @Test
   void testBlankDescriptionIsAllowed() {
-    assertEquals(Optional.of(" "), parser.apply(" "), "Space should be allowed");
+    assertEquals(Optional.of("@"), parser.apply(" "), "Space should be allowed and mapped to '@'");
   }
 
   @Test

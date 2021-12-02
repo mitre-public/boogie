@@ -25,6 +25,8 @@ class TestBoogieRunway {
         .trueCourse(0.)
         .arrivalRunwayEnd(LatLong.of(0., 0.))
         .departureRunwayEnd(LatLong.of(0., 0.))
+        .ilsGlsMls1("CAT1")
+        .ilsGlsMls2("CAT2")
         .build();
 
     assertEquals(runway, runway.toBuilder().build(), "toBuilder().build() should return equivalent runway.");

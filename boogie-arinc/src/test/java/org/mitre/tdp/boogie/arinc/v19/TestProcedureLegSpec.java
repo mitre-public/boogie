@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
@@ -62,7 +64,7 @@ class TestProcedureLegSpec {
         () -> assertFalse(record.optionalField("routeHoldDistanceTime").isPresent()),
         () -> assertFalse(record.optionalField("recommendedNavaidSectionCode").isPresent()),
         () -> assertFalse(record.optionalField("recommendedNavaidSubSectionCode").isPresent()),
-        () -> assertFalse(record.optionalField("altitudeDescription").isPresent()),
+        () -> assertEquals(Optional.of("@"), record.optionalField("altitudeDescription")),
         () -> assertFalse(record.optionalField("minAltitude1").isPresent()),
         () -> assertFalse(record.optionalField("minAltitude2").isPresent()),
         () -> assertEquals(18000.0d, record.requiredField("transitionAltitude")),
@@ -72,8 +74,8 @@ class TestProcedureLegSpec {
         () -> assertFalse(record.optionalField("centerFixIcaoRegion").isPresent()),
         () -> assertFalse(record.optionalField("centerFixSectionCode").isPresent()),
         () -> assertFalse(record.optionalField("centerFixSubSectionCode").isPresent()),
-        () -> assertEquals("F", record.optionalField("routeTypeQualifier1").get()),
-        () -> assertEquals("S", record.optionalField("routeTypeQualifier2").get()),
+        () -> assertEquals("F", record.optionalField("routeTypeQualifier1").orElse(null)),
+        () -> assertEquals("S", record.optionalField("routeTypeQualifier2").orElse(null)),
         () -> assertEquals(Integer.valueOf(20407), record.requiredField("fileRecordNumber")),
         () -> assertEquals("1113", record.requiredField("lastUpdateCycle"))
     );
