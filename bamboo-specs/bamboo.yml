@@ -30,10 +30,10 @@ stages:
   # Configure standard test and integration tests as part of the same stage but as different jobs so they can be run in parallel
   - Test: [ Gradle Unit Test, Gradle Integration Test ]
   - Push Latest: [ Publish Snapshots, Push Latest Image Codev Artifactory ]
-  - Deploy Latest: [ Deploy Latest Internal Openshift ]
+  - Deploy Latest: [ Deploy Latest Internal Openshift, Report Updated Code Quality]
   - Push Release:
       manual: true
-      jobs: [ Report Updated Code Quality, Publish Release, Push Release Image Codev Artifactory ]
+      jobs: [ Publish Release, Push Release Image Codev Artifactory ]
 
 Gradle Unit Test:
   tasks:

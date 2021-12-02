@@ -25,7 +25,7 @@ tasks.register<JacocoReport>("codeCoverageReport") {
     // If a subproject applies the 'jacoco' plugin, add its result into the aggregate report
     subprojects {
         val subproject = this
-        dependsOn(subproject.tasks.named("test"))
+        dependsOn(subproject.tasks.named("testUnit"))
         subproject.plugins.withType<JacocoPlugin>().configureEach {
             subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.configureEach {
 
