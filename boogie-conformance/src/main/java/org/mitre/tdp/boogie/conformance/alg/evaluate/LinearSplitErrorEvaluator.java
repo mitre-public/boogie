@@ -4,9 +4,12 @@ import static org.mitre.tdp.boogie.conformance.alg.evaluate.MaxOffTrackDistanceE
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -15,6 +18,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.caasd.commons.Speed;
+import org.mitre.caasd.commons.TimeWindow;
 import org.mitre.caasd.commons.math.FastLinearApproximation;
 import org.mitre.caasd.commons.math.PiecewiseLinearSplitter;
 import org.mitre.caasd.commons.math.XyDataset;
@@ -60,15 +64,14 @@ public class LinearSplitErrorEvaluator implements PrecomputedEvaluator {
    * Returns the mapping of {time, conforming?} based on the computed linear split change points.
    */
   @Override
-  public NavigableMap<Instant, Boolean> conformanceTimes(NavigableMap<ConformablePoint, LegPair> conformablePairs) {
-    NavigableMap<Duration, Pair<Speed, Distance>> piecewiseSlopes = computeOffsetToFittedSpeedAverageDistance(conformablePairs);
-    Instant t0 = conformablePairs.firstKey().time();
+  public NavigableMap<TimeWindow, Boolean> conformanceTimes(NavigableMap<ConformablePoint, LegPair> conformablePairs) {
+    NavigableMap<TimeWindow, Pair<Speed, Distance>> piecewiseSlopes = computeOffsetToFittedSpeedAverageDistance(conformablePairs);
 
     return piecewiseSlopes.entrySet().stream().collect(Collectors.toMap(
-        e -> t0.plus(e.getKey()),
+        Map.Entry::getKey,
         e -> isLevelAndNotOffset(e.getValue()),
         (k1, k2) -> {throw new IllegalStateException("Key collision in map. K1: ".concat(k1.toString()).concat(" K2: ".concat(k2.toString())));},
-        TreeMap::new
+        this::newTimeWindowTreeMap
     ));
   }
 
@@ -76,10 +79,11 @@ public class LinearSplitErrorEvaluator implements PrecomputedEvaluator {
    * Returns a map containing the Duration offset from the initial point in the conforming point to the fitted speed and max
    * cross track distance over the course of the split.
    */
-  public NavigableMap<Duration, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
-    XyDataset dataset = convertToXYData(conformingPairs);
+  public NavigableMap<TimeWindow, Pair<Speed, Distance>> computeOffsetToFittedSpeedAverageDistance(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
+    Instant t0 = conformingPairs.firstKey().time();
+    XyDataset dataset = convertToXYData(conformingPairs, t0);
     XyDataset[] splits = piecewiseSplits(dataset);
-    return asOffsetToFittedSpeedAverageDistance(splits);
+    return asOffsetToFittedSpeedAverageDistance(splits, t0);
   }
 
   /**
@@ -100,8 +104,8 @@ public class LinearSplitErrorEvaluator implements PrecomputedEvaluator {
    *
    * This map can later be transformed to get the time intervals and the cross t
    */
-  public NavigableMap<Duration, Pair<Speed, Distance>> asOffsetToFittedSpeedAverageDistance(XyDataset[] splits) {
-    NavigableMap<Duration, Pair<Speed, Distance>> offsetToFittedSpeedAverageDuration = new TreeMap<>();
+  public NavigableMap<TimeWindow, Pair<Speed, Distance>> asOffsetToFittedSpeedAverageDistance(XyDataset[] splits, Instant t0) {
+    NavigableMap<TimeWindow, Pair<Speed, Distance>> timeWindowLinearFit = newTimeWindowTreeMap();
 
     Arrays.stream(splits).forEach(xyDataset -> {
       FastLinearApproximation approximation = xyDataset.approximateFit();
@@ -111,17 +115,22 @@ public class LinearSplitErrorEvaluator implements PrecomputedEvaluator {
           Speed.of(approximation.slope(), Speed.Unit.KNOTS),
           Distance.ofNauticalMiles(maxY));
 
-      Long epoch = hoursToEpoch(approximation.minX());
-      Duration offset = Duration.ofMillis(epoch);
-      offsetToFittedSpeedAverageDuration.put(offset, pair);
+      TimeWindow tw = new TimeWindow(
+          t0.plus((long) hoursToMillis(approximation.minX()), ChronoUnit.MILLIS),
+          t0.plus((long) hoursToMillis(approximation.maxX()), ChronoUnit.MILLIS));
+      timeWindowLinearFit.put(tw, pair);
     });
 
-    return offsetToFittedSpeedAverageDuration;
+    return timeWindowLinearFit;
   }
 
   public XyDataset[] piecewiseSplits(XyDataset dataset) {
     PiecewiseLinearSplitter splitter = new PiecewiseLinearSplitter(maxError().inNauticalMiles());
     return dataset.split(splitter);
+  }
+
+  private <T> TreeMap<TimeWindow, T> newTimeWindowTreeMap() {
+    return new TreeMap<>(Comparator.comparing(TimeWindow::start));
   }
 
   /**
@@ -130,27 +139,30 @@ public class LinearSplitErrorEvaluator implements PrecomputedEvaluator {
    * x = epoch time in hours
    * y = cross track distance from leg in nm
    */
-  public XyDataset convertToXYData(NavigableMap<ConformablePoint, LegPair> conformingPairs) {
+  public XyDataset convertToXYData(NavigableMap<ConformablePoint, LegPair> conformingPairs, Instant t0) {
     List<Double> times = new ArrayList<>();
     List<Double> crossTrackDistances = new ArrayList<>();
 
-    long t0 = conformingPairs.firstKey().time().toEpochMilli();
     conformingPairs.forEach((point, pair) -> offTrackDistance(point, pair)
         .ifPresent(distance -> {
-          times.add(epochToHours(point.time().toEpochMilli() - t0));
+          times.add(hoursBetween(t0, point.time()));
           crossTrackDistances.add(distance.inNauticalMiles());
         }));
 
     return new XyDataset(times, crossTrackDistances);
   }
 
-  private Double epochToHours(Long epoch) {
-    return epoch.doubleValue() / hour;
+  private Double hoursBetween(Instant t0, Instant t1) {
+    return millisToHours(Duration.between(t0, t1).toMillis());
   }
 
-  private Long hoursToEpoch(Double hours) {
-    return (long) (hours * hour);
+  private Double millisToHours(Long millis) {
+    return millis.doubleValue() / MILLIS_PER_HOUR;
   }
 
-  double hour = 60.0d * 60.0d * 1000.0d;
+  private double hoursToMillis(double hours) {
+    return hours * MILLIS_PER_HOUR;
+  }
+
+  private static final double MILLIS_PER_HOUR = 60.0d * 60.0d * 1000.0d;
 }
