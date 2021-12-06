@@ -21,6 +21,7 @@ import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.caasd.commons.Speed;
+import org.mitre.caasd.commons.TimeWindow;
 import org.mitre.caasd.commons.math.XyDataset;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
@@ -131,10 +132,12 @@ class TestLinearSplitErrorEvaluator {
 
     LinearSplitErrorEvaluator splitter = new LinearSplitErrorEvaluator(Distance.ofNauticalMiles(1.0), Speed.of(10.0, Speed.Unit.KNOTS));
 
-    XyDataset dataset = splitter.convertToXYData(pairs);
+    Instant t0 = pairs.firstKey().time();
+
+    XyDataset dataset = splitter.convertToXYData(pairs, t0);
     XyDataset[] splits = splitter.piecewiseSplits(dataset);
 
-    NavigableMap<Duration, Pair<Speed, Distance>> piecewiseSlopes = splitter.asOffsetToFittedSpeedAverageDistance(splits);
+    NavigableMap<TimeWindow, Pair<Speed, Distance>> piecewiseSlopes = splitter.asOffsetToFittedSpeedAverageDistance(splits, t0);
     assertEquals(2, piecewiseSlopes.size());
 
     Pair<Speed, Distance> first = piecewiseSlopes.firstEntry().getValue();

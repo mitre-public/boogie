@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.NavigableMap;
 import java.util.Optional;
 
+import org.mitre.caasd.commons.TimeWindow;
 import org.mitre.tdp.boogie.ConformablePoint;
 
 import com.google.common.collect.Maps;
@@ -28,12 +29,12 @@ public interface PrecomputedEvaluator {
    * Returns a {@link NavigableMap} giving the start time of either a conforming (true) or non-conforming
    * (false) portion of the track.
    */
-  NavigableMap<Instant, Boolean> conformanceTimes(NavigableMap<ConformablePoint, LegPair> conformablePairs);
+  NavigableMap<TimeWindow, Boolean> conformanceTimes(NavigableMap<ConformablePoint, LegPair> conformablePairs);
 
   /**
    * Utility method of inputs where not each point may necessarily be assigned to an explicit LegPair.
    */
-  default NavigableMap<Instant, Boolean> optionalConformanceTimes(NavigableMap<ConformablePoint, Optional<LegPair>> conformableMap) {
+  default NavigableMap<TimeWindow, Boolean> optionalConformanceTimes(NavigableMap<ConformablePoint, Optional<LegPair>> conformableMap) {
     return conformanceTimes(Maps.transformValues(Maps.filterEntries(conformableMap, entry -> entry.getValue().isPresent()), Optional::get));
   }
 }

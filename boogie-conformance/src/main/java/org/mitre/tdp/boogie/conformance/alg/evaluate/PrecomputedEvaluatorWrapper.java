@@ -2,20 +2,20 @@ package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
 import static java.util.Objects.requireNonNull;
 
-import java.time.Instant;
 import java.util.NavigableMap;
 import java.util.Optional;
 
+import org.mitre.caasd.commons.TimeWindow;
 import org.mitre.tdp.boogie.ConformablePoint;
 
 public final class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
 
   private final PrecomputedEvaluator evaluator;
-  private final NavigableMap<Instant, Boolean> conformanceTimes;
+  private final NavigableMap<TimeWindow, Boolean> conformanceTimes;
 
   public PrecomputedEvaluatorWrapper(
       PrecomputedEvaluator evaluator,
-      NavigableMap<Instant, Boolean> conformanceTimes) {
+      NavigableMap<TimeWindow, Boolean> conformanceTimes) {
     this.evaluator = requireNonNull(evaluator);
     this.conformanceTimes = conformanceTimes;
   }
@@ -26,7 +26,7 @@ public final class PrecomputedEvaluatorWrapper implements ConformanceEvaluator {
 
   @Override
   public Optional<Boolean> conforming(ConformablePoint point, LegPair consecutiveLegs) {
-    return Optional.ofNullable(conformanceTimes.lowerEntry(point.time()).getValue());
+    return Optional.ofNullable(conformanceTimes.lowerEntry(TimeWindow.of(point.time(), point.time())).getValue());
   }
 
   /**
