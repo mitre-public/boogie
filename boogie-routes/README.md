@@ -111,3 +111,20 @@ The approach above allows us to keep the algorithm itself reasonably generic and
 resolved path generally does a good job of handling things like repeated airways in the route string, etc.
 
 Additionally boogie provides the legs within this path in a "flyable" form - this means the leg types accurately reflect the way the aircraft should actually fly them.
+
+## Extra Docs
+Approaches are assigned by taking an arrival runway and a set of tiered equipage preferences to down-select the available approaches at the airport to just those for the target runway and with the preferred required equipage. If no procedures match these filters, no approach will be used.
+
+<b>Available Equipages</b>
+1. CONV - Conventional procedures are ones where aircraft fly directly between pairs of physical facilities or with direct reference to particular ones.
+2. RNAV - An RNAV procedure is any procedure which can be flown without direct reference to conventional physical infrastructure such as NDB/VORs/etc. RNAV waypoints don't always directly correspond to traditional infrastructure but can be the product of pairs of VORs, etc. Basically remember you can do RNAV without GPS, same with RNP.
+3. RNP - RNP is really any RNAV procedure which has onboard alerting for the aircraft. This gets a bit weird because its less of a procedure thing and more of an aircraft equipage question. Basically a RNP procedure is a procedure any RNAV equipped aircraft can fly but which has been encoded in such a way that the aircraft (if equipped) will provide alerts when it is too far off route.
+<br>So whether an aircraft flies the RNAV procedure as RNP depends on whether they have the onboard equipage for the notifications <i>and</i> whether the procedure itself was encoded with RNP tolerances on the legs.
+4. UNKNOWN - Placeholder - the required high-level equipage can't always be inferred for various procedure sources - this is provided as a placeholder for those situations. e.g. within the ProcedureFactory.newProcedure() method - where required equipage can't be inferred based solely on the transition interface.
+
+<b>Things to Note/Watch Out For</b>
+1. A route will start with a DF (direct to fix) leg if there is no departure procedure. 
+2. Legs are collapsed to keep the 'most restrictive leg' between sid-airway or airway-star/approach.
+3. Stars-approaches that do not link will have an extra DF leg created to link them.
+4. You will need to add arrival runways/missed approaches if you need them. 
+5. Boogie will add airports as the start/end legs of a route. 
