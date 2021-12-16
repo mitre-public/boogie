@@ -9,7 +9,7 @@ buildscript {
         maven(url = "https://dali.mitre.org/nexus/content/repositories/proxy-gradle-plugin-portal/")
     }
     dependencies {
-        val sonarqubePluginVersion = "2.7.1"//matches caasd-sonar version
+        val sonarqubePluginVersion = "3.0" // matches sonarqube.mitre.org version
         classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion")
     }
 }
@@ -64,11 +64,10 @@ apply<org.sonarqube.gradle.SonarQubePlugin>()    //apply("org.sonarqube")
 configure<org.sonarqube.gradle.SonarQubeExtension> {
     properties {
         properties(mapOf(
-                "sonar.coverage.jacoco.xmlReportPaths" to jacocoAggregateXmlReportFile,
-                "sonar.projectKey" to "boogie",
-                "sonar.projectName" to "boogie",
-                "sonar.host.url" to "https://caasd-sonar.mitre.org/sonar",
-                "sonar.login" to "2c9dc52ffc9a381791b545266a882e806d597c59"
+            "sonar.coverage.jacoco.xmlReportPaths" to jacocoAggregateXmlReportFile,
+            "sonar.projectKey" to "boogie",
+            "sonar.host.url" to "https://sonarqube.mitre.org",
+            "sonar.login" to "679804ed9a3029d0f5c800f432581eb4dac9be4b"
         ))
     }
 }
