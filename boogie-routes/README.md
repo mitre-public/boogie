@@ -127,4 +127,4 @@ Approaches are assigned by taking an arrival runway and a set of tiered equipage
 2. Legs are collapsed to keep the 'most restrictive leg' between sid-airway or airway-star/approach.
 3. Stars-approaches that do not link will have an extra DF leg created to link them.
 4. You will need to add arrival runways/missed approaches if you need them. 
-5. Boogie will add airports as the start/end legs of a route. 
+5. The expanded route string will start/end with the airports from the route string when airports are provided in the route string
