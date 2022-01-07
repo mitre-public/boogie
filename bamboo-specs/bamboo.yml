@@ -12,6 +12,9 @@ branches:
     after-inactive-days: 14
   link-to-jira: true
 
+triggers:
+  - polling: 150
+
 notifications:
   - recipients:
       - webhook:
