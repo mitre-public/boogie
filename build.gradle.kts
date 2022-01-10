@@ -5,6 +5,9 @@ plugins {
     id("net.researchgate.release") version "2.8.1" // used to emulate mvn release: https://github.com/researchgate/gradle-release
 }
 
+val mavenUser: String? by project
+val mavenPassword: String? by project
+
 /** Explicitly declare referenced/used repositories which host the artifact necessary to build the software */
 allprojects {
     repositories {
@@ -15,36 +18,25 @@ allprojects {
             url = uri("https://repo.clojars.org/")
         }
         maven {
-            name = "dali-mirror"
-            url = uri("https://dali.mitre.org/nexus/content/groups/mirror")
-            content {
-                excludeGroup("org.jacoco")// dali's: mirror/org/jacoco doesn't have all the agent jar's, just runtime which breaks the build
+            name = "repo1"
+            url = uri("https://repo1.maven.org/maven2/")
+        }
+        maven {
+            name = "codev-artifactory-releases"
+            url = uri("https://repo.codev.mitre.org/artifactory/idaass-maven")
+            mavenContent {
+                releasesOnly()
             }
-        }
-        maven {
-            name = "dali-proxied-repositories"
-            url = uri("https://dali.mitre.org/nexus/content/groups/proxied-repositories")
-        }
-        maven {
-            name = "dali-external"
-            url = uri("https://dali.mitre.org/nexus/content/groups/external")
-        }
-        maven {
-            name = "mitre-caasd-releases"
-            url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-releases/")
-        }
-        maven {
-            name = "dali-mitre-caasd-releases"
-            url = uri("https://dali.mitre.org/nexus/content/groups/mitre-caasd")
+            credentials {
+                username = mavenUser
+                password = mavenPassword
+            }
         }
     }
 }
 
 /** Add gradle tasks for releasing a new version of the software to MITRE internal DALI */
 apply(from = "./scripts/gradle/dali-releasing.gradle.kts")
-
-val mavenUser: String? by project
-val mavenPassword: String? by project
 
 release {
     preTagCommitMessage = "[Gradle] Bump to stable version "
@@ -69,8 +61,9 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "com.adarshr.test-logger")
 
-    configure<JavaPluginConvention> {
-        sourceCompatibility = JavaVersion.VERSION_1_8
+    configure<JavaPluginExtension> {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     // declare dependencies used in every child module

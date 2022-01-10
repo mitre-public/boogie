@@ -1,0 +1,21 @@
+name: test-and-deploy
+on: [ push ]
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testUnit.sh "${{ github.ref }}" "svc-idaass-users" "${{ secrets.SVC_IDAASS_USERS_CODEV }}"
+        env:
+          FILE_LOCATOR_PATH: "/idont/exist"
+  integration-tests:
+    runs-on: ubuntu-latest
+    container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testIntegration.sh "${{ github.ref }}" "svc-idaass-users" "${{ secrets.SVC_IDAASS_USERS_CODEV }}"
+        env:
+          FILE_LOCATOR_PATH: "/idont/exist"

@@ -23,13 +23,13 @@ subprojects {
                 pom {
                     name.set(project.name)
                     organization {
-                        name.set("The MITRE Corporation")
-                        url.set("https://www.mitre.org")
+                        name.set("The MITRE Corporation TDP")
+                        url.set("https://github.com/mitre-tdp")
                     }
                     scm {
-                        connection.set("scm:git:ssh://git@mustache.mitre.org:7999/ttfs/boogie.git")
-                        developerConnection.set("scm:git:ssh://git@mustache.mitre.org:7999/ttfs/boogie.git")
-                        url.set("https://mustache.mitre.org/projects/TTFS/repos/boogie")
+                        connection.set("scm:git:ssh://git@github.com:mitre-tdp/boogie.git")
+                        developerConnection.set("scm:git:ssh://git@github.com:mitre-tdp/boogie.git")
+                        url.set("https://github.com/mitre-tdp/boogie")
                         tag.set("HEAD")
                     }
                 }

@@ -15,6 +15,17 @@
 [![Bitbucket](https://img.shields.io/badge/Bitbucket-330F63?style=for-the-badge&logo=bitbucket&logoColor=white)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 [![Bitbucket](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
 
+**NOTE**: If you're coming here from a local installation of Boogie (the one on MITRE bitbucket), please ensure you:
+```bash
+git remote set-url origin git@github.com:mitre-tdp/boogie.git
+```
+From within your existing repo to update the remote location of the Boogie repo to its new home in Github.
+
+**NOTE**: Github hosted Boogie has been updated to Java 11 - if you're still primarily using Java 8 the recommended way to run is:
+```bash
+./gradlew <command> -Dorg.gradle.java.home=/path/to/your/jdk11/install
+```
+
 ### Project overview
 
 Boogie serves as an entry point for navigation data parsing, route expansion, route conformance, and eventually flight modeling 
