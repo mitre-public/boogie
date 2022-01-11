@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
-      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testUnit.sh "${{ github.ref }}" "svc-idaass-users" "${{ secrets.SVC_IDAASS_USERS_CODEV }}"
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testUnit.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
         env:
           FILE_LOCATOR_PATH: "/idont/exist"
   integration-tests:
@@ -16,6 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
-      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testIntegration.sh "${{ github.ref }}" "svc-idaass-users" "${{ secrets.SVC_IDAASS_USERS_CODEV }}"
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testIntegration.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
         env:
           FILE_LOCATOR_PATH: "/idont/exist"
