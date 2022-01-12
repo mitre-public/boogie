@@ -23,7 +23,9 @@ GREEN="$(echo -e "\033[32m")"
 YELLOW="$(echo -e "\033[33m")"
 BLUE="$(echo -e "\033[34m")"
 
-if [ $bamboo_planRepository_branchName != "main" ] ; then
+branchName=$(git rev-parse --abbrev-ref HEAD)
+
+if [ $branchName != "main" ] ; then
   echo "Not on main - skipping release"
   exit 1
 fi
@@ -39,7 +41,6 @@ cd boogie
 git config user.name "${bamboo_git_username}"
 git config user.email "${bamboo_git_email}"
 
-branchName=$(git rev-parse --abbrev-ref HEAD)
 myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
 echo "Running ${BLUE}$0${NONE} on branch ${BLUE}$branchName${NONE} at version: ${BLUE}$myProjVersion${NONE}"
 

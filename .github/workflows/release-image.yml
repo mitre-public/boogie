@@ -1,0 +1,34 @@
+name: Release Image
+on: [ workflow_dispatch ]
+jobs:
+  parse-release-version:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      software-version: ${{ steps.parse-release-version.outputs.software-version }}
+      short-commit: ${{ steps.parse-short-commit.outputs.short-commit }}
+      release-version: ${{ steps.parse-release-version.outputs.release-version }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: parse-software-version
+        run: echo ::set-output name=software-version::$(./gradlew properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
+      - id: parse-short-commit
+        run: echo ::set-output name=short-commit::$(git rev-parse --short HEAD)
+      - id: parse-release-version
+        run: echo ::set-output name=release-version::$(echo ${{ steps.parse-software-version.outputs.software-version }} | sed "s/SNAPSHOT/release/g")
+  publish-release-image:
+    runs-on: ubuntu-latest
+    needs: parse-release-version
+    if: success() && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo ${{ needs.parse-release-version.outputs.release-version }}
+      - name: Release Image
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: idaass-docker/tdp/boogie-rest
+          username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
+          password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
+          registry: ${{ secrets.CODEV_URL }}
+          tags: "latest,${{ needs.parse-release-version.outputs.release-version }}-${{ needs.parse-release-version.outputs.short-commit }}"
+          buildargs: MAVEN_USER=${{ secrets.CODEV_NAME_IDAASS_USERS }},MAVEN_PASSWORD=${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
