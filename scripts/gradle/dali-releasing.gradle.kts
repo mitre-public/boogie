@@ -37,14 +37,9 @@ subprojects {
         }
         repositories {
             maven {
-                //logger.lifecycle("using version [$version] to determine publish repo")
-                if (version.toString().endsWith("SNAPSHOT")) {
-                    name = "mitre-caasd-snapshots"
-                    url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-snapshots/")
-                } else {
-                    name = "mitre-caasd-releases"
-                    url = uri("https://dali.mitre.org/nexus/content/repositories/mitre-caasd-releases/")
-                }
+                // deploy to codev artifactory
+                name = "codev-artifactory"
+                url = uri("https://repo.codev.mitre.org/artifactory/idaass-maven")
                 credentials {
                     username = mavenUser
                     password = mavenPassword

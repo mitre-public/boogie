@@ -13,7 +13,7 @@ echo "Running ${BLUE}$0${NONE} on branch ${BLUE}$branchName${NONE} at version: $
 # only publish for this build if SNAPSHOT version AND on main branch
 if [[ "$myProjVersion" == *SNAPSHOT ]] && [ $branchName = "main" ]; then
   echo "${GREEN}publishing a main SNAPSHOT...$NONE"
-  output=$(./gradlew publish $1 $2)
+  output=$(./gradlew publish -PmavenUser=$1 -PmavenPassword=$2)
   echo "$output"
 else
   echo "not on ${YELLOW}main${NONE} (${BLUE}$branchName${NONE}) branch or not on a ${YELLOW}SNAPSHOT${NONE} (${BLUE}$myProjVersion${NONE}) version.. ${RED}NOT PUBLISHING!${NONE}"

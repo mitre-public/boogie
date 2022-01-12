@@ -1,45 +1,28 @@
-FROM gradle:6.9.0-jdk8 AS base
+FROM gradle:7.3.3-jdk11 AS base
 
 WORKDIR /certs
 
-ADD http://pki.mitre.org/MITRE%20BA%20Root.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-1.crt \
+ADD http://pki.mitre.org/MITRE%20BA%20ROOT.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-1.crt \
     http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt \
     http://pki.mitre.org/ZScaler_Root.crt /certs/
 
-RUN for cert in "MITRE BA Root.crt" "MITRE BA NPE CA-1.crt" "MITRE BA NPE CA-3.crt" "MITRE BA NPE CA-4.crt" "ZScaler_Root.crt"; \
-    do keytool -import -alias "${cert}" -file "${cert}" -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit -noprompt; done
+RUN for cert in "MITRE BA ROOT.crt" "MITRE BA NPE CA-1.crt" "MITRE BA NPE CA-3.crt" "MITRE BA NPE CA-4.crt" "ZScaler_Root.crt"; \
+    do keytool -import -alias "${cert}" -file "${cert}" -keystore "$JAVA_HOME/lib/security/cacerts" -storepass changeit -noprompt; done
 
-FROM base AS gradle-files
+FROM base AS build
 
-WORKDIR /boogie
-
-# grab everything from the source directory
-COPY . .
-
-# remove everything that isn't a relevant gradle.kts file containing dependencies from the sub-projects
-RUN find . \! -name "*.gradle.kts" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
-
-# add back in the scripts/gradle directory containing helper gradle files (alternatively updating the find command may be possible)
-COPY ./scripts/gradle ./scripts/gradle
-
-FROM base AS dependencies
-
-# resolve and build all the app dependencies into a directory - as a side effect this builds the gradle cache
-WORKDIR /boogie
-COPY --from=gradle-files /boogie .
-RUN gradle --no-daemon :boogie-rest:copyDeps
-
-# Transfer sources
-COPY . .
-
-FROM dependencies AS build
+# Injectible mavenUser and mavenPassword for use in building the image within the container
+ARG MAVEN_USER
+ARG MAVEN_PASSWORD
 
 # transfer all the source code again to build the final jar containing the boogie source (dependencies have already been cached)
 WORKDIR /boogie
 
+COPY . .
+
 # build the boogie-rest shadowjar and then rename it to not contain the version and leave it in ./boogie-rest.jar
 RUN BOOGIE_VERSION=$(gradle properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}') \
-    && gradle --no-daemon :boogie-rest:shadowJar \
+    && gradle --no-daemon :boogie-rest:shadowJar -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD \
     && mv boogie-rest/build/libs/boogie-rest-$BOOGIE_VERSION-all.jar ./boogie-rest.jar
 
 FROM openjdk:8-jre-slim AS production

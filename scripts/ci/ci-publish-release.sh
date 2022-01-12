@@ -53,7 +53,7 @@ if [ $? -eq 0 ]; then
   echo "Successfully created version bump commits... deploying to Dali"
   # back up to stable commit
   git checkout HEAD^
-  ./gradlew publish $1 $2
+  ./gradlew publish -PmavenUser=$1 -PmavenPassword=$2
 else
   echo "Failure: unable to make version commits" >&2
   exit 1

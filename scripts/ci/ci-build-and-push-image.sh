@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # This script exists to allow users to specify a collection of parameters and then publish a tagged version of the Boogie docker
 # image to whatever target image repository and namespace they specified (and with whatever version tag they want).

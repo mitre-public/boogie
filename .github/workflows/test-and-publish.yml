@@ -1,0 +1,54 @@
+name: Test and Publish
+on: [ push ]
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testUnit.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
+        env:
+          FILE_LOCATOR_PATH: "/idont/exist"
+      - uses: mikepenz/action-junit-report@v2
+        if: always()
+        with:
+          check_name: unit-test-report
+          report_paths: '**/test-results/**/*.xml'
+  integration-tests:
+    runs-on: ubuntu-latest
+    container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testIntegration.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
+        env:
+          FILE_LOCATOR_PATH: "/idont/exist"
+      - uses: mikepenz/action-junit-report@v2
+        if: always()
+        with:
+          check_name: integration-test-report
+          report_paths: '**/test-results/**/*.xml'
+  publish-snapshots:
+    runs-on: ubuntu-latest
+    needs: [ unit-tests, integration-tests ]
+    if: success() && github.ref == 'refs/heads/main'
+    container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-publish-snapshot.sh "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
+  publish-latest-image:
+    runs-on: ubuntu-latest
+    needs: [ unit-tests, integration-tests ]
+    if: success() && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: idaass-docker/tdp/boogie-rest
+          username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
+          password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
+          registry: ${{ secrets.CODEV_URL }}
+          tags: "latest"
+          buildargs: MAVEN_USER=${{ secrets.CODEV_NAME_IDAASS_USERS }},MAVEN_PASSWORD=${{ secrets.CODEV_TOKEN_IDAASS_USERS }}

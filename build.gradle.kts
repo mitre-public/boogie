@@ -22,7 +22,7 @@ allprojects {
             url = uri("https://repo1.maven.org/maven2/")
         }
         maven {
-            name = "codev-artifactory-releases"
+            name = "codev-artifactory"
             url = uri("https://repo.codev.mitre.org/artifactory/idaass-maven")
             mavenContent {
                 releasesOnly()
