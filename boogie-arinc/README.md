@@ -26,7 +26,7 @@ the exact allowed content combinations therein.
 
 #### Quick notes on what <i>is</i> explicitly checked...
 
-See the various [validator](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/v18/AirportValidator.java?at=main) classes
+See the various [validator](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/v18/AirportValidator.java) classes
 within the V18 specification package. Most of them are lightweight and about what you would expect - the only heavier weight one is the ```ProcedureLegValidator``` which inspects both the
 path terminator (TF, RF, AF, VA, etc.) and the field contents of the record to ensure the required information is present in the record to model how the leg should be flown (e.g. VA legs need
 to have a valid specified min altitude and outbound course).
@@ -34,7 +34,7 @@ to have a valid specified min altitude and outbound course).
 ### Indexing in provided database implementations
 The nature of most of the ARINC record types is to be referential towards other record types - take for example an ```ArincProcedureLeg``` record:
 <br>
-<img align="float: left;" height="80" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-arinc/arinc-procedure-leg-v18.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="80" src="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-arinc/arinc-procedure-leg-v18.png?token=GHSAT0AAAAAABQRZEVT6DEMBZ247EMVX4YUYPJXBSA"/>
 <br>
 There are three key groupings of fields we care about in there (as taken from the TDP POJO model), namely:
 ```java
@@ -179,7 +179,7 @@ once but may be used in airport/navaid/waypoint/etc. records.
 
 The idea is you compose some invariant set of fields together in an ordered sequence to form a full ARINC 424 record string - a la the below:
 </p>
-<img align="float: left;" height="80" src="https://mustache.mitre.org/projects/TTFS/repos/boogie/raw/boogie-arinc/arinc-airway-v18.png?at=refs%2Fheads%2Fmain"/>
+<img align="float: left;" height="80" src="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-arinc/arinc-airway-v18.png?token=GHSAT0AAAAAABQRZEVSVF3RUAAAG6XF2UV6YPJVO6A"/>
 <p>
 In the above, each of those traced out blocks has an associated number (e.g. 5.12, 5.13) which is a pointer to a specification for how that field should be interpreted within the ARINC ICD 
 (typically) a PDF for the appropriate version of ARINC data.
@@ -243,12 +243,12 @@ Hopefully the Quick start was able to get you up and running relatively easily -
 If you find that the currently supported set of record parsers doesn't meet your needs this section will cover how to extend the API for new record types.
 
 #### The RecordSpec
-The high level abstraction for defining a record specification in Boogie is the [RecordSpec](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/RecordSpec.java?at=refs%2Fheads%2Fmain).
+The high level abstraction for defining a record specification in Boogie is the [RecordSpec](hhttps://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/RecordSpec.java).
 These specifications define an ordered sequence of (named) fields within a high level ARINC record along with a matcher which is used to decide whether the given specification should be applied
 to a given raw text input string (substring of the overall raw text record). 
 
-Parsers a la [ArincFileParser](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileParser.java?at=main) are configured with 
-a collection of record specifications (which don't need to cover all possible record types within a file). These specs are used to convert the raw record strings to semi-structured [ArincRecord](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecord.java?at=main) 
+Parsers a la [ArincFileParser](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileParser.java) are configured with 
+a collection of record specifications (which don't need to cover all possible record types within a file). These specs are used to convert the raw record strings to semi-structured [ArincRecord](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecord.java) 
 objects. This approach tends to work well as people often don't care about every record type (see TDP) and only having to implement parsing for a subset of records of interest is convenient.
 
 #### Field specifications
@@ -261,7 +261,7 @@ As such Boogie has generally chosen to fast-reject bad inputs fields - returning
 accept/reject the more structured/parsed record contents using the more advanced rules based on compositions of fields being present (e.g. using PathTerminator types to push expectations on which leg 
 fields must be present for a record to be considered "valid").
 
-In general the requirements for adding a new field specification to the library are in the [FieldSpec](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/FieldSpec.java?at=TDP-5508-boogie-arinc-refactor) 
+In general the requirements for adding a new field specification to the library are in the [FieldSpec](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/FieldSpec.java) 
 interface but re-iterated here are:
 
 1. The code of the field's specification in the appropriate ARINC ICD.

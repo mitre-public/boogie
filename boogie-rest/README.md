@@ -19,8 +19,8 @@ Alternatively to do both in one step via Gradle for testing: ```./gradlew :boogi
 Two things to note:
 
 1. The ARINC 424 data served by the REST API depends on the environment variable ```FILE_LOCATOR_PATH``` at the launch time of the API:
-   1. If overridden with a value it should match the path spec expected by [PatternBasedFileLocator](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/PatternBasedFileLocator.java?at=refs%2Fheads%2Fmain).
-   2. Otherwise it defaults to the [MITRE CIFP](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileStore.java?at=main#25) archive.
+   1. If overridden with a value it should match the path spec expected by [PatternBasedFileLocator](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/PatternBasedFileLocator.java).
+   2. Otherwise it defaults to the [MITRE CIFP](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileStore.java) archive.
 2. When run locally the API documentation (hosted by Swagger) can be found under ```http://localhost:8087/boogie/``` (if run local, otherwise at the same path on your chosen host).
 
 Reading the Swagger docs from a local launch of the software is the easiest way to see what the API provides even if you're unfamiliar with Clojure as a language and is the recommended way 

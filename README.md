@@ -1,7 +1,7 @@
 # Boogie
 [![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-SHIM)](https://pandafood.mitre.org/browse/TTFS-SHIM)
 <br>
-[![Latest Release](https://img.shields.io/badge/version-1.0.5-gre.svg)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
+[![Latest Release](https://img.shields.io/badge/version-1.0.5-gre.svg)](https://github.com/mitre-tdp/boogie)
 <br>
 [![Quality Gate Status](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=alert_status)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 <br>
@@ -12,8 +12,8 @@
 [![Maintainability Rating](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=sqale_rating)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 [![Security Rating](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=security_rating)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
 <br>
-[![Bitbucket](https://img.shields.io/badge/Bitbucket-330F63?style=for-the-badge&logo=bitbucket&logoColor=white)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
-[![Bitbucket](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse)
+[![Github](https://img.shields.io/badge/Github-330F63?style=for-the-badge&logo=Github&logoColor=white)](https://github.com/mitre-tdp/boogie)
+[![Github](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://github.com/mitre-tdp/boogie)
 
 **NOTE**: If you're coming here from a local installation of Boogie (the one on MITRE bitbucket), please ensure you:
 ```bash
@@ -38,13 +38,12 @@ readme's (linked in the below table of contents).
 
 A general outline of what's provided within this repo is here:
 
-1. [boogie-core](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-core) - core set of navigational interfaces and general purpose algorithms
-1. [boogie-arinc](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-arinc) - parser implementations for various versions and record types within ARINC-424
-1. [boogie-routes](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-routes) - route expansion logic - takes route strings in a variety of formats and converts them into 2D paths using relevant navigational data.
-1. [boogie-conformance](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-conformance) - tools for evaluating how well trajectory data conformed with a physical path (generally as outlined by a procedure/airway). 
-1. [boogie-rest](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-rest) - REST API wrapper around common Boogie services - utilizes pieces of multiple modules (e.g. ARINC parsing, Route Expansion).
-1. [boogie-test](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/boogie-test) - is provided as a common module for integration testing across components of the above
-1. [CI services](https://mustache.mitre.org/projects/TTFS/repos/boogie/browse/bamboo-specs) - which outlines the CI pipeline for Boogie and the artifacts/services it produces
+1. [boogie-core](https://github.com/mitre-tdp/boogie/tree/main/boogie-core) - core set of navigational interfaces and general purpose algorithms
+1. [boogie-arinc](https://github.com/mitre-tdp/boogie/tree/main/boogie-arinc) - parser implementations for various versions and record types within ARINC-424
+1. [boogie-routes](https://github.com/mitre-tdp/boogie/tree/main/boogie-routes) - route expansion logic - takes route strings in a variety of formats and converts them into 2D paths using relevant navigational data.
+1. [boogie-conformance](https://github.com/mitre-tdp/boogie/tree/main/boogie-conformance) - tools for evaluating how well trajectory data conformed with a physical path (generally as outlined by a procedure/airway). 
+1. [boogie-rest](https://github.com/mitre-tdp/boogie/tree/main/boogie-rest) - REST API wrapper around common Boogie services - utilizes pieces of multiple modules (e.g. ARINC parsing, Route Expansion).
+1. [boogie-test](https://github.com/mitre-tdp/boogie/tree/main/boogie-test) - is provided as a common module for integration testing across components of the above
 
 ### Resources
 

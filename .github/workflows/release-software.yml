@@ -1,7 +1,7 @@
 name: Release Software
 on: [ workflow_dispatch ]
 jobs:
-  publish-snapshots:
+  publish-release:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos

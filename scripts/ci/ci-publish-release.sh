@@ -30,17 +30,6 @@ if [ $branchName != "main" ] ; then
   exit 1
 fi
 
-echo "Shallow cloning source repo..."
-
-git remote set-url origin "https://${bamboo_git_username}:${bamboo_git_tokenpassword}@mustache.mitre.org/scm/ttfs/boogie.git"
-git remote -v
-
-cd boogie
-
-# Service account login
-git config user.name "${bamboo_git_username}"
-git config user.email "${bamboo_git_email}"
-
 myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
 echo "Running ${BLUE}$0${NONE} on branch ${BLUE}$branchName${NONE} at version: ${BLUE}$myProjVersion${NONE}"
 
