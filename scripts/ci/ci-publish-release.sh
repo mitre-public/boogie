@@ -42,9 +42,9 @@ echo "current dev version: $myProjVersion"
 # bump to stable, commit+tag+push; then bump to next snapshot, commit+push
 ./gradlew release -Prelease.useAutomaticVersion=true
 
-# if the above was successful, back up to stable version's commit & deploy to dali
+# if the above was successful, back up to stable version's commit & deploy to whatever repos are configured in gradle
 if [ $? -eq 0 ]; then
-  echo "Successfully created version bump commits... deploying to Dali"
+  echo "Successfully created version bump commits... deploying to target repos"
   # back up to stable commit
   git checkout HEAD^
   ./gradlew publish -PmavenUser=$3 -PmavenPassword=$4
