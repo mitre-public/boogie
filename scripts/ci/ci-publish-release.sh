@@ -30,6 +30,10 @@ if [ $branchName != "main" ] ; then
   exit 1
 fi
 
+# Service account login
+git config user.name "$1"
+git config user.email "$2"
+
 myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
 echo "Running ${BLUE}$0${NONE} on branch ${BLUE}$branchName${NONE} at version: ${BLUE}$myProjVersion${NONE}"
 
@@ -43,7 +47,7 @@ if [ $? -eq 0 ]; then
   echo "Successfully created version bump commits... deploying to Dali"
   # back up to stable commit
   git checkout HEAD^
-  ./gradlew publish -PmavenUser=$1 -PmavenPassword=$2
+  ./gradlew publish -PmavenUser=$3 -PmavenPassword=$4
 else
   echo "Failure: unable to make version commits" >&2
   exit 1
