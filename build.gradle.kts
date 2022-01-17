@@ -36,7 +36,7 @@ allprojects {
 }
 
 /** Add gradle tasks for releasing a new version of the software to MITRE internal DALI */
-apply(from = "./scripts/gradle/dali-releasing.gradle.kts")
+apply(from = "./scripts/gradle/artifactory-releasing.gradle.kts")
 
 release {
     preTagCommitMessage = "[Gradle] Bump to stable version "
@@ -60,11 +60,6 @@ subprojects {
     apply(plugin = "checkstyle") //https://docs.gradle.org/current/userguide/checkstyle_plugin.html
     apply(plugin = "maven-publish")
     apply(plugin = "com.adarshr.test-logger")
-
-    configure<JavaPluginExtension> {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 
     // declare dependencies used in every child module
     dependencies {
@@ -172,6 +167,10 @@ subprojects {
 
     /** create/publish source and javadoc jars */
     configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
+
         withSourcesJar()
         withJavadocJar()
     }

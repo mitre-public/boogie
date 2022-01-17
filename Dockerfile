@@ -25,7 +25,7 @@ RUN BOOGIE_VERSION=$(gradle properties --no-daemon --console=plain -q | grep "^v
     && gradle --no-daemon :boogie-rest:shadowJar -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD \
     && mv boogie-rest/build/libs/boogie-rest-$BOOGIE_VERSION-all.jar ./boogie-rest.jar
 
-FROM openjdk:8-jre-slim AS production
+FROM openjdk:11-jre-slim AS production
 
 WORKDIR /boogie
 

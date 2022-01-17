@@ -12,7 +12,7 @@ scripts work as follows:
 |:-------|:------------|
 | [Build docs](https://github.com/mitre-tdp/boogie/blob/main/scripts/gradle/build-docs.gradle.kts) | Adds a gradle task which builds and zips the javadocs for all of the methods and classes in the repo. |
 | [Build reporting](https://github.com/mitre-tdp/boogie/blob/main/scripts/gradle/build-reporting.gradle.kts) | Adds a gradle task which can be used to parse the junit output of run tests and upload it to [sonar]() so it can be scanned and introspected. |
-| [Dali releasing](https://github.com/mitre-tdp/boogie/blob/main/scripts/gradle/dali-releasing.gradle.kts) | Adds a release task which can be used to automatically bump the repo to a release version, release to DALI, and then update to a new snapshot and publish that as well. |
+| [Artifactory releasing](https://github.com/mitre-tdp/boogie/blob/main/scripts/gradle/artifactory-releasing.gradle.kts) | Adds a release task which can be used to automatically bump the repo to a release version, release to Codev Artifactory, and then update to a new snapshot and publish that as well. |
 
 ### Bash scripts 
 
