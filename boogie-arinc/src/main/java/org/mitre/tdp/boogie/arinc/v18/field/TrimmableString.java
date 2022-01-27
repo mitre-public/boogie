@@ -11,6 +11,6 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 abstract class TrimmableString implements FieldSpec<String> {
 
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty());
+    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).map(String::intern);
   }
 }

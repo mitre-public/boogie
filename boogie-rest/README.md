@@ -33,7 +33,7 @@ the short name of the git commit it was built off of plus the current version of
 the README. Locally the docker container can be launched via:
 ```shell script
 # build the image
-docker-compose build
+docker-compose build --build-arg MAVEN_USER=<codev-user> --build-arg MAVEN_PASSWORD=<codev-password>
 
 # launch the image
 docker-compose up

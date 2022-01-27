@@ -99,6 +99,6 @@ public final class AirwayLegSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.substring(4, 6).equals("ER");
+    return arincRecord.regionMatches(4, "ER", 0, 2);
   }
 }

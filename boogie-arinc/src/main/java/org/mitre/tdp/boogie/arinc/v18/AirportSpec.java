@@ -2,18 +2,18 @@ package org.mitre.tdp.boogie.arinc.v18;
 
 import java.util.List;
 
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.IataDesignator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportElevation;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
 import org.mitre.tdp.boogie.arinc.v18.field.DatumCode;
 import org.mitre.tdp.boogie.arinc.v18.field.DaylightTimeIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.IataDesignator;
 import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
 import org.mitre.tdp.boogie.arinc.v18.field.IfrCapability;
 import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
@@ -91,7 +91,6 @@ public final class AirportSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    String subsection = arincRecord.substring(12, 13);
-    return arincRecord.substring(4, 5).concat(subsection).equals("PA");
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A';
   }
 }

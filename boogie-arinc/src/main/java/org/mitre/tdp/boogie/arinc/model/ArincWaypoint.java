@@ -26,13 +26,13 @@ public final class ArincWaypoint implements ArincModel {
   private final String continuationRecordNumber;
   private final String waypointType;
   private final String waypointUsage;
-  private final Double latitude;
-  private final Double longitude;
+  private final double latitude;
+  private final double longitude;
   private final Double magneticVariation;
   private final String datumCode;
   private final String nameFormat;
   private final String waypointNameDescription;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
   private ArincWaypoint(Builder builder) {
@@ -112,11 +112,11 @@ public final class ArincWaypoint implements ArincModel {
     return Optional.ofNullable(waypointUsage);
   }
 
-  public Double latitude() {
+  public double latitude() {
     return latitude;
   }
 
-  public Double longitude() {
+  public double longitude() {
     return longitude;
   }
 
@@ -136,7 +136,7 @@ public final class ArincWaypoint implements ArincModel {
     return Optional.ofNullable(waypointNameDescription);
   }
 
-  public Integer fileRecordNumber() {
+  public int fileRecordNumber() {
     return fileRecordNumber;
   }
 

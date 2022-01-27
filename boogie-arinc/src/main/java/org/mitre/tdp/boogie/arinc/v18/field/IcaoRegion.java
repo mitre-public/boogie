@@ -40,6 +40,6 @@ public final class IcaoRegion implements FieldSpec<String> {
 
   @Override
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(matcher);
+    return Optional.of(fieldValue).map(String::trim).filter(matcher).map(String::trim);
   }
 }

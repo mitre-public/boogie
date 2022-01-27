@@ -91,11 +91,11 @@ public final class ArincAirport implements ArincModel {
   /**
    * The latitude of the airport.
    */
-  private final Double latitude;
+  private final double latitude;
   /**
    * The longitude of the airport.
    */
-  private final Double longitude;
+  private final double longitude;
   /**
    * The published magnetic variation at the facility in degrees (+/-).
    * <br>
@@ -143,7 +143,7 @@ public final class ArincAirport implements ArincModel {
    * The full name of the facility - e.g. JOHN F KENNEDY INTL.
    */
   private final String airportFullName;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   /**
    * See {@link Cycle}.
    */
@@ -230,11 +230,11 @@ public final class ArincAirport implements ArincModel {
     return Optional.ofNullable(longestRunwaySurfaceCode);
   }
 
-  public Double latitude() {
+  public double latitude() {
     return latitude;
   }
 
-  public Double longitude() {
+  public double longitude() {
     return longitude;
   }
 
@@ -286,7 +286,7 @@ public final class ArincAirport implements ArincModel {
     return Optional.ofNullable(airportFullName);
   }
 
-  public Integer fileRecordNumber() {
+  public int fileRecordNumber() {
     return fileRecordNumber;
   }
 

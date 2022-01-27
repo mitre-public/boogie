@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import static java.util.Optional.ofNullable;
+
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,7 +34,7 @@ public final class ArincProcedureLeg implements ArincModel {
   private final String sidStarIdentifier;
   private final String routeType;
   private final String transitionIdentifier;
-  private final Integer sequenceNumber;
+  private final int sequenceNumber;
   private final String fixIdentifier;
   private final String fixIcaoRegion;
   private final SectionCode fixSectionCode;
@@ -43,29 +45,29 @@ public final class ArincProcedureLeg implements ArincModel {
    */
   private final String waypointDescription;
   private final TurnDirection turnDirection;
-  private final Double rnp;
+  private final Float rnp;
   private final PathTerminator pathTerminator;
   private final Boolean turnDirectionValid;
   private final String recommendedNavaidIdentifier;
   private final String recommendedNavaidIcaoRegion;
-  private final Double arcRadius;
-  private final Double theta;
-  private final Double rho;
-  private final Double outboundMagneticCourse;
+  private final Float arcRadius;
+  private final Float theta;
+  private final Float rho;
+  private final Float outboundMagneticCourse;
   private final String routeHoldDistanceTime;
   private final Duration holdTime;
-  private final Double routeDistance;
+  private final Float routeDistance;
   private final SectionCode recommendedNavaidSectionCode;
   private final String recommendedNavaidSubSectionCode;
   /**
    * See {@link AltitudeDescription} for options - and note "blank"s are mapped to "@"s.
    */
   private final String altitudeDescription;
-  private final Double minAltitude1;
-  private final Double minAltitude2;
-  private final Double transitionAltitude;
+  private final Float minAltitude1;
+  private final Float minAltitude2;
+  private final Float transitionAltitude;
   private final Integer speedLimit;
-  private final Double verticalAngle;
+  private final Float verticalAngle;
   private final String centerFixIdentifier;
   private final String centerFixIcaoRegion;
   private final SectionCode centerFixSectionCode;
@@ -76,7 +78,7 @@ public final class ArincProcedureLeg implements ArincModel {
   private final String speedLimitDescription;
   private final String routeTypeQualifier1;
   private final String routeTypeQualifier2;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
   private ArincProcedureLeg(Builder builder) {
@@ -97,26 +99,26 @@ public final class ArincProcedureLeg implements ArincModel {
     this.continuationRecordNumber = builder.continuationRecordNumber;
     this.waypointDescription = builder.waypointDescription;
     this.turnDirection = builder.turnDirection;
-    this.rnp = builder.rnp;
+    this.rnp = ofNullable(builder.rnp).map(Double::floatValue).orElse(null);
     this.pathTerminator = builder.pathTerminator;
     this.turnDirectionValid = builder.turnDirectionValid;
     this.recommendedNavaidIdentifier = builder.recommendedNavaidIdentifier;
     this.recommendedNavaidIcaoRegion = builder.recommendedNavaidIcaoRegion;
-    this.arcRadius = builder.arcRadius;
-    this.theta = builder.theta;
-    this.rho = builder.rho;
-    this.outboundMagneticCourse = builder.outboundMagneticCourse;
+    this.arcRadius = ofNullable(builder.arcRadius).map(Double::floatValue).orElse(null);
+    this.theta = ofNullable(builder.theta).map(Double::floatValue).orElse(null);
+    this.rho = ofNullable(builder.rho).map(Double::floatValue).orElse(null);
+    this.outboundMagneticCourse = ofNullable(builder.outboundMagneticCourse).map(Double::floatValue).orElse(null);
     this.routeHoldDistanceTime = builder.routeHoldDistanceTime;
     this.holdTime = builder.holdTime;
-    this.routeDistance = builder.routeDistance;
+    this.routeDistance = ofNullable(builder.routeDistance).map(Double::floatValue).orElse(null);
     this.recommendedNavaidSectionCode = builder.recommendedNavaidSectionCode;
     this.recommendedNavaidSubSectionCode = builder.recommendedNavaidSubSectionCode;
     this.altitudeDescription = builder.altitudeDescription;
-    this.minAltitude1 = builder.minAltitude1;
-    this.minAltitude2 = builder.minAltitude2;
-    this.transitionAltitude = builder.transitionAltitude;
+    this.minAltitude1 = ofNullable(builder.minAltitude1).map(Double::floatValue).orElse(null);
+    this.minAltitude2 = ofNullable(builder.minAltitude2).map(Double::floatValue).orElse(null);
+    this.transitionAltitude = ofNullable(builder.transitionAltitude).map(Double::floatValue).orElse(null);
     this.speedLimit = builder.speedLimit;
-    this.verticalAngle = builder.verticalAngle;
+    this.verticalAngle = ofNullable(builder.verticalAngle).map(Double::floatValue).orElse(null);
     this.centerFixIdentifier = builder.centerFixIdentifier;
     this.centerFixIcaoRegion = builder.centerFixIcaoRegion;
     this.centerFixSectionCode = builder.centerFixSectionCode;
@@ -133,7 +135,7 @@ public final class ArincProcedureLeg implements ArincModel {
   }
 
   public Optional<CustomerAreaCode> customerAreaCode() {
-    return Optional.ofNullable(customerAreaCode);
+    return ofNullable(customerAreaCode);
   }
 
   @Override
@@ -163,43 +165,43 @@ public final class ArincProcedureLeg implements ArincModel {
   }
 
   public Optional<String> transitionIdentifier() {
-    return Optional.ofNullable(transitionIdentifier);
+    return ofNullable(transitionIdentifier);
   }
 
-  public Integer sequenceNumber() {
+  public int sequenceNumber() {
     return sequenceNumber;
   }
 
   public Optional<String> fixIdentifier() {
-    return Optional.ofNullable(fixIdentifier);
+    return ofNullable(fixIdentifier);
   }
 
   public Optional<String> fixIcaoRegion() {
-    return Optional.ofNullable(fixIcaoRegion);
+    return ofNullable(fixIcaoRegion);
   }
 
   public Optional<SectionCode> fixSectionCode() {
-    return Optional.ofNullable(fixSectionCode);
+    return ofNullable(fixSectionCode);
   }
 
   public Optional<String> fixSubSectionCode() {
-    return Optional.ofNullable(fixSubSectionCode);
+    return ofNullable(fixSubSectionCode);
   }
 
   public Optional<String> continuationRecordNumber() {
-    return Optional.ofNullable(continuationRecordNumber);
+    return ofNullable(continuationRecordNumber);
   }
 
   public Optional<String> waypointDescription() {
-    return Optional.ofNullable(waypointDescription);
+    return ofNullable(waypointDescription);
   }
 
   public Optional<TurnDirection> turnDirection() {
-    return Optional.ofNullable(turnDirection);
+    return ofNullable(turnDirection);
   }
 
   public Optional<Double> rnp() {
-    return Optional.ofNullable(rnp);
+    return ofNullable(rnp).map(Float::doubleValue);
   }
 
   public PathTerminator pathTerm() {
@@ -207,106 +209,106 @@ public final class ArincProcedureLeg implements ArincModel {
   }
 
   public Optional<Boolean> turnDirectionValid() {
-    return Optional.ofNullable(turnDirectionValid);
+    return ofNullable(turnDirectionValid);
   }
 
   public Optional<String> recommendedNavaidIdentifier() {
-    return Optional.ofNullable(recommendedNavaidIdentifier);
+    return ofNullable(recommendedNavaidIdentifier);
   }
 
   public Optional<String> recommendedNavaidIcaoRegion() {
-    return Optional.ofNullable(recommendedNavaidIcaoRegion);
+    return ofNullable(recommendedNavaidIcaoRegion);
   }
 
   public Optional<Double> arcRadius() {
-    return Optional.ofNullable(arcRadius);
+    return ofNullable(arcRadius).map(Float::doubleValue);
   }
 
   public Optional<Double> theta() {
-    return Optional.ofNullable(theta);
+    return ofNullable(theta).map(Float::doubleValue);
   }
 
   public Optional<Double> rho() {
-    return Optional.ofNullable(rho);
+    return ofNullable(rho).map(Float::doubleValue);
   }
 
   public Optional<Double> outboundMagneticCourse() {
-    return Optional.ofNullable(outboundMagneticCourse);
+    return ofNullable(outboundMagneticCourse).map(Float::doubleValue);
   }
 
   public Optional<String> routeHoldDistanceTime() {
-    return Optional.ofNullable(routeHoldDistanceTime);
+    return ofNullable(routeHoldDistanceTime);
   }
 
   public Optional<Duration> holdTime() {
-    return Optional.ofNullable(holdTime);
+    return ofNullable(holdTime);
   }
 
   public Optional<Double> routeDistance() {
-    return Optional.ofNullable(routeDistance);
+    return ofNullable(routeDistance).map(Float::doubleValue);
   }
 
   public Optional<SectionCode> recommendedNavaidSectionCode() {
-    return Optional.ofNullable(recommendedNavaidSectionCode);
+    return ofNullable(recommendedNavaidSectionCode);
   }
 
   public Optional<String> recommendedNavaidSubSectionCode() {
-    return Optional.ofNullable(recommendedNavaidSubSectionCode);
+    return ofNullable(recommendedNavaidSubSectionCode);
   }
 
   public Optional<String> altitudeDescription() {
-    return Optional.ofNullable(altitudeDescription);
+    return ofNullable(altitudeDescription);
   }
 
   public Optional<Double> minAltitude1() {
-    return Optional.ofNullable(minAltitude1);
+    return ofNullable(minAltitude1).map(Float::doubleValue);
   }
 
   public Optional<Double> minAltitude2() {
-    return Optional.ofNullable(minAltitude2);
+    return ofNullable(minAltitude2).map(Float::doubleValue);
   }
 
   public Optional<Double> transitionAltitude() {
-    return Optional.ofNullable(transitionAltitude);
+    return ofNullable(transitionAltitude).map(Float::doubleValue);
   }
 
   public Optional<Integer> speedLimit() {
-    return Optional.ofNullable(speedLimit);
+    return ofNullable(speedLimit);
   }
 
   public Optional<Double> verticalAngle() {
-    return Optional.ofNullable(verticalAngle);
+    return ofNullable(verticalAngle).map(Float::doubleValue);
   }
 
   public Optional<String> centerFixIdentifier() {
-    return Optional.ofNullable(centerFixIdentifier);
+    return ofNullable(centerFixIdentifier);
   }
 
   public Optional<String> centerFixIcaoRegion() {
-    return Optional.ofNullable(centerFixIcaoRegion);
+    return ofNullable(centerFixIcaoRegion);
   }
 
   public Optional<SectionCode> centerFixSectionCode() {
-    return Optional.ofNullable(centerFixSectionCode);
+    return ofNullable(centerFixSectionCode);
   }
 
   public Optional<String> centerFixSubSectionCode() {
-    return Optional.ofNullable(centerFixSubSectionCode);
+    return ofNullable(centerFixSubSectionCode);
   }
 
   public Optional<String> speedLimitDescription() {
-    return Optional.ofNullable(speedLimitDescription);
+    return ofNullable(speedLimitDescription);
   }
 
   public Optional<String> routeTypeQualifier1() {
-    return Optional.ofNullable(routeTypeQualifier1);
+    return ofNullable(routeTypeQualifier1);
   }
 
   public Optional<String> routeTypeQualifier2() {
-    return Optional.ofNullable(routeTypeQualifier2);
+    return ofNullable(routeTypeQualifier2);
   }
 
-  public Integer fileRecordNumber() {
+  public int fileRecordNumber() {
     return fileRecordNumber;
   }
 

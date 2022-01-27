@@ -29,12 +29,12 @@ public final class ArincVhfNavaid implements ArincModel {
    * For consistency of use - if these are not populated in the raw record but the {@link #dmeLatitude} is then this field will
    * reflect that value (and the {@link #dmeLatitude} value will be identical).
    */
-  private final Double latitude;
+  private final double latitude;
   /**
    * For consistency of use - if these are not populated in the raw record but the {@link #dmeLongitude} is then this field will
    * reflect that value (and the {@link #dmeLongitude} value will be identical).
    */
-  private final Double longitude;
+  private final double longitude;
   private final String dmeIdentifier;
   private final Double dmeLatitude;
   private final Double dmeLongitude;
@@ -45,7 +45,7 @@ public final class ArincVhfNavaid implements ArincModel {
   private final Double frequencyProtectionDistance;
   private final String datumCode;
   private final String vhfNavaidName;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
   private ArincVhfNavaid(Builder builder) {
@@ -122,11 +122,11 @@ public final class ArincVhfNavaid implements ArincModel {
     return Optional.ofNullable(navaidClass);
   }
 
-  public Double latitude() {
+  public double latitude() {
     return latitude;
   }
 
-  public Double longitude() {
+  public double longitude() {
     return longitude;
   }
 

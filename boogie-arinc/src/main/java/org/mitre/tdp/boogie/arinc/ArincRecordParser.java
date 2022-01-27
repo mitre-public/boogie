@@ -77,7 +77,7 @@ public final class ArincRecordParser implements Function<String, Optional<ArincR
 
       RecordField<?> field = recordSpec.recordFields().get(i);
 
-      String value = rawRecord.substring(offset, offset + field.fieldSpec().fieldLength());
+      String value = rawRecord.substring(offset, offset + field.fieldSpec().fieldLength()).intern();
       namedData.put(field.fieldName(), Pair.of(field.fieldSpec(), value));
 
       i++;

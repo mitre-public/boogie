@@ -15,7 +15,7 @@ public final class CoordinateParser {
   }
 
   public static boolean isNegative(String s) {
-    return s.equals("S") || s.endsWith("S") || s.equals("W") || s.endsWith("W");
+    return s.endsWith("S") || s.endsWith("W");
   }
 
   public static double sign(String s) {

@@ -76,9 +76,7 @@ public final class WaypointSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    // enroute waypoint section subsection are in a different location than the terminal ones
-    String enroute = arincRecord.substring(4, 6);
-    String terminal = arincRecord.substring(4, 5).concat(arincRecord.substring(12, 13));
-    return enroute.equals("EA") || terminal.equals("PC");
+    return arincRecord.regionMatches(4, "EA", 0, 2)
+        || (arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'C');
   }
 }

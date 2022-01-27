@@ -68,7 +68,7 @@ public final class ArincAirwayLeg implements ArincModel {
   /**
    * See {@link SequenceNumber}.
    */
-  private final Integer sequenceNumber;
+  private final int sequenceNumber;
   /**
    * See {@link FixIdentifier}.
    */
@@ -169,7 +169,7 @@ public final class ArincAirwayLeg implements ArincModel {
    * See {@link FixedRadiusTransitionIndicator}.
    */
   private final Double fixedRadiusTransitionIndicator;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
   private ArincAirwayLeg(Builder builder) {
@@ -236,7 +236,7 @@ public final class ArincAirwayLeg implements ArincModel {
     return Optional.ofNullable(sixthCharacter);
   }
 
-  public Integer sequenceNumber() {
+  public int sequenceNumber() {
     return sequenceNumber;
   }
 
@@ -344,7 +344,7 @@ public final class ArincAirwayLeg implements ArincModel {
     return Optional.ofNullable(fixedRadiusTransitionIndicator);
   }
 
-  public Integer fileRecordNumber() {
+  public int fileRecordNumber() {
     return fileRecordNumber;
   }
 

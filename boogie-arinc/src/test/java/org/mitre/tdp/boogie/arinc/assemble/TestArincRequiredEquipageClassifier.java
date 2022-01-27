@@ -2,8 +2,11 @@ package org.mitre.tdp.boogie.arinc.assemble;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
@@ -20,7 +23,7 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignRouteTypeRNP() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("D").routeType("F").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "D", "F", null, null);
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.RNP, actual);
@@ -28,7 +31,7 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignRouteTypeRNAV() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("D").routeType("4").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "D", "4", null, null);
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.RNAV, actual);
@@ -37,7 +40,7 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignRouteTypeCONV() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("D").routeType("1").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "D", "1", null, null);
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.CONV, actual);
@@ -45,8 +48,7 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignedRouteTypeRNPForApproachRRS() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("F")
-        .routeType("R").routeTypeQualifier1("R").routeTypeQualifier2("S").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "R", "R", "S");
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.RNP, actual);
@@ -54,8 +56,7 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignedRouteTypeRNPForApproachRAS() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("F")
-        .routeType("R").routeTypeQualifier1("A").routeTypeQualifier2("S").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "R", "A", "S");
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.RNP, actual);
@@ -63,8 +64,7 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignedRouteTypeRNPForApproachRFS() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("F")
-        .routeType("R").routeTypeQualifier1("F").routeTypeQualifier2("S").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "R", "F", "S");
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.RNP, actual);
@@ -72,8 +72,7 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignedRouteTypeRNAVForApproachRPS() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("F")
-        .routeType("R").routeTypeQualifier1("P").routeTypeQualifier2("S").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "R", "P", "S");
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.RNAV, actual);
@@ -81,10 +80,26 @@ class TestArincRequiredEquipageClassifier {
 
   @Test
   void testTryAssignedRouteTypeRNPForApproachH() {
-    ArincProcedureLeg leg = new ArincProcedureLeg.Builder().sectionCode(SectionCode.P).subSectionCode("F").routeType("H").build();
+    ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "H", null, null);
 
     RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
     assertEquals(RequiredNavigationEquipage.RNP, actual);
+  }
+
+  private ArincProcedureLeg mockProcedureLeg(
+      SectionCode sectionCode,
+      String subSectionCode,
+      String routeType,
+      String qualifier1,
+      String qualifier2
+  ) {
+    ArincProcedureLeg leg = mock(ArincProcedureLeg.class);
+    when(leg.sectionCode()).thenReturn(sectionCode);
+    when(leg.subSectionCode()).thenReturn(Optional.ofNullable(subSectionCode));
+    when(leg.routeType()).thenReturn(routeType);
+    when(leg.routeTypeQualifier1()).thenReturn(Optional.ofNullable(qualifier1));
+    when(leg.routeTypeQualifier2()).thenReturn(Optional.ofNullable(qualifier2));
+    return leg;
   }
 
   private Multimap<TransitionType, List<ArincProcedureLeg>> asMultimap(TransitionType transitionType, ArincProcedureLeg arincProcedureLeg) {

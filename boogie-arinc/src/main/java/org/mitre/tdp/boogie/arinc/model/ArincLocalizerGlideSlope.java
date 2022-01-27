@@ -91,7 +91,7 @@ public final class ArincLocalizerGlideSlope implements ArincModel {
   private final String supportingFacilityIcaoRegion;
   private final SectionCode supportingFacilitySectionCode;
   private final String supportingFacilitySubsectionCode;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
   private ArincLocalizerGlideSlope(Builder builder) {
@@ -241,7 +241,7 @@ public final class ArincLocalizerGlideSlope implements ArincModel {
     return Optional.ofNullable(supportingFacilitySubsectionCode);
   }
 
-  public Integer fileRecordNumber() {
+  public int fileRecordNumber() {
     return fileRecordNumber;
   }
 

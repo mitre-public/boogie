@@ -22,6 +22,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincProcedureLeg {
 
+  public static final String HF = "SEEUP UITTUIFN12   ACI4   020CI   UIDB0EE AR   HF                     1210T053      04160                              S   785571907";
   private static final ProcedureLegConverter converter = new ProcedureLegConverter();
 
   @Test
@@ -57,16 +58,16 @@ class TestArincProcedureLeg {
         () -> assertEquals("IJOC", procedureLeg.recommendedNavaidIdentifier().orElseThrow(AssertionError::new)),
         () -> assertEquals("K6", procedureLeg.recommendedNavaidIcaoRegion().orElseThrow(AssertionError::new)),
         () -> assertFalse(procedureLeg.arcRadius().isPresent()),
-        () -> assertEquals(41.1d, procedureLeg.theta().orElseThrow(AssertionError::new)),
-        () -> assertEquals(6.6d, procedureLeg.rho().orElseThrow(AssertionError::new)),
-        () -> assertEquals(221.3d, procedureLeg.outboundMagneticCourse().orElseThrow(AssertionError::new)),
+        () -> assertEquals(41.1d, procedureLeg.theta().orElseThrow(AssertionError::new), .0001, "Theta"),
+        () -> assertEquals(6.6d, procedureLeg.rho().orElseThrow(AssertionError::new), .0001, "Rho"),
+        () -> assertEquals(221.3d, procedureLeg.outboundMagneticCourse().orElseThrow(AssertionError::new), .0001, "Outbound Magnetic Course"),
         () -> assertEquals("0050", procedureLeg.routeHoldDistanceTime().orElseThrow(AssertionError::new)),
         () -> assertEquals("+", procedureLeg.altitudeDescription().orElseThrow(AssertionError::new)),
-        () -> assertEquals(1900.0d, procedureLeg.minAltitude1().orElseThrow(AssertionError::new)),
+        () -> assertEquals(1900.0d, procedureLeg.minAltitude1().orElseThrow(AssertionError::new), .0001, "MinAltitude1"),
         () -> assertFalse(procedureLeg.minAltitude2().isPresent()),
         () -> assertFalse(procedureLeg.transitionAltitude().isPresent()),
         () -> assertFalse(procedureLeg.speedLimit().isPresent()),
-        () -> assertEquals(-3.01, procedureLeg.verticalAngle().orElseThrow(AssertionError::new)),
+        () -> assertEquals(-3.01, procedureLeg.verticalAngle().orElseThrow(AssertionError::new), .0001, "VerticalAngle"),
         () -> assertFalse(procedureLeg.centerFixIdentifier().isPresent()),
         () -> assertFalse(procedureLeg.centerFixIcaoRegion().isPresent()),
         () -> assertFalse(procedureLeg.centerFixSectionCode().isPresent()),
@@ -77,8 +78,6 @@ class TestArincProcedureLeg {
         () -> assertEquals("2004", procedureLeg.lastUpdateCycle())
     );
   }
-
-  public static final String HF = "SEEUP UITTUIFN12   ACI4   020CI   UIDB0EE AR   HF                     1210T053      04160                              S   785571907";
 
   @Test
   void testFieldAccessHF() {

@@ -33,8 +33,8 @@ public final class ArincRunway implements ArincModel {
    */
   private final Integer runwayLength;
   private final Double runwayMagneticBearing;
-  private final Double latitude;
-  private final Double longitude;
+  private final double latitude;
+  private final double longitude;
   private final Double runwayGradient;
   private final Integer landingThresholdElevation;
   /**
@@ -56,7 +56,7 @@ public final class ArincRunway implements ArincModel {
   private final String secondaryIlsMlsGlsIdentifier;
   private final String secondaryIlsMlsGlsCategory;
   private final String runwayDescription;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
   private ArincRunway(Builder builder) {
@@ -129,11 +129,11 @@ public final class ArincRunway implements ArincModel {
     return Optional.ofNullable(runwayMagneticBearing);
   }
 
-  public Double latitude() {
+  public double latitude() {
     return latitude;
   }
 
-  public Double longitude() {
+  public double longitude() {
     return longitude;
   }
 
@@ -181,7 +181,7 @@ public final class ArincRunway implements ArincModel {
     return Optional.ofNullable(runwayDescription);
   }
 
-  public Integer fileRecordNumber() {
+  public int fileRecordNumber() {
     return fileRecordNumber;
   }
 

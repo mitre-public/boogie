@@ -81,6 +81,6 @@ public final class VhfNavaidSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return "D".equals(arincRecord.substring(4, 5));
+    return arincRecord.charAt(4) == 'D';
   }
 }

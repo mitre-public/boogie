@@ -25,12 +25,12 @@ public final class ArincNdbNavaid implements ArincModel {
   private final String continuationRecordNumber;
   private final Double ndbFrequency;
   private final String navaidClass;
-  private final Double latitude;
-  private final Double longitude;
+  private final double latitude;
+  private final double longitude;
   private final Double magneticVariation;
   private final String datumCode;
   private final String ndbNavaidName;
-  private final Integer fileRecordNumber;
+  private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
   private ArincNdbNavaid(Builder builder) {
@@ -100,11 +100,11 @@ public final class ArincNdbNavaid implements ArincModel {
     return Optional.ofNullable(navaidClass);
   }
 
-  public Double latitude() {
+  public double latitude() {
     return latitude;
   }
 
-  public Double longitude() {
+  public double longitude() {
     return longitude;
   }
 
@@ -120,7 +120,7 @@ public final class ArincNdbNavaid implements ArincModel {
     return Optional.ofNullable(ndbNavaidName);
   }
 
-  public Integer fileRecordNumber() {
+  public int fileRecordNumber() {
     return fileRecordNumber;
   }
 

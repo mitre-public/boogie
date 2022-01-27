@@ -87,6 +87,6 @@ public final class RunwaySpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.substring(4, 5).concat(arincRecord.substring(12, 13)).equals("PG");
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'G';
   }
 }

@@ -45,6 +45,13 @@ public final class EmbeddedCifpFile {
     loadRecords().forEach(records);
   }
 
+  /**
+   * Returns the singleton instance of the contents of the embedded ARINC 424 file.
+   */
+  public static EmbeddedCifpFile instance() {
+    return SingletonHolder.INSTANCE;
+  }
+
   public Collection<ArincAirport> arincAirports() {
     return records.arincAirports();
   }
@@ -111,13 +118,6 @@ public final class EmbeddedCifpFile {
     } catch (IOException e) {
       throw new IllegalArgumentException("Error opening embedded resource file.", e);
     }
-  }
-
-  /**
-   * Returns the singleton instance of the contents of the embedded ARINC 424 file.
-   */
-  public static EmbeddedCifpFile instance() {
-    return SingletonHolder.INSTANCE;
   }
 
   /**
