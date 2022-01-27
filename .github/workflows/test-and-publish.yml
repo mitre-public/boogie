@@ -47,7 +47,7 @@ jobs:
     steps:
       # Install git before checkout so that the checkout action can use it to clone the repo and log us in (note centos ships with an older version - so update it)
       - run: |
-          yum -y install https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.9-1.x86_64.rpm
+          yum -y install http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm
           yum install git -y
       - uses: actions/checkout@v2
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
