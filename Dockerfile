@@ -21,7 +21,7 @@ WORKDIR /boogie
 COPY . .
 
 # build the boogie-rest shadowjar and then rename it to not contain the version and leave it in ./boogie-rest.jar
-RUN BOOGIE_VERSION=$(gradle properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}') \
+RUN BOOGIE_VERSION=$(gradle properties -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}') \
     && gradle --no-daemon :boogie-rest:shadowJar -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD \
     && mv boogie-rest/build/libs/boogie-rest-$BOOGIE_VERSION-all.jar ./boogie-rest.jar
 
