@@ -69,13 +69,12 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
     LOG.debug("Connecting {} terminal STAR legs to {} initial approach legs.", terminalStarLegs.size(), initialApproachLegs.size());
     List<LinkedLegs> linkedLegs = cartesianProduct(terminalStarLegs, initialApproachLegs).stream()
         .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
-        .map(this::glueLegBetweenStarAndApproach)
-        .map(leg -> checkForOverlapInManualTerminatingStarCase(leg, finalStarTransitions))
+        .map(leg -> glueLegBetweenStarAndApproach(leg, finalStarTransitions))
         .flatMap(List::stream)
         .sorted(Comparator.comparing(x -> x.source().sequenceNumber()))
         .collect(toList());
 
-    return linkedLegs.size() > 1 ? verifySequenceNumbers(linkedLegs) : linkedLegs;
+    return linkedLegs;
   }
 
   private List<Transition> initialApproachTransitions(ApproachElement approachElement) {
@@ -86,30 +85,6 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
   }
 
   /**
-   * Edge case where the manual terminating star leg starts at the fix originating approach leg. In this instance, drop the manual terminating
-   * star leg and take the closest previous leg from the transition and form the link using that leg instead.
-   */
-  private List<LinkedLegs> checkForOverlapInManualTerminatingStarCase(List<LinkedLegs> legs, List<Transition> finalStarTransitions) {
-    Optional<LinkedLegs> overlappingLeg = legs.stream().filter(leg -> leg.linkWeight() == 999999.0).findFirst();
-    if(!overlappingLeg.isPresent()) {
-      return legs;
-    }
-    List<Leg> terminalStarLegs = finalStarTransitions.stream()
-        .filter(transition -> transition.legs().contains(overlappingLeg.get().source()))
-        .map(Transition::legs)
-        .flatMap(List::stream)
-        .filter(leg -> leg.associatedFix().isPresent())
-        .collect(toList());
-
-    Leg closestPreviousStarLeg = terminalStarLegs.get(terminalStarLegs.size() - 2);
-    Leg replacedOverlappingLeg = convertToDF(overlappingLeg.get().target());
-
-    return asList(
-        new LinkedLegs(closestPreviousStarLeg, replacedOverlappingLeg, distanceBetween(Pair.of(closestPreviousStarLeg, replacedOverlappingLeg))),
-        new LinkedLegs(replacedOverlappingLeg, overlappingLeg.get().target(), distanceBetween(Pair.of(replacedOverlappingLeg, overlappingLeg.get().target()))));
-  }
-
-  /**
    * Checks to see if a leg needs to be inserted inbetween Star and Approach. Firstly, ensures that the first leg of the
    * approach is a fix originating leg. Then checks to see if the star ends with a fix terminating leg or manual terminating leg.
    * If the Star has a fix termanating leg and the distance between the approach leg is non zero, add a DF leg to the approach in between.
@@ -117,18 +92,14 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
    * the manual terminating leg of the star to a DF leg. If the distance is zero, this is an edge case where the manual terminating leg
    * needs to be dropped because it is overlapping with the fic originating leg and the closest leg in the star is used in the linking.
    */
-  private List<LinkedLegs> glueLegBetweenStarAndApproach(LinkedLegs leg) {
+  private List<LinkedLegs> glueLegBetweenStarAndApproach(LinkedLegs leg, List<Transition> finalStarTransitions) {
     Preconditions.checkArgument(fixOriginatingLegs.test(leg.target().pathTerminator().toString()), "Approaches can't start with non-fix-originating legs");
 
     List<LinkedLegs> newLegs = new ArrayList<>();
-    if (fixTerminatingLegs.test(leg.source().pathTerminator().toString()) && leg.linkWeight() != 0) {
+    if (fixTerminatingLegs.test(leg.source().pathTerminator().toString()) && leg.linkWeight() > 1.0E-5) {
       newLegs.addAll(fixTerminatingStarWithNonZeroDistanceAdjustment(leg));
     } else if (manualTerminatingLegs.test(leg.source().pathTerminator().toString())) {
-      if (leg.linkWeight() != 0) { //should i make this less than a certain threshold? like only add/convert leg if the distance between hte manual terminating leg and first approach is less than 0.5 miles
-        newLegs.addAll(manualTerminatingStarWithNonZeroDistanceAdjustment(leg));
-      } else {
-        newLegs.add(new LinkedLegs(leg.source(), leg.target(),999999.0));
-      }
+      newLegs.addAll(manualTerminatingStarAdjustment(leg, finalStarTransitions, leg.linkWeight() > 1.0E-5));
     }
 
     return newLegs.isEmpty() ? asList(leg) : newLegs;
@@ -136,25 +107,46 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
 
   /**
    * Clones first leg of approach, makes it a DF, and inserts it in between the fix terminating leg of star and fix originating leg
-   * of approach
+   * of approach resulting in 2 LinkedLegs
    */
   private List<LinkedLegs> fixTerminatingStarWithNonZeroDistanceAdjustment(LinkedLegs leg) {
     List<LinkedLegs> adjustedLegs = new ArrayList<>();
     BoogieLeg newDFApproachLeg = convertToDF(leg.target());
+
     Pair<Leg, Leg> starToNewLeg = Pair.of(leg.source(), newDFApproachLeg);
     Pair<Leg, Leg> newLegToApproach = Pair.of(newDFApproachLeg, leg.target());
+
     adjustedLegs.add(new LinkedLegs(starToNewLeg.first(), starToNewLeg.second(), distanceBetween(starToNewLeg)));
     adjustedLegs.add(new LinkedLegs(newLegToApproach.first(), newLegToApproach.second(), distanceBetween(newLegToApproach)));
+
     return adjustedLegs;
   }
 
   /**
-   * Replaces the manual terminating leg of star with a DF to the first leg of approach.
+   * Removes the manual terminating leg of star and replaces it with the closest previous leg in the star with a fix. If the distance between
+   * the approach and star was not zero, insert a cloned DF leg of the first approach leg. Otherwise, just link the closest previous with the
+   * initial approach leg
    */
-  private List<LinkedLegs> manualTerminatingStarWithNonZeroDistanceAdjustment(LinkedLegs leg) {
+  private List<LinkedLegs> manualTerminatingStarAdjustment(LinkedLegs leg, List<Transition> finalStarTransitions, boolean distanceBetween) {
+    Leg manualTerminatingStarLeg = leg.source();
+    Leg initialApproachLeg = leg.target();
+    Leg clonedDFApproachLeg = convertToDF(initialApproachLeg);
+
+    List<Leg> closestPreviousStarLeg = finalStarTransitions.stream()
+        .filter(t -> t.legs().contains(manualTerminatingStarLeg))
+        .map(t -> t.legs().stream().filter(l -> l.associatedFix().isPresent()).collect(toList()))
+        .map(t -> t.get(t.size() - 2))
+        .collect(toList());
+
     List<LinkedLegs> adjustedLegs = new ArrayList<>();
-    Pair<Leg, Leg> pair = Pair.of(setSequenceNumberOfLeg(convertToDF(leg.target()), leg.target().sequenceNumber() - 1), leg.target());
-    adjustedLegs.add(new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)));
+    for(Leg closestPreviousLeg : closestPreviousStarLeg) {
+      Pair<Leg, Leg> pair = Pair.of(closestPreviousLeg, distanceBetween ? clonedDFApproachLeg : initialApproachLeg);
+      adjustedLegs.add(new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)));
+    }
+    if(distanceBetween) {
+      adjustedLegs.add(new LinkedLegs(clonedDFApproachLeg, initialApproachLeg, 0));
+    }
+
     return adjustedLegs;
   }
 
@@ -163,32 +155,5 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
    */
   private BoogieLeg convertToDF(Leg leg) {
     return ((BoogieLeg) leg).toBuilder().pathTerminator(PathTerminator.DF).build();
-  }
-
-  /**
-   * Parses through linked legs to verify sequence numbers are all incrementing by 1 starting with the first LinkedLeg.
-   */
-  private List<LinkedLegs> verifySequenceNumbers(List<LinkedLegs> linkedLegs) {
-    List<LinkedLegs> resultingLegs = new ArrayList<>();
-    int currentSequenceNumber = linkedLegs.get(0).source().sequenceNumber();
-    for(Iterator<LinkedLegs> it = linkedLegs.iterator(); it.hasNext(); ) {
-      LinkedLegs legs = it.next();
-      Leg source = legs.source();
-      Leg target = legs.target();
-      if(source.sequenceNumber() != currentSequenceNumber) {
-        source = setSequenceNumberOfLeg(source, currentSequenceNumber);
-      }
-      if(target.sequenceNumber() != source.sequenceNumber() - 1) {
-        target = setSequenceNumberOfLeg(target, currentSequenceNumber + 1);
-      }
-      LinkedLegs newLegs = new LinkedLegs(source, target, distanceBetween(Pair.of(source, target)));
-      resultingLegs.add(newLegs);
-      currentSequenceNumber = target.sequenceNumber();
-    }
-    return resultingLegs;
-  }
-
-  private BoogieLeg setSequenceNumberOfLeg(Leg leg, int newSequenceNumber) {
-    return ((BoogieLeg) leg).toBuilder().sequenceNumber(newSequenceNumber).build();
   }
 }

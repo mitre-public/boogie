@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.model.BoogieLeg;
 import org.mitre.tdp.boogie.util.Declinations;
 
 
@@ -34,10 +35,11 @@ public final class MockObjects {
 
   public static Leg leg(String name, double lat, double lon, PathTerminator type) {
     Fix term = fix(name, lat, lon);
-    Leg leg = mock(Leg.class);
+    BoogieLeg leg = mock(BoogieLeg.class);
     when(leg.pathTerminator()).thenReturn(type);
     when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
     when(leg.toString()).thenReturn("Associated Fix: " + name + " - " + type.name());
+    when(leg.toBuilder()).thenReturn(new BoogieLeg.Builder().associatedFix(term));
     return leg;
   }
 

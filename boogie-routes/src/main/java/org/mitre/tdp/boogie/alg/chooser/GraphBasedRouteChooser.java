@@ -22,6 +22,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteSummary;
@@ -224,7 +225,11 @@ public final class GraphBasedRouteChooser implements Function<List<ResolvedSecti
       String resolvedElementTypes = elements.stream().map(resolvedElement -> resolvedElement.getClass().getTypeName()).collect(Collectors.joining(","));
       logIf(elements.size() > 1, LOG::debug, "Returned multiple source elements for leg: {}. ResolvedElement types were: {}.", leg, resolvedElementTypes);
 
-      return elements.stream().findFirst().orElseThrow(IllegalStateException::new);
+      if(elements.isEmpty()) {
+        return checkForManuallyAddedLeg(leg);
+      }
+
+      return elements.stream().findFirst().get();
     }
 
     private ResolvedSection resolvedSectionOf(ResolvedElement resolvedElement) {
@@ -234,6 +239,18 @@ public final class GraphBasedRouteChooser implements Function<List<ResolvedSecti
       logIf(sections.size() > 1, LOG::warn, "Returned multiple source sections for element: {}. ResolvedSection splits were: {}.", resolvedElement, resolvedSections);
 
       return sections.stream().findFirst().orElseThrow(IllegalStateException::new);
+    }
+
+    private ResolvedElement checkForManuallyAddedLeg(Leg leg) {
+      Preconditions.checkArgument(leg.pathTerminator().equals(PathTerminator.DF), "All manually added legs are DF legs");
+
+      Leg originalLeg = legToElement.keys().stream()
+          .filter(l -> l.associatedFix().isPresent())
+          .filter(l -> l.associatedFix().get().fixIdentifier().equals(leg.associatedFix().get().fixIdentifier()))
+          .findFirst()
+          .orElseThrow(IllegalStateException::new);
+
+      return resolvedElementOf(originalLeg);
     }
   }
 }
