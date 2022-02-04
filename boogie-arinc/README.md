@@ -33,9 +33,8 @@ to have a valid specified min altitude and outbound course).
 
 ### Indexing in provided database implementations
 The nature of most of the ARINC record types is to be referential towards other record types - take for example an ```ArincProcedureLeg``` record:
-<br>
-<img align="float: left;" height="80" src="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-arinc/arinc-procedure-leg-v18.png?token=GHSAT0AAAAAABQRZEVT6DEMBZ247EMVX4YUYPJXBSA"/>
-<br>
+![Arinc Procedure Leg](arinc-procedure-leg-v18.png)
+
 There are three key groupings of fields we care about in there (as taken from the TDP POJO model), namely:
 ```java
 // Fix Identification Information
@@ -179,7 +178,9 @@ once but may be used in airport/navaid/waypoint/etc. records.
 
 The idea is you compose some invariant set of fields together in an ordered sequence to form a full ARINC 424 record string - a la the below:
 </p>
-<img align="float: left;" height="80" src="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-arinc/arinc-airway-v18.png?token=GHSAT0AAAAAABQRZEVSVF3RUAAAG6XF2UV6YPJVO6A"/>
+
+![Arinc Airway](arinc-airway-v18.png)
+
 <p>
 In the above, each of those traced out blocks has an associated number (e.g. 5.12, 5.13) which is a pointer to a specification for how that field should be interpreted within the ARINC ICD 
 (typically) a PDF for the appropriate version of ARINC data.
