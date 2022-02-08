@@ -1,10 +1,14 @@
 import net.researchgate.release.GitAdapter.GitConfig
+import org.mitre.tdp.repositories.repo1
+import org.mitre.tdp.repositories.codev
+import org.mitre.tdp.repositories.from
+import org.mitre.tdp.repositories.repo1
 
 plugins {
     `java-platform`
     `maven-publish`
     jacoco
-    id("org.mitre.tdp.gradle-cookbook") version "1.0.0-SNAPSHOT"
+    id("org.mitre.tdp.gradle-cookbook") version "1.0.0"
     id("net.researchgate.release") version "2.8.1" // used to emulate mvn release (see https://github.com/researchgate/gradle-release)
 }
 
@@ -13,30 +17,27 @@ tdpConventions {
     `multimodule-javadoc-conventions`
 }
 
-val mavenUser: String? by project
-val mavenPassword: String? by project
+val codevUserKey = "mavenUser"
+val codevPasswordKey = "mavenPassword"
 
-/** Explicitly declare referenced/used repositories which host the artifact necessary to build the software */
 allprojects {
     repositories {
-        // mavenLocal() // only uncomment to test a build that depends on locally installed maven artifacts
+        // only uncomment to test a build that depends on locally installed maven artifacts
+        // mavenLocal()
         maven {
             name = "clojars"
             url = uri("https://repo.clojars.org/")
         }
-        maven {
-            name = "repo1"
-            url = uri("https://repo1.maven.org/maven2/")
-        }
-        maven {
-            name = "codev-artifactory"
-            url = uri("https://repo.codev.mitre.org/artifactory/idaass-maven")
+        // only uncomment to test a build that depends on locally installed maven artifacts
+        // mavenLocal()
+        repo1()
+        codev.mavenArtifactory {
             mavenContent {
                 releasesOnly()
             }
-            credentials {
-                username = mavenUser
-                password = mavenPassword
+            credentials.from(rootProject.properties) {
+                usernameKey = codevUserKey
+                passwordKey = codevPasswordKey
             }
         }
     }
@@ -123,12 +124,10 @@ subprojects {
             }
         }
         repositories {
-            maven {
-                name = "codev-artifactory"
-                url = uri("https://repo.codev.mitre.org/artifactory/idaass-maven")
-                credentials {
-                    username = mavenUser
-                    password = mavenPassword
+            codev.mavenArtifactory {
+                credentials.from(rootProject.properties) {
+                    usernameKey = codevUserKey
+                    passwordKey = codevPasswordKey
                 }
             }
         }
