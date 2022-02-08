@@ -31,7 +31,7 @@ fi
 git config user.name "$1"
 git config user.email "$2"
 
-myProjVersion=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
+myProjVersion=$(./gradlew properties -PmavenUser=$3 -PmavenPassword=$4 -q | grep "version:" | awk '{print $2}' | tr -d '[:space:]')
 echo "Running ${BLUE}$0${NONE} on branch ${BLUE}$branchName${NONE} at version: ${BLUE}$myProjVersion${NONE}"
 
 echo "current dev version: $myProjVersion"
