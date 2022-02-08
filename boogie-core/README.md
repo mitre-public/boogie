@@ -101,12 +101,8 @@ Both are simple decorators for `Procedure` implementing classes which implement 
 introduced in downstream modules but the general programmatic way to use these is something like (taking for example with the 
 HOBTT2 procedure shown below):
 
-<a href="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-core/docs/hobtt2-2.png?token=GHSAT0AAAAAABQRZEVTAJXDTWJWY56O7ZBWYPJWUJQ">
-<img align="float: left;" height="500" src="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-core/docs/hobtt2-2.png?token=GHSAT0AAAAAABQRZEVTAJXDTWJWY56O7ZBWYPJWUJQ"/>
-</a>
-<a href="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-core/docs/hobtt2-1.png?token=GHSAT0AAAAAABQRZEVTFKQQFVWV6QASZAJIYPJWVAA">
-<img align="float: left;" height="500" src="https://raw.githubusercontent.com/mitre-tdp/boogie/main/boogie-core/docs/hobtt2-1.png?token=GHSAT0AAAAAABQRZEVTFKQQFVWV6QASZAJIYPJWVAA"/>
-</a>
+![HOBTT2 procedure](docs/hobtt2-1.png)
+![HOBTT2 procedure](docs/hobtt2-2.png)
 
 ```java
 Procedure hobtt2 = ...;
