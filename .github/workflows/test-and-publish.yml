@@ -6,6 +6,11 @@ jobs:
     container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: mitre-tdp/github-ci-scripts
+          token: '${{ secrets.READ_CI_SCRIPTS }}'
+          path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testUnit.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
         env:
@@ -25,6 +30,11 @@ jobs:
     container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: mitre-tdp/github-ci-scripts
+          token: '${{ secrets.READ_CI_SCRIPTS }}'
+          path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testIntegration.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
         env:
@@ -50,6 +60,11 @@ jobs:
           yum -y install http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm
           yum install git -y
       - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: mitre-tdp/github-ci-scripts
+          token: '${{ secrets.READ_CI_SCRIPTS }}'
+          path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-publish-snapshot.sh "${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}"
   publish-latest-image:
