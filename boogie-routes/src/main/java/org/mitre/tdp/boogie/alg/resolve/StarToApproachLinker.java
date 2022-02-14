@@ -102,7 +102,7 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
       newLegs.addAll(manualTerminatingStarAdjustment(leg, finalStarTransitions, leg.linkWeight() > 1.0E-5));
     }
 
-    return newLegs.isEmpty() ? asList(leg) : newLegs;
+    return newLegs.isEmpty() ? List.of(leg) : newLegs;
   }
 
   /**
@@ -111,7 +111,7 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
    */
   private List<LinkedLegs> fixTerminatingStarWithNonZeroDistanceAdjustment(LinkedLegs leg) {
     List<LinkedLegs> adjustedLegs = new ArrayList<>();
-    BoogieLeg newDFApproachLeg = convertToDF(leg.target());
+    Leg newDFApproachLeg = dfLegOf(leg.target());
 
     Pair<Leg, Leg> starToNewLeg = Pair.of(leg.source(), newDFApproachLeg);
     Pair<Leg, Leg> newLegToApproach = Pair.of(newDFApproachLeg, leg.target());
@@ -130,7 +130,7 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
   private List<LinkedLegs> manualTerminatingStarAdjustment(LinkedLegs leg, List<Transition> finalStarTransitions, boolean distanceBetween) {
     Leg manualTerminatingStarLeg = leg.source();
     Leg initialApproachLeg = leg.target();
-    Leg clonedDFApproachLeg = convertToDF(initialApproachLeg);
+    Leg clonedDFApproachLeg = dfLegOf(initialApproachLeg);
 
     List<Leg> closestPreviousStarLeg = finalStarTransitions.stream()
         .filter(t -> t.legs().contains(manualTerminatingStarLeg))
@@ -153,7 +153,24 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
   /**
    * Converts the path terminator of the inputted leg to DF.
    */
-  private BoogieLeg convertToDF(Leg leg) {
-    return ((BoogieLeg) leg).toBuilder().pathTerminator(PathTerminator.DF).build();
+  private Leg dfLegOf(Leg leg) {
+    return new BoogieLeg.Builder()
+        .associatedFix(leg.associatedFix().orElse(null))
+        .recommendedNavaid(leg.recommendedNavaid().orElse(null))
+        .centerFix(leg.centerFix().orElse(null))
+        .pathTerminator(PathTerminator.DF)
+        .sequenceNumber(leg.sequenceNumber())
+        .outboundMagneticCourse(leg.outboundMagneticCourse().orElse(null))
+        .rho(leg.rho().orElse(null))
+        .rnp(leg.rnp().orElse(null))
+        .routeDistance(leg.routeDistance().orElse(null))
+        .holdTime(leg.holdTime().orElse(null))
+        .verticalAngle(leg.verticalAngle().orElse(null))
+        .speedConstraint(leg.speedConstraint())
+        .altitudeConstraint(leg.altitudeConstraint())
+        .turnDirection(leg.turnDirection().orElse(null))
+        .isFlyOverFix(leg.isFlyOverFix())
+        .isPublishedHoldingFix(leg.isPublishedHoldingFix())
+        .build();
   }
 }
