@@ -1,16 +1,12 @@
 version: '2'
 
-# Convert this sucker to YAML (single-container service) and run oc apply to create services on openshift cluster (CDA-Viewer, CFIT, SUPREMESET)
-# Kubernetes job to do some operation which is move data around yeah
-# PERSISTENT VOLUME CLAIM - KubeJob replaces data in volume claim
 services:
-  boogie-rest:
-    build: .
-    image: boogie/rest:v1
+  boogie:
+    image: boogie-rest:latest
     ports:
-      - "24567:8087"
-    volumes:
-      - ./boogie-arinc/src/test/resources:/boogie/data
-    # This hosts the local cached file of records which are vaguely JFK-related on inside the container
+      - "8080:8080"
     environment:
-      - FILE_LOCATOR_PATH=/boogie/data/kjfk-and-friends.txt
+      - arinc.config.path=/config
+    volumes:
+      - ./boogie-rest/deploy/local:/config
+      - ./boogie-rest/src/test/resources:/data/arinc

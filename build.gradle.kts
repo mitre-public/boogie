@@ -23,12 +23,6 @@ allprojects {
     repositories {
         // only uncomment to test a build that depends on locally installed maven artifacts
         // mavenLocal()
-        maven {
-            name = "clojars"
-            url = uri("https://repo.clojars.org/")
-        }
-        // only uncomment to test a build that depends on locally installed maven artifacts
-        // mavenLocal()
         repo1()
         codev.mavenArtifactory {
             mavenContent {
@@ -43,6 +37,9 @@ allprojects {
 }
 
 release {
+    // allow un-versioned files which may have been copied in for use by CI
+    failOnUnversionedFiles = false
+
     preTagCommitMessage = "[Gradle] Bump to stable version "
     newVersionCommitMessage = "[Gradle] Bump to version "
 

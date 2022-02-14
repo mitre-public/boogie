@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.Pair;
@@ -61,12 +62,12 @@ public final class TerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::runways).orElse(Collections.emptySet());
   }
 
-  public Optional<ArincLocalizerGlideSlope> localizerGlideSlopeAt(String airport, String identifier){
+  public Optional<ArincLocalizerGlideSlope> localizerGlideSlopeAt(String airport, String identifier) {
     return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.localizerGlideSlope(identifier));
   }
 
-  public Collection<ArincLocalizerGlideSlope> localizerGlideSlopesAt(String airport){
-    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyList);
+  public Map<String, ArincLocalizerGlideSlope> localizerGlideSlopesAt(String airport) {
+    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyMap);
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeOf(String airport, String runway) {

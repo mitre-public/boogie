@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,11 +60,11 @@ final class AirportPage {
   }
 
   public Optional<ArincLocalizerGlideSlope> localizerGlideSlope(String identifier) {
-    return localizerGlideSlopes().stream().filter(gs -> identifier.equals(gs.localizerIdentifier())).findFirst();
+    return Optional.ofNullable(localizerGlideSlopes().get(identifier));
   }
 
-  public Collection<ArincLocalizerGlideSlope> localizerGlideSlopes() {
-    return runwayPages.values().stream().flatMap(page -> Stream.of(page.primaryLocalizerGlideSlope(), page.secondaryLocalizerGlideSlope())).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+  public Map<String, ArincLocalizerGlideSlope> localizerGlideSlopes() {
+    return runwayPages.values().stream().flatMap(page -> Stream.of(page.primaryLocalizerGlideSlope(), page.secondaryLocalizerGlideSlope())).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toMap(ArincLocalizerGlideSlope::localizerIdentifier, Function.identity()));
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeForRunway(String runwayId) {
