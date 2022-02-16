@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
@@ -32,6 +34,13 @@ final class LinkingUtils {
   static List<Transition> finalStarTransitions(Procedure procedure) {
     return TransitionSorter.INSTANCE
         .sortStarTransitions(procedure.transitions())
+        .stream().filter(col -> !col.isEmpty())
+        .reduce((l1, l2) -> l2).orElseThrow(IllegalStateException::new);
+  }
+
+  static List<Transition> finalSidTransitions(Procedure procedure) {
+    return TransitionSorter.INSTANCE
+        .sortSidTransitions(procedure.transitions())
         .stream().filter(col -> !col.isEmpty())
         .reduce((l1, l2) -> l2).orElseThrow(IllegalStateException::new);
   }

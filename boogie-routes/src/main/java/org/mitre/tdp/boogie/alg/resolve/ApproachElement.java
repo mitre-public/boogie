@@ -10,6 +10,8 @@ import org.mitre.tdp.boogie.ProcedureType;
 
 public final class ApproachElement extends ProcedureElement {
 
+  private static final SectionGluer sectionGluer = new SectionGluer();
+
   ApproachElement(Procedure procedure) {
     super(procedure);
     checkArgument(ProcedureType.APPROACH.equals(procedure.procedureType()), "Provided procedure must be of type Approach.");
@@ -22,17 +24,33 @@ public final class ApproachElement extends ProcedureElement {
 
   @Override
   public List<LinkedLegs> visit(AirportElement airportElement) {
-    return ClosestPointBetween.INSTANCE.apply(airportElement, this);
+    List<LinkedLegs> initialLinking = ClosestPointBetween.INSTANCE.apply(airportElement, this);
+    return sectionGluer.apply(initialLinking, airportElement);
+  }
+
+
+  @Override
+  public List<LinkedLegs> visit(AirwayElement airwayElement) {
+    List<LinkedLegs> initialLinking = ClosestPointBetween.INSTANCE.apply(airwayElement, this);
+    return sectionGluer.apply(initialLinking, airwayElement);
+  }
+
+  @Override
+  public List<LinkedLegs> visit(FixElement fixElement) {
+    List<LinkedLegs> initialLinking = ClosestPointBetween.INSTANCE.apply(fixElement, this);
+    return sectionGluer.apply(initialLinking, fixElement);
   }
 
   @Override
   public List<LinkedLegs> visit(SidElement sidElement) {
-    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(sidElement, this);
+    List<LinkedLegs> initialLinking = orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(sidElement, this);
+    return sectionGluer.apply(initialLinking, sidElement);
   }
 
   @Override
   public List<LinkedLegs> visit(StarElement starElement) {
-    return StarToApproachLinker.INSTANCE.apply(starElement, this);
+    List<LinkedLegs> initialLinking = StarToApproachLinker.INSTANCE.apply(starElement, this);
+    return sectionGluer.apply(initialLinking, starElement);
   }
 
   @Override

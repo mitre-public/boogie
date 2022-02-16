@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.Airways;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -19,9 +21,7 @@ import static org.mitre.tdp.boogie.MockObjects.transition;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedure;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
-public class TestStarToApproachLinker {
-
-  private static StarToApproachLinker linker = StarToApproachLinker.INSTANCE;
+public class TestApproachElement {
 
   /**
    * Test case to ensure that when an approach element starts with a non fix originating leg, an exception is thrown.
@@ -31,7 +31,7 @@ public class TestStarToApproachLinker {
     StarElement star = fixTerminatingStar(0.5);
     ApproachElement approach = nonFixOriginatingApproach(0.5);
 
-    assertThrows(IllegalArgumentException.class, () -> linker.apply(star, approach));
+    assertThrows(IllegalArgumentException.class, () -> approach.visit(star));
   }
 
   /**
@@ -42,7 +42,7 @@ public class TestStarToApproachLinker {
   void testFixTerminatingStarAndZeroDistanceInBetween() {
     StarElement star = fixTerminatingStar(0.5);
     ApproachElement approach = fixOriginatingApproach(0.5);
-    List<LinkedLegs> starApproachLinkedLegs = linker.apply(star, approach);
+    List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
         () -> assertEquals(1, starApproachLinkedLegs.size()),
@@ -63,7 +63,7 @@ public class TestStarToApproachLinker {
   void testFixTerminatingStarAndNonZeroDistanceInBetween() {
     StarElement star = fixTerminatingStar(0.5);
     ApproachElement approach = fixOriginatingApproach(0.75);
-    List<LinkedLegs> starApproachLinkedLegs = linker.apply(star, approach);
+    List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
         () -> assertEquals(2, starApproachLinkedLegs.size()),
@@ -90,7 +90,7 @@ public class TestStarToApproachLinker {
   void testManualTerminatingStarAndNonZeroDistanceInBetween() {
     StarElement star = manualTerminatingStar(0.5);
     ApproachElement approach = fixOriginatingApproach(0.75);
-    List<LinkedLegs> starApproachLinkedLegs = linker.apply(star, approach);
+    List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
         () -> assertEquals(2, starApproachLinkedLegs.size()),
@@ -117,7 +117,7 @@ public class TestStarToApproachLinker {
   void testManualTerminatingStarAndZeroDistanceInBetween() {
     StarElement star = manualTerminatingStar(0.5);
     ApproachElement approach = fixOriginatingApproach(0.5);
-    List<LinkedLegs> starApproachLinkedLegs = linker.apply(star, approach);
+    List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
         () -> assertEquals(1, starApproachLinkedLegs.size()),
@@ -126,6 +126,125 @@ public class TestStarToApproachLinker {
         () -> assertEquals("first star leg", starApproachLinkedLegs.get(0).source().associatedFix().get().fixIdentifier()),
         () -> assertEquals(PathTerminator.FD, starApproachLinkedLegs.get(0).target().pathTerminator()),
         () -> assertEquals("fix originating approach leg", starApproachLinkedLegs.get(0).target().associatedFix().get().fixIdentifier())
+    );
+  }
+
+  /**
+   * Tests case where distance between a manual terminating leg from a sid (with only one fix) and the fix originating leg of the approach is zero.
+   * The intended adjustment to the LinkedLegs in this instance is to keep the manual terminating leg from the sid because there is no
+   * other fix it can refer to and add a cloned DF of the approach in between the sid and approach legs.
+   * Therefore the linked legs would go from VA(no fix) -> VM(fix1) -> FD(fix1)
+   * To VA(no fix) -> DF(fix1) -> FD(fix1)
+   */
+  @Test
+  void testManualTerminatingSidWithOnlyOneFixAndZeroDistanceInBetween() {
+    SidElement sid = manualTerminatingSidWithOnlyOneFix(0.5);
+    ApproachElement approach = fixOriginatingApproach(0.5);
+    List<LinkedLegs> legs = approach.visit(sid);
+
+    assertAll(
+        () -> assertEquals(1, legs.size()),
+
+        () -> assertEquals(PathTerminator.DF, legs.get(0).source().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(0).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.FD, legs.get(0).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(0).target().associatedFix().get().fixIdentifier())
+    );
+  }
+
+  /**
+   * Tests case where distance between a manual terminating leg from a sid (with only one fix) and the fix originating leg of the approach is non zero.
+   * The intended adjustment to the LinkedLegs in this instance is to keep the manual terminating leg from the sid because there is no
+   * other fix it can refer to and add a cloned DF of the approach in between the sid and approach legs.
+   * Therefore the linked legs would go from VA(no fix) -> VM(fix1) -> FD(fix2)
+   * To VA(no fix) -> VM(fix1) -> DF(fix2) -> FD(fix2)
+   */
+  @Test
+  void testManualTerminatingSidWithOnlyOneFixAndNonZeroDistanceInBetween() {
+    SidElement sid = manualTerminatingSidWithOnlyOneFix(0.5);
+    ApproachElement approach = fixOriginatingApproach(0.75);
+    List<LinkedLegs> legs = approach.visit(sid);
+
+    assertAll(
+        () -> assertEquals(2, legs.size()),
+
+        () -> assertEquals(PathTerminator.VM, legs.get(0).source().pathTerminator()),
+        () -> assertEquals("manual terminating sid leg", legs.get(0).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.DF, legs.get(0).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(0).target().associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals(PathTerminator.DF, legs.get(1).source().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(1).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.FD, legs.get(1).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(1).target().associatedFix().get().fixIdentifier())
+    );
+  }
+
+  /**
+   * Since all fixes are fix terminating legs and in this instance there is zero distance, the appropriate response is to do nothing
+   */
+  @Test
+  void testFixToApproachWithZeroDistance() {
+    FixElement fix = new FixElement(createFix("myFix", 0, 0), " ");
+    ApproachElement approach = fixOriginatingApproach(0);
+    List<LinkedLegs> legs = approach.visit(fix);
+
+    assertAll(
+        () -> assertEquals(1, legs.size()),
+        () -> assertEquals(PathTerminator.DF, legs.get(0).source().pathTerminator()),
+        () -> assertEquals("myFix", legs.get(0).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.FD, legs.get(0).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(0).target().associatedFix().get().fixIdentifier())
+    );
+  }
+
+  /**
+   * Since all fixes are fix terminating legs and in this instance there is non zero distance, so the appropriate response is
+   * make a DF clone the approach leg, and insert in between
+   */
+  @Test
+  void testFixToApproachWithNonZeroDistance() {
+    FixElement fix = new FixElement(createFix("myFix", 0, 0), " ");
+    ApproachElement approach = fixOriginatingApproach(0.5);
+    List<LinkedLegs> legs = approach.visit(fix);
+
+    assertAll(
+        () -> assertEquals(2, legs.size()),
+
+        () -> assertEquals(PathTerminator.DF, legs.get(0).source().pathTerminator()),
+        () -> assertEquals("myFix", legs.get(0).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.DF, legs.get(0).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(0).target().associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals(PathTerminator.DF, legs.get(1).source().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(1).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.FD, legs.get(1).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(1).target().associatedFix().get().fixIdentifier())
+    );
+  }
+
+  /**
+   * Airway to approach test where fix terminating airway leg has non zero distance from approach leg so create DF clone
+   * of first approach leg.
+   */
+  @Test
+  void testAirwayToApproachWithNonZeroDistance() {
+    AirwayElement airway = new AirwayElement(Airways.UM219());
+    ApproachElement approach = fixOriginatingApproach(0.5);
+    List<LinkedLegs> legs = approach.visit(airway);
+
+    assertAll(
+        () -> assertEquals(2, legs.size()),
+
+        () -> assertEquals(PathTerminator.TF, legs.get(0).source().pathTerminator()),
+        () -> assertEquals("MYDIA", legs.get(0).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.DF, legs.get(0).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(0).target().associatedFix().get().fixIdentifier()),
+
+        () -> assertEquals(PathTerminator.DF, legs.get(1).source().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(1).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.FD, legs.get(1).target().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", legs.get(1).target().associatedFix().get().fixIdentifier())
     );
   }
 
@@ -143,6 +262,17 @@ public class TestStarToApproachLinker {
     Transition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
     return new StarElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
+  }
+
+  private SidElement manualTerminatingSidWithOnlyOneFix(double endingLongitude) {
+    Leg l1_1 = new BoogieLeg.Builder()
+        .pathTerminator(PathTerminator.VA)
+        .associatedFix(null)
+        .build();
+    Leg l1_2 = createLeg("manual terminating sid leg", 0.0, endingLongitude, PathTerminator.VM);
+    Transition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
+
+    return new SidElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
   }
 
   private ApproachElement fixOriginatingApproach(double startingLongitude) {
