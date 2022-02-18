@@ -21,6 +21,8 @@ jobs:
           yum -y install http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm
           yum install git -y
       - uses: actions/checkout@v2
+        with:
+          ssh-key: ${{ secrets.BOOGIE_CHECKOUT_SSH_KEY }}
       - uses: actions/checkout@v2
         with:
           repository: mitre-tdp/github-ci-scripts

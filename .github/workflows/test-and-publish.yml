@@ -13,8 +13,6 @@ jobs:
           path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testUnit.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
-        env:
-          FILE_LOCATOR_PATH: "/idont/exist"
       - uses: mikepenz/action-junit-report@v2
         if: always()
         with:
@@ -37,8 +35,6 @@ jobs:
           path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testIntegration.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
-        env:
-          FILE_LOCATOR_PATH: "/idont/exist"
       - uses: mikepenz/action-junit-report@v2
         if: always()
         with:
@@ -56,9 +52,6 @@ jobs:
     container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
     steps:
       # Install git before checkout so that the checkout action can use it to clone the repo and log us in (note centos ships with an older version - so update it)
-      - run: |
-          yum -y install http://opensource.wandisco.com/centos/7/git/x86_64/wandisco-git-release-7-2.noarch.rpm
-          yum install git -y
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
