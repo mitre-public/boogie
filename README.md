@@ -1,16 +1,7 @@
 # Boogie
-[![Build Status](https://pandafood.mitre.org/plugins/servlet/wittified/build-status/TTFS-SHIM)](https://pandafood.mitre.org/browse/TTFS-SHIM)
+![Build Status](https://github.com/mitre-tdp/boogie/actions/workflows/test-and-publish.yml/badge.svg)
 <br>
-[![Latest Release](https://img.shields.io/badge/version-1.0.5-gre.svg)](https://github.com/mitre-tdp/boogie)
-<br>
-[![Quality Gate Status](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=alert_status)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
-<br>
-[![Coverage](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=coverage)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
-[![Lines of Code](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=ncloc)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
-<br>
-[![Reliability Rating](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=reliability_rating)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
-[![Maintainability Rating](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=sqale_rating)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
-[![Security Rating](https://caasd-sonar.mitre.org/sonar/api/project_badges/measure?project=boogie&metric=security_rating)](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
+[![Latest Release](https://img.shields.io/badge/version-2.0.2-gre.svg)](https://github.com/mitre-tdp/boogie)
 <br>
 [![Github](https://img.shields.io/badge/Github-330F63?style=for-the-badge&logo=Github&logoColor=white)](https://github.com/mitre-tdp/boogie)
 [![Github](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://github.com/mitre-tdp/boogie)
