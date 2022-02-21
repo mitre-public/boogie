@@ -23,8 +23,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * <p>
  * Note the {@link EnableScheduling} annotation allows spring to schedule and execute the various {@link DirectoryWatcher}s.
  */
-@EnableScheduling
 @SpringBootApplication
+@EnableScheduling
 public class BoogieApplication {
 
   public static void main(String[] args) {
