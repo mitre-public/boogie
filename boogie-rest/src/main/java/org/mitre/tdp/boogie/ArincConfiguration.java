@@ -4,11 +4,12 @@ import static java.util.Optional.ofNullable;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.fileutil.FileUtils;
-import org.mitre.kraken.tentacular.core.DirectoryWatcher;
 import org.mitre.kraken.tentacular.core.ScanDirectoryForFiles;
+import org.mitre.kraken.tentacular.core.SimpleDirectoryWatcher;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +37,13 @@ class ArincConfiguration {
   }
 
   @Bean
-  public DirectoryWatcher arincWatcher() {
+  public SimpleDirectoryWatcher arincWatcher() {
     Path arincDirectory = Paths.get(environment.getRequiredProperty("arinc.watch.directory"));
 
     FileUtils.makeDirIfMissing(arincDirectory.toFile());
-    return DirectoryWatcher.triggerOnCreate(arincDirectory, boogieCache());
+    BoogieState boogieState = boogieCache();
+
+    return SimpleDirectoryWatcher.forwardOnCreate(arincDirectory, boogieState, Duration.ofDays(1));
   }
 
   @Bean
