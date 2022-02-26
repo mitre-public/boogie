@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -99,19 +98,19 @@ final class BoogieState implements Consumer<Path> {
   }
 
   public Collection<Fix> fixes(String... identifiers) {
-    return Arrays.stream(identifiers).distinct().flatMap(identifier -> assembledFixes.get(identifier).stream()).collect(Collectors.toList());
+    return FormattingArincQuerier.streamUnique(identifiers).flatMap(identifier -> assembledFixes.get(identifier).stream()).collect(Collectors.toList());
   }
 
   public Collection<Airport> airports(String... airports) {
-    return Arrays.stream(airports).distinct().flatMap(airport -> assembledAirports.get(airport).stream()).collect(Collectors.toList());
+    return FormattingArincQuerier.streamUnique(airports).flatMap(airport -> assembledAirports.get(airport).stream()).collect(Collectors.toList());
   }
 
   public Collection<Airway> airways(String... airways) {
-    return Arrays.stream(airways).distinct().flatMap(airway -> assembledAirways.get(airway).stream()).collect(Collectors.toList());
+    return FormattingArincQuerier.streamUnique(airways).flatMap(airway -> assembledAirways.get(airway).stream()).collect(Collectors.toList());
   }
 
   public Collection<Procedure> procedures(String... procedures) {
-    return Arrays.stream(procedures).distinct().flatMap(procedure -> assembledProcedures.get(procedure).stream()).collect(Collectors.toList());
+    return FormattingArincQuerier.streamUnique(procedures).flatMap(procedure -> assembledProcedures.get(procedure).stream()).collect(Collectors.toList());
   }
 
   public RouteExpander routeExpander() {

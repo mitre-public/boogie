@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
@@ -45,28 +46,28 @@ final class FormattingArincQuerier {
   }
 
   public Map<String, ArincAirport> arincAirports(String... airports) {
-    return Arrays.stream(airports).distinct()
+    return streamUnique(airports)
         .map(terminalAreaDatabase::airport)
         .filter(Optional::isPresent).map(Optional::get)
         .collect(toMap(ArincAirport::airportIdentifier, identity()));
   }
 
   public Map<String, Map<String, ArincRunway>> arincRunways(String... airports) {
-    return Arrays.stream(airports).distinct()
+    return streamUnique(airports)
         .map(airport -> terminalAreaDatabase.runwaysAt(airport).stream().collect(toMap(ArincRunway::runwayIdentifier, identity())))
         .filter(map -> !map.isEmpty())
         .collect(toMap(map -> map.values().iterator().next().airportIdentifier(), identity()));
   }
 
   public Map<String, Map<String, ArincLocalizerGlideSlope>> arincLocalizers(String... airports) {
-    return Arrays.stream(airports).distinct()
+    return streamUnique(airports)
         .map(terminalAreaDatabase::localizerGlideSlopesAt)
         .filter(map -> !map.isEmpty())
         .collect(toMap(map -> map.values().iterator().next().airportIdentifier(), identity()));
   }
 
   public Map<String, Map<String, ArincVhfNavaid>> arincVhfNavaids(String... navaids) {
-    return Arrays.stream(navaids).distinct()
+    return streamUnique(navaids)
         .map(identifier -> fixDatabase.vhfNavaids(identifier).stream()
             .collect(toMap(ArincVhfNavaid::vhfIcaoRegion, identity())))
         .filter(map -> !map.isEmpty())
@@ -74,7 +75,7 @@ final class FormattingArincQuerier {
   }
 
   public Map<String, Map<String, ArincNdbNavaid>> arincNdbNavaids(String... navaids) {
-    return Arrays.stream(navaids).distinct()
+    return streamUnique(navaids)
         .map(identifier -> fixDatabase.ndbNavaids(identifier).stream()
             .collect(toMap(ArincNdbNavaid::ndbIcaoRegion, identity())))
         .filter(map -> !map.isEmpty())
@@ -82,7 +83,11 @@ final class FormattingArincQuerier {
   }
 
   public Map<String, Collection<ArincProcedureLeg>> arincProcedureLegs(String airport, String... procedures) {
-    return Arrays.stream(procedures).distinct()
-        .collect(toMap(Function.identity(), procedure -> terminalAreaDatabase.legsForProcedure(airport, procedure)));
+    return streamUnique(procedures)
+        .collect(toMap(Function.identity(), procedure -> terminalAreaDatabase.legsForProcedure(airport.trim().toUpperCase(), procedure)));
+  }
+
+  static Stream<String> streamUnique(String... names) {
+    return Arrays.stream(names).map(String::trim).map(String::toUpperCase).distinct();
   }
 }
