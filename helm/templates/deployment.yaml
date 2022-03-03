@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+spec:
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.imagePullSecrets }}
+      - name: {{ . }}
+      {{- end }}
+      {{- if .Values.serviceAccountName }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      {{- end }}
+      {{- end }}
+      containers:
+        - name: boogie-rest
+          # Use the image built from the release version of the boogie software in the prod deployment
+          image: "repo.codev.mitre.org/idaass-docker/tdp/boogie-rest:{{ .Values.imageVersion }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: arinc.config.path
+              value: /config
+          resources:
+            requests:
+              cpu: {{ .Values.cpu }}
+              memory: {{ .Values.memory }}
+            limits:
+              cpu: {{ .Values.cpuLimit }}
+              memory: {{ .Values.memoryLimit }}
+          volumeMounts:
+            - name: config
+              mountPath: "/config"
+              readOnly: true
+            - name: boogie-db
+              mountPath: /data/arinc
+              readOnly: false
+      # Claim to a volume which we assume will have a loaded cycle of procedure data in it
+      volumes:
+        - name: config
+          configMap:
+            name: boogie-config
+            items:
+              - key: arinc.properties
+                path: arinc.properties
+        - name: boogie-db
+          persistentVolumeClaim:
+            claimName: boogie-db

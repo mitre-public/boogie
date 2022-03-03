@@ -1,0 +1,5 @@
+Finished generating/installing chart for the Boogie REST API. Quick notes:
+1. Set `arinc.filename.pattern=myRegex` in the {{ .Values.arinc.properties }} to down-select the collection of files which will be
+forwarded from the watched directory.
+1. Enable `cache.preScan=true` in the {{ .Values.arinc.properties }} to pre-scan the watch directory for files and forward them to
+the host on start-up.

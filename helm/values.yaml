@@ -1,0 +1,12 @@
+name: boogie-rest
+imageVersion: latest
+imagePullSecrets: [ kubernetes-codev-pull ]
+cpu: 1000m
+memory: 5Gi
+cpuLimit: 2000m
+memoryLimit: 10Gi
+storageClassName: efs-auto-provisioned
+storageResources: 1Gi
+arinc:
+  properties: |
+    arinc.watch.directory=/data/arinc

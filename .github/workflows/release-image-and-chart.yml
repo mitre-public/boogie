@@ -1,0 +1,58 @@
+name: Release Image & Chart
+on: [ workflow_dispatch ]
+jobs:
+  parse-release-version:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      software-version: ${{ steps.parse-release-version.outputs.software-version }}
+      short-commit: ${{ steps.parse-short-commit.outputs.short-commit }}
+      release-version: ${{ steps.parse-release-version.outputs.release-version }}
+      image-version: ${{ steps.chart-image-version.outputs.image-version}}
+    steps:
+      - uses: actions/checkout@v2
+      - id: parse-software-version
+        run: echo ::set-output name=software-version::$(./gradlew properties -PmavenUser=${{ secrets.CODEV_NAME_IDAASS_USERS }} -PmavenPassword=${{ secrets.CODEV_TOKEN_IDAASS_USERS }} --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
+      - id: parse-short-commit
+        run: echo ::set-output name=short-commit::$(git rev-parse --short HEAD)
+      - id: parse-release-version
+        run: echo ::set-output name=release-version::$(echo ${{ steps.parse-software-version.outputs.software-version }} | sed "s/SNAPSHOT/release/g")
+      - id: chart-image-version
+        run: echo ::set-output name=image-version::$(echo "${{ steps.parse-release-version.outputs.release-version }}-${{ steps.parse-short-commit.outputs.short-commit }}")
+  publish-release-image:
+    runs-on: ubuntu-latest
+    needs: parse-release-version
+    if: success() && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo ${{ needs.parse-release-version.outputs.release-version }}
+      - name: Release Image
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: idaass-docker/tdp/boogie-rest
+          username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
+          password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
+          registry: ${{ secrets.CODEV_URL }}
+          tags: "latest,${{ needs.parse-release-version.outputs.image-version }}"
+          buildargs: MAVEN_USER=${{ secrets.CODEV_NAME_IDAASS_USERS }},MAVEN_PASSWORD=${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
+  publish-release-chart:
+    runs-on: ubuntu-latest
+    needs: parse-release-version
+    if: success() && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo ${{ needs.parse-release-version.outputs.image-version }}
+      - name: Release Chart
+        uses: docker://alpine/helm:3.8.0
+        with:
+          args: package --version ${{ needs.parse-release-version.outputs.image-version }} --app-version ${{ needs.parse-release-version.outputs.image-version }} ./helm
+      - run: echo "CHART_PACKAGE=boogie-rest-${{ needs.parse-release-version.outputs.image-version }}.tgz" >> $GITHUB_ENV
+      - run: echo "CHART_MD5_CHECKSUM=$(md5sum ${{ env.CHART_PACKAGE }} | awk '{print $1}')" >> $GITHUB_ENV
+      - run: echo "CHART_SHA1_CHECKSUM=$(sha1sum ${{ env.CHART_PACKAGE }} | awk '{ print $1 }')" >> $GITHUB_ENV
+      - run: echo "CHART_SHA256_CHECKSUM=$(sha256sum ${{ env.CHART_PACKAGE }} | awk '{ print $1 }')" >> $GITHUB_ENV
+      - run: |
+          curl -s -H "Authorization: Bearer ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}" \
+            -H "X-Checksum-MD5:${{ env.CHART_MD5_CHECKSUM }}" \
+            -H "X-Checksum-Sha1:${{ env.CHART_SHA1_CHECKSUM }}" \
+            -H "X-Checksum-Sha256:${{ env.CHART_SHA256_CHECKSUM }}" \
+            -T ./${{ env.CHART_PACKAGE }} "https://repo.codev.mitre.org/artifactory/idaas-helm/"
