@@ -1,7 +1,7 @@
 # Boogie
 ![Build Status](https://github.com/mitre-tdp/boogie/actions/workflows/test-and-publish.yml/badge.svg)
 <br>
-[![Latest Release](https://img.shields.io/badge/version-2.0.2-gre.svg)](https://github.com/mitre-tdp/boogie)
+[![Latest Release](https://img.shields.io/badge/version-2.0.1-gre.svg)](https://github.com/mitre-tdp/boogie)
 <br>
 [![Github](https://img.shields.io/badge/Github-330F63?style=for-the-badge&logo=Github&logoColor=white)](https://github.com/mitre-tdp/boogie)
 [![Github](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://github.com/mitre-tdp/boogie)
@@ -40,10 +40,8 @@ A general outline of what's provided within this repo is here:
 
 Outlined here are the generic set of resources related to the project:
 
-1. [CI plan](https://pandafood.mitre.org/browse/TTFS-SHIM)
-1. [Code coverage and quality](https://caasd-sonar.mitre.org/sonar/dashboard?id=boogie)
-1. [Openshift project information](https://gitlab.mitre.org/tfm-analytics-ec/tfm-analytics-openshift-management)
-1. [Internal REST service deployment](https://boogie-rest.apps.epic-osc.mitre.org/boogie/index.html)
+1. [CI tasks](https://github.com/mitre-tdp/boogie/actions)
+1. [Cloud REST service deployment (CRE)](https://boogie.streaming.cre.gov.aws.mitre.org/swagger-ui/index.html#/)
 1. [Software guidance](https://gitlab.mitre.org/tfm-analytics-ec/project-documentation/-/blob/main/software-guidance-and-best-practices/README.md)
 1. [TDP-infrastructure](https://mustache.mitre.org/projects/TTFS/repos/ttfs/browse/tdp-infrastructure) & [TDP-procedure](https://mustache.mitre.org/projects/TTFS/repos/ttfs/browse/ttfs-procedure)
 1. [AKELA-boogie](https://mustache.mitre.org/projects/AKELA/repos/akela-boogie/browse)
