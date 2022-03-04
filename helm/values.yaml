@@ -8,7 +8,7 @@ memoryLimit: 10Gi
 storageClassName: efs-auto-provisioned
 storageResources: 1Gi
 # Tag with auto-discovery prometheus metrics
-annotations: {prometheus.io/path: /actuator/prometheus, prometheus.io/port: “8080”, prometheus.io/scrape: “true”}
+annotations: {prometheus.io/path: "/actuator/prometheus", prometheus.io/port: "8080", prometheus.io/scrape: "true"}
 arinc:
   properties: |
     arinc.watch.directory=/data/arinc
