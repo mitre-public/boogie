@@ -13,5 +13,6 @@ annotations:
   prometheus.io/scrape: 'true'
 arinc:
   properties: |
-    arinc.watch.directory=/data/arinc
+    arinc.watchDirectory=/data/arinc
+    arinc.filePattern=.*dat
     cache.preScan=true

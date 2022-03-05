@@ -47,9 +47,13 @@ class ArincConfiguration {
   public SimpleDirectoryWatcher arincWatcher() {
     FileUtils.makeDirIfMissing(arincDirectory().toFile());
 
+    Consumer<Path> pathConsumer = environment.getProperty("cleanup.watchDirectory", Boolean.class, false)
+        ? LatestFileOnlyEnforcer.managing(arincDirectory(), boogieCache())
+        : boogieCache();
+
     Consumer<Path> target = InputFilenameFilter.allowMatchingPattern(
-        LatestFileOnlyEnforcer.managing(arincDirectory(), boogieCache()),
-        environment.getProperty("arinc.filename.pattern")
+        pathConsumer,
+        environment.getProperty("arinc.filePattern")
     );
 
     return SimpleDirectoryWatcher.forwardOnCreate(arincDirectory(), target, Duration.ofDays(1));
@@ -69,10 +73,8 @@ class ArincConfiguration {
   @EventListener
   public void onApplicationStart(ApplicationStartedEvent event) {
     boolean preScan = environment.getProperty("cache.preScan", Boolean.class, false);
-    Path arincDirectory = Paths.get(environment.getRequiredProperty("arinc.watch.directory"));
-
     if (preScan) {
-      ScanDirectoryForFiles.andHandoffTo(boogieCache()).accept(arincDirectory);
+      ScanDirectoryForFiles.andHandoffTo(boogieCache()).accept(arincDirectory());
     }
   }
 
@@ -87,6 +89,6 @@ class ArincConfiguration {
   }
 
   private Path arincDirectory() {
-    return Paths.get(environment.getRequiredProperty("arinc.watch.directory"));
+    return Paths.get(environment.getRequiredProperty("arinc.watchDirectory"));
   }
 }
