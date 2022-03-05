@@ -39,6 +39,7 @@ final class InputFilenameFilter implements Consumer<Path> {
   @Override
   public void accept(Path path) {
     if (allowed.test(path)) {
+      LOG.info("Accepting path matching input pattern: {}.", path);
       delegate.accept(path);
     } else {
       LOG.info("Ignoring file which didn't match input pattern: {}.", path);
