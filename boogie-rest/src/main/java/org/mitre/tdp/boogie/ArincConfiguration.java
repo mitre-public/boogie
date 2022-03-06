@@ -10,17 +10,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.mitre.caasd.commons.fileutil.FileUtils;
-import org.mitre.kraken.tentacular.core.ScanDirectoryForFiles;
 import org.mitre.kraken.tentacular.core.SimpleDirectoryWatcher;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -68,14 +65,6 @@ class ArincConfiguration {
 
     LOG.info("Instantiating Boogie record cache with input version {}.", version);
     return BoogieState.forVersion(version);
-  }
-
-  @EventListener
-  public void onApplicationStart(ApplicationStartedEvent event) {
-    boolean preScan = environment.getProperty("cache.preScan", Boolean.class, false);
-    if (preScan) {
-      ScanDirectoryForFiles.andHandoffTo(boogieCache()).accept(arincDirectory());
-    }
   }
 
   Optional<ArincVersion> tryParseVersion(String versionString) {
