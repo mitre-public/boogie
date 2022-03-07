@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.ICAO_AIRPORT;
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.DOMESTIC_AIRWAY;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.LATLON;
+import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.FAA_LATLON;
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.TAILORED;
 import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.WAYPOINT;
 
@@ -58,10 +58,10 @@ class TestSectionHeuristics {
   @Test
   void testLatLonMatching() {
     assertAll(
-        () -> assertTrue(latlons.get(0).matches(LATLON.pattern())),
-        () -> assertTrue(latlons.get(1).matches(LATLON.pattern())),
-        () -> assertTrue(latlons.get(2).matches(LATLON.pattern())),
-        () -> assertFalse(latlons.get(3).matches(LATLON.pattern()))
+        () -> assertTrue(latlons.get(0).matches(FAA_LATLON.pattern())),
+        () -> assertTrue(latlons.get(1).matches(FAA_LATLON.pattern())),
+        () -> assertTrue(latlons.get(2).matches(FAA_LATLON.pattern())),
+        () -> assertFalse(latlons.get(3).matches(FAA_LATLON.pattern()))
     );
   }
 

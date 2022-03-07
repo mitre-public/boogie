@@ -2,19 +2,17 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.alg.resolve.SectionHeuristics.LATLON;
 
 import java.time.Instant;
 import java.util.List;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.util.CoordinateParser;
 import org.mitre.tdp.boogie.util.Declinations;
-
-import com.google.common.base.Preconditions;
 
 public final class LatLonElement implements ResolvedElement {
 
@@ -30,21 +28,13 @@ public final class LatLonElement implements ResolvedElement {
     this.linkedLegs = toLinkedLegsInternal();
   }
 
-  private List<LinkedLegs> toLinkedLegsInternal() {
-    FixTerminationLeg leg = Wildcard.TAILORED.test(wildcards)
-        ? FixTerminationLeg.IF(fix)
-        : FixTerminationLeg.DF(fix);
-
-    return singletonList(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
-  }
-
   /**
    * Generates a new LatLonElement from the given string location.
    */
-  public static LatLonElement from(String location, String wildcards) {
-    Preconditions.checkArgument(location.matches(LATLON.pattern()));
+  public static LatLonElement from(SectionSplit sectionSplit) {
 
-    LatLong latLong = CoordinateParser.parse(location);
+    LatLong latLong = CoordinateParser.parse(CoordinateFormatStandard.makeLat(sectionSplit.value()).orElse(""),
+        CoordinateFormatStandard.makeLon(sectionSplit.value()).orElse(""));
 
     double declinationApprox = Declinations.declination(
         latLong.latitude(),
@@ -54,14 +44,22 @@ public final class LatLonElement implements ResolvedElement {
     );
 
     BoogieFix fix = new BoogieFix.Builder()
-        .fixIdentifier(location)
+        .fixIdentifier(sectionSplit.value())
         .fixRegion("ANONYMOUS")
         .latitude(latLong.latitude())
         .longitude(latLong.longitude())
         .modeledVariation(declinationApprox)
         .build();
 
-    return new LatLonElement(fix, wildcards);
+    return new LatLonElement(fix, sectionSplit.wildcards());
+  }
+
+  private List<LinkedLegs> toLinkedLegsInternal() {
+    FixTerminationLeg leg = Wildcard.TAILORED.test(wildcards)
+        ? FixTerminationLeg.IF(fix)
+        : FixTerminationLeg.DF(fix);
+
+    return singletonList(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
   }
 
   @Override

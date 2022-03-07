@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.alg;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
@@ -16,6 +18,9 @@ import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SidStarResolver;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
+import org.mitre.tdp.boogie.alg.split.InternationalIfrFormatSectionSplitter;
+import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.validate.EnforceSequentiallyOrderedLegs;
 
 public final class RouteExpanderFactory {
@@ -36,8 +41,26 @@ public final class RouteExpanderFactory {
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
       LookupService<Procedure> procedureService) {
+    return newGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixService, airwayService, airportService, procedureService);
+  }
+
+  /**
+   * Functionally identical to the {@link #newGraphicalRouteExpander(LookupService, LookupService, LookupService, LookupService)}
+   * but allowing substitution of one of the custom {@link SectionSplitter} implementations.
+   * <ul>
+   *   <li>{@link IfrFormatSectionSplitter} - for internal NAS-format routes</li>
+   *   <li>{@link InternationalIfrFormatSectionSplitter} - or international-format routes</li>
+   * </ul>
+   */
+  public static RouteExpander newGraphicalRouteExpander(
+      Function<String, List<SectionSplit>> sectionSplitter,
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      LookupService<Procedure> procedureService
+  ) {
     return new RouteExpander(
-        IfrFormatSectionSplitter.INSTANCE,
+        sectionSplitter,
         fixService,
         airwayService,
         airportService,
@@ -60,8 +83,26 @@ public final class RouteExpanderFactory {
       LookupService<Airport> airportService,
       LookupService<Procedure> procedureService,
       LookupService<Procedure> proceduresAtAirport) {
+    return newGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixService, airwayService, airportService, procedureService, proceduresAtAirport);
+  }
+
+  /**
+   * Functionally identical to the {@link #newGraphicalRouteExpander(LookupService, LookupService, LookupService, LookupService, LookupService)}
+   * but allowing substitution of one of the custom {@link SectionSplitter} implementations.
+   * <ul>
+   *   <li>{@link IfrFormatSectionSplitter} - for internal NAS-format routes</li>
+   *   <li>{@link InternationalIfrFormatSectionSplitter} - or international-format routes</li>
+   * </ul>
+   */
+  public static RouteExpander newGraphicalRouteExpander(
+      Function<String, List<SectionSplit>> sectionSplitter,
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      LookupService<Procedure> procedureService,
+      LookupService<Procedure> proceduresAtAirport) {
     return new RouteExpander(
-        IfrFormatSectionSplitter.INSTANCE,
+        sectionSplitter,
         fixService,
         airwayService,
         airportService,
@@ -80,12 +121,30 @@ public final class RouteExpanderFactory {
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,
       Collection<? extends Procedure> procedures) {
+    return newGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixes, airways, airports, procedures);
+  }
+
+  /**
+   * Functionally identical to the {@link #newGraphicalRouteExpander(Collection, Collection, Collection, Collection)} but allowing
+   * substitution of one of the custom {@link SectionSplitter} implementations.
+   * <ul>
+   *   <li>{@link IfrFormatSectionSplitter} - for internal NAS-format routes</li>
+   *   <li>{@link InternationalIfrFormatSectionSplitter} - or international-format routes</li>
+   * </ul>
+   */
+  public static RouteExpander newGraphicalRouteExpander(
+      Function<String, List<SectionSplit>> sectionSplitter,
+      Collection<? extends Fix> fixes,
+      Collection<? extends Airway> airways,
+      Collection<? extends Airport> airports,
+      Collection<? extends Procedure> procedures) {
 
     // check expectations on leg ordering before they're handed off to the RouteExpander
     airways.forEach(airway -> EnforceSequentiallyOrderedLegs.INSTANCE.accept(airway.legs()));
     procedures.forEach(procedure -> procedure.transitions().forEach(transition -> EnforceSequentiallyOrderedLegs.INSTANCE.accept(transition.legs())));
 
     return newGraphicalRouteExpander(
+        sectionSplitter,
         // ugh collection type casting... makes it nicer to use though...
         (LookupService<Fix>) DefaultLookupService.newLookupService(fixes, Fix::fixIdentifier),
         (LookupService<Airway>) DefaultLookupService.newLookupService(airways, Airway::airwayIdentifier),

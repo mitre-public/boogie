@@ -36,6 +36,22 @@ public final class CoordinateParser {
   }
 
   /**
+   * This method parses DDMMSS{N,S} DDDMMSS{E,W}
+   * DD/DDD are degrees
+   * MM are minutes
+   * SS are seconds
+   */
+  public static LatLong parse(String lat, String lon) {
+    Preconditions.checkArgument(lat.length() == 7, "DDMMSS check the lat string length");
+    Preconditions.checkArgument(lat.endsWith("N") || lat.endsWith("S"), "Which hemisphere is that lat again?");
+    Preconditions.checkArgument(lon.length() == 8, "DDDMMSS check the lon string length");
+    Preconditions.checkArgument(lon.endsWith("E") || lon.endsWith("W"), "Well its not east or west, what now?");
+    double latDeg = Double.parseDouble(lat.substring(0, 2)) + (Double.parseDouble(lat.substring(2, 4)) / 60.0) + (Double.parseDouble(lat.substring(4, 6)) / 3600.0);
+    double lonDeg = Double.parseDouble(lon.substring(0, 3)) + (Double.parseDouble(lon.substring(3, 5)) / 60.0) + (Double.parseDouble(lon.substring(5, 7)) / 3600.0);
+    return LatLong.of(sign(lat) * latDeg, sign(lon) * lonDeg);
+  }
+
+  /**
    * Convert coordinates of the form "DD-MM-SS.XXXd" or "SS.XXX" where
    * DD are degrees
    * MM are minutes

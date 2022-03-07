@@ -22,6 +22,14 @@ public final class SectionSplit implements Comparable<SectionSplit> {
    */
   private final String etaEet;
   /**
+   * On international flight plans a section may have a speed/level change.
+   */
+  private final String speedLevel;
+  /**
+   * This field indicates if this point is where flight rules change to this type
+   */
+  private final String flightRules;
+  /**
    * The index of the split in the original route string.
    * <p>
    * Determined by String.split("\\.")
@@ -37,8 +45,14 @@ public final class SectionSplit implements Comparable<SectionSplit> {
   private SectionSplit(Builder bldr) {
     this.value = requireNonNull(bldr.value);
     this.etaEet = bldr.etaEet;
+    this.speedLevel = bldr.speedLevel;
+    this.flightRules = bldr.flightRules;
     this.index = bldr.index;
     this.wildcards = bldr.wildcards;
+  }
+
+  public static SectionSplit.Builder builder() {
+    return new SectionSplit.Builder();
   }
 
   public String value() {
@@ -47,6 +61,14 @@ public final class SectionSplit implements Comparable<SectionSplit> {
 
   public String etaEet() {
     return etaEet;
+  }
+
+  public String speedLevel() {
+    return speedLevel;
+  }
+
+  public String flightRules() {
+    return flightRules;
   }
 
   public double index() {
@@ -66,6 +88,8 @@ public final class SectionSplit implements Comparable<SectionSplit> {
     return new Builder()
         .setValue(value)
         .setEtaEet(etaEet)
+        .setSpeedLevel(speedLevel)
+        .setFlightRules(flightRules)
         .setIndex(index)
         .setWildcards(wildcards);
   }
@@ -76,6 +100,8 @@ public final class SectionSplit implements Comparable<SectionSplit> {
       SectionSplit osplit = (SectionSplit) that;
       return Objects.equals(value, osplit.value)
           && Objects.equals(etaEet, osplit.etaEet)
+          && Objects.equals(speedLevel, osplit.speedLevel)
+          && Objects.equals(flightRules, osplit.flightRules)
           && Objects.equals(index, osplit.index)
           && Objects.equals(wildcards, osplit.wildcards);
     }
@@ -84,7 +110,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(value, etaEet, index, wildcards);
+    return Objects.hash(value, etaEet,speedLevel, flightRules, index, wildcards);
   }
 
   @Override
@@ -97,6 +123,8 @@ public final class SectionSplit implements Comparable<SectionSplit> {
     return "SectionSplit{" +
         "value='" + value + '\'' +
         ", etaEet='" + etaEet + '\'' +
+        ", speedLevel='" + speedLevel + '\'' +
+        ", flightRules='" + flightRules + '\'' +
         ", index=" + index +
         ", wildcards='" + wildcards + '\'' +
         '}';
@@ -105,6 +133,8 @@ public final class SectionSplit implements Comparable<SectionSplit> {
   public static class Builder {
     private String value;
     private String etaEet;
+    private String speedLevel;
+    private String flightRules;
     private double index;
     private String wildcards;
 
@@ -115,6 +145,16 @@ public final class SectionSplit implements Comparable<SectionSplit> {
 
     public Builder setEtaEet(String etaEet) {
       this.etaEet = etaEet;
+      return this;
+    }
+
+    public Builder setSpeedLevel(String speedLevel) {
+      this.speedLevel = speedLevel;
+      return this;
+    }
+
+    public Builder setFlightRules(String flightRules) {
+      this.flightRules = flightRules;
       return this;
     }
 
