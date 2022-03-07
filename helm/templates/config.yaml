@@ -2,19 +2,21 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: boogie-db
+  name: {{ .Values.name }}-db
 spec:
   # We need to be able to update the data stored in this volume periodically from a different
   accessModes:
     - ReadWriteMany
-  storageClassName: {{ .Values.storageClassName }}
+  storageClassName: {{ .Values.resources.storageClassName }}
   resources:
     requests:
-      storage: {{ .Values.storageResources }}
+      storage: {{ .Values.resources.storageResources }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: boogie-config
+  name: {{ .Values.name }}-config
 data:
-  arinc.properties: {{ .Values.arinc.properties | quote }}
+  arinc.properties: |
+    arinc.watchDirectory={{ .Values.arinc.watchDirectory }}
+    arinc.filePattern={{ .Values.arinc.filePattern }}

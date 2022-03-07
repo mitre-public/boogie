@@ -1,18 +1,19 @@
-name: boogie-rest
-imageVersion: latest
+name: boogie
+image: "repo.codev.mitre.org/idaass-docker/tdp/boogie-rest:latest"
 imagePullSecrets: [ kubernetes-codev-pull ]
-cpu: 1000m
-memory: 5Gi
-cpuLimit: 2000m
-memoryLimit: 10Gi
-storageClassName: efs-auto-provisioned
-storageResources: 1Gi
+resources:
+  cpu: 1000m
+  memory: 5Gi
+  cpuLimit: 2000m
+  memoryLimit: 10Gi
+  storageClassName: efs-auto-provisioned
+  storageResources: 1Gi
 annotations:
   prometheus.io/path: '/actuator/prometheus'
   prometheus.io/port: '8080'
   prometheus.io/scrape: 'true'
 arinc:
-  properties: |
-    arinc.watchDirectory=/data/arinc
-    arinc.filePattern=.*dat
-    cache.preScan=true
+  watchDirectory: '/data/arinc'
+  filePattern: '.*dat'
+cleanup:
+  watchDirectory: false
