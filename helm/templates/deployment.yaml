@@ -7,6 +7,9 @@ metadata:
     app: {{ .Values.name }}
 spec:
   revisionHistoryLimit: 0
+  {{- if .Values.resources.replicas }}
+  replicas: {{ .Values.resources.replicas }}
+  {{- end}}
   selector:
     matchLabels:
       app: {{ .Values.name }}
