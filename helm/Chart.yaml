@@ -1,5 +1,5 @@
 apiVersion: v2
-name: boogie-rest
+name: boogie
 description: Helm chart to deploy instances of the Boogie REST API for hosting navigational infrastructure data.
 
 type: application

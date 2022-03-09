@@ -46,7 +46,7 @@ jobs:
         uses: docker://alpine/helm:3.8.0
         with:
           args: package --version ${{ needs.parse-release-version.outputs.image-version }} --app-version ${{ needs.parse-release-version.outputs.image-version }} ./helm
-      - run: echo "CHART_PACKAGE=boogie-rest-${{ needs.parse-release-version.outputs.image-version }}.tgz" >> $GITHUB_ENV
+      - run: echo "CHART_PACKAGE=boogie-${{ needs.parse-release-version.outputs.image-version }}.tgz" >> $GITHUB_ENV
       - run: echo "CHART_MD5_CHECKSUM=$(md5sum ${{ env.CHART_PACKAGE }} | awk '{print $1}')" >> $GITHUB_ENV
       - run: echo "CHART_SHA1_CHECKSUM=$(sha1sum ${{ env.CHART_PACKAGE }} | awk '{ print $1 }')" >> $GITHUB_ENV
       - run: echo "CHART_SHA256_CHECKSUM=$(sha256sum ${{ env.CHART_PACKAGE }} | awk '{ print $1 }')" >> $GITHUB_ENV
