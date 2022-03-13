@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.io.DOTExporter;
+import org.jgrapht.nio.dot.DOTExporter;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 
@@ -25,7 +25,7 @@ final class GraphExporter implements Function<SimpleDirectedWeightedGraph<Leg, D
   @Override
   public String apply(SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph) {
     requireNonNull(graph);
-    DOTExporter<Leg, DefaultWeightedEdge> graphExporter = new DOTExporter<>(this::legSignature, null, e -> Double.toString(graph.getEdgeWeight(e)));
+    DOTExporter<Leg, DefaultWeightedEdge> graphExporter = new DOTExporter<>(this::legSignature);
 
     try (StringWriter writer = new StringWriter()) {
       graphExporter.exportGraph(graph, writer);

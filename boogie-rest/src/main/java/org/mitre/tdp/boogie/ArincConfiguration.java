@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.mitre.caasd.commons.fileutil.FileUtils;
+import org.mitre.kraken.tentacular.core.InputFilenameFilter;
+import org.mitre.kraken.tentacular.core.LatestFileOnlyEnforcer;
 import org.mitre.kraken.tentacular.core.SimpleDirectoryWatcher;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.slf4j.Logger;

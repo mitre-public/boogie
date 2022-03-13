@@ -57,7 +57,6 @@ jacoco {
     toolVersion = "0.8.5"
 }
 
-val mockitoVersion by extra("3.2.4")
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
@@ -67,17 +66,35 @@ subprojects {
         `module-testing-conventions`
     }
 
-    // declare dependencies used in every child module
+    val commonsVersion = "0.0.46"
+    val guavaVersion = "23.0"
     dependencies {
+        api("org.mitre.caasd:commons:$commonsVersion")
+        "implementation"("com.google.guava:guava:$guavaVersion")
+
+        val jgraphtVersion = "1.5.1"
+        api("org.jgrapht:jgrapht-core:$jgraphtVersion")
+        api("org.jgrapht:jgrapht-io:$jgraphtVersion")
+
         val slf4jVersion = "1.7.25" // "implementation"("org.slf4j:slf4j-simple:1.7.7")
         "implementation"("org.slf4j:slf4j-api:$slf4jVersion")
         "implementation"("org.slf4j:slf4j-log4j12:$slf4jVersion")
 
         val junitVersion = "5.5.2"
-        "testImplementation"("org.junit.jupiter:junit-jupiter-api:$junitVersion")
         "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+        "testImplementation"("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+        "testImplementation"("org.junit.jupiter:junit-jupiter-params:$junitVersion")
 
+        val mockitoVersion = "3.2.4"
         "testImplementation"("org.mockito:mockito-core:$mockitoVersion")
+        "testImplementation"("org.mockito:mockito-inline:$mockitoVersion")
+
+        "testImplementation"("nl.jqno.equalsverifier:equalsverifier:3.7")
+
+        configurations.all {
+            exclude("junit", "junit") //because we use only JUnit 5 (jupiter)
+            resolutionStrategy.force("com.google.guava:guava:$guavaVersion")
+        }
     }
 
     tdpCheckstyle {

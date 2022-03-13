@@ -15,7 +15,7 @@ import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
-import org.jgrapht.io.DOTExporter;
+import org.jgrapht.nio.dot.DOTExporter;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
@@ -39,14 +39,13 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
   private final transient Procedure procedure;
 
   private final transient DOTExporter<Leg, DefaultEdge> exporter;
+  private final transient AllDirectedPaths<Leg, DefaultEdge> allDirectedPaths = new AllDirectedPaths<>(this);
 
   ProcedureGraph(Procedure procedure) {
     super(DefaultEdge.class);
     this.procedure = requireNonNull(procedure);
-    this.exporter = new DOTExporter<>(this::legSignature, null, null);
+    this.exporter = new DOTExporter<>(this::legSignature);
   }
-
-  private final transient AllDirectedPaths<Leg, DefaultEdge> allDirectedPaths = new AllDirectedPaths<>(this);
 
   public List<List<Leg>> pathsBetween(Leg start, Leg end) {
     return allDirectedPaths.getAllPaths(start, end, false, 100)
