@@ -42,6 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: echo ${{ needs.parse-release-version.outputs.image-version }}
+      - run: sed -i 's/boogie-rest:latest/boogie-rest:${{ needs.parse-release-version.outputs.image-version }}/' ./helm/values.yaml
       - name: Release Chart
         uses: docker://alpine/helm:3.8.0
         with:
