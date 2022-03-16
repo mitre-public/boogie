@@ -27,13 +27,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/routes")
 @Tag(name = "Route Expansion", description = "API for performing expansion of flight plan route strings into 2D paths.")
-final class RoutesRestController {
+final class RoutesController {
 
   private final Gson gson;
   private final BoogieState boogieState;
 
   @Autowired
-  RoutesRestController(
+  RoutesController(
       Gson gson,
       BoogieState boogieState
   ) {

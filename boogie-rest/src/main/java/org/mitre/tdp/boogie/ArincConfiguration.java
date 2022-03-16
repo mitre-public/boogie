@@ -20,11 +20,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 
+/**
+ * This class allows resolving the required configuration properties from either:
+ * <ul>
+ *   <li>The classpath: at the location <b>arinc.config.properties</b> (set as an ENV variable or system prop), default a top-level <b>arinc.properties</b> file</li>
+ *   <li>The local filesystem: at the location <b>arinc.config.properties</b> (set as an ENV variable or system prop), default <b>/config/arinc.properties</b></li>
+ * </ul>
+ * Note - the classpath specification is mostly to allow for easier testing of the component.
+ */
 @Configuration
-@PropertySource("file:${arinc.config.path}/arinc.properties")
+@PropertySources( {
+    @PropertySource(value = "classpath:${arinc.config.properties:arinc.properties}", ignoreResourceNotFound = true),
+    @PropertySource(value = "file:${arinc.config.properties:/config/arinc.properties}", ignoreResourceNotFound = true)
+})
 class ArincConfiguration {
 
   private static final Logger LOG = LoggerFactory.getLogger(ArincConfiguration.class);
@@ -80,6 +92,7 @@ class ArincConfiguration {
   }
 
   private Path arincDirectory() {
-    return Paths.get(environment.getRequiredProperty("arinc.watchDirectory"));
+    return ofNullable(environment.getProperty("arinc.watchDirectory")).map(Paths::get)
+        .orElseThrow(() -> new IllegalArgumentException("Unable to resolve arinc.watchDirectory in properties. Either (1) it wasn't set there or (2) the properties file wasn't able to be resolved."));
   }
 }

@@ -13,7 +13,6 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.core.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,13 +31,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/arinc")
 @Tag(name = "ARINC", description = "API providing access to underlying parsed ARINC-424 data in a more structured JSON format.")
-final class ArincRestController {
+final class ArincController {
 
   private final Gson gson;
   private final BoogieState boogieState;
 
   @Autowired
-  ArincRestController(
+  ArincController(
       Gson gson,
       BoogieState boogieState
   ) {

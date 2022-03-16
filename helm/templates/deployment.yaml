@@ -39,8 +39,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: arinc.config.path
-              value: /config
+            - name: arinc.config.properties
+              value: /config/arinc.properties
           resources:
             requests:
               cpu: {{ .Values.resources.cpu }}

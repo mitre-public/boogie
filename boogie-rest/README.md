@@ -45,7 +45,7 @@ There are two key classes of configuration options for the endpoint, outlined as
 
 REST endpoint configuration options modify where Boogie looks for data and how it interacts with new data when encountered in those 
 locations. These are all provided in an `arinc.properties` file who's relative location is passed to the container via an environment 
-variable `arinc.config.path`. In helm these are directly overridable in a `values.yml` file as a block.
+variable (or system property) `arinc.config.properties`. In helm these are directly overridable in a `values.yml` file as a block.
 
 [See the defaults](../helm/values.yaml)
 

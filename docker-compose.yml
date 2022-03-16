@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - arinc.config.path=/config
+      - arinc.config.properties=/config/arinc.properties
     volumes:
       - ./boogie-rest/deploy/local:/config
       - ./boogie-rest/src/test/resources:/data/arinc

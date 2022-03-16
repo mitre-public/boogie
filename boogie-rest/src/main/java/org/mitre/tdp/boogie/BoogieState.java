@@ -140,7 +140,7 @@ final class BoogieState implements Consumer<Path> {
         consumer.arincAirports()
     );
 
-    LOG.info("Finished instantiation if FixDatabase.");
+    LOG.info("Finished instantiation of FixDatabase.");
 
     TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         consumer.arincAirports(),

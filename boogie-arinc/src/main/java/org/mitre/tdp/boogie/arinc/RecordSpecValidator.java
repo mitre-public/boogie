@@ -31,7 +31,7 @@ public final class RecordSpecValidator implements Consumer<RecordSpec> {
 
   @Override
   public void accept(RecordSpec recordSpec) {
-    LOG.info("Beginning validation of record spec: {}", recordSpec.getClass().getSimpleName());
+    LOG.debug("Beginning validation of record spec: {}", recordSpec.getClass().getSimpleName());
 
     checkArgument(recordSpec.recordLength() > 0, "Inferred record length based on the field spec is <= 0: ".concat(Integer.toString(recordSpec.recordLength())));
 
@@ -39,10 +39,10 @@ public final class RecordSpecValidator implements Consumer<RecordSpec> {
     checkArgument(recordSpec.recordLength() == fieldSpecSumLengths, "Mismatched specified record length and sum of field lengths: ".concat(Integer.toString(recordSpec.recordLength()).concat(" vs ").concat(Integer.toString(fieldSpecSumLengths))));
 
     Map<String, List<RecordField<?>>> fieldsByName = recordSpec.recordFields().stream().collect(Collectors.groupingBy(RecordField::fieldName));
-    LOG.info("Record spec contained {} uniquely named fields.", fieldsByName.size());
+    LOG.debug("Record spec contained {} uniquely named fields.", fieldsByName.size());
 
     List<List<RecordField<?>>> duplicateFields = fieldsByName.values().stream().filter(list -> list.size() > 1).collect(Collectors.toList());
-    LOG.info("Identified {} total duplicate fields (by name) within the provided record spec.", duplicateFields.size());
+    LOG.debug("Identified {} total duplicate fields (by name) within the provided record spec.", duplicateFields.size());
 
     duplicateFields.forEach(list -> LOG.warn("Duplicate record fields encountered: {}", duplicateFields));
     checkArgument(duplicateFields.isEmpty(), "Duplicate record fields encountered in spec - see log warnings for listing.");
