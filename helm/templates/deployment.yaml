@@ -17,9 +17,9 @@ spec:
     metadata:
       labels:
         app: {{ .Values.name }}
-      {{- if .Values.annotations }}
+      {{- if .Values.deployment.annotations }}
       annotations:
-{{ toYaml .Values.annotations | indent 8 }}
+{{ toYaml .Values.deployment.annotations | indent 8 }}
       {{- end }}
     spec:
       {{- if .Values.imagePullSecrets }}

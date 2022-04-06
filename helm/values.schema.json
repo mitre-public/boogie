@@ -4,7 +4,8 @@
   "required": [
     "name",
     "image",
-    "resources"
+    "resources",
+    "ingress"
   ],
   "properties": {
     "image": {
@@ -63,6 +64,15 @@
         "watchDirectory": {
           "type": "boolean"
         }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "required": [
+        "host"
+      ],
+      "host": {
+        "type": "string"
       }
     }
   }

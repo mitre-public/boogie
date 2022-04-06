@@ -9,10 +9,14 @@ resources:
   storageClassName: efs-auto-provisioned
   storageResources: 1Gi
   replicas: 2
-annotations:
-  prometheus.io/path: '/actuator/prometheus'
-  prometheus.io/port: '8080'
-  prometheus.io/scrape: 'true'
+ingress:
+  enabled: false # disable by default
+  host: 'boogie.streaming.cre.gov.aws.mitre.org'
+deployment:
+  annotations:
+    prometheus.io/path: '/actuator/prometheus'
+    prometheus.io/port: '8080'
+    prometheus.io/scrape: 'true'
 arinc:
   watchDirectory: '/data/arinc'
   filePattern: '.*dat'
