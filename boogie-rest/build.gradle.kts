@@ -2,12 +2,12 @@ plugins {
     application
     // No shadowJar plugins needed - Spring auto-shades the jar as part of the standard jar task - which is a bit weird
     // but lets them hijack it to set up all the things they need for their auto-wiring to work
-    id("org.springframework.boot") version "2.6.3"
+    id("org.springframework.boot") version "2.6.6"
 }
 
 dependencies {
     // instead of using the dependency plugin import the BOM
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.6.3"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.6.6"))
 
     api(project(":boogie-arinc"))
     api(project(":boogie-routes"))
