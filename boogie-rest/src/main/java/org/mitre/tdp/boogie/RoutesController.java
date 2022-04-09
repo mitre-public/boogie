@@ -11,6 +11,7 @@ import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * Rest controller for handling all requests against assembled Boogie classes and interfaces as well as route expansion.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/routes")
 @Tag(name = "Route Expansion", description = "API for performing expansion of flight plan route strings into 2D paths.")

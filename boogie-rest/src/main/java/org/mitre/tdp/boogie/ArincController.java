@@ -15,6 +15,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * Rest controller for handling all requests about/for ARINC-424 records prior to assembly into Boogie interfaces/models.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/arinc")
 @Tag(name = "ARINC", description = "API providing access to underlying parsed ARINC-424 data in a more structured JSON format.")
