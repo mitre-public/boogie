@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.util.Declinations.declination;
 
 import java.util.List;

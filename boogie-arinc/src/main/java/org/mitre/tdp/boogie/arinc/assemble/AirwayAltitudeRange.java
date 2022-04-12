@@ -21,7 +21,9 @@ public final class AirwayAltitudeRange implements TriFunction<Double, Double, Do
     Optional<Double> upperAltitude = Optional.ofNullable(maxAltitude);
 
     if (lowerAltitude.isPresent() && upperAltitude.isPresent()) {
-      return Range.closed(lowerAltitude.get(), upperAltitude.get());
+      double lower = lowerAltitude.get();
+      double upper = upperAltitude.get();
+      return lower <= upper ? Range.closed(lower, upper) : Range.all();
     } else {
       return lowerAltitude.map(Range::atLeast).orElseGet(() -> upperAltitude.map(Range::atMost).orElseGet(Range::all));
     }
