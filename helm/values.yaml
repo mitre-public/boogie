@@ -2,12 +2,12 @@ name: boogie
 image: "repo.codev.mitre.org/idaass-docker/tdp/boogie-rest:latest"
 imagePullSecrets: [ kubernetes-codev-pull ]
 resources:
-  cpu: 1000m
-  memory: 5Gi
+  cpu: 500m
+  memory: 2Gi
   cpuLimit: 2000m
-  memoryLimit: 10Gi
+  memoryLimit: 4Gi
   storageClassName: efs-auto-provisioned
-  storageResources: 1Gi
+  storageResources: 300Mi
   replicas: 2
 ingress:
   enabled: false # disable by default

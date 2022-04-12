@@ -29,7 +29,11 @@ RUN API_VERSION=$(gradle properties -PmavenUser=$MAVEN_USER -PmavenPassword=$MAV
 FROM openjdk:11-jre-slim AS production
 
 WORKDIR /boogie
+
+# override the java opts for JVM on launch if provided this is typically used with
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75"
+
 # this is the port that spring (by default) exposes the REST controller on
 EXPOSE 8080
 COPY --from=build /boogie/boogie.jar .
-CMD ["java", "-jar", "./boogie.jar"]
+CMD java $JAVA_OPTS -jar ./boogie.jar
