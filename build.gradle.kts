@@ -66,11 +66,18 @@ subprojects {
         `module-testing-conventions`
     }
 
-    val commonsVersion = "0.0.46"
     val guavaVersion = "23.0"
     dependencies {
+
+        val commonsVersion = "0.0.49"
         api("org.mitre.caasd:commons:$commonsVersion")
+
+        val gsonVersion = "2.8.7"
         "implementation"("com.google.guava:guava:$guavaVersion")
+        "implementation"("com.google.code.gson:gson:$gsonVersion")
+
+        val math3Version = "3.6.1"
+        "implementation"("org.apache.commons:commons-math3:$math3Version")
 
         val jgraphtVersion = "1.5.1"
         api("org.jgrapht:jgrapht-core:$jgraphtVersion")
