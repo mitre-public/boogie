@@ -17,6 +17,7 @@ import org.mitre.tdp.boogie.alg.resolve.FixResolver;
 import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SidStarResolver;
+import org.mitre.tdp.boogie.alg.resolve.SurlySectionResolver;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.InternationalIfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
@@ -61,11 +62,44 @@ public final class RouteExpanderFactory {
   ) {
     return new RouteExpander(
         sectionSplitter,
-        fixService,
-        airwayService,
-        airportService,
         procedureService,
         LookupService.noop(),
+        SectionResolver.composeAll(
+            new FixResolver(requireNonNull(fixService)),
+            new AirwayResolver(requireNonNull(airwayService)),
+            new AirportResolver(requireNonNull(airportService)),
+            new SidStarResolver(requireNonNull(procedureService)),
+            new LatLonResolver()),
+        new GraphBasedRouteChooser()
+    );
+  }
+
+  /**
+   * Functionally identical to the {@link #newGraphicalRouteExpander(LookupService, LookupService, LookupService, LookupService)}
+   * but allowing substitution of one of the custom {@link SectionSplitter} implementations and will throw errors if the section
+   * resolver fails to find e.g., a waypoint.
+   * <ul>
+   *   <li>{@link IfrFormatSectionSplitter} - for internal NAS-format routes</li>
+   *   <li>{@link InternationalIfrFormatSectionSplitter} - or international-format routes</li>
+   * </ul>
+   */
+  public static RouteExpander newSurlyGraphicalRouteExpander(
+      Function<String, List<SectionSplit>> sectionSplitter,
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      LookupService<Procedure> procedureService
+  ) {
+    return new RouteExpander(
+        sectionSplitter,
+        procedureService,
+        LookupService.noop(),
+        new SurlySectionResolver(SectionResolver.composeAll(
+            new FixResolver(requireNonNull(fixService)),
+            new AirwayResolver(requireNonNull(airwayService)),
+            new AirportResolver(requireNonNull(airportService)),
+            new SidStarResolver(requireNonNull(procedureService)),
+            new LatLonResolver())),
         new GraphBasedRouteChooser()
     );
   }
@@ -103,11 +137,14 @@ public final class RouteExpanderFactory {
       LookupService<Procedure> proceduresAtAirport) {
     return new RouteExpander(
         sectionSplitter,
-        fixService,
-        airwayService,
-        airportService,
         procedureService,
         proceduresAtAirport,
+        SectionResolver.composeAll(
+            new FixResolver(requireNonNull(fixService)),
+            new AirwayResolver(requireNonNull(airwayService)),
+            new AirportResolver(requireNonNull(airportService)),
+            new SidStarResolver(requireNonNull(procedureService)),
+            new LatLonResolver()),
         new GraphBasedRouteChooser()
     );
   }
@@ -122,6 +159,18 @@ public final class RouteExpanderFactory {
       Collection<? extends Airport> airports,
       Collection<? extends Procedure> procedures) {
     return newGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixes, airways, airports, procedures);
+  }
+
+  /**
+   * Same implementation as {@link #newGraphicalRouteExpander(LookupService, LookupService, LookupService, LookupService)} with
+   * modified signature to allow internal instantiation of the {@link LookupService}s, except this has surly section resolvers
+   */
+  public static RouteExpander newSurlyGraphicalRouteExpander(
+      Collection<? extends Fix> fixes,
+      Collection<? extends Airway> airways,
+      Collection<? extends Airport> airports,
+      Collection<? extends Procedure> procedures) {
+    return newSurlyGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixes, airways, airports, procedures);
   }
 
   /**
@@ -151,6 +200,36 @@ public final class RouteExpanderFactory {
         (LookupService<Airport>) DefaultLookupService.newLookupService(airports, Airport::airportIdentifier),
         (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::procedureIdentifier),
         (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::airportIdentifier)
+    );
+  }
+
+  /**
+   * Functionally identical to the {@link #newGraphicalRouteExpander(Collection, Collection, Collection, Collection)} but allowing
+   * substitution of one of the custom {@link SectionSplitter} implementations and uses the surly section resolver which
+   * will throw an error if a section does not resolve.
+   * <ul>
+   *   <li>{@link IfrFormatSectionSplitter} - for internal NAS-format routes</li>
+   *   <li>{@link InternationalIfrFormatSectionSplitter} - or international-format routes</li>
+   * </ul>
+   */
+  public static RouteExpander newSurlyGraphicalRouteExpander(
+      Function<String, List<SectionSplit>> sectionSplitter,
+      Collection<? extends Fix> fixes,
+      Collection<? extends Airway> airways,
+      Collection<? extends Airport> airports,
+      Collection<? extends Procedure> procedures) {
+
+    // check expectations on leg ordering before they're handed off to the RouteExpander
+    airways.forEach(airway -> EnforceSequentiallyOrderedLegs.INSTANCE.accept(airway.legs()));
+    procedures.forEach(procedure -> procedure.transitions().forEach(transition -> EnforceSequentiallyOrderedLegs.INSTANCE.accept(transition.legs())));
+
+    return newSurlyGraphicalRouteExpander(
+        sectionSplitter,
+        // ugh collection type casting... makes it nicer to use though...
+        (LookupService<Fix>) DefaultLookupService.newLookupService(fixes, Fix::fixIdentifier),
+        (LookupService<Airway>) DefaultLookupService.newLookupService(airways, Airway::airwayIdentifier),
+        (LookupService<Airport>) DefaultLookupService.newLookupService(airports, Airport::airportIdentifier),
+        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::procedureIdentifier)
     );
   }
 

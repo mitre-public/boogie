@@ -75,23 +75,15 @@ public final class RouteExpander implements
    */
   public RouteExpander(
       Function<String, List<SectionSplit>> sectionSplitter,
-      LookupService<Fix> fixService,
-      LookupService<Airway> airwayService,
-      LookupService<Airport> airportService,
       LookupService<Procedure> procedureService,
       LookupService<Procedure> proceduresAtAirport,
+      SectionResolver sectionResolver,
       Function<List<ResolvedSection>, ExpandedRoute> routeChooser
   ) {
     this.sectionSplitter = requireNonNull(sectionSplitter);
     this.procedureService = requireNonNull(procedureService);
     this.proceduresAtAirport = requireNonNull(proceduresAtAirport);
-    this.standardSectionResolver = SectionResolver.composeAll(
-        new FixResolver(requireNonNull(fixService)),
-        new AirwayResolver(requireNonNull(airwayService)),
-        new AirportResolver(requireNonNull(airportService)),
-        new SidStarResolver(requireNonNull(procedureService)),
-        new LatLonResolver()
-    );
+    this.standardSectionResolver = requireNonNull(sectionResolver);
     this.routeChooser = requireNonNull(routeChooser);
   }
 

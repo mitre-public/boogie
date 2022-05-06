@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.Airports.KATL;
 import static org.mitre.tdp.boogie.Airports.KDEN;
@@ -63,6 +64,38 @@ class TestRouteExpander {
 
     RouteExpander expander = newExpander(emptyList(), emptyList(), emptyList(), emptyList());
     assertFalse(expander.apply(route).isPresent());
+  }
+
+  @Test
+  void testSurlyResolverThrows() {
+    String route = "KDEN.CONNR5.DBL";
+    RouteExpander expander = newSurlyExpander(emptyList(), emptyList(), emptyList(), emptyList());
+    Throwable error = assertThrows(IllegalStateException.class, () -> expander.apply(route));
+    assertTrue(error.getLocalizedMessage().contains("Section resolver could not find any matching infrastructure for "));
+  }
+
+  @Test
+  void surlyDropTest() {
+    String route = "KDEN.CONNR5.DBL";
+
+    RouteExpander expander = newSurlyExpander(
+        singletonList(fix("DBL", 39.439344444444444, -106.89468055555557)),
+        emptyList(),
+        singletonList(KDEN()),
+        singletonList(CONNR5.INSTANCE));
+
+    ExpandedRoute expandedRoute = expander.apply(route, "RW16R", null).orElseThrow(IllegalStateException::new);
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+    assertAll(
+        "This surly expander had better still work",
+        () -> assertEquals("KDEN", routeSummary.departureAirport()),
+        () -> assertEquals(Optional.of("RW16R"), routeSummary.departureRunway()),
+        () -> assertEquals(Optional.of("CONNR5"), routeSummary.sid()),
+        () -> assertEquals(Optional.of("DBL"), routeSummary.sidExitFix()),
+        () -> assertEquals(Optional.of("CONNR"), routeSummary.departureFix()),
+        () -> assertEquals(Optional.of(RequiredNavigationEquipage.RNAV), routeSummary.requiredSidEquipage())
+    );
   }
 
   @Test
@@ -978,5 +1011,14 @@ class TestRouteExpander {
       Collection<? extends Procedure> procedures
   ) {
     return RouteExpanderFactory.newGraphicalRouteExpander(fixes, airways, airports, procedures);
+  }
+
+  private RouteExpander newSurlyExpander(
+      Collection<? extends Fix> fixes,
+      Collection<? extends Airway> airways,
+      Collection<? extends Airport> airports,
+      Collection<? extends Procedure> procedures
+  ) {
+    return RouteExpanderFactory.newSurlyGraphicalRouteExpander(fixes, airways, airports, procedures);
   }
 }
