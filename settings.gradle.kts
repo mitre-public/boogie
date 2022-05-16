@@ -17,11 +17,11 @@ pluginManagement {
             name = "codev-gradle-artifactory"
             url = uri("https://repo.codev.mitre.org/artifactory/idaass-gradle")
 
-            val mavenUser: String? by settings // NOTE: "by project" won't work here
-            val mavenPassword: String? by settings
+            val codevUser: String? by settings // NOTE: "by project" won't work here
+            val codevPassword: String? by settings
             credentials {
-                username = mavenUser
-                password = mavenPassword
+                username = codevUser
+                password = codevPassword
             }
         }
     }

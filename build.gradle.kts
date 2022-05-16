@@ -16,8 +16,8 @@ tdpConventions {
     `multimodule-javadoc-conventions`
 }
 
-val codevUserKey = "mavenUser"
-val codevPasswordKey = "mavenPassword"
+val codevUserKey = "codevUser"
+val codevPasswordKey = "codevPassword"
 
 allprojects {
     repositories {
