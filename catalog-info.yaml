@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: boogie
+  annotations:
+    github.com/project-slug: mitre-tdp/boogie
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - markdown
+spec:
+  type: techdocs
+  lifecycle: unknown
+  owner: group:streaming
+  
