@@ -40,6 +40,7 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.SUMMA2;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
+import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
@@ -559,6 +560,102 @@ class TestRouteExpander {
     Fix rsw = fix("RSW", 26.529875, -81.77576666666667);
 
     RouteExpander expander = newExpander(
+        singletonList(rsw),
+        emptyList(),
+        singletonList(Airports.KMCO()),
+        asList(COSTR3.INSTANCE, KMCO_I17R.I17R)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();
+
+    RouteSummary routeSummary = expandedRoute.routeSummary().orElseThrow(AssertionError::new);
+    assertAll(
+        "Check expanded STAR/Approach summary statistics.",
+        () -> assertEquals("KMCO", routeSummary.arrivalAirport()),
+        () -> assertEquals(Optional.of("RW17R"), routeSummary.arrivalRunway()),
+
+        // STAR
+        () -> assertEquals(Optional.of("COSTR3"), routeSummary.star()),
+        () -> assertEquals(Optional.of("RSW"), routeSummary.starEntryFix()),
+        () -> assertEquals(Optional.of("COSTR"), routeSummary.arrivalFix()),
+        () -> assertEquals(Optional.of(RequiredNavigationEquipage.RNAV), routeSummary.requiredStarEquipage()),
+
+        // Approach
+        () -> assertEquals(Optional.of("I17R"), routeSummary.approach()),
+        () -> assertEquals(Optional.of("RATOY"), routeSummary.approachEntryFix()),
+        () -> assertEquals(Optional.of(RequiredNavigationEquipage.CONV), routeSummary.requiredApproachEquipage())
+    );
+
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals("COSTR3", legs.get(0).section()),
+        () -> assertEquals("RSW", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(1).section()),
+        () -> assertEquals("DOWNN", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(2).section()),
+        () -> assertEquals("MOANS", legs.get(2).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(3).section()),
+        () -> assertEquals("COSTR", legs.get(3).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(4).section()),
+        () -> assertEquals("BIGGR", legs.get(4).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(5).section()),
+        () -> assertEquals("TINKR", legs.get(5).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(6).section()),
+        () -> assertEquals("KRAKN", legs.get(6).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(7).section()),
+        () -> assertEquals("TWONA", legs.get(7).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("COSTR3", legs.get(8).section()),
+        () -> assertEquals("KNUKL", legs.get(8).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(8).pathTerminator()),
+
+        () -> assertEquals("I17R", legs.get(9).section()),
+        () -> assertEquals("RATOY", legs.get(9).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.DF, legs.get(9).pathTerminator()),
+
+        () -> assertEquals("I17R", legs.get(10).section()),
+        () -> assertEquals("SACRO", legs.get(10).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(11).section()),
+        () -> assertEquals("TACOT", legs.get(11).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(12).section()),
+        () -> assertEquals("DALTY", legs.get(12).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(13).section()),
+        () -> assertEquals("ELLAN", legs.get(13).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(14).section()),
+        () -> assertEquals("GLOSI", legs.get(14).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(15).section()),
+        () -> assertEquals("MINCO", legs.get(15).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("I17R", legs.get(16).section()),
+        () -> assertEquals("RW17R", legs.get(16).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals("KMCO", legs.get(17).section()),
+        () -> assertEquals("KMCO", legs.get(17).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+
+        () -> assertEquals(18, legs.size())
+    );
+  }
+
+  @Test
+  void testFPApchASurly() {
+    String route = "RSW.COSTR3.KMCO";
+
+    Fix rsw = fix("RSW", 26.529875, -81.77576666666667);
+
+    RouteExpander expander = newSurlyExpander(
         singletonList(rsw),
         emptyList(),
         singletonList(Airports.KMCO()),

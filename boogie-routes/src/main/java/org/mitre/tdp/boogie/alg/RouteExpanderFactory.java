@@ -121,6 +121,52 @@ public final class RouteExpanderFactory {
   }
 
   /**
+   * Returns a new instance of a {@link RouteExpander} configured with the:
+   * <br>
+   * 1. {@link IfrFormatSectionSplitter} - which is the common format for domestic FAA flight plans
+   * 2. {@link GraphBasedRouteChooser} - which leverages shortest path algorithms to resolve the flown routes from a collection
+   * of known matching infrastructure elements.
+   */
+  public static RouteExpander newSurlyGraphicalRouteExpander(
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      LookupService<Procedure> procedureService,
+      LookupService<Procedure> proceduresAtAirport) {
+    return newSurlyGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixService, airwayService, airportService, procedureService, proceduresAtAirport);
+  }
+
+  /**
+   * Functionally identical to the {@link #newSurlyGraphicalRouteExpander(LookupService, LookupService, LookupService, LookupService, LookupService)}
+   * but allowing substitution of one of the custom {@link SectionSplitter} implementations.
+   * <ul>
+   *   <li>{@link IfrFormatSectionSplitter} - for internal NAS-format routes</li>
+   *   <li>{@link InternationalIfrFormatSectionSplitter} - or international-format routes</li>
+   * </ul>
+   */
+  public static RouteExpander newSurlyGraphicalRouteExpander(
+      Function<String, List<SectionSplit>> sectionSplitter,
+      LookupService<Fix> fixService,
+      LookupService<Airway> airwayService,
+      LookupService<Airport> airportService,
+      LookupService<Procedure> procedureService,
+      LookupService<Procedure> proceduresAtAirport) {
+    return new RouteExpander(
+        sectionSplitter,
+        procedureService,
+        proceduresAtAirport,
+        new SurlySectionResolver(SectionResolver.composeAll(
+            new FixResolver(requireNonNull(fixService)),
+            new AirwayResolver(requireNonNull(airwayService)),
+            new AirportResolver(requireNonNull(airportService)),
+            new SidStarResolver(requireNonNull(procedureService)),
+            new LatLonResolver())
+        ),
+        new GraphBasedRouteChooser()
+    );
+  }
+
+  /**
    * Functionally identical to the {@link #newGraphicalRouteExpander(LookupService, LookupService, LookupService, LookupService, LookupService)}
    * but allowing substitution of one of the custom {@link SectionSplitter} implementations.
    * <ul>
@@ -229,7 +275,8 @@ public final class RouteExpanderFactory {
         (LookupService<Fix>) DefaultLookupService.newLookupService(fixes, Fix::fixIdentifier),
         (LookupService<Airway>) DefaultLookupService.newLookupService(airways, Airway::airwayIdentifier),
         (LookupService<Airport>) DefaultLookupService.newLookupService(airports, Airport::airportIdentifier),
-        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::procedureIdentifier)
+        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::procedureIdentifier),
+        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::airportIdentifier)
     );
   }
 
