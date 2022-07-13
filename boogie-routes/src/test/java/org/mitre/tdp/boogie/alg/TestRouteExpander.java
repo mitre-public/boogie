@@ -33,6 +33,7 @@ import org.mitre.tdp.boogie.CZM;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.HOBTT2;
 import org.mitre.tdp.boogie.JIIMS3;
+import org.mitre.tdp.boogie.KMCO_I17L;
 import org.mitre.tdp.boogie.KMCO_I17R;
 import org.mitre.tdp.boogie.PLMMR2;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -563,7 +564,7 @@ class TestRouteExpander {
         singletonList(rsw),
         emptyList(),
         singletonList(Airports.KMCO()),
-        asList(COSTR3.INSTANCE, KMCO_I17R.I17R)
+        asList(COSTR3.INSTANCE, KMCO_I17R.I17R, KMCO_I17L.I17L)
     );
 
     ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();

@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.alg.resolve;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.RunwayNumberExtractor;
+import org.mitre.tdp.boogie.alg.RunwayIdExtractor;
 
 /**
  * Configurable runway transition filter for use in down-selecting the set of available runway transitions for the flight to just
@@ -19,9 +19,18 @@ final class RunwayTransitionFilter implements Predicate<Transition> {
 
   @Override
   public boolean test(Transition transition) {
-    return transition.transitionIdentifier().filter(id -> id.contains(runwayId) || runwayId.contains(id)).isPresent()
-        // SID/STAR transitions serving multiple runways off the same end of the airport typically are tagged with RWY01B
-        // as the name for a transition servicing RW01R/L
-        || transition.transitionIdentifier().filter(id -> id.endsWith("B")).flatMap(id -> RunwayNumberExtractor.INSTANCE.runwayNumber(runwayId).filter(id::contains)).isPresent();
+    return transition.transitionIdentifier()
+        .map(this::doesTheTransitionMatch)
+        .orElse(false);
+  }
+
+  private boolean doesTheTransitionMatch(String transitionIdentifier) {
+    return transitionIdentifier.contains(runwayId) || runwayId.contains(transitionIdentifier) || transitionNameWithBMatches(transitionIdentifier);
+  }
+
+  private boolean transitionNameWithBMatches(String transitionIdentifier) {
+    return RunwayIdExtractor.runwayNumber(runwayId)
+        .map(number -> transitionIdentifier.endsWith("B") && transitionIdentifier.contains(number))
+        .orElse(false);
   }
 }
