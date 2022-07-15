@@ -12,4 +12,4 @@ ingress:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws-us-gov:acm:us-gov-west-1:311422395510:certificate/8a0a44f6-44ee-4a93-a87d-36ebbe2ac47f
     alb.ingress.kubernetes.io/ssl-redirect: "443"
 arinc:
-  image: "repo.codev.mitre.org/idaass-docker/tdp/trawler-cifp:0.0.1-3"
+  image: "repo.codev.mitre.org/idaass-docker/tdp/trawler-cifp:0.0.1-4"
