@@ -44,28 +44,6 @@ jobs:
         on_success: *notfiy_success
         on_failure: *notify_failure
 
-  - name: build-cifp-sidecar
-    plan:
-      - get: boogie-sidecar-folder
-        trigger: true
-      - put: cifp-sidecar
-        params: {build: boogie-sidecar-folder/deploy/sidecar}
-
-  - name: update-boogie-sidecars
-    plan:
-      - get: boogie-sidecar-folder
-        trigger: true
-      - put: kubectl-dev
-        params:
-          kubectl: apply -f boogie-sidecar-folder/deploy/sidecar
-        on_success: *notfiy_success
-        on_failure: *notify_failure
-      - put: kubectl-prod
-        params:
-          kubectl: apply -f boogie-sidecar-folder/deploy/sidecar
-        on_success: *notfiy_success
-        on_failure: *notify_failure
-
 resource_types:
 
   - name: local-helm-repo
@@ -114,47 +92,12 @@ resources:
       password: ((concourse-codev-pull.CODEV_TOKEN_IDAASS_USERS))
       sort_by: created
 
-  - name: boogie-sidecar-folder
-    type: git
-    icon: github
-    source:
-      uri: git@github.com:mitre-tdp/boogie.git
-      private_key: ((boogie-deploy-key.ssh-privatekey))
-      branch: main
-      paths: [deploy/sidecar]
-
-  - name: cifp-sidecar
-    type: docker-image
-    source:
-      username: ((concourse-codev-push.CODEV_NAME_IDAASS_DEVELOPERS))
-      password: ((concourse-codev-push.CODEV_TOKEN_IDAASS_DEVELOPERS))
-      repository: repo.codev.mitre.org/idaass-docker/tdp/cifp-sidecar
-      tag: latest
-
   - name: notify
     type: slack-alert
     icon: slack
     source:
       url: https://hooks.slack.com/services/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
       channel: "@acramer"
-
-  - name: kubectl-dev
-    type: k8s-resource
-    icon: kubernetes
-    source:
-      url: ((kubernetes.dev-uri))
-      token: ((kubernetes.dev-token))
-      insecure_skip_tls_verify: true
-      namespace: *deployment_namespace
-
-  - name: kubectl-prod
-    type: k8s-resource
-    icon: kubernetes
-    source:
-      url: ((kubernetes.prod-uri))
-      token: ((kubernetes.prod-token))
-      insecure_skip_tls_verify: true
-      namespace: *deployment_namespace
 
   - name: helm-dev
     type: local-helm-repo

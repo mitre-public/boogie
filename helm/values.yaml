@@ -10,7 +10,7 @@ resources:
   storageResources: 300Mi
   replicas: 2
 ingress:
-  enabled: false # disable by default
+  enabled: false
   host: 'boogie.streaming.cre.gov.aws.mitre.org'
 deployment:
   annotations:

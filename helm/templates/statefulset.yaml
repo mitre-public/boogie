@@ -1,6 +1,6 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ .Values.name }}
   labels:
@@ -13,6 +13,7 @@ spec:
   selector:
     matchLabels:
       app: {{ .Values.name }}
+  serviceName: {{ .Values.name }}
   template:
     metadata:
       labels:
@@ -25,7 +26,7 @@ spec:
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
       {{- range .Values.imagePullSecrets }}
-      - name: {{ . }}
+        - name: {{ . }}
       {{- end }}
       {{- if .Values.serviceAccountName }}
       serviceAccountName: {{ .Values.serviceAccountName }}
@@ -33,7 +34,6 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Values.name }}
-          # Use the image built from the release version of the boogie software in the prod deployment
           image: {{ .Values.image }}
           imagePullPolicy: Always
           ports:
@@ -55,7 +55,18 @@ spec:
             - name: {{ .Values.name }}-db
               mountPath: {{ .Values.arinc.watchDirectory }}
               readOnly: false
-      # Claim to a volume which we assume will have a loaded cycle of procedure data in it
+        {{- if .Values.arinc.image }}
+        - name: {{ .Values.name }}-arinc
+          image: {{ .Values.arinc.image }}
+          imagePullPolicy: Always
+          env:
+            - name: ARINC_PATH
+              value: {{ .Values.arinc.watchDirectory }}
+          volumeMounts:
+            - name: {{.Values.name}}-db
+              mountPath: {{.Values.arinc.watchDirectory }}
+              readOnly: false
+        {{- end }}
       volumes:
         - name: config
           configMap:
@@ -63,6 +74,12 @@ spec:
             items:
               - key: arinc.properties
                 path: arinc.properties
-        - name: {{ .Values.name }}-db
-          persistentVolumeClaim:
-            claimName: {{ .Values.name }}-db
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ .Values.name }}-db
+      spec:
+        accessModes: [ "ReadWriteMany" ]
+        storageClassName: {{ .Values.resources.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.resources.storageResources }}
