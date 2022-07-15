@@ -118,10 +118,10 @@ resources:
     type: git
     icon: github
     source:
-      uri: git@github.com:mitre-tdp/auspicious-abyss.git
-      private_key: ((auspicious-abyss-deploy-key.ssh-privatekey))
+      uri: git@github.com:mitre-tdp/boogie.git
+      private_key: ((boogie-deploy-key.ssh-privatekey))
       branch: main
-      paths: [deploy/boogie/sidecar]
+      paths: [deploy/sidecar]
 
   - name: cifp-sidecar
     type: docker-image
@@ -137,6 +137,24 @@ resources:
     source:
       url: https://hooks.slack.com/services/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
       channel: "@acramer"
+
+  - name: kubectl-dev
+    type: k8s-resource
+    icon: kubernetes
+    source:
+      url: ((kubernetes.dev-uri))
+      token: ((kubernetes.dev-token))
+      insecure_skip_tls_verify: true
+      namespace: *deployment_namespace
+
+  - name: kubectl-prod
+    type: k8s-resource
+    icon: kubernetes
+    source:
+      url: ((kubernetes.prod-uri))
+      token: ((kubernetes.prod-token))
+      insecure_skip_tls_verify: true
+      namespace: *deployment_namespace
 
   - name: helm-dev
     type: local-helm-repo
