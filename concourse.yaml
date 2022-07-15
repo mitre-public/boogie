@@ -44,6 +44,28 @@ jobs:
         on_success: *notfiy_success
         on_failure: *notify_failure
 
+  - name: build-cifp-sidecar
+    plan:
+      - get: boogie-sidecar-folder
+        trigger: true
+      - put: cifp-sidecar
+        params: {build: boogie-sidecar-folder/deploy/sidecar}
+
+  - name: update-boogie-sidecars
+    plan:
+      - get: boogie-sidecar-folder
+        trigger: true
+      - put: kubectl-dev
+        params:
+          kubectl: apply -f boogie-sidecar-folder/deploy/sidecar
+        on_success: *notfiy_success
+        on_failure: *notify_failure
+      - put: kubectl-prod
+        params:
+          kubectl: apply -f boogie-sidecar-folder/deploy/sidecar
+        on_success: *notfiy_success
+        on_failure: *notify_failure
+
 resource_types:
 
   - name: local-helm-repo
@@ -91,6 +113,23 @@ resources:
       username: ((concourse-codev-pull.CODEV_NAME_IDAASS_USERS))
       password: ((concourse-codev-pull.CODEV_TOKEN_IDAASS_USERS))
       sort_by: created
+
+  - name: boogie-sidecar-folder
+    type: git
+    icon: github
+    source:
+      uri: git@github.com:mitre-tdp/auspicious-abyss.git
+      private_key: ((auspicious-abyss-deploy-key.ssh-privatekey))
+      branch: main
+      paths: [deploy/boogie/sidecar]
+
+  - name: cifp-sidecar
+    type: docker-image
+    source:
+      username: ((concourse-codev-push.CODEV_NAME_IDAASS_DEVELOPERS))
+      password: ((concourse-codev-push.CODEV_TOKEN_IDAASS_DEVELOPERS))
+      repository: repo.codev.mitre.org/idaass-docker/tdp/cifp-sidecar
+      tag: latest
 
   - name: notify
     type: slack-alert
