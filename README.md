@@ -2,9 +2,7 @@
 ![Build Status](https://github.com/mitre-tdp/boogie/actions/workflows/test-and-publish.yml/badge.svg)
 <br>
 [![Latest Release](https://img.shields.io/badge/version-2.0.1-gre.svg)](https://github.com/mitre-tdp/boogie)
-<br>
-[![Github](https://img.shields.io/badge/Github-330F63?style=for-the-badge&logo=Github&logoColor=white)](https://github.com/mitre-tdp/boogie)
-[![Github](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://github.com/mitre-tdp/boogie)
+[![Concourse Pipeline](https://img.shields.io/badge/Concourse-Pipeline-blue)](https://concourse-cre-ops.cre.gov.aws.mitre.org/teams/cre-streaming/pipelines/boogie)
 
 **NOTE**: If you're coming here from a local installation of Boogie (the one on MITRE bitbucket), please ensure you:
 ```bash
