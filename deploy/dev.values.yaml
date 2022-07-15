@@ -1,0 +1,12 @@
+ingress:
+  enabled: true
+  host: 'boogie.streaming.narwhal.gov.aws.mitre.org'
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: streaming
+    # needs to match on all ingresses in group, or only be present on 1
+    alb.ingress.kubernetes.io/security-groups: Generic MITRE All SG,Generic Default (Local VPC Traffic) SG
+    # if clusterIP instead of nodeport
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws-us-gov:acm:us-gov-west-1:776365636493:certificate/fa460dca-2d5c-4a2c-83fa-27fbdf2bdb4c
+    alb.ingress.kubernetes.io/ssl-redirect: "443"

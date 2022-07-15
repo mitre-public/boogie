@@ -1,0 +1,13 @@
+ingress:
+  enabled: true
+  host: 'boogie.streaming.cre.gov.aws.mitre.org'
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: streaming
+    # needs to match on all ingresses in group, or only be present on 1
+    alb.ingress.kubernetes.io/security-groups: Generic MITRE All SG,Generic Default (Local VPC Traffic) SG
+    # if clusterIP instead of nodeport
+    alb.ingress.kubernetes.io/target-type: ip
+    # if you want https via route53 (using mitre cert for our route53 name)
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws-us-gov:acm:us-gov-west-1:311422395510:certificate/8a0a44f6-44ee-4a93-a87d-36ebbe2ac47f
+    alb.ingress.kubernetes.io/ssl-redirect: "443"

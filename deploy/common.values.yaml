@@ -1,0 +1,9 @@
+namespace: auspicious-abyss
+resources:
+  storageResources: 1Gi
+arinc:
+  properties: |
+    arinc.watchDirectory=/data/arinc
+    cleanup.watchDirectory=true
+    arinc.filePattern=.*dat
+    cache.preScan=false

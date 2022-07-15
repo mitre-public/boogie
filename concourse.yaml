@@ -1,0 +1,130 @@
+deployment_namespace: &deployment_namespace auspicious-abyss
+
+jobs:
+
+  - name: reconfigure-self
+    plan:
+      - get: pipeline-file
+        trigger: true
+      - set_pipeline: boogie
+        file: pipeline-file/concourse.yaml
+
+  - name: update-boogie
+    plan:
+      - get: boogie-deploy-folder
+        trigger: true
+      - get: boogie-chart-watcher
+        trigger: true
+      - put: helm-dev
+        params:
+          chart: tdp-apps/boogie
+          release: boogie
+          values: [
+              boogie-deploy-folder/deploy/common.values.yaml,
+              boogie-deploy-folder/deploy/dev.values.yaml
+          ]
+          version: boogie-chart-watcher/version
+          show_diff: true
+        on_success: &notfiy_success
+          put: notify
+          params: {alert_type: success}
+        on_failure: &notify_failure
+          put: notify
+          params: {alert_type: failed}
+      - put: helm-prod
+        params:
+          chart: tdp-apps/boogie
+          release: boogie
+          values: [
+              boogie-deploy-folder/deploy/common.values.yaml,
+              boogie-deploy-folder/deploy/prod.values.yaml
+          ]
+          version: boogie-chart-watcher/version
+          show_diff: true
+        on_success: *notfiy_success
+        on_failure: *notify_failure
+
+resource_types:
+
+  - name: local-helm-repo
+    type: docker-image
+    source: {repository: typositoire/concourse-helm3-resource, tag: v1.21.0}
+
+  - name: artifactory
+    type: registry-image
+    source: {repository: troykinsella/concourse-artifactory-resource, tag: 2.1.0}
+
+  - name: chart-watcher
+    type: docker-image
+    source: {repository: jghiloni/helm-chart-resource, tag: v0.1.1}
+
+  - name: slack-alert
+    type: docker-image
+    source: {repository: arbourd/concourse-slack-alert-resource, tag: v0.15.0}
+
+resources:
+
+  - name: pipeline-file
+    type: git
+    icon: github
+    source:
+      uri: git@github.com:mitre-tdp/boogie.git
+      private_key: ((boogie-deploy-key.ssh-privatekey))
+      branch: main
+      paths: [concourse.yaml]
+
+  - name: boogie-deploy-folder
+    type: git
+    icon: github
+    source:
+      uri: git@github.com:mitre-tdp/boogie.git
+      private_key: ((boogie-deploy-key.ssh-privatekey))
+      branch: main
+      paths: [deploy/common.values.yaml, deploy/dev.values.yaml, deploy/prod.values.yaml]
+
+  - name: boogie-chart-watcher
+    type: chart-watcher
+    icon: archive
+    source:
+      repository_url: https://repo.codev.mitre.org/artifactory/idaas-helm
+      chart: boogie
+      username: ((concourse-codev-pull.CODEV_NAME_IDAASS_USERS))
+      password: ((concourse-codev-pull.CODEV_TOKEN_IDAASS_USERS))
+      sort_by: created
+
+  - name: notify
+    type: slack-alert
+    icon: slack
+    source:
+      url: https://hooks.slack.com/services/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
+      channel: "@acramer"
+
+  - name: helm-dev
+    type: local-helm-repo
+    icon: kubernetes
+    source:
+      cluster_url: ((kubernetes.dev-uri))
+      token: ((kubernetes.dev-token))
+      cluster_ca: ((kubernetes.dev-ca))
+      namespace: *deployment_namespace
+      helm_history_max: 2
+      repos:
+        - name: tdp-apps
+          url: https://repo.codev.mitre.org/artifactory/idaas-helm
+          username: ((concourse-codev-pull.CODEV_NAME_IDAASS_USERS))
+          password: ((concourse-codev-pull.CODEV_TOKEN_IDAASS_USERS))
+
+  - name: helm-prod
+    type: local-helm-repo
+    icon: kubernetes
+    source:
+      cluster_url: ((kubernetes.prod-uri))
+      token: ((kubernetes.prod-token))
+      cluster_ca: ((kubernetes.prod-ca))
+      namespace: *deployment_namespace
+      helm_history_max: 2
+      repos:
+        - name: tdp-apps
+          url: https://repo.codev.mitre.org/artifactory/idaas-helm
+          username: ((concourse-codev-pull.CODEV_NAME_IDAASS_USERS))
+          password: ((concourse-codev-pull.CODEV_TOKEN_IDAASS_USERS))

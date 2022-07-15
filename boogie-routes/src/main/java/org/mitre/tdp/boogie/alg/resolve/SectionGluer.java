@@ -21,7 +21,7 @@ import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.distanceBetween;
 import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.finalSidTransitions;
 import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.finalStarTransitions;
 
-public class SectionGluer implements BiFunction<List<LinkedLegs>, ResolvedElement, List<LinkedLegs>> {
+final class SectionGluer implements BiFunction<List<LinkedLegs>, ResolvedElement, List<LinkedLegs>> {
 
   private static final Predicate<String> fixTerminatingLegs = Pattern.compile("AF|CF|DF|RF|TF|IF|HF").asPredicate();
 
