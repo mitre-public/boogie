@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import org.mitre.caasd.commons.Pair;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
@@ -47,7 +48,7 @@ final class SectionGluer implements BiFunction<List<LinkedLegs>, ResolvedElement
    * needs to be dropped because it is overlapping with the fic originating leg and the closest leg in the procedure is used in the linking.
    */
   private List<LinkedLegs> glueLegBetweenStarAndApproach(LinkedLegs leg, ResolvedElement resolvedElement) {
-    Preconditions.checkArgument(fixOriginatingLegs.test(leg.target().pathTerminator().toString()), "Approaches can't start with non-fix-originating legs");
+    Preconditions.checkArgument(fixOriginatingLegs.test(leg.target().pathTerminator().toString()), "Approaches can't start with non-fix-originating legs:" + leg.target().pathTerminator() + "/" + leg.target().associatedFix().map(Fix::fixIdentifier));
 
     List<LinkedLegs> newLegs = new ArrayList<>();
     if (fixTerminatingLegs.test(leg.source().pathTerminator().toString()) && leg.linkWeight() > 1.0E-5) {

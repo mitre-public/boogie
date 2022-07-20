@@ -43,16 +43,39 @@ public final class MockObjects {
     return leg;
   }
 
+  public static Leg leg(String name, double lat, double lon, PathTerminator type, int sequence) {
+    Fix term = fix(name, lat, lon);
+    BoogieLeg leg = mock(BoogieLeg.class);
+    when(leg.sequenceNumber()).thenReturn(sequence);
+    when(leg.pathTerminator()).thenReturn(type);
+    when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
+    when(leg.toString()).thenReturn("Associated Fix: " + name + " - " + type.name());
+    when(leg.toBuilder()).thenReturn(new BoogieLeg.Builder().associatedFix(term));
+    return leg;
+  }
+
   public static Leg TF(String name, double lat, double lon) {
     return leg(name, lat, lon, PathTerminator.TF);
+  }
+
+  public static Leg TF(String name, double lat, double lon, int sequence) {
+    return leg(name, lat, lon, PathTerminator.TF, sequence);
   }
 
   public static Leg IF(String name, double lat, double lon) {
     return leg(name, lat, lon, PathTerminator.IF);
   }
 
+  public static Leg IF(String name, double lat, double lon, int sequence) {
+    return leg(name, lat, lon, PathTerminator.IF, sequence);
+  }
+
   public static Leg DF(String name, double lat, double lon) {
     return leg(name, lat, lon, PathTerminator.DF);
+  }
+
+  public static Leg DF(String name, double lat, double lon, int sequence) {
+    return leg(name, lat, lon, PathTerminator.DF, sequence);
   }
 
   public static Leg CF(String name, double lat, double lon) {
@@ -65,6 +88,10 @@ public final class MockObjects {
 
   public static Leg HM(String name, double lat, double lon) {
     return leg(name, lat, lon, PathTerminator.HM);
+  }
+
+  public static Leg HM(String name, double lat, double lon, int sequence) {
+    return leg(name, lat, lon, PathTerminator.HM, sequence);
   }
 
   public static Leg CA() {

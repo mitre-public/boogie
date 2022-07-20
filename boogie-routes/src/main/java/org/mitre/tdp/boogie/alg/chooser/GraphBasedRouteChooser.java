@@ -225,7 +225,7 @@ public final class GraphBasedRouteChooser implements Function<List<ResolvedSecti
       String resolvedElementTypes = elements.stream().map(resolvedElement -> resolvedElement.getClass().getTypeName()).collect(Collectors.joining(","));
       logIf(elements.size() > 1, LOG::debug, "Returned multiple source elements for leg: {}. ResolvedElement types were: {}.", leg, resolvedElementTypes);
 
-      if(elements.isEmpty()) {
+      if (elements.isEmpty()) {
         return checkForManuallyAddedLeg(leg);
       }
 

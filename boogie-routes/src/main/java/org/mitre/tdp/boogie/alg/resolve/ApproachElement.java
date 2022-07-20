@@ -24,26 +24,25 @@ public final class ApproachElement extends ProcedureElement {
 
   @Override
   public List<LinkedLegs> visit(AirportElement airportElement) {
-    List<LinkedLegs> initialLinking = ClosestPointBetween.INSTANCE.apply(airportElement, this);
+    List<LinkedLegs> initialLinking = SectionToApproachLinker.INSTANCE.apply(airportElement, this);
     return sectionGluer.apply(initialLinking, airportElement);
   }
 
-
   @Override
   public List<LinkedLegs> visit(AirwayElement airwayElement) {
-    List<LinkedLegs> initialLinking = ClosestPointBetween.INSTANCE.apply(airwayElement, this);
+    List<LinkedLegs> initialLinking = SectionToApproachLinker.INSTANCE.apply(airwayElement, this);
     return sectionGluer.apply(initialLinking, airwayElement);
   }
 
   @Override
   public List<LinkedLegs> visit(FixElement fixElement) {
-    List<LinkedLegs> initialLinking = ClosestPointBetween.INSTANCE.apply(fixElement, this);
+    List<LinkedLegs> initialLinking = SectionToApproachLinker.INSTANCE.apply(fixElement, this);
     return sectionGluer.apply(initialLinking, fixElement);
   }
 
   @Override
   public List<LinkedLegs> visit(SidElement sidElement) {
-    List<LinkedLegs> initialLinking = orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(sidElement, this);
+    List<LinkedLegs> initialLinking = SidToApproachLinker.INSTANCE.apply(sidElement, this);
     return sectionGluer.apply(initialLinking, sidElement);
   }
 

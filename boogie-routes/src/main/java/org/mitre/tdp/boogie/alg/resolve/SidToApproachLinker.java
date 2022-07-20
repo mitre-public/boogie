@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.distanceBetween;
-import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.finalStarTransitions;
 import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.orElse;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
@@ -16,25 +15,25 @@ import org.mitre.tdp.boogie.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class StarToApproachLinker implements BiFunction<StarElement, ApproachElement, List<LinkedLegs>> {
+public class SidToApproachLinker implements BiFunction<SidElement, ApproachElement, List<LinkedLegs>> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(StarToApproachLinker.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SidToApproachLinker.class);
 
-  static final StarToApproachLinker INSTANCE = new StarToApproachLinker();
+  public static final SidToApproachLinker INSTANCE = new SidToApproachLinker();
 
-  private StarToApproachLinker() {
+  private SidToApproachLinker() {
+
   }
 
   @Override
-  public List<LinkedLegs> apply(StarElement starElement, ApproachElement approachElement) {
-
-    if (starElement.toLinkedLegs().isEmpty() || approachElement.toLinkedLegs().isEmpty()) {
+  public List<LinkedLegs> apply(SidElement sidElement, ApproachElement approachElement) {
+    if (sidElement.toLinkedLegs().isEmpty() || approachElement.toLinkedLegs().isEmpty()) {
       return Collections.emptyList();
     }
 
-    List<Transition> finalStarTransitions = finalStarTransitions(starElement.procedure());
+    List<Transition> finalSidTransitions = LinkingUtils.finalSidTransitions(sidElement.procedure());
 
-    List<Leg> terminalStarLegs = finalStarTransitions.stream()
+    List<Leg> sidLegs = finalSidTransitions.stream()
         .filter(transition -> !transition.legs().isEmpty())
         .map(LinkingUtils::lastLegWithLocation)
         .flatMap(Optional::stream)
@@ -42,9 +41,12 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
 
     List<Leg> initialApproachLegs = orElse(LinkingUtils.approachTransitions, LinkingUtils.finalApproach).apply(approachElement);
 
-    LOG.debug("Connecting {} terminal STAR legs to {} initial approach legs.", terminalStarLegs.size(), initialApproachLegs.size());
-    return cartesianProduct(terminalStarLegs, initialApproachLegs).stream()
+    LOG.debug("Connecting {} final SID legs to {} initial approach legs.", sidLegs.size(), initialApproachLegs.size());
+    List<LinkedLegs> linkedLegs = cartesianProduct(sidLegs, initialApproachLegs).stream()
         .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
         .collect(toList());
+
+    return linkedLegs;
   }
+
 }

@@ -5,6 +5,8 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
@@ -12,6 +14,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.util.TransitionSorter;
 
 /**
@@ -45,6 +48,13 @@ final class LinkingUtils {
         .reduce((l1, l2) -> l2).orElseThrow(IllegalStateException::new);
   }
 
+  static List<Transition> initialApproachTransitions(ApproachElement approachElement) {
+    return TransitionSorter.INSTANCE
+        .sortApproachTransitions(approachElement.procedure().transitions())
+        .stream().filter(col -> !col.isEmpty())
+        .findFirst().orElseThrow(IllegalStateException::new);
+  }
+
   /**
    * Returns the composition of the two linkers between {@link ResolvedElement}s - if the first returns no links then the second
    * will be called and its set of links returned.
@@ -61,6 +71,30 @@ final class LinkingUtils {
       return firstLinked.isEmpty()
           ? linker2.apply(resolvedElement1, resolvedElement2)
           : firstLinked;
+    };
+  }
+
+  public static final Function<ApproachElement, List<Leg>> approachTransitions = approachElement -> approachElement.procedure().transitions().stream()
+      .filter(t -> t.transitionType().equals(TransitionType.APPROACH))
+      .map(LinkingUtils::firstLegWithLocation)
+      .flatMap(Optional::stream)
+      .collect(Collectors.toList());
+
+  public static final Function<ApproachElement, List<Leg>> finalApproach = approachElement -> approachElement.procedure().transitions().stream()
+      .filter(t -> t.transitionType().equals(TransitionType.COMMON))
+      .map(LinkingUtils::firstLegWithLocation)
+      .flatMap(Optional::stream)
+      .collect(Collectors.toList());
+
+  static Function<ApproachElement, List<Leg>> orElse(Function<ApproachElement, List<Leg>> one, Function<ApproachElement, List<Leg>> two) {
+    requireNonNull(one);
+    requireNonNull(two);
+
+    return (resolvedOne) -> {
+      List<Leg> oneList = one.apply(resolvedOne);
+      return oneList.isEmpty()
+          ? two.apply(resolvedOne)
+          : oneList;
     };
   }
 

@@ -33,6 +33,7 @@ import org.mitre.tdp.boogie.CZM;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.HOBTT2;
 import org.mitre.tdp.boogie.JIIMS3;
+import org.mitre.tdp.boogie.KATL_R27R;
 import org.mitre.tdp.boogie.KMCO_I17L;
 import org.mitre.tdp.boogie.KMCO_I17R;
 import org.mitre.tdp.boogie.PLMMR2;
@@ -551,6 +552,66 @@ class TestRouteExpander {
         () -> assertEquals("KMCO", legs.get(10).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(11, legs.size())
+    );
+  }
+
+  @Test
+  void testLeavingEarly() {
+    Fix drsdn = fix("DRSDN", 33.06475, -86.183083);
+    Fix khmya = fix("KHMYA", 32.33565277777778, -87.04967777777777);
+    Fix fnley = fix("FNLEY", 32.70103888888889, -86.09133055555554);
+    Fix shurt = fix("SHURT", 33.53684166666667, -84.43048055555556);
+    RouteExpander expander = newExpander(
+        List.of(drsdn, khmya, fnley, shurt),
+        emptyList(),
+        singletonList(Airports.KATL()),
+        List.of(HOBTT2.INSTANCE, KATL_R27R.INSTANCE)
+    );
+
+    String leftStarEarly = "KHMYA.HOBTT2.FNLEY..KATL";
+    ExpandedRoute leftStarEarlyRoute = expander.apply(leftStarEarly, null, "RW27R", RequiredNavigationEquipage.RNAV).get();
+
+    assertAll(
+        () -> assertEquals("CNDLR", leftStarEarlyRoute.legs().get(1).associatedFix().get().fixIdentifier(), "Should pull the runway transition"),
+        () -> assertEquals("FNLEY", leftStarEarlyRoute.legs().get(2).associatedFix().get().fixIdentifier(), "Should have MMCAP transition"),
+        () -> assertTrue(leftStarEarlyRoute.legs().stream().noneMatch(i -> i.associatedFix().get().fixIdentifier().equals("SMAWG"))),
+        () -> assertEquals("MMCAP", leftStarEarlyRoute.legs().get(3).associatedFix().get().fixIdentifier(), "The nearest is mmcap")
+    );
+
+    String leftStarLate = "DRSDN.HOBTT2.SHURT..KATL";
+    ExpandedRoute leftStarLateRoute = expander.apply(leftStarLate, null, "RW27R", RequiredNavigationEquipage.RNAV).get();
+
+    assertAll(
+        () -> assertEquals("SHURT", leftStarLateRoute.legs().get(5).associatedFix().get().fixIdentifier(), "This should be the last one now"),
+        () -> assertEquals("MMCAP", leftStarLateRoute.legs().get(6).associatedFix().get().fixIdentifier(), "Still the nearest one")
+    );
+  }
+
+  @Test
+  void joinApproachAt() {
+    Fix mmcap = fix("MMCAP", 33.6341, -84.0600);
+    Fix youyu = fix("YOUYU", 33.6339, -83.9911);
+    Fix david = fix("DAVID", 33.6858, -83.9001);
+
+    RouteExpander expander = newExpander(
+        List.of(mmcap, youyu, david),
+        emptyList(),
+        singletonList(Airports.KATL()),
+        List.of(HOBTT2.INSTANCE, KATL_R27R.INSTANCE)
+    );
+
+    String youyuString = "DAVID..KATL";
+    ExpandedRoute youyuRoute = expander.apply(youyuString, null, "RW27R", RequiredNavigationEquipage.RNAV).get();
+
+    assertAll(
+        () -> assertEquals("YOUYU", youyuRoute.legs().get(1).associatedFix().get().fixIdentifier(), "Nearest to youyu")
+    );
+
+    String mmcapString = "MMCAP..KATL";
+    ExpandedRoute mmcapRoute = expander.apply(mmcapString, null, "RW27R", RequiredNavigationEquipage.RNAV).get();
+
+    assertAll(
+        () -> assertEquals("MMCAP", mmcapRoute.legs().get(0).associatedFix().get().fixIdentifier(), "Should collapse to the first fix only")
     );
   }
 
