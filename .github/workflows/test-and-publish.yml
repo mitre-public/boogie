@@ -48,6 +48,9 @@ jobs:
   check-helm-chart:
     runs-on: ubuntu-latest
     container: alpine/helm:3.8.0
+    strategy:
+      matrix:
+        schema-version: [ '1.22.0' ]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
@@ -55,7 +58,7 @@ jobs:
           repository: mitre-tdp/github-ci-scripts
           token: '${{ secrets.READ_CI_SCRIPTS }}'
           path: scripts/ci
-      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-validate-helm.sh ${GITHUB_WORKSPACE}/helm
+      - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-validate-helm.sh ${GITHUB_WORKSPACE}/helm ${{ matrix.schema-version }}
   publish-snapshots:
     runs-on: ubuntu-latest
     needs: [ unit-tests, integration-tests, check-helm-chart ]
