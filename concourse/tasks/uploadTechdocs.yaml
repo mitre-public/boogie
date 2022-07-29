@@ -38,7 +38,7 @@ spec:
         - --ssh
         - --ssh-known-hosts=false
         - --repo=git@github.com:mitre-tdp/boogie.git
-        - --branch=master
+        - --branch=main
         - --depth=0
         - --root=/git
         - --one-time=true
