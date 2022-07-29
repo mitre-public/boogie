@@ -7,7 +7,7 @@ jobs:
       - get: pipeline-file
         trigger: true
       - set_pipeline: boogie
-        file: pipeline-file/concourse.yaml
+        file: pipeline-file/concourse/concourse.yaml
 
   - name: update-boogie
     plan:
@@ -44,6 +44,16 @@ jobs:
         on_success: *notfiy_success
         on_failure: *notify_failure
 
+  - name: publish-techdocs
+    plan:
+      - in_parallel:
+        - get: documentation
+          trigger: true
+        - get: pipeline-file
+          trigger: false
+      - put: kubectl-techdocs-upload
+        params: { kubectl: "apply -f pipeline-file/concourse/tasks/uploadTechdocs.yaml -n backstage" }
+
 resource_types:
 
   - name: local-helm-repo
@@ -62,6 +72,10 @@ resource_types:
     type: docker-image
     source: {repository: arbourd/concourse-slack-alert-resource, tag: v0.15.0}
 
+  - name: k8s-resource
+    type: docker-image
+    source: { repository: jgriff/k8s-resource, tag: 0.2.0-kubectl-1.18 }
+
 resources:
 
   - name: pipeline-file
@@ -71,7 +85,16 @@ resources:
       uri: git@github.com:mitre-tdp/boogie.git
       private_key: ((boogie-deploy-key.ssh-privatekey))
       branch: main
-      paths: [concourse.yaml]
+      paths: [concourse]
+
+  - name: documentation
+    type: git
+    icon: github
+    source:
+      uri: git@github.com:mitre-tdp/boogie.git
+      private_key: ((boogie-deploy-key.ssh-privatekey))
+      branch: main
+      paths: [README.md]
 
   - name: boogie-deploy-folder
     type: git
@@ -128,3 +151,12 @@ resources:
           url: https://repo.codev.mitre.org/artifactory/idaas-helm
           username: ((concourse-codev-pull.CODEV_NAME_IDAASS_USERS))
           password: ((concourse-codev-pull.CODEV_TOKEN_IDAASS_USERS))
+
+  - name: kubectl-techdocs-upload
+    type: k8s-resource
+    icon: kubernetes
+    source:
+      url: ((kubernetes.ops-uri))
+      token: ((kubernetes.ops-token))
+      insecure_skip_tls_verify: true
+      namespace: backstage

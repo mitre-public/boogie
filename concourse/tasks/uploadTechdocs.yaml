@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: upload-boogie-techdocs
+  namespace: backstage
+spec:
+  ttlSecondsAfterFinished: 10
+  template:
+    spec:
+      serviceAccountName: techdocs-service-account
+      imagePullSecrets:
+        - name: codev-artifactory-docker-cfg
+      containers:
+      - name: techdocs-upload-container
+        image: repo.codev.mitre.org/idaass-docker/cdap/techdocs:1.0.2
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+        - sleep 10;
+          cd /s3;
+          TECHDOCS_S3=`cat bucketName`;
+          cd /git/boogie.git;
+          ls;
+          techdocs-cli generate --no-docker --output-dir ./site --verbose;
+          techdocs-cli publish --publisher-type awsS3 --storage-name $TECHDOCS_S3 --entity default/component/boogie --directory ./site;
+        volumeMounts:
+        - mountPath: /git/
+          name: content-from-git
+        - mountPath: /s3/
+          name: techdocs-secret
+      initContainers:
+      - name: git-sync-sidecar
+        image: k8s.gcr.io/git-sync/git-sync:v3.5.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsUser: 65533
+        args:
+        - --ssh
+        - --ssh-known-hosts=false
+        - --repo=git@github.com:mitre-tdp/boogie.git
+        - --branch=master
+        - --depth=0
+        - --root=/git
+        - --one-time=true
+        volumeMounts:
+        - mountPath: /git/
+          name: content-from-git
+        - mountPath: /etc/git-secret/
+          name: git-secret
+      securityContext:
+        fsGroup: 65533
+      volumes:
+      - emptyDir: {}
+        name: content-from-git
+      - name: git-secret
+        secret:
+          defaultMode: 256
+          secretName: cre-artifact-reader-git-sync-ssh
+      - name: techdocs-secret
+        secret:
+          secretName: techdocsbucket
+      restartPolicy: OnFailure
+  backoffLimit: 1

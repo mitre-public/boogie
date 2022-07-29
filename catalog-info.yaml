@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: Component
+kind: API
 metadata:
   name: boogie
   annotations:
@@ -7,8 +7,9 @@ metadata:
     backstage.io/techdocs-ref: dir:.
   tags:
     - markdown
+    - java
 spec:
-  type: techdocs
-  lifecycle: unknown
+  type: service
+  lifecycle: development
   owner: group:streaming
   
