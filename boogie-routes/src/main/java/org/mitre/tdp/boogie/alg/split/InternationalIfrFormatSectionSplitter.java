@@ -37,7 +37,7 @@ public final class InternationalIfrFormatSectionSplitter implements Function<Str
       (l1, l2) -> Strings.isNullOrEmpty(l1.value()),
       (l1, l2) -> l2.setWildcards(l2.wildcards().concat(l1.wildcards()))
   );
-  static Pattern speedLevel = Pattern.compile("/[A-Z0-9]{8,9}$");
+  static Pattern speedLevel = Pattern.compile("/[A-Z0-9]{8,10}$");
 
   private InternationalIfrFormatSectionSplitter() {
   }
