@@ -13,7 +13,7 @@ jobs:
           path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testUnit.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
-      - uses: mikepenz/action-junit-report@v2
+      - uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           check_name: unit-test-report
@@ -35,7 +35,7 @@ jobs:
           path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-testIntegration.sh "${{ github.ref }}" "${{ secrets.CODEV_NAME_IDAASS_USERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_USERS }}"
-      - uses: mikepenz/action-junit-report@v2
+      - uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           check_name: integration-test-report
