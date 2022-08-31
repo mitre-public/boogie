@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           repository: mitre-tdp/github-ci-scripts
           token: '${{ secrets.READ_CI_SCRIPTS }}'
@@ -27,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           repository: mitre-tdp/github-ci-scripts
           token: '${{ secrets.READ_CI_SCRIPTS }}'
@@ -52,8 +52,8 @@ jobs:
       matrix:
         schema-version: [ '1.22.0' ]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           repository: mitre-tdp/github-ci-scripts
           token: '${{ secrets.READ_CI_SCRIPTS }}'
@@ -66,8 +66,8 @@ jobs:
     container: adoptopenjdk/openjdk11:jdk-11.0.11_9-centos
     steps:
       # Install git before checkout so that the checkout action can use it to clone the repo and log us in (note centos ships with an older version - so update it)
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           repository: mitre-tdp/github-ci-scripts
           token: '${{ secrets.READ_CI_SCRIPTS }}'
@@ -79,7 +79,7 @@ jobs:
     needs: [ unit-tests, integration-tests, check-helm-chart ]
     if: success() && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: idaass-docker/tdp/boogie-rest

@@ -10,7 +10,7 @@ jobs:
       release-version: ${{ steps.parse-release-version.outputs.release-version }}
       image-version: ${{ steps.chart-image-version.outputs.image-version}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: parse-software-version
         run: echo ::set-output name=software-version::$(./gradlew properties -PcodevUser=${{ secrets.CODEV_NAME_IDAASS_USERS }} -PcodevPassword=${{ secrets.CODEV_TOKEN_IDAASS_USERS }} --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')
       - id: parse-short-commit
@@ -24,7 +24,7 @@ jobs:
     needs: parse-release-version
     if: success() && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: echo ${{ needs.parse-release-version.outputs.release-version }}
       - name: Release Image
         uses: elgohr/Publish-Docker-Github-Action@master
@@ -40,7 +40,7 @@ jobs:
     needs: [parse-release-version, publish-release-image]
     if: success() && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: echo ${{ needs.parse-release-version.outputs.image-version }}
       - run: sed -i 's/boogie-rest:latest/boogie-rest:${{ needs.parse-release-version.outputs.image-version }}/' ./helm/values.yaml
       - name: Release Chart
