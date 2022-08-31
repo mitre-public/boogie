@@ -72,7 +72,7 @@ subprojects {
         val commonsVersion = "0.0.49"
         api("org.mitre.caasd:commons:$commonsVersion")
 
-        val gsonVersion = "2.8.7"
+        val gsonVersion = "2.9.1"
         "implementation"("com.google.guava:guava:$guavaVersion")
         "implementation"("com.google.code.gson:gson:$gsonVersion")
 
