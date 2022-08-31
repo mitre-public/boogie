@@ -1,4 +1,4 @@
-FROM gradle:7.3.3-jdk11 AS base
+FROM gradle:7.5.1-jdk11 AS base
 
 WORKDIR /certs
 
