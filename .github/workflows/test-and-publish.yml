@@ -18,7 +18,7 @@ jobs:
         with:
           check_name: unit-test-report
           report_paths: '**/test-results/**/*.xml'
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: unit-test-artifact
@@ -40,7 +40,7 @@ jobs:
         with:
           check_name: integration-test-report
           report_paths: '**/test-results/**/*.xml'
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: integration-test-artifact
