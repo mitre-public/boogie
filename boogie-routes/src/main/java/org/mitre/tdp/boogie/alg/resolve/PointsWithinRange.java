@@ -1,15 +1,16 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.distanceBetween;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
 
 /**
@@ -37,11 +38,12 @@ final class PointsWithinRange implements BiFunction<ResolvedElement, ResolvedEle
     List<Leg> element1Legs = withLocation(resolvedElement1.toLinkedLegs());
     List<Leg> element2Legs = withLocation(resolvedElement2.toLinkedLegs());
 
-    return cartesianProduct(element1Legs, element2Legs).stream()
-        .sorted(Comparator.comparing(LinkingUtils::distanceBetween))
-        .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
-        .filter(pair -> pair.linkWeight() < distanceThreshold)
-        .collect(Collectors.toList());
+    return cartesianProduct(element1Legs, element2Legs).stream().sorted(comparing(LinkingUtils::distanceBetween))
+        .map(this::createPair).filter(pair -> pair.linkWeight() < distanceThreshold).collect(toList());
+  }
+
+  private LinkedLegs createPair(Pair<Leg, Leg> pair) {
+    return new LinkedLegs(pair.first(), pair.second(), Math.max(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT, distanceBetween(pair)));
   }
 
   static List<Leg> withLocation(List<LinkedLegs> linkedLegs) {
@@ -49,6 +51,6 @@ final class PointsWithinRange implements BiFunction<ResolvedElement, ResolvedEle
         .flatMap(linked -> Stream.of(linked.source(), linked.target()))
         .distinct()
         .filter(leg -> leg.associatedFix().isPresent())
-        .collect(Collectors.toList());
+        .collect(toList());
   }
 }

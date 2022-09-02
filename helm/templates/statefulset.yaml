@@ -36,6 +36,14 @@ spec:
         - name: {{ .Values.name }}
           image: {{ .Values.image }}
           imagePullPolicy: Always
+          {{- if .Values.deployment.livenessProbe }}
+          livenessProbe:
+{{ toYaml .Values.deployment.livenessProbe | indent 12 }}
+          {{- end }}
+          {{- if .Values.deployment.readinessProbe }}
+          readinessProbe:
+{{ toYaml .Values.deployment.readinessProbe | indent 12 }}
+          {{- end }}
           ports:
             - containerPort: 8080
           env:
