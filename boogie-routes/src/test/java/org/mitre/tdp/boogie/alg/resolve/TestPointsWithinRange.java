@@ -33,7 +33,7 @@ class TestPointsWithinRange {
 
     assertAll(
         () -> assertEquals(1, linkedLegs.size(), "Should only be one shared linking between the provided elements."),
-        () -> assertEquals(0., linkedLegs.get(0).linkWeight(), "Link weight should be zero as they are the same leg.")
+        () -> assertEquals(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT, linkedLegs.get(0).linkWeight(), "Link weight should be zero as they are the same leg.")
     );
   }
 
@@ -49,8 +49,8 @@ class TestPointsWithinRange {
     List<LinkedLegs> linkedLegs = PointsWithinRange.INSTANCE.apply(r1, r2);
 
     List<LinkedLegs> expected = Arrays.asList(
-        new LinkedLegs(l2, l2, 0.),
-        new LinkedLegs(l3, l3, 0.)
+        new LinkedLegs(l2, l2, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT),
+        new LinkedLegs(l3, l3, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT)
     );
 
     assertAll(
