@@ -83,7 +83,7 @@ subprojects {
         api("org.jgrapht:jgrapht-core:$jgraphtVersion")
         api("org.jgrapht:jgrapht-io:$jgraphtVersion")
 
-        val slf4jVersion = "2.0.0" // "implementation"("org.slf4j:slf4j-simple:1.7.7")
+        val slf4jVersion = "2.0.2" // "implementation"("org.slf4j:slf4j-simple:1.7.7")
         "implementation"("org.slf4j:slf4j-api:$slf4jVersion")
         "implementation"("org.slf4j:slf4j-log4j12:$slf4jVersion")
 
