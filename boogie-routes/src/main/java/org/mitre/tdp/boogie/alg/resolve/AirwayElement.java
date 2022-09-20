@@ -13,6 +13,8 @@ import org.mitre.tdp.boogie.util.Streams;
 
 public final class AirwayElement implements ResolvedElement {
 
+  private static final double PUNISHMENT = .001;
+
   private final Airway airway;
 
   private final List<LinkedLegs> linkedLegs;
@@ -66,12 +68,16 @@ public final class AirwayElement implements ResolvedElement {
 
   @Override
   public List<LinkedLegs> visit(StarElement starElement) {
-    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(starElement, this).stream().map(leg -> new LinkedLegs(leg.source(), leg.target(), leg.linkWeight() + 0.001)).collect(Collectors.toList());
+    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE)
+        .andThen(new UnlikelyCombinationPenalizer(PUNISHMENT))
+        .apply(starElement, this);
   }
 
   @Override
   public List<LinkedLegs> visit(ApproachElement approachElement) {
-    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(approachElement, this);
+    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE)
+        .andThen(new UnlikelyCombinationPenalizer(PUNISHMENT))
+        .apply(approachElement, this);
   }
 
   @Override

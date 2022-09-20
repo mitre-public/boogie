@@ -3,13 +3,7 @@ package org.mitre.tdp.boogie.alg;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mitre.tdp.boogie.Airports.KATL;
 import static org.mitre.tdp.boogie.Airports.KDEN;
 import static org.mitre.tdp.boogie.MockObjects.fix;
@@ -60,6 +54,28 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  * e.g. TestAPF would indicated a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class TestRouteExpander {
+
+  @Test
+  void testOddComboDoesNotHappen() {
+    Fix start = fix("START", 33.3336, -84.7909);
+    Fix end = fix("ENDDD", 33.5496, -84.1357);
+
+    String route = "KATL..START..ZALLE.J000.GGOLF..ENDDD..KMCO"; //these are also on the sid
+
+    RouteExpander expander = newExpander(
+        asList(start, end),
+        singletonList(Airways.J000()),
+        asList(Airports.KATL(), Airports.KMCO()),
+        singletonList(PLMMR2.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route).orElseThrow();
+
+    assertAll("We want the airway to be taken over the sid",
+        () -> assertEquals("J000", expandedRoute.legs().get(2).section(), "This better not be the sid"),
+        () -> assertEquals("J000", expandedRoute.legs().get(3).section(), "This better not be the sid")
+    );
+  }
 
   @Test
   void testExitsEarlyWithNoResolvedElements() {

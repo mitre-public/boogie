@@ -10,6 +10,8 @@ import org.mitre.tdp.boogie.ProcedureType;
 
 public final class SidElement extends ProcedureElement {
 
+  private static final double PUNISHMENT = .001;
+
   SidElement(Procedure procedure) {
     super(procedure);
     checkArgument(ProcedureType.SID.equals(procedure.procedureType()), "Provided procedure must be of type SID.");
@@ -26,17 +28,28 @@ public final class SidElement extends ProcedureElement {
   }
 
   @Override
+  public List<LinkedLegs> visit(AirwayElement airwayElement) {
+    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE)
+        .andThen(new UnlikelyCombinationPenalizer(PUNISHMENT))
+        .apply(airwayElement, this);
+  }
+
+  @Override
   public List<LinkedLegs> visit(SidElement sidElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(sidElement, this);
   }
 
   @Override
   public List<LinkedLegs> visit(StarElement starElement) {
-    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(starElement, this);
+    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE)
+        .andThen(new UnlikelyCombinationPenalizer(PUNISHMENT))
+        .apply(starElement, this);
   }
 
   @Override
   public List<LinkedLegs> visit(ApproachElement approachElement) {
-    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(approachElement, this);
+    return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE)
+        .andThen(new UnlikelyCombinationPenalizer(PUNISHMENT))
+        .apply(approachElement, this);
   }
 }

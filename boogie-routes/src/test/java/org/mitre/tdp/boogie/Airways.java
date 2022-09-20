@@ -14,6 +14,14 @@ public final class Airways {
     throw new IllegalStateException("Unable to instantiate static factory class.");
   }
 
+  /**
+   * This airway is faked to provide overlap with the PLMMR2 SID
+   */
+  public static Airway J000() {
+    Leg ZALLE = TF("ZALLE", 33.45709166666667, -84.58449444444445);
+    Leg GGOLF = TF("GGOLF", 33.45582777777778, -84.33613333333332);
+    return airway("J000", Arrays.asList(ZALLE, GGOLF));
+  }
   public static Airway J121() {
     Leg CRG = TF("CRG", 30.338880555555555, -81.50992777777778);
     Leg MILIE = TF("MILIE", 31.328622222222222, -81.17371944444444);
