@@ -87,7 +87,7 @@ subprojects {
         "implementation"("org.slf4j:slf4j-api:$slf4jVersion")
         "implementation"("org.slf4j:slf4j-log4j12:$slf4jVersion")
 
-        val junitVersion = "5.5.2"
+        val junitVersion = "5.9.0"
         "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:$junitVersion")
         "testImplementation"("org.junit.jupiter:junit-jupiter-params:$junitVersion")
