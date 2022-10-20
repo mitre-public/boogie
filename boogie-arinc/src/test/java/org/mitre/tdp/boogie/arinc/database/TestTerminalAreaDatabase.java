@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.arinc.database;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.util.Optional;
@@ -10,40 +9,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
-import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
-import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
-import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
-import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
-import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 
 class TestTerminalAreaDatabase {
 
-  private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-kjfk-v18.txt"));
+  private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-kjfk_yssy-v18.txt"));
 
   private static TerminalAreaDatabase terminalAreaDatabase;
 
@@ -58,7 +30,8 @@ class TestTerminalAreaDatabase {
         testV18Consumer.arincNdbNavaids(),
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincProcedureLegs()
+        testV18Consumer.arincProcedureLegs(),
+        testV18Consumer.arincGnssLandingSystems()
     );
   }
 
@@ -67,6 +40,15 @@ class TestTerminalAreaDatabase {
     assertAll(
         () -> assertEquals(Optional.of("KJFK"), terminalAreaDatabase.airport("KJFK").map(ArincAirport::airportIdentifier)),
         () -> assertEquals(Optional.of("KJFK"), terminalAreaDatabase.airport("KJFK", "K6").map(ArincAirport::airportIdentifier))
+    );
+  }
+
+  @Test
+  void testGls() {
+    assertAll(
+        () -> assertEquals("G25A", terminalAreaDatabase.gnssLandingSystemAt("YSSY", "G25A").map(ArincGnssLandingSystem::glsRefPathIdentifier).orElseThrow()),
+        () -> assertTrue(terminalAreaDatabase.allProcedureLegsAt("YSSY").stream().filter(i -> i.recommendedNavaidIdentifier().isPresent()).anyMatch(i -> i.recommendedNavaidIdentifier().get().equals("G25A"))),
+        () -> assertEquals(6, terminalAreaDatabase.gnssLandingSystemsAt("YSSY").size())
     );
   }
 
@@ -123,6 +105,7 @@ class TestTerminalAreaDatabase {
       new AirwayLegSpec(),
       new LocalizerGlideSlopeSpec(),
       new NdbNavaidSpec(),
+      new GnssLandingSystemSpec(),
       // the V19 leg spec - thanks CIFP
       new ProcedureLegSpec(),
       new RunwaySpec(),
@@ -150,5 +133,7 @@ class TestTerminalAreaDatabase {
       .vhfNavaidConverter(new VhfNavaidConverter())
       .waypointDelegator(new WaypointValidator())
       .waypointConverter(new WaypointConverter())
+      .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+      .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .build();
 }

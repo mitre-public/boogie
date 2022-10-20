@@ -11,13 +11,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.*;
 
 /**
  * Represents a page of structured ARINC 424 data related to an {@link ArincAirport}.
@@ -65,6 +59,14 @@ final class AirportPage {
 
   public Map<String, ArincLocalizerGlideSlope> localizerGlideSlopes() {
     return runwayPages.values().stream().flatMap(page -> Stream.of(page.primaryLocalizerGlideSlope(), page.secondaryLocalizerGlideSlope())).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toMap(ArincLocalizerGlideSlope::localizerIdentifier, Function.identity()));
+  }
+
+  public Optional<ArincGnssLandingSystem> gnssLandingSystem(String identifier) {
+    return Optional.ofNullable(gnssLandingSystems().get(identifier));
+  }
+
+  public Map<String, ArincGnssLandingSystem> gnssLandingSystems() {
+    return runwayPages.values().stream().map(RunwayPage::gnssLandingSystem).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity()));
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeForRunway(String runwayId) {

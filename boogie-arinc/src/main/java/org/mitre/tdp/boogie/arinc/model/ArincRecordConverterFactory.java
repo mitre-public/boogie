@@ -3,22 +3,7 @@ package org.mitre.tdp.boogie.arinc.model;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
-import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
-import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
+import org.mitre.tdp.boogie.arinc.v18.*;
 
 /**
  * Factory class for common instantiations of {@link ConvertingArincRecordConsumer}s.
@@ -61,6 +46,8 @@ public final class ArincRecordConverterFactory {
             .vhfNavaidConverter(new VhfNavaidConverter())
             .waypointDelegator(new WaypointValidator())
             .waypointConverter(new WaypointConverter())
+            .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+            .gnssLandingSystemConverter(new GnssLandingSystemConverter())
             .build();
       default:
         throw new UnsupportedOperationException("No factory method support for provided pre-canned version spec: ".concat(version.name()));
@@ -96,6 +83,8 @@ public final class ArincRecordConverterFactory {
             .vhfNavaidConverter(new VhfNavaidConverter())
             .waypointDelegator(new WaypointValidator())
             .waypointConverter(new WaypointConverter())
+            .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+            .gnssLandingSystemConverter(new GnssLandingSystemConverter())
             .build();
       default:
         throw new UnsupportedOperationException("No factory method support for provided pre-canned version spec: ".concat(version.name()));

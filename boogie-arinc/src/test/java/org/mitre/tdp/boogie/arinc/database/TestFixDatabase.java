@@ -16,29 +16,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
-import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
-import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
-import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
-import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
+import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 
 class TestFixDatabase {
@@ -124,5 +102,7 @@ class TestFixDatabase {
       .vhfNavaidConverter(new VhfNavaidConverter())
       .waypointDelegator(new WaypointValidator())
       .waypointConverter(new WaypointConverter())
+      .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+      .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .build();
 }

@@ -31,6 +31,8 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
   private final DelegatingMapper<ArincAirwayLeg> arincAirwayLegs;
   private final DelegatingMapper<ArincProcedureLeg> arincProcedureLegs;
 
+  private final DelegatingMapper<ArincGnssLandingSystem> arincGnssLandingSystems;
+
   private ConvertingArincRecordMapper(Builder builder) {
     this.arincAirports = new DelegatingMapper<>(builder.airportDelegator, builder.airportConverter);
     this.arincRunways = new DelegatingMapper<>(builder.runwayDelegator, builder.runwayConverter);
@@ -40,6 +42,7 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     this.arincWaypoints = new DelegatingMapper<>(builder.waypointDelegator, builder.waypointConverter);
     this.arincAirwayLegs = new DelegatingMapper<>(builder.airwayDelegator, builder.airwayConverter);
     this.arincProcedureLegs = new DelegatingMapper<>(builder.procedureDelegator, builder.procedureConverter);
+    this.arincGnssLandingSystems = new DelegatingMapper<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
   }
 
   @Override
@@ -67,6 +70,9 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     }
     if (arincVhfNavaids.test(arincRecord)) {
       return arincVhfNavaids.apply(arincRecord);
+    }
+    if (arincGnssLandingSystems.test(arincRecord)) {
+      return arincGnssLandingSystems.apply(arincRecord);
     }
     return Optional.empty();
   }
@@ -110,6 +116,10 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     private Function<ArincRecord, Optional<ArincVhfNavaid>> vhfNavaidConverter;
     private Predicate<ArincRecord> waypointDelegator;
     private Function<ArincRecord, Optional<ArincWaypoint>> waypointConverter;
+
+    private Predicate<ArincRecord> gnssLandingSystemDelegator;
+
+    private Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter;
 
     public Builder airportDelegator(Predicate<ArincRecord> airportDelegator) {
       this.airportDelegator = requireNonNull(airportDelegator);
@@ -188,6 +198,16 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
     public Builder waypointConverter(Function<ArincRecord, Optional<ArincWaypoint>> waypointConverter) {
       this.waypointConverter = requireNonNull(waypointConverter);
+      return this;
+    }
+
+    public Builder gnssLandingSystemDelegator(Predicate<ArincRecord> gnssLandingSystemDelegator) {
+      this.gnssLandingSystemDelegator = requireNonNull(gnssLandingSystemDelegator);
+      return this;
+    }
+
+    public Builder gnssLandingSystemConverter(Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter) {
+      this.gnssLandingSystemConverter = requireNonNull(gnssLandingSystemConverter);
       return this;
     }
 

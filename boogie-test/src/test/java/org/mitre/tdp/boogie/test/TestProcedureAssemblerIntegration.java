@@ -50,7 +50,8 @@ class TestProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincNdbNavaids(),
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
-        EmbeddedCifpFile.instance().arincProcedureLegs()
+        EmbeddedCifpFile.instance().arincProcedureLegs(),
+        EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
     FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(

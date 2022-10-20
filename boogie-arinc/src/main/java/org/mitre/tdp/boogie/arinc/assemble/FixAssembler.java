@@ -5,14 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincModel;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.model.BoogieFix;
 
 /**
@@ -43,8 +36,11 @@ public final class FixAssembler implements Function<ArincModel, Fix> {
   private final Function<ArincRunway, Fix> runwayConverter;
   private final Function<ArincLocalizerGlideSlope, Fix> localizerGlideSlopeConverter;
 
+  private final Function<ArincGnssLandingSystem, Fix> gnssLandingSystemConverter;
+
   private FixAssembler() {
     this(
+        ArincToBoogieConverterFactory::newFixFrom,
         ArincToBoogieConverterFactory::newFixFrom,
         ArincToBoogieConverterFactory::newFixFrom,
         ArincToBoogieConverterFactory::newFixFrom,
@@ -60,13 +56,15 @@ public final class FixAssembler implements Function<ArincModel, Fix> {
       Function<ArincVhfNavaid, Fix> vhfNavaidConverter,
       Function<ArincAirport, Fix> airportConverter,
       Function<ArincRunway, Fix> runwayConverter,
-      Function<ArincLocalizerGlideSlope, Fix> localizerGlideSlopeConverter) {
+      Function<ArincLocalizerGlideSlope, Fix> localizerGlideSlopeConverter,
+      Function<ArincGnssLandingSystem, Fix> gnssLandingSystemConverter) {
     this.waypointConverter = requireNonNull(waypointConverter);
     this.ndbNavaidConverter = requireNonNull(ndbNavaidConverter);
     this.vhfNavaidConverter = requireNonNull(vhfNavaidConverter);
     this.airportConverter = requireNonNull(airportConverter);
     this.runwayConverter = requireNonNull(runwayConverter);
     this.localizerGlideSlopeConverter = requireNonNull(localizerGlideSlopeConverter);
+    this.gnssLandingSystemConverter = requireNonNull(gnssLandingSystemConverter);
   }
 
   @Override
@@ -74,40 +72,36 @@ public final class FixAssembler implements Function<ArincModel, Fix> {
     String sectionSubSection = arincModel.sectionCode().name().concat(arincModel.subSectionCode().orElse(""));
 
     // airports
-    if ("PA".equals(sectionSubSection)) {
-      return airportConverter.apply((ArincAirport) arincModel);
-    }
-    // Enroute NDB Navaids
-    else if ("DB".equals(sectionSubSection)) {
-      return ndbNavaidConverter.apply((ArincNdbNavaid) arincModel);
-    }
-    // Terminal NDB Navaids
-    else if ("PN".equals(sectionSubSection)) {
-      return ndbNavaidConverter.apply((ArincNdbNavaid) arincModel);
-    }
-    // VHF Navaids
-    else if ("D".equals(sectionSubSection)) {
-      return vhfNavaidConverter.apply((ArincVhfNavaid) arincModel);
-    }
-    // Enroute waypoints
-    else if ("EA".equals(sectionSubSection)) {
-      return waypointConverter.apply((ArincWaypoint) arincModel);
-    }
-    // Terminal waypoints
-    else if ("PC".equals(sectionSubSection)) {
-      return waypointConverter.apply((ArincWaypoint) arincModel);
-    }
-    // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
-    else if ("PG".equals(sectionSubSection)) {
-      return runwayConverter.apply((ArincRunway) arincModel);
-    }
-    // localizerGlideSlopes - generally used as a recommended navaid on some approaches
-    else if ("PI".equals(sectionSubSection)) {
-      return localizerGlideSlopeConverter.apply((ArincLocalizerGlideSlope) arincModel);
-    }
-    // anything else is not explicitly supported as a reference object in a leg
-    else {
-      throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
+    switch (sectionSubSection) {
+      case "PA":
+        return airportConverter.apply((ArincAirport) arincModel);
+      // Enroute NDB Navaids
+      case "DB":
+        return ndbNavaidConverter.apply((ArincNdbNavaid) arincModel);
+      // Terminal NDB Navaids
+      case "PN":
+        return ndbNavaidConverter.apply((ArincNdbNavaid) arincModel);
+      // VHF Navaids
+      case "D":
+        return vhfNavaidConverter.apply((ArincVhfNavaid) arincModel);
+      // Enroute waypoints
+      case "EA":
+        return waypointConverter.apply((ArincWaypoint) arincModel);
+      // Terminal waypoints
+      case "PC":
+        return waypointConverter.apply((ArincWaypoint) arincModel);
+      // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
+      case "PG":
+        return runwayConverter.apply((ArincRunway) arincModel);
+      // localizerGlideSlopes - generally used as a recommended navaid on some approaches
+      case "PI":
+        return localizerGlideSlopeConverter.apply((ArincLocalizerGlideSlope) arincModel);
+      //gnss landing systems - usually used on gls approach or as rec navs rarely
+      case "PT":
+        return gnssLandingSystemConverter.apply((ArincGnssLandingSystem) arincModel);
+      // anything else is not explicitly supported as a reference object in a leg
+      default:
+        throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
     }
   }
 }

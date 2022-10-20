@@ -2,18 +2,10 @@ package org.mitre.tdp.boogie.arinc.database;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.*;
 
 import com.google.common.collect.Multimap;
 
@@ -68,6 +60,14 @@ public final class TerminalAreaDatabase {
 
   public Map<String, ArincLocalizerGlideSlope> localizerGlideSlopesAt(String airport) {
     return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyMap);
+  }
+
+  public Optional<ArincGnssLandingSystem> gnssLandingSystemAt(String airport, String identifier) {
+    return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.gnssLandingSystem(identifier));
+  }
+
+  public Map<String, ArincGnssLandingSystem> gnssLandingSystemsAt(String airport) {
+    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::gnssLandingSystems).orElseGet(Collections::emptyMap);
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeOf(String airport, String runway) {

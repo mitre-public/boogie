@@ -11,13 +11,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +82,8 @@ public final class ArincDatabaseFactory {
       Collection<ArincNdbNavaid> ndbNavaids,
       Collection<ArincVhfNavaid> vhfNavaids,
       Collection<ArincWaypoint> waypoints,
-      Collection<ArincProcedureLeg> procedureLegs) {
+      Collection<ArincProcedureLeg> procedureLegs,
+      Collection<ArincGnssLandingSystem> gnssLandingSystems) {
 
     LinkedHashMultimap<Pair<String, String>, AirportPage> lookup = LinkedHashMultimap.create();
 
@@ -98,9 +93,10 @@ public final class ArincDatabaseFactory {
     Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap = vhfNavaids.stream().collect(Collectors.groupingBy(vhfNavaidToAirportIndex));
     Map<Pair<String, String>, List<ArincWaypoint>> waypointMap = waypoints.stream().collect(Collectors.groupingBy(waypointToAirportIndex));
     Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap = procedureLegs.stream().collect(Collectors.groupingBy(procedureLegToAirportIndex));
-
+    Map<Pair<String, String>, List<ArincGnssLandingSystem>> gnssLandingSystemMap = gnssLandingSystems.stream().collect(Collectors.groupingBy(gnssLandingSystemToAirportIndex));
+    //airport and region for gls
     airports.forEach(airport -> {
-      Pair<String, String> index = airportToAirportIndex.apply(airport);
+      Pair<String, String> index = airportToAirportIndex.apply(airport); //name and region
 
       Map<String, List<ArincProcedureLeg>> plm = procedureLegMap.getOrDefault(index, emptyList()).stream()
           .collect(Collectors.groupingBy(ArincProcedureLeg::sidStarIdentifier));
@@ -120,13 +116,17 @@ public final class ArincDatabaseFactory {
       Map<Pair<String, String>, ArincLocalizerGlideSlope> lgm = localizerMap.getOrDefault(index, emptyList()).stream()
           .collect(Collectors.toMap(lgs -> Pair.of(lgs.runwayIdentifier(), lgs.localizerIdentifier()), Function.identity()));
 
+      Map<String, ArincGnssLandingSystem> gm = gnssLandingSystemMap.getOrDefault(index, emptyList()).stream()
+          .collect(Collectors.toMap(ArincGnssLandingSystem::runwayIdentifier, Function.identity()));
+
       Map<String, RunwayPage> rm = new HashMap<>();
       runwayMap.getOrDefault(index, emptyList()).forEach(runway -> {
 
         RunwayPage runwayPage = new RunwayPage(
             runway,
             lgm.get(Pair.of(runway.runwayIdentifier(), runway.ilsMlsGlsIdentifier().orElse(null))),
-            lgm.get(Pair.of(runway.runwayIdentifier(), runway.secondaryIlsMlsGlsIdentifier().orElse(null)))
+            lgm.get(Pair.of(runway.runwayIdentifier(), runway.secondaryIlsMlsGlsIdentifier().orElse(null))),
+            gm.get(runway.runwayIdentifier())
         );
 
         rm.putIfAbsent(runway.runwayIdentifier(), runwayPage);
@@ -160,6 +160,11 @@ public final class ArincDatabaseFactory {
   private static final Function<ArincLocalizerGlideSlope, Pair<String, String>> localizerGlideSlopeToAirportIndex = arincLocalizerGlideSlope -> Pair.of(
       arincLocalizerGlideSlope.airportIdentifier(),
       arincLocalizerGlideSlope.airportIcaoRegion()
+  );
+
+  private static final Function<ArincGnssLandingSystem, Pair<String, String>> gnssLandingSystemToAirportIndex = arincGnssLandingSystem -> Pair.of(
+      arincGnssLandingSystem.airportIdentifier(),
+      arincGnssLandingSystem.airportIcaoRegion()
   );
 
   private static final Function<ArincNdbNavaid, Pair<String, String>> ndbNavaidToAirportIndex = arincNdbNavaid -> Pair.of(

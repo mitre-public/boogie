@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
@@ -16,14 +17,18 @@ final class RunwayPage {
   private final ArincLocalizerGlideSlope localizerGlideSlope;
   private final ArincLocalizerGlideSlope secondaryLocalizerGlideSlope;
 
+  private final ArincGnssLandingSystem gnssLandingSystem;
+
   RunwayPage(
       ArincRunway runway,
       ArincLocalizerGlideSlope localizerGlideSlope,
-      ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
+      ArincLocalizerGlideSlope secondaryLocalizerGlideSlope,
+      ArincGnssLandingSystem gnssLandingSystem
   ) {
     this.runway = requireNonNull(runway);
     this.localizerGlideSlope = localizerGlideSlope;
     this.secondaryLocalizerGlideSlope = secondaryLocalizerGlideSlope;
+    this.gnssLandingSystem = gnssLandingSystem;
   }
 
   public ArincRunway runway() {
@@ -36,5 +41,9 @@ final class RunwayPage {
 
   public Optional<ArincLocalizerGlideSlope> secondaryLocalizerGlideSlope() {
     return Optional.ofNullable(secondaryLocalizerGlideSlope);
+  }
+
+  public Optional<ArincGnssLandingSystem> gnssLandingSystem() {
+    return Optional.ofNullable(gnssLandingSystem);
   }
 }

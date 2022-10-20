@@ -149,7 +149,8 @@ final class BoogieState implements Consumer<Path> {
         consumer.arincNdbNavaids(),
         consumer.arincVhfNavaids(),
         consumer.arincWaypoints(),
-        consumer.arincProcedureLegs()
+        consumer.arincProcedureLegs(),
+        consumer.arincGnssLandingSystems()
     );
 
     LOG.info("Finished instantiation of TerminalAreaDatabase.");

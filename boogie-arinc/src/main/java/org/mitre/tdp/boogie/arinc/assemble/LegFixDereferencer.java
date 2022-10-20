@@ -43,9 +43,7 @@ public final class LegFixDereferencer {
   }
 
   Optional<Fix> dereferenceNavaid(String identifier, String icaoRegion) {
-    Fix navaid = dereference(identifier, null, icaoRegion, SectionCode.D, null)
-        .orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.D, "B")
-            .orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.P, "n").orElse(null)));
+    Fix navaid = dereference(identifier, null, icaoRegion, SectionCode.D, null).orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.D, "B").orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.P, "n").orElse(null)));
     return Optional.ofNullable(navaid);
   }
 
@@ -55,41 +53,35 @@ public final class LegFixDereferencer {
   Optional<Fix> dereference(String identifier, @Nullable String airport, String icaoRegion, SectionCode sectionCode, @Nullable String subSectionCode) {
     String sectionSubSection = sectionCode.name().concat(Optional.ofNullable(subSectionCode).orElse(""));
 
-    // airports
-    if ("PA".equals(sectionSubSection)) {
-      return fixDatabase.airport(identifier, icaoRegion).map(fixAssembler);
-    }
-    // Enroute NDB Navaids
-    else if ("DB".equals(sectionSubSection)) {
-      return fixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler);
-    }
-    // Terminal NDB Navaids
-    else if ("PN".equals(sectionSubSection)) {
-      return fixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler);
-    }
-    // VHF Navaids
-    else if ("D".equals(sectionSubSection)) {
-      return fixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler);
-    }
-    // Enroute waypoints
-    else if ("EA".equals(sectionSubSection)) {
-      return fixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler);
-    }
-    // Terminal waypoints
-    else if ("PC".equals(sectionSubSection)) {
-      return fixDatabase.terminalWaypoint(identifier, icaoRegion).map(fixAssembler);
-    }
-    // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
-    else if ("PG".equals(sectionSubSection)) {
-      return airport == null ? Optional.empty() : terminalAreaDatabase.runwayAt(airport, identifier).map(fixAssembler);
-    }
-    // localizerGlideSlopes - generally used as a recommended navaid on some approaches
-    else if ("PI".equals(sectionSubSection)) {
-      return airport == null ? Optional.empty() : terminalAreaDatabase.localizerGlideSlopeAt(airport, identifier).map(fixAssembler);
-    }
-    // anything else is not explicitly supported as a reference object in a leg
-    else {
-      throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
+    switch (sectionSubSection) {
+      case "PA":  // airports
+        return fixDatabase.airport(identifier, icaoRegion).map(fixAssembler);
+      // Enroute NDB Navaids
+      case "DB":
+        return fixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler);
+      // Terminal NDB Navaids
+      case "PN":
+        return fixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler);
+      // VHF Navaids
+      case "D":
+        return fixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler);
+      // Enroute waypoints
+      case "EA":
+        return fixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler);
+      // Terminal waypoints
+      case "PC":
+        return fixDatabase.terminalWaypoint(identifier, icaoRegion).map(fixAssembler);
+      // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
+      case "PG":
+        return airport == null ? Optional.empty() : terminalAreaDatabase.runwayAt(airport, identifier).map(fixAssembler);
+      // localizerGlideSlopes - generally used as a recommended navaid on some approaches
+      case "PI":
+        return airport == null ? Optional.empty() : terminalAreaDatabase.localizerGlideSlopeAt(airport, identifier).map(fixAssembler);
+      case "PT":
+        return airport == null ? Optional.empty() : terminalAreaDatabase.gnssLandingSystemAt(airport, identifier).map(fixAssembler);
+        // anything else is not explicitly supported as a reference object in a leg
+      default:
+        throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
     }
   }
 }

@@ -41,6 +41,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   private final DelegatableCollection<ArincAirwayLeg> arincAirwayLegs;
   private final DelegatableCollection<ArincProcedureLeg> arincProcedureLegs;
 
+  private final DelegatableCollection<ArincGnssLandingSystem> gnssLandingSystems;
+
   private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;
 
   private ConvertingArincRecordConsumer(Builder builder) {
@@ -52,6 +54,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincWaypoints = new DelegatableCollection<>(builder.waypointDelegator, builder.waypointConverter);
     this.arincAirwayLegs = new DelegatableCollection<>(builder.airwayDelegator, builder.airwayConverter);
     this.arincProcedureLegs = new DelegatableCollection<>(builder.procedureDelegator, builder.procedureConverter);
+    this.gnssLandingSystems = new DelegatableCollection<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
 
     this.consumer = new MRUDequeConsumer<>(
         this.arincAirports,
@@ -61,7 +64,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         this.arincVhfNavaids,
         this.arincWaypoints,
         this.arincAirwayLegs,
-        this.arincProcedureLegs
+        this.arincProcedureLegs,
+        this.gnssLandingSystems
     );
   }
 
@@ -95,6 +99,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
   public Collection<ArincProcedureLeg> arincProcedureLegs() {
     return arincProcedureLegs.records();
+  }
+
+  public Collection<ArincGnssLandingSystem> arincGnssLandingSystems() {
+    return gnssLandingSystems.records();
   }
 
   @Override
@@ -186,6 +194,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     private Predicate<ArincRecord> waypointDelegator;
     private Function<ArincRecord, Optional<ArincWaypoint>> waypointConverter;
 
+    private Predicate<ArincRecord> gnssLandingSystemDelegator;
+
+    private Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter;
+
     public Builder airportDelegator(Predicate<ArincRecord> airportDelegator) {
       this.airportDelegator = requireNonNull(airportDelegator);
       return this;
@@ -263,6 +275,16 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     public Builder waypointConverter(Function<ArincRecord, Optional<ArincWaypoint>> waypointConverter) {
       this.waypointConverter = requireNonNull(waypointConverter);
+      return this;
+    }
+
+    public Builder gnssLandingSystemDelegator(Predicate<ArincRecord> gnssLandingSystemDelegator) {
+      this.gnssLandingSystemDelegator = requireNonNull(gnssLandingSystemDelegator);
+      return this;
+    }
+
+    public Builder gnssLandingSystemConverter(Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter) {
+      this.gnssLandingSystemConverter = requireNonNull(gnssLandingSystemConverter);
       return this;
     }
 

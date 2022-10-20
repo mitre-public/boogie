@@ -4,6 +4,7 @@ import static org.mitre.tdp.boogie.util.Declinations.declination;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.Course;
@@ -22,15 +23,7 @@ import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincModel;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
 import org.mitre.tdp.boogie.model.BoogieAirport;
 import org.mitre.tdp.boogie.model.BoogieAirway;
@@ -142,6 +135,25 @@ public final class ArincToBoogieConverterFactory {
         .longitude(runway.longitude())
         .elevation(runway.landingThresholdElevation().map(Integer::doubleValue).orElse(null))
         .modeledVariation(modeledDeclination)
+        .build();
+  }
+
+  static Fix newFixFrom(ArincGnssLandingSystem gls) {
+    double modeledDeclination = declination(
+        gls.stationLatitude(),
+        gls.stationLongitude(),
+        Optional.ofNullable(gls.stationElevation()).filter(Optional::isPresent).map(Optional::get).orElse(null),
+        AiracCycle.startDate(gls.lastUpdatedCycle())
+    );
+
+    return new BoogieFix.Builder()
+        .fixIdentifier(gls.glsRefPathIdentifier())
+        .fixRegion(gls.airportIcaoRegion())
+        .latitude(gls.stationLatitude())
+        .longitude(gls.stationLongitude())
+        .elevation(Optional.ofNullable(gls.stationElevation()).filter(Optional::isPresent).map(Optional::get).orElse(null))
+        .modeledVariation(modeledDeclination)
+        .publishedVariation(gls.magneticVariation())
         .build();
   }
 
