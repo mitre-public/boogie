@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     // instead of using the dependency plugin import the BOM
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.4"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.5"))
 
     api(project(":boogie-arinc"))
     api(project(":boogie-routes"))
