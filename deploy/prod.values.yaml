@@ -1,8 +1,9 @@
 ingress:
-  enabled: true
+  enabled: false
   host: 'boogie.streaming.cre.gov.aws.mitre.org'
   annotations:
     kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/group.name: streaming
     # needs to match on all ingresses in group, or only be present on 1
     alb.ingress.kubernetes.io/security-groups: Generic MITRE All SG,Generic Default (Local VPC Traffic) SG

@@ -39,7 +39,7 @@ A general outline of what's provided within this repo is here:
 Outlined here are the generic set of resources related to the project:
 
 1. [CI tasks](https://github.com/mitre-tdp/boogie/actions)
-1. [Cloud REST service deployment (CRE)](https://boogie.streaming.cre.gov.aws.mitre.org/swagger-ui/index.html#/)
+1. [Cloud REST service deployment (CRE)](https://cre.mitre.org/streaming/boogie/swagger-ui/index.html)
 1. [Software guidance](https://gitlab.mitre.org/tfm-analytics-ec/project-documentation/-/blob/main/software-guidance-and-best-practices/README.md)
 1. [TDP-infrastructure](https://mustache.mitre.org/projects/TTFS/repos/ttfs/browse/tdp-infrastructure) & [TDP-procedure](https://mustache.mitre.org/projects/TTFS/repos/ttfs/browse/ttfs-procedure)
 1. [AKELA-boogie](https://mustache.mitre.org/projects/AKELA/repos/akela-boogie/browse)
