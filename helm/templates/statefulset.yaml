@@ -38,10 +38,16 @@ spec:
           imagePullPolicy: Always
           {{- if .Values.deployment.livenessProbe }}
           livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
 {{ toYaml .Values.deployment.livenessProbe | indent 12 }}
           {{- end }}
           {{- if .Values.deployment.readinessProbe }}
           readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
 {{ toYaml .Values.deployment.readinessProbe | indent 12 }}
           {{- end }}
           ports:
