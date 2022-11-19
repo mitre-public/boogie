@@ -96,7 +96,7 @@ subprojects {
         "testImplementation"("org.mockito:mockito-core:$mockitoVersion")
         "testImplementation"("org.mockito:mockito-inline:$mockitoVersion")
 
-        "testImplementation"("nl.jqno.equalsverifier:equalsverifier:3.10.1")
+        "testImplementation"("nl.jqno.equalsverifier:equalsverifier:3.11.1")
 
         configurations.all {
             exclude("junit", "junit") //because we use only JUnit 5 (jupiter)
