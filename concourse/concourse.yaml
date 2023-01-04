@@ -89,7 +89,7 @@ jobs:
       - in_parallel:
           - get: application-code
             trigger: true
-            passed: [ docker-build, unit-test ]
+            passed: [ docker-build, unit-test, integration-test ]
           - get: dev-image
             params: { format: oci }
             passed: [ docker-build ]
