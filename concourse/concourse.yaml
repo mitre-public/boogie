@@ -37,6 +37,21 @@ jobs:
       put: notify
       params: { alert_type: failed }
 
+  - name: integration-test
+    plan:
+      - in_parallel:
+          - get: concourse-tasks
+          - get: application-code
+            trigger: true
+      - task: test
+        file: concourse-tasks/tasks/gradle-task.yaml
+        input_mapping: { repo: application-code }
+        vars:
+          task: testIntegration
+        params:
+          <<: *codev-env
+    on_failure: *notify_failure
+
   - name: docker-build
     plan:
       - in_parallel:
@@ -148,13 +163,6 @@ jobs:
         input_mapping: { pods: dev-pods, version: candidate-chart }
         params:
           containerSelector: "boogie"
-      - task: test
-        file: concourse-tasks/tasks/gradle-task.yaml
-        input_mapping: { repo: application-code }
-        vars:
-          task: testIntegration
-        params:
-          <<: *codev-env
     on_failure: *notify_failure
 
   - name: create-release
@@ -265,6 +273,7 @@ groups:
   - name: release
     jobs:
       - unit-test
+      - integration-test
       - docker-build
       - helm-validate
       - release-candidate-gate
@@ -278,14 +287,6 @@ groups:
     jobs:
       - reconfigure-self
       - reconfigure-pr-pipelines
-
-resource_types:
-
-  - name: helm-chart
-    type: codev-image
-    source:
-      repository: repo.codev.mitre.org/idaass-docker/concourse/helm-chart-resource
-      tag: 1.0.29
 
 resources:
 
