@@ -1,15 +1,4 @@
-FROM gradle:7.5.1-jdk11 AS base
-
-WORKDIR /certs
-
-ADD http://pki.mitre.org/MITRE%20BA%20ROOT.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-1.crt \
-    http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt \
-    http://pki.mitre.org/ZScaler_Root.crt /certs/
-
-RUN for cert in "MITRE BA ROOT.crt" "MITRE BA NPE CA-1.crt" "MITRE BA NPE CA-3.crt" "MITRE BA NPE CA-4.crt" "ZScaler_Root.crt"; \
-    do keytool -import -alias "${cert}" -file "${cert}" -keystore "$JAVA_HOME/lib/security/cacerts" -storepass changeit -noprompt; done
-
-FROM base AS build
+FROM gradle:7.5.1-jdk11 AS build
 
 # Injectible mavenUser and mavenPassword for use in building the image within the container
 ARG MAVEN_USER
