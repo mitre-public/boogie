@@ -373,7 +373,7 @@ resources:
     icon: github
     source:
       <<: *github-boogie
-      paths: [ dev.values.yaml, common.values.yaml ]
+      paths: [ deploy/dev.values.yaml, deploy/common.values.yaml ]
 
   - name: kubectl-dev
     type: k8s-resource
@@ -432,7 +432,7 @@ resources:
     icon: github
     source:
       <<: *github-boogie
-      paths: [ prod.values.yaml, common.values.yaml ]
+      paths: [ deploy/prod.values.yaml, deploy/common.values.yaml ]
 
   - name: kubectl-prod
     type: k8s-resource
