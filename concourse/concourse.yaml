@@ -146,6 +146,8 @@ jobs:
       - task: check-pod-status
         file: concourse-tasks/tasks/pod-status.yaml
         input_mapping: { pods: dev-pods, version: candidate-chart }
+        params:
+          containerSelector: "boogie"
       - task: test
         file: concourse-tasks/tasks/gradle-task.yaml
         input_mapping: { repo: application-code }
@@ -217,6 +219,8 @@ jobs:
       - task: check-pod-status
         file: concourse-tasks/tasks/pod-status.yaml
         input_mapping: { pods: prod-pods, version: stable-chart }
+        params:
+          containerSelector: "boogie"
       - task: build-api
         file: concourse-tasks/tasks/openapi-codegen.yaml
         input_mapping: { input-spec: prod-api-spec }
