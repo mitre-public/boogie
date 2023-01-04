@@ -34,7 +34,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Values.name }}
-          image: {{ .Values.image }}
+          image: "{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.Version }}"
           imagePullPolicy: Always
           {{- if .Values.deployment.livenessProbe }}
           livenessProbe:

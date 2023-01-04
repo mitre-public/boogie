@@ -3,6 +3,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.name }}
+  labels:
+  {{- if .Values.service.labels }}
+{{ toYaml .Values.service.labels | indent 4 }}
+  {{- end}}
+  annotations:
+  {{- if .Values.service.annotations }}
+{{ toYaml .Values.service.annotations | indent 4 }}
+  {{- end}}
 spec:
   selector:
     app: {{ .Values.name }}
@@ -11,11 +19,11 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8080
-    - name: http-port
+    - name: http
       protocol: TCP
       port: 80
       targetPort: 8080
-    - name: https-port
+    - name: https
       protocol: TCP
       port: 443
       targetPort: 8080

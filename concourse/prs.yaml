@@ -1,0 +1,80 @@
+codev-env: &codev-env
+  CODEV_USER: ((codev-write.write_user))
+  CODEV_PASSWORD: ((codev-write.write_user_token))
+
+jobs:
+
+  - name: unit-test
+    plan:
+      - in_parallel:
+          - get: concourse-tasks
+          - get: github-prs
+            trigger: true
+      - task: test
+        file: concourse-tasks/tasks/gradle-task.yaml
+        input_mapping: { repo: github-prs }
+        vars:
+          task: testUnit
+        params:
+          <<: *codev-env
+    on_success:
+      put: github-prs
+      params: { path: github-prs, status: success, context: gradle-test }
+    on_failure:
+      put: github-prs
+      params: { path: github-prs, status: failure, context: gradle-test }
+
+  - name: helm-validate
+    plan:
+      - in_parallel:
+          - get: concourse-tasks
+          - get: github-prs
+            trigger: true
+      - task: helm-validate
+        file: concourse-tasks/tasks/helm-validate.yaml
+        input_mapping: { repo: github-prs }
+        params:
+          CHART_PATH: repo/helm
+    on_success:
+      put: github-prs
+      params: { path: github-prs, status: success, context: helm-validate }
+    on_failure:
+      put: github-prs
+      params: { path: github-prs, status: failure, context: helm-validate }
+
+  - name: fly-validate
+    plan:
+      - in_parallel:
+          - get: concourse-tasks
+          - get: github-prs
+            trigger: true
+      - task: fly-validate
+        file: concourse-tasks/tasks/fly-validate.yaml
+        input_mapping: { repo: github-prs }
+        vars:
+          pipeline-file: concourse/concourse.yaml
+    on_success:
+      put: github-prs
+      params: { path: github-prs, status: success, context: fly-validate }
+    on_failure:
+      put: github-prs
+      params: { path: github-prs, status: failure, context: fly-validate }
+
+resources:
+
+  - name: github-prs
+    type: pull-request
+    icon: source-pull
+    source:
+      access_token: ((github-concourse-token.token))
+      repository: mitre-tdp/boogie
+      number: ((number))
+
+  - name: concourse-tasks
+    type: git
+    icon: github
+    source:
+      uri: git@github.com:mitre-tdp/concourse-tools.git
+      private_key: ((github.concourse-tools_private_deploy_key))
+      branch: main
+      paths: [ tasks ]

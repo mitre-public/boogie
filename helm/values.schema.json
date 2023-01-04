@@ -9,7 +9,15 @@
   ],
   "properties": {
     "image": {
-      "type": "string"
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
     },
     "resources": {
       "type": "object",

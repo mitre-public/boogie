@@ -1,5 +1,7 @@
 name: boogie
-image: "repo.codev.mitre.org/idaass-docker/tdp/boogie-rest:latest"
+image:
+  name: "ghcr.io/mitre-tdp/tdp/boogie"
+  tag: ""
 imagePullSecrets: [ kubernetes-codev-pull ]
 resources:
   cpu: 500m
@@ -9,6 +11,7 @@ resources:
   storageClassName: efs-auto-provisioned
   storageResources: 300Mi
   replicas: 2
+service: { }
 ingress:
   enabled: false
   host: 'boogie.streaming.cre.gov.aws.mitre.org'
