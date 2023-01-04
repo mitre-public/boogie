@@ -146,6 +146,14 @@ jobs:
       - task: check-pod-status
         file: concourse-tasks/tasks/pod-status.yaml
         input_mapping: { pods: dev-pods, version: candidate-chart }
+      - task: test
+        file: concourse-tasks/tasks/gradle-task.yaml
+        input_mapping: { repo: application-code }
+        vars:
+          task: testIntegration
+        params:
+          <<: *codev-env
+    on_failure: *notify_failure
 
   - name: create-release
     plan:
