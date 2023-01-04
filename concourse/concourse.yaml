@@ -129,7 +129,7 @@ jobs:
           show_diff: true
         on_failure: *notify_failure
       - put: kubectl-dev
-        params: { kubectl: "rollout restart deployment boogie" }
+        params: { kubectl: "rollout restart statefulset boogie" }
         on_failure: *notify_failure
 
   - name: release-gate
@@ -202,7 +202,7 @@ jobs:
           show_diff: true
         on_failure: *notify_failure
       - put: kubectl-prod
-        params: { kubectl: "rollout restart deployment boogie" }
+        params: { kubectl: "rollout restart statefulset boogie" }
         on_failure: *notify_failure
 
   - name: publish-api
