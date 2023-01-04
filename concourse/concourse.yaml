@@ -122,8 +122,8 @@ jobs:
           chart: dev-apps/boogie
           release: boogie
           values: [
-            dev-deploy-folder/common.values.yaml,
-            dev-deploy-folder/dev.values.yaml
+            dev-deploy-folder/deploy/common.values.yaml,
+            dev-deploy-folder/deploy/dev.values.yaml
           ]
           version: candidate-chart/version
           show_diff: true
@@ -195,8 +195,8 @@ jobs:
           chart: prod-apps/boogie
           release: boogie
           values: [
-            prod-deploy-folder/common.values.yaml,
-            prod-deploy-folder/prod.values.yaml
+            prod-deploy-folder/deploy/common.values.yaml,
+            prod-deploy-folder/deploy/prod.values.yaml
           ]
           version: stable-chart/version
           show_diff: true
@@ -238,21 +238,6 @@ jobs:
         file: boogie-concourse/concourse/concourse.yaml
     on_failure: *notify_failure
 
-  - name: reconfigure-api-gen
-    plan:
-      - get: boogie-concourse
-        trigger: true
-        passed: [ reconfigure-self ]
-      - across:
-          - var: version
-            values: [ 1.15, 1.16, 1.17 ]
-            max_in_flight: all
-        set_pipeline: flink-boogie
-        file: boogie-concourse/concourse/flink-api.yaml
-        instance_vars:
-          version: ((.:version))
-    on_failure: *notify_failure
-
   - name: reconfigure-pr-pipelines
     plan:
       - in_parallel:
@@ -288,7 +273,6 @@ groups:
   - name: reconfigure
     jobs:
       - reconfigure-self
-      - reconfigure-api-gen
       - reconfigure-pr-pipelines
 
 resource_types:
