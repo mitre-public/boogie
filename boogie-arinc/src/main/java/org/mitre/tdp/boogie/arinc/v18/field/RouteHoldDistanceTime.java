@@ -31,8 +31,7 @@ public final class RouteHoldDistanceTime extends TrimmableString {
     return Optional.of(fieldString)
         .filter(fs -> fs.startsWith("T"))
         .map(fs -> fs.substring(1))
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths)
-        .map(mins -> Duration.ofSeconds((int) (mins * 60)));
+        .map(LegTimeFromString.INSTANCE);
   }
 
   /**

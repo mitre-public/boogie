@@ -23,7 +23,8 @@ public enum ArincVersion {
       new VhfNavaidSpec(),
       new WaypointSpec(),
       new org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec(),
-      new GnssLandingSystemSpec()
+      new GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec()
   ),
   /**
    * Returns a static implementation of a parser for V19 ARINC 424 data. From the perspective of the Boogie front-end parsers
@@ -38,7 +39,8 @@ public enum ArincVersion {
       new VhfNavaidSpec(),
       new WaypointSpec(),
       new org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec(),
-      new GnssLandingSystemSpec()
+      new GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec()
   );
 
   private final ArincRecordParser parser;

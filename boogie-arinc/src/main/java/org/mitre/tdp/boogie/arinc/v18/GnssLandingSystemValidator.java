@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GnssLandingSystemValidator implements Predicate<ArincRecord> {
+public final class GnssLandingSystemValidator implements Predicate<ArincRecord> {
 
   private static final Logger LOG = LoggerFactory.getLogger(GnssLandingSystemValidator.class);
 

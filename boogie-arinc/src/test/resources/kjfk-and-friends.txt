@@ -1,3 +1,6 @@
+SAFREPENRT                 10ABU  HLD 01400L   15FL150FL290265                                    ABU ARGUB                141282101
+SAFREPENRT                 10ACC  DGD 02060L   20FL140                                            ACCRA                    141292003
+SAFREPENRT                 10ADM  GMD 00520L   15FL210FL340265                                    AL-MASSIRA               141302113
 SCAND        AFE   PA011440 DUW                    AFE N56575010W133544280E0210001700     NARKAKE                          002371612
 SCAND        BKA   PA011380VTHW N56513387W135330472    N56513387W135330472E0200002602     NARBIORKA ISLAND                 002452002
 SCAND        CDB   PA011260VTHW N55160226W162462639    N55160226W162462639E0100000992     NARCOLD BAY                      002492010
@@ -165,6 +168,9 @@ SCANP PFTOPFCLISEY PA0    W     N63204103W143100019                       E0182 
 SCANP PFTOPFFR07   R      020LISEYPAPC0E  F 010TF                                 + 03500                 RW07  PFPGB PS   132422009
 SCANP Z78 PAAZ78     0     100NWN56174420W158240533E019000000         1800018000C    MNAR    CHIGNIK BAY                   134521703
 SCANURPAUANC SATR  A00102C                                                                         DESIGNATED ATCT         163631703
+SEEUEPEEEIEE               50VEGEREEPC00620R043  02200     230                                    VEGER                    782232102
+SEEUEPEEEIEE               51VEGEREEPC00620R   1002200                                            VEGER                    782242102
+SEEUEPEEEIEE               52VEGEREEPC00620R033  02200                                            VEGER                    782252102
 SLAMP TJPSTJCOLGAH TJ0    C     N17491222W066061718                       W0133     NAR           OLGAH-MIL                171662002
 SLAMP TJPSTJDWLFRD26OLGAH 010WLFRDTJPC0E       IF                                             18000                        172001610
 SLAMP TJPSTJDWLFRD26OLGAH 020OLGAHTJPC0EE      TF                                                                          172011610

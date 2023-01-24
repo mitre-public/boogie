@@ -43,6 +43,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
   private final DelegatableCollection<ArincGnssLandingSystem> gnssLandingSystems;
 
+  private final DelegatableCollection<ArincHoldingPattern> arincHoldingPatterns;
+
   private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;
 
   private ConvertingArincRecordConsumer(Builder builder) {
@@ -55,6 +57,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincAirwayLegs = new DelegatableCollection<>(builder.airwayDelegator, builder.airwayConverter);
     this.arincProcedureLegs = new DelegatableCollection<>(builder.procedureDelegator, builder.procedureConverter);
     this.gnssLandingSystems = new DelegatableCollection<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
+    this.arincHoldingPatterns = new DelegatableCollection<>(builder.holdingPatternDelegator, builder.holdingPatternConverter);
 
     this.consumer = new MRUDequeConsumer<>(
         this.arincAirports,
@@ -65,7 +68,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         this.arincWaypoints,
         this.arincAirwayLegs,
         this.arincProcedureLegs,
-        this.gnssLandingSystems
+        this.gnssLandingSystems,
+        this.arincHoldingPatterns
     );
   }
 
@@ -103,6 +107,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
   public Collection<ArincGnssLandingSystem> arincGnssLandingSystems() {
     return gnssLandingSystems.records();
+  }
+
+  public Collection<ArincHoldingPattern> arincHoldingPatterns() {
+    return arincHoldingPatterns.records();
   }
 
   @Override
@@ -198,6 +206,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     private Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter;
 
+    private Predicate<ArincRecord> holdingPatternDelegator;
+
+    private Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter;
+
     public Builder airportDelegator(Predicate<ArincRecord> airportDelegator) {
       this.airportDelegator = requireNonNull(airportDelegator);
       return this;
@@ -285,6 +297,16 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     public Builder gnssLandingSystemConverter(Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter) {
       this.gnssLandingSystemConverter = requireNonNull(gnssLandingSystemConverter);
+      return this;
+    }
+
+    public Builder holdingPatternDelegator(Predicate<ArincRecord> holdingPatternDelegator) {
+      this.holdingPatternDelegator = holdingPatternDelegator;
+      return this;
+    }
+
+    public Builder holdingPatternConverter(Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter) {
+      this.holdingPatternConverter = holdingPatternConverter;
       return this;
     }
 

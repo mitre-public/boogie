@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 
-public class GnssLandingSystemConverter implements Function<ArincRecord, Optional<ArincGnssLandingSystem>> {
+public final class GnssLandingSystemConverter implements Function<ArincRecord, Optional<ArincGnssLandingSystem>> {
 
   private static final Predicate<ArincRecord> isInvalidRecord = new GnssLandingSystemValidator().negate();
 

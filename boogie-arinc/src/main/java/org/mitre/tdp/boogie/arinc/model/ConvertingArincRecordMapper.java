@@ -33,6 +33,8 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
   private final DelegatingMapper<ArincGnssLandingSystem> arincGnssLandingSystems;
 
+  private final DelegatingMapper<ArincHoldingPattern> arincHoldingPatterns;
+
   private ConvertingArincRecordMapper(Builder builder) {
     this.arincAirports = new DelegatingMapper<>(builder.airportDelegator, builder.airportConverter);
     this.arincRunways = new DelegatingMapper<>(builder.runwayDelegator, builder.runwayConverter);
@@ -43,6 +45,7 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     this.arincAirwayLegs = new DelegatingMapper<>(builder.airwayDelegator, builder.airwayConverter);
     this.arincProcedureLegs = new DelegatingMapper<>(builder.procedureDelegator, builder.procedureConverter);
     this.arincGnssLandingSystems = new DelegatingMapper<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
+    this.arincHoldingPatterns = new DelegatingMapper<>(builder.holdingPatternDelegator, builder.holdingPatternConverter);
   }
 
   @Override
@@ -73,6 +76,9 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     }
     if (arincGnssLandingSystems.test(arincRecord)) {
       return arincGnssLandingSystems.apply(arincRecord);
+    }
+    if (arincHoldingPatterns.test(arincRecord)) {
+      return arincHoldingPatterns.apply(arincRecord);
     }
     return Optional.empty();
   }
@@ -120,6 +126,10 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     private Predicate<ArincRecord> gnssLandingSystemDelegator;
 
     private Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter;
+
+    private Predicate<ArincRecord> holdingPatternDelegator;
+
+    private Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter;
 
     public Builder airportDelegator(Predicate<ArincRecord> airportDelegator) {
       this.airportDelegator = requireNonNull(airportDelegator);
@@ -208,6 +218,16 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
     public Builder gnssLandingSystemConverter(Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter) {
       this.gnssLandingSystemConverter = requireNonNull(gnssLandingSystemConverter);
+      return this;
+    }
+
+    public Builder holdingPatternDelegator(Predicate<ArincRecord> holdingPatternDelegator) {
+      this.holdingPatternDelegator = holdingPatternDelegator;
+      return this;
+    }
+
+    public Builder holdingPatternConverter(Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter) {
+      this.holdingPatternConverter = holdingPatternConverter;
       return this;
     }
 

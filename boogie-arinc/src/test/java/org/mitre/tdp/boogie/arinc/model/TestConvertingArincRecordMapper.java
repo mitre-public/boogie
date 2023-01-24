@@ -74,5 +74,7 @@ class TestConvertingArincRecordMapper {
       .waypointConverter(new WaypointConverter())
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+      .holdingPatternConverter(new HoldingPatternConverter())
+      .holdingPatternDelegator(new GnssLandingSystemValidator())
       .build();
 }

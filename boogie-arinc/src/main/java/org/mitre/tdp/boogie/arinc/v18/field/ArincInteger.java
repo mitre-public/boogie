@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
 
-abstract class ArincInteger implements FieldSpec<Integer> {
+public abstract class ArincInteger implements FieldSpec<Integer> {
 
   @Override
   public Optional<Integer> apply(String fieldValue) {

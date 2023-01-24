@@ -81,6 +81,8 @@ public final class EmbeddedCifpFile {
     return new HashSet<>();
   }
 
+  public Collection<ArincHoldingPattern> arincHoldingPatterns() {return new HashSet<>();}
+
   public int totalRecords() {
     return arincAirports().size()
         + arincRunways().size()

@@ -45,7 +45,8 @@ class TestAirwayAssembler {
         testV18Consumer.arincNdbNavaids(),
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincAirports()
+        testV18Consumer.arincAirports(),
+        testV18Consumer.arincHoldingPatterns()
     );
 
     AirwayAssembler assembler = new AirwayAssembler(fixDatabase);
@@ -120,5 +121,7 @@ class TestAirwayAssembler {
       .waypointConverter(new WaypointConverter())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+      .holdingPatternConverter(new HoldingPatternConverter())
+      .holdingPatternDelegator(new HoldingPatternValidator())
       .build();
 }

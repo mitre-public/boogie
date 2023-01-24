@@ -63,7 +63,8 @@ class TestProcedureAssembler {
         testV18Consumer.arincNdbNavaids(),
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincAirports()
+        testV18Consumer.arincAirports(),
+        testV18Consumer.arincHoldingPatterns()
     );
 
     assembler = new ProcedureAssembler(terminalAreaDatabase, fixDatabase);
@@ -251,5 +252,7 @@ class TestProcedureAssembler {
       .waypointConverter(new WaypointConverter())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+      .holdingPatternDelegator(new HoldingPatternValidator())
+      .holdingPatternConverter(new HoldingPatternConverter())
       .build();
 }

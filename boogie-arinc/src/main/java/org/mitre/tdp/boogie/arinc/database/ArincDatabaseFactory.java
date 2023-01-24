@@ -2,11 +2,7 @@ package org.mitre.tdp.boogie.arinc.database;
 
 import static java.util.Collections.emptyList;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,7 +44,8 @@ public final class ArincDatabaseFactory {
       Collection<ArincNdbNavaid> ndbNavaids,
       Collection<ArincVhfNavaid> vhfNavaids,
       Collection<ArincWaypoint> waypoints,
-      Collection<ArincAirport> airports) {
+      Collection<ArincAirport> airports,
+      Collection<ArincHoldingPattern> holdingPatterns) {
 
     LinkedHashMultimap<ArincKey, Object> lookup = LinkedHashMultimap.create();
 
@@ -63,6 +60,9 @@ public final class ArincDatabaseFactory {
 
     LOG.info("Indexing {} Airports in the FixDatabase.", airports.size());
     airports.forEach(airport -> lookup.put(airportToFixIndex.apply(airport), airport));
+
+    LOG.info("Indexing {} Holding Patterns in the FixDatabase.", airports.size());
+    holdingPatterns.forEach(arincHoldingPattern -> lookup.put(holdingToHoldingIndex.apply(arincHoldingPattern), arincHoldingPattern));
 
     return new FixDatabase(lookup);
   }
@@ -213,5 +213,12 @@ public final class ArincDatabaseFactory {
       arincAirport.airportIcaoRegion(),
       arincAirport.sectionCode(),
       arincAirport.subSectionCode().orElse(null)
+  );
+
+  private static final Function<ArincHoldingPattern, ArincKey> holdingToHoldingIndex = arincHoldingPattern -> new ArincKey(
+      arincHoldingPattern.fixIdentifier(),
+      arincHoldingPattern.fixIcaoRegion(),
+      arincHoldingPattern.sectionCode(),
+      arincHoldingPattern.subSectionCode()
   );
 }

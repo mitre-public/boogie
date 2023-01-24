@@ -1,20 +1,19 @@
 package org.mitre.tdp.boogie.arinc.database;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import com.google.common.collect.LinkedHashMultimap;
@@ -208,6 +207,19 @@ public final class FixDatabase {
         new ArincKey(identifier, icaoRegion, SectionCode.D, null)
     );
     return highlander(navaids);
+  }
+
+  /**
+   * Returns the collection of holding fixes at that fixIdent/regionCode.
+   * @param fixIdentifier holding fix identifier
+   * @param fixIcaoRegion holding fix region code
+   * @return A collection of holds or empty collection to go with that key
+   */
+  public Collection<ArincHoldingPattern> enrouteHolds(String fixIdentifier, String fixIcaoRegion) {
+    return castingLookup(
+        ArincHoldingPattern.class,
+        new ArincKey(fixIdentifier, fixIcaoRegion, SectionCode.E, "P")
+    );
   }
 
   /**

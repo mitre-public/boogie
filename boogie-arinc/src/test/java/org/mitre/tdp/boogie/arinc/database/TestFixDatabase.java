@@ -1,9 +1,10 @@
 package org.mitre.tdp.boogie.arinc.database;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -11,11 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 
@@ -27,13 +24,28 @@ class TestFixDatabase {
 
   @BeforeAll
   static void setup() {
-    fileParser.apply(arincTestFile).forEach(testV18Consumer);
+    fileParser.apply(arincTestFile)
+        .forEach(i -> testV18Consumer.accept(i));
 
     fixDatabase = ArincDatabaseFactory.newFixDatabase(
         testV18Consumer.arincNdbNavaids(),
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincAirports()
+        testV18Consumer.arincAirports(),
+        testV18Consumer.arincHoldingPatterns()
+    );
+  }
+
+  @Test
+  void testHoldingFunctionality() {
+    ArincHoldingPattern abu = fixDatabase.enrouteHolds("ABU", "HL").stream().findFirst().orElseThrow();
+    List<ArincHoldingPattern> vegers = fixDatabase.enrouteHolds("VEGER", "EE").stream().sorted().collect(Collectors.toList());
+    assertAll(
+        () -> assertEquals("ABU", abu.fixIdentifier()),
+        () -> assertEquals(90, abu.legTime().orElseThrow().getSeconds(), "Should be 90 seconds aka 1.5 min a normal hold"),
+        () -> assertEquals(43.0, vegers.get(0).legLength().orElseThrow(), "Should have a length"),
+        () -> assertTrue(vegers.get(1).legLength().isEmpty(), "Both are not coded, so this should be empty"),
+        () -> assertEquals(1, vegers.get(1).legTime().orElseThrow().toMinutes(), "Should have a time of 1 min")
     );
   }
 
@@ -79,7 +91,8 @@ class TestFixDatabase {
       new ProcedureLegSpec(),
       new RunwaySpec(),
       new VhfNavaidSpec(),
-      new WaypointSpec()
+      new WaypointSpec(),
+      new HoldingPatternSpec()
   );
 
   /**
@@ -104,5 +117,7 @@ class TestFixDatabase {
       .waypointConverter(new WaypointConverter())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+      .holdingPatternConverter(new HoldingPatternConverter())
+      .holdingPatternDelegator(new HoldingPatternValidator())
       .build();
 }

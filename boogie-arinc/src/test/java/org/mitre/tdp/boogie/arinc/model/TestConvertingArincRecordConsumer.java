@@ -72,5 +72,7 @@ class TestConvertingArincRecordConsumer {
       .waypointConverter(new WaypointConverter())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+      .holdingPatternConverter(new HoldingPatternConverter())
+      .holdingPatternDelegator(new HoldingPatternValidator())
       .build();
 }
