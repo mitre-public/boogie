@@ -26,7 +26,7 @@ dependencies {
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
     /* Swagger dependencies */
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
 
     /** Logging dependencies */
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
