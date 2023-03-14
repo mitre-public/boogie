@@ -338,7 +338,7 @@ resources:
       namespace: *deployment-namespace
 
   - name: dev-pods
-    type: k8s-resource
+    type: k8s-dev
     icon: kubernetes
     source:
       namespace: *deployment-namespace

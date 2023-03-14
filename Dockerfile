@@ -8,7 +8,7 @@ COPY . .
 # build the jar and then rename it to not contain the version and leave it in ./boogie.jar
 # note this task will also run checkstyle, code coverage, and tests
 RUN --mount=type=secret,id=gradle.properties,dst=/root/.gradle/gradle.properties API_VERSION=$(gradle properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}') \
-    && gradle --no-daemon bootJar -PcodevUser=$MAVEN_USER -PcodevPassword=$MAVEN_PASSWORD \
+    && gradle --no-daemon bootJar \
     && mv boogie-rest/build/libs/boogie-rest-$API_VERSION.jar ./boogie.jar
 
 FROM openjdk:11-jre-slim AS production
