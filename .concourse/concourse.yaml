@@ -1,9 +1,5 @@
 deployment-namespace: &deployment-namespace auspicious-abyss
 
-codev-user-pass: &codev-user-pass
-  username: ((codev-write.write_user))
-  password: ((codev-write.write_user_token))
-
 codev-env: &codev-env
   CODEV_USER: ((codev-write.write_user))
   CODEV_PASSWORD: ((codev-write.write_user_token))
@@ -13,20 +9,15 @@ github-boogie: &github-boogie
   private_key: ((boogie-deploy-key.ssh-privatekey))
   branch: main
 
-chart-source: &chart-source
-  repository_url: https://repo.codev.mitre.org/artifactory/idaas-helm/
-  chart: boogie
-  <<: *codev-user-pass
-
 jobs:
-
   - name: unit-test
     plan:
       - in_parallel:
-          - get: concourse-tasks
-          - get: application-code
-            trigger: true
-      - task: test
+        - get: concourse-tasks
+        - get: application-code
+          trigger: true
+      - &unit-test-task
+        task: test
         file: concourse-tasks/tasks/gradle-task.yaml
         input_mapping: { repo: application-code }
         vars:
@@ -35,14 +26,14 @@ jobs:
           <<: *codev-env
     on_failure: &notify_failure
       put: notify
-      params: { alert_type: failed }
+      params: { alert_type: broke }
 
   - name: integration-test
     plan:
       - in_parallel:
-          - get: concourse-tasks
-          - get: application-code
-            trigger: true
+        - get: concourse-tasks
+        - get: application-code
+          trigger: true
       - task: test
         file: concourse-tasks/tasks/gradle-task.yaml
         input_mapping: { repo: application-code }
@@ -55,16 +46,17 @@ jobs:
   - name: docker-build
     plan:
       - in_parallel:
-          - get: concourse-tasks
-          - get: application-code
-            trigger: true
+        - get: concourse-tasks
+        - get: application-code
+          trigger: true
       - task: build-image
         privileged: true
         file: concourse-tasks/tasks/build-image.yaml
         input_mapping: { dockerfile: application-code }
         params:
-          BUILD_ARG_MAVEN_USER: ((codev-write.write_user))
-          BUILD_ARG_MAVEN_PASSWORD: ((codev-write.write_user_token))
+          LABEL_org.opencontainers.image.source: "https://github.com/mitre-tdp/boogie"
+          LABEL_org.opencontainers.image.description: "TDP independent project for Procedure/Airway/Fix/Airport - related infrastructure parsing and algorithms."
+          BUILDKIT_SECRETTEXT_gradle.properties: ((codev-write.gradlePropertiesFile))
       - put: dev-image
         params:
           image: image/image.tar
@@ -75,27 +67,13 @@ jobs:
     plan:
       - in_parallel:
           - get: concourse-tasks
-          - get: helm-code
-            trigger: true
-      - task: helm-validate
-        file: concourse-tasks/tasks/helm-validate.yaml
-        input_mapping: { repo: helm-code }
-        params:
-          CHART_PATH: repo/helm
-    on_failure: *notify_failure
-
-  - name: release-candidate-gate
-    plan:
-      - in_parallel:
           - get: application-code
             trigger: true
-            passed: [ docker-build, unit-test, integration-test ]
-          - get: dev-image
-            params: { format: oci }
-            passed: [ docker-build ]
-          - get: helm-code
-            trigger: true
-            passed: [ helm-validate ]
+      - &helm-validate-task
+        task: helm-validate
+        file: concourse-tasks/tasks/helm-validate.yaml
+        input_mapping: { repo: application-code }
+    on_failure: *notify_failure
 
   - name: create-release-candidate
     plan:
@@ -103,16 +81,16 @@ jobs:
           - get: concourse-tasks
           - get: version
             params: { bump: patch }
-          - get: helm-code
+          - get: application-code
             trigger: true
-            passed: [ release-candidate-gate ]
+            passed: [ docker-build, unit-test, integration-test, helm-validate ]
           - get: dev-image
             trigger: true
             params: { format: oci }
-            passed: [ release-candidate-gate ]
+            passed: [ docker-build ]
       - task: generate-rc-version
         file: concourse-tasks/tasks/rc-version.yaml
-        input_mapping: { repo: helm-code }
+        input_mapping: { repo: application-code }
       - put: candidate-image
         params:
           additional_tags: version/version
@@ -120,7 +98,7 @@ jobs:
         get_params: { skip_download: true }
       - put: candidate-chart
         params:
-          repository: helm-code/helm
+          repository: application-code/helm
           version_file: version/version
     on_failure: *notify_failure
 
@@ -134,7 +112,7 @@ jobs:
             trigger: true
       - put: helm-dev
         params:
-          chart: dev-apps/boogie
+          chart: apps/boogie
           release: boogie
           values: [
             dev-deploy-folder/deploy/common.values.yaml,
@@ -202,7 +180,7 @@ jobs:
             trigger: true
       - put: helm-prod
         params:
-          chart: prod-apps/boogie
+          chart: apps/boogie
           release: boogie
           values: [
             prod-deploy-folder/deploy/common.values.yaml,
@@ -244,30 +222,40 @@ jobs:
 
   - name: reconfigure-self
     plan:
-      - get: boogie-concourse
+      - get: application-code
         trigger: true
       - set_pipeline: boogie
-        file: boogie-concourse/concourse/concourse.yaml
+        file: application-code/.concourse/concourse.yaml
     on_failure: *notify_failure
 
-  - name: reconfigure-pr-pipelines
+  - name: test-prs
     plan:
       - in_parallel:
-          - get: boogie-concourse
+          - get: application-code
+            resource: github-pull-requests
             trigger: true
-            passed: [ reconfigure-self ]
-          - get: github-prs
-            trigger: true
-      - load_var: all_prs
-        file: github-prs/prs.json
-      - across:
-          - var: single_pr
-            values: ((.:all_prs))
-            max_in_flight: all
-        set_pipeline: boogie-prs
-        file: boogie-concourse/concourse/prs.yaml
-        instance_vars:
-          number: ((.:single_pr.number))
+            version: every
+          - get: concourse-tasks
+      - put: github-pull-requests
+        params: { path: application-code, status: pending, context: test }
+      - in_parallel:
+        - <<: *unit-test-task
+        - <<: *helm-validate-task
+        - task: fly-validate
+          file: concourse-tasks/tasks/fly-validate.yaml
+          input_mapping: { repo: github-pull-requests }
+          vars:
+            pipeline-file: .concourse/concourse.yaml
+    on_success:
+      put: github-pull-requests
+      params: { path: application-code, status: success, context: test }
+    on_failure:
+      put: github-pull-requests
+      params: { path: application-code, status: failure, context: test }
+    on_error: &on-error
+      put: github-pull-requests
+      params: { path: application-code, status: error, context: test }
+    on_abort: *on-error
 
 groups:
   - name: release
@@ -276,7 +264,6 @@ groups:
       - integration-test
       - docker-build
       - helm-validate
-      - release-candidate-gate
       - create-release-candidate
       - deploy-dev
       - release-gate
@@ -284,42 +271,24 @@ groups:
       - deploy-prod
       - publish-api
   - name: reconfigure
-    jobs:
-      - reconfigure-self
-      - reconfigure-pr-pipelines
+    jobs: [reconfigure-self, test-prs]
 
 resources:
-
-  - name: github-prs
-    type: pull-request
-    icon: &git-icon github
+  - name: github-pull-requests
+    type: dynamic-pull-requests
+    icon: source-pull
     source:
-      access_token: ((github-concourse-token.token))
-      base_branch: main
       repository: mitre-tdp/boogie
 
   - name: concourse-tasks
-    type: git
-    icon: *git-icon
-    source:
-      uri: git@github.com:mitre-tdp/concourse-tools.git
-      private_key: ((github.concourse-tools_private_deploy_key))
-      branch: main
-      paths: [ tasks ]
-
-  - name: boogie-concourse
-    type: git
-    icon: *git-icon
-    source:
-      <<: *github-boogie
-      paths: [ concourse ]
+    type: concourse-tasks
+    icon: &git-icon github
 
   - name: application-code
     type: git
     icon: *git-icon
     source:
       <<: *github-boogie
-      paths: [ gradle, src, .gitignore, build.gradle.kts, gradle.properties, settings.gradle.kts, Dockerfile, .dockerignore ]
 
   - name: dev-image
     type: ghcr-image
@@ -328,19 +297,11 @@ resources:
       repository: ghcr.io/mitre-tdp/tdp/boogie
       tag: latest
 
-  - name: helm-code
-    type: git
-    icon: *git-icon
-    source:
-      <<: *github-boogie
-      paths: [ helm ]
-
   - name: version
     type: semver
     icon: tag
     source:
       <<: *github-boogie
-      driver: git
       file: VERSION
 
   - name: candidate-image
@@ -354,7 +315,7 @@ resources:
     type: helm-chart
     icon: &helm-icon ship-wheel
     source:
-      <<: *chart-source
+      chart: boogie
       include_pre_releases: true
 
   - name: dev-deploy-folder
@@ -365,33 +326,22 @@ resources:
       paths: [ deploy/dev.values.yaml, deploy/common.values.yaml ]
 
   - name: kubectl-dev
-    type: k8s-resource
+    type: k8s-dev
     icon: kubernetes
-    source: &dev-k8s
-      url: ((kubernetes.dev-uri))
-      token: ((kubernetes.dev-token))
-      insecure_skip_tls_verify: true
+    source:
       namespace: *deployment-namespace
 
   - name: helm-dev
-    type: local-helm-repo
+    type: helm-dev
     icon: kubernetes
     source:
-      cluster_url: ((kubernetes.dev-uri))
-      token: ((kubernetes.dev-token))
-      cluster_ca: ((kubernetes.dev-ca))
       namespace: *deployment-namespace
-      helm_history_max: 2
-      repos:
-        - name: dev-apps
-          url: https://repo.codev.mitre.org/artifactory/idaas-helm
-          <<: *codev-user-pass
 
   - name: dev-pods
     type: k8s-resource
     icon: kubernetes
     source:
-      <<: *dev-k8s
+      namespace: *deployment-namespace
       resource_types: pods
       filter:
         name: "boogie*"
@@ -414,7 +364,7 @@ resources:
     type: helm-chart
     icon: *helm-icon
     source:
-      <<: *chart-source
+      chart: boogie
 
   - name: prod-deploy-folder
     type: git
@@ -424,33 +374,21 @@ resources:
       paths: [ deploy/prod.values.yaml, deploy/common.values.yaml ]
 
   - name: kubectl-prod
-    type: k8s-resource
+    type: k8s-prod
     icon: kubernetes
-    source: &prod-k8s
-      url: ((kubernetes.prod-uri))
-      token: ((kubernetes.prod-token))
-      insecure_skip_tls_verify: true
+    source:
       namespace: *deployment-namespace
 
   - name: helm-prod
-    type: local-helm-repo
+    type: helm-prod
     icon: kubernetes
     source:
-      cluster_url: ((kubernetes.prod-uri))
-      token: ((kubernetes.prod-token))
-      cluster_ca: ((kubernetes.prod-ca))
       namespace: *deployment-namespace
-      helm_history_max: 2
-      repos:
-        - name: prod-apps
-          url: https://repo.codev.mitre.org/artifactory/idaas-helm
-          <<: *codev-user-pass
 
   - name: prod-pods # prods
-    type: k8s-resource
+    type: k8s-prod
     icon: kubernetes
     source:
-      <<: *prod-k8s
       resource_types: pods
       filter:
         name: "boogie*"
@@ -466,5 +404,4 @@ resources:
     type: slack-alert
     icon: slack
     source:
-      url: https://hooks.slack.com/services/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
       channel: "#treebeard-n-pippin"

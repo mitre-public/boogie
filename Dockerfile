@@ -1,9 +1,5 @@
 FROM gradle:7.5.1-jdk11 AS build
 
-# Injectible mavenUser and mavenPassword for use in building the image within the container
-ARG MAVEN_USER
-ARG MAVEN_PASSWORD
-
 # transfer all the source code again to build the final jar containing the boogie source (dependencies have already been cached)
 WORKDIR /boogie
 
@@ -11,7 +7,7 @@ COPY . .
 
 # build the jar and then rename it to not contain the version and leave it in ./boogie.jar
 # note this task will also run checkstyle, code coverage, and tests
-RUN API_VERSION=$(gradle properties -PcodevUser=$MAVEN_USER -PcodevPassword=$MAVEN_PASSWORD --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}') \
+RUN --mount=type=secret,id=gradle.properties,dst=/root/.gradle/gradle.properties API_VERSION=$(gradle properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}') \
     && gradle --no-daemon bootJar -PcodevUser=$MAVEN_USER -PcodevPassword=$MAVEN_PASSWORD \
     && mv boogie-rest/build/libs/boogie-rest-$API_VERSION.jar ./boogie.jar
 
