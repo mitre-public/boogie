@@ -38,6 +38,7 @@ spec:
           imagePullPolicy: Always
           {{- if .Values.deployment.livenessProbe }}
           livenessProbe:
+            timeoutSeconds: 5
             httpGet:
               path: /actuator/health/liveness
               port: 8080
@@ -45,6 +46,7 @@ spec:
           {{- end }}
           {{- if .Values.deployment.readinessProbe }}
           readinessProbe:
+            timeoutSeconds: 5
             httpGet:
               path: /actuator/health/readiness
               port: 8080
