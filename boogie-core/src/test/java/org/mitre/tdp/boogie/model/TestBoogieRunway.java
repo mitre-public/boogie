@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.model;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -27,8 +28,14 @@ class TestBoogieRunway {
         .departureRunwayEnd(LatLong.of(0., 0.))
         .ilsGlsMls1("CAT1")
         .ilsGlsMls2("CAT2")
+        .departureRunwayEndElevation(12)
+        .landingThresholdElevation(20)
         .build();
 
-    assertEquals(runway, runway.toBuilder().build(), "toBuilder().build() should return equivalent runway.");
+    assertAll("Simple checks",
+        () -> assertEquals(runway, runway.toBuilder().build(), "toBuilder().build() should return equivalent runway."),
+        () -> assertEquals(20, runway.landingThresholdElevation().get()),
+        () -> assertEquals(12, runway.departureRunwayEndElevation().get())
+    );
   }
 }

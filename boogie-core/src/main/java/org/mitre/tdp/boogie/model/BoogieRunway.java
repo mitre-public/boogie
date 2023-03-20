@@ -21,7 +21,9 @@ public final class BoogieRunway implements Serializable, Runway {
   private final Double length;
   private final Double trueCourse;
   private final LatLong arrivalRunwayEnd;
+  private final Integer landingThresholdElevation;
   private final LatLong departureRunwayEnd;
+  private final Integer departureRunwayEndElevation;
   /**
    * The identifier of the primary ILS/GLS/MLS of the runway (if it exists).
    */
@@ -42,6 +44,8 @@ public final class BoogieRunway implements Serializable, Runway {
     this.departureRunwayEnd = builder.departureRunwayEnd;
     this.ilsGlsMls1 = builder.ilsGlsMls1;
     this.ilsGlsMls2 = builder.ilsGlsMls2;
+    this.landingThresholdElevation = builder.landingThresholdElevation;
+    this.departureRunwayEndElevation = builder.departureRunwayEndElevation;
   }
 
   @Override
@@ -80,8 +84,18 @@ public final class BoogieRunway implements Serializable, Runway {
   }
 
   @Override
+  public Optional<Integer> landingThresholdElevation() {
+    return Optional.ofNullable(landingThresholdElevation);
+  }
+
+  @Override
   public Optional<LatLong> departureRunwayEnd() {
     return Optional.ofNullable(departureRunwayEnd);
+  }
+
+  @Override
+  public Optional<Integer> departureRunwayEndElevation() {
+    return Optional.ofNullable(departureRunwayEndElevation);
   }
 
   public Optional<String> ilsGlsMls1() {
@@ -103,7 +117,9 @@ public final class BoogieRunway implements Serializable, Runway {
         .arrivalRunwayEnd(arrivalRunwayEnd())
         .departureRunwayEnd(departureRunwayEnd().orElse(null))
         .ilsGlsMls1(ilsGlsMls1().orElse(null))
-        .ilsGlsMls2(ilsGlsMls2().orElse(null));
+        .ilsGlsMls2(ilsGlsMls2().orElse(null))
+        .landingThresholdElevation(landingThresholdElevation().orElse(null))
+        .departureRunwayEndElevation(departureRunwayEndElevation().orElse(null));
   }
 
   @Override
@@ -124,12 +140,14 @@ public final class BoogieRunway implements Serializable, Runway {
         Objects.equals(arrivalRunwayEnd, that.arrivalRunwayEnd) &&
         Objects.equals(departureRunwayEnd, that.departureRunwayEnd) &&
         Objects.equals(ilsGlsMls1, that.ilsGlsMls1) &&
-        Objects.equals(ilsGlsMls2, that.ilsGlsMls2);
+        Objects.equals(ilsGlsMls2, that.ilsGlsMls2) &&
+        Objects.equals(landingThresholdElevation, that.landingThresholdElevation) &&
+        Objects.equals(departureRunwayEndElevation, that.departureRunwayEndElevation);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(runwayIdentifier, airportIdentifier, airportRegion, width, length, trueCourse, arrivalRunwayEnd, departureRunwayEnd, ilsGlsMls1, ilsGlsMls2);
+    return Objects.hash(runwayIdentifier, airportIdentifier, airportRegion, width, length, trueCourse, arrivalRunwayEnd, departureRunwayEnd, ilsGlsMls1, ilsGlsMls2, landingThresholdElevation, departureRunwayEndElevation);
   }
 
   @Override
@@ -159,6 +177,8 @@ public final class BoogieRunway implements Serializable, Runway {
     private LatLong departureRunwayEnd;
     private String ilsGlsMls1;
     private String ilsGlsMls2;
+    private Integer landingThresholdElevation;
+    private Integer departureRunwayEndElevation;
 
     public Builder runwayIdentifier(String runwayIdentifier) {
       this.runwayIdentifier = requireNonNull(runwayIdentifier);
@@ -207,6 +227,16 @@ public final class BoogieRunway implements Serializable, Runway {
 
     public Builder ilsGlsMls2(String ilsGlsMls2) {
       this.ilsGlsMls2 = ilsGlsMls2;
+      return this;
+    }
+
+    public Builder landingThresholdElevation(Integer landingThresholdElevation) {
+      this.landingThresholdElevation = landingThresholdElevation;
+      return this;
+    }
+
+    public Builder departureRunwayEndElevation(Integer departureRunwayEndElevation) {
+      this.departureRunwayEndElevation = departureRunwayEndElevation;
       return this;
     }
 

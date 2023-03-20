@@ -26,6 +26,8 @@ class TestBoogieAirport {
         .trueCourse(0.)
         .arrivalRunwayEnd(LatLong.of(0., 0.))
         .departureRunwayEnd(LatLong.of(0., 0.))
+        .departureRunwayEndElevation(15)
+        .landingThresholdElevation(20)
         .build();
 
     BoogieAirport airport = new BoogieAirport.Builder()

@@ -58,6 +58,10 @@ public final class TerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.localizerGlideSlope(identifier));
   }
 
+  public Map<String, ArincLocalizerGlideSlope> allLocalizerGlideSlopeAt(String airportIdent, String airportRegion) {
+    return highlander(airportLookup.get(Pair.of(airportIdent, airportRegion))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyMap);
+  }
+
   public Map<String, ArincLocalizerGlideSlope> localizerGlideSlopesAt(String airport) {
     return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyMap);
   }

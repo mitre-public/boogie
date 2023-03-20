@@ -6,6 +6,10 @@ plugins {
 }
 
 dependencies {
+    val immutablesVersion = "2.9.3"
+    annotationProcessor("org.immutables:value:$immutablesVersion")
+    compileOnly("org.immutables:value:$immutablesVersion")
+
     // instead of using the dependency plugin import the BOM
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.5"))
 

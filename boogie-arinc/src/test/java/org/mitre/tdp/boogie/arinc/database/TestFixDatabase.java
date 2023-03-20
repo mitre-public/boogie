@@ -24,8 +24,7 @@ class TestFixDatabase {
 
   @BeforeAll
   static void setup() {
-    fileParser.apply(arincTestFile)
-        .forEach(i -> testV18Consumer.accept(i));
+    fileParser.apply(arincTestFile).forEach(testV18Consumer);
 
     fixDatabase = ArincDatabaseFactory.newFixDatabase(
         testV18Consumer.arincNdbNavaids(),
@@ -115,9 +114,9 @@ class TestFixDatabase {
       .vhfNavaidConverter(new VhfNavaidConverter())
       .waypointDelegator(new WaypointValidator())
       .waypointConverter(new WaypointConverter())
-      .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-      .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .holdingPatternConverter(new HoldingPatternConverter())
       .holdingPatternDelegator(new HoldingPatternValidator())
+      .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+      .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .build();
 }

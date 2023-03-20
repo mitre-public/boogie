@@ -1,13 +1,18 @@
-package org.mitre.tdp.boogie;
+package org.mitre.tdp.boogie.contract.routes;
 
 import java.util.Optional;
 
-import org.mitre.caasd.commons.LatLong;
+import org.immutables.value.Value;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@Value.Immutable
+@JsonSerialize(as = ImmutableRunway.class)
+@JsonDeserialize(as = ImmutableRunway.class)
 public interface Runway {
-
   /**
-   * The identifier of the runway. Typically the name is based on the magnetic heading of the runway from arrival->departure
+   * The identifier of the runway. Typically, the name is based on the magnetic heading of the runway from arrival->departure
    * (alternatively origin->reciprocal/base->reciprocal) end.
    */
   String runwayIdentifier();
@@ -46,15 +51,8 @@ public interface Runway {
   LatLong arrivalRunwayEnd();
 
   /**
-   * The elevation of the landing threshold.
-   */
-  Optional<Integer> landingThresholdElevation();
-
-  /**
    * The position of the end of the runway aircraft would depart over. This value is optional as some runways don't have well
    * defined reciprocal ends - though most standard ones do.
    */
   Optional<LatLong> departureRunwayEnd();
-
-  Optional<Integer> departureRunwayEndElevation();
 }

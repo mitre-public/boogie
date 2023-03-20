@@ -105,12 +105,25 @@ final class BoogieState implements Consumer<Path> {
     return FormattingArincQuerier.streamUnique(airports).flatMap(airport -> assembledAirports.get(airport).stream()).collect(Collectors.toList());
   }
 
+  public Collection<Airport> allAirportsInRegion(String icaoRegion) {
+    String prepared = icaoRegion.trim().toUpperCase();
+    return assembledAirports.values().stream().filter(i -> i.airportRegion().equals(prepared)).collect(Collectors.toSet());
+  }
+
+  public Collection<String> allRegions() {
+    return assembledAirports.values().stream().map(Airport::airportRegion).collect(Collectors.toSet());
+  }
+
   public Collection<Airway> airways(String... airways) {
     return FormattingArincQuerier.streamUnique(airways).flatMap(airway -> assembledAirways.get(airway).stream()).collect(Collectors.toList());
   }
 
   public Collection<Procedure> procedures(String... procedures) {
     return FormattingArincQuerier.streamUnique(procedures).flatMap(procedure -> assembledProcedures.get(procedure).stream()).collect(Collectors.toList());
+  }
+
+  public Collection<Procedure> proceduresAt(String airport, String icaoRegion) {
+    return FormattingArincQuerier.streamUnique(airport).flatMap(arpt -> assembledProcedures.values().stream().filter(i -> i.airportIdentifier().equals(arpt) && i.airportRegion().equals(icaoRegion))).collect(Collectors.toList());
   }
 
   public RouteExpander routeExpander() {

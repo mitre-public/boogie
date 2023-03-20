@@ -233,6 +233,8 @@ public final class ArincToBoogieConverterFactory {
         ))
         .ilsGlsMls1(Optional.ofNullable(primaryLocalizer).map(ArincLocalizerGlideSlope::localizerIdentifier).orElse(null))
         .ilsGlsMls2(Optional.ofNullable(secondaryLocalizer).map(ArincLocalizerGlideSlope::localizerIdentifier).orElse(null))
+        .landingThresholdElevation(arrivalEnd.landingThresholdElevation().orElse(null))
+        .departureRunwayEndElevation(Optional.ofNullable(departureEnd).flatMap(ArincRunway::landingThresholdElevation).orElse(null))
         .build();
   }
 

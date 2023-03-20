@@ -21,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * }</pre>
  * Docker-wrapped versions of this exist and can be launched in accordance with the README.md.
  * <p>
- * Note the {@link EnableScheduling} annotation allows spring to schedule and execute the various {@link DirectoryWatcher}s.
+ * Note the {@link EnableScheduling} annotation allows spring to schedule and execute the various DirectoryWatchers.
  */
 @SpringBootApplication
 @EnableScheduling
