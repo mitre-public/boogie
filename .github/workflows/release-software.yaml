@@ -29,4 +29,5 @@ jobs:
           token: '${{ secrets.READ_CI_SCRIPTS }}'
           path: scripts/ci
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-install-certs.sh
+      - run: git config --global --add safe.directory '*'
       - run: ${GITHUB_WORKSPACE}/scripts/ci/ci-publish-release.sh "${{ github.event.inputs.username }}" "${{ github.event.inputs.email }}" "${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}" "${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}"
