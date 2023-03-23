@@ -19,10 +19,15 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory;
 import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssembler;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.model.BoogieFix;
+import org.mitre.tdp.boogie.model.BoogieLeg;
+import org.mitre.tdp.boogie.model.BoogieProcedure;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +67,7 @@ class TestProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    ProcedureAssembler assembler = new ProcedureAssembler(terminalAreaDatabase, fixDatabase);
+    ProcedureAssembler<BoogieProcedure, BoogieTransition, BoogieLeg, BoogieFix> assembler = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase);
     proceduresByAirport = assembler.apply(EmbeddedCifpFile.instance().arincProcedureLegs()).collect(Collectors.groupingBy(Procedure::airportIdentifier));
   }
 

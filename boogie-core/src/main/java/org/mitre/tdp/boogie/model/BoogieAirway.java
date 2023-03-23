@@ -15,7 +15,7 @@ public final class BoogieAirway implements Airway {
 
   private final String airwayIdentifier;
   private final String airwayRegion;
-  private final List<Leg> legs;
+  private final List<BoogieLeg> legs;
 
   private BoogieAirway(Builder builder) {
     this.airwayIdentifier = builder.airwayIdentifier;
@@ -34,7 +34,7 @@ public final class BoogieAirway implements Airway {
   }
 
   @Override
-  public List<org.mitre.tdp.boogie.Leg> legs() {
+  public List<BoogieLeg> legs() {
     return legs;
   }
 
@@ -76,7 +76,7 @@ public final class BoogieAirway implements Airway {
   public static final class Builder {
     private String airwayIdentifier;
     private String airwayRegion;
-    private List<org.mitre.tdp.boogie.Leg> legs;
+    private List<BoogieLeg> legs;
 
     public Builder airwayIdentifier(String airwayIdentifier) {
       this.airwayIdentifier = requireNonNull(airwayIdentifier);
@@ -88,7 +88,7 @@ public final class BoogieAirway implements Airway {
       return this;
     }
 
-    public Builder legs(List<org.mitre.tdp.boogie.Leg> legs) {
+    public Builder legs(List<BoogieLeg> legs) {
       this.legs = legs;
       return this;
     }

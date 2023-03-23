@@ -44,7 +44,7 @@ class TestProcedureGraph {
   void testSingleLegSingleTransition() {
     Leg leg = MockObjects.IF("YYT", 0.0, 0.0);
 
-    Transition transition = MockObjects.transition("A", TransitionType.COMMON, ProcedureType.STAR, singletonList(leg));
+    BoogieTransition transition = MockObjects.transition("A", TransitionType.COMMON, ProcedureType.STAR, singletonList(leg));
     ProcedureGraph graph = newProcedureGraph(newProcedure(singletonList(transition)));
 
     assertAll(
@@ -209,19 +209,19 @@ class TestProcedureGraph {
 
     Leg l1_1 = MockObjects.IF("AAA", 0.0, 0.0);
     Leg l1_2 = MockObjects.TF("BBB", 0.0, 0.1);
-    Transition ab = MockObjects.transition("B", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    BoogieTransition ab = MockObjects.transition("B", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
     Leg l2_1 = MockObjects.IF("BBB", 0.0, 0.2);
     Leg l2_2 = MockObjects.TF("CCC", 0.0, 0.4);
-    Transition bc = MockObjects.transition("C", "ALPHA1", "APT", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
+    BoogieTransition bc = MockObjects.transition("C", "ALPHA1", "APT", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
 
     Leg l3_1 = MockObjects.IF("CCC", 0.0, 0.4);
     Leg l3_2 = MockObjects.TF("DDD", 0.0, 0.5);
-    Transition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    BoogieTransition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = MockObjects.IF("CCC", 0.0, 0.4);
     Leg l4_2 = MockObjects.TF("EEE", 0.0, 0.5);
-    Transition ce = MockObjects.transition("E", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    BoogieTransition ce = MockObjects.transition("E", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
     return newProcedureGraph(newProcedure(Arrays.asList(ab, bc, cd, ce)));
   }
@@ -230,11 +230,11 @@ class TestProcedureGraph {
 
     Leg l3_1 = MockObjects.IF("CCC", 0.0, 0.4);
     Leg l3_2 = MockObjects.TF("DDD", 0.0, 0.5);
-    Transition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    BoogieTransition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = MockObjects.IF("EEE", 0.0, 0.4);
     Leg l4_2 = MockObjects.TF("FFF", 0.0, 0.5);
-    Transition ef = MockObjects.transition("F", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    BoogieTransition ef = MockObjects.transition("F", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
     return newProcedureGraph(newProcedure(Arrays.asList(cd, ef)));
   }

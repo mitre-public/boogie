@@ -22,6 +22,8 @@ import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
+import org.mitre.tdp.boogie.model.BoogieAirport;
+import org.mitre.tdp.boogie.model.BoogieRunway;
 
 class TestAirportAssembler {
 
@@ -29,7 +31,7 @@ class TestAirportAssembler {
 
   private static TerminalAreaDatabase terminalAreaDatabase;
 
-  private static AirportAssembler assembler;
+  private static AirportAssembler<BoogieAirport, BoogieRunway> assembler;
 
   @BeforeAll
   static void setup() {
@@ -47,12 +49,12 @@ class TestAirportAssembler {
         testV18Consumer.arincGnssLandingSystems()
     );
 
-    assembler = new AirportAssembler(terminalAreaDatabase);
+    assembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
   }
 
   @Test
   void testKjfkAssembly() {
-    Airport airport = assembler.apply(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
+    BoogieAirport airport = assembler.apply(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
 
     Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
 

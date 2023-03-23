@@ -26,6 +26,7 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.util.Iterators;
 
@@ -131,7 +132,7 @@ class TestSidStarElements {
     Leg l2 = TF("ZZY", 0.0, 1.0);
     Leg l3 = TF("ZZZ", 0.0, 2.0);
 
-    Transition transition = mock(Transition.class);
+    BoogieTransition transition = mock(BoogieTransition.class);
     when(transition.airportIdentifier()).thenReturn("MOCK");
     when(transition.airportRegion()).thenReturn("MOCK");
     when(transition.transitionType()).thenReturn(TransitionType.COMMON);
@@ -146,19 +147,19 @@ class TestSidStarElements {
 
     Leg l1_1 = IF("AAA", 0.0, 0.0);
     Leg l1_2 = TF("BBB", 0.0, 0.1);
-    Transition ab = transition("B", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    BoogieTransition ab = transition("B", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
     Leg l2_1 = IF("BBB", 0.0, 0.2);
     Leg l2_2 = TF("CCC", 0.0, 0.4);
-    Transition bc = transition("C", "ALPHA1", "APT", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
+    BoogieTransition bc = transition("C", "ALPHA1", "APT", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
 
     Leg l3_1 = IF("CCC", 0.0, 0.4);
     Leg l3_2 = TF("DDD", 0.0, 0.5);
-    Transition cd = transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    BoogieTransition cd = transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = IF("CCC", 0.0, 0.4);
     Leg l4_2 = TF("EEE", 0.0, 0.5);
-    Transition ce = transition("E", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    BoogieTransition ce = transition("E", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
     return newProcedureGraph(newProcedure(Arrays.asList(ab, bc, cd, ce)));
   }

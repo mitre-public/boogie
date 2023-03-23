@@ -17,7 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FixConverterTest {
-  private static final org.mitre.tdp.boogie.Fix fix = new BoogieFix.Builder()
+  private static final BoogieFix fix = new BoogieFix.Builder()
       .fixIdentifier("DAVID")
       .fixRegion("DB")
       .latitude(50D)
@@ -27,7 +27,7 @@ public class FixConverterTest {
       .modeledVariation(23D)
       .build();
 
-  private static final org.mitre.tdp.boogie.Runway runway = new BoogieRunway.Builder()
+  private static final BoogieRunway runway = new BoogieRunway.Builder()
       .airportIdentifier("DAVID")
       .airportRegion("DB")
       .departureRunwayEnd(LatLong.of(50D, 90D))
@@ -37,7 +37,7 @@ public class FixConverterTest {
       .runwayIdentifier("RW26")
       .build();
 
-  private static final org.mitre.tdp.boogie.Airport airport = new BoogieAirport.Builder()
+  private static final BoogieAirport airport = new BoogieAirport.Builder()
       .airportIdentifier("DAVID")
       .airportRegion("DB")
       .latitude(50D)

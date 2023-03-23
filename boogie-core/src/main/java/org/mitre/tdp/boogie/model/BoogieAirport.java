@@ -20,7 +20,7 @@ public final class BoogieAirport implements Airport {
   private final LatLong latLong;
   private final Double publishedVariation;
   private final double modeledVariation;
-  private final List<Runway> runways;
+  private final List<BoogieRunway> runways;
   private final Double elevation;
 
   private BoogieAirport(Builder builder) {
@@ -59,7 +59,7 @@ public final class BoogieAirport implements Airport {
   }
 
   @Override
-  public List<org.mitre.tdp.boogie.Runway> runways() {
+  public List<BoogieRunway> runways() {
     return runways;
   }
 
@@ -123,7 +123,7 @@ public final class BoogieAirport implements Airport {
     private double longitude;
     private Double publishedVariation;
     private double modeledVariation;
-    private List<org.mitre.tdp.boogie.Runway> runways;
+    private List<BoogieRunway> runways;
     private Double elevation;
 
     public Builder airportIdentifier(String airportIdentifier) {
@@ -156,7 +156,7 @@ public final class BoogieAirport implements Airport {
       return this;
     }
 
-    public Builder runways(List<org.mitre.tdp.boogie.Runway> runways) {
+    public Builder runways(List<BoogieRunway> runways) {
       this.runways = runways;
       return this;
     }

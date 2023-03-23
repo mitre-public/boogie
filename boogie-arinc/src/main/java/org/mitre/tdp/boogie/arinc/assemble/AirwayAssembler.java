@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
@@ -30,41 +29,32 @@ import org.mitre.tdp.boogie.fn.TriFunction;
  * This class is similar in to {@link ProcedureAssembler} in that it groups legs of the airway together by the airways identifier
  * and then splits out legs into different top-level airway records based on the
  */
-public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg>, Stream<Airway>> {
+public final class AirwayAssembler<A,F,L> implements Function<Collection<ArincAirwayLeg>, Stream<A>> {
 
   /**
    * Functional class for transforming a {@link ArincAirwayLeg} and a pair of matched fixes as AssociatedFix and RecommendedNavaid
    * for the leg with the
    */
-  private final ArincAirwayLegConverter inflator;
+  private final ArincAirwayLegConverter<L,F> inflator;
 
   private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway;
 
-  private final BiFunction<ArincAirwayLeg, List<Leg>, Airway> airwayConverter;
-
-  public AirwayAssembler(FixDatabase fixDatabase) {
-    this(
-        fixDatabase,
-        FixAssembler.INSTANCE,
-        ArincToBoogieConverterFactory::newAirwayLegFrom,
-        ArincToBoogieConverterFactory::newAirwayFrom
-    );
-  }
+  private final BiFunction<ArincAirwayLeg, List<L>, A> airwayConverter;
 
   public AirwayAssembler(
       FixDatabase fixDatabase,
-      Function<ArincModel, Fix> fixConverter,
-      TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter,
-      BiFunction<ArincAirwayLeg, List<Leg>, Airway> airwayConverter) {
+      Function<ArincModel, F> fixConverter,
+      TriFunction<ArincAirwayLeg, F, F, L> legConverter,
+      BiFunction<ArincAirwayLeg, List<L>, A> airwayConverter) {
     this.airwayConverter = airwayConverter;
-    this.inflator = new ArincAirwayLegConverter(fixDatabase, fixConverter, legConverter);
+    this.inflator = new ArincAirwayLegConverter<>(fixDatabase, fixConverter, legConverter);
     this.shouldSplitAirway = (previous, next) -> isSequenceNumberJump(previous, next)
         || isSequenceNumberReset(previous, next)
         || !previous.routeIdentifier().equals(next.routeIdentifier());
   }
 
   @Override
-  public Stream<Airway> apply(Collection<ArincAirwayLeg> arincAirwayLegs) {
+  public Stream<A> apply(Collection<ArincAirwayLeg> arincAirwayLegs) {
     return arincAirwayLegs.stream()
         .sorted(Comparator.comparing(ArincAirwayLeg::fileRecordNumber))
         .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
@@ -91,10 +81,10 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
     return String.format("%04d", arincAirwayLeg.sequenceNumber());
   }
 
-  private Airway toAirway(List<ArincAirwayLeg> arincAirwayLegs) {
+  private A toAirway(List<ArincAirwayLeg> arincAirwayLegs) {
     ArincAirwayLeg representative = arincAirwayLegs.get(0);
 
-    List<Leg> legs = arincAirwayLegs.stream().map(inflator).collect(Collectors.toList());
+    List<L> legs = arincAirwayLegs.stream().map(inflator).collect(Collectors.toList());
     return airwayConverter.apply(representative, legs);
   }
 
@@ -102,26 +92,26 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
    * Converter logic for transforming an {@link ArincAirwayLeg} to a {@link Leg} implementation - handling the complex parts of
    * looking up the associated fix and recommended navaid for the leg.
    */
-  public static final class ArincAirwayLegConverter implements Function<ArincAirwayLeg, Leg> {
+  public static final class ArincAirwayLegConverter<L,F> implements Function<ArincAirwayLeg, L> {
 
-    private final LegFixDereferencer legFixDereferencer;
+    private final LegFixDereferencer<F> legFixDereferencer;
 
-    private final TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter;
+    private final TriFunction<ArincAirwayLeg, F, F, L> legConverter;
 
     public ArincAirwayLegConverter(
         FixDatabase fixDatabase,
-        Function<ArincModel, Fix> fixConverter,
-        TriFunction<ArincAirwayLeg, Fix, Fix, Leg> legConverter) {
-      this.legFixDereferencer = new LegFixDereferencer(fixConverter, ArincDatabaseFactory.emptyTerminalAreaDatabase(), fixDatabase);
+        Function<ArincModel, F> fixConverter,
+        TriFunction<ArincAirwayLeg, F, F, L> legConverter) {
+      this.legFixDereferencer = new LegFixDereferencer<>(fixConverter, ArincDatabaseFactory.emptyTerminalAreaDatabase(), fixDatabase);
       this.legConverter = requireNonNull(legConverter);
     }
 
     @Override
-    public Leg apply(ArincAirwayLeg arincAirwayLeg) {
+    public L apply(ArincAirwayLeg arincAirwayLeg) {
       return legConverter.apply(arincAirwayLeg, associatedFix(arincAirwayLeg).orElse(null), recommendedNavaid(arincAirwayLeg).orElse(null));
     }
 
-    Optional<Fix> associatedFix(ArincAirwayLeg arincAirwayLeg) {
+    Optional<F> associatedFix(ArincAirwayLeg arincAirwayLeg) {
       return legFixDereferencer.dereference(
           arincAirwayLeg.fixIdentifier(),
           null,
@@ -131,7 +121,7 @@ public final class AirwayAssembler implements Function<Collection<ArincAirwayLeg
       );
     }
 
-    Optional<Fix> recommendedNavaid(ArincAirwayLeg arincAirwayLeg) {
+    Optional<F> recommendedNavaid(ArincAirwayLeg arincAirwayLeg) {
       if (arincAirwayLeg.recommendedNavaidIdentifier().isPresent() && arincAirwayLeg.recommendedNavaidIcaoRegion().isPresent()) {
         return legFixDereferencer.dereferenceNavaid(
             arincAirwayLeg.recommendedNavaidIdentifier().orElseThrow(IllegalStateException::new),

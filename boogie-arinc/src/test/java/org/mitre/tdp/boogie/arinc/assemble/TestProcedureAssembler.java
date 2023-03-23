@@ -33,6 +33,10 @@ import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
+import org.mitre.tdp.boogie.model.BoogieFix;
+import org.mitre.tdp.boogie.model.BoogieLeg;
+import org.mitre.tdp.boogie.model.BoogieProcedure;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 
 class TestProcedureAssembler {
 
@@ -41,7 +45,7 @@ class TestProcedureAssembler {
   private static TerminalAreaDatabase terminalAreaDatabase;
   private static FixDatabase fixDatabase;
 
-  private static ProcedureAssembler assembler;
+  private static ProcedureAssembler<BoogieProcedure, BoogieTransition, BoogieLeg, BoogieFix> assembler;
 
   @BeforeAll
   static void setup() {
@@ -67,7 +71,7 @@ class TestProcedureAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    assembler = new ProcedureAssembler(terminalAreaDatabase, fixDatabase);
+    assembler = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase);
   }
 
   @Test

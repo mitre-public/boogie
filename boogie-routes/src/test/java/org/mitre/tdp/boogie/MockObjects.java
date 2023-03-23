@@ -11,6 +11,8 @@ import java.util.Optional;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.model.BoogieLeg;
+import org.mitre.tdp.boogie.model.BoogieProcedure;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.util.Declinations;
 
 
@@ -116,16 +118,16 @@ public final class MockObjects {
     return leg;
   }
 
-  public static Transition transition(String pname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
+  public static BoogieTransition transition(String pname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
     return transition(null, pname, "FOO", ttype, ptype, legs);
   }
 
-  public static Transition transition(String pname, String aname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
+  public static BoogieTransition transition(String pname, String aname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
     return transition(null, pname, aname, ttype, ptype, legs);
   }
 
-  public static Transition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<? extends Leg> legs) {
-    Transition transition = mock(Transition.class);
+  public static BoogieTransition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<? extends Leg> legs) {
+    BoogieTransition transition = mock(BoogieTransition.class);
 
     when(transition.transitionIdentifier()).thenReturn(Optional.ofNullable(tname));
     when(transition.airportIdentifier()).thenReturn(aname);

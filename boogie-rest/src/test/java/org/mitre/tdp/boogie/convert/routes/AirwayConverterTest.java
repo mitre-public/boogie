@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.contract.routes.Airway;
+import org.mitre.tdp.boogie.model.BoogieAirport;
 import org.mitre.tdp.boogie.model.BoogieAirway;
 import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.model.BoogieLeg;
@@ -16,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Range;
 
 public class AirwayConverterTest {
-  private final static org.mitre.tdp.boogie.Fix fix = new BoogieFix.Builder()
+  private final static BoogieFix fix = new BoogieFix.Builder()
       .fixIdentifier("DAVID")
       .fixRegion("DB")
       .latitude(50D)
@@ -24,7 +25,7 @@ public class AirwayConverterTest {
       .publishedVariation(15D)
       .build();
 
-  private static final org.mitre.tdp.boogie.Leg leg = new BoogieLeg.Builder()
+  private static final BoogieLeg leg = new BoogieLeg.Builder()
       .associatedFix(fix)
       .pathTerminator(PathTerminator.TF)
       .sequenceNumber(10)
@@ -34,7 +35,7 @@ public class AirwayConverterTest {
       .speedConstraint(Range.all())
       .build();
 
-  private final static org.mitre.tdp.boogie.Airway airway = new BoogieAirway.Builder()
+  private final static BoogieAirway airway = new BoogieAirway.Builder()
       .airwayIdentifier("J1")
       .airwayRegion("K1")
       .legs(List.of(leg))

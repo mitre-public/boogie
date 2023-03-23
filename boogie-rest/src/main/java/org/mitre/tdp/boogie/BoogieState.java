@@ -14,15 +14,13 @@ import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.assemble.AirportAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.AirwayAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.FixAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssembler;
+import org.mitre.tdp.boogie.arinc.assemble.*;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+import org.mitre.tdp.boogie.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,17 +61,17 @@ final class BoogieState implements Consumer<Path> {
   /**
    * Mapping from {{@link Airport#airportIdentifier()}, {@link Airport}}.
    */
-  private Multimap<String, Airport> assembledAirports;
+  private Multimap<String, BoogieAirport> assembledAirports;
 
   /**
    * Mapping from {{@link Airway#airwayIdentifier()}, {@link Airway}}.
    */
-  private Multimap<String, Airway> assembledAirways;
+  private Multimap<String, BoogieAirway> assembledAirways;
 
   /**
    * Mapping from {{@link Procedure#procedureIdentifier()}, {{@link Procedure#airportIdentifier()}, {@link Procedure}}.
    */
-  private Multimap<String, Procedure> assembledProcedures;
+  private Multimap<String, BoogieProcedure> assembledProcedures;
 
   /**
    * Shared {@link RouteExpander} instance for general use.
@@ -176,24 +174,25 @@ final class BoogieState implements Consumer<Path> {
                 consumer.arincNdbNavaids().stream(),
                 consumer.arincVhfNavaids().stream()
             ))
-        .map(FixAssembler.INSTANCE);
+        .map(ArincToBoogieConverterFactory.newFixAssembler());
     this.assembledFixes = toMultimap(Fix::fixIdentifier, fixStream);
 
     LOG.info("Finished assembling {} total fixes.", this.assembledFixes.size());
 
-    AirportAssembler airportAssembler = new AirportAssembler(terminalAreaDatabase);
+    AirportAssembler<BoogieAirport, BoogieRunway> airportAssembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
 
-    Stream<Airport> airportStream = consumer.arincAirports().stream().map(airportAssembler);
+    Stream<BoogieAirport> airportStream = consumer.arincAirports().stream().map(airportAssembler);
     this.assembledAirports = toMultimap(Airport::airportIdentifier, airportStream);
 
     LOG.info("Finished assembling {} total airports.", this.assembledAirports.size());
 
-    Stream<Airway> airwayStream = new AirwayAssembler(fixDatabase).apply(consumer.arincAirwayLegs());
+    Stream<BoogieAirway> airwayStream = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase).apply(consumer.arincAirwayLegs());
     this.assembledAirways = toMultimap(Airway::airwayIdentifier, airwayStream);
 
     LOG.info("Finished assembling {} total airways.", this.assembledAirways.size());
 
-    Stream<Procedure> procedureStream = new ProcedureAssembler(terminalAreaDatabase, fixDatabase).apply(consumer.arincProcedureLegs());
+    Stream<BoogieProcedure> procedureStream = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase).apply(consumer.arincProcedureLegs());
+
     this.assembledProcedures = toMultimap(Procedure::procedureIdentifier, procedureStream);
 
     LOG.info("Finished assembling {} total procedures.", this.assembledProcedures.size());

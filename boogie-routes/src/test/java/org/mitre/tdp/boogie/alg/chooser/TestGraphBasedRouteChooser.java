@@ -29,6 +29,7 @@ import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 class TestGraphBasedRouteChooser {
@@ -92,7 +93,7 @@ class TestGraphBasedRouteChooser {
     Leg l3 = TF("GRRDR", 0.0, 2.0);
     Leg l4 = TF("VNY", 0.0, 3.0);
 
-    Transition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
+    BoogieTransition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
 
     return RouteExpanderFactory.newStandardSectionResolver(
         singletonList(l4.associatedFix().orElseThrow(IllegalStateException::new)),

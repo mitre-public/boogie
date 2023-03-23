@@ -22,6 +22,9 @@ import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
+import org.mitre.tdp.boogie.model.BoogieAirway;
+import org.mitre.tdp.boogie.model.BoogieFix;
+import org.mitre.tdp.boogie.model.BoogieLeg;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -49,7 +52,7 @@ class TestAirwayAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    AirwayAssembler assembler = new AirwayAssembler(fixDatabase);
+    AirwayAssembler<BoogieAirway, BoogieFix, BoogieLeg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
 
     airwayMap = assembler.apply(testV18Consumer.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }

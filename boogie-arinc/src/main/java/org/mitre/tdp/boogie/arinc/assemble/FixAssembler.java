@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.arinc.model.*;
-import org.mitre.tdp.boogie.model.BoogieFix;
 
 /**
  * Functional class for converting certain types of {@link ArincModel} records to {@link Fix} records based on their section and
@@ -22,42 +21,25 @@ import org.mitre.tdp.boogie.model.BoogieFix;
  * <br>
  * Standard "fixes" typically only encompass Waypoints + VHF/NDB Navaids.
  */
-public final class FixAssembler implements Function<ArincModel, Fix> {
+public final class FixAssembler<F> implements Function<ArincModel, F> {
 
-  /**
-   * Singleton instance generating default {@link Fix} implementations based on the {@link BoogieFix} data model.
-   */
-  public static final FixAssembler INSTANCE = new FixAssembler();
+  private final Function<ArincWaypoint, F> waypointConverter;
+  private final Function<ArincNdbNavaid, F> ndbNavaidConverter;
+  private final Function<ArincVhfNavaid, F> vhfNavaidConverter;
+  private final Function<ArincAirport, F> airportConverter;
+  private final Function<ArincRunway, F> runwayConverter;
+  private final Function<ArincLocalizerGlideSlope, F> localizerGlideSlopeConverter;
 
-  private final Function<ArincWaypoint, Fix> waypointConverter;
-  private final Function<ArincNdbNavaid, Fix> ndbNavaidConverter;
-  private final Function<ArincVhfNavaid, Fix> vhfNavaidConverter;
-  private final Function<ArincAirport, Fix> airportConverter;
-  private final Function<ArincRunway, Fix> runwayConverter;
-  private final Function<ArincLocalizerGlideSlope, Fix> localizerGlideSlopeConverter;
-
-  private final Function<ArincGnssLandingSystem, Fix> gnssLandingSystemConverter;
-
-  private FixAssembler() {
-    this(
-        ArincToBoogieConverterFactory::newFixFrom,
-        ArincToBoogieConverterFactory::newFixFrom,
-        ArincToBoogieConverterFactory::newFixFrom,
-        ArincToBoogieConverterFactory::newFixFrom,
-        ArincToBoogieConverterFactory::newFixFrom,
-        ArincToBoogieConverterFactory::newFixFrom,
-        ArincToBoogieConverterFactory::newFixFrom
-    );
-  }
+  private final Function<ArincGnssLandingSystem, F> gnssLandingSystemConverter;
 
   public FixAssembler(
-      Function<ArincWaypoint, Fix> waypointConverter,
-      Function<ArincNdbNavaid, Fix> ndbNavaidConverter,
-      Function<ArincVhfNavaid, Fix> vhfNavaidConverter,
-      Function<ArincAirport, Fix> airportConverter,
-      Function<ArincRunway, Fix> runwayConverter,
-      Function<ArincLocalizerGlideSlope, Fix> localizerGlideSlopeConverter,
-      Function<ArincGnssLandingSystem, Fix> gnssLandingSystemConverter) {
+      Function<ArincWaypoint, F> waypointConverter,
+      Function<ArincNdbNavaid, F> ndbNavaidConverter,
+      Function<ArincVhfNavaid, F> vhfNavaidConverter,
+      Function<ArincAirport, F> airportConverter,
+      Function<ArincRunway, F> runwayConverter,
+      Function<ArincLocalizerGlideSlope, F> localizerGlideSlopeConverter,
+      Function<ArincGnssLandingSystem, F> gnssLandingSystemConverter) {
     this.waypointConverter = requireNonNull(waypointConverter);
     this.ndbNavaidConverter = requireNonNull(ndbNavaidConverter);
     this.vhfNavaidConverter = requireNonNull(vhfNavaidConverter);
@@ -68,7 +50,7 @@ public final class FixAssembler implements Function<ArincModel, Fix> {
   }
 
   @Override
-  public Fix apply(ArincModel arincModel) {
+  public F apply(ArincModel arincModel) {
     String sectionSubSection = arincModel.sectionCode().name().concat(arincModel.subSectionCode().orElse(""));
 
     // airports

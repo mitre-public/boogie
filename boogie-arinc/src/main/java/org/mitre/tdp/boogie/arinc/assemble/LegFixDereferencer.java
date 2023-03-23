@@ -19,38 +19,33 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
  * This class is hitting NDB/VHF navaids, waypoints, airports, runways, and localizers to find the appropriate database entry to
  * populate the leg fields and returns the result of those lookups as {@link Fix} records.
  */
-public final class LegFixDereferencer {
+public final class LegFixDereferencer<F> {
 
   /**
    * Function to use to convert the selected {@link ArincModel} to the appropriate {@link Fix} implementation.
    * <br>
-   * Generally speaking this will either be the {@link FixAssembler#INSTANCE} or some version of a fix assembler with injected
+   * Generally speaking this will either be the {@link FixAssembler} or some version of a fix assembler with injected
    * converters.
    */
-  private final Function<ArincModel, Fix> fixAssembler;
-
+  private final Function<ArincModel, F> fixAssembler;
   private final TerminalAreaDatabase terminalAreaDatabase;
   private final FixDatabase fixDatabase;
 
-  LegFixDereferencer(TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
-    this(FixAssembler.INSTANCE, terminalAreaDatabase, fixDatabase);
-  }
-
-  LegFixDereferencer(Function<ArincModel, Fix> fixAssembler, TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
+  LegFixDereferencer(Function<ArincModel, F> fixAssembler, TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
     this.fixAssembler = requireNonNull(fixAssembler);
     this.terminalAreaDatabase = requireNonNull(terminalAreaDatabase);
     this.fixDatabase = requireNonNull(fixDatabase);
   }
 
-  Optional<Fix> dereferenceNavaid(String identifier, String icaoRegion) {
-    Fix navaid = dereference(identifier, null, icaoRegion, SectionCode.D, null).orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.D, "B").orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.P, "n").orElse(null)));
+  Optional<F> dereferenceNavaid(String identifier, String icaoRegion) {
+    F navaid = dereference(identifier, null, icaoRegion, SectionCode.D, null).orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.D, "B").orElseGet(() -> dereference(identifier, null, icaoRegion, SectionCode.P, "n").orElse(null)));
     return Optional.ofNullable(navaid);
   }
 
   /**
    * We allow the airport to be nullable so this signature can be used in conjunction with the {@link AirwayAssembler}.
    */
-  Optional<Fix> dereference(String identifier, @Nullable String airport, String icaoRegion, SectionCode sectionCode, @Nullable String subSectionCode) {
+  Optional<F> dereference(String identifier, @Nullable String airport, String icaoRegion, SectionCode sectionCode, @Nullable String subSectionCode) {
     String sectionSubSection = sectionCode.name().concat(Optional.ofNullable(subSectionCode).orElse(""));
 
     switch (sectionSubSection) {

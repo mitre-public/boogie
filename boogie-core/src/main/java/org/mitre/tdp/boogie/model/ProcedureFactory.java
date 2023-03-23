@@ -37,7 +37,7 @@ public final class ProcedureFactory {
    * Generates all of the {@link Procedure} records from the supplied collection of input {@link Transition}s using the normal
    * grouping strategy of {airportIdentifier, airportRegion, procedureIdentifier, procedureType}.
    */
-  public static Collection<Procedure> newProcedures(Collection<? extends Transition> transitions) {
+  public static Collection<Procedure> newProcedures(Collection<BoogieTransition> transitions) {
     Function<Transition, String> groupKey = transition -> transition.procedureIdentifier()
         .concat(transition.airportIdentifier())
         .concat(transition.airportRegion())
@@ -54,7 +54,7 @@ public final class ProcedureFactory {
    * Note that procedures constructed in this way will have their {@link RequiredNavigationEquipage} set to 'UNKNOWN' as the
    * value cannot be inferred from the transitions alone.
    */
-  public static BoogieProcedure newProcedureWithEquipage(Collection<? extends Transition> transitions, RequiredNavigationEquipage requiredNavigationEquipage) {
+  public static BoogieProcedure newProcedureWithEquipage(Collection<BoogieTransition> transitions, RequiredNavigationEquipage requiredNavigationEquipage) {
     checkArgument(Preconditions.allMatch(transitions, Transition::airportIdentifier), "All airport identifiers should match.");
     checkArgument(Preconditions.allMatch(transitions, Transition::airportRegion), "All airport regions should match.");
     checkArgument(Preconditions.allMatch(transitions, Transition::procedureIdentifier), "All procedure identifiers should match.");
@@ -67,7 +67,7 @@ public final class ProcedureFactory {
         .airportRegion(representative.airportRegion())
         .procedureType(representative.procedureType())
         .requiredNavigationEquipage(requiredNavigationEquipage)
-        .transitions((Collection<Transition>) transitions)
+        .transitions(transitions)
         .build();
   }
 
@@ -78,7 +78,7 @@ public final class ProcedureFactory {
    * Note that procedures constructed in this way will have their {@link RequiredNavigationEquipage} set to 'UNKNOWN' as the
    * value cannot be inferred from the transitions alone.
    */
-  public static BoogieProcedure newProcedure(Collection<? extends Transition> transitions) {
+  public static BoogieProcedure newProcedure(Collection<BoogieTransition> transitions) {
     return newProcedureWithEquipage(transitions, RequiredNavigationEquipage.UNKNOWN);
   }
 

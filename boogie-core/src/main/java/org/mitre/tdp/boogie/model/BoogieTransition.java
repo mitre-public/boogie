@@ -22,7 +22,7 @@ public final class BoogieTransition implements Transition {
   private final String airportRegion;
   private final ProcedureType procedureType;
   private final TransitionType transitionType;
-  private final List<Leg> legs;
+  private final List<BoogieLeg> legs;
 
   private BoogieTransition(Builder builder) {
     this.transitionIdentifier = builder.transitionIdentifier;
@@ -65,7 +65,7 @@ public final class BoogieTransition implements Transition {
   }
 
   @Override
-  public List<org.mitre.tdp.boogie.Leg> legs() {
+  public List<BoogieLeg> legs() {
     return legs;
   }
 
@@ -123,7 +123,7 @@ public final class BoogieTransition implements Transition {
     private String airportRegion;
     private ProcedureType procedureType;
     private TransitionType transitionType;
-    private List<org.mitre.tdp.boogie.Leg> legs;
+    private List<BoogieLeg> legs;
 
     public Builder transitionIdentifier(String transitionIdentifier) {
       this.transitionIdentifier = transitionIdentifier;
@@ -155,7 +155,7 @@ public final class BoogieTransition implements Transition {
       return this;
     }
 
-    public Builder legs(List<org.mitre.tdp.boogie.Leg> legs) {
+    public Builder legs(List<BoogieLeg> legs) {
       this.legs = legs;
       return this;
     }

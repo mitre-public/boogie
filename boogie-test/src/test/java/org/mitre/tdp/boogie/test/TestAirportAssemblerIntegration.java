@@ -17,9 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.assemble.AirportAssembler;
+import org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.model.BoogieAirport;
+import org.mitre.tdp.boogie.model.BoogieRunway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +46,7 @@ class TestAirportAssemblerIntegration {
          EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
-    AirportAssembler assembler = new AirportAssembler(terminalAreaDatabase);
+    AirportAssembler<BoogieAirport, BoogieRunway> assembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
     airports = EmbeddedCifpFile.instance().arincAirports().stream().map(assembler).collect(Collectors.groupingBy(Airport::airportIdentifier));
   }
 

@@ -15,8 +15,13 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.assemble.AirwayAssembler;
+import org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
+import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.model.BoogieAirway;
+import org.mitre.tdp.boogie.model.BoogieFix;
+import org.mitre.tdp.boogie.model.BoogieLeg;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +46,7 @@ class TestAirwayAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    AirwayAssembler assembler = new AirwayAssembler(fixDatabase);
+    AirwayAssembler<BoogieAirway, BoogieFix, BoogieLeg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
     airwaysByName = assembler.apply(EmbeddedCifpFile.instance().arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }
 

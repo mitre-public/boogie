@@ -27,7 +27,7 @@ public class ProcedureConverterTest {
       .publishedVariation(15D)
       .build();
 
-  private final static org.mitre.tdp.boogie.Leg leg = new BoogieLeg.Builder()
+  private final static BoogieLeg leg = new BoogieLeg.Builder()
       .pathTerminator(PathTerminator.TF)
       .sequenceNumber(10)
       .associatedFix(fix)
@@ -35,7 +35,7 @@ public class ProcedureConverterTest {
       .altitudeConstraint(Range.all())
       .build();
 
-  private final static org.mitre.tdp.boogie.Transition transition = new BoogieTransition.Builder()
+  private final static BoogieTransition transition = new BoogieTransition.Builder()
       .airportIdentifier("KDCA")
       .airportRegion("K1")
       .legs(List.of(leg))
@@ -45,7 +45,7 @@ public class ProcedureConverterTest {
       .transitionType(TransitionType.COMMON)
       .build();
 
-  private final static org.mitre.tdp.boogie.Procedure procedure = new BoogieProcedure.Builder()
+  private final static BoogieProcedure procedure = new BoogieProcedure.Builder()
       .procedureIdentifier("STAR1")
       .airportIdentifier("KDCA")
       .airportRegion("K1")

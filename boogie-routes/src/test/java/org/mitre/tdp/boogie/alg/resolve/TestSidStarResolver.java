@@ -18,6 +18,7 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 
 class TestSidStarResolver {
 
@@ -25,9 +26,9 @@ class TestSidStarResolver {
   void testResolvesBothProceduresWithNoAirportContext() {
     Leg l = IF("FOO", 0.0, 0.0);
 
-    Transition atlJimmy = transition("JIMMY", "KATL", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
+    BoogieTransition atlJimmy = transition("JIMMY", "KATL", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
-    Transition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
+    BoogieTransition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
     SidStarResolver resolver = new SidStarResolver(newLookupService(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), Procedure::procedureIdentifier));
 
@@ -50,9 +51,9 @@ class TestSidStarResolver {
   void testSidResolutionWithAirportContext() {
     Leg l = IF("FOO", 0.0, 0.0);
 
-    Transition atlJimmy = transition("JIMMY", "KATL", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
+    BoogieTransition atlJimmy = transition("JIMMY", "KATL", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
-    Transition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
+    BoogieTransition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
     SidStarResolver resolver = new SidStarResolver(newLookupService(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), Procedure::procedureIdentifier));
 
@@ -75,9 +76,9 @@ class TestSidStarResolver {
   void testStarResolutionWithAirportContext() {
     Leg l = IF("FOO", 0.0, 0.0);
 
-    Transition atlJimmy = transition("JIMMY", "KATL", TransitionType.COMMON, ProcedureType.STAR, singletonList(l));
+    BoogieTransition atlJimmy = transition("JIMMY", "KATL", TransitionType.COMMON, ProcedureType.STAR, singletonList(l));
 
-    Transition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.STAR, singletonList(l));
+    BoogieTransition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.STAR, singletonList(l));
 
     SidStarResolver resolver = new SidStarResolver(newLookupService(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), Procedure::procedureIdentifier));
 

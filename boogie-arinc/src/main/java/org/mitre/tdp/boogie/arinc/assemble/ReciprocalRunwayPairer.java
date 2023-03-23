@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
  * <br>
  * List{A, B, C, D} --> Pair{A, B}, Pair{C, null}, Pair{D, null}
  */
-final class ReciprocalRunwayPairer implements Function<Collection<ArincRunway>, Collection<Pair<ArincRunway, ArincRunway>>> {
+public final class ReciprocalRunwayPairer implements Function<Collection<ArincRunway>, Collection<Pair<ArincRunway, ArincRunway>>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ReciprocalRunwayPairer.class);
 

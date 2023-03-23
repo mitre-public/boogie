@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
@@ -25,7 +24,7 @@ import org.mitre.tdp.boogie.model.BoogieAirport;
  * <br>
  * This class provides a default implementation of that conversion targeting the {@link BoogieAirport} data model.
  */
-public final class AirportAssembler implements Function<ArincAirport, Airport> {
+public final class AirportAssembler<A,R> implements Function<ArincAirport, A> {
 
   private final TerminalAreaDatabase terminalAreaDatabase;
 
@@ -34,32 +33,24 @@ public final class AirportAssembler implements Function<ArincAirport, Airport> {
    * <br>
    * The list of runways may be empty.
    */
-  private final BiFunction<ArincAirport, List<Runway>, Airport> airportConverter;
+  private final BiFunction<ArincAirport, List<R>, A> airportConverter;
   /**
    * Converter for transforming the arrival + (optional) departure end of a runway and its (optional) associated primary/secondary
    * localizer and glide slope.
    */
-  private final PentaFunction<ArincAirport, ArincRunway, ArincRunway, ArincLocalizerGlideSlope, ArincLocalizerGlideSlope, Runway> runwayConverter;
-
-  public AirportAssembler(TerminalAreaDatabase terminalAreaDatabase) {
-    this(
-        terminalAreaDatabase,
-        ArincToBoogieConverterFactory::newAirportFrom,
-        ArincToBoogieConverterFactory::newRunwayFrom
-    );
-  }
+  private final PentaFunction<ArincAirport, ArincRunway, ArincRunway, ArincLocalizerGlideSlope, ArincLocalizerGlideSlope, R> runwayConverter;
 
   public AirportAssembler(
       TerminalAreaDatabase terminalAreaDatabase,
-      BiFunction<ArincAirport, List<Runway>, Airport> airportConverter,
-      PentaFunction<ArincAirport, ArincRunway, ArincRunway, ArincLocalizerGlideSlope, ArincLocalizerGlideSlope, Runway> runwayConverter) {
+      BiFunction<ArincAirport, List<R>, A> airportConverter,
+      PentaFunction<ArincAirport, ArincRunway, ArincRunway, ArincLocalizerGlideSlope, ArincLocalizerGlideSlope, R> runwayConverter) {
     this.terminalAreaDatabase = requireNonNull(terminalAreaDatabase);
     this.airportConverter = requireNonNull(airportConverter);
     this.runwayConverter = requireNonNull(runwayConverter);
   }
 
   @Override
-  public Airport apply(ArincAirport arincAirport) {
+  public A apply(ArincAirport arincAirport) {
     requireNonNull(arincAirport);
 
     Collection<ArincRunway> arincRunways = terminalAreaDatabase.runwaysAt(
@@ -67,7 +58,7 @@ public final class AirportAssembler implements Function<ArincAirport, Airport> {
         arincAirport.airportIcaoRegion()
     );
 
-    List<Runway> runways = new ArrayList<>();
+    List<R> runways = new ArrayList<>();
 
     if (!arincRunways.isEmpty()) {
       ReciprocalRunwayPairer.INSTANCE.apply(arincRunways).stream()

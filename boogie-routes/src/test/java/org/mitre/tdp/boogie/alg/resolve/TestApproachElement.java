@@ -13,6 +13,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.model.BoogieLeg;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -251,7 +252,7 @@ public class TestApproachElement {
   private StarElement fixTerminatingStar(double endingLongitude) {
     Leg l1_1 = createLeg("first star leg", 0.0, 0.0, PathTerminator.IF);
     Leg l1_2 = createLeg("fix terminating star leg", 0.0, endingLongitude, PathTerminator.TF);
-    Transition ab = transition("fixTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    BoogieTransition ab = transition("fixTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
     return new StarElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
   }
@@ -259,7 +260,7 @@ public class TestApproachElement {
   private StarElement manualTerminatingStar(double endingLongitude) {
     Leg l1_1 = createLeg("first star leg", 0.0, 0.0, PathTerminator.IF);
     Leg l1_2 = createLeg("manual terminating star leg", 0.0, endingLongitude, PathTerminator.FM);
-    Transition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    BoogieTransition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
     return new StarElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
   }
@@ -270,7 +271,7 @@ public class TestApproachElement {
         .associatedFix(null)
         .build();
     Leg l1_2 = createLeg("manual terminating sid leg", 0.0, endingLongitude, PathTerminator.VM);
-    Transition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
+    BoogieTransition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
 
     return new SidElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
   }
@@ -278,7 +279,7 @@ public class TestApproachElement {
   private ApproachElement fixOriginatingApproach(double startingLongitude) {
     Leg l2_1 = createLeg("fix originating approach leg", 0.0, startingLongitude, PathTerminator.FD);
     Leg l2_2 = createLeg("next approach leg", 0.0, startingLongitude + 0.5, PathTerminator.TF);
-    Transition bc = transition("fixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
+    BoogieTransition bc = transition("fixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
 
     return new ApproachElement(newProcedureGraph(newProcedure(Arrays.asList(bc))));
   }
@@ -286,7 +287,7 @@ public class TestApproachElement {
   private ApproachElement nonFixOriginatingApproach(double startingLongitude) {
     Leg l2_1 = createLeg("non fix originating approach leg", 0.0, startingLongitude, PathTerminator.TF);
     Leg l2_2 = createLeg("next approach leg", 0.0, startingLongitude + 0.5, PathTerminator.TF);
-    Transition bc = transition("nonFixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
+    BoogieTransition bc = transition("nonFixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
 
     return new ApproachElement(newProcedureGraph(newProcedure(Arrays.asList(bc))));
   }
