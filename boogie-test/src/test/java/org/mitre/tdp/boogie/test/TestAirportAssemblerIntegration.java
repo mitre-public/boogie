@@ -46,7 +46,7 @@ class TestAirportAssemblerIntegration {
          EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
-    AirportAssembler<BoogieAirport, BoogieRunway> assembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
+    AirportAssembler<Airport, Runway> assembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
     airports = EmbeddedCifpFile.instance().arincAirports().stream().map(assembler).collect(Collectors.groupingBy(Airport::airportIdentifier));
   }
 

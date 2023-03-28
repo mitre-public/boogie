@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.assemble.AirwayAssembler;
 import org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory;
@@ -46,7 +47,7 @@ class TestAirwayAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    AirwayAssembler<BoogieAirway, BoogieFix, BoogieLeg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
+    AirwayAssembler<Airway, Fix, Leg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
     airwaysByName = assembler.apply(EmbeddedCifpFile.instance().arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }
 

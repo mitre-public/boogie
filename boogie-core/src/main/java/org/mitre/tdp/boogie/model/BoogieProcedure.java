@@ -20,7 +20,7 @@ public final class BoogieProcedure implements Procedure {
   private final String airportRegion;
   private final ProcedureType procedureType;
   private final RequiredNavigationEquipage requiredNavigationEquipage;
-  private final Collection<BoogieTransition> transitions;
+  private final Collection<Transition> transitions;
 
   private BoogieProcedure(Builder builder) {
     this.procedureIdentifier = builder.procedureIdentifier;
@@ -57,7 +57,7 @@ public final class BoogieProcedure implements Procedure {
   }
 
   @Override
-  public Collection<BoogieTransition> transitions() {
+  public Collection<Transition> transitions() {
     return transitions;
   }
 
@@ -111,7 +111,7 @@ public final class BoogieProcedure implements Procedure {
     private String airportRegion;
     private ProcedureType procedureType;
     private RequiredNavigationEquipage requiredNavigationEquipage;
-    private Collection<BoogieTransition> transitions;
+    private Collection<Transition> transitions;
 
     public Builder procedureIdentifier(String procedureIdentifier) {
       this.procedureIdentifier = requireNonNull(procedureIdentifier);
@@ -138,7 +138,7 @@ public final class BoogieProcedure implements Procedure {
       return this;
     }
 
-    public Builder transitions(Collection<BoogieTransition> transitions) {
+    public Builder transitions(Collection<Transition> transitions) {
       this.transitions = transitions;
       return this;
     }

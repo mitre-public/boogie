@@ -28,7 +28,7 @@ public final class ArincToBoogieConverterFactory {
     throw new IllegalStateException("Unable to instantiate static factory class");
   }
 
-  public static FixAssembler<BoogieFix> newFixAssembler() {
+  public static FixAssembler<Fix> newFixAssembler() {
     return new FixAssembler<>(
         ArincToBoogieConverterFactory::newFixFrom,
         ArincToBoogieConverterFactory::newFixFrom,
@@ -40,13 +40,13 @@ public final class ArincToBoogieConverterFactory {
     );
   }
 
-  public static AirportAssembler<BoogieAirport, BoogieRunway> newAirportAssembler(TerminalAreaDatabase terminalAreaDatabase) {
+  public static AirportAssembler<Airport, Runway> newAirportAssembler(TerminalAreaDatabase terminalAreaDatabase) {
     return new AirportAssembler<>(terminalAreaDatabase,
         ArincToBoogieConverterFactory::newAirportFrom,
         ArincToBoogieConverterFactory::newRunwayFrom);
   }
 
-  public static AirwayAssembler<BoogieAirway, BoogieFix, BoogieLeg> newAirwayAssembler(FixDatabase fixDatabase) {
+  public static AirwayAssembler<Airway, Fix, Leg> newAirwayAssembler(FixDatabase fixDatabase) {
     return new AirwayAssembler<>(
         fixDatabase,
         newFixAssembler(),
@@ -56,7 +56,7 @@ public final class ArincToBoogieConverterFactory {
     );
   }
 
-  public static ProcedureAssembler<BoogieProcedure, BoogieTransition, BoogieLeg, BoogieFix> newProcedureAssembler(TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
+  public static ProcedureAssembler<Procedure, Transition, Leg, Fix> newProcedureAssembler(TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
     return new ProcedureAssembler<>(
         terminalAreaDatabase,
         fixDatabase,
@@ -179,7 +179,7 @@ public final class ArincToBoogieConverterFactory {
         .build();
   }
 
-  static BoogieFix newFixFrom(ArincLocalizerGlideSlope localizerGlideSlope) {
+  static Fix newFixFrom(ArincLocalizerGlideSlope localizerGlideSlope) {
 
     double modeledDeclination = declination(
         localizerGlideSlope.localizerLatitude().orElseGet(() -> localizerGlideSlope.glideSlopeLatitude().orElseThrow(IllegalStateException::new)),
@@ -199,7 +199,7 @@ public final class ArincToBoogieConverterFactory {
         .build();
   }
 
-  static BoogieAirport newAirportFrom(ArincAirport arincAirport, List<BoogieRunway> runways) {
+  static Airport newAirportFrom(ArincAirport arincAirport, List<Runway> runways) {
     return new BoogieAirport.Builder()
         .airportIdentifier(arincAirport.airportIdentifier())
         .airportRegion(arincAirport.airportIcaoRegion())
@@ -225,7 +225,7 @@ public final class ArincToBoogieConverterFactory {
    * Generates a new concrete {@link Runway} instance using the provided context from airport, arrival/departure runway ends, and
    * including context from the localizer/glideslope(s) at the runway.
    */
-  static BoogieRunway newRunwayFrom(
+  static Runway newRunwayFrom(
       ArincAirport arincAirport,
       ArincRunway arrivalEnd,
       @Nullable ArincRunway departureEnd,
@@ -260,7 +260,7 @@ public final class ArincToBoogieConverterFactory {
         .build();
   }
 
-  static BoogieLeg newAirwayLegFrom(ArincAirwayLeg arincAirwayLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid) {
+  static Leg newAirwayLegFrom(ArincAirwayLeg arincAirwayLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid) {
     return new BoogieLeg.Builder()
         .associatedFix(associatedFix)
         .recommendedNavaid(recommendedNavaid)
@@ -282,7 +282,7 @@ public final class ArincToBoogieConverterFactory {
         .build();
   }
 
-  static BoogieAirway newAirwayFrom(ArincAirwayLeg arincAirwayLeg, List<BoogieLeg> legs) {
+  static Airway newAirwayFrom(ArincAirwayLeg arincAirwayLeg, List<Leg> legs) {
     return new BoogieAirway.Builder()
         .airwayIdentifier(arincAirwayLeg.routeIdentifier())
         .airwayRegion(arincAirwayLeg.customerAreaCode().name())
@@ -290,7 +290,7 @@ public final class ArincToBoogieConverterFactory {
         .build();
   }
 
-  static BoogieLeg newProcedureLegFrom(ArincProcedureLeg arincProcedureLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix) {
+  static Leg newProcedureLegFrom(ArincProcedureLeg arincProcedureLeg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix) {
     return new BoogieLeg.Builder()
         .associatedFix(associatedFix)
         .recommendedNavaid(recommendedNavaid)
@@ -326,10 +326,10 @@ public final class ArincToBoogieConverterFactory {
    * 1. {@link TransitionType#MISSED} -> "MISSED"
    * 2. Using the {@link StandardizedTransitionName} for the rest
    */
-  static BoogieTransition newTransitionFrom(
+  static Transition newTransitionFrom(
       ArincProcedureLeg representative,
       TransitionType transitionType,
-      List<BoogieLeg> legs
+      List<Leg> legs
   ) {
     return new BoogieTransition.Builder()
         .procedureIdentifier(representative.sidStarIdentifier())
@@ -344,10 +344,10 @@ public final class ArincToBoogieConverterFactory {
         .build();
   }
 
-  static BoogieProcedure newProcedureFrom(
+  static Procedure newProcedureFrom(
       ArincProcedureLeg representative,
       RequiredNavigationEquipage requiredNavigationEquipage,
-      List<BoogieTransition> transitions
+      List<Transition> transitions
   ) {
     Preconditions.checkArgument(representative.subSectionCode().isPresent());
     return new BoogieProcedure.Builder()
@@ -386,7 +386,7 @@ public final class ArincToBoogieConverterFactory {
     }
   }
 
-  static BoogieLeg newProcedureLegFrom(ArincAirwayLeg arincAirwayLeg, Fix associatedFix, @Nullable Fix recommendedNavaid) {
+  static Leg newProcedureLegFrom(ArincAirwayLeg arincAirwayLeg, Fix associatedFix, @Nullable Fix recommendedNavaid) {
     return new BoogieLeg.Builder()
         .associatedFix(associatedFix)
         .recommendedNavaid(recommendedNavaid)

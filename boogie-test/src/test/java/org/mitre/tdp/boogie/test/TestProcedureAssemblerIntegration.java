@@ -15,10 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory;
 import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssembler;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
@@ -67,7 +64,7 @@ class TestProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    ProcedureAssembler<BoogieProcedure, BoogieTransition, BoogieLeg, BoogieFix> assembler = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase);
+    ProcedureAssembler<Procedure, Transition, Leg, Fix> assembler = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase);
     proceduresByAirport = assembler.apply(EmbeddedCifpFile.instance().arincProcedureLegs()).collect(Collectors.groupingBy(Procedure::airportIdentifier));
   }
 

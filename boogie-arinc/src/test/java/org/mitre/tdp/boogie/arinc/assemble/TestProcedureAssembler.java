@@ -45,7 +45,7 @@ class TestProcedureAssembler {
   private static TerminalAreaDatabase terminalAreaDatabase;
   private static FixDatabase fixDatabase;
 
-  private static ProcedureAssembler<BoogieProcedure, BoogieTransition, BoogieLeg, BoogieFix> assembler;
+  private static ProcedureAssembler<Procedure, Transition, Leg, Fix> assembler;
 
   @BeforeAll
   static void setup() {

@@ -61,17 +61,17 @@ final class BoogieState implements Consumer<Path> {
   /**
    * Mapping from {{@link Airport#airportIdentifier()}, {@link Airport}}.
    */
-  private Multimap<String, BoogieAirport> assembledAirports;
+  private Multimap<String, Airport> assembledAirports;
 
   /**
    * Mapping from {{@link Airway#airwayIdentifier()}, {@link Airway}}.
    */
-  private Multimap<String, BoogieAirway> assembledAirways;
+  private Multimap<String, Airway> assembledAirways;
 
   /**
    * Mapping from {{@link Procedure#procedureIdentifier()}, {{@link Procedure#airportIdentifier()}, {@link Procedure}}.
    */
-  private Multimap<String, BoogieProcedure> assembledProcedures;
+  private Multimap<String, Procedure> assembledProcedures;
 
   /**
    * Shared {@link RouteExpander} instance for general use.
@@ -179,19 +179,19 @@ final class BoogieState implements Consumer<Path> {
 
     LOG.info("Finished assembling {} total fixes.", this.assembledFixes.size());
 
-    AirportAssembler<BoogieAirport, BoogieRunway> airportAssembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
+    AirportAssembler<Airport, Runway> airportAssembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
 
-    Stream<BoogieAirport> airportStream = consumer.arincAirports().stream().map(airportAssembler);
+    Stream<Airport> airportStream = consumer.arincAirports().stream().map(airportAssembler);
     this.assembledAirports = toMultimap(Airport::airportIdentifier, airportStream);
 
     LOG.info("Finished assembling {} total airports.", this.assembledAirports.size());
 
-    Stream<BoogieAirway> airwayStream = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase).apply(consumer.arincAirwayLegs());
+    Stream<Airway> airwayStream = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase).apply(consumer.arincAirwayLegs());
     this.assembledAirways = toMultimap(Airway::airwayIdentifier, airwayStream);
 
     LOG.info("Finished assembling {} total airways.", this.assembledAirways.size());
 
-    Stream<BoogieProcedure> procedureStream = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase).apply(consumer.arincProcedureLegs());
+    Stream<Procedure> procedureStream = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase).apply(consumer.arincProcedureLegs());
 
     this.assembledProcedures = toMultimap(Procedure::procedureIdentifier, procedureStream);
 

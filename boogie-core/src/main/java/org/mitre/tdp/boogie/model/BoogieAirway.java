@@ -15,7 +15,7 @@ public final class BoogieAirway implements Airway {
 
   private final String airwayIdentifier;
   private final String airwayRegion;
-  private final List<BoogieLeg> legs;
+  private final List<Leg> legs;
 
   private BoogieAirway(Builder builder) {
     this.airwayIdentifier = builder.airwayIdentifier;
@@ -34,7 +34,7 @@ public final class BoogieAirway implements Airway {
   }
 
   @Override
-  public List<BoogieLeg> legs() {
+  public List<Leg> legs() {
     return legs;
   }
 
@@ -76,7 +76,7 @@ public final class BoogieAirway implements Airway {
   public static final class Builder {
     private String airwayIdentifier;
     private String airwayRegion;
-    private List<BoogieLeg> legs;
+    private List<Leg> legs;
 
     public Builder airwayIdentifier(String airwayIdentifier) {
       this.airwayIdentifier = requireNonNull(airwayIdentifier);
@@ -88,7 +88,7 @@ public final class BoogieAirway implements Airway {
       return this;
     }
 
-    public Builder legs(List<BoogieLeg> legs) {
+    public Builder legs(List<Leg> legs) {
       this.legs = legs;
       return this;
     }

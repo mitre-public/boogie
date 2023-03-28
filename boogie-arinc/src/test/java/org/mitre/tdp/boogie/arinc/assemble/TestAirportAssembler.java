@@ -31,7 +31,7 @@ class TestAirportAssembler {
 
   private static TerminalAreaDatabase terminalAreaDatabase;
 
-  private static AirportAssembler<BoogieAirport, BoogieRunway> assembler;
+  private static AirportAssembler<Airport, Runway> assembler;
 
   @BeforeAll
   static void setup() {
@@ -54,7 +54,7 @@ class TestAirportAssembler {
 
   @Test
   void testKjfkAssembly() {
-    BoogieAirport airport = assembler.apply(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
+    Airport airport = assembler.apply(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
 
     Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
 

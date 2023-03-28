@@ -52,7 +52,7 @@ class TestAirwayAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    AirwayAssembler<BoogieAirway, BoogieFix, BoogieLeg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
+    AirwayAssembler<Airway, Fix, Leg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
 
     airwayMap = assembler.apply(testV18Consumer.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }

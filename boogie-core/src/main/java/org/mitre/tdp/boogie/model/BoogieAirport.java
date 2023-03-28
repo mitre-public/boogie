@@ -20,7 +20,7 @@ public final class BoogieAirport implements Airport {
   private final LatLong latLong;
   private final Double publishedVariation;
   private final double modeledVariation;
-  private final List<BoogieRunway> runways;
+  private final List<Runway> runways;
   private final Double elevation;
 
   private BoogieAirport(Builder builder) {
@@ -59,7 +59,7 @@ public final class BoogieAirport implements Airport {
   }
 
   @Override
-  public List<BoogieRunway> runways() {
+  public List<Runway> runways() {
     return runways;
   }
 
@@ -123,7 +123,7 @@ public final class BoogieAirport implements Airport {
     private double longitude;
     private Double publishedVariation;
     private double modeledVariation;
-    private List<BoogieRunway> runways;
+    private List<Runway> runways;
     private Double elevation;
 
     public Builder airportIdentifier(String airportIdentifier) {
@@ -156,7 +156,7 @@ public final class BoogieAirport implements Airport {
       return this;
     }
 
-    public Builder runways(List<BoogieRunway> runways) {
+    public Builder runways(List<Runway> runways) {
       this.runways = runways;
       return this;
     }
