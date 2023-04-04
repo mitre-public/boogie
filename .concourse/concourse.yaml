@@ -141,7 +141,6 @@ jobs:
         input_mapping: { pods: dev-pods, version: candidate-chart }
         params:
           containerSelector: "boogie"
-    on_failure: *notify_failure
 
   - name: create-release
     plan:
