@@ -66,7 +66,10 @@ final class AirportPage {
   }
 
   public Map<String, ArincGnssLandingSystem> gnssLandingSystems() {
-    return runwayPages.values().stream().map(RunwayPage::gnssLandingSystem).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity()));
+    return runwayPages.values().stream()
+        .map(RunwayPage::gnssLandingSystem)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity()));
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeForRunway(String runwayId) {

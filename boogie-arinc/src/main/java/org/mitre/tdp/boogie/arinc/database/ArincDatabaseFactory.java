@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * Factory class for generating a variety of multi-index databases over ARINC information.
@@ -116,8 +118,7 @@ public final class ArincDatabaseFactory {
       Map<Pair<String, String>, ArincLocalizerGlideSlope> lgm = localizerMap.getOrDefault(index, emptyList()).stream()
           .collect(Collectors.toMap(lgs -> Pair.of(lgs.runwayIdentifier(), lgs.localizerIdentifier()), Function.identity()));
 
-      Map<String, ArincGnssLandingSystem> gm = gnssLandingSystemMap.getOrDefault(index, emptyList()).stream()
-          .collect(Collectors.toMap(ArincGnssLandingSystem::runwayIdentifier, Function.identity()));
+      Multimap<String, ArincGnssLandingSystem> gm = Multimaps.index(gnssLandingSystemMap.getOrDefault(index, emptyList()), ArincGnssLandingSystem::runwayIdentifier);
 
       Map<String, RunwayPage> rm = new HashMap<>();
       runwayMap.getOrDefault(index, emptyList()).forEach(runway -> {

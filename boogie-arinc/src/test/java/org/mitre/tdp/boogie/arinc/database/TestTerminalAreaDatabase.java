@@ -47,8 +47,9 @@ class TestTerminalAreaDatabase {
   void testGls() {
     assertAll(
         () -> assertEquals("G25A", terminalAreaDatabase.gnssLandingSystemAt("YSSY", "G25A").map(ArincGnssLandingSystem::glsRefPathIdentifier).orElseThrow()),
+        () -> assertEquals("G16E", terminalAreaDatabase.gnssLandingSystemAt("YSSY", "G16E").map(ArincGnssLandingSystem::glsRefPathIdentifier).orElseThrow()),
         () -> assertTrue(terminalAreaDatabase.allProcedureLegsAt("YSSY").stream().filter(i -> i.recommendedNavaidIdentifier().isPresent()).anyMatch(i -> i.recommendedNavaidIdentifier().get().equals("G25A"))),
-        () -> assertEquals(6, terminalAreaDatabase.gnssLandingSystemsAt("YSSY").size())
+        () -> assertEquals(7, terminalAreaDatabase.gnssLandingSystemsAt("YSSY").size())
     );
   }
 
