@@ -16,7 +16,7 @@ dependencies {
     api(project(":boogie-arinc"))
     api(project(":boogie-routes"))
 
-    implementation("org.mitre.tdp:tentacular-core:1.0.0")
+    implementation("org.mitre.tdp:tentacular-core:1.0.9")
 
     /** Spring dependency to host a REST API */
     implementation("org.springframework.boot:spring-boot-starter-data-rest") {
