@@ -1,7 +1,0 @@
-apiVersion: v2
-name: boogie
-description: Helm chart to deploy instances of the Boogie REST API for hosting navigational infrastructure data.
-
-type: application
-version: 0.1.0
-appVersion: 1.0.0

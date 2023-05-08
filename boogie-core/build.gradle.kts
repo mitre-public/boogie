@@ -1,3 +1,11 @@
+plugins {
+    id("project.lib-conventions")
+}
+
 dependencies {
-    testImplementation("org.apache.commons:commons-lang3:3.12.0")
+    api(libs.bundles.commons)
+    api(libs.bundles.jgrapht)
+
+    testImplementation(platform(rootProject.libs.junit.bom))
+    testImplementation(rootProject.libs.bundles.test.tools)
 }

@@ -1,9 +1,0 @@
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Values.name }}-config
-data:
-  arinc.properties: |
-    arinc.watchDirectory={{ .Values.arinc.watchDirectory }}
-    arinc.filePattern={{ .Values.arinc.filePattern }}

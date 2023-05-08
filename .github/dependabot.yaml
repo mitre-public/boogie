@@ -36,12 +36,6 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "/boogie-rest"
-    registries:
-      - codev-maven
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gradle"
     directory: "/boogie-routes"
     registries:
       - codev-maven
@@ -57,9 +51,3 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-  - package-ecosystem: "docker"
-    directory: "/"
-    registries:
-      - codev-docker
-    schedule:
-      interval: "weekly"

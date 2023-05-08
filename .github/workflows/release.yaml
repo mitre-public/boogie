@@ -1,0 +1,42 @@
+name: Release Software
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Your Github username - for tagging the release commit'
+        required: true
+        default: 'ttfs'
+      email:
+        description: 'Your Github email - for tagging the release commit'
+        required: true
+        default: 'bamboo@tdp.mitre.org'
+
+# when the action runs on a pull request trigger, then github.ref will be e.g. refs/pull/421/merge, so this gives us a consistent
+# way to reference the branch name
+env:
+  COMMIT_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+  BRANCH: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+
+jobs:
+  release:
+    name: Release Source
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.BOOGIE_CHECKOUT_SSH_KEY }}
+
+      - uses: mitre-actions/setup-gradle@v1
+        with:
+          java-distribution: corretto
+          java-version: 11
+          caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_USERS }}
+          caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
+
+      - name: Run Publish
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: publish

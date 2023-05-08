@@ -1,5 +1,12 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
+import java.util.Optional;
+
+import com.google.common.base.Joiner;
+import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,14 +14,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-
-import com.google.common.base.Joiner;
 
 class TestLocalizerGlideSlopeValidator {
 
@@ -111,7 +110,10 @@ class TestLocalizerGlideSlopeValidator {
     ArincRecord record = mock(ArincRecord.class);
     when(record.optionalField(eq("sectionCode"))).thenReturn(Optional.of(SectionCode.P));
     when(record.optionalField(eq("subSectionCode"))).thenReturn(Optional.of("I"));
-    when(record.optionalField(matches(Joiner.on("|").join(fields)))).thenReturn(presentOptional);
+
+    if (fields.length != 0) {
+      when(record.optionalField(matches(Joiner.on("|").join(fields)))).thenReturn(presentOptional);
+    }
     return record;
   }
 }

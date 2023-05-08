@@ -1,5 +1,10 @@
+plugins {
+    id("project.lib-conventions")
+}
+
 dependencies {
     api(project(":boogie-routes"))
-    implementation("org.jblas:jblas:1.2.5")
-    implementation("ch.hsr:geohash:1.4.0")
+
+    testImplementation(platform(rootProject.libs.junit.bom))
+    testImplementation(rootProject.libs.bundles.test.tools)
 }

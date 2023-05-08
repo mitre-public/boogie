@@ -1,28 +1,20 @@
-rootProject.name = "boogie-parent"
+rootProject.name = "boogie"
+
 include(":boogie-core")
 include(":boogie-arinc")
 include(":boogie-routes")
 include(":boogie-conformance")
 include(":boogie-test")
-include(":boogie-rest")
 
 pluginManagement {
     repositories {
-        /* Other plugin portals you're using, e.g. gradlePluginPortal() */
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
-
-        maven {
-            name = "codev-gradle-artifactory"
-            url = uri("https://repo.codev.mitre.org/artifactory/idaass-gradle")
-
-            val codevUser: String? by settings // NOTE: "by project" won't work here
-            val codevPassword: String? by settings
-            credentials {
-                username = codevUser
-                password = codevPassword
-            }
-        }
+        maven { name = "gradle-plugin-portal" }
+        maven { name = "caasd-plugin-portal" }
     }
+    plugins {
+        id("caasd.repositories") version "1.1.+"
+        id("caasd.publish") version "1.0.+"
+        id("caasd.auto-semver") version "1.0.+"
+    }
+    includeBuild("build-logic")
 }
