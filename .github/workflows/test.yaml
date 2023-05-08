@@ -1,4 +1,4 @@
-name: Commit Check and Release Candidate
+name: Test
 
 # Commit checks and RC deployment run on all changes to trunk and all changes
 # to PR branches, unless the PR is in draft
