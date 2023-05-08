@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.test;
+package org.mitre.tdp.boogie.arinc.assemble;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,14 +15,9 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.arinc.assemble.AirwayAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory;
+import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
-import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.model.BoogieAirway;
-import org.mitre.tdp.boogie.model.BoogieFix;
-import org.mitre.tdp.boogie.model.BoogieLeg;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

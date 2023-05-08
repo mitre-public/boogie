@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.test;
+package org.mitre.tdp.boogie.arinc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;

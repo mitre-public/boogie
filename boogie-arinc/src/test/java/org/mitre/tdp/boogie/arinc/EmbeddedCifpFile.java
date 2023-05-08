@@ -1,19 +1,14 @@
-package org.mitre.tdp.boogie.test;
+package org.mitre.tdp.boogie.arinc;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.zip.GZIPInputStream;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.ContinuationRecordFilter;
 import org.mitre.tdp.boogie.arinc.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

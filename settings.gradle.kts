@@ -4,7 +4,6 @@ include(":boogie-core")
 include(":boogie-arinc")
 include(":boogie-routes")
 include(":boogie-conformance")
-include(":boogie-test")
 
 pluginManagement {
     repositories {

@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.test;
+package org.mitre.tdp.boogie.arinc.assemble;
 
 import static java.util.stream.Collectors.toCollection;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,13 +16,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Runway;
-import org.mitre.tdp.boogie.arinc.assemble.AirportAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.ArincToBoogieConverterFactory;
+import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.model.BoogieAirport;
-import org.mitre.tdp.boogie.model.BoogieRunway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +31,7 @@ class TestAirportAssemblerIntegration {
 
   @BeforeAll
   static void setup() {
-     TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         EmbeddedCifpFile.instance().arincAirports(),
         EmbeddedCifpFile.instance().arincRunways(),
         EmbeddedCifpFile.instance().arincLocalizerGlideSlopes(),
@@ -43,7 +39,7 @@ class TestAirportAssemblerIntegration {
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincProcedureLegs(),
-         EmbeddedCifpFile.instance().arincGnssLandingSystems()
+        EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
     AirportAssembler<Airport, Runway> assembler = ArincToBoogieConverterFactory.newAirportAssembler(terminalAreaDatabase);
