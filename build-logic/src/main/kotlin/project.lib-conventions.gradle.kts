@@ -24,6 +24,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.named<Test>("testIntegration") {
+    maxHeapSize = "2048m"
+}
+
 configure<JavaPluginExtension> {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))

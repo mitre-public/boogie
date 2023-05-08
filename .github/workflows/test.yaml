@@ -32,7 +32,12 @@ jobs:
           caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_USERS }}
           caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
 
-      - name: Run Check
+      - name: Run Unit Tests
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check
+          arguments: testUnit
+
+      - name: Run Integration Tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: testIntegration
