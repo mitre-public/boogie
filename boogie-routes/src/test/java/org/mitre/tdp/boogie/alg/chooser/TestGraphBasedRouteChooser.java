@@ -27,11 +27,13 @@ import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
+import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 class TestGraphBasedRouteChooser {
+
+  private static final SectionSplitter sectionSplitter = SectionSplitter.faaIfrFormat();
 
   private static final GraphBasedRouteChooser routeChooser = new GraphBasedRouteChooser();
 
@@ -52,7 +54,7 @@ class TestGraphBasedRouteChooser {
 
   @Test
   void testShortestPath() {
-    List<ExpandedRouteLeg> legs = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).andThen(routeChooser::chooseRoute).apply("KIND.BLSTR1.VNY").legs();
+    List<ExpandedRouteLeg> legs = sectionSplitter.andThen(apfResolver()::applyTo).andThen(routeChooser::chooseRoute).apply("KIND.BLSTR1.VNY").legs();
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
 
@@ -80,7 +82,7 @@ class TestGraphBasedRouteChooser {
   }
 
   private SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> toGraph(String route) {
-    List<ResolvedSection> resolvedSections = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).apply(route);
+    List<ResolvedSection> resolvedSections = sectionSplitter.andThen(apfResolver()::applyTo).apply(route);
     return routeChooser.constructRouteGraph(resolvedSections);
   }
 

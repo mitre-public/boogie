@@ -5,7 +5,6 @@ import static java.util.Objects.nonNull;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -14,14 +13,7 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
 
 import com.google.common.base.Strings;
 
-/**
- * Section splitter for International IFR format route strings
- * <p>
- * e.g.,"DCT GREKI IFR DCT BGO/N0485F410 M626 VKB M751 VPK B469 BIKTA PIBAP PAS3 MABA2A"
- */
-public final class InternationalIfrFormatSectionSplitter implements Function<String, List<SectionSplit>> {
-
-  public static final InternationalIfrFormatSectionSplitter INSTANCE = new InternationalIfrFormatSectionSplitter();
+final class InternationalIfrFormatSplitter implements SectionSplitter {
 
   /**
    * Takes the ifr vfr object and then adds it to the previous item where the rules changed at
@@ -39,7 +31,7 @@ public final class InternationalIfrFormatSectionSplitter implements Function<Str
   );
   static Pattern speedLevel = Pattern.compile("/[A-Z0-9]{8,10}$");
 
-  private InternationalIfrFormatSectionSplitter() {
+  InternationalIfrFormatSplitter() {
   }
 
   static String findSpeedLevel(String val) {
@@ -52,7 +44,7 @@ public final class InternationalIfrFormatSectionSplitter implements Function<Str
   }
 
   @Override
-  public List<SectionSplit> apply(String route) {
+  public List<SectionSplit> splits(String route) {
     String[] splits = route.split(" ");
     return IntStream.range(0, splits.length)
         .mapToObj(i -> {
@@ -62,7 +54,7 @@ public final class InternationalIfrFormatSectionSplitter implements Function<Str
             return null;
           }
 
-          String etaEet = IfrFormatSectionSplitter.etaEet(s);
+          String etaEet = FaaIfrFormatSplitter.etaEet(s);
 
           String sl = findSpeedLevel(s);
 

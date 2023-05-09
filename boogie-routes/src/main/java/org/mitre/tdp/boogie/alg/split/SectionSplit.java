@@ -7,14 +7,14 @@ import java.util.Objects;
 
 /**
  * Represents the cleaned and tagged portion of a route string between two `.`s.
- * <p>
- * e.g. WYNDE8 in FLT.WYNDE8.KORD.
+ *
+ * <p>e.g. WYNDE8 in FLT.WYNDE8.KORD.
  */
 public final class SectionSplit implements Comparable<SectionSplit> {
   /**
    * The alphanumeric string section value.
-   * <p>
-   * e.g. CTSL6, J121, etc.
+   *
+   * <p>e.g. CTSL6, J121, etc.
    */
   private final String value;
   /**
@@ -31,14 +31,14 @@ public final class SectionSplit implements Comparable<SectionSplit> {
   private final String flightRules;
   /**
    * The index of the split in the original route string.
-   * <p>
-   * Determined by String.split("\\.")
+   *
+   * <p>Determined by String.split("\\.")
    */
   private final double index;
   /**
    * Concatenated string of any non-alphanumeric values associated with the split string section.
-   * <p>
-   * e.g. "*+"
+   *
+   * <p>e.g. "*+"
    */
   private String wildcards;
 
@@ -110,7 +110,7 @@ public final class SectionSplit implements Comparable<SectionSplit> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(value, etaEet,speedLevel, flightRules, index, wildcards);
+    return Objects.hash(value, etaEet, speedLevel, flightRules, index, wildcards);
   }
 
   @Override

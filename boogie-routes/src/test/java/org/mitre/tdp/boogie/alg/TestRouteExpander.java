@@ -3,12 +3,16 @@ package org.mitre.tdp.boogie.alg;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.Airports.KATL;
 import static org.mitre.tdp.boogie.Airports.KDEN;
 import static org.mitre.tdp.boogie.MockObjects.fix;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +40,6 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.SUMMA2;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
@@ -1001,7 +1004,9 @@ class TestRouteExpander {
     );
   }
 
-  /** TDP-5731, TDP-5562 */
+  /**
+   * TDP-5731, TDP-5562
+   */
   @Test
   void testStarExpansionExtraLeg() {
     String route = "KMCO./.SBY057030..JIIMS.JIIMS3.KPHL/1243";
@@ -1052,7 +1057,9 @@ class TestRouteExpander {
     );
   }
 
-  /** TDP-5731, TDP-5562 */
+  /**
+   * TDP-5731, TDP-5562
+   */
   @Test
   void testSidExpansionExtraLeg() {
     String route = "KSEA.SUMMA2.SUMMA..JINMO";
@@ -1098,7 +1105,9 @@ class TestRouteExpander {
     );
   }
 
-  /** TDP-5708 */
+  /**
+   * TDP-5708
+   */
   @Test
   void testStarIncorrectlyUsedAsAirwayEntryAndExitFix() {
     String route = "SAP.UG521.CZM.UB881.CUN.UM219.MYDIA";

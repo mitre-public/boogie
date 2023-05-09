@@ -3,8 +3,6 @@ package org.mitre.tdp.boogie.alg;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Airport;
@@ -20,9 +18,6 @@ import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SidStarResolver;
 import org.mitre.tdp.boogie.alg.resolve.SurlySectionResolver;
-import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
-import org.mitre.tdp.boogie.alg.split.InternationalIfrFormatSectionSplitter;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.validate.EnforceSequentiallyOrderedLegs;
 
@@ -44,7 +39,7 @@ public final class RouteExpanderFactory {
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
       LookupService<Procedure> procedureService) {
-    return newGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixService, airwayService, airportService, procedureService);
+    return newGraphicalRouteExpander(SectionSplitter.faaIfrFormat(), fixService, airwayService, airportService, procedureService);
   }
 
   /**
@@ -56,7 +51,7 @@ public final class RouteExpanderFactory {
    * </ul>
    */
   public static RouteExpander newGraphicalRouteExpander(
-      Function<String, List<SectionSplit>> sectionSplitter,
+      SectionSplitter sectionSplitter,
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
@@ -86,7 +81,7 @@ public final class RouteExpanderFactory {
    * </ul>
    */
   public static RouteExpander newSurlyGraphicalRouteExpander(
-      Function<String, List<SectionSplit>> sectionSplitter,
+      SectionSplitter sectionSplitter,
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
@@ -119,7 +114,7 @@ public final class RouteExpanderFactory {
       LookupService<Airport> airportService,
       LookupService<Procedure> procedureService,
       LookupService<Procedure> proceduresAtAirport) {
-    return newGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixService, airwayService, airportService, procedureService, proceduresAtAirport);
+    return newGraphicalRouteExpander(SectionSplitter.faaIfrFormat(), fixService, airwayService, airportService, procedureService, proceduresAtAirport);
   }
 
   /**
@@ -135,7 +130,7 @@ public final class RouteExpanderFactory {
       LookupService<Airport> airportService,
       LookupService<Procedure> procedureService,
       LookupService<Procedure> proceduresAtAirport) {
-    return newSurlyGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixService, airwayService, airportService, procedureService, proceduresAtAirport);
+    return newSurlyGraphicalRouteExpander(SectionSplitter.faaIfrFormat(), fixService, airwayService, airportService, procedureService, proceduresAtAirport);
   }
 
   /**
@@ -147,7 +142,7 @@ public final class RouteExpanderFactory {
    * </ul>
    */
   public static RouteExpander newSurlyGraphicalRouteExpander(
-      Function<String, List<SectionSplit>> sectionSplitter,
+      SectionSplitter sectionSplitter,
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
@@ -177,7 +172,7 @@ public final class RouteExpanderFactory {
    * </ul>
    */
   public static RouteExpander newGraphicalRouteExpander(
-      Function<String, List<SectionSplit>> sectionSplitter,
+      SectionSplitter sectionSplitter,
       LookupService<Fix> fixService,
       LookupService<Airway> airwayService,
       LookupService<Airport> airportService,
@@ -206,7 +201,7 @@ public final class RouteExpanderFactory {
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,
       Collection<? extends Procedure> procedures) {
-    return newGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixes, airways, airports, procedures);
+    return newGraphicalRouteExpander(SectionSplitter.faaIfrFormat(), fixes, airways, airports, procedures);
   }
 
   /**
@@ -218,7 +213,7 @@ public final class RouteExpanderFactory {
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,
       Collection<? extends Procedure> procedures) {
-    return newSurlyGraphicalRouteExpander(IfrFormatSectionSplitter.INSTANCE, fixes, airways, airports, procedures);
+    return newSurlyGraphicalRouteExpander(SectionSplitter.faaIfrFormat(), fixes, airways, airports, procedures);
   }
 
   /**
@@ -230,7 +225,7 @@ public final class RouteExpanderFactory {
    * </ul>
    */
   public static RouteExpander newGraphicalRouteExpander(
-      Function<String, List<SectionSplit>> sectionSplitter,
+      SectionSplitter sectionSplitter,
       Collection<? extends Fix> fixes,
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,
@@ -261,7 +256,7 @@ public final class RouteExpanderFactory {
    * </ul>
    */
   public static RouteExpander newSurlyGraphicalRouteExpander(
-      Function<String, List<SectionSplit>> sectionSplitter,
+      SectionSplitter sectionSplitter,
       Collection<? extends Fix> fixes,
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,

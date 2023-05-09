@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.alg.split;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -10,23 +9,16 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
 
 import com.google.common.base.Strings;
 
-/**
- * Section splitter for FAA IFR format route strings.
- * <br>
- * e.g. KATL.BOOVE4.DRSDN..AMF.J121.RPA..WYNDE.WYNDE8.KORD/0211
- */
-public final class IfrFormatSectionSplitter implements Function<String, List<SectionSplit>> {
+final class FaaIfrFormatSplitter implements SectionSplitter {
 
-  public static final IfrFormatSectionSplitter INSTANCE = new IfrFormatSectionSplitter();
-
-  private IfrFormatSectionSplitter() {
+  FaaIfrFormatSplitter() {
   }
 
   /**
    * Also performs cleaning to strip attached wildcard characters ("*", "+", etc.) and sequences "/0219" from the ID.
    */
   @Override
-  public List<SectionSplit> apply(String route) {
+  public List<SectionSplit> splits(String route) {
     String[] splits = route.split("\\.");
 
     return IntStream.range(0, splits.length)
