@@ -1,7 +1,18 @@
 package org.mitre.tdp.boogie.arinc;
 
-import org.mitre.tdp.boogie.arinc.v18.*;
+import java.util.Optional;
+
+import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemSpec;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Pre-configured set of parsers for various well-known ARINC spec types and record formats.
@@ -43,10 +54,23 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec()
   );
 
+  private static final ImmutableMap<String, ArincVersion> LOOKUP = ImmutableMap.<String, ArincVersion>builder()
+      .put(V18.name(), V18)
+      .put(V19.name(), V19)
+      .build();
+
   private final ArincRecordParser parser;
 
   ArincVersion(RecordSpec... specs) {
     this.parser = new ArincRecordParser(specs);
+  }
+
+  /**
+   * Implements a "safe" {@link ArincVersion} parse step which returns {@link Optional#empty()} if the string doesn't match one
+   * of the known versions.
+   */
+  public static Optional<ArincVersion> parse(String version) {
+    return Optional.ofNullable(version).map(String::toUpperCase).map(LOOKUP::get);
   }
 
   /**
