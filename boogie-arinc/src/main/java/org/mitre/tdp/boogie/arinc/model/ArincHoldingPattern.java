@@ -4,9 +4,27 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.arinc.v18.field.*;
+import org.mitre.tdp.boogie.arinc.v18.field.ArcRadius;
+import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
+import org.mitre.tdp.boogie.arinc.v18.field.DuplicateIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.FixIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
+import org.mitre.tdp.boogie.arinc.v18.field.InboundMagneticCourse;
+import org.mitre.tdp.boogie.arinc.v18.field.LegLength;
+import org.mitre.tdp.boogie.arinc.v18.field.LegTime;
+import org.mitre.tdp.boogie.arinc.v18.field.MaxAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.MinimumAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.NameField;
+import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.RegionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.Rnp;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
+import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMaximumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMinimumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.VerticalScaleFactor;
@@ -349,11 +367,12 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
    * This is intended to get a list that can be sorted according to the holds at the same fix
    * then by the duplicate identifier. Then if somehow the duplicate code fails us
    * it will sort on the fix section/subsection with nulls last because screw navaids
+   *
    * @param o the object to be compared.
    * @return compare result
    */
   @Override
-  public int compareTo(@NotNull ArincHoldingPattern o) {
+  public int compareTo(ArincHoldingPattern o) {
     return ComparisonChain.start()
         .compare(recordType, o.recordType)
         .compare(customerAreaCode, o.customerAreaCode)
