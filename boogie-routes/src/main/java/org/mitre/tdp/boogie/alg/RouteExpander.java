@@ -43,8 +43,8 @@ public final class RouteExpander implements
 
   /**
    * Function for converting an input route string into a sequence of {@link SectionSplit}s.
-   * <br>
-   * e.g. {@link IfrFormatSectionSplitter}.
+   *
+   * <p>e.g. {@link IfrFormatSectionSplitter}.
    */
   private final Function<String, List<SectionSplit>> sectionSplitter;
   /**

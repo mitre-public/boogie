@@ -10,21 +10,20 @@ import static org.mitre.tdp.boogie.MockObjects.airport;
 import static org.mitre.tdp.boogie.MockObjects.airway;
 import static org.mitre.tdp.boogie.MockObjects.fix;
 import static org.mitre.tdp.boogie.MockObjects.transition;
-import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
+import static org.mitre.tdp.boogie.alg.LookupService.inMemory;
 import static org.mitre.tdp.boogie.util.Preconditions.allMatch;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.split.IfrFormatSectionSplitter;
 import org.mitre.tdp.boogie.model.BoogieTransition;
@@ -60,33 +59,33 @@ class TestRouteResolver {
     BoogieTransition cstl6 = transition("CSTL6", TransitionType.COMMON, ProcedureType.SID, singletonList(ifSherl));
     BoogieTransition jiims2 = transition("JIIMS2", TransitionType.COMMON, ProcedureType.STAR, singletonList(ifBrigs));
 
-    SidStarResolver sidStarResolver = new SidStarResolver(newLookupService(
+    SidStarResolver sidStarResolver = new SidStarResolver(inMemory(
         ProcedureFactory.newProcedures(newArrayList(cstl6, jiims2)),
-        Procedure::procedureIdentifier
+        p -> Stream.of(p.procedureIdentifier())
     ));
 
     Airport kbdl = airport("KBDL", 0.0, 0.0);
     Airport kphl = airport("KPHL", 0.0, 0.0);
 
-    AirportResolver airportResolver = new AirportResolver(newLookupService(
+    AirportResolver airportResolver = new AirportResolver(inMemory(
         newArrayList(kbdl, kphl),
-        Airport::airportIdentifier
+        a -> Stream.of(a.airportIdentifier())
     ));
 
     Airway j121 = airway("J121", emptyList());
     Airway j122 = airway("J122", emptyList());
 
-    AirwayResolver airwayResolver = new AirwayResolver(newLookupService(
+    AirwayResolver airwayResolver = new AirwayResolver(inMemory(
         Arrays.asList(j121, j122),
-        Airway::airwayIdentifier
+        a -> Stream.of(a.airwayIdentifier())
     ));
 
     Fix sherl = fix("SHERL", 0.0, 0.0);
     Fix brigs = fix("BRIGS", 0.0, 0.0);
 
-    FixResolver fixResolver = new FixResolver(newLookupService(
+    FixResolver fixResolver = new FixResolver(inMemory(
         Arrays.asList(sherl, brigs),
-        Fix::fixIdentifier
+        f -> Stream.of(f.fixIdentifier())
     ));
 
     return SectionResolver.composeAll(

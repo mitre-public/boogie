@@ -14,12 +14,15 @@ import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
 
 import com.google.common.collect.ImmutableMap;
 
+import static java.util.Optional.ofNullable;
+
 /**
  * Pre-configured set of parsers for various well-known ARINC spec types and record formats.
- * <br>
- * This class explicitly <i>does not</i> return pre-configured parsers for all of the potential record types that a user might
- * care about within a version nor does it provide pre-configured parsers for all version of 424 data. However it is relatively
- * simple to add new specs/parsers as need if we want to increase the pre-configured support.
+ *
+ * <p>This class explicitly <i>does not</i> return pre-configured parsers for all the potential record types that a user might
+ * care about within a version nor does it provide pre-configured parsers for all version of 424 data.
+ *
+ * <p>However it is relatively simple to add new specs/parsers as need if we want to increase the pre-configured support.
  */
 public enum ArincVersion {
 
@@ -38,9 +41,10 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec()
   ),
   /**
-   * Returns a static implementation of a parser for V19 ARINC 424 data. From the perspective of the Boogie front-end parsers
-   * there is no difference in any of the parsing logic for the V19 record contents other than for procedures where a few more
-   * categorical {@link RouteTypeQualifier}s were added.
+   * Returns a static implementation of a parser for V19 ARINC 424 data.
+   *
+   * <p>From the perspective of the Boogie front-end parsers there is no difference in any of the parsing logic for the V19 record
+   * contents other than for procedures where a few more categorical {@link RouteTypeQualifier}s were added.
    */
   V19(new AirportSpec(),
       new RunwaySpec(),
@@ -70,7 +74,7 @@ public enum ArincVersion {
    * of the known versions.
    */
   public static Optional<ArincVersion> parse(String version) {
-    return Optional.ofNullable(version).map(String::toUpperCase).map(LOOKUP::get);
+    return ofNullable(version).map(String::toUpperCase).map(LOOKUP::get);
   }
 
   /**

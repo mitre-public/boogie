@@ -6,15 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.MockObjects.fix;
-import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 class TestFixResolver {
@@ -58,6 +59,6 @@ class TestFixResolver {
   }
 
   private FixResolver resolver(Fix fix) {
-    return new FixResolver(newLookupService(singleton(fix), Fix::fixIdentifier));
+    return new FixResolver(LookupService.inMemory(singleton(fix), f -> Stream.of(f.fixIdentifier())));
   }
 }

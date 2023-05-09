@@ -6,16 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.MockObjects.IF;
 import static org.mitre.tdp.boogie.MockObjects.transition;
-import static org.mitre.tdp.boogie.alg.DefaultLookupService.newLookupService;
+import static org.mitre.tdp.boogie.alg.LookupService.inMemory;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedures;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.model.BoogieTransition;
@@ -30,7 +30,9 @@ class TestSidStarResolver {
 
     BoogieTransition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
-    SidStarResolver resolver = new SidStarResolver(newLookupService(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), Procedure::procedureIdentifier));
+    SidStarResolver resolver = new SidStarResolver(
+        inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
+    );
 
     ResolvedSection resolved = resolver.resolve(null, split("JIMMY"), null);
 
@@ -55,7 +57,9 @@ class TestSidStarResolver {
 
     BoogieTransition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.SID, singletonList(l));
 
-    SidStarResolver resolver = new SidStarResolver(newLookupService(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), Procedure::procedureIdentifier));
+    SidStarResolver resolver = new SidStarResolver(
+        inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
+    );
 
     ResolvedSection resolved = resolver.resolve(split("KATL"), split("JIMMY"), null);
 
@@ -80,7 +84,9 @@ class TestSidStarResolver {
 
     BoogieTransition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, ProcedureType.STAR, singletonList(l));
 
-    SidStarResolver resolver = new SidStarResolver(newLookupService(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), Procedure::procedureIdentifier));
+    SidStarResolver resolver = new SidStarResolver(
+        inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
+    );
 
     ResolvedSection resolved = resolver.resolve(null, split("JIMMY"), split("KATL"));
 

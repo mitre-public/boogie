@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
@@ -241,11 +242,11 @@ public final class RouteExpanderFactory {
     return newGraphicalRouteExpander(
         sectionSplitter,
         // ugh collection type casting... makes it nicer to use though...
-        (LookupService<Fix>) DefaultLookupService.newLookupService(fixes, Fix::fixIdentifier),
-        (LookupService<Airway>) DefaultLookupService.newLookupService(airways, Airway::airwayIdentifier),
-        (LookupService<Airport>) DefaultLookupService.newLookupService(airports, Airport::airportIdentifier),
-        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::procedureIdentifier),
-        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::airportIdentifier)
+        (LookupService<Fix>) LookupService.inMemory(fixes, f -> Stream.of(f.fixIdentifier())),
+        (LookupService<Airway>) LookupService.inMemory(airways, a -> Stream.of(a.airwayIdentifier())),
+        (LookupService<Airport>) LookupService.inMemory(airports, a -> Stream.of(a.airportIdentifier())),
+        (LookupService<Procedure>) LookupService.inMemory(procedures, p -> Stream.of(p.procedureIdentifier())),
+        (LookupService<Procedure>) LookupService.inMemory(procedures, p -> Stream.of(p.airportIdentifier()))
     );
   }
 
@@ -272,11 +273,11 @@ public final class RouteExpanderFactory {
     return newSurlyGraphicalRouteExpander(
         sectionSplitter,
         // ugh collection type casting... makes it nicer to use though...
-        (LookupService<Fix>) DefaultLookupService.newLookupService(fixes, Fix::fixIdentifier),
-        (LookupService<Airway>) DefaultLookupService.newLookupService(airways, Airway::airwayIdentifier),
-        (LookupService<Airport>) DefaultLookupService.newLookupService(airports, Airport::airportIdentifier),
-        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::procedureIdentifier),
-        (LookupService<Procedure>) DefaultLookupService.newLookupService(procedures, Procedure::airportIdentifier)
+        (LookupService<Fix>) LookupService.inMemory(fixes, f -> Stream.of(f.fixIdentifier())),
+        (LookupService<Airway>) LookupService.inMemory(airways, a -> Stream.of(a.airwayIdentifier())),
+        (LookupService<Airport>) LookupService.inMemory(airports, a -> Stream.of(a.airportIdentifier())),
+        (LookupService<Procedure>) LookupService.inMemory(procedures, p -> Stream.of(p.procedureIdentifier())),
+        (LookupService<Procedure>) LookupService.inMemory(procedures, p -> Stream.of(p.airportIdentifier()))
     );
   }
 
@@ -317,12 +318,12 @@ public final class RouteExpanderFactory {
       Collection<? extends Procedure> transitions
   ) {
     return newStandardSectionResolver(
-        (LookupService<Fix>) DefaultLookupService.newLookupService(fixes, Fix::fixIdentifier),
-        (LookupService<Airway>) DefaultLookupService.newLookupService(airways, Airway::airwayIdentifier),
-        (LookupService<Airport>) DefaultLookupService.newLookupService(airports, Airport::airportIdentifier),
+        (LookupService<Fix>) LookupService.inMemory(fixes, f -> Stream.of(f.fixIdentifier())),
+        (LookupService<Airway>) LookupService.inMemory(airways, a -> Stream.of(a.airwayIdentifier())),
+        (LookupService<Airport>) LookupService.inMemory(airports, a -> Stream.of(a.airportIdentifier())),
         // multi-index the procedures within the same lookup service - this feels a bit hacky but it allows us another reliable
         // way to look-up procedure information for approach resolution
-        (LookupService<Procedure>) DefaultLookupService.newLookupService(transitions, Procedure::procedureIdentifier)
+        (LookupService<Procedure>) LookupService.inMemory(transitions, p -> Stream.of(p.procedureIdentifier()))
     );
   }
 }
