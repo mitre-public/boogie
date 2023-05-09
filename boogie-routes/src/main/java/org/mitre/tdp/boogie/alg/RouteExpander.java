@@ -16,6 +16,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
+import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.AirportResolver;
 import org.mitre.tdp.boogie.alg.resolve.AirwayResolver;
 import org.mitre.tdp.boogie.alg.resolve.ApproachResolver;
@@ -67,7 +68,7 @@ public final class RouteExpander implements
    * Function for turning a sequence of {@link ResolvedSection}s in to a sequence of legs - this is most commonly implemented as
    * the {@link GraphBasedRouteChooser}.
    */
-  private final Function<List<ResolvedSection>, ExpandedRoute> routeChooser;
+  private final RouteChooser routeChooser;
 
   /**
    * Pre-canned implementations can be found here: {@link RouteExpanderFactory}. Otherwise this method is left public for others
@@ -78,7 +79,7 @@ public final class RouteExpander implements
       LookupService<Procedure> procedureService,
       LookupService<Procedure> proceduresAtAirport,
       SectionResolver sectionResolver,
-      Function<List<ResolvedSection>, ExpandedRoute> routeChooser
+      RouteChooser routeChooser
   ) {
     this.sectionSplitter = requireNonNull(sectionSplitter);
     this.procedureService = requireNonNull(procedureService);
@@ -180,7 +181,7 @@ public final class RouteExpander implements
           .sorted(comparing(ResolvedSection::sectionSplit))
           .collect(toList());
 
-      ExpandedRoute expandedRoute = routeChooser.apply(sortedByIndex);
+      ExpandedRoute expandedRoute = routeChooser.chooseRoute(sortedByIndex);
 
       // tag-on user-supplied expansion information (which may not have been summarized internally)
       ExpandedRoute updated = expandedRoute

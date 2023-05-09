@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 
-public final class GraphBasedRouteChooser implements Function<List<ResolvedSection>, ExpandedRoute> {
+public final class GraphBasedRouteChooser implements RouteChooser {
 
   private static final Logger LOG = LoggerFactory.getLogger(GraphBasedRouteChooser.class);
 
@@ -63,7 +63,7 @@ public final class GraphBasedRouteChooser implements Function<List<ResolvedSecti
    * which will be called on the initial {@link ResolvedLeg} output of the chooser.
    */
   @Override
-  public ExpandedRoute apply(List<ResolvedSection> resolvedSections) {
+  public ExpandedRoute chooseRoute(List<ResolvedSection> resolvedSections) {
 
     List<ResolvedLeg> resolvedLegs = resolvedLegSequence(resolvedSections);
     LOG.debug("Generated {} total resolved legs.", resolvedLegs.size());

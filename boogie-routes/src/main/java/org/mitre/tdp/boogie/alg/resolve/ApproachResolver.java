@@ -4,13 +4,17 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.mitre.tdp.boogie.alg.chooser.PreferredProcedureFactory.withPreferredEquipage;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -45,14 +49,16 @@ public final class ApproachResolver implements Function<ResolvedSection, Optiona
     return new ResolvedSection(newSplit, singletonList(new ApproachElement(approach)));
   };
 
-  TriFunction<Collection<Procedure>, String, String, Collection<Procedure>> approachesForRunway = (procedures, runwayNumber, parallelIndicator) -> procedures.stream().filter(p -> IsApproachForRunway.test(p.procedureIdentifier(), runwayNumber, parallelIndicator)).collect(toList());
+  private static final TriFunction<Collection<Procedure>, String, String, Collection<Procedure>> approachesForRunway =
+      (procedures, runwayNumber, parallelIndicator) -> procedures.stream().filter(p -> IsApproachForRunway.test(p.procedureIdentifier(), runwayNumber, parallelIndicator)).collect(toList());
+
   private final String arrivalRunway;
   private final Function<Collection<Procedure>, Collection<Procedure>> equippedProcedures;
   private final LookupService<Procedure> proceduresByAirport;
 
   public ApproachResolver(String arrivalRunway, RequiredNavigationEquipage[] requiredNavigationEquipage, LookupService<Procedure> proceduresByAirport) {
     this.arrivalRunway = requireNonNull(arrivalRunway);
-    this.equippedProcedures = withPreferredEquipage(requiredNavigationEquipage);
+    this.equippedProcedures = PreferredProcedures.equipagePreference(requiredNavigationEquipage);
     this.proceduresByAirport = requireNonNull(proceduresByAirport)
         .thenFilterWith(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
         // mask the missed-approach portions of the approach procedure
@@ -77,5 +83,36 @@ public final class ApproachResolver implements Function<ResolvedSection, Optiona
         // the right requested equipage then we shouldn't care past this
         .min(comparing(Procedure::procedureIdentifier))
         .map(approach -> resolvedSectionOf.apply(approach, oldSplit));
+  }
+
+  static final class PreferredProcedures implements UnaryOperator<Collection<Procedure>> {
+
+    private final List<Predicate<Procedure>> tieredPredicates;
+
+    public PreferredProcedures(List<Predicate<Procedure>> tieredPredicates) {
+      this.tieredPredicates = tieredPredicates;
+    }
+
+    static PreferredProcedures equipagePreference(RequiredNavigationEquipage... equipages) {
+
+      List<Predicate<Procedure>> preferences = Stream.of(equipages)
+          .map(PreferredProcedures::hasEquipage)
+          .collect(Collectors.toList());
+
+      return new PreferredProcedures(preferences);
+    }
+
+    static Predicate<Procedure> hasEquipage(RequiredNavigationEquipage equipage) {
+      return procedure -> equipage.equals(procedure.requiredNavigationEquipage());
+    }
+
+    @Override
+    public Collection<Procedure> apply(Collection<Procedure> procedures) {
+      return tieredPredicates.stream()
+          .map(predicate -> procedures.stream().filter(predicate).collect(toList()))
+          .filter(col -> !col.isEmpty())
+          .findFirst()
+          .orElse(Collections.emptyList());
+    }
   }
 }

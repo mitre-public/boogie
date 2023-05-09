@@ -22,7 +22,6 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
@@ -53,7 +52,7 @@ class TestGraphBasedRouteChooser {
 
   @Test
   void testShortestPath() {
-    List<ExpandedRouteLeg> legs = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).andThen(routeChooser).apply("KIND.BLSTR1.VNY").legs();
+    List<ExpandedRouteLeg> legs = IfrFormatSectionSplitter.INSTANCE.andThen(apfResolver()::applyTo).andThen(routeChooser::chooseRoute).apply("KIND.BLSTR1.VNY").legs();
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
 

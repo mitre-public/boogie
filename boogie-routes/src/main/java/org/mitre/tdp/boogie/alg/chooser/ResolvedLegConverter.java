@@ -28,7 +28,7 @@ import org.mitre.tdp.boogie.alg.resolve.TailoredElement;
  * Functional class which is responsible for converting a {@link ResolvedLeg} to an {@link ExpandedRouteLeg} and adding the
  * appropriate categorical features to it's definition.
  */
-public final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteLeg> {
+final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteLeg> {
 
   public static final ResolvedLegConverter INSTANCE = new ResolvedLegConverter();
 

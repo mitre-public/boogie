@@ -12,6 +12,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
+import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.AirportResolver;
 import org.mitre.tdp.boogie.alg.resolve.AirwayResolver;
 import org.mitre.tdp.boogie.alg.resolve.FixResolver;
@@ -71,7 +72,7 @@ public final class RouteExpanderFactory {
             new AirportResolver(requireNonNull(airportService)),
             new SidStarResolver(requireNonNull(procedureService)),
             new LatLonResolver()),
-        new GraphBasedRouteChooser()
+        RouteChooser.graphical()
     );
   }
 
@@ -101,7 +102,7 @@ public final class RouteExpanderFactory {
             new AirportResolver(requireNonNull(airportService)),
             new SidStarResolver(requireNonNull(procedureService)),
             new LatLonResolver())),
-        new GraphBasedRouteChooser()
+        RouteChooser.graphical()
     );
   }
 
@@ -163,7 +164,7 @@ public final class RouteExpanderFactory {
             new SidStarResolver(requireNonNull(procedureService)),
             new LatLonResolver())
         ),
-        new GraphBasedRouteChooser()
+        RouteChooser.graphical()
     );
   }
 
@@ -192,7 +193,7 @@ public final class RouteExpanderFactory {
             new AirportResolver(requireNonNull(airportService)),
             new SidStarResolver(requireNonNull(procedureService)),
             new LatLonResolver()),
-        new GraphBasedRouteChooser()
+        RouteChooser.graphical()
     );
   }
 
