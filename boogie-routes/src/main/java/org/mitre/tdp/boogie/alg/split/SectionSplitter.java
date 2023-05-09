@@ -15,12 +15,12 @@ import org.mitre.tdp.boogie.alg.LookupService;
 public interface SectionSplitter {
 
   /**
-   * Section splitter for International IFR format route strings.
+   * Section splitter for International ICAO format route strings.
    *
    * <p>e.g. {@code DCT GREKI IFR DCT BGO/N0485F410 M626 VKB M751 VPK B469 BIKTA PIBAP PAS3 MABA2A}
    */
-  static SectionSplitter internationalIfrFormat() {
-    return new InternationalIfrFormatSplitter();
+  static SectionSplitter icaoFormat() {
+    return new IcaoFormatSplitter();
   }
 
   /**

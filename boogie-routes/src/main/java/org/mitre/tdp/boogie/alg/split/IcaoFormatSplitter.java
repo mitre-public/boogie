@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
 
 import com.google.common.base.Strings;
 
-final class InternationalIfrFormatSplitter implements SectionSplitter {
+final class IcaoFormatSplitter implements SectionSplitter {
 
   /**
    * Takes the ifr vfr object and then adds it to the previous item where the rules changed at
@@ -31,7 +31,7 @@ final class InternationalIfrFormatSplitter implements SectionSplitter {
   );
   static Pattern speedLevel = Pattern.compile("/[A-Z0-9]{8,10}$");
 
-  InternationalIfrFormatSplitter() {
+  IcaoFormatSplitter() {
   }
 
   static String findSpeedLevel(String val) {
