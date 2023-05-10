@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.alg;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.Collection;
 import java.util.stream.Stream;
 
@@ -11,13 +9,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
-import org.mitre.tdp.boogie.alg.resolve.AirportResolver;
-import org.mitre.tdp.boogie.alg.resolve.AirwayResolver;
-import org.mitre.tdp.boogie.alg.resolve.FixResolver;
-import org.mitre.tdp.boogie.alg.resolve.LatLonResolver;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.resolve.SidStarResolver;
-import org.mitre.tdp.boogie.alg.resolve.SurlySectionResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.validate.EnforceSequentiallyOrderedLegs;
 
@@ -62,11 +54,11 @@ public final class RouteExpanderFactory {
         procedureService,
         LookupService.noop(),
         SectionResolver.composeAll(
-            new FixResolver(requireNonNull(fixService)),
-            new AirwayResolver(requireNonNull(airwayService)),
-            new AirportResolver(requireNonNull(airportService)),
-            new SidStarResolver(requireNonNull(procedureService)),
-            new LatLonResolver()),
+            SectionResolver.fix(fixService),
+            SectionResolver.airway(airwayService),
+            SectionResolver.airport(airportService),
+            SectionResolver.sidStar(procedureService),
+            SectionResolver.latlong(null)),
         RouteChooser.graphical()
     );
   }
@@ -91,12 +83,12 @@ public final class RouteExpanderFactory {
         sectionSplitter,
         procedureService,
         LookupService.noop(),
-        new SurlySectionResolver(SectionResolver.composeAll(
-            new FixResolver(requireNonNull(fixService)),
-            new AirwayResolver(requireNonNull(airwayService)),
-            new AirportResolver(requireNonNull(airportService)),
-            new SidStarResolver(requireNonNull(procedureService)),
-            new LatLonResolver())),
+        SectionResolver.surly(SectionResolver.composeAll(
+            SectionResolver.fix(fixService),
+            SectionResolver.airway(airwayService),
+            SectionResolver.airport(airportService),
+            SectionResolver.sidStar(procedureService),
+            SectionResolver.latlong(null))),
         RouteChooser.graphical()
     );
   }
@@ -152,12 +144,12 @@ public final class RouteExpanderFactory {
         sectionSplitter,
         procedureService,
         proceduresAtAirport,
-        new SurlySectionResolver(SectionResolver.composeAll(
-            new FixResolver(requireNonNull(fixService)),
-            new AirwayResolver(requireNonNull(airwayService)),
-            new AirportResolver(requireNonNull(airportService)),
-            new SidStarResolver(requireNonNull(procedureService)),
-            new LatLonResolver())
+        SectionResolver.surly(SectionResolver.composeAll(
+            SectionResolver.fix(fixService),
+            SectionResolver.airway(airwayService),
+            SectionResolver.airport(airportService),
+            SectionResolver.sidStar(procedureService),
+            SectionResolver.latlong(null))
         ),
         RouteChooser.graphical()
     );
@@ -183,11 +175,12 @@ public final class RouteExpanderFactory {
         procedureService,
         proceduresAtAirport,
         SectionResolver.composeAll(
-            new FixResolver(requireNonNull(fixService)),
-            new AirwayResolver(requireNonNull(airwayService)),
-            new AirportResolver(requireNonNull(airportService)),
-            new SidStarResolver(requireNonNull(procedureService)),
-            new LatLonResolver()),
+            SectionResolver.fix(fixService),
+            SectionResolver.airway(airwayService),
+            SectionResolver.airport(airportService),
+            SectionResolver.sidStar(procedureService),
+            SectionResolver.latlong(null)
+        ),
         RouteChooser.graphical()
     );
   }
@@ -296,11 +289,11 @@ public final class RouteExpanderFactory {
       LookupService<Procedure> procedureService
   ) {
     return SectionResolver.composeAll(
-        new FixResolver(requireNonNull(fixService)),
-        new AirwayResolver(requireNonNull(airwayService)),
-        new AirportResolver(requireNonNull(airportService)),
-        new SidStarResolver(requireNonNull(procedureService)),
-        new LatLonResolver()
+        SectionResolver.fix(fixService),
+        SectionResolver.airway(airwayService),
+        SectionResolver.airport(airportService),
+        SectionResolver.sidStar(procedureService),
+        SectionResolver.latlong(null)
     );
   }
 

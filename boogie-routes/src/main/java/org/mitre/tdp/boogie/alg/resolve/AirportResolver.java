@@ -9,11 +9,11 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
-public final class AirportResolver implements SingleSplitSectionResolver {
+final class AirportResolver implements SingleSplitSectionResolver {
 
   private final LookupService<Airport> lookupService;
 
-  public AirportResolver(LookupService<Airport> lookupService) {
+  AirportResolver(LookupService<Airport> lookupService) {
     this.lookupService = checkNotNull(lookupService);
   }
 

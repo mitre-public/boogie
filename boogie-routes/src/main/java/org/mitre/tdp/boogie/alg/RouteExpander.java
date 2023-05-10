@@ -14,7 +14,6 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
-import org.mitre.tdp.boogie.alg.resolve.ApproachResolver;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionResolver;
@@ -135,10 +134,11 @@ public final class RouteExpander implements
 
     if (arrivalRunway != null && equipage != null && !resolvedSections.isEmpty()) {
       LOG.info("Attempting to resolve approach procedure with arrival runway {} and equipage {}.", arrivalRunway, equipage);
-      ApproachResolver approachResolver = new ApproachResolver(arrivalRunway, equipage, proceduresAtAirport);
 
       ResolvedSection lastSection = resolvedSections.get(resolvedSections.size() - 1);
-      approachResolver.apply(lastSection).ifPresent(resolvedSections::add);
+
+      SectionResolver.approach(proceduresAtAirport, arrivalRunway, List.of(equipage))
+          .apply(lastSection).ifPresent(resolvedSections::add);
     }
 
     return chooseExpandedRoute(route, resolvedSections, departureRunway, arrivalRunway);

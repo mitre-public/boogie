@@ -2,25 +2,26 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Sets.newHashSet;
 import static org.mitre.tdp.boogie.util.Streams.triplesWithNulls;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
-import org.mitre.tdp.boogie.util.Combinatorics;
-
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * A {@link SectionResolver} exists to resolve infrastructure elements which are considered to be associated with an input
@@ -34,6 +35,86 @@ import com.google.common.collect.Multimap;
  */
 @FunctionalInterface
 public interface SectionResolver {
+
+  /**
+   * Decorates a given {@link SectionResolver} as a "surly" resolver. This changes the typical contract of the resolvers (which
+   * by default allow no elements to be resolved) to instead throw exceptions if no matching infrastructure is found.
+   *
+   * <p>This is desirable in scenarios where the client is expected to be able to take corrective action to supplement configured
+   * infrastructure data backing the resolvers.
+   *
+   * @param sectionResolver the resolver to decorate, generally this should be a composite resolver representing the results of
+   *                        multiple resolvers combined.
+   */
+  static SectionResolver surly(SectionResolver sectionResolver) {
+    return new SurlySectionResolver(sectionResolver);
+  }
+
+  /**
+   * Returns a new {@link SectionResolver} resolving route string sections to concrete airports based on their identifier.
+   *
+   * @param airportsByIdentifier lookup service providing airports indexed by their identifier (e.g. KATL, KLGA) as they would be
+   *                             referenced in an input route string.
+   */
+  static SectionResolver airport(LookupService<Airport> airportsByIdentifier) {
+    return new AirportResolver(airportsByIdentifier);
+  }
+
+  /**
+   * Returns a new {@link SectionResolver} resolving route string sections to concrete procedure SID/STAR procedure definitions,
+   * note that this resolver will mask the
+   *
+   * @param proceduresByIdentifier lookup service providing procedures indexed by their identifier (e.g. CHPPR1, GNDLF2) as they
+   *                               would be referenced in an input route string.
+   */
+  static SectionResolver sidStar(LookupService<Procedure> proceduresByIdentifier) {
+    return new SidStarResolver(proceduresByIdentifier);
+  }
+
+  /**
+   * Returns a new {@link SectionResolver} resolving route string sections to concrete airways based on their identifier.
+   *
+   * @param airwaysByIdentifier lookup service providing airways indexed by their identifier (e.g. J121, Y200) as they would be
+   *                            referenced in an input route string.
+   */
+  static SectionResolver airway(LookupService<Airway> airwaysByIdentifier) {
+    return new AirwayResolver(airwaysByIdentifier);
+  }
+
+  /**
+   * Returns a new {@link SectionResolver} resolving route string sections to concrete fixes based on their identifier (contains
+   * handling for fixes that show up tailored e.g. {@code NAV123034})
+   *
+   * @param fixesByIdentifier lookup service providing fixes indexed by their identifier (e.g. JMACK, VNB) as they would show up
+   *                          in an input route string.
+   */
+  static SectionResolver fix(LookupService<Fix> fixesByIdentifier) {
+    return new FixResolver(fixesByIdentifier);
+  }
+
+  /**
+   * Returns a new {@link SectionResolver} resolving literal lat/long values encoded in the underlying route string.
+   *
+   * <p>Supports both ICAO and FAA coordinate standards out-of-the-box.
+   */
+  static SectionResolver latlong(Function<LatLong, Leg> toLeg) {
+    return new LatLonResolver();
+  }
+
+  /**
+   * Returns a new {@link SectionResolver} resolving an airport to an approach procedure based on the provided runway and equipage.
+   *
+   * @param proceduresByAirport lookup service providing procedures indexed by the airport they serve's identifier
+   * @param arrivalRunway       the arrival runway for the flight
+   * @param preferredEquipages  equipages for the approach in preference order
+   */
+  static Function<ResolvedSection, Optional<ResolvedSection>> approach(
+      LookupService<Procedure> proceduresByAirport,
+      String arrivalRunway,
+      List<RequiredNavigationEquipage> preferredEquipages
+  ) {
+    return new ApproachResolver(arrivalRunway, preferredEquipages.toArray(RequiredNavigationEquipage[]::new), proceduresByAirport);
+  }
 
   /**
    * Attempts to resolve a list of candidate {@link ResolvedElement}s from the given current {@link SectionSplit} as well as

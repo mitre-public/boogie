@@ -35,7 +35,7 @@ import org.mitre.tdp.boogie.fn.TriFunction;
  * <br>
  * If no procedures match these filters no approach will be inserted and used in the resolution.
  */
-public final class ApproachResolver implements Function<ResolvedSection, Optional<ResolvedSection>> {
+final class ApproachResolver implements Function<ResolvedSection, Optional<ResolvedSection>> {
 
   private static final Predicate<Transition> NON_MISSED = t -> !TransitionType.MISSED.equals(t.transitionType());
 
@@ -56,7 +56,7 @@ public final class ApproachResolver implements Function<ResolvedSection, Optiona
   private final Function<Collection<Procedure>, Collection<Procedure>> equippedProcedures;
   private final LookupService<Procedure> proceduresByAirport;
 
-  public ApproachResolver(String arrivalRunway, RequiredNavigationEquipage[] requiredNavigationEquipage, LookupService<Procedure> proceduresByAirport) {
+  ApproachResolver(String arrivalRunway, RequiredNavigationEquipage[] requiredNavigationEquipage, LookupService<Procedure> proceduresByAirport) {
     this.arrivalRunway = requireNonNull(arrivalRunway);
     this.equippedProcedures = PreferredProcedures.equipagePreference(requiredNavigationEquipage);
     this.proceduresByAirport = requireNonNull(proceduresByAirport)

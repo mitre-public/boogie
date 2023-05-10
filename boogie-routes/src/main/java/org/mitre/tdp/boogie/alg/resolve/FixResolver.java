@@ -9,11 +9,11 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
-public final class FixResolver implements SingleSplitSectionResolver {
+final class FixResolver implements SingleSplitSectionResolver {
 
   private final LookupService<Fix> lookupService;
 
-  public FixResolver(LookupService<Fix> lookupService) {
+  FixResolver(LookupService<Fix> lookupService) {
     this.lookupService = checkNotNull(lookupService);
   }
 
@@ -32,7 +32,6 @@ public final class FixResolver implements SingleSplitSectionResolver {
         .map(fix -> section.equals(s)
             ? new FixElement(fix, sectionSplit.wildcards())
             : new TailoredElement(fix, section, sectionSplit.wildcards()))
-
         .collect(Collectors.toList());
   }
 }

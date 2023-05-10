@@ -9,11 +9,11 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
  * This class is decorator for the SectionResolver used inside RouteExpander. Functionally it works the exact same way however,
  * it throws an exception when the SectionResolver doesn't find any matching infrastructure for a section of a route.
  */
-public final class SurlySectionResolver implements SectionResolver {
+final class SurlySectionResolver implements SectionResolver {
 
   private final SectionResolver sectionResolver;
 
-  public SurlySectionResolver(SectionResolver sectionResolver) {
+  SurlySectionResolver(SectionResolver sectionResolver) {
     this.sectionResolver = Objects.requireNonNull(sectionResolver, "sectionResolver cannot be null");
   }
 

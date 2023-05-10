@@ -5,7 +5,10 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
-public final class LatLonResolver implements SingleSplitSectionResolver {
+final class LatLonResolver implements SingleSplitSectionResolver {
+
+  LatLonResolver() {
+  }
 
   @Override
   public List<ResolvedElement> resolve(SectionSplit sectionSplit) {

@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.LookupService;
+import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
-public final class AirwayResolver implements SingleSplitSectionResolver {
+final class AirwayResolver implements SingleSplitSectionResolver {
 
   private final LookupService<Airway> lookupService;
 
-  public AirwayResolver(LookupService<Airway> lookupService) {
+  AirwayResolver(LookupService<Airway> lookupService) {
     this.lookupService = checkNotNull(lookupService);
   }
 
