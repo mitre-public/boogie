@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg.resolve;
+package org.mitre.tdp.boogie.alg.resolve.infer;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
-class TestSidRunwayTransitionResolver {
+class SidRunwayTransitionInferrerTest {
 
   @Test
   void testNonDepartureRunwayTransitionFilter() {
-    SidRunwayTransitionResolver resolver = new SidRunwayTransitionResolver("RW09", procedureId -> Collections.emptyList());
+    SidRunwayTransitionInferrer inferrer = new SidRunwayTransitionInferrer(procedureId -> Collections.emptyList(), "RW09");
 
-    Predicate<Transition> transitionPredicate = resolver.nonDepartureRunwayTransitionFilter();
+    Predicate<Transition> transitionPredicate = inferrer.nonDepartureRunwayTransitionFilter();
 
     assertAll(
         "Collection of assertions against the runway transition resolution.",

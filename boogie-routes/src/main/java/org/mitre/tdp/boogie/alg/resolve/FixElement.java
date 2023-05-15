@@ -31,6 +31,11 @@ public final class FixElement implements ResolvedElement {
   }
 
   @Override
+  public String identifier() {
+    return fix.fixIdentifier();
+  }
+
+  @Override
   public List<LinkedLegs> toLinkedLegs() {
     return linkedLegs;
   }

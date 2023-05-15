@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg.resolve;
+package org.mitre.tdp.boogie.alg.resolve.infer;
 
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -24,28 +23,26 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.RunwayIdExtractor;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
+import org.mitre.tdp.boogie.alg.resolve.AirportElement;
+import org.mitre.tdp.boogie.alg.resolve.ApproachElement;
+import org.mitre.tdp.boogie.alg.resolve.IsApproachForRunway;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
-/**
- * Class for resolving a preferred approach procedure at an airport.
- * <br>
- * This class takes an arrival runway, as well as a set of tiered equipage preferences it uses to down-select the available
- * approaches at the airport to just those for the target runway and with the preferred required equipage.
- * <br>
- * If no procedures match these filters no approach will be inserted and used in the resolution.
- */
-final class ApproachResolver implements Function<ResolvedSection, Optional<ResolvedSection>> {
+final class ApproachInferrer implements SectionInferrer {
 
   private static final Predicate<Transition> NON_MISSED = t -> !TransitionType.MISSED.equals(t.transitionType());
 
   private static final BiFunction<Procedure, SectionSplit, ResolvedSection> resolvedSectionOf = (approach, oldSplit) -> {
+
     SectionSplit newSplit = new SectionSplit.Builder()
         .setValue(approach.procedureIdentifier())
         .setWildcards("")
         .setEtaEet("")
         .setIndex(oldSplit.index() - .5)
         .build();
+
     return new ResolvedSection(newSplit, singletonList(new ApproachElement(approach)));
   };
 
@@ -56,9 +53,9 @@ final class ApproachResolver implements Function<ResolvedSection, Optional<Resol
   private final Function<Collection<Procedure>, Collection<Procedure>> equippedProcedures;
   private final LookupService<Procedure> proceduresByAirport;
 
-  ApproachResolver(String arrivalRunway, RequiredNavigationEquipage[] requiredNavigationEquipage, LookupService<Procedure> proceduresByAirport) {
+  ApproachInferrer(String arrivalRunway, List<RequiredNavigationEquipage> requiredNavigationEquipages, LookupService<Procedure> proceduresByAirport) {
     this.arrivalRunway = requireNonNull(arrivalRunway);
-    this.equippedProcedures = PreferredProcedures.equipagePreference(requiredNavigationEquipage);
+    this.equippedProcedures = PreferredProcedures.equipagePreference(requiredNavigationEquipages);
     this.proceduresByAirport = requireNonNull(proceduresByAirport)
         .thenFilterWith(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
         // mask the missed-approach portions of the approach procedure
@@ -66,8 +63,10 @@ final class ApproachResolver implements Function<ResolvedSection, Optional<Resol
   }
 
   @Override
-  public Optional<ResolvedSection> apply(ResolvedSection resolvedSection) {
-    return RunwayIdExtractor.runwayNumber(arrivalRunway).flatMap(extractedNumber -> resolve(resolvedSection, extractedNumber));
+  public List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right) {
+    return RunwayIdExtractor.runwayNumber(arrivalRunway)
+        .flatMap(extractedNumber -> resolve(right, extractedNumber))
+        .map(List::of).orElseGet(List::of);
   }
 
   private Optional<ResolvedSection> resolve(ResolvedSection resolvedSection, String extractedNumber) {
@@ -75,7 +74,7 @@ final class ApproachResolver implements Function<ResolvedSection, Optional<Resol
     return resolvedSection.elements().stream()
         .filter(AirportElement.class::isInstance)
         .map(AirportElement.class::cast)
-        .map(airportElement -> proceduresByAirport.apply(airportElement.airport().airportIdentifier()))
+        .map(airportElement -> proceduresByAirport.apply(airportElement.identifier()))
         .map(procedures -> approachesForRunway.apply(procedures, extractedNumber, RunwayIdExtractor.parallelDesignator(arrivalRunway).orElse(null)))
         .map(equippedProcedures)
         .flatMap(Collection::stream)
@@ -93,9 +92,9 @@ final class ApproachResolver implements Function<ResolvedSection, Optional<Resol
       this.tieredPredicates = tieredPredicates;
     }
 
-    static PreferredProcedures equipagePreference(RequiredNavigationEquipage... equipages) {
+    static PreferredProcedures equipagePreference(List<RequiredNavigationEquipage> equipages) {
 
-      List<Predicate<Procedure>> preferences = Stream.of(equipages)
+      List<Predicate<Procedure>> preferences = equipages.stream()
           .map(PreferredProcedures::hasEquipage)
           .collect(Collectors.toList());
 

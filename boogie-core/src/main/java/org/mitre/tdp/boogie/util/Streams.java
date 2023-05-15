@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.Pair;
+import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
 import com.google.common.base.Preconditions;
@@ -31,6 +32,15 @@ public final class Streams {
   public static <U> Stream<Pair<U, U>> pairwise(List<U> list) {
     return list.size() < 2 ? Stream.empty() : IntStream.range(1, list.size()).mapToObj(i -> Pair.of(list.get(i - 1), list.get(i)));
   }
+
+  /**
+   * Iterates through the provided {@link HashedLinkedSequence} in a pairwise fashion.
+   */
+  public static <T> Stream<Pair<T, T>> pairwise(HashedLinkedSequence<T> sequence) {
+    Preconditions.checkArgument(sequence.size() >= 2);
+    return sequence.stream().skip(1).map(entry -> Pair.of(sequence.getElementBefore(entry), entry));
+  }
+
 
   /**
    * Returns a stream based on the input list via combining subsequent elements via the provided {@link BiFunction} using null

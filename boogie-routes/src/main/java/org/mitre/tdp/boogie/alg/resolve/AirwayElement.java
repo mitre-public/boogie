@@ -36,6 +36,11 @@ public final class AirwayElement implements ResolvedElement {
   }
 
   @Override
+  public String identifier() {
+    return airway.airwayIdentifier();
+  }
+
+  @Override
   public List<LinkedLegs> toLinkedLegs() {
     return linkedLegs;
   }

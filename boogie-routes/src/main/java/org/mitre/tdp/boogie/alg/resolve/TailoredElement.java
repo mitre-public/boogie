@@ -72,6 +72,11 @@ public final class TailoredElement implements ResolvedElement {
   }
 
   @Override
+  public String identifier() {
+    return tailored;
+  }
+
+  @Override
   public List<LinkedLegs> toLinkedLegs() {
     return linkedLegs;
   }

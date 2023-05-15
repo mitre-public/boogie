@@ -102,21 +102,6 @@ public interface SectionResolver {
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving an airport to an approach procedure based on the provided runway and equipage.
-   *
-   * @param proceduresByAirport lookup service providing procedures indexed by the airport they serve's identifier
-   * @param arrivalRunway       the arrival runway for the flight
-   * @param preferredEquipages  equipages for the approach in preference order
-   */
-  static Function<ResolvedSection, Optional<ResolvedSection>> approach(
-      LookupService<Procedure> proceduresByAirport,
-      String arrivalRunway,
-      List<RequiredNavigationEquipage> preferredEquipages
-  ) {
-    return new ApproachResolver(arrivalRunway, preferredEquipages.toArray(RequiredNavigationEquipage[]::new), proceduresByAirport);
-  }
-
-  /**
    * Attempts to resolve a list of candidate {@link ResolvedElement}s from the given current {@link SectionSplit} as well as
    * the preceding and following section splits.
    */

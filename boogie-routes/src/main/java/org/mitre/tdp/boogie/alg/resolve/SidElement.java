@@ -12,9 +12,14 @@ public final class SidElement extends ProcedureElement {
 
   private static final double PUNISHMENT = .001;
 
-  SidElement(Procedure procedure) {
+  public SidElement(Procedure procedure) {
     super(procedure);
     checkArgument(ProcedureType.SID.equals(procedure.procedureType()), "Provided procedure must be of type SID.");
+  }
+
+  @Override
+  public String identifier() {
+    return procedure.procedureIdentifier();
   }
 
   @Override

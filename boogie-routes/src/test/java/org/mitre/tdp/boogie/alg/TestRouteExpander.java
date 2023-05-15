@@ -601,8 +601,8 @@ class TestRouteExpander {
     ExpandedRoute leftStarLateRoute = expander.apply(leftStarLate, null, "RW27R", RequiredNavigationEquipage.RNAV).get();
 
     assertAll(
-        () -> assertEquals("SHURT", leftStarLateRoute.legs().get(5).associatedFix().get().fixIdentifier(), "This should be the last one now"),
-        () -> assertEquals("MMCAP", leftStarLateRoute.legs().get(6).associatedFix().get().fixIdentifier(), "Still the nearest one")
+        () -> assertEquals("SHURT", leftStarLateRoute.legs().get(4).associatedFix().get().fixIdentifier(), "This should be the last one now"),
+        () -> assertEquals("MMCAP", leftStarLateRoute.legs().get(5).associatedFix().get().fixIdentifier(), "Still the nearest one")
     );
   }
 

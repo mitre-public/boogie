@@ -38,6 +38,11 @@ public final class AirportElement implements ResolvedElement {
   }
 
   @Override
+  public String identifier() {
+    return airport.airportIdentifier();
+  }
+
+  @Override
   public List<LinkedLegs> toLinkedLegs() {
     return linkedLegs;
   }

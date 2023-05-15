@@ -12,9 +12,14 @@ public final class ApproachElement extends ProcedureElement {
 
   private static final SectionGluer sectionGluer = new SectionGluer();
 
-  ApproachElement(Procedure procedure) {
+  public ApproachElement(Procedure procedure) {
     super(procedure);
     checkArgument(ProcedureType.APPROACH.equals(procedure.procedureType()), "Provided procedure must be of type Approach.");
+  }
+
+  @Override
+  public String identifier() {
+    return procedure.procedureIdentifier();
   }
 
   @Override

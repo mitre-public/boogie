@@ -4,20 +4,22 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
+import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.resolve.SidRunwayTransitionResolver;
-import org.mitre.tdp.boogie.alg.resolve.StarRunwayTransitionResolver;
+import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.fn.QuadFunction;
@@ -107,8 +109,7 @@ public final class RouteExpander implements
    */
   @Override
   public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway) {
-    List<ResolvedSection> resolvedSections = resolveSections(route, departureRunway, arrivalRunway);
-    return chooseExpandedRoute(route, resolvedSections, departureRunway, arrivalRunway);
+    return apply(route, departureRunway, arrivalRunway, null);
   }
 
   /**
@@ -130,38 +131,41 @@ public final class RouteExpander implements
    */
   @Override
   public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway, @Nullable RequiredNavigationEquipage... equipage) {
-    List<ResolvedSection> resolvedSections = resolveSections(route, departureRunway, arrivalRunway);
 
-    if (arrivalRunway != null && equipage != null && !resolvedSections.isEmpty()) {
-      LOG.info("Attempting to resolve approach procedure with arrival runway {} and equipage {}.", arrivalRunway, equipage);
-
-      ResolvedSection lastSection = resolvedSections.get(resolvedSections.size() - 1);
-
-      SectionResolver.approach(proceduresAtAirport, arrivalRunway, List.of(equipage))
-          .apply(lastSection).ifPresent(resolvedSections::add);
-    }
-
-    return chooseExpandedRoute(route, resolvedSections, departureRunway, arrivalRunway);
-  }
-
-  /**
-   * Attempts to resolve the sections based on the route, departure, and arrival runway including predictors for departure/arrival
-   * runway transitions.
-   */
-  private List<ResolvedSection> resolveSections(String route, @Nullable String departureRunway, @Nullable String arrivalRunway) {
     checkArgument(route != null && !route.isEmpty(), "Route cannot be null or empty.");
     LOG.info("Beginning expansion of route {} with departure runway {} and arrival runway {}.", route, departureRunway, arrivalRunway);
 
     List<SectionSplit> sectionSplits = sectionSplitter.splits(route);
     LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
 
-    SidRunwayTransitionResolver sidRunway = new SidRunwayTransitionResolver(departureRunway, procedureService);
-    StarRunwayTransitionResolver starRunway = new StarRunwayTransitionResolver(arrivalRunway, procedureService);
+    HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(standardSectionResolver.applyTo(sectionSplits));
+    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
 
-    List<ResolvedSection> resolvedSections = standardSectionResolver.compose(sidRunway).compose(starRunway).applyTo(sectionSplits);
-    LOG.info("Returned {} ResolvedElements across {} ResolvedSections.", resolvedSections.stream().mapToInt(section -> section.elements().size()).sum(), resolvedSections.size());
+    RouteContext context = RouteContext.standard()
+        .proceduresByName(procedureService)
+        .departureRunway(departureRunway)
+        .arrivalRunway(arrivalRunway)
+        .proceduresByAirport(proceduresAtAirport)
+        .equipagePreference(equipage)
+        .build();
 
-    return resolvedSections;
+    for (SectionInferrer inferrer : context.inferrers()) {
+      appendInferredSections(initial, inferrer);
+    }
+    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
+
+    return chooseExpandedRoute(route, new ArrayList<>(initial), departureRunway, arrivalRunway);
+  }
+
+  private void appendInferredSections(HashedLinkedSequence<ResolvedSection> sequence, SectionInferrer inferrer) {
+    inferrer.inferAcross(sequence).forEach((start, inferred) -> {
+      ResolvedSection previous = start;
+
+      for (ResolvedSection section : inferred) {
+        sequence.insertAfter(section, previous);
+        previous = section;
+      }
+    });
   }
 
   private Optional<ExpandedRoute> chooseExpandedRoute(String route, List<ResolvedSection> resolvedSections, @Nullable String departureRunway, @Nullable String arrivalRunway) {

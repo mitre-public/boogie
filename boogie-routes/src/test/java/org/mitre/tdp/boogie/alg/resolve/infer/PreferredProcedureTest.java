@@ -1,34 +1,35 @@
-package org.mitre.tdp.boogie.alg.resolve;
+package org.mitre.tdp.boogie.alg.resolve.infer;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mitre.tdp.boogie.alg.resolve.ApproachResolver.PreferredProcedures.equipagePreference;
+import static org.mitre.tdp.boogie.alg.resolve.infer.ApproachInferrer.PreferredProcedures.equipagePreference;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 
-class TestPreferredProcedure {
+class PreferredProcedureTest {
 
   @Test
   void testPrefersRnpWhenSpecified() {
-    ApproachResolver.PreferredProcedures preferHighToLow = equipagePreference(
+    ApproachInferrer.PreferredProcedures preferHighToLow = equipagePreference(List.of(
         RequiredNavigationEquipage.RNP,
         RequiredNavigationEquipage.RNAV,
         RequiredNavigationEquipage.CONV
-    );
+    ));
 
-    ApproachResolver.PreferredProcedures preferLowToHigh = equipagePreference(
+    ApproachInferrer.PreferredProcedures preferLowToHigh = equipagePreference(List.of(
         RequiredNavigationEquipage.CONV,
         RequiredNavigationEquipage.RNAV,
         RequiredNavigationEquipage.RNP
-    );
+    ));
 
     Procedure rnp = newProcedure(RequiredNavigationEquipage.RNP);
     Procedure rnav = newProcedure(RequiredNavigationEquipage.RNAV);

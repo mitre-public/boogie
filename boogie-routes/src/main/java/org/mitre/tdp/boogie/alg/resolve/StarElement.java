@@ -10,9 +10,14 @@ import org.mitre.tdp.boogie.ProcedureType;
 
 public final class StarElement extends ProcedureElement {
 
-  StarElement(Procedure procedure) {
+  public StarElement(Procedure procedure) {
     super(procedure);
     checkArgument(ProcedureType.STAR.equals(procedure.procedureType()), "Provided procedure must be of type STAR.");
+  }
+
+  @Override
+  public String identifier() {
+    return procedure.procedureIdentifier();
   }
 
   @Override
