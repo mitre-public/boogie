@@ -11,6 +11,12 @@ import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 /**
  * Route context is additional configuration information the expander can use scoped to a single route to help in the expansion
  * process.
+ *
+ * <p>Rather than providing a <i>data contract</i> in the interface layer this provides a <i>functional contract</i> which can be
+ * decorated or implemented such that it feels like a data contract. This gives us a lot of flexibility to grow cleanly.
+ *
+ * <p>The {@link #standard()} implementation of route context is provided for convenience and to give clients an idea of how the
+ * above may be implemented.
  */
 @FunctionalInterface
 public interface RouteContext {
@@ -18,6 +24,11 @@ public interface RouteContext {
   /**
    * Representation of common "standard" route context which is supplemental to the basic information normally encoded in a route
    * string but which may be relevant for route expansion.
+   *
+   * <p>This presents a <i>mostly</i> data-driven contract for route expansion that a client may expect.
+   *
+   * <p>Note that none of the fields are required for the expander to operator, though specifying one field may imply that another
+   * is present.
    */
   static Standard standard() {
     return new Standard();

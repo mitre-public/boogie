@@ -22,7 +22,6 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteExpander;
-import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
 
 import com.google.common.collect.Lists;
 
@@ -59,6 +58,6 @@ class TestGraphicalRouteExpander {
       Collection<? extends Airport> airports,
       Collection<? extends Procedure> procedures
   ) {
-    return RouteExpanderFactory.newGraphicalRouteExpander(fixes, airways, airports, procedures);
+    return RouteExpander.inMemoryBuilder(airports, procedures, airways, fixes).build();
   }
 }

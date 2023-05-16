@@ -88,13 +88,13 @@ class TestRouteResolver {
         f -> Stream.of(f.fixIdentifier())
     ));
 
-    return SectionResolver.composeAll(
-        sidStarResolver,
-        airportResolver,
-        airwayResolver,
-        fixResolver,
-        new LatLonResolver()
-    );
+    return SectionResolver.composite()
+        .addResolver(sidStarResolver)
+        .addResolver(airportResolver)
+        .addResolver(airwayResolver)
+        .addResolver(fixResolver)
+        .addResolver(new LatLonResolver())
+        .build();
   }
 
   private boolean matchesOrder(List<ResolvedSection> sections, List<Class<?>> elementClasses) {

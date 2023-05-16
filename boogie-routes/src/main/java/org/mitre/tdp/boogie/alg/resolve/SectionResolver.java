@@ -2,12 +2,12 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.util.Streams.triplesWithNulls;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -18,23 +18,58 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * A {@link SectionResolver} exists to resolve infrastructure elements which are considered to be associated with an input
  * {@link SectionSplit} generated from a configured {@link SectionSplitter}.
- * <br>
- * Resolvers allow for the context of neighboring splits to be used in the resolution of the current split - though the previous
+ *
+ * <p>Resolvers allow for the context of neighboring splits to be used in the resolution of the current split - though the previous
  * and next section may be null (if at the start or end of a route string).
- * <br>
- * The {@link SingleSplitSectionResolver} is provided as a sub-interface for sections of route strings which dont require the
+ *
+ * <p>The {@link SingleSplitSectionResolver} is provided as a sub-interface for sections of route strings which don't require the
  * context of a neighboring section to be resolved appropriately.
  */
 @FunctionalInterface
 public interface SectionResolver {
+
+  /**
+   * Wrapped implementation of a section resolver which covers all the basic element types which can appear in a route string.
+   *
+   * <p>This pre-canned implementation will cover most use cases and requires access to a backing set of {@link LookupService}
+   * implementations. This also serves as an example method for clients who wish to add their own custom resolvers.
+   *
+   * @param airportsByName   lookup service for airports by their identifier, e.g. {@code KATL} or {@code WSSS}
+   * @param proceduresByName lookup service for procedures by their identifier, e.g. {@code CHPPR1} or {@code GNDLF2}
+   * @param airwaysByName    lookup service for airways by their identifier, e.g. {@code J121} or {@code V76}
+   * @param fixesByName      lookup service for fixes (navaids or waypoints) by their identifier, e.g. {@code JMACK} or {@code VNG}
+   */
+  static SectionResolver standard(
+      LookupService<Airport> airportsByName,
+      LookupService<Procedure> proceduresByName,
+      LookupService<Airway> airwaysByName,
+      LookupService<Fix> fixesByName
+  ) {
+    return composite()
+        .addResolver(airport(airportsByName))
+        .addResolver(sidStar(proceduresByName))
+        .addResolver(airway(airwaysByName))
+        .addResolver(fix(fixesByName))
+        .addResolver(latlong(null))
+        .build();
+  }
+
+  /**
+   * No-op implementations of a section resolver which returns an empty {@link ResolvedSection} when given any section split as
+   * an input.
+   */
+  static SectionResolver noop() {
+    return (left, middle, right) -> new ResolvedSection(middle, List.of());
+  }
 
   /**
    * Decorates a given {@link SectionResolver} as a "surly" resolver. This changes the typical contract of the resolvers (which
@@ -48,6 +83,14 @@ public interface SectionResolver {
    */
   static SectionResolver surly(SectionResolver sectionResolver) {
     return new SurlySectionResolver(sectionResolver);
+  }
+
+  /**
+   * A fluent, buildable, section resolver implementation allowing for multiple resolvers to be chained together to support the
+   * resolution of elements of a variety of different types.
+   */
+  static SectionResolver.Composite composite() {
+    return new Composite();
   }
 
   /**
@@ -115,7 +158,7 @@ public interface SectionResolver {
    * Composes the given {@link SectionResolver} with the provided {@link SectionResolver} to produce a new resolver which returns
    * the outputs of both calls to {@link SectionResolver#resolve(SectionSplit, SectionSplit, SectionSplit)} as a single list.
    */
-  default SectionResolver compose(SectionResolver that) {
+  default SectionResolver and(SectionResolver that) {
     checkNotNull(that, "Input resolver cannot be null.");
     return (p, c, n) -> {
       LinkedHashSet<ResolvedElement> allElements = new LinkedHashSet<>();
@@ -132,11 +175,25 @@ public interface SectionResolver {
     };
   }
 
-  /**
-   * Returns the composition of all provided {@link SectionResolver}s as a single SectionResolver.
-   */
-  static SectionResolver composeAll(SectionResolver... sectionResolvers) {
-    checkArgument(sectionResolvers.length > 0, "Cannot provide zero resolvers to composeAll().");
-    return Arrays.stream(sectionResolvers).reduce(SectionResolver::compose).orElseThrow(IllegalStateException::new);
+  final class Composite {
+
+    private final ImmutableList.Builder<SectionResolver> resolvers = ImmutableList.builder();
+
+    private Composite() {
+    }
+
+    public Composite addResolver(SectionResolver resolver) {
+      this.resolvers.add(requireNonNull(resolver));
+      return this;
+    }
+
+    public Composite addResolvers(Collection<SectionResolver> resolvers) {
+      this.resolvers.addAll(resolvers);
+      return this;
+    }
+
+    SectionResolver build() {
+      return resolvers.build().stream().reduce(SectionResolver::and).orElseThrow(IllegalStateException::new);
+    }
   }
 }

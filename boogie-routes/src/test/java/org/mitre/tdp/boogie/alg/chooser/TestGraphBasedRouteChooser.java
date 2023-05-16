@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.alg.chooser;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +11,7 @@ import static org.mitre.tdp.boogie.MockObjects.transition;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -24,7 +24,7 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
-import org.mitre.tdp.boogie.alg.RouteExpanderFactory;
+import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
@@ -96,11 +96,11 @@ class TestGraphBasedRouteChooser {
 
     BoogieTransition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
 
-    return RouteExpanderFactory.newStandardSectionResolver(
-        singletonList(l4.associatedFix().orElseThrow(IllegalStateException::new)),
-        emptyList(),
-        singletonList(kind),
-        ProcedureFactory.newProcedures(singletonList(t))
+    return SectionResolver.standard(
+        LookupService.inMemory(singletonList(kind), a -> Stream.of(a.airportIdentifier())),
+        LookupService.inMemory(ProcedureFactory.newProcedures(singletonList(t)), p -> Stream.of(p.procedureIdentifier())),
+        LookupService.noop(),
+        LookupService.inMemory(singletonList(l4.associatedFix().orElseThrow(IllegalStateException::new)), f -> Stream.of(f.fixIdentifier()))
     );
   }
 }

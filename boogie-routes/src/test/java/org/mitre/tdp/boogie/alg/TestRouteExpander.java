@@ -40,6 +40,7 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.SUMMA2;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
+import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
@@ -1189,20 +1190,22 @@ class TestRouteExpander {
 
 
   private RouteExpander newExpander(
-      Collection<? extends Fix> fixes,
-      Collection<? extends Airway> airways,
-      Collection<? extends Airport> airports,
-      Collection<? extends Procedure> procedures
+      Collection<Fix> fixes,
+      Collection<Airway> airways,
+      Collection<Airport> airports,
+      Collection<Procedure> procedures
   ) {
-    return RouteExpanderFactory.newGraphicalRouteExpander(fixes, airways, airports, procedures);
+    return RouteExpander.inMemoryBuilder(airports, procedures, airways, fixes).build();
   }
 
   private RouteExpander newSurlyExpander(
-      Collection<? extends Fix> fixes,
-      Collection<? extends Airway> airways,
-      Collection<? extends Airport> airports,
-      Collection<? extends Procedure> procedures
+      Collection<Fix> fixes,
+      Collection<Airway> airways,
+      Collection<Airport> airports,
+      Collection<Procedure> procedures
   ) {
-    return RouteExpanderFactory.newSurlyGraphicalRouteExpander(fixes, airways, airports, procedures);
+    return RouteExpander.inMemoryBuilder(airports, procedures, airways, fixes)
+        .sectionResolver(SectionResolver::surly)
+        .build();
   }
 }

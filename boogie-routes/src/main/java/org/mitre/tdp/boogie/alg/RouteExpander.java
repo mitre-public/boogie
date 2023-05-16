@@ -7,15 +7,20 @@ import static java.util.stream.Collectors.toList;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
+import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
@@ -35,48 +40,69 @@ public final class RouteExpander implements
 
   private static final Logger LOG = LoggerFactory.getLogger(RouteExpander.class);
 
-  /**
-   * Split an input route string into matchable sections. See {@link SectionSplitter}.
-   */
   private final SectionSplitter sectionSplitter;
-  /**
-   * Maintaining an internal instance of a {@link LookupService} for procedures which can be used to configure separate internal
-   * resolvers in the presence of arrival/departure runway information.
-   */
+
   private final LookupService<Procedure> procedureService;
+
   private final LookupService<Procedure> proceduresAtAirport;
-  /**
-   * Auto-configured composite {@link SectionResolver} for all of the standard section types.
-   * <br>
-   * 1. Fixes (Tailored/Waypoint/Navaids)
-   * 2. Procedures (SID/STAR)
-   * 3. Airways
-   * 4. Airports
-   * 5. Lat/Lon Literals
-   */
+
   private final SectionResolver standardSectionResolver;
-  /**
-   * Function for turning a sequence of {@link ResolvedSection}s in to a sequence of legs - this is most commonly implemented as
-   * the {@link GraphBasedRouteChooser}.
-   */
+
   private final RouteChooser routeChooser;
 
+  private RouteExpander(Builder builder) {
+    this.sectionSplitter = requireNonNull(builder.sectionSplitter);
+    this.procedureService = requireNonNull(builder.proceduresByName);
+    this.proceduresAtAirport = requireNonNull(builder.proceduresByAirport);
+    this.standardSectionResolver = requireNonNull(builder.sectionResolver);
+    this.routeChooser = requireNonNull(builder.routeChooser);
+  }
+
   /**
-   * Pre-canned implementations can be found here: {@link RouteExpanderFactory}. Otherwise this method is left public for others
-   * to inject and override specific functionality.
+   * Standard builder for a route expander instance.
    */
-  public RouteExpander(
-      SectionSplitter sectionSplitter,
-      LookupService<Procedure> procedureService,
-      LookupService<Procedure> proceduresAtAirport,
-      SectionResolver sectionResolver,
-      RouteChooser routeChooser
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /**
+   * Creates an in-memory version of a {@link RouteExpander} given the provided infrastructure data and using the {@link Builder}
+   * defaults for the functional components of the expander.
+   *
+   * <p>This is provided alongside the normal {@link #builder()} method for convenience when working with purely in-memory infra
+   * data. The generated {@link SectionResolver} can be configured with {@link Builder#sectionResolver(UnaryOperator)}.
+   *
+   * @param uAirports   all user-defined airport implementation to use in the expansion
+   * @param uProcedures all user-defined procedure implementations to use in the expansion
+   * @param uAirways    all user-defined airway implementations to use in the expansion
+   * @param uFixes      all user-defined fix implementations to use in the expansion
+   */
+  public static <A extends Airport, P extends Procedure, W extends Airway, F extends Fix> RouteExpander.Builder inMemoryBuilder(
+      Collection<A> uAirports,
+      Collection<P> uProcedures,
+      Collection<W> uAirways,
+      Collection<F> uFixes
   ) {
-    this.sectionSplitter = requireNonNull(sectionSplitter);
-    this.procedureService = requireNonNull(procedureService);
-    this.proceduresAtAirport = requireNonNull(proceduresAtAirport);
-    this.standardSectionResolver = requireNonNull(sectionResolver);
-    this.routeChooser = requireNonNull(routeChooser);
+
+    // this cast is annoying for clients and they often bring their own objects, give them (one) hook to let us handle it
+    Collection<Airport> airports = (Collection<Airport>) uAirports;
+    Collection<Procedure> procedures = (Collection<Procedure>) uProcedures;
+    Collection<Airway> airways = (Collection<Airway>) uAirways;
+    Collection<Fix> fixes = (Collection<Fix>) uFixes;
+
+    LookupService<Procedure> proceduresByName = LookupService.inMemory(procedures, p -> Stream.of(p.procedureIdentifier()));
+
+    return RouteExpander.builder()
+        .proceduresByName(proceduresByName)
+        .proceduresByAirport(LookupService.inMemory(procedures, p -> Stream.of(p.airportIdentifier())))
+        .sectionResolver(
+            SectionResolver.standard(
+                LookupService.inMemory(airports, a -> Stream.of(a.airportIdentifier())),
+                proceduresByName,
+                LookupService.inMemory(airways, a -> Stream.of(a.airwayIdentifier())),
+                LookupService.inMemory(fixes, f -> Stream.of(f.fixIdentifier()))
+            )
+        );
   }
 
   /**
@@ -133,7 +159,7 @@ public final class RouteExpander implements
   public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway, @Nullable RequiredNavigationEquipage... equipage) {
 
     checkArgument(route != null && !route.isEmpty(), "Route cannot be null or empty.");
-    LOG.info("Beginning expansion of route {} with departure runway {} and arrival runway {}.", route, departureRunway, arrivalRunway);
+    LOG.info("Beginning expansion of route {} with context: [arrival runway {}, departure runway {}]", route, arrivalRunway, departureRunway);
 
     List<SectionSplit> sectionSplits = sectionSplitter.splits(route);
     LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
@@ -152,8 +178,8 @@ public final class RouteExpander implements
     for (SectionInferrer inferrer : context.inferrers()) {
       appendInferredSections(initial, inferrer);
     }
-    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
 
+    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
     return chooseExpandedRoute(route, new ArrayList<>(initial), departureRunway, arrivalRunway);
   }
 
@@ -190,6 +216,107 @@ public final class RouteExpander implements
           );
 
       return Optional.of(updated);
+    }
+  }
+
+  public static final class Builder {
+
+    private SectionSplitter sectionSplitter = SectionSplitter.faaIfrFormat();
+
+    private LookupService<Procedure> proceduresByName = LookupService.noop();
+
+    private LookupService<Procedure> proceduresByAirport = LookupService.noop();
+
+    private SectionResolver sectionResolver;
+
+    private RouteChooser routeChooser = RouteChooser.graphical();
+
+    private Builder() {
+    }
+
+    /**
+     * Methodology for tokenizing the input route string such that each token can be resolved with a section resolver.
+     *
+     * <p>The pre-defined set of implementations live in the {@link SectionSplitter} interface.
+     *
+     * <p>Default: {@link SectionSplitter#faaIfrFormat()}
+     */
+    public Builder sectionSplitter(SectionSplitter sectionSplitter) {
+      this.sectionSplitter = requireNonNull(sectionSplitter);
+      return this;
+    }
+
+    /**
+     * A lookup service for procedures by their given identifier, e.g. {@code GNDLF2} or {@code CHPPR1}.
+     *
+     * <p>This implementation is required to infer arrival/departure runway transitions based on a provided arrival or departure
+     * runway identifier (given as context during the expansion call).
+     *
+     * <p>In-memory lookup services can be built from collections of objects {@link LookupService#inMemory(Iterable, Function)}.
+     *
+     * <p>Default: {@link LookupService#noop()}
+     */
+    public Builder proceduresByName(LookupService<Procedure> proceduresByName) {
+      this.proceduresByName = requireNonNull(proceduresByName);
+      return this;
+    }
+
+    /**
+     * A lookup service for procedures based on the identifier of the airport they serve, e.g. {@code KATL} or {@code WSSS}.
+     *
+     * <p>This implementation is required to infer an appropriate approach procedures when given an arrival runway and list of
+     * preferred equipages for the approach.
+     *
+     * <p>In-memory lookup services can be built from collections of objects {@link LookupService#inMemory(Iterable, Function)}.
+     *
+     * <p>Default: {@link LookupService#noop()}
+     */
+    public Builder proceduresByAirport(LookupService<Procedure> proceduresByAirport) {
+      this.proceduresByAirport = requireNonNull(proceduresByAirport);
+      return this;
+    }
+
+    /**
+     * The section resolver implementation to use when resolving tokenized sections of the input route string to infrastructure
+     * elements.
+     *
+     * <p>There is no default value for this field as a variety of infrastructure lookup services need to be provided to power the
+     * section resolver.
+     *
+     * <p>Typically, clients use {@link SectionResolver#standard(LookupService, LookupService, LookupService, LookupService)}.
+     */
+    public Builder sectionResolver(SectionResolver sectionResolver) {
+      this.sectionResolver = requireNonNull(sectionResolver);
+      return this;
+    }
+
+    /**
+     * Allows for the customization of an already-configured section resolver implementation (will throw an exception if one isn't
+     * already present). This is provided mainly to allow simple decoration of a default-configured resolver (e.g. make it surly).
+     *
+     * @param sectionResolverConfigurer transform operator to decorate/wrap an already-configured resolver in additional functionality
+     */
+    public Builder sectionResolver(UnaryOperator<SectionResolver> sectionResolverConfigurer) {
+      requireNonNull(sectionResolver, "There should already be a SectionResolver configured we want to transform.");
+      requireNonNull(sectionResolverConfigurer, "The configuration function should be non-null.");
+
+      this.sectionResolver = sectionResolverConfigurer.apply(sectionResolver);
+      return this;
+    }
+
+    /**
+     * Defines how the expander chooses the appropriate route through the resolved infrastructure candidates across all resolved
+     * sections of the route string.
+     *
+     * <p>Default: {@link RouteChooser#graphical()}
+     */
+    public Builder routeChooser(RouteChooser routeChooser) {
+      this.routeChooser = requireNonNull(routeChooser);
+      return this;
+    }
+
+    public RouteExpander build() {
+      return new RouteExpander(this);
     }
   }
 }
