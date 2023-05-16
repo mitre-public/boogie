@@ -10,7 +10,6 @@ import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.util.Streams;
@@ -21,17 +20,6 @@ import org.mitre.tdp.boogie.util.Streams;
  *
  * <p>Typically this is done to facility the generation/resolution of additional implied routing infrastructure beyond that which
  * is defined in a standard route string (e.g. arrival/departure runways, approach procedures, etc.).
- *
- * <p>TODO - {@link ResolvedElement}s need to have a cleaned-up identifier that allow them to be looked up again via service, i.e.
- * "the name you would find me as in a {@link LookupService}"
- *
- * <p>TODO - change expander signature to be {@code expand(String route, Context context)} where the context is
- *
- * <p>Other "inferrer" implementations to consider include:
- * <ol>
- *   <li>(Default) a SID if one wasn't specified in the flightplan (e.g. KATL..DRSDN)</li>
- *   <li>(Default) a STAR if one wasn't specified in the flightplan (e.g. SMAUG..KATL)</li>
- * </ol>
  *
  * <p>Inferrer implementations often require additional information to make their inference, as such they typically aren't created
  * when instantiating an expander, they are implicitly configured based on optional context provided alongside the route string.
@@ -47,19 +35,37 @@ public interface SectionInferrer {
   }
 
   /**
-   * Configures a {@link SectionInferrer} which always provides the given {@link Procedure} as the SID if one was omitted from
-   * the underlying route string (or unable to be located in the infrastructure data).
+   * Infers the specified SID (if available in the provided lookup service) if no SID was filed in the underlying route string.
+   *
+   * <p>This lookup is deferred (i.e. this method doesn't take a {@link Procedure}) for a couple of reasons:
+   * <ol>
+   *   <li>It allows for potentially incomplete infrastructure data (e.g. the SID doesn't actually exist)</li>
+   *   <li>If there are multiple versions of the procedure serving a set of airports it allows us to defer choosing which airports
+   *   implementation we choose until the first-pass of the expansion has been done</li>
+   * </ol>
+   *
+   * @param proceduresByName lookup service providing procedures indexed by their identifier (e.g. {@code CHPPR1, GNDLF2})
+   * @param sid              the identifier of the SID to use
    */
-  static SectionInferrer defaultSid(Procedure sid) {
-    return new DefaultSidInferrer(sid);
+  static SectionInferrer defaultSid(LookupService<Procedure> proceduresByName, String sid) {
+    return new DefaultSidInferrer(proceduresByName, sid);
   }
 
   /**
-   * Configures a {@link SectionInferrer} which always provides the given {@link Procedure} as the STAR if one was omitted from
-   * the underlying route string (or unable to be located in the infrastructure data).
+   * Infers the specified SID (if available in the provided lookup service) if no SID was filed in the underlying route string.
+   *
+   * <p>This lookup is deferred (i.e. this method doesn't take a {@link Procedure}) for a couple of reasons:
+   * <ol>
+   *   <li>It allows for potentially incomplete infrastructure data (e.g. the SID doesn't actually exist)</li>
+   *   <li>If there are multiple versions of the procedure serving a set of airports it allows us to defer choosing which airports
+   *   implementation we choose until the first-pass of the expansion has been done</li>
+   * </ol>
+   *
+   * @param proceduresByName lookup service providing procedures indexed by their identifier (e.g. {@code CHPPR1, GNDLF2})
+   * @param star             star identifier of the STAR to use
    */
-  static SectionInferrer defaultStar(Procedure star) {
-    return new DefaultStarInferrer(star);
+  static SectionInferrer defaultStar(LookupService<Procedure> proceduresByName, String star) {
+    return new DefaultStarInferrer(proceduresByName, star);
   }
 
   /**

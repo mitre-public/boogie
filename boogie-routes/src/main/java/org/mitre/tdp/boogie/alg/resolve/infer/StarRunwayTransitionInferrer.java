@@ -50,15 +50,9 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
 
   private Collection<ResolvedElement> runwayTransitionElements(StarElement star, AirportElement airport) {
 
-    Collection<Procedure> procedures = proceduresByName.apply(star.identifier());
+    Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, star.identifier(), airport.identifier());
 
-    Collection<Procedure> proceduresAtAirport = procedures.stream()
-        .filter(p -> p.airportIdentifier().equalsIgnoreCase(airport.identifier()))
-        .collect(toList());
-
-    Collection<Procedure> toUse = proceduresAtAirport.isEmpty() ? procedures : proceduresAtAirport;
-
-    return toUse.stream()
+    return procedures.stream()
         .map(procedure -> new TransitionMaskedProcedure(procedure, nonArrivalRunwayTransitionFilter()))
         .map(StarElement::new)
         .collect(toList());

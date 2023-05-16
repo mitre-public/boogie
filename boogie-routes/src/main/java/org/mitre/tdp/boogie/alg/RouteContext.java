@@ -130,19 +130,13 @@ public interface RouteContext {
 
     private SectionInferrer defaultSid() {
       return ofNullable(defaultSid)
-          .map(sid -> proceduresByName.apply(sid))
-          .filter(col -> !col.isEmpty())
-          .map(col -> col.iterator().next())
-          .map(SectionInferrer::defaultSid)
+          .map(sid -> SectionInferrer.defaultSid(proceduresByName, sid))
           .orElseGet(SectionInferrer::noop);
     }
 
     private SectionInferrer defaultStar() {
       return ofNullable(defaultStar)
-          .map(star -> proceduresByName.apply(star))
-          .filter(col -> !col.isEmpty())
-          .map(col -> col.iterator().next())
-          .map(SectionInferrer::defaultStar)
+          .map(star -> SectionInferrer.defaultStar(proceduresByName, star))
           .orElseGet(SectionInferrer::noop);
     }
 
