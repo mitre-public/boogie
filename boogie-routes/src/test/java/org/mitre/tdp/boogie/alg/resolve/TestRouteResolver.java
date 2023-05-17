@@ -26,7 +26,6 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
-import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 

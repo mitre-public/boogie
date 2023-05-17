@@ -27,7 +27,6 @@ import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
-import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.fn.QuadFunction;
 import org.mitre.tdp.boogie.fn.TriFunction;
 import org.mitre.tdp.boogie.util.Iterators;
@@ -41,7 +40,7 @@ public final class RouteExpander implements
 
   private static final Logger LOG = LoggerFactory.getLogger(RouteExpander.class);
 
-  private final RouteTokenizer sectionSplitter;
+  private final RouteTokenizer routeTokenizer;
 
   private final LookupService<Procedure> procedureService;
 
@@ -52,7 +51,7 @@ public final class RouteExpander implements
   private final RouteChooser routeChooser;
 
   private RouteExpander(Builder builder) {
-    this.sectionSplitter = requireNonNull(builder.sectionSplitter);
+    this.routeTokenizer = requireNonNull(builder.routeTokenizer);
     this.procedureService = requireNonNull(builder.proceduresByName);
     this.proceduresAtAirport = requireNonNull(builder.proceduresByAirport);
     this.standardSectionResolver = requireNonNull(builder.sectionResolver);
@@ -156,7 +155,7 @@ public final class RouteExpander implements
     checkArgument(route != null && !route.isEmpty(), "Route cannot be null or empty.");
     LOG.info("Beginning expansion of route {} with context: [arrival runway {}, departure runway {}]", route, arrivalRunway, departureRunway);
 
-    List<RouteToken> sectionSplits = sectionSplitter.tokenize(route);
+    List<RouteToken> sectionSplits = routeTokenizer.tokenize(route);
     LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
 
     HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(standardSectionResolver.applyTo(sectionSplits));
@@ -216,7 +215,7 @@ public final class RouteExpander implements
 
   public static final class Builder {
 
-    private RouteTokenizer sectionSplitter = RouteTokenizer.faaIfrFormat();
+    private RouteTokenizer routeTokenizer = RouteTokenizer.faaIfrFormat();
 
     private LookupService<Procedure> proceduresByName = LookupService.noop();
 
@@ -232,12 +231,12 @@ public final class RouteExpander implements
     /**
      * Methodology for tokenizing the input route string such that each token can be resolved with a section resolver.
      *
-     * <p>The pre-defined set of implementations live in the {@link SectionSplitter} interface.
+     * <p>The pre-defined set of implementations live in the {@link RouteTokenizer} interface.
      *
-     * <p>Default: {@link SectionSplitter#faaIfrFormat()}
+     * <p>Default: {@link RouteTokenizer#faaIfrFormat()}
      */
-    public Builder sectionSplitter(RouteTokenizer sectionSplitter) {
-      this.sectionSplitter = requireNonNull(sectionSplitter);
+    public Builder routeTokenizer(RouteTokenizer routeTokenizer) {
+      this.routeTokenizer = requireNonNull(routeTokenizer);
       return this;
     }
 

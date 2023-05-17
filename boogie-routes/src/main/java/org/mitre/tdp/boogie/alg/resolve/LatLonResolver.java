@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 final class LatLonResolver implements SingleSplitSectionResolver {
 

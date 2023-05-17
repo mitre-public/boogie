@@ -18,7 +18,6 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 
 class TestSidStarResolver {

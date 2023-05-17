@@ -20,14 +20,13 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
-import org.mitre.tdp.boogie.alg.split.SectionSplitter;
+import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 
 import com.google.common.collect.ImmutableList;
 
 /**
  * A {@link SectionResolver} exists to resolve infrastructure elements which are considered to be associated with an input
- * {@link SectionSplit} generated from a configured {@link SectionSplitter}.
+ * {@link RouteToken} generated from a configured {@link RouteTokenizer}.
  *
  * <p>Resolvers allow for the context of neighboring splits to be used in the resolution of the current split - though the previous
  * and next section may be null (if at the start or end of a route string).
@@ -65,7 +64,7 @@ public interface SectionResolver {
   }
 
   /**
-   * No-op implementations of a section resolver which returns an empty {@link ResolvedSection} when given any section split as
+   * No-op implementations of a section resolver which returns an empty {@link ResolvedSection} when given any route token as
    * an input.
    */
   static SectionResolver noop() {
@@ -95,7 +94,7 @@ public interface SectionResolver {
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string sections to concrete airports based on their identifier.
+   * Returns a new {@link SectionResolver} resolving route string tokens to concrete airports based on their identifier.
    *
    * @param airportsByIdentifier lookup service providing airports indexed by their identifier (e.g. KATL, KLGA) as they would be
    *                             referenced in an input route string.
@@ -105,7 +104,7 @@ public interface SectionResolver {
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string sections to concrete procedure SID/STAR procedure definitions,
+   * Returns a new {@link SectionResolver} resolving route string tokens to concrete procedure SID/STAR procedure definitions,
    * note that this resolver will mask the
    *
    * @param proceduresByIdentifier lookup service providing procedures indexed by their identifier (e.g. CHPPR1, GNDLF2) as they
@@ -116,7 +115,7 @@ public interface SectionResolver {
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string sections to concrete airways based on their identifier.
+   * Returns a new {@link SectionResolver} resolving route string tokens to concrete airways based on their identifier.
    *
    * @param airwaysByIdentifier lookup service providing airways indexed by their identifier (e.g. J121, Y200) as they would be
    *                            referenced in an input route string.
@@ -126,7 +125,7 @@ public interface SectionResolver {
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string sections to concrete fixes based on their identifier (contains
+   * Returns a new {@link SectionResolver} resolving route string tokens to concrete fixes based on their identifier (contains
    * handling for fixes that show up tailored e.g. {@code NAV123034})
    *
    * @param fixesByIdentifier lookup service providing fixes indexed by their identifier (e.g. JMACK, VNB) as they would show up
@@ -146,8 +145,8 @@ public interface SectionResolver {
   }
 
   /**
-   * Attempts to resolve a list of candidate {@link ResolvedElement}s from the given current {@link SectionSplit} as well as
-   * the preceding and following section splits.
+   * Attempts to resolve a list of candidate {@link ResolvedElement}s from the given current {@link RouteToken} as well as
+   * the preceding and following route tokens.
    */
   ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next);
 
@@ -157,7 +156,7 @@ public interface SectionResolver {
 
   /**
    * Composes the given {@link SectionResolver} with the provided {@link SectionResolver} to produce a new resolver which returns
-   * the outputs of both calls to {@link SectionResolver#resolve(SectionSplit, SectionSplit, SectionSplit)} as a single list.
+   * the outputs of both calls to {@link SectionResolver#resolve(RouteToken, RouteToken, RouteToken)} as a single list.
    */
   default SectionResolver and(SectionResolver that) {
     checkNotNull(that, "Input resolver cannot be null.");

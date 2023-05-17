@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.alg.split;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,21 +12,22 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
 
 import com.google.common.base.Strings;
 
-final class IcaoFormatSplitter implements SectionSplitter {
+final class IcaoFormatSplitter implements RouteTokenizer {
 
   /**
    * Takes the ifr vfr object and then adds it to the previous item where the rules changed at
    */
-  private static final LeftMerger<SectionSplit> ifrVfrMerger = new LeftMerger<>(
-      (l1, l2) -> nonNull(l2.flightRules()),
-      (l1, l2) -> l1.toBuilder().setFlightRules(l2.flightRules()).build()
+  private static final LeftMerger<RouteToken.Icao> ifrVfrMerger = new LeftMerger<>(
+      (l1, l2) -> l2.flightRules().isPresent(),
+      (l1, l2) -> l1.toBuilder().flightRules(l2.flightRules().orElse(null)).build()
   );
+
   /**
    * Cleans the ' ' delimited splits pushing any wildcards from referenced empty splits into the following split.
    */
-  private static final LeftMerger<SectionSplit> splitMerger = new LeftMerger<>(
-      (l1, l2) -> Strings.isNullOrEmpty(l1.value()),
-      (l1, l2) -> l2.setWildcards(l2.wildcards().concat(l1.wildcards()))
+  private static final LeftMerger<RouteToken.Icao> splitMerger = new LeftMerger<>(
+      (l1, l2) -> Strings.isNullOrEmpty(l1.infrastructureName()),
+      (l1, l2) -> l2.toBuilder().wildcards(l2.wildcards().orElse("").concat(l1.wildcards().orElse(""))).build()
   );
   static Pattern speedLevel = Pattern.compile("/[A-Z0-9]{8,10}$");
 
@@ -44,9 +44,10 @@ final class IcaoFormatSplitter implements SectionSplitter {
   }
 
   @Override
-  public List<SectionSplit> splits(String route) {
+  public List<RouteToken> tokenize(String route) {
     String[] splits = route.split(" ");
-    return IntStream.range(0, splits.length)
+
+    List<RouteToken.Icao> tokens = IntStream.range(0, splits.length)
         .mapToObj(i -> {
           String s = splits[i];
 
@@ -76,18 +77,18 @@ final class IcaoFormatSplitter implements SectionSplitter {
             wildcards += "/";
           }
 
-          return SectionSplit.builder()
-              .setValue(clean)
-              .setEtaEet(etaEet)
-              .setSpeedLevel(sl)
-              .setFlightRules(frc)
-              .setIndex(i)
-              .setWildcards(wildcards)
+          return RouteToken.icaoBuilder(clean, i)
+              .etaEet(etaEet)
+              .wildcards(wildcards)
+              .speedLevel(sl)
+              .flightRules(frc)
               .build();
         })
         .filter(Objects::nonNull)
         .collect(ifrVfrMerger.asCollector())
         .stream()
         .collect(splitMerger.asCollector());
+
+    return (List<RouteToken>) (List) tokens;
   }
 }

@@ -5,10 +5,9 @@ import static java.util.Objects.requireNonNull;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 /**
- * This class represents a graph node as a {@link SectionSplit} as extracted from the top level route
+ * This class represents a graph node as a {@link RouteToken} as extracted from the top level route
  * string, a top level resolved infrastructure element associated with that split {@link ResolvedElement}
  * and a leg indicating both what the fix is as well as an indication of how to fly to it.
  *
@@ -17,7 +16,7 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
  */
 public final class ResolvedLeg {
   /**
-   * The {@link SectionSplit} from the route string used to generate this reference.
+   * The {@link RouteToken} from the route string used to generate this reference.
    */
   private final RouteToken sectionSplit;
   /**

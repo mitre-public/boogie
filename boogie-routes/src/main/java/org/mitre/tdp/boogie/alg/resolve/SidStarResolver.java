@@ -16,11 +16,10 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.validate.RecordElectorFactory;
 
 /**
- * Class for resolving candidate {@link SidElement}/{@link StarElement}s from a {@link SectionSplit}.
+ * Class for resolving candidate {@link SidElement}/{@link StarElement}s from a {@link RouteToken}.
  */
 final class SidStarResolver implements SectionResolver {
 

@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 import com.google.common.collect.Range;
@@ -29,7 +29,7 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
    */
   private final ElementType elementType;
   /**
-   * Any of the {@link Wildcard}s from the {@link SectionSplit#wildcards()} characters.
+   * Any of the {@link Wildcard}s from providing {@link RouteToken}s
    */
   private final String wildcards;
   /**

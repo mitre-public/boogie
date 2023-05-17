@@ -9,61 +9,15 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
 
 import com.google.common.base.Strings;
 
-final class FaaIfrFormatSplitter implements SectionSplitter, RouteTokenizer {
+final class FaaIfrFormatSplitter implements RouteTokenizer {
+
+  private static final Pattern ETAEET = Pattern.compile("/[0-9]{4}$");
 
   FaaIfrFormatSplitter() {
   }
 
-  /**
-   * Also performs cleaning to strip attached wildcard characters ("*", "+", etc.) and sequences "/0219" from the ID.
-   */
-  @Override
-  public List<SectionSplit> splits(String route) {
-    String[] splits = route.split("\\.");
-
-    return IntStream.range(0, splits.length)
-        .mapToObj(i -> {
-          String s = splits[i];
-
-          String etaEet = etaEet(s);
-          String ns = null == etaEet ? s : s.replace("/" + etaEet, "");
-
-          String clean = ns.replaceAll("[^A-Za-z0-9/]", "");
-
-          // if the cleaned section is empty - then that means the section indicates a direct - tag it in the wildcards
-          String wildcards = ns.replaceAll("[A-Za-z0-9/]", "").concat(clean.isEmpty() ? " " : "");
-
-          // special case for tailored, we want this to be a wildcard but we need this to work with Lat/Lon vals and
-          // preserve the forward slash
-          if ("/".equals(clean)) {
-            clean = "";
-            wildcards += "/";
-          }
-
-          return new SectionSplit.Builder()
-              .setValue(clean)
-              .setEtaEet(etaEet)
-              .setIndex(i)
-              .setWildcards(wildcards)
-              .build();
-        })
-        .collect(splitMerger.asCollector());
-  }
-
-  /**
-   * Cleans the '.' delimited splits pushing any wildcards from referenced empty splits into the following split.
-   */
-  private static final LeftMerger<SectionSplit> splitMerger = new LeftMerger<>(
-      (l1, l2) -> Strings.isNullOrEmpty(l1.value()),
-      (l1, l2) -> l2.setWildcards(l2.wildcards().concat(l1.wildcards()))
-  );
-
-  static Pattern etaEet() {
-    return Pattern.compile("/[0-9]{4}$");
-  }
-
   static String etaEet(String val) {
-    Matcher matcher = etaEet().matcher(val);
+    Matcher matcher = ETAEET.matcher(val);
     return matcher.find() ? matcher.group(0).replace("/", "") : null;
   }
 

@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
  * <p>These tokens need to be sequentially ordered so downstream consumers of them can traverse them in the order they appeared
  * in the original route string (if necessary).
  *
- * <p>This interface is provided to allow various {@link SectionSplitter} implementations to resolve tokens which contain more
+ * <p>This interface is provided to allow various {@link RouteTokenizer} implementations to resolve tokens which contain more
  * than the required information for expansion to run (e.g. requested altitude and speed, wildcard characters, etc). Tokens can
  * then be visited by {@link RouteTokenVisitor} implementations to collect this information.
  */
@@ -37,7 +37,8 @@ public interface RouteToken {
   }
 
   /**
-   *
+   * Returns a new builder for a ICAO formatted route token, including support for additional specification such as speed/altitude
+   * requests and IFR/VFR status.
    */
   static Icao.Builder icaoBuilder(String value, double index) {
     return new Icao.Builder(new Standard(value, index));
@@ -97,6 +98,11 @@ public interface RouteToken {
     @Override
     public double index() {
       return index;
+    }
+
+    @Override
+    public void accept(RouteTokenVisitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -226,14 +232,20 @@ public interface RouteToken {
 
     private final Standard delegate;
 
+    private final String etaEet;
+
+    private final String wildcards;
+
     private final String speedLevel;
 
     private final String flightRules;
 
     private Icao(Builder builder) {
       this.delegate = requireNonNull(builder.delegate);
-      this.speedLevel = requireNonNull(builder.speedLevel);
-      this.flightRules = requireNonNull(builder.flightRules);
+      this.etaEet = builder.etaEet;
+      this.wildcards = builder.wildcards;
+      this.speedLevel = builder.speedLevel;
+      this.flightRules = builder.flightRules;
     }
 
     @Override
@@ -244,6 +256,14 @@ public interface RouteToken {
     @Override
     public double index() {
       return delegate.index();
+    }
+
+    public Optional<String> etaEet() {
+      return ofNullable(etaEet);
+    }
+
+    public Optional<String> wildcards() {
+      return ofNullable(wildcards);
     }
 
     public Optional<String> speedLevel() {
@@ -260,7 +280,7 @@ public interface RouteToken {
     }
 
     public Builder toBuilder() {
-      return new Builder(delegate).speedLevel(speedLevel).flightRules(flightRules);
+      return new Builder(delegate).etaEet(etaEet).wildcards(wildcards).speedLevel(speedLevel).flightRules(flightRules);
     }
 
     @Override
@@ -295,12 +315,26 @@ public interface RouteToken {
 
       private final Standard delegate;
 
+      private String etaEet;
+
+      private String wildcards;
+
       private String speedLevel;
 
       private String flightRules;
 
       private Builder(Standard delegate) {
         this.delegate = requireNonNull(delegate);
+      }
+
+      public Builder etaEet(String etaEet) {
+        this.etaEet = etaEet;
+        return this;
+      }
+
+      public Builder wildcards(String wildcards) {
+        this.wildcards = wildcards;
+        return this;
       }
 
       public Builder speedLevel(String speedLevel) {

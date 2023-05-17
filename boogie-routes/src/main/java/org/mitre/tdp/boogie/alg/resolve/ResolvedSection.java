@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 /**
  * Wrapper class for a section containing context flags from the filed route string itself (e.g. direct/suppressed) as well
  * as a collection of possible infrastructure elements that were determined to be associated with the section id via the
- * {@link RouteResolver}.
+ * {@link SectionResolver}.
  */
 public final class ResolvedSection {
 

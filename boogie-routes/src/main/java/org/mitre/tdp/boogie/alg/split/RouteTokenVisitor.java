@@ -14,6 +14,44 @@ public interface RouteTokenVisitor {
 
   void visit(RouteToken.Icao icao);
 
+  final class IsFiledDirect implements RouteTokenVisitor {
+
+    private boolean isFiledDirect = false;
+
+    @Override
+    public void visit(RouteToken.Standard standard) {
+
+    }
+
+    @Override
+    public void visit(RouteToken.FaaIfr faaIfr) {
+
+    }
+
+    @Override
+    public void visit(RouteToken.Icao icao) {
+
+    }
+  }
+
+  final class IsTailoredTo implements RouteTokenVisitor {
+
+    @Override
+    public void visit(RouteToken.Standard standard) {
+
+    }
+
+    @Override
+    public void visit(RouteToken.FaaIfr faaIfr) {
+
+    }
+
+    @Override
+    public void visit(RouteToken.Icao icao) {
+
+    }
+  }
+
   final class WildcardVisitor implements RouteTokenVisitor {
 
     private String wildcards = "";
