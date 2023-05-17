@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
 
 import com.google.common.base.Strings;
 
-final class IcaoFormatSplitter implements RouteTokenizer {
+final class IcaoFormatTokenizer implements RouteTokenizer {
 
   /**
    * Takes the ifr vfr object and then adds it to the previous item where the rules changed at
@@ -31,7 +31,7 @@ final class IcaoFormatSplitter implements RouteTokenizer {
   );
   static Pattern speedLevel = Pattern.compile("/[A-Z0-9]{8,10}$");
 
-  IcaoFormatSplitter() {
+  IcaoFormatTokenizer() {
   }
 
   static String findSpeedLevel(String val) {
@@ -55,7 +55,7 @@ final class IcaoFormatSplitter implements RouteTokenizer {
             return null;
           }
 
-          String etaEet = FaaIfrFormatSplitter.etaEet(s);
+          String etaEet = FaaIfrFormatTokenizer.etaEet(s);
 
           String sl = findSpeedLevel(s);
 

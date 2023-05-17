@@ -29,6 +29,7 @@ final class FixResolver implements SingleSplitSectionResolver {
         ? section.substring(0, section.length() - 6)
         : section;
 
+    // TODO - do this please
 //    boolean isDirect = RouteTokenVisitor.isDirect(sectionSplit);
 //
 //    boolean isTailored = RouteTokenVisitor.isTailored(sectionSplit);

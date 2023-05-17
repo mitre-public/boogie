@@ -12,7 +12,7 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 
-class IcaoFormatSplitterTest {
+class IcaoFormatTokenizerTest {
 
   private static final RouteTokenizer TOKENIZER = RouteTokenizer.icaoFormat();
 

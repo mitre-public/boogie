@@ -9,11 +9,11 @@ import org.mitre.tdp.boogie.fn.LeftMerger;
 
 import com.google.common.base.Strings;
 
-final class FaaIfrFormatSplitter implements RouteTokenizer {
+final class FaaIfrFormatTokenizer implements RouteTokenizer {
 
   private static final Pattern ETAEET = Pattern.compile("/[0-9]{4}$");
 
-  FaaIfrFormatSplitter() {
+  FaaIfrFormatTokenizer() {
   }
 
   static String etaEet(String val) {

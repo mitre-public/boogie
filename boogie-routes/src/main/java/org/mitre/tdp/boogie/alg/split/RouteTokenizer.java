@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.alg.split;
 
 import java.util.List;
 
-import org.mitre.tdp.boogie.alg.LookupService;
+import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 
 /**
  * Responsible for splitting an input route string into a sequence of elements matchable to infrastructure elements based on ID
@@ -17,7 +17,7 @@ public interface RouteTokenizer {
    * <p>e.g. {@code KATL.BOOVE4.DRSDN..AMF.J121.RPA..WYNDE.WYNDE8.KORD/0211}
    */
   static RouteTokenizer faaIfrFormat() {
-    return new FaaIfrFormatSplitter();
+    return new FaaIfrFormatTokenizer();
   }
 
   /**
@@ -26,12 +26,12 @@ public interface RouteTokenizer {
    * <p>e.g. {@code DCT GREKI IFR DCT BGO/N0485F410 M626 VKB M751 VPK B469 BIKTA PIBAP PAS3 MABA2A}
    */
   static RouteTokenizer icaoFormat() {
-    return new IcaoFormatSplitter();
+    return new IcaoFormatTokenizer();
   }
 
   /**
    * Tokenize an input route of some (potentially undetermined format) and convert it to token identifiers which can be matched
-   * against the contents of various {@link LookupService} implementations.
+   * against infrastructure using various {@link SectionResolver} implementations.
    *
    * @param route the stringified route-of-flight for an aircraft
    */

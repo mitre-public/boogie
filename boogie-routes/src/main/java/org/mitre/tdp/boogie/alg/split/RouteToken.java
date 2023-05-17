@@ -292,20 +292,20 @@ public interface RouteToken {
         return false;
       }
       Icao icao = (Icao) o;
-      return Objects.equals(delegate, icao.delegate)
-          && Objects.equals(speedLevel, icao.speedLevel)
-          && Objects.equals(flightRules, icao.flightRules);
+      return Objects.equals(delegate, icao.delegate) && Objects.equals(etaEet, icao.etaEet) && Objects.equals(wildcards, icao.wildcards) && Objects.equals(speedLevel, icao.speedLevel) && Objects.equals(flightRules, icao.flightRules);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(delegate, speedLevel, flightRules);
+      return Objects.hash(delegate, etaEet, wildcards, speedLevel, flightRules);
     }
 
     @Override
     public String toString() {
       return "Icao{" +
           "delegate=" + delegate +
+          ", etaEet='" + etaEet + '\'' +
+          ", wildcards='" + wildcards + '\'' +
           ", speedLevel='" + speedLevel + '\'' +
           ", flightRules='" + flightRules + '\'' +
           '}';
