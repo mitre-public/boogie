@@ -194,8 +194,8 @@ public final class GraphBasedRouteChooser implements RouteChooser {
   /**
    * Returns an embedding for mapping back from a given {@link Leg} returned by the route resolver to its source ResolvedElement
    * and ResolvedSection.
-   * <br>
-   * If multiple sections/elements generated/returned the same leg instance then this class will return the first section/element
+   *
+   * <p>If multiple sections/elements generated/returned the same leg instance then this class will return the first section/element
    * associated with the leg.
    */
   private static final class LegEmbedding implements Function<Leg, ResolvedLeg> {

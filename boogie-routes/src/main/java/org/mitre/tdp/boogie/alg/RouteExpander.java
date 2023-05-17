@@ -59,7 +59,7 @@ public final class RouteExpander implements
   }
 
   /**
-   * Standard builder for a route expander instance.
+   * Standard builder for a route expander instance. See additional setup docs on the {@link Builder} methods.
    */
   public static Builder builder() {
     return new Builder();
@@ -107,13 +107,11 @@ public final class RouteExpander implements
 
   /**
    * Returns the result of applying the route expander to the provided route string with no departure/arrival runway information.
-   * <br>
    *
    * @param route the route to expand, SID/STAR expansion will start/stop at the beginning/end of the common portions of the
    *              procedures
-   *              <br>
-   *              This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
-   *              build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
+   * @return This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
+   * build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
    */
   @Override
   public Optional<ExpandedRoute> apply(String route) {
@@ -122,16 +120,14 @@ public final class RouteExpander implements
 
   /**
    * Takes the argument route string and expands it against the infrastructure data in the provided services.
-   * <br>
    *
    * @param route           the route to expand
    * @param departureRunway the departure runway used, if provided the appropriate departure runway transition will be included
    *                        in the final expanded route
    * @param arrivalRunway   the arrival runway used, if provided the appropriate arrival runway transition will be included in the
    *                        final expanded route
-   *                        <br>
-   *                        This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
-   *                        build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
+   * @return This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
+   * build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
    */
   @Override
   public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway) {
@@ -140,7 +136,6 @@ public final class RouteExpander implements
 
   /**
    * Takes the argument route string and expands it against the infrastructure data in the provided services.
-   * <br>
    *
    * @param route           the route to expand
    * @param departureRunway the departure runway used, if provided the appropriate departure runway transition will be included
@@ -149,11 +144,10 @@ public final class RouteExpander implements
    *                        final expanded route
    * @param equipage        the equipage of the aircraft, if provided (along with an arrival runway) this will determine the type of
    *                        approach procedure included in the final expansion, the varargs list represents the preference order (e.g. RNP > RNAV), if
-   *                        the listing is incomplete (doesnt cover all options) procedures with unlisted equipages will be ignored (not returned as
+   *                        the listing is incomplete (doesn't cover all options) procedures with unlisted equipages will be ignored (not returned as
    *                        candidates) and not be included in the final expansion
-   *                        <br>
-   *                        This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
-   *                        build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
+   * @return This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
+   * build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.
    */
   @Override
   public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway, @Nullable RequiredNavigationEquipage... equipage) {
