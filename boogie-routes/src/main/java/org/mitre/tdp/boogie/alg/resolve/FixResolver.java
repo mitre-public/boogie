@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
+import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
 
 final class FixResolver implements SingleSplitSectionResolver {
 
@@ -18,8 +19,9 @@ final class FixResolver implements SingleSplitSectionResolver {
   }
 
   @Override
-  public List<ResolvedElement> resolve(SectionSplit sectionSplit) {
-    String section = sectionSplit.value();
+  public List<ResolvedElement> resolve(RouteToken sectionSplit) {
+
+    String section = sectionSplit.infrastructureName();
 
     // check to see if the parsed section is a tailored waypoint reference
     // if so extract the course/distance suffix from the fix identifier
@@ -27,11 +29,25 @@ final class FixResolver implements SingleSplitSectionResolver {
         ? section.substring(0, section.length() - 6)
         : section;
 
+//    boolean isDirect = RouteTokenVisitor.isDirect(sectionSplit);
+//
+//    boolean isTailored = RouteTokenVisitor.isTailored(sectionSplit);
+
+
+    String wildcards = RouteTokenVisitor.wildcards(sectionSplit);
+
+    // supplier?
+//    if (isDirect) {
+//      new DirectToFixElement(fix);
+//    } else {
+//      new InitialFixElement(fix);
+//    }
+
     return lookupService
         .apply(s).stream()
         .map(fix -> section.equals(s)
-            ? new FixElement(fix, sectionSplit.wildcards())
-            : new TailoredElement(fix, section, sectionSplit.wildcards()))
+            ? new FixElement(fix, wildcards)
+            : new TailoredElement(fix, section, wildcards))
         .collect(Collectors.toList());
   }
 }

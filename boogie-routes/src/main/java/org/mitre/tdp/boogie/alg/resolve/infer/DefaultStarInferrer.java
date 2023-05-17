@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.resolve.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.StarElement;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 final class DefaultStarInferrer implements SectionInferrer {
 
@@ -49,13 +49,8 @@ final class DefaultStarInferrer implements SectionInferrer {
   }
 
   private ResolvedSection makeSection(Procedure star, ResolvedSection left, ResolvedSection right) {
-
-    SectionSplit split = SectionSplit.builder()
-        .setValue(star.procedureIdentifier())
-        .setIndex((left.sectionSplit().index() + right.sectionSplit().index()) / 2.)
-        .build();
-
-    return new ResolvedSection(split, List.of(new StarElement(new TransitionMaskedProcedure(star, COMMON_OR_ENROUTE))));
+    RouteToken token = RouteToken.between(star.procedureIdentifier(), left.sectionSplit(), right.sectionSplit());
+    return new ResolvedSection(token, List.of(new StarElement(new TransitionMaskedProcedure(star, COMMON_OR_ENROUTE))));
   }
 
 

@@ -23,6 +23,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.SidElement;
 import org.mitre.tdp.boogie.alg.resolve.StarElement;
 import org.mitre.tdp.boogie.alg.resolve.TailoredElement;
+import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
 
 /**
  * Functional class which is responsible for converting a {@link ResolvedLeg} to an {@link ExpandedRouteLeg} and adding the
@@ -38,9 +39,9 @@ final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteL
   @Override
   public ExpandedRouteLeg apply(ResolvedLeg resolvedLeg) {
     return new ExpandedRouteLeg(
-        resolvedLeg.split().value(),
+        resolvedLeg.split().infrastructureName(),
         fromResolvedElement(resolvedLeg.sourceElement()),
-        resolvedLeg.split().wildcards(),
+        RouteTokenVisitor.wildcards(resolvedLeg.split()),
         resolvedLeg.leg()
     );
   }

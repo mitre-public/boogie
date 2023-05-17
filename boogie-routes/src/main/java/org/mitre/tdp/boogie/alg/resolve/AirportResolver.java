@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
+import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
 
 final class AirportResolver implements SingleSplitSectionResolver {
 
@@ -18,11 +19,11 @@ final class AirportResolver implements SingleSplitSectionResolver {
   }
 
   @Override
-  public List<ResolvedElement> resolve(SectionSplit sectionSplit) {
+  public List<ResolvedElement> resolve(RouteToken sectionSplit) {
     return lookupService
-        .apply(sectionSplit.value())
+        .apply(sectionSplit.infrastructureName())
         .stream()
-        .map(airport -> new AirportElement(airport, sectionSplit.wildcards()))
+        .map(airport -> new AirportElement(airport, RouteTokenVisitor.wildcards(sectionSplit)))
         .collect(Collectors.toList());
   }
 }

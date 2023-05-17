@@ -149,7 +149,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
     return resolvedSections.stream()
         // drop sections without expanded legs (or with no source elements to expand)
         .filter(resolvedSection -> !resolvedSection.allLegs().isEmpty())
-        .min(Comparator.comparing(ResolvedSection::sectionSplit))
+        .min(Comparator.comparingDouble(s -> s.sectionSplit().index()))
         .map(ResolvedSection::allLegs)
         .orElseGet(Collections::emptyList)
         .stream().map(LinkedLegs::source)
@@ -166,7 +166,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
   LinkedHashSet<Leg> resolveExitPoints(List<ResolvedSection> resolvedSections) {
     return resolvedSections.stream()
         .filter(resolvedSection -> !resolvedSection.allLegs().isEmpty())
-        .max(Comparator.comparing(ResolvedSection::sectionSplit))
+        .max(Comparator.comparingDouble(s -> s.sectionSplit().index()))
         .map(ResolvedSection::allLegs)
         .orElseGet(Collections::emptyList)
         .stream().map(LinkedLegs::source)

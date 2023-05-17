@@ -25,6 +25,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
@@ -37,7 +38,7 @@ class TestRouteResolver {
   void testFullResolveRoute0() {
     SectionResolver resolver = resolverForRoute0();
 
-    List<ResolvedSection> sections = resolver.applyTo(SectionSplitter.faaIfrFormat().splits(route0));
+    List<ResolvedSection> sections = resolver.applyTo(RouteTokenizer.faaIfrFormat().tokenize(route0));
     assertEquals(7, sections.size());
 
     assertTrue(allMatch(sections, s -> s.elements().size() == 1));

@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 /**
@@ -18,7 +19,7 @@ public final class ResolvedLeg {
   /**
    * The {@link SectionSplit} from the route string used to generate this reference.
    */
-  private final SectionSplit sectionSplit;
+  private final RouteToken sectionSplit;
   /**
    * A pointer to the {@link ResolvedElement} which generated the given leg for the top level split.
    */
@@ -28,13 +29,13 @@ public final class ResolvedLeg {
    */
   private final Leg leg;
 
-  public ResolvedLeg(SectionSplit sectionSplit, ResolvedElement resolvedElement, Leg leg) {
+  public ResolvedLeg(RouteToken sectionSplit, ResolvedElement resolvedElement, Leg leg) {
     this.sectionSplit = requireNonNull(sectionSplit);
     this.resolvedElement = requireNonNull(resolvedElement);
     this.leg = requireNonNull(leg);
   }
 
-  public SectionSplit split() {
+  public RouteToken split() {
     return sectionSplit;
   }
 

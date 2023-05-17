@@ -11,6 +11,7 @@ import static org.mitre.tdp.boogie.MockObjects.transition;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
@@ -27,13 +28,14 @@ import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
-import org.mitre.tdp.boogie.alg.split.SectionSplitter;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
+import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 class TestGraphBasedRouteChooser {
 
-  private static final SectionSplitter sectionSplitter = SectionSplitter.faaIfrFormat();
+  private static final RouteTokenizer sectionSplitter = RouteTokenizer.faaIfrFormat();
 
   private static final GraphBasedRouteChooser routeChooser = new GraphBasedRouteChooser();
 
@@ -54,7 +56,7 @@ class TestGraphBasedRouteChooser {
 
   @Test
   void testShortestPath() {
-    List<ExpandedRouteLeg> legs = sectionSplitter.andThen(apfResolver()::applyTo).andThen(routeChooser::chooseRoute).apply("KIND.BLSTR1.VNY").legs();
+    List<ExpandedRouteLeg> legs = split().andThen(apfResolver()::applyTo).andThen(routeChooser::chooseRoute).apply("KIND.BLSTR1.VNY").legs();
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
 
@@ -81,8 +83,12 @@ class TestGraphBasedRouteChooser {
     );
   }
 
+  private Function<String, List<RouteToken>> split() {
+    return sectionSplitter::tokenize;
+  }
+
   private SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> toGraph(String route) {
-    List<ResolvedSection> resolvedSections = sectionSplitter.andThen(apfResolver()::applyTo).apply(route);
+    List<ResolvedSection> resolvedSections = split().andThen(apfResolver()::applyTo).apply(route);
     return routeChooser.constructRouteGraph(resolvedSections);
   }
 

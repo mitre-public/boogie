@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 class TestAirportResolver {
 
@@ -21,8 +21,8 @@ class TestAirportResolver {
     Airport airport = airport("JIMMY", 0.0, 0.0);
     AirportResolver resolver = new AirportResolver(LookupService.inMemory(singleton(airport), a -> Stream.of(a.airportIdentifier())));
 
-    SectionSplit sectionSplit = new SectionSplit.Builder().setValue("JIMMY").setWildcards("").build();
-    List<ResolvedElement> resolved = resolver.resolve(sectionSplit);
+    RouteToken token = RouteToken.standard("JIMMY", 0.);
+    List<ResolvedElement> resolved = resolver.resolve(token);
 
     assertAll(
         () -> assertEquals(1, resolved.size()),

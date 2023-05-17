@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.LookupService;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 
@@ -148,9 +149,9 @@ public interface SectionResolver {
    * Attempts to resolve a list of candidate {@link ResolvedElement}s from the given current {@link SectionSplit} as well as
    * the preceding and following section splits.
    */
-  ResolvedSection resolve(@Nullable SectionSplit previous, SectionSplit current, @Nullable SectionSplit next);
+  ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next);
 
-  default List<ResolvedSection> applyTo(List<SectionSplit> sectionSplits) {
+  default List<ResolvedSection> applyTo(List<RouteToken> sectionSplits) {
     return triplesWithNulls(sectionSplits, this::resolve).collect(Collectors.toList());
   }
 

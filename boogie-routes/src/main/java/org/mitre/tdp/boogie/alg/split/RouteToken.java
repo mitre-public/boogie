@@ -44,6 +44,14 @@ public interface RouteToken {
   }
 
   /**
+   * Create a new {@link RouteToken} with the given identifier between the provided left and right tokens. This method primarily
+   * supports the various {@link SectionInferrer} implementations.
+   */
+  static RouteToken between(String infrastructureName, RouteToken left, RouteToken right) {
+    return standard(infrastructureName, (left.index() + right.index()) / 2.);
+  }
+
+  /**
    * The name of the referenced infrastructure element extracted from the underlying route string.
    *
    * <p>This should a matchable identifier for the piece of navigation infrastructure referred to by this token in the route. In
@@ -149,6 +157,11 @@ public interface RouteToken {
       return delegate.index();
     }
 
+    @Override
+    public void accept(RouteTokenVisitor visitor) {
+      visitor.visit(this);
+    }
+
     public Builder toBuilder() {
       return new Builder(delegate).etaEet(etaEet).wildcards(wildcards);
     }
@@ -213,18 +226,69 @@ public interface RouteToken {
 
     private final Standard delegate;
 
+    private final String speedLevel;
+
+    private final String flightRules;
+
     private Icao(Builder builder) {
       this.delegate = requireNonNull(builder.delegate);
+      this.speedLevel = requireNonNull(builder.speedLevel);
+      this.flightRules = requireNonNull(builder.flightRules);
     }
 
     @Override
     public String infrastructureName() {
-      return null;
+      return delegate.infrastructureName();
     }
 
     @Override
     public double index() {
-      return 0;
+      return delegate.index();
+    }
+
+    public Optional<String> speedLevel() {
+      return ofNullable(speedLevel);
+    }
+
+    public Optional<String> flightRules() {
+      return ofNullable(flightRules);
+    }
+
+    @Override
+    public void accept(RouteTokenVisitor visitor) {
+      visitor.visit(this);
+    }
+
+    public Builder toBuilder() {
+      return new Builder(delegate).speedLevel(speedLevel).flightRules(flightRules);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Icao icao = (Icao) o;
+      return Objects.equals(delegate, icao.delegate)
+          && Objects.equals(speedLevel, icao.speedLevel)
+          && Objects.equals(flightRules, icao.flightRules);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(delegate, speedLevel, flightRules);
+    }
+
+    @Override
+    public String toString() {
+      return "Icao{" +
+          "delegate=" + delegate +
+          ", speedLevel='" + speedLevel + '\'' +
+          ", flightRules='" + flightRules + '\'' +
+          '}';
     }
 
     public static final class Builder {
@@ -239,7 +303,19 @@ public interface RouteToken {
         this.delegate = requireNonNull(delegate);
       }
 
-      public Builder
+      public Builder speedLevel(String speedLevel) {
+        this.speedLevel = speedLevel;
+        return this;
+      }
+
+      public Builder flightRules(String flightRules) {
+        this.flightRules = flightRules;
+        return this;
+      }
+
+      public Icao build() {
+        return new Icao(this);
+      }
     }
   }
 }

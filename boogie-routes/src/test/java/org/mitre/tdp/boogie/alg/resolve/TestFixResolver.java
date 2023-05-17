@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 class TestFixResolver {
 
@@ -25,7 +25,7 @@ class TestFixResolver {
     Fix fix = fix("JIMMY", 0.0, 0.0);
     FixResolver resolver = resolver(fix);
 
-    List<ResolvedElement> resolved = resolver.resolve(split("JIMMY"));
+    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("JIMMY", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
@@ -42,7 +42,7 @@ class TestFixResolver {
 
     FixResolver resolver = resolver(fix);
 
-    List<ResolvedElement> resolved = resolver.resolve(split("JIMMY111018"));
+    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("JIMMY111018", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
@@ -52,10 +52,6 @@ class TestFixResolver {
     ResolvedElement resolvedFix = resolved.get(0);
     LatLong generatedLocation = resolvedFix.toLinkedLegs().get(0).source().associatedFix().map(Fix::latLong).orElse(LatLong.of(0., 0.));
     assertNotEquals(LatLong.of(0., 0.), generatedLocation, "Generated location in the final LinkedLegs should reflect the offset from the tailoring.");
-  }
-
-  private SectionSplit split(String name) {
-    return new SectionSplit.Builder().setValue(name).setWildcards("").build();
   }
 
   private FixResolver resolver(Fix fix) {

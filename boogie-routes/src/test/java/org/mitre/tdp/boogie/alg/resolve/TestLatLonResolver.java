@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 class TestLatLonResolver {
 
@@ -17,7 +17,7 @@ class TestLatLonResolver {
   void testSingleLatLonResolution() {
     LatLonResolver resolver = new LatLonResolver();
 
-    List<ResolvedElement> resolved = resolver.resolve(split("5300N/14000W"));
+    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("5300N/14000W", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
@@ -30,9 +30,5 @@ class TestLatLonResolver {
         () -> assertEquals("5300N/14000W", resolvedFix.fixIdentifier()),
         () -> assertEquals(LatLong.of(53.0, -140.0), resolvedFix.latLong())
     );
-  }
-
-  private SectionSplit split(String name) {
-    return new SectionSplit.Builder().setValue(name).setWildcards("").build();
   }
 }

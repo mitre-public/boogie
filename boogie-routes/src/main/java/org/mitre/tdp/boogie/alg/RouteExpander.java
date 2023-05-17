@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.alg;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingDouble;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
@@ -25,7 +25,8 @@ import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
+import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.alg.split.SectionSplitter;
 import org.mitre.tdp.boogie.fn.QuadFunction;
 import org.mitre.tdp.boogie.fn.TriFunction;
@@ -40,7 +41,7 @@ public final class RouteExpander implements
 
   private static final Logger LOG = LoggerFactory.getLogger(RouteExpander.class);
 
-  private final SectionSplitter sectionSplitter;
+  private final RouteTokenizer sectionSplitter;
 
   private final LookupService<Procedure> procedureService;
 
@@ -155,7 +156,7 @@ public final class RouteExpander implements
     checkArgument(route != null && !route.isEmpty(), "Route cannot be null or empty.");
     LOG.info("Beginning expansion of route {} with context: [arrival runway {}, departure runway {}]", route, arrivalRunway, departureRunway);
 
-    List<SectionSplit> sectionSplits = sectionSplitter.splits(route);
+    List<RouteToken> sectionSplits = sectionSplitter.tokenize(route);
     LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
 
     HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(standardSectionResolver.applyTo(sectionSplits));
@@ -195,7 +196,7 @@ public final class RouteExpander implements
     } else {
 
       List<ResolvedSection> sortedByIndex = resolvedSections.stream()
-          .sorted(comparing(ResolvedSection::sectionSplit))
+          .sorted(comparingDouble(r -> r.sectionSplit().index()))
           .collect(toList());
 
       ExpandedRoute expandedRoute = routeChooser.chooseRoute(sortedByIndex);
@@ -215,7 +216,7 @@ public final class RouteExpander implements
 
   public static final class Builder {
 
-    private SectionSplitter sectionSplitter = SectionSplitter.faaIfrFormat();
+    private RouteTokenizer sectionSplitter = RouteTokenizer.faaIfrFormat();
 
     private LookupService<Procedure> proceduresByName = LookupService.noop();
 
@@ -235,7 +236,7 @@ public final class RouteExpander implements
      *
      * <p>Default: {@link SectionSplitter#faaIfrFormat()}
      */
-    public Builder sectionSplitter(SectionSplitter sectionSplitter) {
+    public Builder sectionSplitter(RouteTokenizer sectionSplitter) {
       this.sectionSplitter = requireNonNull(sectionSplitter);
       return this;
     }

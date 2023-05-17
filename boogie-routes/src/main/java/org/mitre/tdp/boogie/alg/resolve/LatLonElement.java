@@ -8,7 +8,8 @@ import java.util.List;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
+import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.util.CoordinateParser;
@@ -31,10 +32,10 @@ public final class LatLonElement implements ResolvedElement {
   /**
    * Generates a new LatLonElement from the given string location.
    */
-  public static LatLonElement from(SectionSplit sectionSplit) {
+  public static LatLonElement from(RouteToken sectionSplit) {
 
-    LatLong latLong = CoordinateParser.parse(CoordinateFormatStandard.makeLat(sectionSplit.value()).orElse(""),
-        CoordinateFormatStandard.makeLon(sectionSplit.value()).orElse(""));
+    LatLong latLong = CoordinateParser.parse(CoordinateFormatStandard.makeLat(sectionSplit.infrastructureName()).orElse(""),
+        CoordinateFormatStandard.makeLon(sectionSplit.infrastructureName()).orElse(""));
 
     double declinationApprox = Declinations.declination(
         latLong.latitude(),
@@ -44,14 +45,14 @@ public final class LatLonElement implements ResolvedElement {
     );
 
     BoogieFix fix = new BoogieFix.Builder()
-        .fixIdentifier(sectionSplit.value())
+        .fixIdentifier(sectionSplit.infrastructureName())
         .fixRegion("ANONYMOUS")
         .latitude(latLong.latitude())
         .longitude(latLong.longitude())
         .modeledVariation(declinationApprox)
         .build();
 
-    return new LatLonElement(fix, sectionSplit.wildcards());
+    return new LatLonElement(fix, RouteTokenVisitor.wildcards(sectionSplit));
   }
 
   private List<LinkedLegs> toLinkedLegsInternal() {

@@ -7,19 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 class TestLatLonElement {
 
   @Test
   void testLatLonElementIcaoD() {
-    SectionSplit split = SectionSplit.builder()
-        .setValue("53N140W")
-        .setWildcards("")
-        .build();
-    SectionSplit split1 = SectionSplit.builder()
-        .setValue("50N140W")
-        .setWildcards("/")
+
+    RouteToken split = RouteToken.standard("53N140W", 0.);
+
+    RouteToken split1 = RouteToken.faaIfrBuilder("50N140W", 0.)
+        .wildcards("/")
         .build();
 
     LatLonElement element = LatLonElement.from(split);
@@ -36,7 +34,7 @@ class TestLatLonElement {
         () -> assertEquals("53N140W", linked.target().associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator()),
-        () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator())
+        () -> assertEquals(PathTerminator.DF, linked.target().pathTerminator())
     );
 
     element = LatLonElement.from(split1);
@@ -50,13 +48,11 @@ class TestLatLonElement {
 
   @Test
   void testLatLonElementIcaoDM() {
-    SectionSplit split = SectionSplit.builder()
-        .setValue("5300N14000W")
-        .setWildcards("")
-        .build();
-    SectionSplit split1 = SectionSplit.builder()
-        .setValue("5300N14000W")
-        .setWildcards("/")
+
+    RouteToken split = RouteToken.standard("5300N14000W", 0.);
+
+    RouteToken split1 = RouteToken.faaIfrBuilder("5300N14000W", 0.)
+        .wildcards("/")
         .build();
 
     LatLonElement element = LatLonElement.from(split);
@@ -88,13 +84,11 @@ class TestLatLonElement {
 
   @Test
   void testLatLonElementFAA() {
-    SectionSplit split = SectionSplit.builder()
-        .setValue("5300N/14000W")
-        .setWildcards("")
-        .build();
-    SectionSplit split1 = SectionSplit.builder()
-        .setValue("5300N/14000W")
-        .setWildcards("/")
+
+    RouteToken split = RouteToken.standard("5300N/14000W", 0.);
+
+    RouteToken split1 = RouteToken.faaIfrBuilder("5300N/14000W", 0.)
+        .wildcards("/")
         .build();
 
     LatLonElement element = LatLonElement.from(split);

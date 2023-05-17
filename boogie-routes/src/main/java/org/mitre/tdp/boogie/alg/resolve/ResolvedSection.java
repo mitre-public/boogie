@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 /**
@@ -18,7 +19,7 @@ public final class ResolvedSection {
   /**
    * The split section with wildcards and etc associated with this collection of route elements.
    */
-  private final SectionSplit sectionSplit;
+  private final RouteToken sectionSplit;
   /**
    * List of resolved infrastructure elements.
    *
@@ -26,12 +27,12 @@ public final class ResolvedSection {
    */
   private final Collection<ResolvedElement> elements;
 
-  public ResolvedSection(SectionSplit split, Collection<ResolvedElement> resolvedElements) {
+  public ResolvedSection(RouteToken split, Collection<ResolvedElement> resolvedElements) {
     this.sectionSplit = requireNonNull(split);
     this.elements = resolvedElements;
   }
 
-  public SectionSplit sectionSplit() {
+  public RouteToken sectionSplit() {
     return sectionSplit;
   }
 

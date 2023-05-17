@@ -17,6 +17,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 
@@ -34,7 +35,7 @@ class TestSidStarResolver {
         inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
     );
 
-    ResolvedSection resolved = resolver.resolve(null, split("JIMMY"), null);
+    ResolvedSection resolved = resolver.resolve(null, RouteToken.standard("JIMMY", 0.), null);
 
     assertAll(
         () -> assertEquals(2, resolved.elements().size()),
@@ -61,7 +62,7 @@ class TestSidStarResolver {
         inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
     );
 
-    ResolvedSection resolved = resolver.resolve(split("KATL"), split("JIMMY"), null);
+    ResolvedSection resolved = resolver.resolve(RouteToken.standard("KATL", 0.), RouteToken.standard("JIMMY", 1.), null);
 
     assertAll(
         () -> assertEquals(1, resolved.elements().size()),
@@ -88,7 +89,7 @@ class TestSidStarResolver {
         inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
     );
 
-    ResolvedSection resolved = resolver.resolve(null, split("JIMMY"), split("KATL"));
+    ResolvedSection resolved = resolver.resolve(null, RouteToken.standard("JIMMY", 0.), RouteToken.standard("KATL", 1.));
 
     assertAll(
         () -> assertEquals(1, resolved.elements().size()),
@@ -101,9 +102,5 @@ class TestSidStarResolver {
         () -> assertEquals("JIMMY", resolvedProcedure.procedureIdentifier()),
         () -> assertEquals("KATL", resolvedProcedure.airportIdentifier())
     );
-  }
-
-  private SectionSplit split(String name) {
-    return new SectionSplit.Builder().setValue(name).build();
   }
 }

@@ -15,6 +15,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 import org.mitre.tdp.boogie.validate.RecordElectorFactory;
 
@@ -30,7 +31,7 @@ final class SidStarResolver implements SectionResolver {
   }
 
   @Override
-  public ResolvedSection resolve(@Nullable SectionSplit previous, SectionSplit sectionSplit, @Nullable SectionSplit next) {
+  public ResolvedSection resolve(@Nullable RouteToken previous, RouteToken sectionSplit, @Nullable RouteToken next) {
     return new ResolvedSection(sectionSplit, convertToResolvedElements(proceduresFor(previous, sectionSplit, next)));
   }
 
@@ -38,10 +39,10 @@ final class SidStarResolver implements SectionResolver {
    * Returns the collection of procedures matching the current section split + applying some filtering to preferentially select
    * procedures with the same source airports as the previous or next section split.
    * <br>
-   * See {@link #newAirportFilter(SectionSplit, SectionSplit)}.
+   * See {@link #newAirportFilter(RouteToken, RouteToken)}.
    */
-  Collection<Procedure> proceduresFor(@Nullable SectionSplit previous, SectionSplit sectionSplit, @Nullable SectionSplit next) {
-    Collection<Procedure> procedures = lookupService.apply(sectionSplit.value());
+  Collection<Procedure> proceduresFor(@Nullable RouteToken previous, RouteToken sectionSplit, @Nullable RouteToken next) {
+    Collection<Procedure> procedures = lookupService.apply(sectionSplit.infrastructureName());
 
     // Down-select to procedures matching the filed arr/dep airport (assuming we have them)
     Predicate<Procedure> airportFilter = newAirportFilter(previous, next);
@@ -81,15 +82,15 @@ final class SidStarResolver implements SectionResolver {
    * Note this requires some upstream standardization of route strings (as many real route strings interchangeable use the ICAO/FAA
    * code for the arrival/departure airport).
    */
-  Predicate<Procedure> newAirportFilter(@Nullable SectionSplit previous, @Nullable SectionSplit next) {
+  Predicate<Procedure> newAirportFilter(@Nullable RouteToken previous, @Nullable RouteToken next) {
     return procedure -> {
       if (ProcedureType.SID.equals(procedure.procedureType())) {
         return Optional.ofNullable(previous)
-            .filter(p -> p.value().equalsIgnoreCase(procedure.airportIdentifier())).isPresent();
+            .filter(p -> p.infrastructureName().equalsIgnoreCase(procedure.airportIdentifier())).isPresent();
       }
       if (ProcedureType.STAR.equals(procedure.procedureType())) {
         return Optional.ofNullable(next)
-            .filter(n -> n.value().equalsIgnoreCase(procedure.airportIdentifier())).isPresent();
+            .filter(n -> n.infrastructureName().equalsIgnoreCase(procedure.airportIdentifier())).isPresent();
       }
       return false;
     };

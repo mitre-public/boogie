@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.resolve.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.SidElement;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 final class DefaultSidInferrer implements SectionInferrer {
 
@@ -49,13 +49,8 @@ final class DefaultSidInferrer implements SectionInferrer {
   }
 
   private ResolvedSection makeSection(Procedure sid, ResolvedSection left, ResolvedSection right) {
-
-    SectionSplit split = SectionSplit.builder()
-        .setValue(sid.procedureIdentifier())
-        .setIndex((left.sectionSplit().index() + right.sectionSplit().index()) / 2.)
-        .build();
-
-    return new ResolvedSection(split, List.of(new SidElement(new TransitionMaskedProcedure(sid, COMMON_OR_ENROUTE))));
+    RouteToken token = RouteToken.between(sid.procedureIdentifier(), left.sectionSplit(), right.sectionSplit());
+    return new ResolvedSection(token, List.of(new SidElement(new TransitionMaskedProcedure(sid, COMMON_OR_ENROUTE))));
   }
 
 

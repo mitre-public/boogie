@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg.resolve;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.SectionSplit;
 
 /**
@@ -12,10 +13,10 @@ import org.mitre.tdp.boogie.alg.split.SectionSplit;
 @FunctionalInterface
 public interface SingleSplitSectionResolver extends SectionResolver {
 
-  List<ResolvedElement> resolve(SectionSplit sectionSplit);
+  List<ResolvedElement> resolve(RouteToken sectionSplit);
 
   @Override
-  default ResolvedSection resolve(@Nullable SectionSplit previous, SectionSplit current, @Nullable SectionSplit next) {
+  default ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next) {
     return new ResolvedSection(current, resolve(current));
   }
 }

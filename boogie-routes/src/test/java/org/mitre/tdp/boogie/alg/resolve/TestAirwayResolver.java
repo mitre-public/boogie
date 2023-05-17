@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 class TestAirwayResolver {
 
@@ -22,15 +22,11 @@ class TestAirwayResolver {
     Airway airway = airway("J121", emptyList());
     AirwayResolver resolver = new AirwayResolver(inMemory(singleton(airway), a -> Stream.of(a.airwayIdentifier())));
 
-    List<ResolvedElement> resolved = resolver.resolve(split("J121"));
+    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("J121", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
         () -> assertTrue(resolved.get(0) instanceof AirwayElement)
     );
-  }
-
-  private SectionSplit split(String name) {
-    return new SectionSplit.Builder().setValue(name).build();
   }
 }

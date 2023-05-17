@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -27,24 +26,12 @@ import org.mitre.tdp.boogie.alg.resolve.AirportElement;
 import org.mitre.tdp.boogie.alg.resolve.ApproachElement;
 import org.mitre.tdp.boogie.alg.resolve.IsApproachForRunway;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.split.SectionSplit;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
 final class ApproachInferrer implements SectionInferrer {
 
   private static final Predicate<Transition> NON_MISSED = t -> !TransitionType.MISSED.equals(t.transitionType());
-
-  private static final BiFunction<Procedure, SectionSplit, ResolvedSection> resolvedSectionOf = (approach, oldSplit) -> {
-
-    SectionSplit newSplit = new SectionSplit.Builder()
-        .setValue(approach.procedureIdentifier())
-        .setWildcards("")
-        .setEtaEet("")
-        .setIndex(oldSplit.index() - .5)
-        .build();
-
-    return new ResolvedSection(newSplit, singletonList(new ApproachElement(approach)));
-  };
 
   private static final TriFunction<Collection<Procedure>, String, String, Collection<Procedure>> approachesForRunway =
       (procedures, runwayNumber, parallelIndicator) -> procedures.stream().filter(p -> IsApproachForRunway.test(p.procedureIdentifier(), runwayNumber, parallelIndicator)).collect(toList());
@@ -66,11 +53,16 @@ final class ApproachInferrer implements SectionInferrer {
   public List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right) {
     return RunwayIdExtractor.runwayNumber(arrivalRunway)
         .flatMap(extractedNumber -> resolve(right, extractedNumber))
+        .map(approach -> makeResolvedSection(approach, left.sectionSplit(), right.sectionSplit()))
         .map(List::of).orElseGet(List::of);
   }
 
-  private Optional<ResolvedSection> resolve(ResolvedSection resolvedSection, String extractedNumber) {
-    SectionSplit oldSplit = resolvedSection.sectionSplit();
+  private ResolvedSection makeResolvedSection(Procedure approach, RouteToken left, RouteToken right) {
+    RouteToken token = RouteToken.between(approach.procedureIdentifier(), left, right);
+    return new ResolvedSection(token, singletonList(new ApproachElement(approach)));
+  }
+
+  private Optional<Procedure> resolve(ResolvedSection resolvedSection, String extractedNumber) {
     return resolvedSection.elements().stream()
         .filter(AirportElement.class::isInstance)
         .map(AirportElement.class::cast)
@@ -80,8 +72,7 @@ final class ApproachInferrer implements SectionInferrer {
         .flatMap(Collection::stream)
         // deterministic ordering for the procedures - by identifier alphabetically, if you are getting
         // the right requested equipage then we shouldn't care past this
-        .min(comparing(Procedure::procedureIdentifier))
-        .map(approach -> resolvedSectionOf.apply(approach, oldSplit));
+        .min(comparing(Procedure::procedureIdentifier));
   }
 
   static final class PreferredProcedures implements UnaryOperator<Collection<Procedure>> {
