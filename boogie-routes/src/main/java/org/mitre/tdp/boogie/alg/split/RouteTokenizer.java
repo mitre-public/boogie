@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.alg.split;
 
 import java.util.List;
 
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 
 /**
  * Responsible for splitting an input route string into a sequence of elements matchable to infrastructure elements based on ID
@@ -31,7 +31,7 @@ public interface RouteTokenizer {
 
   /**
    * Tokenize an input route of some (potentially undetermined format) and convert it to token identifiers which can be matched
-   * against infrastructure using various {@link SectionResolver} implementations.
+   * against infrastructure using various {@link RouteTokenResolver} implementations.
    *
    * @param route the stringified route-of-flight for an aircraft
    */

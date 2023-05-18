@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
 /**
  * Wrapper class for a section containing context flags from the filed route string itself (e.g. direct/suppressed) as well
  * as a collection of possible infrastructure elements that were determined to be associated with the section id via the
- * {@link SectionResolver}.
+ * {@link RouteTokenResolver}.
  */
 public final class ResolvedSection {
 

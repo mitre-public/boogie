@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
-final class AirwayResolver implements SingleSplitSectionResolver {
+final class AirwayResolver implements SingleTokenResolver {
 
   private final LookupService<Airway> lookupService;
 

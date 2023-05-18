@@ -35,7 +35,7 @@ class TestRouteResolver {
 
   @Test
   void testFullResolveRoute0() {
-    SectionResolver resolver = resolverForRoute0();
+    RouteTokenResolver resolver = resolverForRoute0();
 
     List<ResolvedSection> sections = resolver.applyTo(RouteTokenizer.faaIfrFormat().tokenize(route0));
     assertEquals(7, sections.size());
@@ -52,7 +52,7 @@ class TestRouteResolver {
         AirportElement.class)));
   }
 
-  private SectionResolver resolverForRoute0() {
+  private RouteTokenResolver resolverForRoute0() {
     Leg ifSherl = IF("SHERL", 0.0, 0.0);
     Leg ifBrigs = IF("BRIGS", 0.0, 0.0);
 
@@ -88,7 +88,7 @@ class TestRouteResolver {
         f -> Stream.of(f.fixIdentifier())
     ));
 
-    return SectionResolver.composite()
+    return RouteTokenResolver.composite()
         .addResolver(sidStarResolver)
         .addResolver(airportResolver)
         .addResolver(airwayResolver)

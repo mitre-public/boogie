@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
-final class LatLonResolver implements SingleSplitSectionResolver {
+final class LatLonResolver implements SingleTokenResolver {
 
   LatLonResolver() {
   }

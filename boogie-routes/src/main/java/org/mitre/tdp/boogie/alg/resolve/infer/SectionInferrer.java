@@ -11,11 +11,11 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.util.Streams;
 
 /**
- * A section "inferrer" considers pairs of {@link ResolvedSection}s which were resolved by {@link SectionResolver} implementations
+ * A section "inferrer" considers pairs of {@link ResolvedSection}s which were resolved by {@link RouteTokenResolver} implementations
  * from a provided route string and generates new "implied" sections between directly resolved ones.
  *
  * <p>Typically this is done to facility the generation/resolution of additional implied routing infrastructure beyond that which

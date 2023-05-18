@@ -13,14 +13,14 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.model.BoogieLeg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Due to the nature of the {@link SectionResolver} step in the expansion process we get DF->DF leg pairings often when expanding
+ * Due to the nature of the {@link RouteTokenResolver} step in the expansion process we get DF->DF leg pairings often when expanding
  * routes which look similar to the following:
  * <br>
  * Route String: KDCA..JMACK..HUNTN..TABLO..KORD

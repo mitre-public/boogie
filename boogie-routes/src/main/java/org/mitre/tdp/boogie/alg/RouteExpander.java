@@ -23,7 +23,7 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
@@ -46,7 +46,7 @@ public final class RouteExpander implements
 
   private final LookupService<Procedure> proceduresAtAirport;
 
-  private final SectionResolver standardSectionResolver;
+  private final RouteTokenResolver standardRouteTokenResolver;
 
   private final RouteChooser routeChooser;
 
@@ -54,7 +54,7 @@ public final class RouteExpander implements
     this.routeTokenizer = requireNonNull(builder.routeTokenizer);
     this.procedureService = requireNonNull(builder.proceduresByName);
     this.proceduresAtAirport = requireNonNull(builder.proceduresByAirport);
-    this.standardSectionResolver = requireNonNull(builder.sectionResolver);
+    this.standardRouteTokenResolver = requireNonNull(builder.routeTokenResolver);
     this.routeChooser = requireNonNull(builder.routeChooser);
   }
 
@@ -70,7 +70,7 @@ public final class RouteExpander implements
    * defaults for the functional components of the expander.
    *
    * <p>This is provided alongside the normal {@link #builder()} method for convenience when working with purely in-memory infra
-   * data. The generated {@link SectionResolver} can be configured with {@link Builder#sectionResolver(UnaryOperator)}.
+   * data. The generated {@link RouteTokenResolver} can be configured with {@link Builder#sectionResolver(UnaryOperator)}.
    *
    * @param uAirports   all user-defined airport implementation to use in the expansion
    * @param uProcedures all user-defined procedure implementations to use in the expansion
@@ -96,7 +96,7 @@ public final class RouteExpander implements
         .proceduresByName(proceduresByName)
         .proceduresByAirport(LookupService.inMemory(procedures, p -> Stream.of(p.airportIdentifier())))
         .sectionResolver(
-            SectionResolver.standard(
+            RouteTokenResolver.standard(
                 LookupService.inMemory(airports, a -> Stream.of(a.airportIdentifier())),
                 proceduresByName,
                 LookupService.inMemory(airways, a -> Stream.of(a.airwayIdentifier())),
@@ -158,7 +158,7 @@ public final class RouteExpander implements
     List<RouteToken> sectionSplits = routeTokenizer.tokenize(route);
     LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
 
-    HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(standardSectionResolver.applyTo(sectionSplits));
+    HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(standardRouteTokenResolver.applyTo(sectionSplits));
     LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
 
     RouteContext context = RouteContext.standard()
@@ -221,7 +221,7 @@ public final class RouteExpander implements
 
     private LookupService<Procedure> proceduresByAirport = LookupService.noop();
 
-    private SectionResolver sectionResolver;
+    private RouteTokenResolver routeTokenResolver;
 
     private RouteChooser routeChooser = RouteChooser.graphical();
 
@@ -277,10 +277,10 @@ public final class RouteExpander implements
      * <p>There is no default value for this field as a variety of infrastructure lookup services need to be provided to power the
      * section resolver.
      *
-     * <p>Typically, clients use {@link SectionResolver#standard(LookupService, LookupService, LookupService, LookupService)}.
+     * <p>Typically, clients use {@link RouteTokenResolver#standard(LookupService, LookupService, LookupService, LookupService)}.
      */
-    public Builder sectionResolver(SectionResolver sectionResolver) {
-      this.sectionResolver = requireNonNull(sectionResolver);
+    public Builder sectionResolver(RouteTokenResolver routeTokenResolver) {
+      this.routeTokenResolver = requireNonNull(routeTokenResolver);
       return this;
     }
 
@@ -290,11 +290,11 @@ public final class RouteExpander implements
      *
      * @param sectionResolverConfigurer transform operator to decorate/wrap an already-configured resolver in additional functionality
      */
-    public Builder sectionResolver(UnaryOperator<SectionResolver> sectionResolverConfigurer) {
-      requireNonNull(sectionResolver, "There should already be a SectionResolver configured we want to transform.");
+    public Builder sectionResolver(UnaryOperator<RouteTokenResolver> sectionResolverConfigurer) {
+      requireNonNull(routeTokenResolver, "There should already be a SectionResolver configured we want to transform.");
       requireNonNull(sectionResolverConfigurer, "The configuration function should be non-null.");
 
-      this.sectionResolver = sectionResolverConfigurer.apply(sectionResolver);
+      this.routeTokenResolver = sectionResolverConfigurer.apply(routeTokenResolver);
       return this;
     }
 

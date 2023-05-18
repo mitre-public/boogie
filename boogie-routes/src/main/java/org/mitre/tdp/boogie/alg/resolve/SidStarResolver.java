@@ -21,7 +21,7 @@ import org.mitre.tdp.boogie.validate.RecordElectorFactory;
 /**
  * Class for resolving candidate {@link SidElement}/{@link StarElement}s from a {@link RouteToken}.
  */
-final class SidStarResolver implements SectionResolver {
+final class SidStarResolver implements RouteTokenResolver {
 
   private final LookupService<Procedure> lookupService;
 

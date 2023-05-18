@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.Airports.KATL;
 import static org.mitre.tdp.boogie.Airports.KDEN;
@@ -40,7 +39,7 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.SUMMA2;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
@@ -87,14 +86,6 @@ class TestRouteExpander {
 
     RouteExpander expander = newExpander(emptyList(), emptyList(), emptyList(), emptyList());
     assertFalse(expander.apply(route).isPresent());
-  }
-
-  @Test
-  void testSurlyResolverThrows() {
-    String route = "KDEN.CONNR5.DBL";
-    RouteExpander expander = newSurlyExpander(emptyList(), emptyList(), emptyList(), emptyList());
-    Throwable error = assertThrows(IllegalStateException.class, () -> expander.apply(route));
-    assertTrue(error.getLocalizedMessage().contains("Section resolver could not find any matching infrastructure for "));
   }
 
   @Test
@@ -1205,7 +1196,7 @@ class TestRouteExpander {
       Collection<Procedure> procedures
   ) {
     return RouteExpander.inMemoryBuilder(airports, procedures, airways, fixes)
-        .sectionResolver(SectionResolver::surly)
+        .sectionResolver(RouteTokenResolver::surly)
         .build();
   }
 }

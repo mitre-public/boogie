@@ -27,7 +27,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.model.BoogieTransition;
@@ -92,7 +92,7 @@ class TestGraphBasedRouteChooser {
     return routeChooser.constructRouteGraph(resolvedSections);
   }
 
-  private static SectionResolver apfResolver() {
+  private static RouteTokenResolver apfResolver() {
     Airport kind = airport("KIND", 1.0, 0.0);
 
     Leg l1 = IF("BNDRR", 0.0, 0.0);
@@ -102,7 +102,7 @@ class TestGraphBasedRouteChooser {
 
     BoogieTransition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
 
-    return SectionResolver.standard(
+    return RouteTokenResolver.standard(
         LookupService.inMemory(singletonList(kind), a -> Stream.of(a.airportIdentifier())),
         LookupService.inMemory(ProcedureFactory.newProcedures(singletonList(t)), p -> Stream.of(p.procedureIdentifier())),
         LookupService.noop(),

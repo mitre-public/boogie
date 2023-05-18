@@ -25,20 +25,20 @@ import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import com.google.common.collect.ImmutableList;
 
 /**
- * A {@link SectionResolver} exists to resolve infrastructure elements which are considered to be associated with an input
+ * A {@link RouteTokenResolver} exists to resolve infrastructure elements which are considered to be associated with an input
  * {@link RouteToken} generated from a configured {@link RouteTokenizer}.
  *
- * <p>Resolvers allow for the context of neighboring splits to be used in the resolution of the current split - though the previous
- * and next section may be null (if at the start or end of a route string).
+ * <p>Resolvers allow for the context of neighboring tokens to be used in the resolution of the current token - though the previous
+ * and next token may be null (if at the start or end of a route string).
  *
- * <p>The {@link SingleSplitSectionResolver} is provided as a sub-interface for sections of route strings which don't require the
- * context of a neighboring section to be resolved appropriately.
+ * <p>The {@link SingleTokenResolver} is provided as a sub-interface for tokens which don't require the context of a neighboring
+ * tokens to be resolved appropriately.
  */
 @FunctionalInterface
-public interface SectionResolver {
+public interface RouteTokenResolver {
 
   /**
-   * Wrapped implementation of a section resolver which covers all the basic element types which can appear in a route string.
+   * Wrapped implementation of a token resolver which covers all the basic element types which can appear in a route string.
    *
    * <p>This pre-canned implementation will cover most use cases and requires access to a backing set of {@link LookupService}
    * implementations. This also serves as an example method for clients who wish to add their own custom resolvers.
@@ -48,7 +48,7 @@ public interface SectionResolver {
    * @param airwaysByName    lookup service for airways by their identifier, e.g. {@code J121} or {@code V76}
    * @param fixesByName      lookup service for fixes (navaids or waypoints) by their identifier, e.g. {@code JMACK} or {@code VNG}
    */
-  static SectionResolver standard(
+  static RouteTokenResolver standard(
       LookupService<Airport> airportsByName,
       LookupService<Procedure> proceduresByName,
       LookupService<Airway> airwaysByName,
@@ -64,83 +64,83 @@ public interface SectionResolver {
   }
 
   /**
-   * No-op implementations of a section resolver which returns an empty {@link ResolvedSection} when given any route token as
+   * No-op implementations of a token resolver which returns an empty {@link ResolvedSection} when given any route token as
    * an input.
    */
-  static SectionResolver noop() {
+  static RouteTokenResolver noop() {
     return (left, middle, right) -> new ResolvedSection(middle, List.of());
   }
 
   /**
-   * Decorates a given {@link SectionResolver} as a "surly" resolver. This changes the typical contract of the resolvers (which
+   * Decorates a given {@link RouteTokenResolver} as a "surly" resolver. This changes the typical contract of the resolvers (which
    * by default allow no elements to be resolved) to instead throw exceptions if no matching infrastructure is found.
    *
    * <p>This is desirable in scenarios where the client is expected to be able to take corrective action to supplement configured
    * infrastructure data backing the resolvers.
    *
-   * @param sectionResolver the resolver to decorate, generally this should be a composite resolver representing the results of
-   *                        multiple resolvers combined.
+   * @param routeTokenResolver the resolver to decorate, generally this should be a composite resolver representing the results of
+   *                           multiple resolvers combined.
    */
-  static SectionResolver surly(SectionResolver sectionResolver) {
-    return new SurlySectionResolver(sectionResolver);
+  static RouteTokenResolver surly(RouteTokenResolver routeTokenResolver) {
+    return new SurlyTokenResolver(routeTokenResolver);
   }
 
   /**
-   * A fluent, buildable, section resolver implementation allowing for multiple resolvers to be chained together to support the
+   * A fluent, buildable, token resolver implementation allowing for multiple resolvers to be chained together to support the
    * resolution of elements of a variety of different types.
    */
-  static SectionResolver.Composite composite() {
+  static RouteTokenResolver.Composite composite() {
     return new Composite();
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string tokens to concrete airports based on their identifier.
+   * Returns a new {@link RouteTokenResolver} resolving route string tokens to concrete airports based on their identifier.
    *
    * @param airportsByIdentifier lookup service providing airports indexed by their identifier (e.g. KATL, KLGA) as they would be
    *                             referenced in an input route string.
    */
-  static SectionResolver airport(LookupService<Airport> airportsByIdentifier) {
+  static RouteTokenResolver airport(LookupService<Airport> airportsByIdentifier) {
     return new AirportResolver(airportsByIdentifier);
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string tokens to concrete procedure SID/STAR procedure definitions,
+   * Returns a new {@link RouteTokenResolver} resolving route string tokens to concrete procedure SID/STAR procedure definitions,
    * note that this resolver will mask the
    *
    * @param proceduresByIdentifier lookup service providing procedures indexed by their identifier (e.g. CHPPR1, GNDLF2) as they
    *                               would be referenced in an input route string.
    */
-  static SectionResolver sidStar(LookupService<Procedure> proceduresByIdentifier) {
+  static RouteTokenResolver sidStar(LookupService<Procedure> proceduresByIdentifier) {
     return new SidStarResolver(proceduresByIdentifier);
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string tokens to concrete airways based on their identifier.
+   * Returns a new {@link RouteTokenResolver} resolving route string tokens to concrete airways based on their identifier.
    *
    * @param airwaysByIdentifier lookup service providing airways indexed by their identifier (e.g. J121, Y200) as they would be
    *                            referenced in an input route string.
    */
-  static SectionResolver airway(LookupService<Airway> airwaysByIdentifier) {
+  static RouteTokenResolver airway(LookupService<Airway> airwaysByIdentifier) {
     return new AirwayResolver(airwaysByIdentifier);
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving route string tokens to concrete fixes based on their identifier (contains
+   * Returns a new {@link RouteTokenResolver} resolving route string tokens to concrete fixes based on their identifier (contains
    * handling for fixes that show up tailored e.g. {@code NAV123034})
    *
    * @param fixesByIdentifier lookup service providing fixes indexed by their identifier (e.g. JMACK, VNB) as they would show up
    *                          in an input route string.
    */
-  static SectionResolver fix(LookupService<Fix> fixesByIdentifier) {
+  static RouteTokenResolver fix(LookupService<Fix> fixesByIdentifier) {
     return new FixResolver(fixesByIdentifier);
   }
 
   /**
-   * Returns a new {@link SectionResolver} resolving literal lat/long values encoded in the underlying route string.
+   * Returns a new {@link RouteTokenResolver} resolving literal lat/long values encoded in the underlying route string.
    *
    * <p>Supports both ICAO and FAA coordinate standards out-of-the-box.
    */
-  static SectionResolver latlong(Function<LatLong, Leg> toLeg) {
+  static RouteTokenResolver latlong(Function<LatLong, Leg> toLeg) {
     return new LatLonResolver();
   }
 
@@ -155,10 +155,10 @@ public interface SectionResolver {
   }
 
   /**
-   * Composes the given {@link SectionResolver} with the provided {@link SectionResolver} to produce a new resolver which returns
-   * the outputs of both calls to {@link SectionResolver#resolve(RouteToken, RouteToken, RouteToken)} as a single list.
+   * Composes the given {@link RouteTokenResolver} with the provided {@link RouteTokenResolver} to produce a new resolver which returns
+   * the outputs of both calls to {@link RouteTokenResolver#resolve(RouteToken, RouteToken, RouteToken)} as a single list.
    */
-  default SectionResolver and(SectionResolver that) {
+  default RouteTokenResolver and(RouteTokenResolver that) {
     checkNotNull(that, "Input resolver cannot be null.");
     return (p, c, n) -> {
       LinkedHashSet<ResolvedElement> allElements = new LinkedHashSet<>();
@@ -177,23 +177,23 @@ public interface SectionResolver {
 
   final class Composite {
 
-    private final ImmutableList.Builder<SectionResolver> resolvers = ImmutableList.builder();
+    private final ImmutableList.Builder<RouteTokenResolver> resolvers = ImmutableList.builder();
 
     private Composite() {
     }
 
-    public Composite addResolver(SectionResolver resolver) {
+    public Composite addResolver(RouteTokenResolver resolver) {
       this.resolvers.add(requireNonNull(resolver));
       return this;
     }
 
-    public Composite addResolvers(Collection<SectionResolver> resolvers) {
+    public Composite addResolvers(Collection<RouteTokenResolver> resolvers) {
       this.resolvers.addAll(resolvers);
       return this;
     }
 
-    SectionResolver build() {
-      return resolvers.build().stream().reduce(SectionResolver::and).orElseThrow(IllegalStateException::new);
+    RouteTokenResolver build() {
+      return resolvers.build().stream().reduce(RouteTokenResolver::and).orElseThrow(IllegalStateException::new);
     }
   }
 }

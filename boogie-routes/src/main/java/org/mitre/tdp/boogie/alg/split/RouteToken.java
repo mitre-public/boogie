@@ -6,12 +6,12 @@ import static java.util.Optional.ofNullable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.alg.resolve.SectionResolver;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 
 /**
  * Represents an indexed portion of a route string which has been extracted as a token (potentially with some standardization
- * applied) and converted to a value which can be handed off to {@link SectionResolver}s for resolution.
+ * applied) and converted to a value which can be handed off to {@link RouteTokenResolver}s for resolution.
  *
  * <p>These tokens need to be sequentially ordered so downstream consumers of them can traverse them in the order they appeared
  * in the original route string (if necessary).
@@ -58,7 +58,7 @@ public interface RouteToken {
    * <p>This should a matchable identifier for the piece of navigation infrastructure referred to by this token in the route. In
    * general this will be something like a procedure name but may also be a Lat/Lon literal or something else.
    *
-   * <p>It is this method which is used by {@link SectionResolver} implementations to resolve underlying infrastructure info. If
+   * <p>It is this method which is used by {@link RouteTokenResolver} implementations to resolve underlying infrastructure info. If
    * alternate token types need to be processed a new resolver implementation may need to be created and configured.
    */
   String infrastructureName();

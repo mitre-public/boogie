@@ -6,11 +6,11 @@ import javax.annotation.Nullable;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 /**
- * A {@link SingleSplitSectionResolver} is an extension of a {@link SectionResolver} which doesn't rely on context from the previous
+ * A {@link SingleTokenResolver} is an extension of a {@link RouteTokenResolver} which doesn't rely on context from the previous
  * or next sections of the route string to perform resolution.
  */
 @FunctionalInterface
-public interface SingleSplitSectionResolver extends SectionResolver {
+public interface SingleTokenResolver extends RouteTokenResolver {
 
   List<ResolvedElement> resolve(RouteToken sectionSplit);
 
