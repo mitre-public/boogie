@@ -22,7 +22,7 @@ import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.distanceBetween;
 import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.finalSidTransitions;
 import static org.mitre.tdp.boogie.alg.resolve.LinkingUtils.finalStarTransitions;
 
-final class SectionGluer implements BiFunction<List<LinkedLegs>, ResolvedElement, List<LinkedLegs>> {
+final class SectionGluer implements BiFunction<List<LinkedLegs>, ResolvedToken, List<LinkedLegs>> {
 
   private static final Predicate<String> fixTerminatingLegs = Pattern.compile("AF|CF|DF|RF|TF|IF|HF").asPredicate();
 
@@ -31,9 +31,9 @@ final class SectionGluer implements BiFunction<List<LinkedLegs>, ResolvedElement
   private static final Predicate<String> fixOriginatingLegs = Pattern.compile("FC|FD|HF|IF|PI|FA").asPredicate();
   
   @Override
-  public List<LinkedLegs> apply(List<LinkedLegs> linkedLegs, ResolvedElement resolvedElement) {
+  public List<LinkedLegs> apply(List<LinkedLegs> linkedLegs, ResolvedToken resolvedToken) {
     return linkedLegs.stream()
-        .map(leg -> glueLegBetweenStarAndApproach(leg, resolvedElement))
+        .map(leg -> glueLegBetweenStarAndApproach(leg, resolvedToken))
         .flatMap(List::stream)
         .sorted(Comparator.comparing(x -> x.source().sequenceNumber()))
         .collect(toList());
@@ -47,14 +47,14 @@ final class SectionGluer implements BiFunction<List<LinkedLegs>, ResolvedElement
    * the manual terminating leg of the procedure to a DF leg. If the distance is zero, this is an edge case where the manual terminating leg
    * needs to be dropped because it is overlapping with the fic originating leg and the closest leg in the procedure is used in the linking.
    */
-  private List<LinkedLegs> glueLegBetweenStarAndApproach(LinkedLegs leg, ResolvedElement resolvedElement) {
+  private List<LinkedLegs> glueLegBetweenStarAndApproach(LinkedLegs leg, ResolvedToken resolvedToken) {
     Preconditions.checkArgument(fixOriginatingLegs.test(leg.target().pathTerminator().toString()), "Approaches can't start with non-fix-originating legs:" + leg.target().pathTerminator() + "/" + leg.target().associatedFix().map(Fix::fixIdentifier));
 
     List<LinkedLegs> newLegs = new ArrayList<>();
     if (fixTerminatingLegs.test(leg.source().pathTerminator().toString()) && leg.linkWeight() > 1.0E-5) {
       newLegs.addAll(fixTerminatingStarWithNonZeroDistanceAdjustment(leg));
-    } else if (resolvedElement instanceof ProcedureElement && manualTerminatingLegs.test(leg.source().pathTerminator().toString())) {
-      ProcedureElement procedureElement = (ProcedureElement) resolvedElement;
+    } else if (resolvedToken instanceof ProcedureToken && manualTerminatingLegs.test(leg.source().pathTerminator().toString())) {
+      ProcedureToken procedureElement = (ProcedureToken) resolvedToken;
       newLegs.addAll(manualTerminatingProcedureAdjustment(leg, procedureElement.procedure(), leg.linkWeight() > 1.0E-5));
     }
 

@@ -27,7 +27,7 @@ import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteSummary;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.slf4j.Logger;
@@ -108,7 +108,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
 
   /**
    * Constructs a graphical representation of the resolved sections. This method uses the visitor pattern implemented on top of
-   * the {@link ResolvedElement}s to generate links between consecutive sections.
+   * the {@link ResolvedToken}s to generate links between consecutive sections.
    * <br>
    * The edges and their associated weights come from the returned {@link LinkedLegs}.
    */
@@ -177,8 +177,8 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    * Returns a newly initialized {@link LegEmbedding} with the appropriate leg->element and element->section lookups.
    */
   LegEmbedding newLegEmbedding(List<ResolvedSection> resolvedSections) {
-    LinkedHashMultimap<Leg, ResolvedElement> legToElement = LinkedHashMultimap.create();
-    LinkedHashMultimap<ResolvedElement, ResolvedSection> elementToSection = LinkedHashMultimap.create();
+    LinkedHashMultimap<Leg, ResolvedToken> legToElement = LinkedHashMultimap.create();
+    LinkedHashMultimap<ResolvedToken, ResolvedSection> elementToSection = LinkedHashMultimap.create();
 
     resolvedSections.forEach(resolvedSection -> resolvedSection.elements().forEach(resolvedElement -> {
       elementToSection.put(resolvedElement, resolvedSection);
@@ -200,12 +200,12 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    */
   private static final class LegEmbedding implements Function<Leg, ResolvedLeg> {
 
-    private final LinkedHashMultimap<Leg, ResolvedElement> legToElement;
-    private final LinkedHashMultimap<ResolvedElement, ResolvedSection> elementToSection;
+    private final LinkedHashMultimap<Leg, ResolvedToken> legToElement;
+    private final LinkedHashMultimap<ResolvedToken, ResolvedSection> elementToSection;
 
     LegEmbedding(
-        LinkedHashMultimap<Leg, ResolvedElement> legToElement,
-        LinkedHashMultimap<ResolvedElement, ResolvedSection> elementToSection
+        LinkedHashMultimap<Leg, ResolvedToken> legToElement,
+        LinkedHashMultimap<ResolvedToken, ResolvedSection> elementToSection
     ) {
       this.legToElement = legToElement;
       this.elementToSection = elementToSection;
@@ -213,14 +213,14 @@ public final class GraphBasedRouteChooser implements RouteChooser {
 
     @Override
     public ResolvedLeg apply(Leg leg) {
-      ResolvedElement resolvedElement = resolvedElementOf(leg);
-      ResolvedSection resolvedSection = resolvedSectionOf(resolvedElement);
+      ResolvedToken resolvedToken = resolvedElementOf(leg);
+      ResolvedSection resolvedSection = resolvedSectionOf(resolvedToken);
 
-      return new ResolvedLeg(resolvedSection.sectionSplit(), resolvedElement, leg);
+      return new ResolvedLeg(resolvedSection.sectionSplit(), resolvedToken, leg);
     }
 
-    private ResolvedElement resolvedElementOf(Leg leg) {
-      Collection<ResolvedElement> elements = legToElement.get(requireNonNull(leg));
+    private ResolvedToken resolvedElementOf(Leg leg) {
+      Collection<ResolvedToken> elements = legToElement.get(requireNonNull(leg));
 
       String resolvedElementTypes = elements.stream().map(resolvedElement -> resolvedElement.getClass().getTypeName()).collect(Collectors.joining(","));
       logIf(elements.size() > 1, LOG::debug, "Returned multiple source elements for leg: {}. ResolvedElement types were: {}.", leg, resolvedElementTypes);
@@ -232,16 +232,16 @@ public final class GraphBasedRouteChooser implements RouteChooser {
       return elements.stream().findFirst().get();
     }
 
-    private ResolvedSection resolvedSectionOf(ResolvedElement resolvedElement) {
-      Collection<ResolvedSection> sections = elementToSection.get(requireNonNull(resolvedElement));
+    private ResolvedSection resolvedSectionOf(ResolvedToken resolvedToken) {
+      Collection<ResolvedSection> sections = elementToSection.get(requireNonNull(resolvedToken));
 
       String resolvedSections = sections.stream().map(resolvedSection -> resolvedSection.sectionSplit().toString()).collect(Collectors.joining(","));
-      logIf(sections.size() > 1, LOG::warn, "Returned multiple source sections for element: {}. ResolvedSection splits were: {}.", resolvedElement, resolvedSections);
+      logIf(sections.size() > 1, LOG::warn, "Returned multiple source sections for element: {}. ResolvedSection splits were: {}.", resolvedToken, resolvedSections);
 
       return sections.stream().findFirst().orElseThrow(IllegalStateException::new);
     }
 
-    private ResolvedElement checkForManuallyAddedLeg(Leg leg) {
+    private ResolvedToken checkForManuallyAddedLeg(Leg leg) {
       Preconditions.checkArgument(leg.pathTerminator().equals(PathTerminator.DF), "All manually added legs are DF legs");
 
       Leg originalLeg = legToElement.keys().stream()

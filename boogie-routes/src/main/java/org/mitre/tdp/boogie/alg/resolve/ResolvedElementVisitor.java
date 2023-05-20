@@ -5,12 +5,12 @@ import java.util.List;
 import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
 
 /**
- * Visitor interface such that different {@link ResolvedElement}s can visit each-other to determine how they should be linked.
+ * Visitor interface such that different {@link ResolvedToken}s can visit each-other to determine how they should be linked.
  * <br>
  * The call hierarchy in visitors can get complex and the {@link LinkedLegs} need to be directional - so to call it out explicitly,
  * MY implementation of the visit method will only be called as the result of a call to a different ResolvedElement's:
  * <br>
- * {@link ResolvedElement#linksTo(ResolvedElementVisitor)}
+ * {@link ResolvedToken#linksTo(ResolvedElementVisitor)}
  * <br>
  * These methods are used in the {@link GraphBasedRouteChooser} - and the call there is:
  * <br>
@@ -21,23 +21,23 @@ import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
  */
 public interface ResolvedElementVisitor {
 
-  List<LinkedLegs> visit(AirportElement airportElement);
+  List<LinkedLegs> visit(AirportToken airportElement);
 
-  List<LinkedLegs> visit(AirwayElement airwayElement);
+  List<LinkedLegs> visit(AirwayToken airwayElement);
 
-  List<LinkedLegs> visit(FixElement fixElement);
+  List<LinkedLegs> visit(FixToken fixElement);
 
-  List<LinkedLegs> visit(SidElement sidElement);
+  List<LinkedLegs> visit(SidToken sidElement);
 
-  List<LinkedLegs> visit(StarElement starElement);
+  List<LinkedLegs> visit(StarToken starElement);
 
-  List<LinkedLegs> visit(ApproachElement approachElement);
+  List<LinkedLegs> visit(ApproachToken approachElement);
 
-  List<LinkedLegs> visit(TailoredElement tailoredElement);
+  List<LinkedLegs> visit(TailoredToken tailoredElement);
 
-  List<LinkedLegs> visit(LatLonElement latLonElement);
+  List<LinkedLegs> visit(LatLonToken latLonElement);
 
-  default List<LinkedLegs> visit(DirectToFixElement fixElement){
+  default List<LinkedLegs> visit(DirectToFixToken fixElement){
     return List.of();
   }
 

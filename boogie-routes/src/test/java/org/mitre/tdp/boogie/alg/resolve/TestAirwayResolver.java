@@ -22,11 +22,11 @@ class TestAirwayResolver {
     Airway airway = airway("J121", emptyList());
     AirwayResolver resolver = new AirwayResolver(inMemory(singleton(airway), a -> Stream.of(a.airwayIdentifier())));
 
-    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("J121", 0.));
+    List<ResolvedToken> resolved = resolver.resolve(RouteToken.standard("J121", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
-        () -> assertTrue(resolved.get(0) instanceof AirwayElement)
+        () -> assertTrue(resolved.get(0) instanceof AirwayToken)
     );
   }
 }

@@ -19,7 +19,7 @@ import org.mitre.tdp.boogie.Leg;
  * <br>
  * A static implementation is provided with a range that is generally sufficient.
  */
-final class PointsWithinRange implements BiFunction<ResolvedElement, ResolvedElement, List<LinkedLegs>> {
+final class PointsWithinRange implements BiFunction<ResolvedToken, ResolvedToken, List<LinkedLegs>> {
 
   static final PointsWithinRange INSTANCE = new PointsWithinRange(.25);
 
@@ -34,9 +34,9 @@ final class PointsWithinRange implements BiFunction<ResolvedElement, ResolvedEle
   }
 
   @Override
-  public List<LinkedLegs> apply(ResolvedElement resolvedElement1, ResolvedElement resolvedElement2) {
-    List<Leg> element1Legs = withLocation(resolvedElement1.toLinkedLegs());
-    List<Leg> element2Legs = withLocation(resolvedElement2.toLinkedLegs());
+  public List<LinkedLegs> apply(ResolvedToken resolvedToken1, ResolvedToken resolvedToken2) {
+    List<Leg> element1Legs = withLocation(resolvedToken1.toLinkedLegs());
+    List<Leg> element2Legs = withLocation(resolvedToken2.toLinkedLegs());
 
     return cartesianProduct(element1Legs, element2Legs).stream().sorted(comparing(LinkingUtils::distanceBetween))
         .map(this::createPair).filter(pair -> pair.linkWeight() < distanceThreshold).collect(toList());

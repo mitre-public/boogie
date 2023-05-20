@@ -43,13 +43,13 @@ class TestRouteResolver {
     assertTrue(allMatch(sections, s -> s.elements().size() == 1));
 
     assertTrue(matchesOrder(sections, Arrays.asList(
-        AirportElement.class,
-        SidElement.class,
-        FixElement.class,
-        AirwayElement.class,
-        FixElement.class,
-        StarElement.class,
-        AirportElement.class)));
+        AirportToken.class,
+        SidToken.class,
+        FixToken.class,
+        AirwayToken.class,
+        FixToken.class,
+        StarToken.class,
+        AirportToken.class)));
   }
 
   private RouteTokenResolver resolverForRoute0() {
@@ -101,7 +101,7 @@ class TestRouteResolver {
     return IntStream.range(0, sections.size())
         .filter(i -> {
           ResolvedSection section = sections.get(i);
-          ResolvedElement element = section.elements().iterator().next();
+          ResolvedToken element = section.elements().iterator().next();
           return elementClasses.get(i).isAssignableFrom(element.getClass());
         }).count() == sections.size();
   }

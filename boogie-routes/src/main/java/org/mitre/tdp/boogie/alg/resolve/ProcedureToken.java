@@ -14,28 +14,28 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
 
 /**
- * Abstract implementation of a {@link ResolvedElement} decorating a {@link Procedure} record. Many of the methods for procedures
+ * Abstract implementation of a {@link ResolvedToken} decorating a {@link Procedure} record. Many of the methods for procedures
  * are common across {@link ProcedureType}s and so we provide them defaulted here.
  * <br>
  * The three primary subclasses of this class:
  * <br>
- * 1. {@link ApproachElement}
- * 2. {@link SidElement}
- * 3. {@link StarElement}
+ * 1. {@link ApproachToken}
+ * 2. {@link SidToken}
+ * 3. {@link StarToken}
  * <br>
  * Are primarily concerned with overriding specific implementations of the visitor pattern - and within that most of the main
- * overrides are related to STARs/Approaches (the SID one lives in the {@link AirportElement}). The reasons for and the methods
+ * overrides are related to STARs/Approaches (the SID one lives in the {@link AirportToken}). The reasons for and the methods
  * used for each are documented on the concrete subclasses of this.
  * <br>
- * Note due to the nature of the visitor pattern {@link ResolvedElement#linksTo(ResolvedElementVisitor)} cannot be overridden in
+ * Note due to the nature of the visitor pattern {@link ResolvedToken#linksTo(ResolvedElementVisitor)} cannot be overridden in
  * this class even though the implementations look "identical".
  */
-abstract class ProcedureElement implements ResolvedElement {
+abstract class ProcedureToken implements ResolvedToken {
 
   protected final Procedure procedure;
   private final List<LinkedLegs> linkedLegs;
 
-  protected ProcedureElement(Procedure procedure) {
+  protected ProcedureToken(Procedure procedure) {
     this.procedure = requireNonNull(procedure);
     this.linkedLegs = toLinkedLegsInternal();
   }
@@ -72,22 +72,22 @@ abstract class ProcedureElement implements ResolvedElement {
   }
 
   @Override
-  public List<LinkedLegs> visit(AirwayElement airwayElement) {
+  public List<LinkedLegs> visit(AirwayToken airwayElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(airwayElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(FixElement fixElement) {
+  public List<LinkedLegs> visit(FixToken fixElement) {
     return ClosestPointBetween.INSTANCE.apply(fixElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(TailoredElement tailoredElement) {
+  public List<LinkedLegs> visit(TailoredToken tailoredElement) {
     return ClosestPointBetween.INSTANCE.apply(tailoredElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(LatLonElement latLonElement) {
+  public List<LinkedLegs> visit(LatLonToken latLonElement) {
     return ClosestPointBetween.INSTANCE.apply(latLonElement, this);
   }
 }

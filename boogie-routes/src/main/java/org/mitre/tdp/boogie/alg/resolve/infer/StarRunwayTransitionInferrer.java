@@ -13,11 +13,11 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.AirportToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.RunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.resolve.StarElement;
+import org.mitre.tdp.boogie.alg.resolve.StarToken;
 
 final class StarRunwayTransitionInferrer implements SectionInferrer {
 
@@ -33,14 +33,14 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
   @Override
   public List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right) {
 
-    Optional<StarElement> star = left.elements().stream()
-        .filter(e -> e instanceof StarElement)
-        .map(StarElement.class::cast)
+    Optional<StarToken> star = left.elements().stream()
+        .filter(e -> e instanceof StarToken)
+        .map(StarToken.class::cast)
         .findFirst();
 
-    Optional<AirportElement> airport = right.elements().stream()
-        .filter(e -> e instanceof AirportElement)
-        .map(AirportElement.class::cast)
+    Optional<AirportToken> airport = right.elements().stream()
+        .filter(e -> e instanceof AirportToken)
+        .map(AirportToken.class::cast)
         .findFirst();
 
     return star.isPresent() && airport.isPresent()
@@ -48,13 +48,13 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
         : List.of();
   }
 
-  private Collection<ResolvedElement> runwayTransitionElements(StarElement star, AirportElement airport) {
+  private Collection<ResolvedToken> runwayTransitionElements(StarToken star, AirportToken airport) {
 
     Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, star.identifier(), airport.identifier());
 
     return procedures.stream()
         .map(procedure -> new TransitionMaskedProcedure(procedure, nonArrivalRunwayTransitionFilter()))
-        .map(StarElement::new)
+        .map(StarToken::new)
         .collect(toList());
   }
 

@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airways;
-import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.model.BoogieLeg;
@@ -29,8 +27,8 @@ public class TestApproachElement {
    */
   @Test
   void testNonFixOriginatingApproach() {
-    StarElement star = fixTerminatingStar(0.5);
-    ApproachElement approach = nonFixOriginatingApproach(0.5);
+    StarToken star = fixTerminatingStar(0.5);
+    ApproachToken approach = nonFixOriginatingApproach(0.5);
 
     assertThrows(IllegalArgumentException.class, () -> approach.visit(star));
   }
@@ -41,8 +39,8 @@ public class TestApproachElement {
    */
   @Test
   void testFixTerminatingStarAndZeroDistanceInBetween() {
-    StarElement star = fixTerminatingStar(0.5);
-    ApproachElement approach = fixOriginatingApproach(0.5);
+    StarToken star = fixTerminatingStar(0.5);
+    ApproachToken approach = fixOriginatingApproach(0.5);
     List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
@@ -62,8 +60,8 @@ public class TestApproachElement {
    */
   @Test
   void testFixTerminatingStarAndNonZeroDistanceInBetween() {
-    StarElement star = fixTerminatingStar(0.5);
-    ApproachElement approach = fixOriginatingApproach(0.75);
+    StarToken star = fixTerminatingStar(0.5);
+    ApproachToken approach = fixOriginatingApproach(0.75);
     List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
@@ -89,8 +87,8 @@ public class TestApproachElement {
    */
   @Test
   void testManualTerminatingStarAndNonZeroDistanceInBetween() {
-    StarElement star = manualTerminatingStar(0.5);
-    ApproachElement approach = fixOriginatingApproach(0.75);
+    StarToken star = manualTerminatingStar(0.5);
+    ApproachToken approach = fixOriginatingApproach(0.75);
     List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
@@ -116,8 +114,8 @@ public class TestApproachElement {
    */
   @Test
   void testManualTerminatingStarAndZeroDistanceInBetween() {
-    StarElement star = manualTerminatingStar(0.5);
-    ApproachElement approach = fixOriginatingApproach(0.5);
+    StarToken star = manualTerminatingStar(0.5);
+    ApproachToken approach = fixOriginatingApproach(0.5);
     List<LinkedLegs> starApproachLinkedLegs = approach.visit(star);
 
     assertAll(
@@ -139,8 +137,8 @@ public class TestApproachElement {
    */
   @Test
   void testManualTerminatingSidWithOnlyOneFixAndZeroDistanceInBetween() {
-    SidElement sid = manualTerminatingSidWithOnlyOneFix(0.5);
-    ApproachElement approach = fixOriginatingApproach(0.5);
+    SidToken sid = manualTerminatingSidWithOnlyOneFix(0.5);
+    ApproachToken approach = fixOriginatingApproach(0.5);
     List<LinkedLegs> legs = approach.visit(sid);
 
     assertAll(
@@ -162,8 +160,8 @@ public class TestApproachElement {
    */
   @Test
   void testManualTerminatingSidWithOnlyOneFixAndNonZeroDistanceInBetween() {
-    SidElement sid = manualTerminatingSidWithOnlyOneFix(0.5);
-    ApproachElement approach = fixOriginatingApproach(0.75);
+    SidToken sid = manualTerminatingSidWithOnlyOneFix(0.5);
+    ApproachToken approach = fixOriginatingApproach(0.75);
     List<LinkedLegs> legs = approach.visit(sid);
 
     assertAll(
@@ -186,8 +184,8 @@ public class TestApproachElement {
    */
   @Test
   void testFixToApproachWithZeroDistance() {
-    FixElement fix = new FixElement(createFix("myFix", 0, 0), " ");
-    ApproachElement approach = fixOriginatingApproach(0);
+    FixToken fix = new FixToken(createFix("myFix", 0, 0), " ");
+    ApproachToken approach = fixOriginatingApproach(0);
     List<LinkedLegs> legs = approach.visit(fix);
 
     assertAll(
@@ -205,8 +203,8 @@ public class TestApproachElement {
    */
   @Test
   void testFixToApproachWithNonZeroDistance() {
-    FixElement fix = new FixElement(createFix("myFix", 0, 0), " ");
-    ApproachElement approach = fixOriginatingApproach(0.5);
+    FixToken fix = new FixToken(createFix("myFix", 0, 0), " ");
+    ApproachToken approach = fixOriginatingApproach(0.5);
     List<LinkedLegs> legs = approach.visit(fix);
 
     assertAll(
@@ -230,8 +228,8 @@ public class TestApproachElement {
    */
   @Test
   void testAirwayToApproachWithNonZeroDistance() {
-    AirwayElement airway = new AirwayElement(Airways.UM219());
-    ApproachElement approach = fixOriginatingApproach(0.5);
+    AirwayToken airway = new AirwayToken(Airways.UM219());
+    ApproachToken approach = fixOriginatingApproach(0.5);
     List<LinkedLegs> legs = approach.visit(airway);
 
     assertAll(
@@ -249,23 +247,23 @@ public class TestApproachElement {
     );
   }
 
-  private StarElement fixTerminatingStar(double endingLongitude) {
+  private StarToken fixTerminatingStar(double endingLongitude) {
     Leg l1_1 = createLeg("first star leg", 0.0, 0.0, PathTerminator.IF);
     Leg l1_2 = createLeg("fix terminating star leg", 0.0, endingLongitude, PathTerminator.TF);
     BoogieTransition ab = transition("fixTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
-    return new StarElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
+    return new StarToken(newProcedureGraph(newProcedure(Arrays.asList(ab))));
   }
 
-  private StarElement manualTerminatingStar(double endingLongitude) {
+  private StarToken manualTerminatingStar(double endingLongitude) {
     Leg l1_1 = createLeg("first star leg", 0.0, 0.0, PathTerminator.IF);
     Leg l1_2 = createLeg("manual terminating star leg", 0.0, endingLongitude, PathTerminator.FM);
     BoogieTransition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
-    return new StarElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
+    return new StarToken(newProcedureGraph(newProcedure(Arrays.asList(ab))));
   }
 
-  private SidElement manualTerminatingSidWithOnlyOneFix(double endingLongitude) {
+  private SidToken manualTerminatingSidWithOnlyOneFix(double endingLongitude) {
     Leg l1_1 = new BoogieLeg.Builder()
         .pathTerminator(PathTerminator.VA)
         .associatedFix(null)
@@ -273,23 +271,23 @@ public class TestApproachElement {
     Leg l1_2 = createLeg("manual terminating sid leg", 0.0, endingLongitude, PathTerminator.VM);
     BoogieTransition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
 
-    return new SidElement(newProcedureGraph(newProcedure(Arrays.asList(ab))));
+    return new SidToken(newProcedureGraph(newProcedure(Arrays.asList(ab))));
   }
 
-  private ApproachElement fixOriginatingApproach(double startingLongitude) {
+  private ApproachToken fixOriginatingApproach(double startingLongitude) {
     Leg l2_1 = createLeg("fix originating approach leg", 0.0, startingLongitude, PathTerminator.FD);
     Leg l2_2 = createLeg("next approach leg", 0.0, startingLongitude + 0.5, PathTerminator.TF);
     BoogieTransition bc = transition("fixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
 
-    return new ApproachElement(newProcedureGraph(newProcedure(Arrays.asList(bc))));
+    return new ApproachToken(newProcedureGraph(newProcedure(Arrays.asList(bc))));
   }
 
-  private ApproachElement nonFixOriginatingApproach(double startingLongitude) {
+  private ApproachToken nonFixOriginatingApproach(double startingLongitude) {
     Leg l2_1 = createLeg("non fix originating approach leg", 0.0, startingLongitude, PathTerminator.TF);
     Leg l2_2 = createLeg("next approach leg", 0.0, startingLongitude + 0.5, PathTerminator.TF);
     BoogieTransition bc = transition("nonFixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
 
-    return new ApproachElement(newProcedureGraph(newProcedure(Arrays.asList(bc))));
+    return new ApproachToken(newProcedureGraph(newProcedure(Arrays.asList(bc))));
   }
 
   private static BoogieLeg createLeg(String name, double lat, double lon, PathTerminator type) {

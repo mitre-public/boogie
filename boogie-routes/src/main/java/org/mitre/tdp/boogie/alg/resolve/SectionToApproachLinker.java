@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Leg;
 
-public class SectionToApproachLinker implements BiFunction<ResolvedElement, ApproachElement, List<LinkedLegs>> {
+public class SectionToApproachLinker implements BiFunction<ResolvedToken, ApproachToken, List<LinkedLegs>> {
 
   public static final SectionToApproachLinker INSTANCE = new SectionToApproachLinker();
 
@@ -22,8 +22,8 @@ public class SectionToApproachLinker implements BiFunction<ResolvedElement, Appr
   }
 
   @Override
-  public List<LinkedLegs> apply(ResolvedElement resolvedElement, ApproachElement approachElement) {
-    List<Leg> elementLegs = withLocation(resolvedElement.toLinkedLegs());
+  public List<LinkedLegs> apply(ResolvedToken resolvedToken, ApproachToken approachElement) {
+    List<Leg> elementLegs = withLocation(resolvedToken.toLinkedLegs());
     List<Leg> approachStartLegs = orElse(LinkingUtils.approachTransitions, LinkingUtils.finalApproach).apply(approachElement);
 
     return cartesianProduct(elementLegs, approachStartLegs).stream()

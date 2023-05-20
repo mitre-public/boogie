@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
  * <br>
  * Leverages {@link PointsWithinRange} to build the set of candidates to take the min of.
  */
-final class ClosestPointBetween implements BiFunction<ResolvedElement, ResolvedElement, List<LinkedLegs>> {
+final class ClosestPointBetween implements BiFunction<ResolvedToken, ResolvedToken, List<LinkedLegs>> {
 
   static final ClosestPointBetween INSTANCE = new ClosestPointBetween();
 
@@ -17,8 +17,8 @@ final class ClosestPointBetween implements BiFunction<ResolvedElement, ResolvedE
   }
 
   @Override
-  public List<LinkedLegs> apply(ResolvedElement resolvedElement1, ResolvedElement resolvedElement2) {
-    List<LinkedLegs> withinRange = pointsWithinRange.apply(resolvedElement1, resolvedElement2);
+  public List<LinkedLegs> apply(ResolvedToken resolvedToken1, ResolvedToken resolvedToken2) {
+    List<LinkedLegs> withinRange = pointsWithinRange.apply(resolvedToken1, resolvedToken2);
     return withinRange.stream().findFirst().map(Collections::singletonList).orElseGet(Collections::emptyList);
   }
 

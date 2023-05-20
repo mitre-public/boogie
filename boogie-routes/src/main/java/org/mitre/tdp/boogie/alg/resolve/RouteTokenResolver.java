@@ -145,7 +145,7 @@ public interface RouteTokenResolver {
   }
 
   /**
-   * Attempts to resolve a list of candidate {@link ResolvedElement}s from the given current {@link RouteToken} as well as
+   * Attempts to resolve a list of candidate {@link ResolvedToken}s from the given current {@link RouteToken} as well as
    * the preceding and following route tokens.
    */
   ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next);
@@ -161,7 +161,7 @@ public interface RouteTokenResolver {
   default RouteTokenResolver and(RouteTokenResolver that) {
     checkNotNull(that, "Input resolver cannot be null.");
     return (p, c, n) -> {
-      LinkedHashSet<ResolvedElement> allElements = new LinkedHashSet<>();
+      LinkedHashSet<ResolvedToken> allElements = new LinkedHashSet<>();
 
       ResolvedSection thisSection = this.resolve(p, c, n);
       ResolvedSection thatSection = that.resolve(p, c, n);

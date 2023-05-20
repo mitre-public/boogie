@@ -8,7 +8,7 @@ import java.util.List;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
-public final class AirportElement implements ResolvedElement {
+public final class AirportToken implements ResolvedToken {
 
   private final Airport airport;
   /**
@@ -18,7 +18,7 @@ public final class AirportElement implements ResolvedElement {
 
   private final List<LinkedLegs> linkedLegs;
 
-  AirportElement(Airport airport, String wildcards) {
+  AirportToken(Airport airport, String wildcards) {
     this.airport = requireNonNull(airport);
     this.wildcards = requireNonNull(wildcards);
     this.linkedLegs = this.toLinkedLegsInternal();
@@ -58,17 +58,17 @@ public final class AirportElement implements ResolvedElement {
   }
 
   @Override
-  public List<LinkedLegs> visit(AirportElement airportElement) {
+  public List<LinkedLegs> visit(AirportToken airportElement) {
     return ClosestPointBetween.INSTANCE.apply(airportElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(AirwayElement airwayElement) {
+  public List<LinkedLegs> visit(AirwayToken airwayElement) {
     return ClosestPointBetween.INSTANCE.apply(airwayElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(FixElement fixElement) {
+  public List<LinkedLegs> visit(FixToken fixElement) {
     return ClosestPointBetween.INSTANCE.apply(fixElement, this);
   }
 
@@ -77,7 +77,7 @@ public final class AirportElement implements ResolvedElement {
    * best we can do is assume the flight departs from the nearest SID fix to their destination.
    */
   @Override
-  public List<LinkedLegs> visit(SidElement sidElement) {
+  public List<LinkedLegs> visit(SidToken sidElement) {
     return ClosestPointBetween.INSTANCE.apply(sidElement, this);
   }
 
@@ -85,7 +85,7 @@ public final class AirportElement implements ResolvedElement {
    * See the implementation in the dedicated {@link StarToAirportLinker}.
    */
   @Override
-  public List<LinkedLegs> visit(StarElement starElement) {
+  public List<LinkedLegs> visit(StarToken starElement) {
     return StarToAirportLinker.INSTANCE.apply(starElement, this);
   }
 
@@ -94,17 +94,17 @@ public final class AirportElement implements ResolvedElement {
    * approach (typically a runway end).
    */
   @Override
-  public List<LinkedLegs> visit(ApproachElement approachElement) {
+  public List<LinkedLegs> visit(ApproachToken approachElement) {
     return ClosestPointBetween.INSTANCE.apply(approachElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(TailoredElement tailoredElement) {
+  public List<LinkedLegs> visit(TailoredToken tailoredElement) {
     return ClosestPointBetween.INSTANCE.apply(tailoredElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(LatLonElement latLonElement) {
+  public List<LinkedLegs> visit(LatLonToken latLonElement) {
     return ClosestPointBetween.INSTANCE.apply(latLonElement, this);
   }
 

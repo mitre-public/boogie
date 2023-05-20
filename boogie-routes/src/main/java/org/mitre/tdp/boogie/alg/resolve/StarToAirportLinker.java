@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * Additional complexity comes in when we realize beyond that some procedures also have <i>no</i> runway transitions but the
  * common portion of the STAR comes down similar a runway in the above picture (typically these are unidirectional STARs).
  */
-final class StarToAirportLinker implements BiFunction<StarElement, AirportElement, List<LinkedLegs>> {
+final class StarToAirportLinker implements BiFunction<StarToken, AirportToken, List<LinkedLegs>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(StarToAirportLinker.class);
 
@@ -46,7 +46,7 @@ final class StarToAirportLinker implements BiFunction<StarElement, AirportElemen
   }
 
   @Override
-  public List<LinkedLegs> apply(StarElement starElement, AirportElement airportElement) {
+  public List<LinkedLegs> apply(StarToken starElement, AirportToken airportElement) {
 
     if (starElement.toLinkedLegs().isEmpty()) {
       return Collections.emptyList();

@@ -19,11 +19,11 @@ final class AirportResolver implements SingleTokenResolver {
   }
 
   @Override
-  public List<ResolvedElement> resolve(RouteToken sectionSplit) {
+  public List<ResolvedToken> resolve(RouteToken sectionSplit) {
     return lookupService
         .apply(sectionSplit.infrastructureName())
         .stream()
-        .map(airport -> new AirportElement(airport, RouteTokenVisitor.wildcards(sectionSplit)))
+        .map(airport -> new AirportToken(airport, RouteTokenVisitor.wildcards(sectionSplit)))
         .collect(Collectors.toList());
   }
 }

@@ -8,9 +8,9 @@ import java.util.List;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 
-public final class StarElement extends ProcedureElement {
+public final class StarToken extends ProcedureToken {
 
-  public StarElement(Procedure procedure) {
+  public StarToken(Procedure procedure) {
     super(procedure);
     checkArgument(ProcedureType.STAR.equals(procedure.procedureType()), "Provided procedure must be of type STAR.");
   }
@@ -31,22 +31,22 @@ public final class StarElement extends ProcedureElement {
   }
 
   @Override
-  public List<LinkedLegs> visit(AirportElement airportElement) {
+  public List<LinkedLegs> visit(AirportToken airportElement) {
     return ClosestPointBetween.INSTANCE.apply(airportElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(SidElement sidElement) {
+  public List<LinkedLegs> visit(SidToken sidElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(sidElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(StarElement starElement) {
+  public List<LinkedLegs> visit(StarToken starElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(starElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(ApproachElement approachElement) {
+  public List<LinkedLegs> visit(ApproachToken approachElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(approachElement, this);
   }
 }

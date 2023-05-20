@@ -15,7 +15,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SidToApproachLinker implements BiFunction<SidElement, ApproachElement, List<LinkedLegs>> {
+public class SidToApproachLinker implements BiFunction<SidToken, ApproachToken, List<LinkedLegs>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(SidToApproachLinker.class);
 
@@ -26,7 +26,7 @@ public class SidToApproachLinker implements BiFunction<SidElement, ApproachEleme
   }
 
   @Override
-  public List<LinkedLegs> apply(SidElement sidElement, ApproachElement approachElement) {
+  public List<LinkedLegs> apply(SidToken sidElement, ApproachToken approachElement) {
     if (sidElement.toLinkedLegs().isEmpty() || approachElement.toLinkedLegs().isEmpty()) {
       return Collections.emptyList();
     }

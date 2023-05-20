@@ -2,23 +2,23 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 public interface ResolvedTokenVisitor {
 
-  void visit(AirportElement airportElement);
+  void visit(AirportToken airportElement);
 
-  void visit(AirwayElement airwayElement);
+  void visit(AirwayToken airwayElement);
 
-  void visit(FixElement fixElement);
+  void visit(FixToken fixElement);
 
-  void visit(SidElement sidElement);
+  void visit(SidToken sidElement);
 
-  void visit(StarElement starElement);
+  void visit(StarToken starElement);
 
-  void visit(ApproachElement approachElement);
+  void visit(ApproachToken approachElement);
 
-  void visit(TailoredElement tailoredElement);
+  void visit(TailoredToken tailoredElement);
 
-  void visit(LatLonElement latLonElement);
+  void visit(LatLonToken latLonElement);
 
-  void visit(DirectToFixElement fixElement);
+  void visit(DirectToFixToken fixElement);
 
   void visit(InitialFixElement fixElement);
 }

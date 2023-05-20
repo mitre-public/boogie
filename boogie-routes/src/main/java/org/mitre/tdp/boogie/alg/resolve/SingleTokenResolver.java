@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
 @FunctionalInterface
 public interface SingleTokenResolver extends RouteTokenResolver {
 
-  List<ResolvedElement> resolve(RouteToken sectionSplit);
+  List<ResolvedToken> resolve(RouteToken sectionSplit);
 
   @Override
   default ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next) {

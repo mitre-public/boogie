@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 
@@ -25,7 +25,7 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
    */
   private final String section;
   /**
-   * A higher-level semantic tag for the type of {@link ResolvedElement} that the given expanded leg came from.
+   * A higher-level semantic tag for the type of {@link ResolvedToken} that the given expanded leg came from.
    */
   private final ElementType elementType;
   /**

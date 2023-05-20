@@ -14,11 +14,11 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.AirportToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.resolve.RunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.resolve.SidElement;
+import org.mitre.tdp.boogie.alg.resolve.SidToken;
 
 final class SidRunwayTransitionInferrer implements SectionInferrer {
 
@@ -34,14 +34,14 @@ final class SidRunwayTransitionInferrer implements SectionInferrer {
   @Override
   public List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right) {
 
-    Optional<AirportElement> airport = left.elements().stream()
-        .filter(e -> e instanceof AirportElement)
-        .map(AirportElement.class::cast)
+    Optional<AirportToken> airport = left.elements().stream()
+        .filter(e -> e instanceof AirportToken)
+        .map(AirportToken.class::cast)
         .findFirst();
 
-    Optional<SidElement> sid = right.elements().stream()
-        .filter(e -> e instanceof SidElement)
-        .map(SidElement.class::cast)
+    Optional<SidToken> sid = right.elements().stream()
+        .filter(e -> e instanceof SidToken)
+        .map(SidToken.class::cast)
         .findFirst();
 
     return airport.isPresent() && sid.isPresent()
@@ -49,13 +49,13 @@ final class SidRunwayTransitionInferrer implements SectionInferrer {
         : List.of();
   }
 
-  private Collection<ResolvedElement> runwayTransitionElements(AirportElement airport, SidElement sid) {
+  private Collection<ResolvedToken> runwayTransitionElements(AirportToken airport, SidToken sid) {
 
     Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, sid.identifier(), airport.identifier());
 
     return procedures.stream()
         .map(procedure -> new TransitionMaskedProcedure(procedure, nonDepartureRunwayTransitionFilter()))
-        .map(SidElement::new)
+        .map(SidToken::new)
         .collect(toList());
   }
 

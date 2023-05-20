@@ -22,7 +22,7 @@ class TestFixElement {
     when(fix.latLong()).thenReturn(fixLocation);
     when(fix.fixIdentifier()).thenReturn(fixId);
 
-    FixElement element = new FixElement(fix, "");
+    FixToken element = new FixToken(fix, "");
 
     assertEquals(element.toLinkedLegs().size(), 1);
 
@@ -39,7 +39,7 @@ class TestFixElement {
         () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator())
     );
 
-    element = new FixElement(fix, "/");
+    element = new FixToken(fix, "/");
     LinkedLegs linked2 = element.toLinkedLegs().iterator().next();
 
     assertAll(

@@ -15,7 +15,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.model.BoogieTransition;
@@ -34,8 +32,8 @@ class TestSidStarElements {
 
   @Test
   void testProcedureElementFilteredReturnsNoLegsIfNoTransitionsPass() {
-    SidElement sid = new SidElement(new TransitionMaskedProcedure(singleTransitionProcedureGraph(ProcedureType.SID), transition -> false));
-    StarElement star = new StarElement(new TransitionMaskedProcedure(singleTransitionProcedureGraph(ProcedureType.STAR), transition -> false));
+    SidToken sid = new SidToken(new TransitionMaskedProcedure(singleTransitionProcedureGraph(ProcedureType.SID), transition -> false));
+    StarToken star = new StarToken(new TransitionMaskedProcedure(singleTransitionProcedureGraph(ProcedureType.STAR), transition -> false));
 
     assertAll(
         () -> assertEquals(emptyList(), sid.toLinkedLegs()),
@@ -47,7 +45,7 @@ class TestSidStarElements {
   void testStarElementSingleTransitionLegIdentifiersAndWeights() {
     ProcedureGraph pg = singleTransitionProcedureGraph(ProcedureType.STAR);
 
-    ProcedureElement element = new StarElement(pg);
+    ProcedureToken element = new StarToken(pg);
     assertEquals(2, element.toLinkedLegs().size());
 
     List<LinkedLegs> linked = element.toLinkedLegs();
@@ -68,7 +66,7 @@ class TestSidStarElements {
   void testSidElementSingleTransitionLegIdentifiersAndWeights() {
     ProcedureGraph pg = singleTransitionProcedureGraph(ProcedureType.SID);
 
-    ProcedureElement element = new SidElement(pg);
+    ProcedureToken element = new SidToken(pg);
     assertEquals(2, element.toLinkedLegs().size());
 
     List<LinkedLegs> linked = element.toLinkedLegs();
@@ -89,7 +87,7 @@ class TestSidStarElements {
   void testProcedureElementSubsequentLegLinkReferences() {
     ProcedureGraph pg = singleTransitionProcedureGraph(ProcedureType.STAR);
 
-    ProcedureElement element = new StarElement(pg);
+    ProcedureToken element = new StarToken(pg);
 
     List<LinkedLegs> linked = element.toLinkedLegs();
 
@@ -104,7 +102,7 @@ class TestSidStarElements {
   void testProcedureElementMultiTransition() {
     ProcedureGraph pg = nominalGraph();
 
-    ProcedureElement element = new StarElement(pg);
+    ProcedureToken element = new StarToken(pg);
 
     List<LinkedLegs> linked = element.toLinkedLegs();
 

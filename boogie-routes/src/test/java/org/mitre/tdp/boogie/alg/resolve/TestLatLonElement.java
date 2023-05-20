@@ -20,7 +20,7 @@ class TestLatLonElement {
         .wildcards("/")
         .build();
 
-    LatLonElement element = LatLonElement.from(split);
+    LatLonToken element = LatLonToken.from(split);
 
     assertEquals(element.toLinkedLegs().size(), 1);
 
@@ -37,7 +37,7 @@ class TestLatLonElement {
         () -> assertEquals(PathTerminator.DF, linked.target().pathTerminator())
     );
 
-    element = LatLonElement.from(split1);
+    element = LatLonToken.from(split1);
     LinkedLegs linked2 = element.toLinkedLegs().iterator().next();
 
     assertAll(
@@ -55,7 +55,7 @@ class TestLatLonElement {
         .wildcards("/")
         .build();
 
-    LatLonElement element = LatLonElement.from(split);
+    LatLonToken element = LatLonToken.from(split);
 
     assertEquals(element.toLinkedLegs().size(), 1);
 
@@ -72,7 +72,7 @@ class TestLatLonElement {
         () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator())
     );
 
-    element = LatLonElement.from(split1);
+    element = LatLonToken.from(split1);
     LinkedLegs linked2 = element.toLinkedLegs().iterator().next();
 
     assertAll(
@@ -91,7 +91,7 @@ class TestLatLonElement {
         .wildcards("/")
         .build();
 
-    LatLonElement element = LatLonElement.from(split);
+    LatLonToken element = LatLonToken.from(split);
 
     assertEquals(element.toLinkedLegs().size(), 1);
 
@@ -108,7 +108,7 @@ class TestLatLonElement {
         () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator())
     );
 
-    element = LatLonElement.from(split1);
+    element = LatLonToken.from(split1);
     LinkedLegs linked2 = element.toLinkedLegs().iterator().next();
 
     assertAll(

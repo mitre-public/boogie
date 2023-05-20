@@ -4,14 +4,14 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 
-import org.mitre.tdp.boogie.alg.resolve.AirwayElement;
+import org.mitre.tdp.boogie.alg.resolve.AirwayToken;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
-final class GraphableAirway implements GraphableToken {
+final class Airway implements GraphableToken {
 
-  private final AirwayElement airway;
+  private final AirwayToken airway;
 
-  GraphableAirway(AirwayElement airway) {
+  Airway(AirwayToken airway) {
     this.airway = requireNonNull(airway);
   }
 
@@ -26,12 +26,12 @@ final class GraphableAirway implements GraphableToken {
   }
 
   @Override
-  public Linker visit(GraphableDirectToAirport airport) {
+  public Linker visit(DirectToAirport airport) {
     return null;
   }
 
   @Override
-  public Linker visit(GraphableAirway airway) {
+  public Linker visit(org.mitre.tdp.boogie.alg.chooser.graph.Airway airway) {
     return null;
   }
 }

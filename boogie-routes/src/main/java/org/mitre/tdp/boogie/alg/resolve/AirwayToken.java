@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.util.Streams;
 
-public final class AirwayElement implements ResolvedElement {
+public final class AirwayToken implements ResolvedToken {
 
   private static final double PUNISHMENT = .001;
 
@@ -19,7 +19,7 @@ public final class AirwayElement implements ResolvedElement {
 
   private final List<LinkedLegs> linkedLegs;
 
-  AirwayElement(Airway airway) {
+  AirwayToken(Airway airway) {
     this.airway = requireNonNull(airway);
     this.linkedLegs = toLinkedLegsInternal();
   }
@@ -56,47 +56,47 @@ public final class AirwayElement implements ResolvedElement {
   }
 
   @Override
-  public List<LinkedLegs> visit(AirportElement airportElement) {
+  public List<LinkedLegs> visit(AirportToken airportElement) {
     return ClosestPointBetween.INSTANCE.apply(airportElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(AirwayElement airwayElement) {
+  public List<LinkedLegs> visit(AirwayToken airwayElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(airwayElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(FixElement fixElement) {
+  public List<LinkedLegs> visit(FixToken fixElement) {
     return ClosestPointBetween.INSTANCE.apply(fixElement, this);
   }
 
 
   @Override
-  public List<LinkedLegs> visit(SidElement sidElement) {
+  public List<LinkedLegs> visit(SidToken sidElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE).apply(sidElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(StarElement starElement) {
+  public List<LinkedLegs> visit(StarToken starElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE)
         .andThen(new UnlikelyCombinationPenalizer(PUNISHMENT))
         .apply(starElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(ApproachElement approachElement) {
+  public List<LinkedLegs> visit(ApproachToken approachElement) {
     return orElse(PointsWithinRange.INSTANCE, ClosestPointBetween.INSTANCE)
         .andThen(new UnlikelyCombinationPenalizer(PUNISHMENT))
         .apply(approachElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(TailoredElement tailoredElement) {
+  public List<LinkedLegs> visit(TailoredToken tailoredElement) {
     return ClosestPointBetween.INSTANCE.apply(tailoredElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(LatLonElement latLonElement) {
+  public List<LinkedLegs> visit(LatLonToken latLonElement) {
     return ClosestPointBetween.INSTANCE.apply(latLonElement, this);
   }
 }

@@ -10,15 +10,13 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
 class TestAirportElement {
 
   @Test
   void testAirportElement() {
     Airport airport = testAirport();
-    AirportElement element = new AirportElement(airport, "");
+    AirportToken element = new AirportToken(airport, "");
 
     LinkedLegs linked = element.toLinkedLegs().get(0);
 
@@ -38,7 +36,7 @@ class TestAirportElement {
   @Test
   void testAirportElementFiledDirect() {
     Airport airport = testAirport();
-    AirportElement element = new AirportElement( airport, " ");
+    AirportToken element = new AirportToken( airport, " ");
 
     LinkedLegs linked = element.toLinkedLegs().get(0);
 

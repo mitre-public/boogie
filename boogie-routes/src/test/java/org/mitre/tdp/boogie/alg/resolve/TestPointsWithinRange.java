@@ -26,8 +26,8 @@ class TestPointsWithinRange {
     Leg l2 = newLeg(LatLong.of(0., 1.));
     Leg l3 = newLeg(LatLong.of(1., 1.));
 
-    ResolvedElement r1 = newResolvedElement(l1, l2);
-    ResolvedElement r2 = newResolvedElement(l2, l3);
+    ResolvedToken r1 = newResolvedElement(l1, l2);
+    ResolvedToken r2 = newResolvedElement(l2, l3);
 
     List<LinkedLegs> linkedLegs = PointsWithinRange.INSTANCE.apply(r1, r2);
 
@@ -43,8 +43,8 @@ class TestPointsWithinRange {
     Leg l2 = newLeg(LatLong.of(0., 1.));
     Leg l3 = newLeg(LatLong.of(1., 1.));
 
-    ResolvedElement r1 = newResolvedElement(l1, l2, l3);
-    ResolvedElement r2 = newResolvedElement(l2, l3);
+    ResolvedToken r1 = newResolvedElement(l1, l2, l3);
+    ResolvedToken r2 = newResolvedElement(l2, l3);
 
     List<LinkedLegs> linkedLegs = PointsWithinRange.INSTANCE.apply(r1, r2);
 
@@ -59,13 +59,13 @@ class TestPointsWithinRange {
     );
   }
 
-  private ResolvedElement newResolvedElement(Leg... legs) {
+  private ResolvedToken newResolvedElement(Leg... legs) {
     List<LinkedLegs> linkedLegs = Stream.of(legs).map(leg -> new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT)).collect(toList());
 
-    ResolvedElement resolvedElement = mock(ResolvedElement.class);
-    when(resolvedElement.toLinkedLegs()).thenReturn(linkedLegs);
+    ResolvedToken resolvedToken = mock(ResolvedToken.class);
+    when(resolvedToken.toLinkedLegs()).thenReturn(linkedLegs);
 
-    return resolvedElement;
+    return resolvedToken;
   }
 
   private Leg newLeg(LatLong location) {

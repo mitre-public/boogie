@@ -25,11 +25,11 @@ class TestFixResolver {
     Fix fix = fix("JIMMY", 0.0, 0.0);
     FixResolver resolver = resolver(fix);
 
-    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("JIMMY", 0.));
+    List<ResolvedToken> resolved = resolver.resolve(RouteToken.standard("JIMMY", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
-        () -> assertTrue(resolved.get(0) instanceof FixElement)
+        () -> assertTrue(resolved.get(0) instanceof FixToken)
     );
   }
 
@@ -42,14 +42,14 @@ class TestFixResolver {
 
     FixResolver resolver = resolver(fix);
 
-    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("JIMMY111018", 0.));
+    List<ResolvedToken> resolved = resolver.resolve(RouteToken.standard("JIMMY111018", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
-        () -> assertTrue(resolved.get(0) instanceof TailoredElement)
+        () -> assertTrue(resolved.get(0) instanceof TailoredToken)
     );
 
-    ResolvedElement resolvedFix = resolved.get(0);
+    ResolvedToken resolvedFix = resolved.get(0);
     LatLong generatedLocation = resolvedFix.toLinkedLegs().get(0).source().associatedFix().map(Fix::latLong).orElse(LatLong.of(0., 0.));
     assertNotEquals(LatLong.of(0., 0.), generatedLocation, "Generated location in the final LinkedLegs should reflect the offset from the tailoring.");
   }

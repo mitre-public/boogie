@@ -19,7 +19,7 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.validate.RecordElectorFactory;
 
 /**
- * Class for resolving candidate {@link SidElement}/{@link StarElement}s from a {@link RouteToken}.
+ * Class for resolving candidate {@link SidToken}/{@link StarToken}s from a {@link RouteToken}.
  */
 final class SidStarResolver implements RouteTokenResolver {
 
@@ -52,15 +52,15 @@ final class SidStarResolver implements RouteTokenResolver {
     return proceduresAtAirport.isEmpty() ? procedures : proceduresAtAirport;
   }
 
-  List<ResolvedElement> convertToResolvedElements(Collection<Procedure> procedures) {
+  List<ResolvedToken> convertToResolvedElements(Collection<Procedure> procedures) {
     return procedures.stream()
         .map(procedure -> {
           Procedure withoutRunwayTransitions = new TransitionMaskedProcedure(procedure, COMMON_OR_ENROUTE);
 
           if (ProcedureType.SID.equals(procedure.procedureType())) {
-            return new SidElement(withoutRunwayTransitions);
+            return new SidToken(withoutRunwayTransitions);
           } else if (ProcedureType.STAR.equals(procedure.procedureType())) {
-            return new StarElement(withoutRunwayTransitions);
+            return new StarToken(withoutRunwayTransitions);
           } else {
             throw new IllegalArgumentException("Unsupported procedure type for conversion: ".concat(procedure.procedureType().name()));
           }

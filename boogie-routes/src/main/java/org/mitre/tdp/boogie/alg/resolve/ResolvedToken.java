@@ -2,10 +2,10 @@ package org.mitre.tdp.boogie.alg.resolve;
 
 import java.util.List;
 
-public interface ResolvedElement extends ResolvedElementVisitor {
+public interface ResolvedToken extends ResolvedElementVisitor {
 
   /**
-   * The identifier of the {@link ResolvedElement} as it was looked-up from configured infrastructure data.
+   * The identifier of the {@link ResolvedToken} as it was looked-up from configured infrastructure data.
    *
    * <p>For some element types this may not point to an explicit
    */

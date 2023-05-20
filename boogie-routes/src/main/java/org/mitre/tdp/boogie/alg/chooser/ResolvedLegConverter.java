@@ -12,17 +12,17 @@ import static org.mitre.tdp.boogie.alg.resolve.ElementType.TAILORED;
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
-import org.mitre.tdp.boogie.alg.resolve.AirwayElement;
-import org.mitre.tdp.boogie.alg.resolve.ApproachElement;
+import org.mitre.tdp.boogie.alg.resolve.AirportToken;
+import org.mitre.tdp.boogie.alg.resolve.AirwayToken;
+import org.mitre.tdp.boogie.alg.resolve.ApproachToken;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.FixElement;
-import org.mitre.tdp.boogie.alg.resolve.LatLonElement;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.FixToken;
+import org.mitre.tdp.boogie.alg.resolve.LatLonToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
-import org.mitre.tdp.boogie.alg.resolve.SidElement;
-import org.mitre.tdp.boogie.alg.resolve.StarElement;
-import org.mitre.tdp.boogie.alg.resolve.TailoredElement;
+import org.mitre.tdp.boogie.alg.resolve.SidToken;
+import org.mitre.tdp.boogie.alg.resolve.StarToken;
+import org.mitre.tdp.boogie.alg.resolve.TailoredToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
 
 /**
@@ -49,25 +49,25 @@ final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteL
   /**
    * This isn't a best practice implementation but this class as a whole is mainly provided for ease-of-use in downstream apps.
    */
-  public static ElementType fromResolvedElement(ResolvedElement resolvedElement) {
-    if (resolvedElement instanceof AirportElement) {
+  public static ElementType fromResolvedElement(ResolvedToken resolvedToken) {
+    if (resolvedToken instanceof AirportToken) {
       return AIRPORT;
-    } else if (resolvedElement instanceof AirwayElement) {
+    } else if (resolvedToken instanceof AirwayToken) {
       return AIRWAY;
-    } else if (resolvedElement instanceof FixElement) {
+    } else if (resolvedToken instanceof FixToken) {
       return FIX;
-    } else if (resolvedElement instanceof SidElement) {
+    } else if (resolvedToken instanceof SidToken) {
       return SID;
-    } else if (resolvedElement instanceof StarElement) {
+    } else if (resolvedToken instanceof StarToken) {
       return STAR;
-    } else if (resolvedElement instanceof ApproachElement) {
+    } else if (resolvedToken instanceof ApproachToken) {
       return APPROACH;
-    } else if (resolvedElement instanceof LatLonElement) {
+    } else if (resolvedToken instanceof LatLonToken) {
       return LATLON;
-    } else if (resolvedElement instanceof TailoredElement) {
+    } else if (resolvedToken instanceof TailoredToken) {
       return TAILORED;
     } else {
-      throw new IllegalArgumentException("Unknown how to map input ResolvedElement to ElementType. ResolvedElement class was: ".concat(resolvedElement.getClass().getSimpleName()));
+      throw new IllegalArgumentException("Unknown how to map input ResolvedElement to ElementType. ResolvedElement class was: ".concat(resolvedToken.getClass().getSimpleName()));
     }
   }
 }

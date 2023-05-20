@@ -38,10 +38,10 @@ class TestSidStarResolver {
 
     assertAll(
         () -> assertEquals(2, resolved.elements().size()),
-        () -> assertTrue(resolved.elements().iterator().next() instanceof SidElement)
+        () -> assertTrue(resolved.elements().iterator().next() instanceof SidToken)
     );
 
-    Procedure resolvedProcedure = ((ProcedureElement) resolved.elements().iterator().next()).procedure();
+    Procedure resolvedProcedure = ((ProcedureToken) resolved.elements().iterator().next()).procedure();
 
     assertAll(
         () -> assertEquals("JIMMY", resolvedProcedure.procedureIdentifier()),
@@ -65,10 +65,10 @@ class TestSidStarResolver {
 
     assertAll(
         () -> assertEquals(1, resolved.elements().size()),
-        () -> assertTrue(resolved.elements().iterator().next() instanceof SidElement)
+        () -> assertTrue(resolved.elements().iterator().next() instanceof SidToken)
     );
 
-    Procedure resolvedProcedure = ((ProcedureElement) resolved.elements().iterator().next()).procedure();
+    Procedure resolvedProcedure = ((ProcedureToken) resolved.elements().iterator().next()).procedure();
 
     assertAll(
         () -> assertEquals("JIMMY", resolvedProcedure.procedureIdentifier()),
@@ -92,10 +92,10 @@ class TestSidStarResolver {
 
     assertAll(
         () -> assertEquals(1, resolved.elements().size()),
-        () -> assertTrue(resolved.elements().iterator().next() instanceof StarElement)
+        () -> assertTrue(resolved.elements().iterator().next() instanceof StarToken)
     );
 
-    Procedure resolvedProcedure = ((ProcedureElement) resolved.elements().iterator().next()).procedure();
+    Procedure resolvedProcedure = ((ProcedureToken) resolved.elements().iterator().next()).procedure();
 
     assertAll(
         () -> assertEquals("JIMMY", resolvedProcedure.procedureIdentifier()),

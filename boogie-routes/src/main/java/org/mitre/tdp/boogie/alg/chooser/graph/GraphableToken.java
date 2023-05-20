@@ -2,24 +2,24 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 
 import java.util.Collection;
 
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
-import org.mitre.tdp.boogie.alg.resolve.AirwayElement;
+import org.mitre.tdp.boogie.alg.resolve.AirportToken;
+import org.mitre.tdp.boogie.alg.resolve.AirwayToken;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
 public interface GraphableToken extends LinkingVisitor {
 
   /**
-   * Implementation of a {@link GraphableToken} which wraps a an {@link AirportElement} for linking.
+   * Implementation of a {@link GraphableToken} which wraps a an {@link AirportToken} for linking.
    */
-  static GraphableToken airport(AirportElement airport) {
-    return new GraphableDirectToAirport(airport);
+  static GraphableToken airport(AirportToken airport) {
+    return new DirectToAirport(airport);
   }
 
   /**
-   * Implementation of {@link GraphableToken} which wraps an {@link AirwayElement} for linking.
+   * Implementation of {@link GraphableToken} which wraps an {@link AirwayToken} for linking.
    */
-  static GraphableToken airway(AirwayElement airway) {
-    return new GraphableAirway(airway);
+  static GraphableToken airway(AirwayToken airway) {
+    return new org.mitre.tdp.boogie.alg.chooser.graph.Airway(airway);
   }
 
   /**
@@ -36,4 +36,16 @@ public interface GraphableToken extends LinkingVisitor {
    * pattern whereby the behaviour of the linking is determined by the concrete types of both the caller and the callee at runtime.
    */
   Linker accept(LinkingVisitor visitor);
+
+  final class Airway {
+
+  }
+
+  final class Sid {
+
+  }
+
+  final class Star {
+
+  }
 }

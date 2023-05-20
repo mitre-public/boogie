@@ -25,8 +25,8 @@ class TestClosestPointBetween {
     Leg l2 = newLeg(LatLong.of(.5, .5));
     Leg l3 = newLeg(LatLong.of(1., 1.));
 
-    ResolvedElement r1 = newResolvedElement(l1, l2);
-    ResolvedElement r2 = newResolvedElement(l3);
+    ResolvedToken r1 = newResolvedElement(l1, l2);
+    ResolvedToken r2 = newResolvedElement(l3);
 
     List<LinkedLegs> linkedLegs = ClosestPointBetween.INSTANCE.apply(r1, r2);
 
@@ -35,13 +35,13 @@ class TestClosestPointBetween {
     assertEquals(expected, linkedLegs);
   }
 
-  private ResolvedElement newResolvedElement(Leg... legs) {
+  private ResolvedToken newResolvedElement(Leg... legs) {
     List<LinkedLegs> linkedLegs = Stream.of(legs).map(leg -> new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT)).collect(toList());
 
-    ResolvedElement resolvedElement = mock(ResolvedElement.class);
-    when(resolvedElement.toLinkedLegs()).thenReturn(linkedLegs);
+    ResolvedToken resolvedToken = mock(ResolvedToken.class);
+    when(resolvedToken.toLinkedLegs()).thenReturn(linkedLegs);
 
-    return resolvedElement;
+    return resolvedToken;
   }
 
   private Leg newLeg(LatLong location) {

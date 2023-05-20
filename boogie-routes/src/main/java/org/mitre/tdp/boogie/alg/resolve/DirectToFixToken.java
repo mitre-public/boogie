@@ -6,27 +6,20 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.alg.split.Wildcard;
 
-public final class FixElement implements ResolvedElement {
+public final class DirectToFixToken implements ResolvedToken {
 
   private final Fix fix;
 
-  private final String wildcards;
-
   private final List<LinkedLegs> linkedLegs;
 
-  public FixElement(Fix fix, String wildcards) {
+  public DirectToFixToken(Fix fix) {
     this.fix = requireNonNull(fix);
-    this.wildcards = wildcards;
     this.linkedLegs = toLinkedLegsInternal();
   }
 
   private List<LinkedLegs> toLinkedLegsInternal() {
-    FixTerminationLeg leg = Wildcard.TAILORED.test(wildcards)
-        ? FixTerminationLeg.IF(fix)
-        : FixTerminationLeg.DF(fix);
-
+    FixTerminationLeg leg = FixTerminationLeg.DF(fix);
     return singletonList(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
   }
 
@@ -51,42 +44,42 @@ public final class FixElement implements ResolvedElement {
   }
 
   @Override
-  public List<LinkedLegs> visit(AirportElement airportElement) {
+  public List<LinkedLegs> visit(AirportToken airportElement) {
     return ClosestPointBetween.INSTANCE.apply(airportElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(AirwayElement airwayElement) {
+  public List<LinkedLegs> visit(AirwayToken airwayElement) {
     return ClosestPointBetween.INSTANCE.apply(airwayElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(FixElement fixElement) {
+  public List<LinkedLegs> visit(FixToken fixElement) {
     return ClosestPointBetween.INSTANCE.apply(fixElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(SidElement sidElement) {
+  public List<LinkedLegs> visit(SidToken sidElement) {
     return ClosestPointBetween.INSTANCE.apply(sidElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(StarElement starElement) {
+  public List<LinkedLegs> visit(StarToken starElement) {
     return ClosestPointBetween.INSTANCE.apply(starElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(ApproachElement approachElement) {
+  public List<LinkedLegs> visit(ApproachToken approachElement) {
     return ClosestPointBetween.INSTANCE.apply(approachElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(TailoredElement tailoredElement) {
+  public List<LinkedLegs> visit(TailoredToken tailoredElement) {
     return ClosestPointBetween.INSTANCE.apply(tailoredElement, this);
   }
 
   @Override
-  public List<LinkedLegs> visit(LatLonElement latLonElement) {
+  public List<LinkedLegs> visit(LatLonToken latLonElement) {
     return ClosestPointBetween.INSTANCE.apply(latLonElement, this);
   }
 }

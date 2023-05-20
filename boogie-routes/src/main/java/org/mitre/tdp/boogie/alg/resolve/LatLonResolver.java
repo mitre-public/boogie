@@ -11,8 +11,8 @@ final class LatLonResolver implements SingleTokenResolver {
   }
 
   @Override
-  public List<ResolvedElement> resolve(RouteToken sectionSplit) {
+  public List<ResolvedToken> resolve(RouteToken sectionSplit) {
     return CoordinateFormatStandard.supported(sectionSplit.infrastructureName()) ?
-        Collections.singletonList(LatLonElement.from(sectionSplit)) : Collections.emptyList();
+        Collections.singletonList(LatLonToken.from(sectionSplit)) : Collections.emptyList();
   }
 }

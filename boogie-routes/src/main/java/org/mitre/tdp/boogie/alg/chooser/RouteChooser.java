@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.alg.chooser;
 import java.util.List;
 
 import org.mitre.tdp.boogie.alg.ExpandedRoute;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 
 /**
@@ -23,7 +23,7 @@ public interface RouteChooser {
 
   /**
    * Create a new {@link ExpandedRoute} from the provided ordered sequence of {@link ResolvedSection}s extracted from the route
-   * string. Each section contains a list of candidate {@link ResolvedElement}s which must be chosen between.
+   * string. Each section contains a list of candidate {@link ResolvedToken}s which must be chosen between.
    *
    * @param resolvedSections the sections of the route string (in the order they were filed)
    */

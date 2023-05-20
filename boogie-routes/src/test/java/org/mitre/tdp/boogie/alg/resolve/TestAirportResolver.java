@@ -22,11 +22,11 @@ class TestAirportResolver {
     AirportResolver resolver = new AirportResolver(LookupService.inMemory(singleton(airport), a -> Stream.of(a.airportIdentifier())));
 
     RouteToken token = RouteToken.standard("JIMMY", 0.);
-    List<ResolvedElement> resolved = resolver.resolve(token);
+    List<ResolvedToken> resolved = resolver.resolve(token);
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
-        () -> assertTrue(resolved.get(0) instanceof AirportElement)
+        () -> assertTrue(resolved.get(0) instanceof AirportToken)
     );
   }
 }

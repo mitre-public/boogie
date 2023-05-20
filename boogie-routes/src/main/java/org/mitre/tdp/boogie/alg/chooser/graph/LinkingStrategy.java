@@ -7,19 +7,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
-import org.mitre.tdp.boogie.alg.resolve.AirwayElement;
-import org.mitre.tdp.boogie.alg.resolve.ApproachElement;
-import org.mitre.tdp.boogie.alg.resolve.DirectToFixElement;
-import org.mitre.tdp.boogie.alg.resolve.FixElement;
+import org.mitre.tdp.boogie.alg.resolve.AirportToken;
+import org.mitre.tdp.boogie.alg.resolve.AirwayToken;
+import org.mitre.tdp.boogie.alg.resolve.ApproachToken;
+import org.mitre.tdp.boogie.alg.resolve.DirectToFixToken;
+import org.mitre.tdp.boogie.alg.resolve.FixToken;
 import org.mitre.tdp.boogie.alg.resolve.InitialFixElement;
-import org.mitre.tdp.boogie.alg.resolve.LatLonElement;
+import org.mitre.tdp.boogie.alg.resolve.LatLonToken;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedElement;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
-import org.mitre.tdp.boogie.alg.resolve.SidElement;
-import org.mitre.tdp.boogie.alg.resolve.StarElement;
-import org.mitre.tdp.boogie.alg.resolve.TailoredElement;
+import org.mitre.tdp.boogie.alg.resolve.SidToken;
+import org.mitre.tdp.boogie.alg.resolve.StarToken;
+import org.mitre.tdp.boogie.alg.resolve.TailoredToken;
 
 /**  */
 @FunctionalInterface
@@ -36,7 +36,7 @@ public interface LinkingStrategy {
     return new Overridable();
   }
 
-  Collection<LinkedLegs> links(ResolvedElement left, ResolvedElement right);
+  Collection<LinkedLegs> links(ResolvedToken left, ResolvedToken right);
 
   final class Overridable {
 
@@ -45,19 +45,19 @@ public interface LinkingStrategy {
 
     private static final class ElementTypes {
 
-      private final Class<? extends ResolvedElement> left;
-      private final Class<? extends ResolvedElement> right;
+      private final Class<? extends ResolvedToken> left;
+      private final Class<? extends ResolvedToken> right;
 
-      private ElementTypes(Class<? extends ResolvedElement> left, Class<? extends ResolvedElement> right) {
+      private ElementTypes(Class<? extends ResolvedToken> left, Class<? extends ResolvedToken> right) {
         this.left = requireNonNull(left);
         this.right = requireNonNull(right);
       }
 
-      private boolean matchesLeft(ResolvedElement element) {
+      private boolean matchesLeft(ResolvedToken element) {
         return left.isAssignableFrom(element.getClass());
       }
 
-      private boolean matchesRight(ResolvedElement element) {
+      private boolean matchesRight(ResolvedToken element) {
         return right.isAssignableFrom(element.getClass());
       }
     }
@@ -66,7 +66,7 @@ public interface LinkingStrategy {
 
 
       @Override
-      public List<LinkedLegs> links(ResolvedElement left, ResolvedElement right) {
+      public List<LinkedLegs> links(ResolvedToken left, ResolvedToken right) {
         return null;
       }
     }
@@ -81,11 +81,11 @@ public interface LinkingStrategy {
     }
 
     @Override
-    public Collection<LinkedLegs> links(ResolvedElement left, ResolvedElement right) {
+    public Collection<LinkedLegs> links(ResolvedToken left, ResolvedToken right) {
       return wrap(left).accept(wrap(right)).links();
     }
 
-    private GraphableToken wrap(ResolvedElement element) {
+    private GraphableToken wrap(ResolvedToken element) {
 
       ResolvedTokenWrapper wrapper = new ResolvedTokenWrapper();
       element.accept(wrapper);
@@ -106,47 +106,47 @@ public interface LinkingStrategy {
       }
 
       @Override
-      public void visit(AirportElement airportElement) {
-        this.token = new GraphableDirectToAirport(airportElement);
+      public void visit(AirportToken airportElement) {
+        this.token = new DirectToAirport(airportElement);
       }
 
       @Override
-      public void visit(AirwayElement airwayElement) {
-        this.token = new GraphableAirway(airwayElement);
+      public void visit(AirwayToken airwayElement) {
+        this.token = new Airway(airwayElement);
       }
 
       @Override
-      public void visit(FixElement fixElement) {
-
-      }
-
-      @Override
-      public void visit(SidElement sidElement) {
+      public void visit(FixToken fixElement) {
 
       }
 
       @Override
-      public void visit(StarElement starElement) {
+      public void visit(SidToken sidElement) {
 
       }
 
       @Override
-      public void visit(ApproachElement approachElement) {
+      public void visit(StarToken starElement) {
 
       }
 
       @Override
-      public void visit(TailoredElement tailoredElement) {
+      public void visit(ApproachToken approachElement) {
 
       }
 
       @Override
-      public void visit(LatLonElement latLonElement) {
+      public void visit(TailoredToken tailoredElement) {
 
       }
 
       @Override
-      public void visit(DirectToFixElement fixElement) {
+      public void visit(LatLonToken latLonElement) {
+
+      }
+
+      @Override
+      public void visit(DirectToFixToken fixElement) {
 
       }
 

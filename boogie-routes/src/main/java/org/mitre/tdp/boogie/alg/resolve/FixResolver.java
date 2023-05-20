@@ -19,7 +19,7 @@ final class FixResolver implements SingleTokenResolver {
   }
 
   @Override
-  public List<ResolvedElement> resolve(RouteToken sectionSplit) {
+  public List<ResolvedToken> resolve(RouteToken sectionSplit) {
 
     String section = sectionSplit.infrastructureName();
 
@@ -47,8 +47,8 @@ final class FixResolver implements SingleTokenResolver {
     return lookupService
         .apply(s).stream()
         .map(fix -> section.equals(s)
-            ? new FixElement(fix, wildcards)
-            : new TailoredElement(fix, section, wildcards))
+            ? new FixToken(fix, wildcards)
+            : new TailoredToken(fix, section, wildcards))
         .collect(Collectors.toList());
   }
 }

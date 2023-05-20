@@ -18,10 +18,10 @@ final class AirwayResolver implements SingleTokenResolver {
   }
 
   @Override
-  public List<ResolvedElement> resolve(RouteToken sectionSplit) {
+  public List<ResolvedToken> resolve(RouteToken sectionSplit) {
     return lookupService.apply(sectionSplit.infrastructureName())
         .stream()
-        .map(AirwayElement::new)
+        .map(AirwayToken::new)
         .collect(Collectors.toList());
   }
 }

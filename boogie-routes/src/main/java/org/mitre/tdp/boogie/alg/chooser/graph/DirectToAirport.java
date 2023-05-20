@@ -6,17 +6,17 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.List;
 
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
+import org.mitre.tdp.boogie.alg.resolve.AirportToken;
 import org.mitre.tdp.boogie.alg.resolve.FixTerminationLeg;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
-final class GraphableDirectToAirport implements GraphableToken {
+final class DirectToAirport implements GraphableToken {
 
-  private final AirportElement airport;
+  private final AirportToken airport;
 
   private final Collection<LinkedLegs> linkedLegs;
 
-  GraphableDirectToAirport(AirportElement airport) {
+  DirectToAirport(AirportToken airport) {
     this.airport = requireNonNull(airport);
     this.linkedLegs = toLinkedLegsInternal();
   }
@@ -37,12 +37,12 @@ final class GraphableDirectToAirport implements GraphableToken {
   }
 
   @Override
-  public Linker visit(GraphableDirectToAirport airport) {
+  public Linker visit(DirectToAirport airport) {
     return Linker.closestPointBetween(airport, this);
   }
 
   @Override
-  public Linker visit(GraphableAirway airway) {
+  public Linker visit(org.mitre.tdp.boogie.alg.chooser.graph.Airway airway) {
     return Linker.closestPointBetween(airway, this);
   }
 }

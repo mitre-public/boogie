@@ -30,7 +30,7 @@ class TestAirwayElement {
     Airway airway = mock(Airway.class);
     when(airway.legs()).thenReturn((List) Collections.singletonList(leg));
 
-    AirwayElement element = new AirwayElement(airway);
+    AirwayToken element = new AirwayToken(airway);
     assertEquals(0, element.toLinkedLegs().size());
   }
 
@@ -38,7 +38,7 @@ class TestAirwayElement {
   void testAirwayElement() {
     Airway airway = singleAirway();
 
-    AirwayElement element = new AirwayElement(airway);
+    AirwayToken element = new AirwayToken(airway);
 
     assertAll(
         () -> assertEquals(element.toLinkedLegs().size(), 6),
@@ -82,7 +82,7 @@ class TestAirwayElement {
   void testAirwayElementSubsequentLegLinkReferences() {
     Airway airway = singleAirway();
 
-    AirwayElement element = new AirwayElement(airway);
+    AirwayToken element = new AirwayToken(airway);
 
     List<LinkedLegs> linked = element.toLinkedLegs();
 

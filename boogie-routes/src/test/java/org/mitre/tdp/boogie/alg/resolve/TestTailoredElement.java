@@ -12,15 +12,13 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
-import org.mitre.tdp.boogie.alg.resolve.TailoredElement;
 
 class TestTailoredElement {
 
   @Test
   void testBearingDistanceTailored() {
     String tailoredId = "HTO354018";
-    Pair<Double, Double> bearingAndDistance = TailoredElement.bearingDistance(tailoredId);
+    Pair<Double, Double> bearingAndDistance = TailoredToken.bearingDistance(tailoredId);
 
     assertAll(
         () -> assertEquals(bearingAndDistance.first(), 354.0, 0.01),
@@ -39,7 +37,7 @@ class TestTailoredElement {
     when(fix.publishedVariation()).thenReturn(Optional.of(-10.));
     when(fix.modeledVariation()).thenReturn(-9.);
 
-    TailoredElement element = new TailoredElement(fix, tailoredId, "/");
+    TailoredToken element = new TailoredToken(fix, tailoredId, "/");
     assertEquals(element.toLinkedLegs().size(), 1);
 
     LinkedLegs linked = element.toLinkedLegs().get(0);
@@ -60,7 +58,7 @@ class TestTailoredElement {
         () -> assertEquals(PathTerminator.IF, linked.source().pathTerminator())
     );
 
-    element = new TailoredElement(fix, tailoredId, "");
+    element = new TailoredToken(fix, tailoredId, "");
     LinkedLegs linked2 = element.toLinkedLegs().iterator().next();
 
     assertAll(

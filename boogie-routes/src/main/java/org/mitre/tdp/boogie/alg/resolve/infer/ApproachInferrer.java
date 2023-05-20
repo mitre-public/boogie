@@ -22,8 +22,8 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.RunwayIdExtractor;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
-import org.mitre.tdp.boogie.alg.resolve.AirportElement;
-import org.mitre.tdp.boogie.alg.resolve.ApproachElement;
+import org.mitre.tdp.boogie.alg.resolve.AirportToken;
+import org.mitre.tdp.boogie.alg.resolve.ApproachToken;
 import org.mitre.tdp.boogie.alg.resolve.IsApproachForRunway;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -59,13 +59,13 @@ final class ApproachInferrer implements SectionInferrer {
 
   private ResolvedSection makeResolvedSection(Procedure approach, RouteToken left, RouteToken right) {
     RouteToken token = RouteToken.between(approach.procedureIdentifier(), left, right);
-    return new ResolvedSection(token, singletonList(new ApproachElement(approach)));
+    return new ResolvedSection(token, singletonList(new ApproachToken(approach)));
   }
 
   private Optional<Procedure> resolve(ResolvedSection resolvedSection, String extractedNumber) {
     return resolvedSection.elements().stream()
-        .filter(AirportElement.class::isInstance)
-        .map(AirportElement.class::cast)
+        .filter(AirportToken.class::isInstance)
+        .map(AirportToken.class::cast)
         .map(airportElement -> proceduresByAirport.apply(airportElement.identifier()))
         .map(procedures -> approachesForRunway.apply(procedures, extractedNumber, RunwayIdExtractor.parallelDesignator(arrivalRunway).orElse(null)))
         .map(equippedProcedures)

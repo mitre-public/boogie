@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 /**
  * This class represents a graph node as a {@link RouteToken} as extracted from the top level route
- * string, a top level resolved infrastructure element associated with that split {@link ResolvedElement}
+ * string, a top level resolved infrastructure element associated with that split {@link ResolvedToken}
  * and a leg indicating both what the fix is as well as an indication of how to fly to it.
  *
  * <p>e.g. For airways the expanded legs are {@link PathTerminator#TF} while for ..FIX.. elements the leg type is
@@ -20,17 +20,17 @@ public final class ResolvedLeg {
    */
   private final RouteToken sectionSplit;
   /**
-   * A pointer to the {@link ResolvedElement} which generated the given leg for the top level split.
+   * A pointer to the {@link ResolvedToken} which generated the given leg for the top level split.
    */
-  private final ResolvedElement resolvedElement;
+  private final ResolvedToken resolvedToken;
   /**
    * The actual resolved leg of the route.
    */
   private final Leg leg;
 
-  public ResolvedLeg(RouteToken sectionSplit, ResolvedElement resolvedElement, Leg leg) {
+  public ResolvedLeg(RouteToken sectionSplit, ResolvedToken resolvedToken, Leg leg) {
     this.sectionSplit = requireNonNull(sectionSplit);
-    this.resolvedElement = requireNonNull(resolvedElement);
+    this.resolvedToken = requireNonNull(resolvedToken);
     this.leg = requireNonNull(leg);
   }
 
@@ -42,7 +42,7 @@ public final class ResolvedLeg {
     return leg;
   }
 
-  public ResolvedElement sourceElement() {
-    return resolvedElement;
+  public ResolvedToken sourceElement() {
+    return resolvedToken;
   }
 }

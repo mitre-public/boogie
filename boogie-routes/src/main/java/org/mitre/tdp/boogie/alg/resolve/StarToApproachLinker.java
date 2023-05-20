@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class StarToApproachLinker implements BiFunction<StarElement, ApproachElement, List<LinkedLegs>> {
+final class StarToApproachLinker implements BiFunction<StarToken, ApproachToken, List<LinkedLegs>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(StarToApproachLinker.class);
 
@@ -26,7 +26,7 @@ final class StarToApproachLinker implements BiFunction<StarElement, ApproachElem
   }
 
   @Override
-  public List<LinkedLegs> apply(StarElement starElement, ApproachElement approachElement) {
+  public List<LinkedLegs> apply(StarToken starElement, ApproachToken approachElement) {
 
     if (starElement.toLinkedLegs().isEmpty() || approachElement.toLinkedLegs().isEmpty()) {
       return Collections.emptyList();

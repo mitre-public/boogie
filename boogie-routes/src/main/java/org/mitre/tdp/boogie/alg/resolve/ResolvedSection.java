@@ -24,18 +24,18 @@ public final class ResolvedSection {
    *
    * <p>This is the superset of all potential elements the filed section of the route string could possible be referring to.
    */
-  private final Collection<ResolvedElement> elements;
+  private final Collection<ResolvedToken> elements;
 
-  public ResolvedSection(RouteToken split, Collection<ResolvedElement> resolvedElements) {
+  public ResolvedSection(RouteToken split, Collection<ResolvedToken> resolvedTokens) {
     this.sectionSplit = requireNonNull(split);
-    this.elements = resolvedElements;
+    this.elements = resolvedTokens;
   }
 
   public RouteToken sectionSplit() {
     return sectionSplit;
   }
 
-  public Collection<ResolvedElement> elements() {
+  public Collection<ResolvedToken> elements() {
     return elements;
   }
 

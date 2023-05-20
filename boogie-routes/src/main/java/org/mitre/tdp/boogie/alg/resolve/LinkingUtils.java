@@ -8,9 +8,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
@@ -18,7 +16,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.util.TransitionSorter;
 
 /**
- * Utility methods for building links between the various {@link ResolvedElement} implementations.
+ * Utility methods for building links between the various {@link ResolvedToken} implementations.
  */
 final class LinkingUtils {
 
@@ -48,7 +46,7 @@ final class LinkingUtils {
         .reduce((l1, l2) -> l2).orElseThrow(IllegalStateException::new);
   }
 
-  static List<Transition> initialApproachTransitions(ApproachElement approachElement) {
+  static List<Transition> initialApproachTransitions(ApproachToken approachElement) {
     return TransitionSorter.INSTANCE
         .sortApproachTransitions(approachElement.procedure().transitions())
         .stream().filter(col -> !col.isEmpty())
@@ -56,12 +54,12 @@ final class LinkingUtils {
   }
 
   /**
-   * Returns the composition of the two linkers between {@link ResolvedElement}s - if the first returns no links then the second
+   * Returns the composition of the two linkers between {@link ResolvedToken}s - if the first returns no links then the second
    * will be called and its set of links returned.
    */
-  static BiFunction<ResolvedElement, ResolvedElement, List<LinkedLegs>> orElse(
-      BiFunction<ResolvedElement, ResolvedElement, List<LinkedLegs>> linker1,
-      BiFunction<ResolvedElement, ResolvedElement, List<LinkedLegs>> linker2
+  static BiFunction<ResolvedToken, ResolvedToken, List<LinkedLegs>> orElse(
+      BiFunction<ResolvedToken, ResolvedToken, List<LinkedLegs>> linker1,
+      BiFunction<ResolvedToken, ResolvedToken, List<LinkedLegs>> linker2
   ) {
     requireNonNull(linker1);
     requireNonNull(linker2);
@@ -74,19 +72,19 @@ final class LinkingUtils {
     };
   }
 
-  public static final Function<ApproachElement, List<Leg>> approachTransitions = approachElement -> approachElement.procedure().transitions().stream()
+  public static final Function<ApproachToken, List<Leg>> approachTransitions = approachElement -> approachElement.procedure().transitions().stream()
       .filter(t -> t.transitionType().equals(TransitionType.APPROACH))
       .map(LinkingUtils::firstLegWithLocation)
       .flatMap(Optional::stream)
       .collect(Collectors.toList());
 
-  public static final Function<ApproachElement, List<Leg>> finalApproach = approachElement -> approachElement.procedure().transitions().stream()
+  public static final Function<ApproachToken, List<Leg>> finalApproach = approachElement -> approachElement.procedure().transitions().stream()
       .filter(t -> t.transitionType().equals(TransitionType.COMMON))
       .map(LinkingUtils::firstLegWithLocation)
       .flatMap(Optional::stream)
       .collect(Collectors.toList());
 
-  static Function<ApproachElement, List<Leg>> orElse(Function<ApproachElement, List<Leg>> one, Function<ApproachElement, List<Leg>> two) {
+  static Function<ApproachToken, List<Leg>> orElse(Function<ApproachToken, List<Leg>> one, Function<ApproachToken, List<Leg>> two) {
     requireNonNull(one);
     requireNonNull(two);
 

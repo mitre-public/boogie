@@ -17,11 +17,11 @@ class TestLatLonResolver {
   void testSingleLatLonResolution() {
     LatLonResolver resolver = new LatLonResolver();
 
-    List<ResolvedElement> resolved = resolver.resolve(RouteToken.standard("5300N/14000W", 0.));
+    List<ResolvedToken> resolved = resolver.resolve(RouteToken.standard("5300N/14000W", 0.));
 
     assertAll(
         () -> assertEquals(1, resolved.size()),
-        () -> assertTrue(resolved.get(0) instanceof LatLonElement)
+        () -> assertTrue(resolved.get(0) instanceof LatLonToken)
     );
 
     Fix resolvedFix = resolved.get(0).toLinkedLegs().get(0).source().associatedFix().orElseThrow(IllegalStateException::new);

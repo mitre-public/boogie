@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * <br>
  * This class is conceptually similar (though not exactly so) to the {@link StarToAirportLinker}.
  */
-public final class AirportToSidLinker implements BiFunction<AirportElement, SidElement, List<LinkedLegs>> {
+public final class AirportToSidLinker implements BiFunction<AirportToken, SidToken, List<LinkedLegs>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AirportToSidLinker.class);
 
@@ -31,7 +31,7 @@ public final class AirportToSidLinker implements BiFunction<AirportElement, SidE
   }
 
   @Override
-  public List<LinkedLegs> apply(AirportElement airportElement, SidElement sidElement) {
+  public List<LinkedLegs> apply(AirportToken airportElement, SidToken sidElement) {
 
     if (sidElement.toLinkedLegs().isEmpty()) {
       return Collections.emptyList();
@@ -51,7 +51,7 @@ public final class AirportToSidLinker implements BiFunction<AirportElement, SidE
    * Returns the "initial" transitions to the SID - these are taken in sorted order by {@link TransitionType}, that is to say
    * they will be the RUNWAY < COMMON < ENROUTE transitions.
    */
-  private List<Transition> initialTransitions(SidElement sidElement) {
+  private List<Transition> initialTransitions(SidToken sidElement) {
     return TransitionSorter.INSTANCE
         .sortSidTransitions(sidElement.procedure.transitions())
         .stream().filter(col -> !col.isEmpty())
