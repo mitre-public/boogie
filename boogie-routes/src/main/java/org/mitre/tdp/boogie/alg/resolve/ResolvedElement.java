@@ -14,4 +14,6 @@ public interface ResolvedElement extends ResolvedElementVisitor {
   List<LinkedLegs> toLinkedLegs();
 
   List<LinkedLegs> linksTo(ResolvedElementVisitor resolvedElementVisitor);
+
+  void accept(ResolvedTokenVisitor visitor);
 }

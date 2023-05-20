@@ -19,7 +19,7 @@ import com.google.common.collect.Range;
  * 2) Direct to LatLon locations
  * 3) Direct to airport
  */
-final class FixTerminationLeg implements Leg {
+public final class FixTerminationLeg implements Leg {
 
   private final Fix associatedFix;
   private final PathTerminator pathTerminator;

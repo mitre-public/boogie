@@ -28,6 +28,11 @@ public final class SidElement extends ProcedureElement {
   }
 
   @Override
+  public void accept(ResolvedTokenVisitor visitor) {
+    visitor.visit(this);
+  }
+
+  @Override
   public List<LinkedLegs> visit(AirportElement airportElement) {
     return AirportToSidLinker.INSTANCE.apply(airportElement, this);
   }

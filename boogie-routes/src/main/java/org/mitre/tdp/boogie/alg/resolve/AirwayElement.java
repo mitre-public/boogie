@@ -51,6 +51,11 @@ public final class AirwayElement implements ResolvedElement {
   }
 
   @Override
+  public void accept(ResolvedTokenVisitor visitor) {
+    visitor.visit(this);
+  }
+
+  @Override
   public List<LinkedLegs> visit(AirportElement airportElement) {
     return ClosestPointBetween.INSTANCE.apply(airportElement, this);
   }

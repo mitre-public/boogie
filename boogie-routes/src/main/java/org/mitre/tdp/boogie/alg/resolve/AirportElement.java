@@ -24,7 +24,7 @@ public final class AirportElement implements ResolvedElement {
     this.linkedLegs = this.toLinkedLegsInternal();
   }
 
-  Airport airport() {
+  public Airport airport() {
     return airport;
   }
 
@@ -50,6 +50,11 @@ public final class AirportElement implements ResolvedElement {
   @Override
   public List<LinkedLegs> linksTo(ResolvedElementVisitor resolvedElementVisitor) {
     return resolvedElementVisitor.visit(this);
+  }
+
+  @Override
+  public void accept(ResolvedTokenVisitor visitor) {
+    visitor.visit(this);
   }
 
   @Override

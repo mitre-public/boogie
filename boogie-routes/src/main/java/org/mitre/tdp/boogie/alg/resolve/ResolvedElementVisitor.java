@@ -36,4 +36,12 @@ public interface ResolvedElementVisitor {
   List<LinkedLegs> visit(TailoredElement tailoredElement);
 
   List<LinkedLegs> visit(LatLonElement latLonElement);
+
+  default List<LinkedLegs> visit(DirectToFixElement fixElement){
+    return List.of();
+  }
+
+  default List<LinkedLegs> visit(InitialFixElement fixElement){
+    return List.of();
+  }
 }

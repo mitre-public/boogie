@@ -26,6 +26,11 @@ public final class StarElement extends ProcedureElement {
   }
 
   @Override
+  public void accept(ResolvedTokenVisitor visitor) {
+    visitor.visit(this);
+  }
+
+  @Override
   public List<LinkedLegs> visit(AirportElement airportElement) {
     return ClosestPointBetween.INSTANCE.apply(airportElement, this);
   }

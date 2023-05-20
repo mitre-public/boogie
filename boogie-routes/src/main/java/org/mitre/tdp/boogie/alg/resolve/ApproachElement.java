@@ -28,6 +28,11 @@ public final class ApproachElement extends ProcedureElement {
   }
 
   @Override
+  public void accept(ResolvedTokenVisitor visitor) {
+    visitor.visit(this);
+  }
+
+  @Override
   public List<LinkedLegs> visit(AirportElement airportElement) {
     List<LinkedLegs> initialLinking = SectionToApproachLinker.INSTANCE.apply(airportElement, this);
     return sectionGluer.apply(initialLinking, airportElement);

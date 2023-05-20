@@ -46,7 +46,7 @@ public final class RouteExpander implements
 
   private final LookupService<Procedure> proceduresAtAirport;
 
-  private final RouteTokenResolver standardRouteTokenResolver;
+  private final RouteTokenResolver routeTokenResolver;
 
   private final RouteChooser routeChooser;
 
@@ -54,7 +54,7 @@ public final class RouteExpander implements
     this.routeTokenizer = requireNonNull(builder.routeTokenizer);
     this.procedureService = requireNonNull(builder.proceduresByName);
     this.proceduresAtAirport = requireNonNull(builder.proceduresByAirport);
-    this.standardRouteTokenResolver = requireNonNull(builder.routeTokenResolver);
+    this.routeTokenResolver = requireNonNull(builder.routeTokenResolver);
     this.routeChooser = requireNonNull(builder.routeChooser);
   }
 
@@ -70,7 +70,7 @@ public final class RouteExpander implements
    * defaults for the functional components of the expander.
    *
    * <p>This is provided alongside the normal {@link #builder()} method for convenience when working with purely in-memory infra
-   * data. The generated {@link RouteTokenResolver} can be configured with {@link Builder#sectionResolver(UnaryOperator)}.
+   * data. The generated {@link RouteTokenResolver} can be configured with {@link Builder#routeTokenResolver(UnaryOperator)}.
    *
    * @param uAirports   all user-defined airport implementation to use in the expansion
    * @param uProcedures all user-defined procedure implementations to use in the expansion
@@ -95,7 +95,7 @@ public final class RouteExpander implements
     return RouteExpander.builder()
         .proceduresByName(proceduresByName)
         .proceduresByAirport(LookupService.inMemory(procedures, p -> Stream.of(p.airportIdentifier())))
-        .sectionResolver(
+        .routeTokenResolver(
             RouteTokenResolver.standard(
                 LookupService.inMemory(airports, a -> Stream.of(a.airportIdentifier())),
                 proceduresByName,
@@ -158,7 +158,7 @@ public final class RouteExpander implements
     List<RouteToken> sectionSplits = routeTokenizer.tokenize(route);
     LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
 
-    HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(standardRouteTokenResolver.applyTo(sectionSplits));
+    HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(routeTokenResolver.applyTo(sectionSplits));
     LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
 
     RouteContext context = RouteContext.standard()
@@ -279,7 +279,7 @@ public final class RouteExpander implements
      *
      * <p>Typically, clients use {@link RouteTokenResolver#standard(LookupService, LookupService, LookupService, LookupService)}.
      */
-    public Builder sectionResolver(RouteTokenResolver routeTokenResolver) {
+    public Builder routeTokenResolver(RouteTokenResolver routeTokenResolver) {
       this.routeTokenResolver = requireNonNull(routeTokenResolver);
       return this;
     }
@@ -288,13 +288,13 @@ public final class RouteExpander implements
      * Allows for the customization of an already-configured section resolver implementation (will throw an exception if one isn't
      * already present). This is provided mainly to allow simple decoration of a default-configured resolver (e.g. make it surly).
      *
-     * @param sectionResolverConfigurer transform operator to decorate/wrap an already-configured resolver in additional functionality
+     * @param routeTokenResolverConfigurer transform operator to decorate/wrap an already-configured resolver in additional functionality
      */
-    public Builder sectionResolver(UnaryOperator<RouteTokenResolver> sectionResolverConfigurer) {
+    public Builder routeTokenResolver(UnaryOperator<RouteTokenResolver> routeTokenResolverConfigurer) {
       requireNonNull(routeTokenResolver, "There should already be a SectionResolver configured we want to transform.");
-      requireNonNull(sectionResolverConfigurer, "The configuration function should be non-null.");
+      requireNonNull(routeTokenResolverConfigurer, "The configuration function should be non-null.");
 
-      this.routeTokenResolver = sectionResolverConfigurer.apply(routeTokenResolver);
+      this.routeTokenResolver = routeTokenResolverConfigurer.apply(routeTokenResolver);
       return this;
     }
 

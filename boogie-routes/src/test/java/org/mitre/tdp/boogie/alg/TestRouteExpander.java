@@ -1196,7 +1196,7 @@ class TestRouteExpander {
       Collection<Procedure> procedures
   ) {
     return RouteExpander.inMemoryBuilder(airports, procedures, airways, fixes)
-        .sectionResolver(RouteTokenResolver::surly)
+        .routeTokenResolver(RouteTokenResolver::surly)
         .build();
   }
 }
