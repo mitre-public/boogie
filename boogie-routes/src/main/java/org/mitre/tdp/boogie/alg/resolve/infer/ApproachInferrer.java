@@ -25,7 +25,7 @@ import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.resolve.AirportToken;
 import org.mitre.tdp.boogie.alg.resolve.ApproachToken;
 import org.mitre.tdp.boogie.alg.resolve.IsApproachForRunway;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
@@ -50,20 +50,20 @@ final class ApproachInferrer implements SectionInferrer {
   }
 
   @Override
-  public List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right) {
+  public List<ResolvedTokens> inferBetween(ResolvedTokens left, ResolvedTokens right) {
     return RunwayIdExtractor.runwayNumber(arrivalRunway)
         .flatMap(extractedNumber -> resolve(right, extractedNumber))
-        .map(approach -> makeResolvedSection(approach, left.sectionSplit(), right.sectionSplit()))
+        .map(approach -> makeResolvedSection(approach, left.routeToken(), right.routeToken()))
         .map(List::of).orElseGet(List::of);
   }
 
-  private ResolvedSection makeResolvedSection(Procedure approach, RouteToken left, RouteToken right) {
+  private ResolvedTokens makeResolvedSection(Procedure approach, RouteToken left, RouteToken right) {
     RouteToken token = RouteToken.between(approach.procedureIdentifier(), left, right);
-    return new ResolvedSection(token, singletonList(new ApproachToken(approach)));
+    return new ResolvedTokens(token, singletonList(new ApproachToken(approach)));
   }
 
-  private Optional<Procedure> resolve(ResolvedSection resolvedSection, String extractedNumber) {
-    return resolvedSection.elements().stream()
+  private Optional<Procedure> resolve(ResolvedTokens resolvedTokens, String extractedNumber) {
+    return resolvedTokens.resolvedTokens().stream()
         .filter(AirportToken.class::isInstance)
         .map(AirportToken.class::cast)
         .map(airportElement -> proceduresByAirport.apply(airportElement.identifier()))

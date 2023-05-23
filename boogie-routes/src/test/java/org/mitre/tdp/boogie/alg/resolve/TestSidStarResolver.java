@@ -34,14 +34,14 @@ class TestSidStarResolver {
         inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
     );
 
-    ResolvedSection resolved = resolver.resolve(null, RouteToken.standard("JIMMY", 0.), null);
+    ResolvedTokens resolved = resolver.resolve(null, RouteToken.standard("JIMMY", 0.), null);
 
     assertAll(
-        () -> assertEquals(2, resolved.elements().size()),
-        () -> assertTrue(resolved.elements().iterator().next() instanceof SidToken)
+        () -> assertEquals(2, resolved.resolvedTokens().size()),
+        () -> assertTrue(resolved.resolvedTokens().iterator().next() instanceof SidToken)
     );
 
-    Procedure resolvedProcedure = ((ProcedureToken) resolved.elements().iterator().next()).procedure();
+    Procedure resolvedProcedure = ((ProcedureToken) resolved.resolvedTokens().iterator().next()).procedure();
 
     assertAll(
         () -> assertEquals("JIMMY", resolvedProcedure.procedureIdentifier()),
@@ -61,14 +61,14 @@ class TestSidStarResolver {
         inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
     );
 
-    ResolvedSection resolved = resolver.resolve(RouteToken.standard("KATL", 0.), RouteToken.standard("JIMMY", 1.), null);
+    ResolvedTokens resolved = resolver.resolve(RouteToken.standard("KATL", 0.), RouteToken.standard("JIMMY", 1.), null);
 
     assertAll(
-        () -> assertEquals(1, resolved.elements().size()),
-        () -> assertTrue(resolved.elements().iterator().next() instanceof SidToken)
+        () -> assertEquals(1, resolved.resolvedTokens().size()),
+        () -> assertTrue(resolved.resolvedTokens().iterator().next() instanceof SidToken)
     );
 
-    Procedure resolvedProcedure = ((ProcedureToken) resolved.elements().iterator().next()).procedure();
+    Procedure resolvedProcedure = ((ProcedureToken) resolved.resolvedTokens().iterator().next()).procedure();
 
     assertAll(
         () -> assertEquals("JIMMY", resolvedProcedure.procedureIdentifier()),
@@ -88,14 +88,14 @@ class TestSidStarResolver {
         inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
     );
 
-    ResolvedSection resolved = resolver.resolve(null, RouteToken.standard("JIMMY", 0.), RouteToken.standard("KATL", 1.));
+    ResolvedTokens resolved = resolver.resolve(null, RouteToken.standard("JIMMY", 0.), RouteToken.standard("KATL", 1.));
 
     assertAll(
-        () -> assertEquals(1, resolved.elements().size()),
-        () -> assertTrue(resolved.elements().iterator().next() instanceof StarToken)
+        () -> assertEquals(1, resolved.resolvedTokens().size()),
+        () -> assertTrue(resolved.resolvedTokens().iterator().next() instanceof StarToken)
     );
 
-    Procedure resolvedProcedure = ((ProcedureToken) resolved.elements().iterator().next()).procedure();
+    Procedure resolvedProcedure = ((ProcedureToken) resolved.resolvedTokens().iterator().next()).procedure();
 
     assertAll(
         () -> assertEquals("JIMMY", resolvedProcedure.procedureIdentifier()),

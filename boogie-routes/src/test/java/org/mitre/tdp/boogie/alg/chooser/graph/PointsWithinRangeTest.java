@@ -71,7 +71,7 @@ class PointsWithinRangeTest {
         .collect(toList());
 
     GraphableToken resolvedElement = mock(GraphableToken.class);
-    when(resolvedElement.toLinkedLegs()).thenReturn(linkedLegs);
+    when(resolvedElement.linkedLegs()).thenReturn(linkedLegs);
 
     return resolvedElement;
   }

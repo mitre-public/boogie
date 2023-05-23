@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.resolve.AirportToken;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.StarToken;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
@@ -28,15 +28,15 @@ final class DefaultStarInferrer implements SectionInferrer {
   }
 
   @Override
-  public List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right) {
+  public List<ResolvedTokens> inferBetween(ResolvedTokens left, ResolvedTokens right) {
 
-    Optional<AirportToken> airport = right.elements().stream()
+    Optional<AirportToken> airport = right.resolvedTokens().stream()
         .filter(e -> e instanceof AirportToken)
         .map(AirportToken.class::cast)
         .findFirst();
 
     boolean missingStar = airport.isPresent()
-        && left.elements().stream().noneMatch(e -> e instanceof StarToken);
+        && left.resolvedTokens().stream().noneMatch(e -> e instanceof StarToken);
 
     if (missingStar) {
 
@@ -48,9 +48,9 @@ final class DefaultStarInferrer implements SectionInferrer {
     return List.of();
   }
 
-  private ResolvedSection makeSection(Procedure star, ResolvedSection left, ResolvedSection right) {
-    RouteToken token = RouteToken.between(star.procedureIdentifier(), left.sectionSplit(), right.sectionSplit());
-    return new ResolvedSection(token, List.of(new StarToken(new TransitionMaskedProcedure(star, COMMON_OR_ENROUTE))));
+  private ResolvedTokens makeSection(Procedure star, ResolvedTokens left, ResolvedTokens right) {
+    RouteToken token = RouteToken.between(star.procedureIdentifier(), left.routeToken(), right.routeToken());
+    return new ResolvedTokens(token, List.of(new StarToken(new TransitionMaskedProcedure(star, COMMON_OR_ENROUTE))));
   }
 
 

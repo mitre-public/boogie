@@ -26,7 +26,8 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
@@ -37,7 +38,7 @@ class TestGraphBasedRouteChooser {
 
   private static final RouteTokenizer sectionSplitter = RouteTokenizer.faaIfrFormat();
 
-  private static final GraphBasedRouteChooser routeChooser = new GraphBasedRouteChooser();
+  private static final GraphBasedRouteChooser routeChooser = new GraphBasedRouteChooser(LinkingStrategy.standard());
 
   @Test
   void testConnectedSubsets() {
@@ -88,8 +89,8 @@ class TestGraphBasedRouteChooser {
   }
 
   private SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> toGraph(String route) {
-    List<ResolvedSection> resolvedSections = split().andThen(apfResolver()::applyTo).apply(route);
-    return routeChooser.constructRouteGraph(resolvedSections);
+    List<ResolvedTokens> resolvedTokens = split().andThen(apfResolver()::applyTo).apply(route);
+    return routeChooser.constructRouteGraph(resolvedTokens);
   }
 
   private static RouteTokenResolver apfResolver() {

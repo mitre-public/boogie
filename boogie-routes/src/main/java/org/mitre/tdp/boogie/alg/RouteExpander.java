@@ -22,7 +22,8 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -158,8 +159,8 @@ public final class RouteExpander implements
     List<RouteToken> sectionSplits = routeTokenizer.tokenize(route);
     LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
 
-    HashedLinkedSequence<ResolvedSection> initial = newHashedLinkedSequence(routeTokenResolver.applyTo(sectionSplits));
-    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
+    HashedLinkedSequence<ResolvedTokens> initial = newHashedLinkedSequence(routeTokenResolver.applyTo(sectionSplits));
+    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.resolvedTokens().size()).sum(), initial.size());
 
     RouteContext context = RouteContext.standard()
         .proceduresByName(procedureService)
@@ -173,29 +174,29 @@ public final class RouteExpander implements
       appendInferredSections(initial, inferrer);
     }
 
-    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.elements().size()).sum(), initial.size());
+    LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.resolvedTokens().size()).sum(), initial.size());
     return chooseExpandedRoute(route, new ArrayList<>(initial), departureRunway, arrivalRunway);
   }
 
-  private void appendInferredSections(HashedLinkedSequence<ResolvedSection> sequence, SectionInferrer inferrer) {
+  private void appendInferredSections(HashedLinkedSequence<ResolvedTokens> sequence, SectionInferrer inferrer) {
     inferrer.inferAcross(sequence).forEach((start, inferred) -> {
-      ResolvedSection previous = start;
+      ResolvedTokens previous = start;
 
-      for (ResolvedSection section : inferred) {
+      for (ResolvedTokens section : inferred) {
         sequence.insertAfter(section, previous);
         previous = section;
       }
     });
   }
 
-  private Optional<ExpandedRoute> chooseExpandedRoute(String route, List<ResolvedSection> resolvedSections, @Nullable String departureRunway, @Nullable String arrivalRunway) {
-    if (!Iterators.checkMatchCount(resolvedSections, s -> !s.allLegs().isEmpty())) {
-      LOG.info("Returning empty - no ResolvedSections with legs in their ResolvedElements.");
+  private Optional<ExpandedRoute> chooseExpandedRoute(String route, List<ResolvedTokens> resolvedTokens, @Nullable String departureRunway, @Nullable String arrivalRunway) {
+    if (!Iterators.checkMatchCount(resolvedTokens, tokens -> !tokens.resolvedTokens().isEmpty())) {
+      LOG.info("Insufficient RouteTokens with non-zero ResolvedTokens, likely caused by missing infrastructure to resolved elements of an otherwise valid route, returning empty.");
       return Optional.empty();
     } else {
 
-      List<ResolvedSection> sortedByIndex = resolvedSections.stream()
-          .sorted(comparingDouble(r -> r.sectionSplit().index()))
+      List<ResolvedTokens> sortedByIndex = resolvedTokens.stream()
+          .sorted(comparingDouble(r -> r.routeToken().index()))
           .collect(toList());
 
       ExpandedRoute expandedRoute = routeChooser.chooseRoute(sortedByIndex);
@@ -223,7 +224,7 @@ public final class RouteExpander implements
 
     private RouteTokenResolver routeTokenResolver;
 
-    private RouteChooser routeChooser = RouteChooser.graphical();
+    private RouteChooser routeChooser = RouteChooser.graphical(LinkingStrategy.standard());
 
     private Builder() {
     }
@@ -241,14 +242,12 @@ public final class RouteExpander implements
     }
 
     /**
-     * A lookup service for procedures by their given identifier, e.g. {@code GNDLF2} or {@code CHPPR1}.
-     *
-     * <p>This implementation is required to infer arrival/departure runway transitions based on a provided arrival or departure
-     * runway identifier (given as context during the expansion call).
+     * Required to infer appropriate arrival/departure runway transitions when given an arrival or departure runway.
      *
      * <p>In-memory lookup services can be built from collections of objects {@link LookupService#inMemory(Iterable, Function)}.
      *
-     * <p>Default: {@link LookupService#noop()}
+     * @param proceduresByName lookup service for procedures by their given identifier, e.g. {@code GNDLF2} or {@code CHPPR1}.
+     *                         Default: {@link LookupService#noop()}
      */
     public Builder proceduresByName(LookupService<Procedure> proceduresByName) {
       this.proceduresByName = requireNonNull(proceduresByName);
@@ -256,14 +255,13 @@ public final class RouteExpander implements
     }
 
     /**
-     * A lookup service for procedures based on the identifier of the airport they serve, e.g. {@code KATL} or {@code WSSS}.
-     *
-     * <p>This implementation is required to infer an appropriate approach procedures when given an arrival runway and list of
-     * preferred equipages for the approach.
+     * Required to infer an appropriate approach procedures when given an arrival runway and list of preferred equipages for the
+     * approach.
      *
      * <p>In-memory lookup services can be built from collections of objects {@link LookupService#inMemory(Iterable, Function)}.
      *
-     * <p>Default: {@link LookupService#noop()}
+     * @param proceduresByAirport lookup service for procedures by the identifier of the airport they serve, e.g. {@code KATL}
+     *                            or {@code WSSS}. Default {@link LookupService#noop()}
      */
     public Builder proceduresByAirport(LookupService<Procedure> proceduresByAirport) {
       this.proceduresByAirport = requireNonNull(proceduresByAirport);
@@ -277,7 +275,8 @@ public final class RouteExpander implements
      * <p>There is no default value for this field as a variety of infrastructure lookup services need to be provided to power the
      * section resolver.
      *
-     * <p>Typically, clients use {@link RouteTokenResolver#standard(LookupService, LookupService, LookupService, LookupService)}.
+     * @param routeTokenResolver the token resolver implementation to use, default
+     *                           {@link RouteTokenResolver#standard(LookupService, LookupService, LookupService, LookupService)}
      */
     public Builder routeTokenResolver(RouteTokenResolver routeTokenResolver) {
       this.routeTokenResolver = requireNonNull(routeTokenResolver);
@@ -288,7 +287,7 @@ public final class RouteExpander implements
      * Allows for the customization of an already-configured section resolver implementation (will throw an exception if one isn't
      * already present). This is provided mainly to allow simple decoration of a default-configured resolver (e.g. make it surly).
      *
-     * @param routeTokenResolverConfigurer transform operator to decorate/wrap an already-configured resolver in additional functionality
+     * @param routeTokenResolverConfigurer transform operator to decorate an already-configured resolver in additional functionality
      */
     public Builder routeTokenResolver(UnaryOperator<RouteTokenResolver> routeTokenResolverConfigurer) {
       requireNonNull(routeTokenResolver, "There should already be a SectionResolver configured we want to transform.");
@@ -299,10 +298,11 @@ public final class RouteExpander implements
     }
 
     /**
-     * Defines how the expander chooses the appropriate route through the resolved infrastructure candidates across all resolved
-     * sections of the route string.
+     * Defines how the expander chooses the appropriate flyable route through the resolved infrastructure candidates across all
+     * tokens in the route string.
      *
-     * <p>Default: {@link RouteChooser#graphical()}
+     * @param routeChooser the route chooser implementation to use, default
+     *                     {@link RouteChooser#graphical(LinkingStrategy)} + {@link LinkingStrategy#standard()}
      */
     public Builder routeChooser(RouteChooser routeChooser) {
       this.routeChooser = requireNonNull(routeChooser);

@@ -1,24 +1,36 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+/**
+ * Interface for a generic visitor resolved tokens, usable via {@link ResolvedToken#accept(ResolvedTokenVisitor)} for collecting
+ * subclass-specific information from them.
+ */
 public interface ResolvedTokenVisitor {
 
-  void visit(AirportToken airportElement);
+  void visit(ResolvedToken.StandardAirport airport);
 
-  void visit(AirwayToken airwayElement);
+  void visit(ResolvedToken.DirectToAirport airport);
 
-  void visit(FixToken fixElement);
+  void visit(ResolvedToken.StandardAirway airway);
 
-  void visit(SidToken sidElement);
+  void visit(ResolvedToken.StandardApproach approach);
 
-  void visit(StarToken starElement);
+  void visit(ResolvedToken.StandardFix fix);
 
-  void visit(ApproachToken approachElement);
+  void visit(ResolvedToken.DirectToFix fix);
 
-  void visit(TailoredToken tailoredElement);
+  void visit(ResolvedToken.StandardLatLong latLong);
 
-  void visit(LatLonToken latLonElement);
+  void visit(ResolvedToken.DirectToLatLong latLong);
 
-  void visit(DirectToFixToken fixElement);
+  void visit(ResolvedToken.SidEnrouteCommon sid);
 
-  void visit(InitialFixElement fixElement);
+  void visit(ResolvedToken.SidRunway sid);
+
+  void visit(ResolvedToken.StarEnrouteCommon star);
+
+  void visit(ResolvedToken.StarRunway star);
+
+  void visit(ResolvedToken.StandardFrd frd);
+
+  void visit(ResolvedToken.DirectToFrd frd);
 }

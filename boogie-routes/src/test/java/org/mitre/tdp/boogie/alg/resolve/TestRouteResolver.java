@@ -37,10 +37,10 @@ class TestRouteResolver {
   void testFullResolveRoute0() {
     RouteTokenResolver resolver = resolverForRoute0();
 
-    List<ResolvedSection> sections = resolver.applyTo(RouteTokenizer.faaIfrFormat().tokenize(route0));
+    List<ResolvedTokens> sections = resolver.applyTo(RouteTokenizer.faaIfrFormat().tokenize(route0));
     assertEquals(7, sections.size());
 
-    assertTrue(allMatch(sections, s -> s.elements().size() == 1));
+    assertTrue(allMatch(sections, s -> s.resolvedTokens().size() == 1));
 
     assertTrue(matchesOrder(sections, Arrays.asList(
         AirportToken.class,
@@ -97,11 +97,11 @@ class TestRouteResolver {
         .build();
   }
 
-  private boolean matchesOrder(List<ResolvedSection> sections, List<Class<?>> elementClasses) {
+  private boolean matchesOrder(List<ResolvedTokens> sections, List<Class<?>> elementClasses) {
     return IntStream.range(0, sections.size())
         .filter(i -> {
-          ResolvedSection section = sections.get(i);
-          ResolvedToken element = section.elements().iterator().next();
+          ResolvedTokens section = sections.get(i);
+          ResolvedToken element = section.resolvedTokens().iterator().next();
           return elementClasses.get(i).isAssignableFrom(element.getClass());
         }).count() == sections.size();
   }

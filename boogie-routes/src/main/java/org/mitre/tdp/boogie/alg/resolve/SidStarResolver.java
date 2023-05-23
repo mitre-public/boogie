@@ -30,8 +30,8 @@ final class SidStarResolver implements RouteTokenResolver {
   }
 
   @Override
-  public ResolvedSection resolve(@Nullable RouteToken previous, RouteToken sectionSplit, @Nullable RouteToken next) {
-    return new ResolvedSection(sectionSplit, convertToResolvedElements(proceduresFor(previous, sectionSplit, next)));
+  public ResolvedTokens resolve(@Nullable RouteToken previous, RouteToken sectionSplit, @Nullable RouteToken next) {
+    return new ResolvedTokens(sectionSplit, convertToResolvedElements(proceduresFor(previous, sectionSplit, next)));
   }
 
   /**

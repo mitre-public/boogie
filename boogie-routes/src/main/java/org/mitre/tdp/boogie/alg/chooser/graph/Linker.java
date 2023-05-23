@@ -16,9 +16,14 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 
+/**
+ * A linker is able to (on demand) return a collection of links (presumed to be between pairs of {@link ResolvedToken}s). This
+ * interface is meant to support the {@link LinkingStrategy#standard()}.
+ */
 @FunctionalInterface
-public interface Linker {
+interface Linker {
 
   /**
    * A linker which returns {@link LinkedLegs} between all leg pairs of the left and right {@link GraphableToken}s where the fixes
@@ -66,8 +71,8 @@ public interface Linker {
     @Override
     public List<LinkedLegs> links() {
 
-      List<Leg> element1Legs = withLocation(left.toLinkedLegs());
-      List<Leg> element2Legs = withLocation(right.toLinkedLegs());
+      List<Leg> element1Legs = withLocation(left.linkedLegs());
+      List<Leg> element2Legs = withLocation(right.linkedLegs());
 
       return cartesianProduct(element1Legs, element2Legs).stream()
           .sorted(comparing(this::distanceBetween))

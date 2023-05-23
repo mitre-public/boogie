@@ -1,21 +1,29 @@
 package org.mitre.tdp.boogie.alg.chooser.graph;
 
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.alg.resolve.FixTerminationLeg;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
-final class DirectToAirport implements GraphableToken {
+final class StandardAirport implements GraphableToken {
 
   private final Airport airport;
 
   private final Collection<LinkedLegs> linkedLegs;
 
-  DirectToAirport(Airport airport, Collection<LinkedLegs> linkedLegs) {
+  StandardAirport(Airport airport) {
     this.airport = requireNonNull(airport);
-    this.linkedLegs = linkedLegs;
+    this.linkedLegs = createLinkedLegs(airport);
+  }
+
+  private Collection<LinkedLegs> createLinkedLegs(Airport airport) {
+    Leg leg = FixTerminationLeg.IF(airport);
+    return singletonList(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
   }
 
   @Override
@@ -30,52 +38,52 @@ final class DirectToAirport implements GraphableToken {
 
   @Override
   public Linker visit(StandardAirport airport) {
-    return null;
+    return Linker.closestPointBetween(airport, this);
   }
 
   @Override
   public Linker visit(DirectToAirport airport) {
-    return null;
+    return Linker.closestPointBetween(airport, this);
   }
 
   @Override
   public Linker visit(StandardAirway airway) {
-    return null;
+    return Linker.closestPointBetween(airway, this);
   }
 
   @Override
   public Linker visit(StandardApproach approach) {
-    return null;
+    return Linker.closestPointBetween(approach, this);
   }
 
   @Override
   public Linker visit(StandardFix fix) {
-    return null;
+    return Linker.closestPointBetween(fix, this);
   }
 
   @Override
   public Linker visit(DirectToFix fix) {
-    return null;
+    return Linker.closestPointBetween(fix, this);
   }
 
   @Override
   public Linker visit(StandardLatLong latLong) {
-    return null;
+    return Linker.closestPointBetween(latLong, this);
   }
 
   @Override
   public Linker visit(DirectToLatLong latLong) {
-    return null;
+    return Linker.closestPointBetween(latLong, this);
   }
 
   @Override
   public Linker visit(SidEnrouteCommon sid) {
-    return null;
+    return Linker.closestPointBetween(sid, this);
   }
 
   @Override
   public Linker visit(SidRunway sid) {
-    return null;
+    return Linker.closestPointBetween(sid, this);
   }
 
   @Override
@@ -90,11 +98,11 @@ final class DirectToAirport implements GraphableToken {
 
   @Override
   public Linker visit(StandardFrd frd) {
-    return null;
+    return Linker.closestPointBetween(frd, this);
   }
 
   @Override
   public Linker visit(DirectToFrd frd) {
-    return null;
+    return Linker.closestPointBetween(frd, this);
   }
 }

@@ -42,7 +42,7 @@ class LinkerTest {
     List<LinkedLegs> linkedLegs = Stream.of(legs).map(leg -> new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT)).collect(toList());
 
     GraphableToken resolvedElement = mock(GraphableToken.class);
-    when(resolvedElement.toLinkedLegs()).thenReturn(linkedLegs);
+    when(resolvedElement.linkedLegs()).thenReturn(linkedLegs);
 
     return resolvedElement;
   }

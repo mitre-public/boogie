@@ -26,10 +26,12 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteSummary;
+import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
+import org.mitre.tdp.boogie.util.Iterators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +41,6 @@ import com.google.common.collect.LinkedHashMultimap;
 public final class GraphBasedRouteChooser implements RouteChooser {
 
   private static final Logger LOG = LoggerFactory.getLogger(GraphBasedRouteChooser.class);
-
-  private static final Predicate<ResolvedSection> sectionIsNonEmpty = resolvedSection -> !resolvedSection.allLegs().isEmpty();
 
   /**
    * Fixer class to address the shortcomings of the current resolution strategy and make the route look more like one a FMS
@@ -58,14 +58,21 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    */
   private static final SequentialLegCollapser sequentialLegCollapser = new SequentialLegCollapser();
 
+  private final LinkingStrategy linkingStrategy;
+
+  GraphBasedRouteChooser(LinkingStrategy linkingStrategy) {
+    this.linkingStrategy = requireNonNull(linkingStrategy);
+  }
+
   /**
    * Pseudo-BiFunction implementation (interface clashes with functional) which allows clients to pass in a summarizer class
    * which will be called on the initial {@link ResolvedLeg} output of the chooser.
    */
   @Override
-  public ExpandedRoute chooseRoute(List<ResolvedSection> resolvedSections) {
+  public ExpandedRoute chooseRoute(List<ResolvedTokens> resolvedTokens) {
 
-    List<ResolvedLeg> resolvedLegs = resolvedLegSequence(resolvedSections);
+    // TODO - handle tokens with valid sub-tokens but no legs? :confused:
+    List<ResolvedLeg> resolvedLegs = resolvedLegSequence(resolvedTokens);
     LOG.debug("Generated {} total resolved legs.", resolvedLegs.size());
 
     List<ExpandedRouteLeg> expandedRouteLegs = subsequentDFToTFConverter.andThen(sequentialLegCollapser)
@@ -79,17 +86,17 @@ public final class GraphBasedRouteChooser implements RouteChooser {
   /**
    * Returns the sequence of {@link ResolvedLeg}s as returned from the graphical resolution of the route.
    */
-  public List<ResolvedLeg> resolvedLegSequence(List<ResolvedSection> resolvedSections) {
-    Preconditions.checkArgument(resolvedSections.stream().filter(sectionIsNonEmpty).count() >= 2,
+  public List<ResolvedLeg> resolvedLegSequence(List<ResolvedTokens> resolvedTokens) {
+    Preconditions.checkArgument(Iterators.checkMatchCount(resolvedTokens, nonEmpty()),
         "At least two resolved sections must provide leg-level information.");
 
-    SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(resolvedSections);
+    SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(resolvedTokens);
     LOG.debug("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph));
 
-    Set<Leg> resolvedEntryPoints = resolveEntryPoints(resolvedSections);
+    Set<Leg> resolvedEntryPoints = resolveEntryPoints(resolvedTokens);
     LOG.debug("Resolved {} candidate entry points into the route graph.", resolvedEntryPoints.size());
 
-    Set<Leg> resolvedExitPoints = resolveExitPoints(resolvedSections);
+    Set<Leg> resolvedExitPoints = resolveExitPoints(resolvedTokens);
     LOG.debug("Resolved {} candidate exit points from the route graph.", resolvedExitPoints.size());
 
     DijkstraShortestPath<Leg, DefaultWeightedEdge> shortestPathAlgorithm = new DijkstraShortestPath<>(routeGraph);
@@ -102,7 +109,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
         .map(GraphPath::getVertexList)
         .orElseGet(Collections::emptyList);
 
-    LegEmbedding legEmbedding = newLegEmbedding(resolvedSections);
+    LegEmbedding legEmbedding = newLegEmbedding(resolvedTokens);
     return shortestPath.stream().map(legEmbedding).collect(Collectors.toList());
   }
 
@@ -112,16 +119,17 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    * <br>
    * The edges and their associated weights come from the returned {@link LinkedLegs}.
    */
-  SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> constructRouteGraph(List<ResolvedSection> resolvedSections) {
+  SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> constructRouteGraph(List<ResolvedTokens> resolvedTokens) {
+
     SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
     // add all the element-internal edges
-    resolvedSections.forEach(resolvedSection -> resolvedSection.elements()
-        .forEach(resolvedElement -> resolvedElement.toLinkedLegs().forEach(link -> addLinkedLegTo(graph, link))));
+    resolvedTokens.forEach(resolvedSection -> resolvedSection.resolvedTokens()
+        .forEach(resolvedElement -> linkingStrategy.graphRepresentation(resolvedElement).forEach(link -> addLinkedLegTo(graph, link))));
 
     // add the links between the adjacent ResolvedElements from various
-    fastslow(resolvedSections, sectionIsNonEmpty, (previous, next, skip) -> cartesianProduct(previous.elements(), next.elements())
-        .forEach(pair -> pair.first().linksTo(pair.second()).forEach(link -> addLinkedLegTo(graph, link))));
+    fastslow(resolvedTokens, nonEmpty(), (previous, next, skip) -> cartesianProduct(previous.resolvedTokens(), next.resolvedTokens())
+        .forEach(pair -> linkingStrategy.links(pair.first(), pair.second()).forEach(link -> addLinkedLegTo(graph, link))));
 
     return graph;
   }
@@ -145,12 +153,12 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    * Generally speaking the returned collection will be a singleton leg representing the departure airport - but for cases where
    * we may have malformed route strings this formulation should remain robust.
    */
-  LinkedHashSet<Leg> resolveEntryPoints(List<ResolvedSection> resolvedSections) {
-    return resolvedSections.stream()
+  LinkedHashSet<Leg> resolveEntryPoints(List<ResolvedTokens> resolvedTokens) {
+    return resolvedTokens.stream()
         // drop sections without expanded legs (or with no source elements to expand)
-        .filter(resolvedSection -> !resolvedSection.allLegs().isEmpty())
-        .min(Comparator.comparingDouble(s -> s.sectionSplit().index()))
-        .map(ResolvedSection::allLegs)
+        .filter(nonEmpty())
+        .min(Comparator.comparingDouble(s -> s.routeToken().index()))
+        .map(this::allLegs)
         .orElseGet(Collections::emptyList)
         .stream().map(LinkedLegs::source)
         .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -163,26 +171,35 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    * Generally speaking the returned collection will be a singleton leg representing the arrival airport - but for cases where
    * we may have malformed route strings this formulation should remain robust.
    */
-  LinkedHashSet<Leg> resolveExitPoints(List<ResolvedSection> resolvedSections) {
-    return resolvedSections.stream()
-        .filter(resolvedSection -> !resolvedSection.allLegs().isEmpty())
-        .max(Comparator.comparingDouble(s -> s.sectionSplit().index()))
-        .map(ResolvedSection::allLegs)
+  LinkedHashSet<Leg> resolveExitPoints(List<ResolvedTokens> resolvedTokens) {
+    return resolvedTokens.stream()
+        .filter(nonEmpty())
+        .max(Comparator.comparingDouble(s -> s.routeToken().index()))
+        .map(this::allLegs)
         .orElseGet(Collections::emptyList)
         .stream().map(LinkedLegs::source)
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
+  private Predicate<ResolvedTokens> nonEmpty() {
+    return tokens -> !allLegs(tokens).isEmpty();
+  }
+
+  private Collection<LinkedLegs> allLegs(ResolvedTokens tokens) {
+    return tokens.resolvedTokens().stream().flatMap(token -> linkingStrategy.graphRepresentation(token).stream()).collect(Collectors.toSet());
+  }
+
   /**
    * Returns a newly initialized {@link LegEmbedding} with the appropriate leg->element and element->section lookups.
    */
-  LegEmbedding newLegEmbedding(List<ResolvedSection> resolvedSections) {
-    LinkedHashMultimap<Leg, ResolvedToken> legToElement = LinkedHashMultimap.create();
-    LinkedHashMultimap<ResolvedToken, ResolvedSection> elementToSection = LinkedHashMultimap.create();
+  LegEmbedding newLegEmbedding(List<ResolvedTokens> resolvedTokens) {
 
-    resolvedSections.forEach(resolvedSection -> resolvedSection.elements().forEach(resolvedElement -> {
+    LinkedHashMultimap<Leg, ResolvedToken> legToElement = LinkedHashMultimap.create();
+    LinkedHashMultimap<ResolvedToken, ResolvedTokens> elementToSection = LinkedHashMultimap.create();
+
+    resolvedTokens.forEach(resolvedSection -> resolvedSection.resolvedTokens().forEach(resolvedElement -> {
       elementToSection.put(resolvedElement, resolvedSection);
-      resolvedElement.toLinkedLegs().forEach(linkedLeg -> {
+      linkingStrategy.graphRepresentation(resolvedElement).forEach(linkedLeg -> {
         legToElement.put(linkedLeg.source(), resolvedElement);
         legToElement.put(linkedLeg.target(), resolvedElement);
       });
@@ -201,11 +218,11 @@ public final class GraphBasedRouteChooser implements RouteChooser {
   private static final class LegEmbedding implements Function<Leg, ResolvedLeg> {
 
     private final LinkedHashMultimap<Leg, ResolvedToken> legToElement;
-    private final LinkedHashMultimap<ResolvedToken, ResolvedSection> elementToSection;
+    private final LinkedHashMultimap<ResolvedToken, ResolvedTokens> elementToSection;
 
     LegEmbedding(
         LinkedHashMultimap<Leg, ResolvedToken> legToElement,
-        LinkedHashMultimap<ResolvedToken, ResolvedSection> elementToSection
+        LinkedHashMultimap<ResolvedToken, ResolvedTokens> elementToSection
     ) {
       this.legToElement = legToElement;
       this.elementToSection = elementToSection;
@@ -214,9 +231,9 @@ public final class GraphBasedRouteChooser implements RouteChooser {
     @Override
     public ResolvedLeg apply(Leg leg) {
       ResolvedToken resolvedToken = resolvedElementOf(leg);
-      ResolvedSection resolvedSection = resolvedSectionOf(resolvedToken);
+      ResolvedTokens resolvedTokens = resolvedSectionOf(resolvedToken);
 
-      return new ResolvedLeg(resolvedSection.sectionSplit(), resolvedToken, leg);
+      return new ResolvedLeg(resolvedTokens.routeToken(), resolvedToken, leg);
     }
 
     private ResolvedToken resolvedElementOf(Leg leg) {
@@ -232,10 +249,10 @@ public final class GraphBasedRouteChooser implements RouteChooser {
       return elements.stream().findFirst().get();
     }
 
-    private ResolvedSection resolvedSectionOf(ResolvedToken resolvedToken) {
-      Collection<ResolvedSection> sections = elementToSection.get(requireNonNull(resolvedToken));
+    private ResolvedTokens resolvedSectionOf(ResolvedToken resolvedToken) {
+      Collection<ResolvedTokens> sections = elementToSection.get(requireNonNull(resolvedToken));
 
-      String resolvedSections = sections.stream().map(resolvedSection -> resolvedSection.sectionSplit().toString()).collect(Collectors.joining(","));
+      String resolvedSections = sections.stream().map(resolvedSection -> resolvedSection.routeToken().toString()).collect(Collectors.joining(","));
       logIf(sections.size() > 1, LOG::warn, "Returned multiple source sections for element: {}. ResolvedSection splits were: {}.", resolvedToken, resolvedSections);
 
       return sections.stream().findFirst().orElseThrow(IllegalStateException::new);

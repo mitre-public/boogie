@@ -10,12 +10,12 @@ import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.util.Streams;
 
 /**
- * A section "inferrer" considers pairs of {@link ResolvedSection}s which were resolved by {@link RouteTokenResolver} implementations
+ * A section "inferrer" considers pairs of {@link ResolvedTokens}s which were resolved by {@link RouteTokenResolver} implementations
  * from a provided route string and generates new "implied" sections between directly resolved ones.
  *
  * <p>Typically this is done to facility the generation/resolution of additional implied routing infrastructure beyond that which
@@ -28,7 +28,7 @@ import org.mitre.tdp.boogie.util.Streams;
 public interface SectionInferrer {
 
   /**
-   * Implementation of a {@link SectionInferrer} which infers the existence of no new {@link ResolvedSection}s.
+   * Implementation of a {@link SectionInferrer} which infers the existence of no new {@link ResolvedTokens}s.
    */
   static SectionInferrer noop() {
     return (left, right) -> Collections.emptyList();
@@ -103,15 +103,15 @@ public interface SectionInferrer {
   }
 
   /**
-   * Generates a new <i>ordered</i> list of {@link ResolvedSection}s based on the preceding and following provided sections.
+   * Generates a new <i>ordered</i> list of {@link ResolvedTokens}s based on the preceding and following provided sections.
    *
-   * @param left  the preceding {@link ResolvedSection} and its associated elements
-   * @param right the following {@link ResolvedSection} and its associated elements
+   * @param left  the preceding {@link ResolvedTokens} and its associated elements
+   * @param right the following {@link ResolvedTokens} and its associated elements
    */
-  List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right);
+  List<ResolvedTokens> inferBetween(ResolvedTokens left, ResolvedTokens right);
 
   /**
-   * Iterates through a list of {@link ResolvedSection}s pairwise searching for places where the inferrer returns a new section
+   * Iterates through a list of {@link ResolvedTokens}s pairwise searching for places where the inferrer returns a new section
    * (or list of sections).
    *
    * <p>Generally intended to be used with {@link HashedLinkedSequence#insertAfter(Object, Object)}.
@@ -119,7 +119,7 @@ public interface SectionInferrer {
    * @param sections the list of currently resolved sections we wish to infer across
    * @return a mapping from a section to what new sections were inferred to exist after it
    */
-  default Map<ResolvedSection, List<ResolvedSection>> inferAcross(HashedLinkedSequence<ResolvedSection> sections) {
+  default Map<ResolvedTokens, List<ResolvedTokens>> inferAcross(HashedLinkedSequence<ResolvedTokens> sections) {
     return Streams.pairwise(sections).collect(Collectors.toMap(Pair::first, pair -> this.inferBetween(pair.first(), pair.second())));
   }
 }

@@ -3,8 +3,6 @@ package org.mitre.tdp.boogie.alg.resolve;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
@@ -13,33 +11,29 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
  * as a collection of possible infrastructure elements that were determined to be associated with the section id via the
  * {@link RouteTokenResolver}.
  */
-public final class ResolvedSection {
+public final class ResolvedTokens {
 
   /**
    * The split section with wildcards and etc associated with this collection of route elements.
    */
-  private final RouteToken sectionSplit;
+  private final RouteToken routeToken;
   /**
    * List of resolved infrastructure elements.
    *
    * <p>This is the superset of all potential elements the filed section of the route string could possible be referring to.
    */
-  private final Collection<ResolvedToken> elements;
+  private final Collection<ResolvedToken> resolvedTokens;
 
-  public ResolvedSection(RouteToken split, Collection<ResolvedToken> resolvedTokens) {
-    this.sectionSplit = requireNonNull(split);
-    this.elements = resolvedTokens;
+  public ResolvedTokens(RouteToken split, Collection<ResolvedToken> resolvedTokens) {
+    this.routeToken = requireNonNull(split);
+    this.resolvedTokens = resolvedTokens;
   }
 
-  public RouteToken sectionSplit() {
-    return sectionSplit;
+  public RouteToken routeToken() {
+    return routeToken;
   }
 
-  public Collection<ResolvedToken> elements() {
-    return elements;
-  }
-
-  public List<LinkedLegs> allLegs() {
-    return elements.stream().flatMap(e -> e.toLinkedLegs().stream()).collect(Collectors.toList());
+  public Collection<ResolvedToken> resolvedTokens() {
+    return resolvedTokens;
   }
 }

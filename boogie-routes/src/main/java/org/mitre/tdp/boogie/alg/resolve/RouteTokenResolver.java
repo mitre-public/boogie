@@ -64,11 +64,11 @@ public interface RouteTokenResolver {
   }
 
   /**
-   * No-op implementations of a token resolver which returns an empty {@link ResolvedSection} when given any route token as
+   * No-op implementations of a token resolver which returns an empty {@link ResolvedTokens} when given any route token as
    * an input.
    */
   static RouteTokenResolver noop() {
-    return (left, middle, right) -> new ResolvedSection(middle, List.of());
+    return (left, middle, right) -> new ResolvedTokens(middle, List.of());
   }
 
   /**
@@ -148,9 +148,9 @@ public interface RouteTokenResolver {
    * Attempts to resolve a list of candidate {@link ResolvedToken}s from the given current {@link RouteToken} as well as
    * the preceding and following route tokens.
    */
-  ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next);
+  ResolvedTokens resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next);
 
-  default List<ResolvedSection> applyTo(List<RouteToken> sectionSplits) {
+  default List<ResolvedTokens> applyTo(List<RouteToken> sectionSplits) {
     return triplesWithNulls(sectionSplits, this::resolve).collect(Collectors.toList());
   }
 
@@ -163,15 +163,15 @@ public interface RouteTokenResolver {
     return (p, c, n) -> {
       LinkedHashSet<ResolvedToken> allElements = new LinkedHashSet<>();
 
-      ResolvedSection thisSection = this.resolve(p, c, n);
-      ResolvedSection thatSection = that.resolve(p, c, n);
+      ResolvedTokens thisSection = this.resolve(p, c, n);
+      ResolvedTokens thatSection = that.resolve(p, c, n);
 
-      checkArgument(thisSection.sectionSplit().equals(thatSection.sectionSplit()));
+      checkArgument(thisSection.routeToken().equals(thatSection.routeToken()));
 
-      allElements.addAll(thisSection.elements());
-      allElements.addAll(thatSection.elements());
+      allElements.addAll(thisSection.resolvedTokens());
+      allElements.addAll(thatSection.resolvedTokens());
 
-      return new ResolvedSection(thisSection.sectionSplit(), allElements);
+      return new ResolvedTokens(thisSection.routeToken(), allElements);
     };
   }
 

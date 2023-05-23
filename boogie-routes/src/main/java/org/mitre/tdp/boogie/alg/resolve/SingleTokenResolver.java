@@ -15,7 +15,7 @@ public interface SingleTokenResolver extends RouteTokenResolver {
   List<ResolvedToken> resolve(RouteToken sectionSplit);
 
   @Override
-  default ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next) {
-    return new ResolvedSection(current, resolve(current));
+  default ResolvedTokens resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next) {
+    return new ResolvedTokens(current, resolve(current));
   }
 }

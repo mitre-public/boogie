@@ -15,7 +15,7 @@ import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.resolve.AirportToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedSection;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RunwayTransitionFilter;
 import org.mitre.tdp.boogie.alg.resolve.StarToken;
 
@@ -31,20 +31,20 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
   }
 
   @Override
-  public List<ResolvedSection> inferBetween(ResolvedSection left, ResolvedSection right) {
+  public List<ResolvedTokens> inferBetween(ResolvedTokens left, ResolvedTokens right) {
 
-    Optional<StarToken> star = left.elements().stream()
+    Optional<StarToken> star = left.resolvedTokens().stream()
         .filter(e -> e instanceof StarToken)
         .map(StarToken.class::cast)
         .findFirst();
 
-    Optional<AirportToken> airport = right.elements().stream()
+    Optional<AirportToken> airport = right.resolvedTokens().stream()
         .filter(e -> e instanceof AirportToken)
         .map(AirportToken.class::cast)
         .findFirst();
 
     return star.isPresent() && airport.isPresent()
-        ? List.of(new ResolvedSection(left.sectionSplit(), runwayTransitionElements(star.get(), airport.get())))
+        ? List.of(new ResolvedTokens(left.routeToken(), runwayTransitionElements(star.get(), airport.get())))
         : List.of();
   }
 

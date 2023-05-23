@@ -19,12 +19,12 @@ final class SurlyTokenResolver implements RouteTokenResolver {
   }
 
   @Override
-  public ResolvedSection resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next) {
-    ResolvedSection resolvedSection = routeTokenResolver.resolve(previous, current, next);
-    if (resolvedSection.elements().isEmpty()) {
+  public ResolvedTokens resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next) {
+    ResolvedTokens resolvedTokens = routeTokenResolver.resolve(previous, current, next);
+    if (resolvedTokens.resolvedTokens().isEmpty()) {
       throw missingSectionErrorMessage(current);
     }
-    return resolvedSection;
+    return resolvedTokens;
   }
 
   private IllegalStateException missingSectionErrorMessage(RouteToken current) {
