@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.Fix;
@@ -124,5 +125,30 @@ public final class FixTerminationLeg implements Leg {
   @Override
   public boolean isPublishedHoldingFix() {
     return false;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    FixTerminationLeg that = (FixTerminationLeg) o;
+    return Objects.equals(associatedFix, that.associatedFix) && pathTerminator == that.pathTerminator;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(associatedFix, pathTerminator);
+  }
+
+  @Override
+  public String toString() {
+    return "FixTerminationLeg{" +
+        "associatedFix=" + associatedFix +
+        ", pathTerminator=" + pathTerminator +
+        '}';
   }
 }

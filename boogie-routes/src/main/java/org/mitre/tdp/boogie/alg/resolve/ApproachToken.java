@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.alg.chooser.graph.SectionGluer;
 
 public final class ApproachToken extends ProcedureToken {
 

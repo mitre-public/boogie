@@ -27,6 +27,7 @@ import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteSummary;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
@@ -58,9 +59,12 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    */
   private static final SequentialLegCollapser sequentialLegCollapser = new SequentialLegCollapser();
 
+  private final TokenGrapher tokenGrapher;
+
   private final LinkingStrategy linkingStrategy;
 
-  GraphBasedRouteChooser(LinkingStrategy linkingStrategy) {
+  GraphBasedRouteChooser(TokenGrapher tokenGrapher, LinkingStrategy linkingStrategy) {
+    this.tokenGrapher = requireNonNull(tokenGrapher);
     this.linkingStrategy = requireNonNull(linkingStrategy);
   }
 
@@ -125,7 +129,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
 
     // add all the element-internal edges
     resolvedTokens.forEach(resolvedSection -> resolvedSection.resolvedTokens()
-        .forEach(resolvedElement -> linkingStrategy.graphRepresentation(resolvedElement).forEach(link -> addLinkedLegTo(graph, link))));
+        .forEach(resolvedElement -> tokenGrapher.graphRepresentationOf(resolvedElement).forEach(link -> addLinkedLegTo(graph, link))));
 
     // add the links between the adjacent ResolvedElements from various
     fastslow(resolvedTokens, nonEmpty(), (previous, next, skip) -> cartesianProduct(previous.resolvedTokens(), next.resolvedTokens())
@@ -186,7 +190,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
   }
 
   private Collection<LinkedLegs> allLegs(ResolvedTokens tokens) {
-    return tokens.resolvedTokens().stream().flatMap(token -> linkingStrategy.graphRepresentation(token).stream()).collect(Collectors.toSet());
+    return tokens.resolvedTokens().stream().flatMap(token -> tokenGrapher.graphRepresentationOf(token).stream()).collect(Collectors.toSet());
   }
 
   /**
@@ -199,7 +203,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
 
     resolvedTokens.forEach(resolvedSection -> resolvedSection.resolvedTokens().forEach(resolvedElement -> {
       elementToSection.put(resolvedElement, resolvedSection);
-      linkingStrategy.graphRepresentation(resolvedElement).forEach(linkedLeg -> {
+      tokenGrapher.graphRepresentationOf(resolvedElement).forEach(linkedLeg -> {
         legToElement.put(linkedLeg.source(), resolvedElement);
         legToElement.put(linkedLeg.target(), resolvedElement);
       });

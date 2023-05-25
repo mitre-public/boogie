@@ -30,8 +30,8 @@ class PointsWithinRangeTest {
     Leg l2 = newLeg(LatLong.of(0., 1.));
     Leg l3 = newLeg(LatLong.of(1., 1.));
 
-    GraphableToken r1 = newResolvedElement(l1, l2);
-    GraphableToken r2 = newResolvedElement(l2, l3);
+    LinkableToken r1 = newResolvedElement(l1, l2);
+    LinkableToken r2 = newResolvedElement(l2, l3);
 
     Collection<LinkedLegs> linkedLegs = Linker.pointsWithinRange(ofNauticalMiles(.25), r1, r2).links();
 
@@ -48,8 +48,8 @@ class PointsWithinRangeTest {
     Leg l2 = newLeg(LatLong.of(0., 1.));
     Leg l3 = newLeg(LatLong.of(1., 1.));
 
-    GraphableToken r1 = newResolvedElement(l1, l2, l3);
-    GraphableToken r2 = newResolvedElement(l2, l3);
+    LinkableToken r1 = newResolvedElement(l1, l2, l3);
+    LinkableToken r2 = newResolvedElement(l2, l3);
 
     Collection<LinkedLegs> linkedLegs = Linker.pointsWithinRange(ofNauticalMiles(.25), r1, r2).links();
 
@@ -64,14 +64,14 @@ class PointsWithinRangeTest {
     );
   }
 
-  private GraphableToken newResolvedElement(Leg... legs) {
+  private LinkableToken newResolvedElement(Leg... legs) {
 
     List<LinkedLegs> linkedLegs = Stream.of(legs)
         .map(leg -> new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT))
         .collect(toList());
 
-    GraphableToken resolvedElement = mock(GraphableToken.class);
-    when(resolvedElement.linkedLegs()).thenReturn(linkedLegs);
+    LinkableToken resolvedElement = mock(LinkableToken.class);
+    when(resolvedElement.graphRepresentation()).thenReturn(linkedLegs);
 
     return resolvedElement;
   }

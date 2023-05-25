@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
@@ -27,11 +28,13 @@ public interface RouteChooser {
    * Returns a new {@link RouteChooser} which will use a shortest-path graph-traversal algorithm to determine the most likely
    * sequence of elements traversed by the flight.
    *
-   * @param linkingStrategy the strategy to use for (1) converting elements to a graphical representation (2) for linking between
-   *                        elements in the overall route graph. Typically {@link LinkingStrategy#standard()} works fine.
+   * @param tokenGrapher    a method of converting individual {@link ResolvedToken}s to a graphical representation, see
+   *                        {@link TokenGrapher#standard()}
+   * @param linkingStrategy strategy for linking between subsequent elements of the route, see
+   *                        {@link LinkingStrategy#standard()}
    */
-  static RouteChooser graphical(LinkingStrategy linkingStrategy) {
-    return new GraphBasedRouteChooser(linkingStrategy);
+  static RouteChooser graphical(TokenGrapher tokenGrapher, LinkingStrategy linkingStrategy) {
+    return new GraphBasedRouteChooser(tokenGrapher, linkingStrategy);
   }
 
   /**

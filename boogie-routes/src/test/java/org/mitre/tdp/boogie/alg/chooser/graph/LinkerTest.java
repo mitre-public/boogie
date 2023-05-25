@@ -28,8 +28,8 @@ class LinkerTest {
     Leg l2 = newLeg(LatLong.of(.5, .5));
     Leg l3 = newLeg(LatLong.of(1., 1.));
 
-    GraphableToken r1 = newResolvedElement(l1, l2);
-    GraphableToken r2 = newResolvedElement(l3);
+    LinkableToken r1 = newResolvedElement(l1, l2);
+    LinkableToken r2 = newResolvedElement(l3);
 
     Collection<LinkedLegs> linkedLegs = Linker.closestPointBetween(r1, r2).links();
 
@@ -38,11 +38,11 @@ class LinkerTest {
     assertEquals(expected, linkedLegs);
   }
 
-  private GraphableToken newResolvedElement(Leg... legs) {
+  private LinkableToken newResolvedElement(Leg... legs) {
     List<LinkedLegs> linkedLegs = Stream.of(legs).map(leg -> new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT)).collect(toList());
 
-    GraphableToken resolvedElement = mock(GraphableToken.class);
-    when(resolvedElement.linkedLegs()).thenReturn(linkedLegs);
+    LinkableToken resolvedElement = mock(LinkableToken.class);
+    when(resolvedElement.graphRepresentation()).thenReturn(linkedLegs);
 
     return resolvedElement;
   }

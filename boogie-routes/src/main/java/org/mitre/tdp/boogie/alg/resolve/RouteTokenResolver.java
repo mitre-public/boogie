@@ -59,6 +59,7 @@ public interface RouteTokenResolver {
         .addResolver(sidStar(proceduresByName))
         .addResolver(airway(airwaysByName))
         .addResolver(fix(fixesByName))
+        .addResolver(frd(fixesByName))
         .addResolver(latlong(null))
         .build();
   }
@@ -141,7 +142,18 @@ public interface RouteTokenResolver {
    * <p>Supports both ICAO and FAA coordinate standards out-of-the-box.
    */
   static RouteTokenResolver latlong(Function<LatLong, Leg> toLeg) {
-    return new LatLonResolver();
+    return new LatLongResolver();
+  }
+
+  /**
+   * Returns a new {@link RouteTokenResolver} resolving route string tokens to fix-radial-distances based on the format of their
+   * identifier (i.e. {@code NAV123034}).
+   *
+   * @param fixesByIdentifier lookup service providing fixes indexed by their identifier (e.g. JMACK, VNB) as they would show up
+   *                          in an input route string.
+   */
+  static RouteTokenResolver frd(LookupService<Fix> fixesByIdentifier) {
+    return new FrdResolver(fixesByIdentifier);
   }
 
   /**

@@ -55,12 +55,11 @@ final class SidStarResolver implements RouteTokenResolver {
   List<ResolvedToken> convertToResolvedElements(Collection<Procedure> procedures) {
     return procedures.stream()
         .map(procedure -> {
-          Procedure withoutRunwayTransitions = new TransitionMaskedProcedure(procedure, COMMON_OR_ENROUTE);
 
           if (ProcedureType.SID.equals(procedure.procedureType())) {
-            return new SidToken(withoutRunwayTransitions);
+            return ResolvedToken.sidEnrouteCommon(procedure);
           } else if (ProcedureType.STAR.equals(procedure.procedureType())) {
-            return new StarToken(withoutRunwayTransitions);
+            return ResolvedToken.starEnrouteCommon(procedure);
           } else {
             throw new IllegalArgumentException("Unsupported procedure type for conversion: ".concat(procedure.procedureType().name()));
           }

@@ -5,31 +5,19 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
  */
 interface LinkingVisitor {
 
-  Linker visit(StandardAirport airport);
+  Linker visit(AnyAirport airport);
 
-  Linker visit(DirectToAirport airport);
+  Linker visit(AnyAirway airway);
 
-  Linker visit(StandardAirway airway);
+  Linker visit(AnyApproach approach);
 
-  Linker visit(StandardApproach approach);
+  Linker visit(AnyFix fix);
 
-  Linker visit(StandardFix fix);
+  Linker visit(AnyLatLong latLong);
 
-  Linker visit(DirectToFix fix);
+  Linker visit(AnySid sid);
 
-  Linker visit(StandardLatLong latLong);
+  Linker visit(AnyStar star);
 
-  Linker visit(DirectToLatLong latLong);
-
-  Linker visit(SidEnrouteCommon sid);
-
-  Linker visit(SidRunway sid);
-
-  Linker visit(StarEnrouteCommon star);
-
-  Linker visit(StarRunway star);
-
-  Linker visit(StandardFrd frd);
-
-  Linker visit(DirectToFrd frd);
+  Linker visit(AnyFrd frd);
 }

@@ -1,10 +1,5 @@
 package org.mitre.tdp.boogie.alg.resolve.infer;
 
-import static java.util.Collections.singletonList;
-import static java.util.Comparator.comparing;
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,12 +17,19 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.RunwayIdExtractor;
 import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
-import org.mitre.tdp.boogie.alg.resolve.AirportToken;
 import org.mitre.tdp.boogie.alg.resolve.ApproachToken;
 import org.mitre.tdp.boogie.alg.resolve.IsApproachForRunway;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.fn.TriFunction;
+
+import static java.util.Collections.singletonList;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 final class ApproachInferrer implements SectionInferrer {
 
@@ -64,9 +66,8 @@ final class ApproachInferrer implements SectionInferrer {
 
   private Optional<Procedure> resolve(ResolvedTokens resolvedTokens, String extractedNumber) {
     return resolvedTokens.resolvedTokens().stream()
-        .filter(AirportToken.class::isInstance)
-        .map(AirportToken.class::cast)
-        .map(airportElement -> proceduresByAirport.apply(airportElement.identifier()))
+        .flatMap(token -> AirportIdentifier.get(token).stream())
+        .map(proceduresByAirport)
         .map(procedures -> approachesForRunway.apply(procedures, extractedNumber, RunwayIdExtractor.parallelDesignator(arrivalRunway).orElse(null)))
         .map(equippedProcedures)
         .flatMap(Collection::stream)
@@ -103,6 +104,30 @@ final class ApproachInferrer implements SectionInferrer {
           .filter(col -> !col.isEmpty())
           .findFirst()
           .orElse(Collections.emptyList());
+    }
+  }
+
+  static final class AirportIdentifier extends ResolvedTokenVisitor.Noop {
+
+    private String identifier;
+
+    private AirportIdentifier() {
+    }
+
+    static Optional<String> get(ResolvedToken token) {
+      AirportIdentifier visitor = new AirportIdentifier();
+      token.accept(visitor);
+      return ofNullable(visitor.identifier);
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirport airport) {
+      this.identifier = airport.identifier();
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToAirport airport) {
+      this.identifier = airport.identifier();
     }
   }
 }
