@@ -150,7 +150,7 @@ public interface ResolvedToken<T> {
    * @param sid the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
    */
   static SidEnrouteCommon sidEnrouteCommon(Procedure sid) {
-    return new SidEnrouteCommon(sid);
+    return new SidEnrouteCommon(Procedure.onlyEnrouteCommon(sid));
   }
 
   /**
@@ -164,7 +164,7 @@ public interface ResolvedToken<T> {
    * @param sid the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
    */
   static SidRunway sidRunway(Procedure sid) {
-    return new SidRunway(sid);
+    return new SidRunway(Procedure.onlyRunway(sid));
   }
 
   /**
@@ -185,7 +185,7 @@ public interface ResolvedToken<T> {
    * @param star the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
    */
   static StarEnrouteCommon starEnrouteCommon(Procedure star) {
-    return new StarEnrouteCommon(star);
+    return new StarEnrouteCommon(Procedure.onlyEnrouteCommon(star));
   }
 
   /**
@@ -199,7 +199,7 @@ public interface ResolvedToken<T> {
    * @param star the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
    */
   static StarRunway starRunway(Procedure star) {
-    return new StarRunway(star);
+    return new StarRunway(Procedure.onlyRunway(star));
   }
 
   /**

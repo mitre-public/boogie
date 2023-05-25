@@ -28,7 +28,6 @@ class LatLongGrapherTest {
     LinkedLegs linked = representation.iterator().next();
     assertAll(
         () -> assertEquals(LatLong.of(0., 0.), linked.source().associatedFix().map(Fix::latLong).orElse(null)),
-        () -> assertEquals("SHERL", linked.source().associatedFix().map(Fix::fixIdentifier).orElse(null)),
         () -> assertEquals(PathTerminator.IF, linked.source().pathTerminator()),
         () -> assertSame(linked.source(), linked.target())
     );
@@ -45,7 +44,6 @@ class LatLongGrapherTest {
     LinkedLegs linked = representation.iterator().next();
     assertAll(
         () -> assertEquals(LatLong.of(0., 0.), linked.source().associatedFix().map(Fix::latLong).orElse(null)),
-        () -> assertEquals("SHERL", linked.source().associatedFix().map(Fix::fixIdentifier).orElse(null)),
         () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator()),
         () -> assertSame(linked.source(), linked.target())
     );

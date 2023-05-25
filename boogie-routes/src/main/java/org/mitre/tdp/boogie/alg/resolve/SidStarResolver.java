@@ -1,12 +1,12 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Procedure;
@@ -14,12 +14,11 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.validate.RecordElectorFactory;
 
 /**
- * Class for resolving candidate {@link SidToken}/{@link StarToken}s from a {@link RouteToken}.
+ * Resolves candidate {@link ResolvedToken.SidEnrouteCommon}/{@link ResolvedToken.StarEnrouteCommon}s from a {@link RouteToken}.
  */
 final class SidStarResolver implements RouteTokenResolver {
 
@@ -45,7 +44,7 @@ final class SidStarResolver implements RouteTokenResolver {
 
     // Down-select to procedures matching the filed arr/dep airport (assuming we have them)
     Predicate<Procedure> airportFilter = newAirportFilter(previous, next);
-    Collection<Procedure> proceduresAtAirport = procedures.stream().filter(airportFilter).collect(Collectors.toList());
+    Collection<Procedure> proceduresAtAirport = procedures.stream().filter(airportFilter).collect(toList());
 
     // We want to down-select where we can, but something is better than nothing, so allow the no-match
     // case to return anything that matched - the algo is generic enough to handle it smartly
@@ -55,7 +54,6 @@ final class SidStarResolver implements RouteTokenResolver {
   List<ResolvedToken> convertToResolvedElements(Collection<Procedure> procedures) {
     return procedures.stream()
         .map(procedure -> {
-
           if (ProcedureType.SID.equals(procedure.procedureType())) {
             return ResolvedToken.sidEnrouteCommon(procedure);
           } else if (ProcedureType.STAR.equals(procedure.procedureType())) {
@@ -64,7 +62,7 @@ final class SidStarResolver implements RouteTokenResolver {
             throw new IllegalArgumentException("Unsupported procedure type for conversion: ".concat(procedure.procedureType().name()));
           }
         })
-        .collect(Collectors.toList());
+        .collect(toList());
   }
 
   /**
@@ -93,7 +91,4 @@ final class SidStarResolver implements RouteTokenResolver {
       return false;
     };
   }
-
-  private static final Predicate<Transition> COMMON_OR_ENROUTE = transition ->
-      TransitionType.COMMON.equals(transition.transitionType()) || TransitionType.ENROUTE.equals(transition.transitionType());
 }

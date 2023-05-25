@@ -24,6 +24,14 @@ public interface Procedure {
     return new TransitionMaskedProcedure(procedure, transitionFilter);
   }
 
+  static Procedure onlyEnrouteCommon(Procedure procedure) {
+    return transitionMasked(procedure, t -> TransitionType.COMMON.equals(t.transitionType()) | TransitionType.ENROUTE.equals(t.transitionType()));
+  }
+
+  static Procedure onlyRunway(Procedure procedure) {
+    return transitionMasked(procedure, t -> TransitionType.RUNWAY.equals(t.transitionType()));
+  }
+
   /**
    * The identifier for the procedure.
    * <br>

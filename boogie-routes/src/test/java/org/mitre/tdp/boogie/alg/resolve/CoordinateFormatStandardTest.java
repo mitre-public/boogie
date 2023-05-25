@@ -25,19 +25,19 @@ class CoordinateFormatStandardTest {
   @Test
   void testFaa() {
     assertAll(
-        () -> assertEquals("", makeLat("5300N/14000W").orElse(null), "FAA Latitude"),
-        () -> assertEquals("", makeLon("5300N/14000W").orElse(null), "FAA Longitude")
+        () -> assertEquals("530000N", makeLat("5300N/14000W").orElse(null), "FAA Latitude"),
+        () -> assertEquals("1400000W", makeLon("5300N/14000W").orElse(null), "FAA Longitude")
     );
   }
 
   @Test
   void testIcao() {
     assertAll(
-        () -> assertEquals("", makeLat("53N140W").orElse(null), "ICAO (Degrees Only) Latitude"),
-        () -> assertEquals("", makeLon("53N140W").orElse(null), "ICAO (Degrees Only) Longitude"),
+        () -> assertEquals("530000N", makeLat("53N140W").orElse(null), "ICAO (Degrees Only) Latitude"),
+        () -> assertEquals("1400000W", makeLon("53N140W").orElse(null), "ICAO (Degrees Only) Longitude"),
 
-        () -> assertEquals("", makeLat("5300N14000W").orElse(null), "ICAO Latitude"),
-        () -> assertEquals("", makeLon("5300N14000W").orElse(null), "ICAO Longitude")
+        () -> assertEquals("530000N", makeLat("5300N14000W").orElse(null), "ICAO Latitude"),
+        () -> assertEquals("1400000W", makeLon("5300N14000W").orElse(null), "ICAO Longitude")
     );
   }
 }

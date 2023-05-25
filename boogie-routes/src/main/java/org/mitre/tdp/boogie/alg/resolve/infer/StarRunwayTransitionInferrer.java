@@ -8,16 +8,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
-import org.mitre.tdp.boogie.alg.resolve.AirportToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.resolve.StarToken;
 
 final class StarRunwayTransitionInferrer implements SectionInferrer {
 
@@ -33,14 +32,12 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
   @Override
   public List<ResolvedTokens> inferBetween(ResolvedTokens left, ResolvedTokens right) {
 
-    Optional<StarToken> star = left.resolvedTokens().stream()
-        .filter(e -> e instanceof StarToken)
-        .map(StarToken.class::cast)
+    Optional<Procedure> star = left.resolvedTokens().stream()
+        .flatMap(t -> ResolvedTokenVisitor.star(t).stream())
         .findFirst();
 
-    Optional<AirportToken> airport = right.resolvedTokens().stream()
-        .filter(e -> e instanceof AirportToken)
-        .map(AirportToken.class::cast)
+    Optional<Airport> airport = right.resolvedTokens().stream()
+        .flatMap(t -> ResolvedTokenVisitor.airport(t).stream())
         .findFirst();
 
     return star.isPresent() && airport.isPresent()
@@ -48,13 +45,13 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
         : List.of();
   }
 
-  private Collection<ResolvedToken> runwayTransitionElements(StarToken star, AirportToken airport) {
+  private Collection<ResolvedToken> runwayTransitionElements(Procedure star, Airport airport) {
 
-    Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, star.identifier(), airport.identifier());
+    Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, star.procedureIdentifier(), airport.airportIdentifier());
 
     return procedures.stream()
-        .map(procedure -> new TransitionMaskedProcedure(procedure, nonArrivalRunwayTransitionFilter()))
-        .map(StarToken::new)
+        .map(procedure -> Procedure.transitionMasked(procedure, nonArrivalRunwayTransitionFilter()))
+        .map(ResolvedToken::starRunway)
         .collect(toList());
   }
 

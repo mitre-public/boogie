@@ -27,6 +27,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -38,7 +39,10 @@ class TestGraphBasedRouteChooser {
 
   private static final RouteTokenizer sectionSplitter = RouteTokenizer.faaIfrFormat();
 
-  private static final GraphBasedRouteChooser routeChooser = new GraphBasedRouteChooser(LinkingStrategy.standard());
+  private static final GraphBasedRouteChooser routeChooser = new GraphBasedRouteChooser(
+      TokenGrapher.standard(),
+      LinkingStrategy.standard(TokenGrapher.standard())
+  );
 
   @Test
   void testConnectedSubsets() {

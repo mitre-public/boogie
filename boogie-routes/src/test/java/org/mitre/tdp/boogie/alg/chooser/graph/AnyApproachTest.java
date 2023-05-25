@@ -197,7 +197,7 @@ class AnyApproachTest {
   void testFixToApproachWithZeroDistance() {
 
     List<LinkedLegs> legs = new ArrayList<>(STRATEGY.links(
-        ResolvedToken.standardFix(createFix("myFix", 0, 0)),
+        ResolvedToken.directToFix(createFix("myFix", 0, 0)),
         fixOriginatingApproach(0))
     );
 
@@ -218,7 +218,7 @@ class AnyApproachTest {
   void testFixToApproachWithNonZeroDistance() {
 
     List<LinkedLegs> legs = new ArrayList<>(STRATEGY.links(
-        ResolvedToken.standardFix(createFix("myFix", 0, 0)),
+        ResolvedToken.directToFix(createFix("myFix", 0, 0)),
         fixOriginatingApproach(0.5))
     );
 

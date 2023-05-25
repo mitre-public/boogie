@@ -23,6 +23,7 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
@@ -224,7 +225,7 @@ public final class RouteExpander implements
 
     private RouteTokenResolver routeTokenResolver;
 
-    private RouteChooser routeChooser = RouteChooser.graphical(LinkingStrategy.standard());
+    private RouteChooser routeChooser = RouteChooser.graphical(TokenGrapher.standard(), LinkingStrategy.standard(TokenGrapher.standard()));
 
     private Builder() {
     }
@@ -301,8 +302,8 @@ public final class RouteExpander implements
      * Defines how the expander chooses the appropriate flyable route through the resolved infrastructure candidates across all
      * tokens in the route string.
      *
-     * @param routeChooser the route chooser implementation to use, default
-     *                     {@link RouteChooser#graphical(LinkingStrategy)} + {@link LinkingStrategy#standard()}
+     * @param routeChooser the route chooser implementation to use, default {@link RouteChooser#graphical(TokenGrapher, LinkingStrategy)}
+     *                     + {@link LinkingStrategy#standard(TokenGrapher)}
      */
     public Builder routeChooser(RouteChooser routeChooser) {
       this.routeChooser = requireNonNull(routeChooser);

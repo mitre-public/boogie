@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,13 +32,9 @@ class AirportGrapherTest {
     LinkedLegs linked = representation.iterator().next();
     assertAll(
         () -> assertEquals(airport.latLong(), linked.source().associatedFix().map(Fix::latLong).orElse(null)),
-        () -> assertEquals(airport.latLong(), linked.target().associatedFix().map(Fix::latLong).orElse(null)),
-
         () -> assertEquals("KATL", linked.source().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals("KATL", linked.target().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-
         () -> assertEquals(PathTerminator.IF, linked.source().pathTerminator()),
-        () -> assertEquals(PathTerminator.IF, linked.source().pathTerminator())
+        () -> assertSame(linked.source(), linked.target())
     );
   }
 
@@ -45,7 +42,7 @@ class AirportGrapherTest {
   void test_DirectToAirport() {
 
     Airport airport = mockAirport("KATL", LatLong.of(0., 0.));
-    ResolvedToken.StandardAirport token = ResolvedToken.standardAirport(airport);
+    ResolvedToken.DirectToAirport token = ResolvedToken.directToAirport(airport);
 
     Collection<LinkedLegs> representation = GRAPHER.graphRepresentationOf(token);
     assertEquals(1, representation.size());
@@ -53,13 +50,9 @@ class AirportGrapherTest {
     LinkedLegs linked = representation.iterator().next();
     assertAll(
         () -> assertEquals(airport.latLong(), linked.source().associatedFix().map(Fix::latLong).orElse(null)),
-        () -> assertEquals(airport.latLong(), linked.target().associatedFix().map(Fix::latLong).orElse(null)),
-
         () -> assertEquals("KATL", linked.source().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals("KATL", linked.target().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-
         () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator()),
-        () -> assertEquals(PathTerminator.DF, linked.source().pathTerminator())
+        () -> assertSame(linked.source(), linked.target())
     );
   }
 

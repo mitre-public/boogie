@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.chooser;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.mitre.caasd.commons.util.Partitioners.newListCollector;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.caasd.commons.util.Partitioners;
+import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
@@ -23,13 +24,8 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.RouteSummary;
-import org.mitre.tdp.boogie.alg.resolve.AirportToken;
-import org.mitre.tdp.boogie.alg.resolve.ApproachToken;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
-import org.mitre.tdp.boogie.alg.resolve.SidToken;
-import org.mitre.tdp.boogie.alg.resolve.StarToken;
-import org.mitre.tdp.boogie.alg.split.RouteToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.util.TransitionSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,11 +86,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
   }
 
   private Optional<String> departureAirport(ResolvedLeg initialLeg) {
-    return Optional.of(initialLeg).filter(leg -> leg.sourceElement() instanceof AirportToken).map(ResolvedLeg::split).map(RouteToken::infrastructureName);
+    return Optional.of(initialLeg).flatMap(l -> ResolvedTokenVisitor.airport(l.sourceElement())).map(Airport::airportIdentifier);
   }
 
   private Optional<String> arrivalAirport(ResolvedLeg finalLeg) {
-    return Optional.of(finalLeg).filter(leg -> leg.sourceElement() instanceof AirportToken).map(ResolvedLeg::split).map(RouteToken::infrastructureName);
+    return Optional.of(finalLeg).flatMap(l -> ResolvedTokenVisitor.airport(l.sourceElement())).map(Airport::airportIdentifier);
   }
 
   /**
@@ -106,9 +102,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     @Override
     public Optional<ProcedureSummary> apply(List<ResolvedLeg> resolvedLegs) {
-      return legsFromElement(resolvedLegs, StarToken.class).stream().reduce((l1, l2) -> l2)
+      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.star(e.sourceElement()).isPresent())
+          .stream()
+          .reduce((l1, l2) -> l2)
           .map(starLegs -> {
-            Procedure star = ((StarToken) starLegs.get(0).sourceElement()).procedure();
+            Procedure star = ResolvedTokenVisitor.star(starLegs.get(0).sourceElement()).orElseThrow();
             Map<Leg, Transition> transitionEmbedding = transitionEmbeddingFor(starLegs);
 
             Optional<String> arrivalFix = starLegs.stream().filter(leg -> TransitionType.COMMON.equals(transitionEmbedding.get(leg.leg()).transitionType()))
@@ -125,9 +123,8 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
       return resolvedLegs.stream()
-          .filter(resolvedLeg -> resolvedLeg.sourceElement() instanceof StarToken)
-          .map(resolvedLeg -> (StarToken) resolvedLeg.sourceElement())
-          .flatMap(starElement -> transitionEmbeddingFor(starElement.procedure()))
+          .flatMap(l -> ResolvedTokenVisitor.star(l.sourceElement()).stream())
+          .flatMap(this::transitionEmbeddingFor)
           .collect(elidingCollector(Pair::first, Pair::second));
     }
 
@@ -147,9 +144,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     @Override
     public Optional<ProcedureSummary> apply(List<ResolvedLeg> resolvedLegs) {
-      return legsFromElement(resolvedLegs, SidToken.class).stream().findFirst()
+      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.sid(e.sourceElement()).isPresent())
+          .stream()
+          .findFirst()
           .map(sidLegs -> {
-            Procedure sid = ((SidToken) sidLegs.get(0).sourceElement()).procedure();
+            Procedure sid = ResolvedTokenVisitor.sid(sidLegs.get(0).sourceElement()).orElseThrow();
             Map<Leg, Transition> transitionEmbedding = transitionEmbeddingFor(sidLegs);
 
             Optional<String> departureFix = sidLegs.stream().filter(leg -> TransitionType.COMMON.equals(transitionEmbedding.get(leg.leg()).transitionType()))
@@ -166,9 +165,8 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
       return resolvedLegs.stream()
-          .filter(resolvedLeg -> resolvedLeg.sourceElement() instanceof SidToken)
-          .map(resolvedLeg -> (SidToken) resolvedLeg.sourceElement())
-          .flatMap(sidElement -> transitionEmbeddingFor(sidElement.procedure()))
+          .flatMap(l -> ResolvedTokenVisitor.sid(l.sourceElement()).stream())
+          .flatMap(this::transitionEmbeddingFor)
           .collect(elidingCollector(Pair::first, Pair::second));
     }
 
@@ -197,9 +195,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     @Override
     public Optional<ProcedureSummary> apply(List<ResolvedLeg> resolvedLegs) {
-      return legsFromElement(resolvedLegs, ApproachToken.class).stream().reduce((l1, l2) -> l2)
+      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.approach(e.sourceElement()).isPresent())
+          .stream()
+          .reduce((l1, l2) -> l2)
           .map(approachLegs -> {
-            Procedure approach = ((ApproachToken) approachLegs.get(0).sourceElement()).procedure();
+            Procedure approach = ResolvedTokenVisitor.approach(approachLegs.get(0).sourceElement()).orElseThrow();
 
             return new ProcedureSummary.Builder()
                 .procedureName(approach.procedureIdentifier())
@@ -210,10 +210,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
     }
   }
 
-  private static List<List<ResolvedLeg>> legsFromElement(List<ResolvedLeg> resolvedLegs, Class<? extends ResolvedToken> elementClass) {
-    Predicate<ResolvedLeg> isFromElement = resolvedLeg -> elementClass.isAssignableFrom(resolvedLeg.sourceElement().getClass());
-    return resolvedLegs.stream().collect(Partitioners.newListCollector(isFromElement)).stream()
-        .filter(list -> isFromElement.test(list.get(0))).collect(Collectors.toList());
+  private static List<List<ResolvedLeg>> legsFromElement(List<ResolvedLeg> resolvedLegs, Predicate<ResolvedLeg> isFromElement) {
+    return resolvedLegs.stream()
+        .collect(newListCollector(isFromElement)).stream()
+        .filter(list -> isFromElement.test(list.get(0)))
+        .collect(Collectors.toList());
   }
 
   /**

@@ -18,8 +18,6 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 class FrdResolverTest {
 
-  // JIMMY111018
-
   @Test
   void testBearingDistanceTailored() {
 
@@ -34,7 +32,7 @@ class FrdResolverTest {
   @Test
   void test_Tailored() {
 
-    RouteToken token = RouteToken.faaIfrBuilder("HTO354018", 0.)
+    RouteToken token = RouteToken.faaIfrBuilder("JIMMY354018", 0.)
         .wildcards("/")
         .build();
 
@@ -53,7 +51,7 @@ class FrdResolverTest {
   @Test
   void test_Direct() {
 
-    RouteToken token = RouteToken.faaIfrBuilder("HTO354018", 0.).build();
+    RouteToken token = RouteToken.faaIfrBuilder("JIMMY354018", 0.).build();
 
     List<ResolvedToken> resolved = resolver(token).resolve(token);
     assertEquals(1, resolved.size(), "Should be on resolved token.");
@@ -70,7 +68,7 @@ class FrdResolverTest {
   private FrdResolver resolver(RouteToken token) {
     String name = token.infrastructureName();
 
-    Fix fix = fix(name.substring(name.length() - 6), 0., 0.);
+    Fix fix = fix(name.substring(0, name.length() - 6), 0., 0.);
     return new FrdResolver(LookupService.inMemory(List.of(fix), f -> Stream.of(f.fixIdentifier())));
   }
 }

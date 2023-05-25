@@ -1,29 +1,16 @@
 package org.mitre.tdp.boogie.alg.chooser;
 
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.AIRPORT;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.AIRWAY;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.APPROACH;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.FIX;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.LATLON;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.SID;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.STAR;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.TAILORED;
-
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
-import org.mitre.tdp.boogie.alg.resolve.AirportToken;
-import org.mitre.tdp.boogie.alg.resolve.AirwayToken;
-import org.mitre.tdp.boogie.alg.resolve.ApproachToken;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-import org.mitre.tdp.boogie.alg.resolve.FixToken;
-import org.mitre.tdp.boogie.alg.resolve.LatLonToken;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
-import org.mitre.tdp.boogie.alg.resolve.SidToken;
-import org.mitre.tdp.boogie.alg.resolve.StarToken;
-import org.mitre.tdp.boogie.alg.resolve.TailoredToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Functional class which is responsible for converting a {@link ResolvedLeg} to an {@link ExpandedRouteLeg} and adding the
@@ -46,28 +33,92 @@ final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteL
     );
   }
 
-  /**
-   * This isn't a best practice implementation but this class as a whole is mainly provided for ease-of-use in downstream apps.
-   */
   public static ElementType fromResolvedElement(ResolvedToken resolvedToken) {
-    if (resolvedToken instanceof AirportToken) {
-      return AIRPORT;
-    } else if (resolvedToken instanceof AirwayToken) {
-      return AIRWAY;
-    } else if (resolvedToken instanceof FixToken) {
-      return FIX;
-    } else if (resolvedToken instanceof SidToken) {
-      return SID;
-    } else if (resolvedToken instanceof StarToken) {
-      return STAR;
-    } else if (resolvedToken instanceof ApproachToken) {
-      return APPROACH;
-    } else if (resolvedToken instanceof LatLonToken) {
-      return LATLON;
-    } else if (resolvedToken instanceof TailoredToken) {
-      return TAILORED;
-    } else {
-      throw new IllegalArgumentException("Unknown how to map input ResolvedElement to ElementType. ResolvedElement class was: ".concat(resolvedToken.getClass().getSimpleName()));
+    return ElementTypeVisitor.get(resolvedToken)
+        .orElseThrow(() -> new IllegalArgumentException("Unknown how to map input ResolvedElement to ElementType. ResolvedElement class was: ".concat(resolvedToken.getClass().getSimpleName())));
+  }
+
+  private static final class ElementTypeVisitor implements ResolvedTokenVisitor {
+
+    private ElementType type;
+
+    private ElementTypeVisitor() {
+    }
+
+    private static Optional<ElementType> get(ResolvedToken token) {
+      ElementTypeVisitor visitor = new ElementTypeVisitor();
+      token.accept(visitor);
+      return ofNullable(visitor.type);
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirport airport) {
+      this.type = ElementType.AIRPORT;
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToAirport airport) {
+      this.type = ElementType.AIRPORT;
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirway airway) {
+      this.type = ElementType.AIRWAY;
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardApproach approach) {
+      this.type = ElementType.APPROACH;
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFix fix) {
+      this.type = ElementType.FIX;
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFix fix) {
+      this.type = ElementType.FIX;
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardLatLong latLong) {
+      this.type = ElementType.LATLON;
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToLatLong latLong) {
+      this.type = ElementType.LATLON;
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidEnrouteCommon sid) {
+      this.type = ElementType.SID;
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidRunway sid) {
+      this.type = ElementType.SID;
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarEnrouteCommon star) {
+      this.type = ElementType.STAR;
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarRunway star) {
+      this.type = ElementType.STAR;
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFrd frd) {
+      this.type = ElementType.TAILORED;
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFrd frd) {
+      this.type = ElementType.TAILORED;
     }
   }
 }

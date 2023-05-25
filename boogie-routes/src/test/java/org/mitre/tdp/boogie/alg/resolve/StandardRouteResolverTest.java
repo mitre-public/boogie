@@ -42,14 +42,17 @@ class StandardRouteResolverTest {
 
     assertTrue(allMatch(sections, s -> s.resolvedTokens().size() == 1));
 
-    assertTrue(matchesOrder(sections, Arrays.asList(
-        AirportToken.class,
-        SidToken.class,
-        FixToken.class,
-        AirwayToken.class,
-        FixToken.class,
-        StarToken.class,
-        AirportToken.class)));
+    List<Class<?>> classOrder = List.of(
+        ResolvedToken.StandardAirport.class,
+        ResolvedToken.SidEnrouteCommon.class,
+        ResolvedToken.DirectToFix.class,
+        ResolvedToken.StandardAirway.class,
+        ResolvedToken.DirectToFix.class,
+        ResolvedToken.StarEnrouteCommon.class,
+        ResolvedToken.StandardAirport.class
+    );
+
+    assertTrue(matchesOrder(sections, classOrder));
   }
 
   private RouteTokenResolver resolverForRoute0() {

@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import org.mitre.caasd.commons.Course;
 import org.mitre.tdp.boogie.util.Declinations;
 
 /**
@@ -59,12 +60,20 @@ public final class MagneticVariation implements Serializable {
     return published().map(published -> course + published).orElse(course + modeled());
   }
 
+  public Course magneticToTrue(Course course) {
+    return Course.ofDegrees(magneticToTrue(course.inDegrees()));
+  }
+
   /**
    * Converts the input true course to a magnetic course using the published local variation if provided otherwise defaulting to
    * the modeled value.
    */
   public Double trueToMagnetic(Double course) {
     return published().map(published -> course - published).orElse(course - modeled());
+  }
+
+  public Course trueToMagnetic(Course course) {
+    return Course.ofDegrees(trueToMagnetic(course.inDegrees()));
   }
 
   @Override

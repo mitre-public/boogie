@@ -45,7 +45,7 @@ final class FrdResolver implements SingleTokenResolver {
   }
 
   static String fixIdentifier(String frd) {
-    return frd.substring(frd.length() - 6);
+    return frd.substring(0, frd.length() - 6);
   }
 
   static Pair<Course, Distance> bearingDistance(String frd) {

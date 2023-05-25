@@ -1,14 +1,16 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.stream.Collectors.toList;
+import static org.mitre.tdp.boogie.alg.resolve.ResolvedToken.directToAirport;
+import static org.mitre.tdp.boogie.alg.resolve.ResolvedToken.standardAirport;
+import static org.mitre.tdp.boogie.alg.split.RouteTokenVisitor.isDirectTo;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
 
 final class AirportResolver implements SingleTokenResolver {
 
@@ -19,11 +21,11 @@ final class AirportResolver implements SingleTokenResolver {
   }
 
   @Override
-  public List<ResolvedToken> resolve(RouteToken routeToken) {
+  public List<ResolvedToken> resolve(RouteToken token) {
     return lookupService
-        .apply(routeToken.infrastructureName())
+        .apply(token.infrastructureName())
         .stream()
-        .map(airport -> new AirportToken(airport, RouteTokenVisitor.wildcards(routeToken)))
-        .collect(Collectors.toList());
+        .map(a -> isDirectTo(token) ? directToAirport(a) : standardAirport(a))
+        .collect(toList());
   }
 }

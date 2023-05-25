@@ -1,21 +1,18 @@
 package org.mitre.tdp.boogie.alg.chooser.graph;
 
+import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.FixRadialDistance;
 import org.mitre.tdp.boogie.alg.resolve.FixTerminationLeg;
 import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
@@ -63,7 +60,7 @@ public interface TokenGrapher {
     /**
      * Visitor implementation of the various {@link ResolvedToken} implementations
      */
-    private static final class VisitingGrapher implements ResolvedTokenVisitor {
+    static final class VisitingGrapher implements ResolvedTokenVisitor {
 
       private static final ProcedureGrapher PROCEDURE_GRAPHER = new ProcedureGrapher();
 
@@ -131,22 +128,22 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.SidEnrouteCommon sid) {
-        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(Procedure.transitionMasked(sid.infrastructure(), ProcedureGrapher.enrouteOrCommon())));
+        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(sid.infrastructure()));
       }
 
       @Override
       public void visit(ResolvedToken.SidRunway sid) {
-        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(Procedure.transitionMasked(sid.infrastructure(), ProcedureGrapher.runway())));
+        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(sid.infrastructure()));
       }
 
       @Override
       public void visit(ResolvedToken.StarEnrouteCommon star) {
-        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(Procedure.transitionMasked(star.infrastructure(), ProcedureGrapher.enrouteOrCommon())));
+        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(star.infrastructure()));
       }
 
       @Override
       public void visit(ResolvedToken.StarRunway star) {
-        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(Procedure.transitionMasked(star.infrastructure(), ProcedureGrapher.runway())));
+        linkedLegs.addAll(PROCEDURE_GRAPHER.apply(star.infrastructure()));
       }
 
       @Override
@@ -180,9 +177,11 @@ public interface TokenGrapher {
       }
 
       private Fix createFix(FixRadialDistance frd) {
+
         LatLong project = frd.projectedLocation();
+
         return new BoogieFix.Builder()
-            .fixIdentifier(frd.fix().fixIdentifier())
+            .fixIdentifier(frd.formattedIdentifier())
             .fixRegion(frd.fix().fixRegion())
             .latitude(project.latitude())
             .longitude(project.longitude())
@@ -196,17 +195,9 @@ public interface TokenGrapher {
     /**
      * Standard handler for converting incoming {@link Procedure} definitions to graphical representations.
      */
-    private static final class ProcedureGrapher implements Function<Procedure, Collection<LinkedLegs>> {
+    static final class ProcedureGrapher implements Function<Procedure, Collection<LinkedLegs>> {
 
-      private ProcedureGrapher() {
-      }
-
-      static Predicate<Transition> enrouteOrCommon() {
-        return t -> TransitionType.COMMON.equals(t.transitionType()) || TransitionType.ENROUTE.equals(t.transitionType());
-      }
-
-      static Predicate<Transition> runway() {
-        return t -> TransitionType.RUNWAY.equals(t.transitionType());
+      ProcedureGrapher() {
       }
 
       @Override
@@ -224,7 +215,7 @@ public interface TokenGrapher {
               Leg target = graph.getEdgeTarget(edge);
               return new LinkedLegs(source, target, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
             })
-            .collect(Collectors.toList());
+            .collect(toList());
       }
     }
   }

@@ -21,7 +21,7 @@ final class AirwayResolver implements SingleTokenResolver {
   public List<ResolvedToken> resolve(RouteToken routeToken) {
     return lookupService.apply(routeToken.infrastructureName())
         .stream()
-        .map(AirwayToken::new)
+        .map(ResolvedToken::standardAirway)
         .collect(Collectors.toList());
   }
 }

@@ -43,7 +43,18 @@ public final class FixRadialDistance {
   }
 
   public LatLong projectedLocation() {
-    return fix.latLong().project(radial, distance);
+    return fix.latLong().project(fix.magneticVariation().magneticToTrue(radial), distance);
+  }
+
+  /**
+   * Returns a formatted identifier in the form {@code [FIX][courseDegrees][distanceInNm]}.
+   */
+  public String formattedIdentifier() {
+    return String.format("%s%03d%03d",
+        fix.fixIdentifier(),
+        Double.valueOf(radial.inDegrees()).intValue(),
+        Double.valueOf(distance.inNauticalMiles()).intValue()
+    );
   }
 
   @Override

@@ -9,16 +9,15 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
+import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
-import org.mitre.tdp.boogie.alg.resolve.AirportToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RunwayTransitionFilter;
-import org.mitre.tdp.boogie.alg.resolve.SidToken;
 
 final class SidRunwayTransitionInferrer implements SectionInferrer {
 
@@ -34,14 +33,12 @@ final class SidRunwayTransitionInferrer implements SectionInferrer {
   @Override
   public List<ResolvedTokens> inferBetween(ResolvedTokens left, ResolvedTokens right) {
 
-    Optional<AirportToken> airport = left.resolvedTokens().stream()
-        .filter(e -> e instanceof AirportToken)
-        .map(AirportToken.class::cast)
+    Optional<Airport> airport = left.resolvedTokens().stream()
+        .flatMap(t -> ResolvedTokenVisitor.airport(t).stream())
         .findFirst();
 
-    Optional<SidToken> sid = right.resolvedTokens().stream()
-        .filter(e -> e instanceof SidToken)
-        .map(SidToken.class::cast)
+    Optional<Procedure> sid = right.resolvedTokens().stream()
+        .flatMap(t -> ResolvedTokenVisitor.sid(t).stream())
         .findFirst();
 
     return airport.isPresent() && sid.isPresent()
@@ -49,13 +46,13 @@ final class SidRunwayTransitionInferrer implements SectionInferrer {
         : List.of();
   }
 
-  private Collection<ResolvedToken> runwayTransitionElements(AirportToken airport, SidToken sid) {
+  private Collection<ResolvedToken> runwayTransitionElements(Airport airport, Procedure sid) {
 
-    Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, sid.identifier(), airport.identifier());
+    Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, sid.procedureIdentifier(), airport.airportIdentifier());
 
     return procedures.stream()
-        .map(procedure -> new TransitionMaskedProcedure(procedure, nonDepartureRunwayTransitionFilter()))
-        .map(SidToken::new)
+        .map(procedure -> Procedure.transitionMasked(procedure, nonDepartureRunwayTransitionFilter()))
+        .map(ResolvedToken::sidRunway)
         .collect(toList());
   }
 
