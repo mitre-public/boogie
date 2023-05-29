@@ -86,11 +86,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
   }
 
   private Optional<String> departureAirport(ResolvedLeg initialLeg) {
-    return Optional.of(initialLeg).flatMap(l -> ResolvedTokenVisitor.airport(l.sourceElement())).map(Airport::airportIdentifier);
+    return Optional.of(initialLeg).flatMap(l -> ResolvedTokenVisitor.airport(l.resolvedToken())).map(Airport::airportIdentifier);
   }
 
   private Optional<String> arrivalAirport(ResolvedLeg finalLeg) {
-    return Optional.of(finalLeg).flatMap(l -> ResolvedTokenVisitor.airport(l.sourceElement())).map(Airport::airportIdentifier);
+    return Optional.of(finalLeg).flatMap(l -> ResolvedTokenVisitor.airport(l.resolvedToken())).map(Airport::airportIdentifier);
   }
 
   /**
@@ -102,11 +102,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     @Override
     public Optional<ProcedureSummary> apply(List<ResolvedLeg> resolvedLegs) {
-      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.star(e.sourceElement()).isPresent())
+      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.star(e.resolvedToken()).isPresent())
           .stream()
           .reduce((l1, l2) -> l2)
           .map(starLegs -> {
-            Procedure star = ResolvedTokenVisitor.star(starLegs.get(0).sourceElement()).orElseThrow();
+            Procedure star = ResolvedTokenVisitor.star(starLegs.get(0).resolvedToken()).orElseThrow();
             Map<Leg, Transition> transitionEmbedding = transitionEmbeddingFor(starLegs);
 
             Optional<String> arrivalFix = starLegs.stream().filter(leg -> TransitionType.COMMON.equals(transitionEmbedding.get(leg.leg()).transitionType()))
@@ -123,7 +123,7 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
       return resolvedLegs.stream()
-          .flatMap(l -> ResolvedTokenVisitor.star(l.sourceElement()).stream())
+          .flatMap(l -> ResolvedTokenVisitor.star(l.resolvedToken()).stream())
           .flatMap(this::transitionEmbeddingFor)
           .collect(elidingCollector(Pair::first, Pair::second));
     }
@@ -144,11 +144,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     @Override
     public Optional<ProcedureSummary> apply(List<ResolvedLeg> resolvedLegs) {
-      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.sid(e.sourceElement()).isPresent())
+      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.sid(e.resolvedToken()).isPresent())
           .stream()
           .findFirst()
           .map(sidLegs -> {
-            Procedure sid = ResolvedTokenVisitor.sid(sidLegs.get(0).sourceElement()).orElseThrow();
+            Procedure sid = ResolvedTokenVisitor.sid(sidLegs.get(0).resolvedToken()).orElseThrow();
             Map<Leg, Transition> transitionEmbedding = transitionEmbeddingFor(sidLegs);
 
             Optional<String> departureFix = sidLegs.stream().filter(leg -> TransitionType.COMMON.equals(transitionEmbedding.get(leg.leg()).transitionType()))
@@ -165,7 +165,7 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
       return resolvedLegs.stream()
-          .flatMap(l -> ResolvedTokenVisitor.sid(l.sourceElement()).stream())
+          .flatMap(l -> ResolvedTokenVisitor.sid(l.resolvedToken()).stream())
           .flatMap(this::transitionEmbeddingFor)
           .collect(elidingCollector(Pair::first, Pair::second));
     }
@@ -195,11 +195,11 @@ final class GraphicalRouteSummarizer implements Function<List<ResolvedLeg>, Opti
 
     @Override
     public Optional<ProcedureSummary> apply(List<ResolvedLeg> resolvedLegs) {
-      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.approach(e.sourceElement()).isPresent())
+      return legsFromElement(resolvedLegs, e -> ResolvedTokenVisitor.approach(e.resolvedToken()).isPresent())
           .stream()
           .reduce((l1, l2) -> l2)
           .map(approachLegs -> {
-            Procedure approach = ResolvedTokenVisitor.approach(approachLegs.get(0).sourceElement()).orElseThrow();
+            Procedure approach = ResolvedTokenVisitor.approach(approachLegs.get(0).resolvedToken()).orElseThrow();
 
             return new ProcedureSummary.Builder()
                 .procedureName(approach.procedureIdentifier())

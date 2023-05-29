@@ -13,6 +13,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
 import org.mitre.tdp.boogie.model.BoogieLeg;
@@ -102,4 +103,6 @@ final class SubsequentDfToTfConverter implements UnaryOperator<List<ExpandedRout
         .isFlyOverFix(leg.isFlyOverFix())
         .build();
   }
+
+  private final FiledDirectTo
 }

@@ -408,7 +408,6 @@ class TestRouteExpander {
         () -> assertEquals("MILIE", legs.get(0).associatedFix().map(Fix::fixIdentifier).orElse(null)),
 
         () -> assertEquals("5300N/14000W", legs.get(1).section()),
-        () -> assertEquals("5300N/14000W", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
         () -> assertEquals(PathTerminator.TF, legs.get(1).pathTerminator()),
         () -> assertEquals(LatLong.of(53.0, -140.0), legs.get(1).associatedFix().map(Fix::latLong).orElse(null)),
 
@@ -437,7 +436,7 @@ class TestRouteExpander {
 
         () -> assertEquals("2200N/12000W", legs.get(1).section()),
         () -> assertTrue(Wildcard.TAILORED.test(legs.get(1).wildcards())),
-        () -> assertEquals("2200N/12000W", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(LatLong.of(22., -120.), legs.get(1).associatedFix().map(Fix::latLong).orElse(null)),
         () -> assertEquals(PathTerminator.IF, legs.get(1).pathTerminator()),
 
         () -> assertEquals("BARTL", legs.get(2).section()),

@@ -26,9 +26,9 @@ final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteL
   @Override
   public ExpandedRouteLeg apply(ResolvedLeg resolvedLeg) {
     return new ExpandedRouteLeg(
-        resolvedLeg.split().infrastructureName(),
-        fromResolvedElement(resolvedLeg.sourceElement()),
-        RouteTokenVisitor.wildcards(resolvedLeg.split()),
+        resolvedLeg.routeToken().infrastructureName(),
+        fromResolvedElement(resolvedLeg.resolvedToken()),
+        RouteTokenVisitor.wildcards(resolvedLeg.routeToken()),
         resolvedLeg.leg()
     );
   }

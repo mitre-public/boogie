@@ -19,7 +19,11 @@ final class LatLongResolver implements SingleTokenResolver {
 
   @Override
   public List<ResolvedToken> resolve(RouteToken routeToken) {
-    return Optional.of(routeToken).filter(t -> supported(t.infrastructureName())).map(this::makeResolved).map(List::of).orElseGet(List::of);
+    return Optional.of(routeToken)
+        .filter(t -> supported(t.infrastructureName()))
+        .map(this::makeResolved)
+        .map(List::of)
+        .orElseGet(List::of);
   }
 
   private ResolvedToken makeResolved(RouteToken token) {
