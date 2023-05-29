@@ -14,7 +14,6 @@ import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 
 class AirportToSidLinkerTest {

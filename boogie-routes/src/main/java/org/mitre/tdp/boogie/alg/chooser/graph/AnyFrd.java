@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 
 import org.mitre.tdp.boogie.alg.FixRadialDistance;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
 final class AnyFrd implements LinkableToken {
 

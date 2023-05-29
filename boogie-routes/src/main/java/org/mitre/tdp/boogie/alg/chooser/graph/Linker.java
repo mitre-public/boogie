@@ -25,7 +25,6 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 
 /**

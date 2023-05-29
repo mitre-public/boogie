@@ -6,7 +6,6 @@ import static org.mitre.caasd.commons.Distance.ofNauticalMiles;
 import java.util.Collection;
 
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
 final class AnyStar implements LinkableToken {
 

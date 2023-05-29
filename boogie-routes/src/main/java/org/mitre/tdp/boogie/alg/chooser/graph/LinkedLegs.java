@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg.resolve;
+package org.mitre.tdp.boogie.alg.chooser.graph;
 
 import java.util.Objects;
 

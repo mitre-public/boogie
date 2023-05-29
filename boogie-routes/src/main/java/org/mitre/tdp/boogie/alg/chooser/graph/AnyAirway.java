@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.function.DoubleUnaryOperator;
 
 import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
 final class AnyAirway implements LinkableToken {
 

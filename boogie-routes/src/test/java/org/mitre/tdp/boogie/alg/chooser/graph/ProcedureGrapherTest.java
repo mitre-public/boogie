@@ -8,7 +8,6 @@ import java.util.Collection;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
 

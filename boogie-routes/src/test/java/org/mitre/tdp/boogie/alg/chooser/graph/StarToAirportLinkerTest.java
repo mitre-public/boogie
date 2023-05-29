@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
@@ -12,7 +11,6 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.HOBTT2;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 
 import static java.util.stream.Collectors.toSet;

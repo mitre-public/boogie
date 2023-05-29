@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.function.DoubleUnaryOperator;
 
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
 
 final class AnySid implements LinkableToken {
 

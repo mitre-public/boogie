@@ -28,7 +28,7 @@ import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.RouteSummary;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.resolve.LinkedLegs;
+import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
@@ -73,7 +73,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
    * which will be called on the initial {@link ResolvedLeg} output of the chooser.
    */
   @Override
-  public ExpandedRoute chooseRoute(List<ResolvedTokens> resolvedTokens) {
+  public List<ResolvedLeg> chooseRoute(List<ResolvedTokens> resolvedTokens) {
 
     // TODO - handle tokens with valid sub-tokens but no legs? :confused:
     List<ResolvedLeg> resolvedLegs = resolvedLegSequence(resolvedTokens);
