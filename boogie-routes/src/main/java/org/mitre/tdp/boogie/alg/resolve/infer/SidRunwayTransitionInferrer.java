@@ -17,7 +17,6 @@ import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
-import org.mitre.tdp.boogie.alg.resolve.RunwayTransitionFilter;
 
 final class SidRunwayTransitionInferrer implements SectionInferrer {
 

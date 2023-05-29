@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg;
+package org.mitre.tdp.boogie.alg.resolve.infer;
 
 import java.util.Optional;
 import java.util.regex.MatchResult;
@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * Singleton class for extracting the numeric portion of a runway identifier.
  */
-public final class RunwayIdExtractor {
+final class RunwayIdExtractor {
 
   private static final Pattern RUNWAY_NUMBER = Pattern.compile("(0[1-9]|[1-2]\\d|3[0-6])");
 

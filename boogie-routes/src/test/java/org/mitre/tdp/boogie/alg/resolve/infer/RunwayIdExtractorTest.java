@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg;
+package org.mitre.tdp.boogie.alg.resolve.infer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class TestRunwayIdExtractor {
+class RunwayIdExtractorTest {
 
   @ParameterizedTest
   @ValueSource(strings = {"32", "RW32", "32L", "32R", "32C", "32B", "RW32C", "RW32T", "RW32W", "32W", "32T"})

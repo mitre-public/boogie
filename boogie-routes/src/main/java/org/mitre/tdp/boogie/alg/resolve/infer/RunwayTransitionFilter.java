@@ -1,15 +1,14 @@
-package org.mitre.tdp.boogie.alg.resolve;
+package org.mitre.tdp.boogie.alg.resolve.infer;
 
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.alg.RunwayIdExtractor;
 
 /**
  * Configurable runway transition filter for use in down-selecting the set of available runway transitions for the flight to just
  * those servicing the arrival/departure runway.
  */
-public final class RunwayTransitionFilter implements Predicate<Transition> {
+final class RunwayTransitionFilter implements Predicate<Transition> {
 
   private final String runwayId;
 

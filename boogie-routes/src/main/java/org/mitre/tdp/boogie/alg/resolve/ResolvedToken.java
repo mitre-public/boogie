@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg.resolve;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
@@ -11,7 +12,6 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.FixRadialDistance;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -147,7 +147,8 @@ public interface ResolvedToken<T> {
    *
    * <p>If additional context is provided a runway transition may be inferred, see {@link #sidRunway(Procedure)}.
    *
-   * @param sid the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
+   * @param sid the unmodified procedure definition, consumers may decorate this as a
+   *            {@link Procedure#transitionMasked(Procedure, Predicate)}.
    */
   static SidEnrouteCommon sidEnrouteCommon(Procedure sid) {
     return new SidEnrouteCommon(Procedure.onlyEnrouteCommon(sid));
@@ -161,7 +162,8 @@ public interface ResolvedToken<T> {
    *
    * <p>See {@link SectionInferrer#sidRunwayTransition(LookupService, String)}.
    *
-   * @param sid the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
+   * @param sid the unmodified procedure definition, consumers may decorate this as a
+   *            {@link Procedure#transitionMasked(Procedure, Predicate)}.
    */
   static SidRunway sidRunway(Procedure sid) {
     return new SidRunway(Procedure.onlyRunway(sid));
@@ -182,7 +184,8 @@ public interface ResolvedToken<T> {
    *
    * <p>If additional context is provided a ruwany transition may be inferred, see {@link #starRunway(Procedure)}.
    *
-   * @param star the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
+   * @param star the unmodified procedure definition, consumers may decorate this as a
+   *             {@link Procedure#transitionMasked(Procedure, Predicate)}.
    */
   static StarEnrouteCommon starEnrouteCommon(Procedure star) {
     return new StarEnrouteCommon(Procedure.onlyEnrouteCommon(star));
@@ -196,7 +199,8 @@ public interface ResolvedToken<T> {
    *
    * <p>See {@link SectionInferrer#starRunwayTransition(LookupService, String)}.
    *
-   * @param star the unmodified procedure definition, consumers may decorate this as a {@link TransitionMaskedProcedure}.
+   * @param star the unmodified procedure definition, consumers may decorate this as a
+   *             {@link Procedure#transitionMasked(Procedure, Predicate)}.
    */
   static StarRunway starRunway(Procedure star) {
     return new StarRunway(Procedure.onlyRunway(star));
@@ -391,7 +395,7 @@ public interface ResolvedToken<T> {
 
     private final LatLong latLong;
 
-    private StandardLatLong(LatLong latLong){
+    private StandardLatLong(LatLong latLong) {
       this.latLong = requireNonNull(latLong);
     }
 

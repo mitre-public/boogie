@@ -21,8 +21,6 @@ import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.RunwayIdExtractor;
-import org.mitre.tdp.boogie.alg.TransitionMaskedProcedure;
 import org.mitre.tdp.boogie.alg.resolve.IsApproachForRunway;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
@@ -47,7 +45,7 @@ final class ApproachInferrer implements SectionInferrer {
     this.proceduresByAirport = requireNonNull(proceduresByAirport)
         .thenFilterWith(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
         // mask the missed-approach portions of the approach procedure
-        .thenApply(procedure -> procedure.stream().map(p -> new TransitionMaskedProcedure(p, NON_MISSED)).collect(toList()));
+        .thenApply(procedure -> procedure.stream().map(p -> Procedure.transitionMasked(p, NON_MISSED)).collect(toList()));
   }
 
   @Override

@@ -3,11 +3,12 @@ package org.mitre.tdp.boogie.alg.resolve;
 import static java.util.Objects.requireNonNull;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 /**
- *
+ * A resolved leg is a container class for a leg which has been chosen as part of the final route after the {@link RouteChooser}
+ * has examined the input sequence of available {@link ResolvedTokens}.
  */
 public final class ResolvedLeg {
   /**
