@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.mitre.tdp.boogie.util.TransitionSorter;
-
 /**
  * Represents a logical procedure object which is composed of a collection of {@link Transition}s.
  * <br>
@@ -81,7 +79,7 @@ public interface Procedure {
    * <p>This method is intended to help identify candidate entry points where aircraft are likely to merge onto the procedure.
    */
   default List<Transition> initialTransitions() {
-    return TransitionSorter.INSTANCE.apply(transitions()).stream().filter(col -> !col.isEmpty()).findFirst().orElseGet(List::of);
+    return TraversalOrderSorter.forProcedureType(procedureType()).sort(transitions()).stream().filter(col -> !col.isEmpty()).findFirst().orElseGet(List::of);
   }
 
   /**
@@ -96,7 +94,7 @@ public interface Procedure {
    * <p>This method is intended to help identify candidate exit points where aircraft are likely to leave the procedure.
    */
   default List<Transition> finalTransitions() {
-    return TransitionSorter.INSTANCE.apply(transitions()).stream().filter(col -> !col.isEmpty()).reduce((t1, t2) -> t2).orElseGet(List::of);
+    return TraversalOrderSorter.forProcedureType(procedureType()).sort(transitions()).stream().filter(col -> !col.isEmpty()).reduce((t1, t2) -> t2).orElseGet(List::of);
   }
 
   /**

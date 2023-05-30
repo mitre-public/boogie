@@ -16,11 +16,11 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.TraversalOrderSorter;
 import org.mitre.tdp.boogie.util.Combinatorics;
 import org.mitre.tdp.boogie.util.Iterators;
 import org.mitre.tdp.boogie.util.Preconditions;
 import org.mitre.tdp.boogie.util.Streams;
-import org.mitre.tdp.boogie.util.TransitionSorter;
 
 /**
  * Due to the fact that {@link Procedure}s are generally compositions of {@link Transition}s, and there are standard ways to
@@ -99,7 +99,7 @@ public final class ProcedureFactory {
 
     // split the transitions by type and insert edges between initial/final legs of subsequent transitions as long
     // as they share a fix identifier (e.g. TF at end of ENROUTE transition -> IF at start of COMMON)
-    List<List<Transition>> sortedTransitions = TransitionSorter.INSTANCE.apply(procedure.transitions());
+    List<List<Transition>> sortedTransitions = TraversalOrderSorter.forProcedureType(procedure.procedureType()).sort(procedure.transitions());
     if (Iterators.checkMatchCount(sortedTransitions, col -> !col.isEmpty())) {
       Iterators.fastslow(
           sortedTransitions,

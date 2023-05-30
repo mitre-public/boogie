@@ -22,10 +22,10 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.TraversalOrderSorter;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
-import org.mitre.tdp.boogie.util.TransitionSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +129,7 @@ final class RouteSummarizer implements Function<List<ResolvedLeg>, Optional<Rout
     }
 
     private Stream<Pair<Leg, Transition>> transitionEmbeddingFor(Procedure star) {
-      return TransitionSorter.INSTANCE.sortStarTransitions(star.transitions()).stream()
+      return TraversalOrderSorter.star().sort(star.transitions()).stream()
           .flatMap(Collection::stream)
           .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)));
     }
@@ -171,7 +171,7 @@ final class RouteSummarizer implements Function<List<ResolvedLeg>, Optional<Rout
     }
 
     private Stream<Pair<Leg, Transition>> transitionEmbeddingFor(Procedure sid) {
-      return TransitionSorter.INSTANCE.sortSidTransitions(sid.transitions()).stream()
+      return TraversalOrderSorter.sid().sort(sid.transitions()).stream()
           .flatMap(Collection::stream)
           .flatMap(transition -> transition.legs().stream().map(leg -> Pair.of(leg, transition)));
     }

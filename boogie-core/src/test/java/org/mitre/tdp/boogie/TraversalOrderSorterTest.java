@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.util;
+package org.mitre.tdp.boogie;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,11 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.TransitionType;
 
-class TestTransitionSorter {
+class TraversalOrderSorterTest {
 
   @Test
   void testStarTransitionOrdering() {
@@ -25,7 +22,7 @@ class TestTransitionSorter {
         transition(TransitionType.ENROUTE, ProcedureType.STAR)
     );
 
-    List<List<Transition>> grouped = TransitionSorter.INSTANCE.sortStarTransitions(transitions);
+    List<List<Transition>> grouped = TraversalOrderSorter.star().sort(transitions);
 
     assertAll(
         () -> assertEquals(3, grouped.size()),
@@ -48,7 +45,7 @@ class TestTransitionSorter {
         transition(TransitionType.RUNWAY, ProcedureType.SID)
     );
 
-    List<List<Transition>> grouped = TransitionSorter.INSTANCE.sortSidTransitions(transitions);
+    List<List<Transition>> grouped = TraversalOrderSorter.sid().sort(transitions);
 
     assertAll(
         () -> assertEquals(3, grouped.size()),
@@ -72,7 +69,7 @@ class TestTransitionSorter {
         transition(TransitionType.APPROACH, ProcedureType.APPROACH)
     );
 
-    List<List<Transition>> grouped = TransitionSorter.INSTANCE.sortApproachTransitions(transitions);
+    List<List<Transition>> grouped = TraversalOrderSorter.approach().sort(transitions);
 
     assertAll(
         () -> assertEquals(4, grouped.size()),

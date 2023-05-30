@@ -19,7 +19,7 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.util.TransitionSorter;
+import org.mitre.tdp.boogie.TraversalOrderSorter;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -38,7 +38,7 @@ public final class QueryableProcedure implements Procedure {
   public QueryableProcedure(Procedure procedure) {
     this.procedure = requireNonNull(procedure);
 
-    List<Transition> sortedTransitions = TransitionSorter.INSTANCE.apply(procedure.transitions()).stream().flatMap(Collection::stream).collect(Collectors.toList());
+    List<Transition> sortedTransitions = TraversalOrderSorter.forProcedureType(procedure.procedureType()).sort(procedure.transitions()).stream().flatMap(Collection::stream).collect(Collectors.toList());
     List<TransitionPage> transitionPages = sortedTransitions.stream().map(TransitionPage::new).collect(Collectors.toList());
 
     this.transitionsByName = transitionPages.stream()

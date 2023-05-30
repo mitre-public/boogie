@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
