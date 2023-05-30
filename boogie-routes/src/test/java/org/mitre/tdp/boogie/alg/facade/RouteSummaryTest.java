@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg;
+package org.mitre.tdp.boogie.alg.facade;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.mitre.tdp.boogie.alg.facade.RouteSummary;
 
-class TestRouteSummary {
+class RouteSummaryTest {
 
   @Test
   void testEqualsAndHashCode() {

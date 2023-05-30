@@ -24,10 +24,14 @@ public final class ResolvedLeg {
    */
   private final Leg leg;
 
-  public ResolvedLeg(RouteToken routeToken, ResolvedToken resolvedToken, Leg leg) {
+  private ResolvedLeg(RouteToken routeToken, ResolvedToken resolvedToken, Leg leg) {
     this.routeToken = requireNonNull(routeToken);
     this.resolvedToken = requireNonNull(resolvedToken);
     this.leg = requireNonNull(leg);
+  }
+
+  public static ResolvedLeg create(RouteToken routeToken, ResolvedToken resolvedToken, Leg leg) {
+    return new ResolvedLeg(routeToken, resolvedToken, leg);
   }
 
   public RouteToken routeToken() {

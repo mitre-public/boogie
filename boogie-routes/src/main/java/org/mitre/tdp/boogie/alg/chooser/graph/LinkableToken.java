@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.FixRadialDistance;
-import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
+import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 
 /**
@@ -86,8 +86,8 @@ interface LinkableToken extends LinkingVisitor {
   /**
    * Returns a collection of {@link LinkedLegs} representing the token as a collection of edges in a graph.
    *
-   * <p>This method backs {@link LinkingStrategy#graphRepresentation(ResolvedToken)} for the {@link LinkingStrategy#standard()}
-   * and serves as the default representation of an object for use with the {@link GraphBasedRouteChooser}.
+   * <p>The returned collection of linked legs associated with this message are typically derived from a {@link TokenGrapher}
+   * implementation.
    */
   Collection<LinkedLegs> graphRepresentation();
 
@@ -103,7 +103,7 @@ interface LinkableToken extends LinkingVisitor {
   /**
    * Returns a {@link Linker} which can be used to summon links between this object and the visiting one. This implementation backs
    * {@link LinkingStrategy#links(ResolvedToken, ResolvedToken)} for the {@link LinkingStrategy#standard()}. Service as the default
-   * linking strategy for the {@link GraphBasedRouteChooser}.
+   * linking strategy for the {@link RouteChooser#graphical(TokenGrapher, LinkingStrategy)}.
    *
    * <p>Tokens can accept other visitors and themselves are visitors of other tokens. This is used to generate links between pairs
    * of subsequent resolved tokens from the underlying route string.

@@ -24,10 +24,10 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -35,11 +35,11 @@ import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 
-class TestGraphBasedRouteChooser {
+class GraphicalRouteChooserTest {
 
   private static final RouteTokenizer sectionSplitter = RouteTokenizer.faaIfrFormat();
 
-  private static final GraphBasedRouteChooser routeChooser = new GraphBasedRouteChooser(
+  private static final GraphicalRouteChooser routeChooser = new GraphicalRouteChooser(
       TokenGrapher.standard(),
       LinkingStrategy.standard(TokenGrapher.standard())
   );
@@ -61,30 +61,31 @@ class TestGraphBasedRouteChooser {
 
   @Test
   void testShortestPath() {
-    List<ExpandedRouteLeg> legs = split().andThen(apfResolver()::applyTo).andThen(routeChooser::chooseRoute).apply("KIND.BLSTR1.VNY").legs();
+    List<ResolvedLeg> legs = split().andThen(apfResolver()::applyTo).andThen(routeChooser::chooseRoute)
+        .apply("KIND.BLSTR1.VNY");
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
 
     assertAll(
-        () -> assertEquals("KIND", legs.get(0).section(), "Incorrect initial section. " + message),
+        () -> assertEquals("KIND", legs.get(0).routeToken().infrastructureName(), "Incorrect initial section. " + message),
         () -> assertEquals("KIND", legs.get(0).leg().associatedFix().map(Fix::fixIdentifier).orElse(null), "Incorrect initial leg terminator. " + message),
         () -> assertEquals(PathTerminator.IF, legs.get(0).leg().pathTerminator(), "Incorrect initial leg type. " + message),
 
-        () -> assertEquals("BLSTR1", legs.get(1).section()),
+        () -> assertEquals("BLSTR1", legs.get(1).routeToken().infrastructureName()),
         () -> assertEquals("BNDRR", legs.get(1).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.IF, legs.get(1).pathTerminator()),
+        () -> assertEquals(PathTerminator.IF, legs.get(1).leg().pathTerminator()),
 
-        () -> assertEquals("BLSTR1", legs.get(2).section()),
+        () -> assertEquals("BLSTR1", legs.get(2).routeToken().infrastructureName()),
         () -> assertEquals("HRRDR", legs.get(2).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.TF, legs.get(2).pathTerminator()),
+        () -> assertEquals(PathTerminator.TF, legs.get(2).leg().pathTerminator()),
 
-        () -> assertEquals("BLSTR1", legs.get(3).section()),
+        () -> assertEquals("BLSTR1", legs.get(3).routeToken().infrastructureName()),
         () -> assertEquals("GRRDR", legs.get(3).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.TF, legs.get(3).pathTerminator()),
+        () -> assertEquals(PathTerminator.TF, legs.get(3).leg().pathTerminator()),
 
-        () -> assertEquals("BLSTR1", legs.get(4).section()),
-        () -> assertEquals("VNY", legs.get(4).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.TF, legs.get(4).pathTerminator())
+        () -> assertEquals("BLSTR1", legs.get(4).routeToken().infrastructureName()),
+        () -> assertEquals("VNY", legs.get(4).leg().associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.TF, legs.get(4).leg().pathTerminator())
     );
   }
 

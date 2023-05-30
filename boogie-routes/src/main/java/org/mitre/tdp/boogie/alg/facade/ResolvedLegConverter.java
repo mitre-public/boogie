@@ -1,16 +1,15 @@
-package org.mitre.tdp.boogie.alg.chooser;
+package org.mitre.tdp.boogie.alg.facade;
+
+import static java.util.Optional.ofNullable;
 
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * Functional class which is responsible for converting a {@link ResolvedLeg} to an {@link ExpandedRouteLeg} and adding the
@@ -18,9 +17,7 @@ import static java.util.Optional.ofNullable;
  */
 final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteLeg> {
 
-  public static final ResolvedLegConverter INSTANCE = new ResolvedLegConverter();
-
-  private ResolvedLegConverter() {
+  ResolvedLegConverter() {
   }
 
   @Override

@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg.chooser;
+package org.mitre.tdp.boogie.alg.facade;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,14 +25,13 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 
 import com.google.common.collect.ImmutableMap;
 
 class TestSequentialLegCollapser {
 
-  private static final SequentialLegCollapser collapser = new SequentialLegCollapser();
+  private static final RedundantLegCombiner collapser = new RedundantLegCombiner();
 
   @Test
   void testMatchingAssociatedFixIdentifiers() {

@@ -2,7 +2,7 @@ package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +25,7 @@ class TestCaFeatureExtractor {
     MagneticVariation magvar = mock(MagneticVariation.class);
     when(magvar.published()).thenReturn(Optional.empty());
     when(magvar.modeled()).thenReturn(0.);
-    when(magvar.trueToMagnetic(any())).thenCallRealMethod();
+    when(magvar.trueToMagnetic(anyDouble())).thenCallRealMethod();
 
     Fix navaid = mock(Fix.class);
     when(navaid.magneticVariation()).thenReturn(magvar);

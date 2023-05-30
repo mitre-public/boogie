@@ -19,14 +19,14 @@ import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.ExpandedRoute;
-import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
-import org.mitre.tdp.boogie.alg.RouteExpander;
+import org.mitre.tdp.boogie.alg.facade.ExpandedRoute;
+import org.mitre.tdp.boogie.alg.facade.ExpandedRouteLeg;
+import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
 
 import com.google.common.collect.Lists;
 
 /**
- * Explicit integration-y test for the {@link GraphBasedRouteChooser} when applied through the {@link RouteExpander} top
+ * Explicit integration-y test for the {@link GraphicalRouteChooser} when applied through the {@link FluentRouteExpander} top
  * level class.
  */
 class TestGraphicalRouteExpander {
@@ -35,7 +35,7 @@ class TestGraphicalRouteExpander {
   void testSubsequentDFToTFConverterIsAppliedWithinExpansion() {
     String route = "KDEN.CONNR5.DBL..OTHER";
 
-    RouteExpander expander = newExpander(
+    FluentRouteExpander expander = newExpander(
         Lists.newArrayList(fix("DBL", 39.439344444444444, -106.89468055555557), fix("OTHER", 39.439344444444444, -106.89478055555557)),
         emptyList(),
         singletonList(KDEN()),
@@ -52,12 +52,12 @@ class TestGraphicalRouteExpander {
         () -> assertEquals(PathTerminator.DF, legsByFix.get("WRIPS").pathTerminator(), "DF filed after VA as part of SID should be unchanged."));
   }
 
-  private RouteExpander newExpander(
+  private FluentRouteExpander newExpander(
       Collection<? extends Fix> fixes,
       Collection<? extends Airway> airways,
       Collection<? extends Airport> airports,
       Collection<? extends Procedure> procedures
   ) {
-    return RouteExpander.inMemoryBuilder(airports, procedures, airways, fixes).build();
+    return FluentRouteExpander.inMemoryBuilder(airports, procedures, airways, fixes).build();
   }
 }

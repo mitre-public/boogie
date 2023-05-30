@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg;
+package org.mitre.tdp.boogie.alg.facade;
 
 import static java.util.Objects.requireNonNull;
 
@@ -9,7 +9,7 @@ import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
 /**
- * Container class for a {@link RouteSummary} (if one was generated) and a leg sequence as resolved by the {@link RouteExpander}.
+ * Container class for a {@link RouteSummary} (if one was generated) and a leg sequence as resolved by the {@link FluentRouteExpander}.
  */
 public final class ExpandedRoute implements Serializable {
 

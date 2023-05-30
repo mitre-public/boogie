@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 
 /**
@@ -20,6 +21,14 @@ import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
  */
 @FunctionalInterface
 public interface RouteContext {
+
+  /**
+   * Returns a new route context object containing no information - suitable for testing purposes or in applications which don't
+   * require additional information beyond what can be encoded in their incoming route format.
+   */
+  static RouteContext none() {
+    return List::of;
+  }
 
   /**
    * Representation of common "standard" route context which is supplemental to the basic information normally encoded in a route

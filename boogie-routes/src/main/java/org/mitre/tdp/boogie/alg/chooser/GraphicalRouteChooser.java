@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,12 +22,9 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.alg.ExpandedRoute;
-import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
-import org.mitre.tdp.boogie.alg.RouteSummary;
+import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
@@ -39,60 +35,32 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 
-public final class GraphBasedRouteChooser implements RouteChooser {
+final class GraphicalRouteChooser implements RouteChooser {
 
-  private static final Logger LOG = LoggerFactory.getLogger(GraphBasedRouteChooser.class);
-
-  /**
-   * Fixer class to address the shortcomings of the current resolution strategy and make the route look more like one a FMS
-   * would generate.
-   * <br>
-   * See the actual docs on {@link SubsequentDfToTfConverter} for motivation/details.
-   */
-  private static final SubsequentDfToTfConverter subsequentDFToTFConverter = new SubsequentDfToTfConverter();
-
-  /**
-   * Fixer class to merge leg definitions in combinations like TF->IF to remove the final IF from the leg sequence but persist
-   * the lower of any restrictions between the two legs.
-   * <br>
-   * See the actual docs on the {@link SequentialLegCollapser} for further motivation/details.
-   */
-  private static final SequentialLegCollapser sequentialLegCollapser = new SequentialLegCollapser();
+  private static final Logger LOG = LoggerFactory.getLogger(GraphicalRouteChooser.class);
 
   private final TokenGrapher tokenGrapher;
 
   private final LinkingStrategy linkingStrategy;
 
-  GraphBasedRouteChooser(TokenGrapher tokenGrapher, LinkingStrategy linkingStrategy) {
+  GraphicalRouteChooser(TokenGrapher tokenGrapher, LinkingStrategy linkingStrategy) {
     this.tokenGrapher = requireNonNull(tokenGrapher);
     this.linkingStrategy = requireNonNull(linkingStrategy);
   }
 
-  /**
-   * Pseudo-BiFunction implementation (interface clashes with functional) which allows clients to pass in a summarizer class
-   * which will be called on the initial {@link ResolvedLeg} output of the chooser.
-   */
   @Override
   public List<ResolvedLeg> chooseRoute(List<ResolvedTokens> resolvedTokens) {
-
-    // TODO - handle tokens with valid sub-tokens but no legs? :confused:
-    List<ResolvedLeg> resolvedLegs = resolvedLegSequence(resolvedTokens);
-    LOG.debug("Generated {} total resolved legs.", resolvedLegs.size());
-
-    List<ExpandedRouteLeg> expandedRouteLegs = subsequentDFToTFConverter.andThen(sequentialLegCollapser)
-        .apply(resolvedLegs.stream().map(ResolvedLegConverter.INSTANCE).collect(Collectors.toList()));
-    LOG.debug("Generated {} final expanded route legs.", expandedRouteLegs.size());
-
-    Optional<RouteSummary> routeSummary = GraphicalRouteSummarizer.INSTANCE.apply(resolvedLegs);
-    return new ExpandedRoute(routeSummary.orElse(null), expandedRouteLegs);
+    if (!Iterators.checkMatchCount(resolvedTokens, nonEmpty())) {
+      LOG.warn("At least two resolved sections must provide leg-level information to choose path.");
+      return List.of();
+    }
+    return resolvedLegSequence(resolvedTokens);
   }
 
   /**
    * Returns the sequence of {@link ResolvedLeg}s as returned from the graphical resolution of the route.
    */
-  public List<ResolvedLeg> resolvedLegSequence(List<ResolvedTokens> resolvedTokens) {
-    Preconditions.checkArgument(Iterators.checkMatchCount(resolvedTokens, nonEmpty()),
-        "At least two resolved sections must provide leg-level information.");
+  private List<ResolvedLeg> resolvedLegSequence(List<ResolvedTokens> resolvedTokens) {
 
     SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(resolvedTokens);
     LOG.debug("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph));
@@ -237,7 +205,7 @@ public final class GraphBasedRouteChooser implements RouteChooser {
       ResolvedToken resolvedToken = resolvedElementOf(leg);
       ResolvedTokens resolvedTokens = resolvedSectionOf(resolvedToken);
 
-      return new ResolvedLeg(resolvedTokens.routeToken(), resolvedToken, leg);
+      return ResolvedLeg.create(resolvedTokens.routeToken(), resolvedToken, leg);
     }
 
     private ResolvedToken resolvedElementOf(Leg leg) {

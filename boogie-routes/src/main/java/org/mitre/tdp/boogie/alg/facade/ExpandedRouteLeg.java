@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg;
+package org.mitre.tdp.boogie.alg.facade;
 
 import static java.util.Objects.requireNonNull;
 

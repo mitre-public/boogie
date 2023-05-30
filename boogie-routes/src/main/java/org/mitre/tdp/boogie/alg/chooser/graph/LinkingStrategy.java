@@ -10,13 +10,13 @@ import java.util.function.Predicate;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.alg.chooser.GraphBasedRouteChooser;
+import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 
 /**
  * A linking strategy represents a methodology of linking pairs of subsequently-filed {@link ResolvedToken}s from an underlying
- * route such that they can be traversed through by the {@link GraphBasedRouteChooser}.
+ * route such that they can be traversed through by the {@link RouteChooser#graphical(TokenGrapher, LinkingStrategy)}.
  *
  * <p>These strategies allow clients to emphasize and de-emphasize certain combinations of elements to tailor expansion to better
  * fit their needs.
@@ -24,7 +24,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 public interface LinkingStrategy {
 
   /**
-   * The standard linking strategy for use with the {@link GraphBasedRouteChooser}.
+   * The standard linking strategy for use with the {@link RouteChooser#graphical(TokenGrapher, LinkingStrategy)}
    *
    * <p>This strategy handles generating links between all commonly filed portions of a route as well as setting sane weights for
    * their relationships.

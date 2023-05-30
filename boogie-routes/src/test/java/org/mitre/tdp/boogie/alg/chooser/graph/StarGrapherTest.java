@@ -9,12 +9,9 @@ import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
@@ -31,7 +28,7 @@ class StarGrapherTest {
     ResolvedToken.StarEnrouteCommon token = ResolvedToken.starEnrouteCommon(nominalGraph(ProcedureType.STAR));
 
     Collection<LinkedLegs> representation = GRAPHER.graphRepresentationOf(token);
-    assertEquals(3, representation.size(), "Should have three links.");
+    assertEquals(3, representation.size(), "Should have three links (1 from enroute, 1 from common, 1 linking them).");
   }
 
   @Test
@@ -40,22 +37,7 @@ class StarGrapherTest {
     ResolvedToken.StarRunway token = ResolvedToken.starRunway(nominalGraph(ProcedureType.STAR));
 
     Collection<LinkedLegs> representation = GRAPHER.graphRepresentationOf(token);
-    assertEquals(2, representation.size(), "Should have two links.");
-  }
-
-  private boolean containsMatchingLink(
-      List<LinkedLegs> legs,
-      String sourceName,
-      PathTerminator sourceType,
-      String targetName,
-      PathTerminator targetType
-  ) {
-    return legs.stream()
-        .filter(ll -> ll.source().associatedFix().isPresent())
-        .filter(ll -> ll.target().associatedFix().isPresent())
-        .filter(ll -> sourceName.equals(ll.source().associatedFix().map(Fix::fixIdentifier).orElse(null)))
-        .filter(ll -> targetName.equals(ll.target().associatedFix().map(Fix::fixIdentifier).orElse(null)))
-        .anyMatch(ll -> ll.source().pathTerminator().equals(sourceType) && ll.target().pathTerminator().equals(targetType));
+    assertEquals(2, representation.size(), "Should have two links (1 from each runway, 0 linking them).");
   }
 
   private static ProcedureGraph nominalGraph(ProcedureType type) {

@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.alg.chooser;
+package org.mitre.tdp.boogie.alg.facade;
 
 import static org.mitre.tdp.boogie.alg.resolve.ElementType.AIRWAY;
 import static org.mitre.tdp.boogie.alg.resolve.ElementType.AIRWAY_TO_APPROACH;
@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.alg.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.fn.LeftMerger;
 import org.mitre.tdp.boogie.model.BoogieLeg;
@@ -26,7 +25,7 @@ import org.mitre.tdp.boogie.model.BoogieLeg;
  * The key thing that makes this operation safe is that it preserves the (more constraining) of the altitude and speed constraints
  * available at a fix along the expansion.
  */
-final class SequentialLegCollapser implements UnaryOperator<List<ExpandedRouteLeg>> {
+final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>> {
 
   @Override
   public List<ExpandedRouteLeg> apply(List<ExpandedRouteLeg> legs) {

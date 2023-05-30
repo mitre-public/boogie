@@ -42,6 +42,10 @@ public final class FixTerminationLeg implements Leg {
     return from(fix, PathTerminator.DF);
   }
 
+  public static FixTerminationLeg TF(Fix fix) {
+    return from(fix, PathTerminator.TF);
+  }
+
   @Override
   public Optional<Fix> associatedFix() {
     return Optional.of(associatedFix);
