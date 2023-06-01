@@ -4,20 +4,20 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 
-import org.mitre.tdp.boogie.alg.FixRadialDistance;
+import org.mitre.tdp.boogie.Fix;
 
 final class AnyFrd implements LinkableToken {
 
-  private final FixRadialDistance frd;
+  private final Fix.FixRadialDistance frd;
 
   private final Collection<LinkedLegs> graphRepresentation;
 
-  AnyFrd(FixRadialDistance frd, Collection<LinkedLegs> graphRepresentation) {
+  AnyFrd(Fix.FixRadialDistance frd, Collection<LinkedLegs> graphRepresentation) {
     this.frd = requireNonNull(frd);
     this.graphRepresentation = graphRepresentation;
   }
 
-  FixRadialDistance frd() {
+  Fix.FixRadialDistance frd() {
     return frd;
   }
 

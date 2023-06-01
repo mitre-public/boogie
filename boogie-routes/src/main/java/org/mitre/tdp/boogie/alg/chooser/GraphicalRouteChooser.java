@@ -25,7 +25,7 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.util.Iterators;

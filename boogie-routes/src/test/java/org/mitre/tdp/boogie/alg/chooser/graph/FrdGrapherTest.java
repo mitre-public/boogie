@@ -9,11 +9,11 @@ import java.util.Collection;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
+import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.alg.FixRadialDistance;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
-import org.mitre.tdp.boogie.model.BoogieFix;
 
 class FrdGrapherTest {
 
@@ -22,7 +22,7 @@ class FrdGrapherTest {
   @Test
   void test_StandardFrd() {
 
-    ResolvedToken.StandardFrd token = ResolvedToken.standardFrd(dummy());
+    ResolvedToken.StandardFrd token = ResolvedToken.standardFrd(frd());
 
     Collection<LinkedLegs> representation = GRAPHER.graphRepresentationOf(token);
     assertEquals(1, representation.size(), "Expected single element.");
@@ -38,7 +38,7 @@ class FrdGrapherTest {
   @Test
   void test_DirectToFrd() {
 
-    ResolvedToken.DirectToFrd token = ResolvedToken.directToFrd(dummy());
+    ResolvedToken.DirectToFrd token = ResolvedToken.directToFrd(frd());
 
     Collection<LinkedLegs> representation = GRAPHER.graphRepresentationOf(token);
     assertEquals(1, representation.size(), "Expected single element.");
@@ -51,21 +51,18 @@ class FrdGrapherTest {
     );
   }
 
-  private FixRadialDistance dummy() {
+  private Fix.FixRadialDistance frd() {
 
-    BoogieFix fix = new BoogieFix.Builder()
+    Fix fix = Fix.builder()
         .fixIdentifier("SHERL")
-        .fixRegion("K2")
-        .latitude(0.)
-        .longitude(0.)
-        .elevation(0.)
-        .modeledVariation(10.)
+        .latLong(LatLong.of(0., 0.))
+        .magneticVariation(MagneticVariation.ofDegrees(10.))
         .build();
 
-    return FixRadialDistance.create(
+    return Fix.fixRadialDistance(
         fix,
-        Course.ofDegrees(0),
-        Distance.ofNauticalMiles(1)
+        Course.ofDegrees(0.),
+        Distance.ofNauticalMiles(1.)
     );
   }
 }

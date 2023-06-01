@@ -1,19 +1,18 @@
 package org.mitre.tdp.boogie;
 
-import static org.mockito.ArgumentMatchers.any;
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.model.BoogieLeg;
-import org.mitre.tdp.boogie.model.BoogieProcedure;
-import org.mitre.tdp.boogie.model.BoogieTransition;
 import org.mitre.tdp.boogie.util.Declinations;
+import org.mitre.tdp.boogie.util.Preconditions;
 
 
 /**
@@ -22,38 +21,19 @@ import org.mitre.tdp.boogie.util.Declinations;
 public final class MockObjects {
 
   public static Fix fix(String name, double lat, double lon) {
-    Fix fix = spy(Fix.class);
-    when(fix.fixIdentifier()).thenReturn(name);
-    when(fix.fixRegion()).thenReturn("MOCK");
-    when(fix.latLong()).thenReturn(LatLong.of(lat, lon));
-    when(fix.latitude()).thenCallRealMethod();
-    when(fix.longitude()).thenCallRealMethod();
-    when(fix.publishedVariation()).thenReturn(Optional.empty());
-    when(fix.modeledVariation()).thenReturn(Declinations.declination(lat, lon, null, Instant.parse("2019-01-01T00:00:00.00Z")));
-    when(fix.toString()).thenReturn("Name: " + name);
-    when(fix.projectOut(any(), any())).thenCallRealMethod();
-    return fix;
+    return Fix.builder()
+        .fixIdentifier(name)
+        .latLong(LatLong.of(lat, lon))
+        .magneticVariation(MagneticVariation.ofDegrees(Declinations.approx(lat, lon)))
+        .build();
   }
 
   public static Leg leg(String name, double lat, double lon, PathTerminator type) {
-    Fix term = fix(name, lat, lon);
-    BoogieLeg leg = mock(BoogieLeg.class);
-    when(leg.pathTerminator()).thenReturn(type);
-    when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
-    when(leg.toString()).thenReturn("Associated Fix: " + name + " - " + type.name());
-    when(leg.toBuilder()).thenReturn(new BoogieLeg.Builder().associatedFix(term));
-    return leg;
+    return leg(name, lat, lon, type, 0);
   }
 
   public static Leg leg(String name, double lat, double lon, PathTerminator type, int sequence) {
-    Fix term = fix(name, lat, lon);
-    BoogieLeg leg = mock(BoogieLeg.class);
-    when(leg.sequenceNumber()).thenReturn(sequence);
-    when(leg.pathTerminator()).thenReturn(type);
-    when(leg.associatedFix()).thenReturn((Optional) Optional.of(term));
-    when(leg.toString()).thenReturn("Associated Fix: " + name + " - " + type.name());
-    when(leg.toBuilder()).thenReturn(new BoogieLeg.Builder().associatedFix(term));
-    return leg;
+    return Leg.builder(type, sequence).associatedFix(fix(name, lat, lon)).build();
   }
 
   public static Leg TF(String name, double lat, double lon) {
@@ -118,40 +98,173 @@ public final class MockObjects {
     return leg;
   }
 
-  public static BoogieTransition transition(String pname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
+  public static Transition transition(String pname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
     return transition(null, pname, "FOO", ttype, ptype, legs);
   }
 
-  public static BoogieTransition transition(String pname, String aname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
+  public static Transition transition(String pname, String aname, TransitionType ttype, ProcedureType ptype, List<Leg> legs) {
     return transition(null, pname, aname, ttype, ptype, legs);
   }
 
-  public static BoogieTransition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<? extends Leg> legs) {
-    BoogieTransition transition = mock(BoogieTransition.class);
-
-    when(transition.transitionIdentifier()).thenReturn(Optional.ofNullable(tname));
-    when(transition.airportIdentifier()).thenReturn(aname);
-    when(transition.airportRegion()).thenReturn("MOCK");
-    when(transition.legs()).thenReturn((List) legs);
-    when(transition.procedureIdentifier()).thenReturn(pname);
-    when(transition.procedureType()).thenReturn(ptype);
-    when(transition.transitionType()).thenReturn(ttype);
-    when(transition.toString()).thenReturn("Transition: " + (tname == null ? "common" : tname) + " Procedure: " + pname);
-
-    return transition;
+  public static Transition transition(String tname, String pname, String aname, TransitionType ttype, ProcedureType ptype, List<? extends Leg> legs) {
+    return CompatTransition.builder()
+        .transitionIdentifier(tname)
+        .procedureIdentifier(pname)
+        .airportIdentifier(aname)
+        .transitionType(ttype)
+        .procedureType(ptype)
+        .legs(legs)
+        .build();
   }
 
   public static Airport airport(String name, double lat, double lon) {
-    Airport airport = spy(Airport.class);
-    when(airport.airportIdentifier()).thenReturn(name);
-    when(airport.latLong()).thenReturn(LatLong.of(lat, lon));
-    return airport;
+    return Airport.builder().airportIdentifier(name).latLong(LatLong.of(lat, lon)).build();
   }
 
   public static Airway airway(String name, List<? extends Leg> legs) {
-    Airway airway = mock(Airway.class);
-    when(airway.airwayIdentifier()).thenReturn(name);
-    when(airway.legs()).thenReturn((List) legs);
-    return airway;
+    return Airway.builder().airwayIdentifier(name).legs(legs).build();
+  }
+
+
+  /**
+   * Taken from legacy {@code ProcedureFactory} class and used extensively in unit tests.
+   */
+  public static Procedure newProcedure(Collection<Transition> transitions) {
+    return newProcedureWithEquipage(transitions, RequiredNavigationEquipage.UNKNOWN);
+  }
+
+  /**
+   * Taken from legacy {@code ProcedureFactory} class and used extensively in unit tests.
+   */
+  public static Procedure newProcedureWithEquipage(Collection<Transition> transitions, RequiredNavigationEquipage requiredNavigationEquipage) {
+    CompatTransition representative = (CompatTransition) transitions.iterator().next();
+    return Procedure.builder()
+        .procedureIdentifier(representative.procedureIdentifier())
+        .airportIdentifier(representative.airportIdentifier())
+        .procedureType(representative.procedureType())
+        .requiredNavigationEquipage(requiredNavigationEquipage)
+        .transitions(transitions)
+        .build();
+  }
+
+  /**
+   * Taken from legacy {@code ProcedureFactory} class and used extensively in unit tests.
+   */
+  public static Collection<Procedure> newProcedures(Collection<Transition> transitions) {
+    return transitions.stream().collect(Collectors.groupingBy(MockObjects::createGroupKey)).values()
+        .stream().map(MockObjects::newProcedure).collect(Collectors.toList());
+  }
+
+  private static String createGroupKey(Transition transition){
+    return Optional.of(transition)
+        .filter(t -> t instanceof CompatTransition)
+        .map(CompatTransition.class::cast)
+        .map(t -> t.procedureIdentifier().concat(t.airportIdentifier()).concat(t.procedureType().name()))
+        .orElseThrow(() -> new IllegalArgumentException("Should be a CompatTransition if going through this - otherwise please assemble the procedure yourself with Procedure.builder()"));
+  }
+
+  /**
+   * Left for compatability in our older unit tests - a bunch of them use features of the {@link Transition}s that exist at the
+   * procedure-level now to group them behind the scenes into procedures...
+   */
+  private static final class CompatTransition implements Transition {
+
+    private final Transition delegate;
+
+    private final String procedureIdentifier;
+
+    private final String airportIdentifier;
+
+    private final ProcedureType procedureType;
+
+    private CompatTransition(Builder builder) {
+      this.delegate = builder.delegate.build();
+      this.procedureIdentifier = builder.procedureIdentifier;
+      this.airportIdentifier = builder.airportIdentifier;
+      this.procedureType = builder.procedureType;
+    }
+
+    static Builder builder() {
+      return new Builder();
+    }
+
+    public String procedureIdentifier() {
+      return procedureIdentifier;
+    }
+
+    public String airportIdentifier() {
+      return airportIdentifier;
+    }
+
+    public ProcedureType procedureType() {
+      return procedureType;
+    }
+
+    @Override
+    public Optional<String> transitionIdentifier() {
+      return delegate.transitionIdentifier();
+    }
+
+    @Override
+    public TransitionType transitionType() {
+      return delegate.transitionType();
+    }
+
+    @Override
+    public List<? extends Leg> legs() {
+      return delegate.legs();
+    }
+
+    private static final class Builder {
+
+      private final Transition.Standard.Builder delegate = Transition.builder();
+
+      private String procedureIdentifier;
+
+      private String airportIdentifier;
+
+      private ProcedureType procedureType;
+
+      private Builder() {
+      }
+
+      public Builder transitionIdentifier(String transitionIdentifier) {
+        this.delegate.transitionIdentifier(transitionIdentifier);
+        return this;
+      }
+
+      public Builder transitionType(TransitionType transitionType) {
+        this.delegate.transitionType(transitionType);
+        return this;
+      }
+
+      /**
+       * Override the current set of configured legs to be the provided list.
+       */
+      public Builder legs(List<? extends Leg> legs) {
+        this.delegate.legs(legs);
+        return this;
+      }
+
+      public Builder procedureIdentifier(String procedureIdentifier) {
+        this.procedureIdentifier = procedureIdentifier;
+        return this;
+      }
+
+      public Builder airportIdentifier(String airportIdentifier) {
+        this.airportIdentifier = airportIdentifier;
+        return this;
+      }
+
+      public Builder procedureType(ProcedureType procedureType) {
+        this.procedureType = procedureType;
+        return this;
+      }
+
+      public CompatTransition build() {
+        return new CompatTransition(this);
+
+      }
+    }
   }
 }

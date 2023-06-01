@@ -11,11 +11,8 @@ import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.validate.RecordElectorFactory;
 
 /**
  * Resolves candidate {@link ResolvedToken.SidEnrouteCommon}/{@link ResolvedToken.StarEnrouteCommon}s from a {@link RouteToken}.

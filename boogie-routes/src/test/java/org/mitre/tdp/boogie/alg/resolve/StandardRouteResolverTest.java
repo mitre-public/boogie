@@ -23,11 +23,11 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MockObjects;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
-import org.mitre.tdp.boogie.model.BoogieTransition;
-import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 class StandardRouteResolverTest {
 
@@ -59,11 +59,11 @@ class StandardRouteResolverTest {
     Leg ifSherl = IF("SHERL", 0.0, 0.0);
     Leg ifBrigs = IF("BRIGS", 0.0, 0.0);
 
-    BoogieTransition cstl6 = transition("CSTL6", TransitionType.COMMON, ProcedureType.SID, singletonList(ifSherl));
-    BoogieTransition jiims2 = transition("JIIMS2", TransitionType.COMMON, ProcedureType.STAR, singletonList(ifBrigs));
+    Transition cstl6 = transition("CSTL6", TransitionType.COMMON, ProcedureType.SID, singletonList(ifSherl));
+    Transition jiims2 = transition("JIIMS2", TransitionType.COMMON, ProcedureType.STAR, singletonList(ifBrigs));
 
     SidStarResolver sidStarResolver = new SidStarResolver(inMemory(
-        ProcedureFactory.newProcedures(newArrayList(cstl6, jiims2)),
+        MockObjects.newProcedures(newArrayList(cstl6, jiims2)),
         p -> Stream.of(p.procedureIdentifier())
     ));
 

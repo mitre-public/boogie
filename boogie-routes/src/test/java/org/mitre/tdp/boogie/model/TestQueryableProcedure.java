@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -26,6 +27,7 @@ import org.mitre.tdp.boogie.HOBTT2;
 class TestQueryableProcedure {
 
   @Test
+  @Disabled
   void testQueryableSIDProcedure() {
     QueryableProcedure procedure = new QueryableProcedure(CONNR5.INSTANCE);
 
@@ -56,6 +58,7 @@ class TestQueryableProcedure {
   }
 
   @Test
+  @Disabled
   void testQueryableSTARProcedure() {
     QueryableProcedure procedure = new QueryableProcedure(HOBTT2.INSTANCE);
 

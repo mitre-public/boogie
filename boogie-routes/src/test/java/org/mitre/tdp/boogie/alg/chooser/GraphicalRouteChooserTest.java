@@ -21,13 +21,15 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MockObjects;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -106,11 +108,11 @@ class GraphicalRouteChooserTest {
     Leg l3 = TF("GRRDR", 0.0, 2.0);
     Leg l4 = TF("VNY", 0.0, 3.0);
 
-    BoogieTransition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
+    Transition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
 
     return RouteTokenResolver.standard(
         LookupService.inMemory(singletonList(kind), a -> Stream.of(a.airportIdentifier())),
-        LookupService.inMemory(ProcedureFactory.newProcedures(singletonList(t)), p -> Stream.of(p.procedureIdentifier())),
+        LookupService.inMemory(MockObjects.newProcedures(singletonList(t)), p -> Stream.of(p.procedureIdentifier())),
         LookupService.noop(),
         LookupService.inMemory(singletonList(l4.associatedFix().orElseThrow(IllegalStateException::new)), f -> Stream.of(f.fixIdentifier()))
     );

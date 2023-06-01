@@ -12,10 +12,6 @@ public interface Runway {
    */
   String runwayIdentifier();
 
-  String airportIdentifier();
-
-  String airportRegion();
-
   /**
    * The true course of the runway in degrees.
    */

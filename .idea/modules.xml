@@ -2,7 +2,22 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-arinc/boogie.boogie-arinc.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-arinc/boogie.boogie-arinc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-arinc/boogie.boogie-arinc.main.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-arinc/boogie.boogie-arinc.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-arinc/boogie.boogie-arinc.test.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-arinc/boogie.boogie-arinc.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-conformance/boogie.boogie-conformance.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-conformance/boogie.boogie-conformance.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-conformance/boogie.boogie-conformance.main.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-conformance/boogie.boogie-conformance.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-conformance/boogie.boogie-conformance.test.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-conformance/boogie.boogie-conformance.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-core/boogie.boogie-core.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-core/boogie.boogie-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-core/boogie.boogie-core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-core/boogie.boogie-core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-core/boogie.boogie-core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-core/boogie.boogie-core.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-routes/boogie.boogie-routes.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-routes/boogie.boogie-routes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-routes/boogie.boogie-routes.main.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-routes/boogie.boogie-routes.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/boogie-routes/boogie.boogie-routes.test.iml" filepath="$PROJECT_DIR$/.idea/modules/boogie-routes/boogie.boogie-routes.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/build-logic/build-logic.iml" filepath="$PROJECT_DIR$/.idea/modules/build-logic/build-logic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/build-logic/build-logic.main.iml" filepath="$PROJECT_DIR$/.idea/modules/build-logic/build-logic.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/build-logic/build-logic.test.iml" filepath="$PROJECT_DIR$/.idea/modules/build-logic/build-logic.test.iml" />
     </modules>
   </component>
 </project>

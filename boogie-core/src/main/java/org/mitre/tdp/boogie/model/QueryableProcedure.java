@@ -122,11 +122,6 @@ public final class QueryableProcedure implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return procedure.airportRegion();
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return procedure.procedureType();
   }

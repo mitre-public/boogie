@@ -49,7 +49,7 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
     Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, star.procedureIdentifier(), airport.airportIdentifier());
 
     return procedures.stream()
-        .map(procedure -> Procedure.transitionMasked(procedure, nonArrivalRunwayTransitionFilter()))
+        .map(procedure -> Procedure.maskTransitions(procedure, nonArrivalRunwayTransitionFilter().negate()))
         .map(ResolvedToken::starRunway)
         .collect(toList());
   }

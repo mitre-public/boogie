@@ -15,7 +15,6 @@ import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.alg.FixRadialDistance;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
@@ -40,7 +39,7 @@ final class FrdResolver implements SingleTokenResolver {
 
     Pair<Course, Distance> pair = bearingDistance(token.infrastructureName());
 
-    FixRadialDistance frd = FixRadialDistance.create(fix, pair.first(), pair.second());
+    Fix.FixRadialDistance frd = Fix.fixRadialDistance(fix, pair.first(), pair.second());
     return isTailoredBefore(token) ? standardFrd(frd) : directToFrd(frd);
   }
 

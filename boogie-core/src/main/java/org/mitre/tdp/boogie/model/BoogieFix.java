@@ -1,13 +1,14 @@
 package org.mitre.tdp.boogie.model;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Immutable convenience implementation of the {@link Fix} interface.
@@ -35,7 +36,6 @@ public final class BoogieFix implements Serializable, Fix {
     return fixIdentifier;
   }
 
-  @Override
   public String fixRegion() {
     return fixRegion;
   }
@@ -46,16 +46,18 @@ public final class BoogieFix implements Serializable, Fix {
   }
 
   @Override
+  public Optional<MagneticVariation> magneticVariation() {
+    return publishedVariation().or(() -> Optional.of(modeledVariation())).map(MagneticVariation::ofDegrees);
+  }
+
   public Optional<Double> publishedVariation() {
     return Optional.ofNullable(publishedVariation);
   }
 
-  @Override
   public double modeledVariation() {
     return modeledVariation;
   }
 
-  @Override
   public Optional<Double> elevation() {
     return Optional.ofNullable(elevation);
   }

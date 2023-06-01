@@ -37,11 +37,6 @@ public final class JIIMS3 implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return "K4";
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return ProcedureType.STAR;
   }

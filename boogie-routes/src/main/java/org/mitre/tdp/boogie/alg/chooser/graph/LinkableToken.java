@@ -7,7 +7,6 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.FixRadialDistance;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 
@@ -79,7 +78,7 @@ interface LinkableToken extends LinkingVisitor {
   /**
    * See {@link ResolvedToken.StandardFrd} for details.
    */
-  static LinkableToken anyFrd(FixRadialDistance frd, Collection<LinkedLegs> graphRepresentation) {
+  static LinkableToken anyFrd(Fix.FixRadialDistance frd, Collection<LinkedLegs> graphRepresentation) {
     return new AnyFrd(frd, graphRepresentation);
   }
 

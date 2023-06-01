@@ -50,7 +50,7 @@ final class SidRunwayTransitionInferrer implements SectionInferrer {
     Collection<Procedure> procedures = PreferProceduresAtAirport.lookup(proceduresByName, sid.procedureIdentifier(), airport.airportIdentifier());
 
     return procedures.stream()
-        .map(procedure -> Procedure.transitionMasked(procedure, nonDepartureRunwayTransitionFilter()))
+        .map(procedure -> Procedure.maskTransitions(procedure, nonDepartureRunwayTransitionFilter().negate()))
         .map(ResolvedToken::sidRunway)
         .collect(toList());
   }

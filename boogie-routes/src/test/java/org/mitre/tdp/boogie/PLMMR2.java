@@ -40,11 +40,6 @@ public final class PLMMR2 implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return "K7";
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return ProcedureType.SID;
   }

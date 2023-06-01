@@ -13,7 +13,6 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.FixRadialDistance;
 import org.mitre.tdp.boogie.alg.resolve.FixTerminationLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
@@ -147,45 +146,20 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.StandardFrd frd) {
-        Leg leg = FixTerminationLeg.IF(createFix(frd.infrastructure()));
+        Leg leg = FixTerminationLeg.IF(frd.infrastructure());
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.DirectToFrd frd) {
-        Leg leg = FixTerminationLeg.DF(createFix(frd.infrastructure()));
+        Leg leg = FixTerminationLeg.DF(frd.infrastructure());
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       private Fix createFix(LatLong latLong) {
-
-        double declinationApprox = Declinations.declination(
-            latLong.latitude(),
-            latLong.longitude(),
-            null,
-            Instant.now()
-        );
-
-        return new BoogieFix.Builder()
+        return Fix.builder()
             .fixIdentifier(latLong.toBase64())
-            .fixRegion("ANONYMOUS")
-            .latitude(latLong.latitude())
-            .longitude(latLong.longitude())
-            .modeledVariation(declinationApprox)
-            .build();
-      }
-
-      private Fix createFix(FixRadialDistance frd) {
-
-        LatLong project = frd.projectedLocation();
-
-        return new BoogieFix.Builder()
-            .fixIdentifier(frd.formattedIdentifier())
-            .fixRegion(frd.fix().fixRegion())
-            .latitude(project.latitude())
-            .longitude(project.longitude())
-            .elevation(null)
-            .modeledVariation(frd.fix().modeledVariation())
+            .latLong(latLong)
             .build();
       }
     }

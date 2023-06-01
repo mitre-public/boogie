@@ -1,25 +1,21 @@
 package org.mitre.tdp.boogie.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TraversalOrderSorter;
 import org.mitre.tdp.boogie.util.Combinatorics;
 import org.mitre.tdp.boogie.util.Iterators;
-import org.mitre.tdp.boogie.util.Preconditions;
 import org.mitre.tdp.boogie.util.Streams;
 
 /**
@@ -31,55 +27,6 @@ public final class ProcedureFactory {
 
   private ProcedureFactory() {
     throw new IllegalStateException("Cannot instantiate static factory class.");
-  }
-
-  /**
-   * Generates all of the {@link Procedure} records from the supplied collection of input {@link Transition}s using the normal
-   * grouping strategy of {airportIdentifier, airportRegion, procedureIdentifier, procedureType}.
-   */
-  public static Collection<Procedure> newProcedures(Collection<Transition> transitions) {
-    Function<Transition, String> groupKey = transition -> transition.procedureIdentifier()
-        .concat(transition.airportIdentifier())
-        .concat(transition.airportRegion())
-        .concat(transition.procedureType().name());
-
-    return transitions.stream().collect(Collectors.groupingBy(groupKey)).values()
-        .stream().map(ProcedureFactory::newProcedure).collect(Collectors.toList());
-  }
-
-  /**
-   * Constructs a new {@link Procedure} record from the input collection of associated transitions. If these transitions don't
-   * share the same {airportIdentifier, airportRegion, procedureIdentifier, procedureType} - this will throw an exception.
-   * <br>
-   * Note that procedures constructed in this way will have their {@link RequiredNavigationEquipage} set to 'UNKNOWN' as the
-   * value cannot be inferred from the transitions alone.
-   */
-  public static Procedure newProcedureWithEquipage(Collection<Transition> transitions, RequiredNavigationEquipage requiredNavigationEquipage) {
-    checkArgument(Preconditions.allMatch(transitions, Transition::airportIdentifier), "All airport identifiers should match.");
-    checkArgument(Preconditions.allMatch(transitions, Transition::airportRegion), "All airport regions should match.");
-    checkArgument(Preconditions.allMatch(transitions, Transition::procedureIdentifier), "All procedure identifiers should match.");
-    checkArgument(Preconditions.allMatch(transitions, Transition::procedureType), "All procedure types should match.");
-
-    Transition representative = transitions.iterator().next();
-    return new BoogieProcedure.Builder()
-        .procedureIdentifier(representative.procedureIdentifier())
-        .airportIdentifier(representative.airportIdentifier())
-        .airportRegion(representative.airportRegion())
-        .procedureType(representative.procedureType())
-        .requiredNavigationEquipage(requiredNavigationEquipage)
-        .transitions(transitions)
-        .build();
-  }
-
-  /**
-   * Constructs a new {@link Procedure} record from the input collection of associated transitions. If these transitions don't
-   * share the same {airportIdentifier, airportRegion, procedureIdentifier, procedureType} - this will throw an exception.
-   * <br>
-   * Note that procedures constructed in this way will have their {@link RequiredNavigationEquipage} set to 'UNKNOWN' as the
-   * value cannot be inferred from the transitions alone.
-   */
-  public static Procedure newProcedure(Collection<Transition> transitions) {
-    return newProcedureWithEquipage(transitions, RequiredNavigationEquipage.UNKNOWN);
   }
 
   /**

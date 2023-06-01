@@ -78,7 +78,7 @@ public final class TraversalOrderSorter {
   }
 
   private void ensureTypeCoverage(Set<TransitionType> detectedTypes) {
-    Sets.SetView<TransitionType> difference = Sets.difference(ordering, detectedTypes);
+    Sets.SetView<TransitionType> difference = Sets.difference(detectedTypes, ordering);
     checkArgument(difference.isEmpty(), "Found unhandled transition type when sorting transitions: {}", difference);
   }
 }

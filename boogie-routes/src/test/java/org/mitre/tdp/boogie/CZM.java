@@ -30,11 +30,6 @@ public class CZM implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return "MM";
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return ProcedureType.STAR;
   }

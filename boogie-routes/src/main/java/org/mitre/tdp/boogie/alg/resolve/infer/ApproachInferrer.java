@@ -30,7 +30,7 @@ import org.mitre.tdp.boogie.fn.TriFunction;
 
 final class ApproachInferrer implements SectionInferrer {
 
-  private static final Predicate<Transition> NON_MISSED = t -> !TransitionType.MISSED.equals(t.transitionType());
+  private static final Predicate<Transition> MISSED = t -> TransitionType.MISSED.equals(t.transitionType());
 
   private static final TriFunction<Collection<Procedure>, String, String, Collection<Procedure>> approachesForRunway =
       (procedures, runwayNumber, parallelIndicator) -> procedures.stream().filter(p -> IsApproachForRunway.test(p.procedureIdentifier(), runwayNumber, parallelIndicator)).collect(toList());
@@ -45,7 +45,7 @@ final class ApproachInferrer implements SectionInferrer {
     this.proceduresByAirport = requireNonNull(proceduresByAirport)
         .thenFilterWith(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
         // mask the missed-approach portions of the approach procedure
-        .thenApply(procedure -> procedure.stream().map(p -> Procedure.transitionMasked(p, NON_MISSED)).collect(toList()));
+        .thenApply(procedure -> procedure.stream().map(p -> Procedure.maskTransitions(p, MISSED)).collect(toList()));
   }
 
   @Override

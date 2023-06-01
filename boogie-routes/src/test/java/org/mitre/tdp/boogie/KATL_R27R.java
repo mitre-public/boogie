@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
-public class KATL_R27R implements Procedure{
+public class KATL_R27R implements Procedure {
 
   public static Procedure INSTANCE = new KATL_R27R();
   private final Map<String, Transition> transitions;
@@ -35,11 +35,6 @@ public class KATL_R27R implements Procedure{
   @Override
   public String airportIdentifier() {
     return "KATL";
-  }
-
-  @Override
-  public String airportRegion() {
-    return "K7";
   }
 
   @Override

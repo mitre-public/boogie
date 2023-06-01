@@ -57,7 +57,7 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  * <br>
  * e.g. TestAPF would indicated a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
-class TestFluentRouteExpander {
+class FluentRouteExpanderTest {
 
   @Test
   void testOddComboDoesNotHappen() {

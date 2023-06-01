@@ -41,7 +41,6 @@ public final class BoogieProcedure implements Procedure {
     return airportIdentifier;
   }
 
-  @Override
   public String airportRegion() {
     return airportRegion;
   }

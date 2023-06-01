@@ -1,22 +1,22 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.transition;
 import static org.mitre.tdp.boogie.alg.LookupService.inMemory;
-import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedures;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
-import org.mitre.tdp.boogie.model.BoogieTransition;
 
 class SidStarResolverTest {
 
@@ -66,14 +66,34 @@ class SidStarResolverTest {
   }
 
   private SidStarResolver resolver(ProcedureType procedureType) {
+
     Leg l = IF("FOO", 0.0, 0.0);
 
-    BoogieTransition atlJimmy = transition("JIMMY", "KATL", TransitionType.COMMON, procedureType, singletonList(l));
+    Procedure atlJimmy = Procedure.builder()
+        .procedureIdentifier("JIMMY")
+        .airportIdentifier("KATL")
+        .procedureType(procedureType)
+        .requiredNavigationEquipage(RequiredNavigationEquipage.UNKNOWN)
+        .transitions(List.of(Transition.builder()
+            .transitionIdentifier("NONE")
+            .transitionType(TransitionType.COMMON)
+            .legs(List.of(l))
+            .build()))
+        .build();
 
-    BoogieTransition bnyJimmy = transition("JIMMY", "KBNY", TransitionType.COMMON, procedureType, singletonList(l));
+    Procedure bnyJimmy = Procedure.builder()
+        .procedureIdentifier("JIMMY")
+        .airportIdentifier("KBNY")
+        .procedureType(procedureType)
+        .requiredNavigationEquipage(RequiredNavigationEquipage.UNKNOWN)
+        .transitions(List.of(Transition.builder()
+            .transitionIdentifier("NONE")
+            .transitionType(TransitionType.COMMON)
+            .legs(List.of(l))
+            .build()))
+        .build();
 
-    return new SidStarResolver(
-        inMemory(newProcedures(Arrays.asList(atlJimmy, bnyJimmy)), p -> Stream.of(p.procedureIdentifier()))
-    );
+    LookupService<Procedure> service = inMemory(List.of(atlJimmy, bnyJimmy), p -> Stream.of(p.procedureIdentifier()));
+    return new SidStarResolver(service);
   }
 }

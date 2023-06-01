@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedure;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
 import java.util.Arrays;
@@ -23,7 +22,9 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MockObjects;
 import org.mitre.tdp.boogie.PLMMR2;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
@@ -44,8 +45,17 @@ class TestProcedureGraph {
   void testSingleLegSingleTransition() {
     Leg leg = MockObjects.IF("YYT", 0.0, 0.0);
 
-    BoogieTransition transition = MockObjects.transition("A", TransitionType.COMMON, ProcedureType.STAR, singletonList(leg));
-    ProcedureGraph graph = newProcedureGraph(newProcedure(singletonList(transition)));
+    Transition transition = MockObjects.transition("A", TransitionType.COMMON, ProcedureType.STAR, singletonList(leg));
+
+    Procedure procedure = Procedure.builder()
+        .procedureIdentifier("A")
+        .airportIdentifier("FOO")
+        .procedureType(ProcedureType.STAR)
+        .requiredNavigationEquipage(RequiredNavigationEquipage.UNKNOWN)
+        .transitions(List.of(transition))
+        .build();
+
+    ProcedureGraph graph = newProcedureGraph(procedure);
 
     assertAll(
         () -> assertTrue(graph.edgeSet().isEmpty()),
@@ -209,34 +219,50 @@ class TestProcedureGraph {
 
     Leg l1_1 = MockObjects.IF("AAA", 0.0, 0.0);
     Leg l1_2 = MockObjects.TF("BBB", 0.0, 0.1);
-    BoogieTransition ab = MockObjects.transition("B", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    Transition ab = MockObjects.transition("B", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
 
     Leg l2_1 = MockObjects.IF("BBB", 0.0, 0.2);
     Leg l2_2 = MockObjects.TF("CCC", 0.0, 0.4);
-    BoogieTransition bc = MockObjects.transition("C", "ALPHA1", "APT", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
+    Transition bc = MockObjects.transition("C", "ALPHA1", "APT", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l2_1, l2_2));
 
     Leg l3_1 = MockObjects.IF("CCC", 0.0, 0.4);
     Leg l3_2 = MockObjects.TF("DDD", 0.0, 0.5);
-    BoogieTransition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    Transition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = MockObjects.IF("CCC", 0.0, 0.4);
     Leg l4_2 = MockObjects.TF("EEE", 0.0, 0.5);
-    BoogieTransition ce = MockObjects.transition("E", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    Transition ce = MockObjects.transition("E", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
-    return newProcedureGraph(newProcedure(Arrays.asList(ab, bc, cd, ce)));
+    Procedure procedure = Procedure.builder()
+        .procedureIdentifier("ALPHA1")
+        .airportIdentifier("APT")
+        .procedureType(ProcedureType.STAR)
+        .requiredNavigationEquipage(RequiredNavigationEquipage.UNKNOWN)
+        .transitions(Arrays.asList(ab, bc, cd, ce))
+        .build();
+
+    return newProcedureGraph(procedure);
   }
 
   private static ProcedureGraph splitGraph() {
 
     Leg l3_1 = MockObjects.IF("CCC", 0.0, 0.4);
     Leg l3_2 = MockObjects.TF("DDD", 0.0, 0.5);
-    BoogieTransition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
+    Transition cd = MockObjects.transition("D", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l3_1, l3_2));
 
     Leg l4_1 = MockObjects.IF("EEE", 0.0, 0.4);
     Leg l4_2 = MockObjects.TF("FFF", 0.0, 0.5);
-    BoogieTransition ef = MockObjects.transition("F", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
+    Transition ef = MockObjects.transition("F", "ALPHA1", "APT", TransitionType.RUNWAY, ProcedureType.STAR, Arrays.asList(l4_1, l4_2));
 
-    return newProcedureGraph(newProcedure(Arrays.asList(cd, ef)));
+    Procedure procedure = Procedure.builder()
+        .procedureIdentifier("ALPHA1")
+        .airportIdentifier("APT")
+        .procedureType(ProcedureType.STAR)
+        .requiredNavigationEquipage(RequiredNavigationEquipage.UNKNOWN)
+        .transitions(Arrays.asList(cd, ef))
+        .build();
+
+    return newProcedureGraph(procedure);
   }
 
   private static boolean matchesSequence(List<Leg> legs, List<Pair<String, PathTerminator>> path) {

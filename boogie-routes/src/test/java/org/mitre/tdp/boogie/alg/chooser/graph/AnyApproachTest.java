@@ -3,8 +3,8 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mitre.tdp.boogie.MockObjects.newProcedure;
 import static org.mitre.tdp.boogie.MockObjects.transition;
-import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedure;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
 import java.util.ArrayList;
@@ -16,11 +16,11 @@ import org.mitre.tdp.boogie.Airways;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.model.BoogieLeg;
-import org.mitre.tdp.boogie.model.BoogieTransition;
 
 class AnyApproachTest {
 
@@ -268,8 +268,8 @@ class AnyApproachTest {
     Leg l1_1 = createLeg("first star leg", 0.0, 0.0, PathTerminator.IF);
     Leg l1_2 = createLeg("fix terminating star leg", 0.0, endingLongitude, PathTerminator.TF);
 
-    BoogieTransition ab = transition("fixTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
-    return ResolvedToken.starEnrouteCommon(newProcedureGraph(newProcedure(Arrays.asList(ab))));
+    Transition ab = transition("fixTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    return ResolvedToken.starEnrouteCommon(newProcedureGraph(newProcedure(List.of(ab))));
   }
 
   private ResolvedToken.StarEnrouteCommon manualTerminatingStar(double endingLongitude) {
@@ -277,8 +277,8 @@ class AnyApproachTest {
     Leg l1_1 = createLeg("first star leg", 0.0, 0.0, PathTerminator.IF);
     Leg l1_2 = createLeg("manual terminating star leg", 0.0, endingLongitude, PathTerminator.FM);
 
-    BoogieTransition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
-    return ResolvedToken.starEnrouteCommon(newProcedureGraph(newProcedure(Arrays.asList(ab))));
+    Transition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    return ResolvedToken.starEnrouteCommon(newProcedureGraph(newProcedure(List.of(ab))));
   }
 
   private ResolvedToken.SidEnrouteCommon manualTerminatingSidWithOnlyOneFix(double endingLongitude) {
@@ -286,8 +286,8 @@ class AnyApproachTest {
     Leg l1_1 = new BoogieLeg.Builder().pathTerminator(PathTerminator.VA).associatedFix(null).build();
     Leg l1_2 = createLeg("manual terminating sid leg", 0.0, endingLongitude, PathTerminator.VM);
 
-    BoogieTransition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
-    return ResolvedToken.sidEnrouteCommon(newProcedureGraph(newProcedure(Arrays.asList(ab))));
+    Transition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
+    return ResolvedToken.sidEnrouteCommon(newProcedureGraph(newProcedure(List.of(ab))));
   }
 
   private ResolvedToken.StandardApproach fixOriginatingApproach(double startingLongitude) {
@@ -295,8 +295,8 @@ class AnyApproachTest {
     Leg l2_1 = createLeg("fix originating approach leg", 0.0, startingLongitude, PathTerminator.FD);
     Leg l2_2 = createLeg("next approach leg", 0.0, startingLongitude + 0.5, PathTerminator.TF);
 
-    BoogieTransition bc = transition("fixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
-    return ResolvedToken.standardApproach(newProcedureGraph(newProcedure(Arrays.asList(bc))));
+    Transition bc = transition("fixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
+    return ResolvedToken.standardApproach(newProcedureGraph(newProcedure(List.of(bc))));
   }
 
   private ResolvedToken.StandardApproach nonFixOriginatingApproach(double startingLongitude) {
@@ -304,8 +304,8 @@ class AnyApproachTest {
     Leg l2_1 = createLeg("non fix originating approach leg", 0.0, startingLongitude, PathTerminator.TF);
     Leg l2_2 = createLeg("next approach leg", 0.0, startingLongitude + 0.5, PathTerminator.TF);
 
-    BoogieTransition bc = transition("nonFixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
-    return ResolvedToken.standardApproach(newProcedureGraph(newProcedure(Arrays.asList(bc))));
+    Transition bc = transition("nonFixOriginatingApproach", "ALPHA2", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l2_1, l2_2));
+    return ResolvedToken.standardApproach(newProcedureGraph(newProcedure(List.of(bc))));
   }
 
   private static BoogieLeg createLeg(String name, double lat, double lon, PathTerminator type) {

@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.facade;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
@@ -22,7 +23,7 @@ import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.fn.QuadFunction;
@@ -185,7 +186,7 @@ public final class FluentRouteExpander implements
         .equipagePreference(details.equipagePreference())
         .build();
 
-    return Optional.of(routeExpander.expand(route, context))
+    return of(routeExpander.expand(route, context))
         .filter(l -> !l.isEmpty())
         .map(this::createExpandedRoute)
         .map(expandedRoute -> expandedRoute

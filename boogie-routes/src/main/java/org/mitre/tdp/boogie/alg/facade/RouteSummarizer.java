@@ -24,7 +24,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.TraversalOrderSorter;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
-import org.mitre.tdp.boogie.alg.resolve.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

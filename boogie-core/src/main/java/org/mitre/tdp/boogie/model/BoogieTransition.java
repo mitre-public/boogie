@@ -39,22 +39,18 @@ public final class BoogieTransition implements Transition {
     return Optional.ofNullable(transitionIdentifier);
   }
 
-  @Override
   public String procedureIdentifier() {
     return procedureIdentifier;
   }
 
-  @Override
   public String airportIdentifier() {
     return airportIdentifier;
   }
 
-  @Override
   public String airportRegion() {
     return airportRegion;
   }
 
-  @Override
   public ProcedureType procedureType() {
     return procedureType;
   }

@@ -50,11 +50,6 @@ public class COSTR3 implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return "K2"; // ?
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return ProcedureType.STAR;
   }

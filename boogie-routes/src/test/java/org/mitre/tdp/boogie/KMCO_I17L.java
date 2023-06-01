@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
-public class KMCO_I17L implements Procedure{
+public class KMCO_I17L implements Procedure {
 
   public static final Procedure I17L = new KMCO_I17L();
 
@@ -43,11 +43,6 @@ public class KMCO_I17L implements Procedure{
   @Override
   public String airportIdentifier() {
     return "KMCO";
-  }
-
-  @Override
-  public String airportRegion() {
-    return "K2";
   }
 
   @Override

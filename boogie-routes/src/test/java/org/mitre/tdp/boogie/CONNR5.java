@@ -44,11 +44,6 @@ public final class CONNR5 implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return "K4"; // ?
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return ProcedureType.SID;
   }

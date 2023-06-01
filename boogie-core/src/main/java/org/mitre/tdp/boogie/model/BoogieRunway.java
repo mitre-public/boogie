@@ -53,12 +53,10 @@ public final class BoogieRunway implements Serializable, Runway {
     return runwayIdentifier;
   }
 
-  @Override
   public String airportIdentifier() {
     return airportIdentifier;
   }
 
-  @Override
   public String airportRegion() {
     return airportRegion;
   }

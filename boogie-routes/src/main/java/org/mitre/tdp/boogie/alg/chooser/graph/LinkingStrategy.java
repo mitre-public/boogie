@@ -39,9 +39,6 @@ public interface LinkingStrategy {
     return new Standard(grapher);
   }
 
-  /**
-   *
-   */
   Collection<LinkedLegs> links(ResolvedToken left, ResolvedToken right);
 
   /**
@@ -135,25 +132,25 @@ public interface LinkingStrategy {
 
       @Override
       public void visit(ResolvedToken.SidEnrouteCommon sid) {
-        Procedure masked = Procedure.transitionMasked(sid.infrastructure(), common().or(enroute()));
+        Procedure masked = Procedure.maskTransitions(sid.infrastructure(), runway());
         this.token = LinkableToken.anySid(masked, grapher.graphRepresentationOf(sid));
       }
 
       @Override
       public void visit(ResolvedToken.SidRunway sid) {
-        Procedure masked = Procedure.transitionMasked(sid.infrastructure(), runway());
+        Procedure masked = Procedure.maskTransitions(sid.infrastructure(), common().or(enroute()));
         this.token = LinkableToken.anySid(masked, grapher.graphRepresentationOf(sid));
       }
 
       @Override
       public void visit(ResolvedToken.StarEnrouteCommon star) {
-        Procedure masked = Procedure.transitionMasked(star.infrastructure(), common().or(enroute()));
+        Procedure masked = Procedure.maskTransitions(star.infrastructure(), runway());
         this.token = LinkableToken.anyStar(masked, grapher.graphRepresentationOf(star));
       }
 
       @Override
       public void visit(ResolvedToken.StarRunway star) {
-        Procedure masked = Procedure.transitionMasked(star.infrastructure(), runway());
+        Procedure masked = Procedure.maskTransitions(star.infrastructure(), common().or(enroute()));
         this.token = LinkableToken.anyStar(masked, grapher.graphRepresentationOf(star));
       }
 

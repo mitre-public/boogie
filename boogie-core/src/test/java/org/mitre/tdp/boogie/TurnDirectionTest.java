@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-class TestTurnDirection {
+class TurnDirectionTest {
 
   @Test
   void testEqualsAndHashCode() {

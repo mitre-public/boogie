@@ -18,8 +18,7 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 final class DefaultSidInferrer implements SectionInferrer {
 
-  private static final Predicate<Transition> COMMON_OR_ENROUTE = transition ->
-      TransitionType.COMMON.equals(transition.transitionType()) || TransitionType.ENROUTE.equals(transition.transitionType());
+  private static final Predicate<Transition> RUNWAY = transition -> TransitionType.RUNWAY.equals(transition.transitionType());
 
   private final LookupService<Procedure> proceduresByName;
 
@@ -52,6 +51,6 @@ final class DefaultSidInferrer implements SectionInferrer {
 
   private ResolvedTokens makeSection(Procedure sid, ResolvedTokens left, ResolvedTokens right) {
     RouteToken token = RouteToken.between(sid.procedureIdentifier(), left.routeToken(), right.routeToken());
-    return new ResolvedTokens(token, List.of(ResolvedToken.sidEnrouteCommon(Procedure.transitionMasked(sid, COMMON_OR_ENROUTE))));
+    return new ResolvedTokens(token, List.of(ResolvedToken.sidEnrouteCommon(Procedure.maskTransitions(sid, RUNWAY))));
   }
 }

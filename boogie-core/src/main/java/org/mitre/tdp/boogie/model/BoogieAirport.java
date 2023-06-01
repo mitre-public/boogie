@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.Runway;
 
 /**
@@ -38,7 +39,6 @@ public final class BoogieAirport implements Airport {
     return airportIdentifier;
   }
 
-  @Override
   public String airportRegion() {
     return airportRegion;
   }
@@ -49,21 +49,22 @@ public final class BoogieAirport implements Airport {
   }
 
   @Override
+  public Optional<MagneticVariation> magneticVariation() {
+    return publishedVariation().or(() -> Optional.of(modeledVariation())).map(MagneticVariation::ofDegrees);
+  }
+
   public Optional<Double> publishedVariation() {
     return Optional.ofNullable(publishedVariation);
   }
 
-  @Override
   public double modeledVariation() {
     return modeledVariation;
   }
 
-  @Override
   public List<Runway> runways() {
     return runways;
   }
 
-  @Override
   public Optional<Double> elevation() {
     return Optional.ofNullable(elevation);
   }

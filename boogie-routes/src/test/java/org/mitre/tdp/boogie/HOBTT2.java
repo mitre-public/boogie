@@ -51,11 +51,6 @@ public final class HOBTT2 implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return "K2"; // ?
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return ProcedureType.STAR;
   }

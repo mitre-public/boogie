@@ -5,20 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mitre.caasd.commons.Distance.ofNauticalMiles;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
 
 class PointsWithinRangeTest {
 
@@ -76,16 +73,6 @@ class PointsWithinRangeTest {
   }
 
   private Leg newLeg(LatLong location) {
-    Fix fix = spy(Fix.class);
-    when(fix.fixIdentifier()).thenReturn("MOCK");
-    when(fix.fixRegion()).thenReturn("MOCK");
-    when(fix.latLong()).thenReturn(location);
-
-    Leg leg = mock(Leg.class);
-    when(leg.associatedFix()).thenReturn((Optional) Optional.of(fix));
-    when(leg.pathTerminator()).thenReturn(PathTerminator.DF);
-    when(leg.toString()).thenReturn(location.toString());
-
-    return leg;
+    return Leg.dfBuilder(Fix.builder().fixIdentifier("MOCK").latLong(location).build(), 0).build();
   }
 }

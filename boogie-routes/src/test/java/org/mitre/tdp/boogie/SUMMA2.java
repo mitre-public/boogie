@@ -39,11 +39,6 @@ public class SUMMA2 implements Procedure {
   }
 
   @Override
-  public String airportRegion() {
-    return "K1";
-  }
-
-  @Override
   public ProcedureType procedureType() {
     return ProcedureType.SID;
   }

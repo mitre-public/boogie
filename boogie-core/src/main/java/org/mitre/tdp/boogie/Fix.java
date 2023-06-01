@@ -1,60 +1,310 @@
 package org.mitre.tdp.boogie;
 
-import java.util.Optional;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+
+import org.mitre.caasd.commons.Course;
+import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.HasPosition;
+import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.util.Declinations;
 
 /**
- * A fix represents a generic named location in 2-3D space (elevation is optional).
- * <br>
- * Generally speaking "fixes" can be waypoints, NDB/VHF navaids, airports, or even runway ends. This interface is primarily meant
- * to be used in conjunction with the {@link Leg} information to represent all of the required information needed to know how to
- * fly a given leg.
- * <br>
- * All fixes should include their defined ICAO region - the assumption being that fix implementations should be unique per ICAO
- * region (e.g. a waypoint, NDB navaid, VHF navaid should all be uniquely identifiable by identifier, subclass, and region).
+ * In Boogie's simplified worldview a fix is any named reference point in space (this could be a VOR, NDB, waypoint, etc.) and is
+ * explicitly meant to be fairly flexible.
+ *
+ * <p>While all the above entities can define a lot of additional information the algorithms provided by Boogie don't required
+ * access to information beyond what's specified here.
+ *
+ * <p>The inclusion of a magnetic variation (published or modeled) is to allow Boogie to convert from magnetic to true courses in
+ * reference to these objects for both conformance computations (e.g. to VA, VA, etc. legs) and to approximate projected locations
+ * of referenced FRDs.
  */
 public interface Fix extends HasPosition {
 
+  static Standard.Builder builder() {
+    return new Standard.Builder();
+  }
+
+  static <T> Record<T> record(T datum, Fix delegate) {
+    return new Record<>(datum, delegate);
+  }
+
+  static <T> Record<T> make(T datum, Function<T, Fix> maker) {
+    return new Record<>(datum, requireNonNull(maker, "Should not be null.").apply(datum));
+  }
+
   /**
-   * The (typically) 3-5 character name of the fix object.
+   * Special-case representation of a fix where the position is determined by projecting a distance along a certain radial from an
+   * existing fix.
+   *
+   * @param origin   the fix representing the origin of the projection
+   * @param bearing  the bearing to project along from the fix
+   * @param distance the distance to project along the bearing
+   */
+  static FixRadialDistance fixRadialDistance(Fix origin, Course bearing, Distance distance) {
+    return new FixRadialDistance(origin, bearing, distance);
+  }
+
+  /**
+   * The (typically) 3-5 character name of the fix object e.g. {@code JMACK, CHPPR, DTW}.
    */
   String fixIdentifier();
 
   /**
-   * The region which the fix exists in.
-   * <br>
-   * The general expectation here is that a given fix identifier will be <i>unique</i> within it's supplied region.
-   * <br>
-   * As an example: for fixes parsed from ARINC 424 data this is the ICAO region (K1, K7, PA, MM, EG, UT, etc.).
+   * The local magnetic variation at the fix - typically this will be published if the fix is a navaid (e.g. VOR/NDB) but won't
+   * be for waypoints (as there is no physical facility there).
+   *
+   * <p>In the latter case (since they're still used as reference points for FRDs in some instances) it can either be left empty,
+   * set to zero, or explicitly modeled using the provided {@link Declinations} class.
+   *
+   * <p>Where Boogie algorithms need this value internally it will be implicitly derived via the {@link Declinations} class under
+   * the hood. Given there is a time component to the variation there is no guarantee this choice will be accurate, so it's best
+   * to provide this value yourself where possible.
    */
-  String fixRegion();
+  Optional<MagneticVariation> magneticVariation();
 
-  /**
-   * The localized {@link MagneticVariation} at the fix as published in official sources.
-   */
-  Optional<Double> publishedVariation();
+  final class Standard implements Fix {
 
-  /**
-   * Boogie provides the {@link Declinations} utility class to compute a modeled version of the declination at a fix based on the
-   * WMM published by NOAA. Generally this information is required to convert the mostly magnetic courses in legs/etc. into true
-   * courses for use in modeling.
-   * <br>
-   * Ideally this could be defaulted on the interface but the value to use is dependent on the publication date of the fix (as
-   * there is a time component to the drift in the declination).
-   */
-  double modeledVariation();
+    private final String fixIdentifier;
 
-  /**
-   * Wraps the overridden interface contract methods as the more usable & functional {@link MagneticVariation} object.
-   */
-  default MagneticVariation magneticVariation() {
-    return new MagneticVariation(publishedVariation().orElse(null), modeledVariation());
+    private final LatLong latLong;
+
+    private final MagneticVariation magneticVariation;
+
+    private Standard(Builder builder) {
+      this.fixIdentifier = requireNonNull(builder.fixIdentifier);
+      this.latLong = requireNonNull(builder.latLong);
+      this.magneticVariation = builder.magneticVariation;
+    }
+
+    @Override
+    public String fixIdentifier() {
+      return fixIdentifier;
+    }
+
+    @Override
+    public Optional<MagneticVariation> magneticVariation() {
+      return ofNullable(magneticVariation);
+    }
+
+    @Override
+    public LatLong latLong() {
+      return latLong;
+    }
+
+    public Builder toBuilder() {
+      return new Builder()
+          .fixIdentifier(fixIdentifier)
+          .latLong(latLong)
+          .magneticVariation(magneticVariation);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Standard standard = (Standard) o;
+      return Objects.equals(fixIdentifier, standard.fixIdentifier)
+          && Objects.equals(latLong, standard.latLong)
+          && Objects.equals(magneticVariation, standard.magneticVariation);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(fixIdentifier, latLong, magneticVariation);
+    }
+
+    @Override
+    public String toString() {
+      return "Standard{" +
+          "fixIdentifier='" + fixIdentifier + '\'' +
+          ", latLong=" + latLong +
+          ", magneticVariation=" + magneticVariation +
+          '}';
+    }
+
+    public static final class Builder {
+
+      private String fixIdentifier;
+
+      private LatLong latLong;
+
+      private MagneticVariation magneticVariation;
+
+      private Builder() {
+      }
+
+      public Builder fixIdentifier(String fixIdentifier) {
+        this.fixIdentifier = requireNonNull(fixIdentifier);
+        return this;
+      }
+
+      public Builder latLong(LatLong latLong) {
+        this.latLong = requireNonNull(latLong);
+        return this;
+      }
+
+      public Builder magneticVariation(MagneticVariation magneticVariation) {
+        this.magneticVariation = magneticVariation;
+        return this;
+      }
+
+      public Standard build() {
+        return new Standard(this);
+      }
+    }
   }
 
-  /**
-   * The elevation in feet of the fix (typically only supplied for physical facilities - i.e. NDB/VHF navaids).
-   */
-  Optional<Double> elevation();
+  final class Record<T> implements Fix {
+
+    private final T datum;
+
+    private final Fix delegate;
+
+    private Record(T datum, Fix delegate) {
+      this.datum = requireNonNull(datum);
+      this.delegate = requireNonNull(delegate);
+    }
+
+    public T datum() {
+      return datum;
+    }
+
+    @Override
+    public String fixIdentifier() {
+      return delegate.fixIdentifier();
+    }
+
+    @Override
+    public Optional<MagneticVariation> magneticVariation() {
+      return delegate.magneticVariation();
+    }
+
+    @Override
+    public LatLong latLong() {
+      return delegate.latLong();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Record<?> record = (Record<?>) o;
+      return Objects.equals(datum, record.datum)
+          && Objects.equals(delegate, record.delegate);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(datum, delegate);
+    }
+
+    @Override
+    public String toString() {
+      return "Record{" +
+          "datum=" + datum +
+          ", delegate=" + delegate +
+          '}';
+    }
+  }
+
+  final class FixRadialDistance implements Fix {
+
+    private final Fix origin;
+
+    private final Course radial;
+
+    private final Distance distance;
+
+    private final LatLong projectedLocation;
+
+    private FixRadialDistance(Fix origin, Course radial, Distance distance) {
+      this.origin = requireNonNull(origin);
+      this.radial = requireNonNull(radial);
+      this.distance = requireNonNull(distance);
+      this.projectedLocation = makeProjectedLocation(origin, radial, distance);
+    }
+
+    private static LatLong makeProjectedLocation(Fix origin, Course radial, Distance distance) {
+
+      MagneticVariation variation = origin.magneticVariation()
+          .orElseGet(() -> MagneticVariation.ofDegrees(Declinations.approx(origin.latitude(), origin.longitude())));
+
+      return origin.latLong().project(variation.magneticToTrue(radial), distance);
+    }
+
+    @Override
+    public String fixIdentifier() {
+      return String.format("%s%03d%03d",
+          origin.fixIdentifier(),
+          Double.valueOf(radial.inDegrees()).intValue(),
+          Double.valueOf(distance.inNauticalMiles()).intValue()
+      );
+    }
+
+    @Override
+    public Optional<MagneticVariation> magneticVariation() {
+      return origin.magneticVariation();
+    }
+
+    @Override
+    public LatLong latLong() {
+      return projectedLocation;
+    }
+
+    public Fix fix() {
+      return origin;
+    }
+
+    public Course radial() {
+      return radial;
+    }
+
+    public Distance distance() {
+      return distance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      FixRadialDistance that = (FixRadialDistance) o;
+      return Objects.equals(origin, that.origin)
+          && Objects.equals(radial, that.radial)
+          && Objects.equals(distance, that.distance)
+          && Objects.equals(projectedLocation, that.projectedLocation);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(origin, radial, distance, projectedLocation);
+    }
+
+    @Override
+    public String toString() {
+      return "FixRadialDistance{" +
+          "origin=" + origin +
+          ", radial=" + radial +
+          ", distance=" + distance +
+          ", projectedLocation=" + projectedLocation +
+          '}';
+    }
+  }
 }

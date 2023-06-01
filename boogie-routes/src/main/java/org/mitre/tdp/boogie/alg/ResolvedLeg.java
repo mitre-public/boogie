@@ -1,9 +1,11 @@
-package org.mitre.tdp.boogie.alg.resolve;
+package org.mitre.tdp.boogie.alg;
 
 import static java.util.Objects.requireNonNull;
 
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 
 /**
@@ -11,6 +13,7 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
  * has examined the input sequence of available {@link ResolvedTokens}.
  */
 public final class ResolvedLeg {
+
   /**
    * The {@link RouteToken} from the route string used to generate this reference.
    */
@@ -23,6 +26,8 @@ public final class ResolvedLeg {
    * The actual resolved leg of the route.
    */
   private final Leg leg;
+  // Leg.Record<T>, T = Akela Leg
+  // DirectTo = Akela Fix
 
   private ResolvedLeg(RouteToken routeToken, ResolvedToken resolvedToken, Leg leg) {
     this.routeToken = requireNonNull(routeToken);

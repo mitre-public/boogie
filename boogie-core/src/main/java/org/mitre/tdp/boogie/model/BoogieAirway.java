@@ -28,7 +28,6 @@ public final class BoogieAirway implements Airway {
     return airwayIdentifier;
   }
 
-  @Override
   public String airwayRegion() {
     return airwayRegion;
   }

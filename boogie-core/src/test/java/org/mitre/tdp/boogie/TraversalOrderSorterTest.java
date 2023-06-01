@@ -17,9 +17,9 @@ class TraversalOrderSorterTest {
   @Test
   void testStarTransitionOrdering() {
     List<Transition> transitions = Arrays.asList(
-        transition(TransitionType.RUNWAY, ProcedureType.STAR),
-        transition(TransitionType.COMMON, ProcedureType.STAR),
-        transition(TransitionType.ENROUTE, ProcedureType.STAR)
+        transition(TransitionType.RUNWAY),
+        transition(TransitionType.COMMON),
+        transition(TransitionType.ENROUTE)
     );
 
     List<List<Transition>> grouped = TraversalOrderSorter.star().sort(transitions);
@@ -40,9 +40,9 @@ class TraversalOrderSorterTest {
   @Test
   void testSidTransitionOrdering() {
     List<Transition> transitions = Arrays.asList(
-        transition(TransitionType.ENROUTE, ProcedureType.SID),
-        transition(TransitionType.COMMON, ProcedureType.SID),
-        transition(TransitionType.RUNWAY, ProcedureType.SID)
+        transition(TransitionType.ENROUTE),
+        transition(TransitionType.COMMON),
+        transition(TransitionType.RUNWAY)
     );
 
     List<List<Transition>> grouped = TraversalOrderSorter.sid().sort(transitions);
@@ -63,10 +63,10 @@ class TraversalOrderSorterTest {
   @Test
   void testApproachTransitionOrdering() {
     List<Transition> transitions = Arrays.asList(
-        transition(TransitionType.MISSED, ProcedureType.APPROACH),
-        transition(TransitionType.COMMON, ProcedureType.APPROACH),
-        transition(TransitionType.RUNWAY, ProcedureType.APPROACH),
-        transition(TransitionType.APPROACH, ProcedureType.APPROACH)
+        transition(TransitionType.MISSED),
+        transition(TransitionType.COMMON),
+        transition(TransitionType.RUNWAY),
+        transition(TransitionType.APPROACH)
     );
 
     List<List<Transition>> grouped = TraversalOrderSorter.approach().sort(transitions);
@@ -86,10 +86,9 @@ class TraversalOrderSorterTest {
     );
   }
 
-  private Transition transition(TransitionType ttype, ProcedureType ptype) {
+  private Transition transition(TransitionType ttype) {
     Transition transition = mock(Transition.class);
     when(transition.transitionType()).thenReturn(ttype);
-    when(transition.procedureType()).thenReturn(ptype);
     return transition;
   }
 }

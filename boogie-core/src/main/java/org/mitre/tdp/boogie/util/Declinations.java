@@ -29,6 +29,13 @@ public final class Declinations {
   }
 
   /**
+   * Returns a bad approximation of the declination at the given coordinates.
+   */
+  public static double approx(double lat, double lon) {
+    return declination(lat, lon, null, Instant.parse("2020-01-01T00:00:00Z"));
+  }
+
+  /**
    * Returns the declination at a position (degrees), elevation (ft), and time.
    * <br>
    * Elevation may optionally be provided - if it is not the elevation is taken to be sea level (0ft).

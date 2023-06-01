@@ -1,32 +1,178 @@
 package org.mitre.tdp.boogie;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
- * The top-level interface for airway records within Boogie.
- * <br>
- * This class expects that all airways will contain an identifier for as well as a region code representing the region they
- * originate in.
+ * In Boogie's simplified worldview it is sufficient to represent an airway as a hierarchical piece of navigation infrastructure
+ * containing a linear, but bi-directionally flyable, sequence of {@link Leg}s.
  */
 public interface Airway {
 
+  static Standard.Builder builder() {
+    return new Standard.Builder();
+  }
+
+  static <T> Record<T> record(T datum, Airway delegate) {
+    return new Record<>(datum, delegate);
+  }
+
+  static <T> Record<T> make(T datum, Function<T, Airway> maker) {
+    return new Record<>(datum, requireNonNull(maker, "Should not be null.").apply(datum));
+  }
+
   /**
-   * The string identifier of the enroute airway.
-   * <br>
-   * Generally speaking this is up to 5 characters in length but may be fewer.
-   * <br>
-   * e.g. Y141, J153, J8, V12, etc.
+   * The string identifier of the airway, typically this a 2-5 character identifier, e.g. {@code Y141, J153, J8, V12}.
    */
   String airwayIdentifier();
 
   /**
-   * Generally speaking airways are defined regionally
-   */
-  String airwayRegion();
-
-  /**
-   * The ordered sequence of {@link Leg}s contained within the airway. These legs are generally flyable bi-directionally unless
-   * explicitly restricted otherwise.
+   * The ordered sequence of {@link Leg}s contained within the airway.
+   *
+   * <p>In Boogie these are typically assumed to be flyable bi-directionally.
    */
   List<? extends Leg> legs();
+
+  final class Standard implements Airway {
+
+    private final String airwayIdentifier;
+
+    private final List<Leg> legs;
+
+    private Standard(Builder builder) {
+      this.airwayIdentifier = requireNonNull(builder.airwayIdentifier);
+      this.legs = builder.legs;
+    }
+
+    @Override
+    public String airwayIdentifier() {
+      return airwayIdentifier;
+    }
+
+    @Override
+    public List<Leg> legs() {
+      return legs;
+    }
+
+    public Builder toBuilder() {
+      return new Builder().airwayIdentifier(airwayIdentifier).legs(legs);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Standard standard = (Standard) o;
+      return Objects.equals(airwayIdentifier, standard.airwayIdentifier)
+          && Objects.equals(legs, standard.legs);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(airwayIdentifier, legs);
+    }
+
+    @Override
+    public String toString() {
+      return "Standard{" +
+          "airwayIdentifier='" + airwayIdentifier + '\'' +
+          ", legs=" + legs +
+          '}';
+    }
+
+    public static final class Builder {
+
+      private String airwayIdentifier;
+
+      private List<Leg> legs = new ArrayList<>();
+
+      private Builder() {
+      }
+
+      public Builder airwayIdentifier(String airwayIdentifier) {
+        this.airwayIdentifier = requireNonNull(airwayIdentifier);
+        return this;
+      }
+
+      /**
+       * Override the current set of configured legs to be the provided list.
+       */
+      public Builder legs(List<? extends Leg> legs) {
+        this.legs = new ArrayList<>(legs);
+        return this;
+      }
+
+      /**
+       * Append a new leg to the end of the current list of configured legs.
+       */
+      public Builder add(Leg leg) {
+        this.legs.add(leg);
+        return this;
+      }
+
+      public Standard build() {
+        return new Standard(this);
+      }
+    }
+  }
+
+  final class Record<T> implements Airway {
+
+    private final T datum;
+
+    private final Airway delegate;
+
+    private Record(T datum, Airway delegate) {
+      this.datum = requireNonNull(datum);
+      this.delegate = requireNonNull(delegate);
+    }
+
+    public T datum() {
+      return datum;
+    }
+
+    @Override
+    public String airwayIdentifier() {
+      return delegate.airwayIdentifier();
+    }
+
+    @Override
+    public List<? extends Leg> legs() {
+      return delegate.legs();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Record<?> record = (Record<?>) o;
+      return Objects.equals(datum, record.datum)
+          && Objects.equals(delegate, record.delegate);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(datum, delegate);
+    }
+
+    @Override
+    public String toString() {
+      return "Record{" +
+          "datum=" + datum +
+          ", delegate=" + delegate +
+          '}';
+    }
+  }
 }
