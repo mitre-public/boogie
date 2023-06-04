@@ -32,7 +32,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
  * interface is meant to support the {@link LinkingStrategy#standard()}.
  */
 @FunctionalInterface
-interface Linker {
+public interface Linker {
 
   static Linker noop() {
     return Collections::emptyList;

@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 /**
  * Linkable tokens represent pieces of infrastructure encapsulated by
  */
-interface LinkableToken extends LinkingVisitor {
+public interface LinkableToken extends LinkingVisitor {
 
   /**
    * A linkable token representing any airport.

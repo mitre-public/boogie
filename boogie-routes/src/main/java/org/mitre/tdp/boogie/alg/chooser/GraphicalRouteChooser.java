@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.alg.chooser;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 import static org.mitre.tdp.boogie.util.ConditionalLogging.logIf;
 import static org.mitre.tdp.boogie.util.Iterators.fastslow;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -22,12 +24,15 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.alg.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
+import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.util.Iterators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +44,15 @@ final class GraphicalRouteChooser implements RouteChooser {
 
   private static final Logger LOG = LoggerFactory.getLogger(GraphicalRouteChooser.class);
 
-  private final TokenGrapher tokenGrapher;
+  private final TokenMapper mapper;
+
+//  private final TokenGrapher tokenGrapher;
 
   private final LinkingStrategy linkingStrategy;
 
   GraphicalRouteChooser(TokenGrapher tokenGrapher, LinkingStrategy linkingStrategy) {
-    this.tokenGrapher = requireNonNull(tokenGrapher);
+    this.mapper = TokenMapper.standard();
+//    this.tokenGrapher = requireNonNull(tokenGrapher);
     this.linkingStrategy = requireNonNull(linkingStrategy);
   }
 
@@ -62,6 +70,20 @@ final class GraphicalRouteChooser implements RouteChooser {
    */
   private List<ResolvedLeg> resolvedLegSequence(List<ResolvedTokens> resolvedTokens) {
 
+    List<LinkableTokens> linkableTokens = resolvedTokens.stream()
+        .map(this::makeLinkable)
+        .collect(toList());
+
+    SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph2(linkableTokens);
+    LOG.debug("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph));
+    
+
+    /*
+     * TODO: Think about implications of the graph hashing legs as vertices...
+     * Making Leg implementations into value objects (something people may expect) has implications on the graph-based
+     * expander which is expecting to be able to handle flattened legs from different source objects by identity to re-
+     * associate them with those source objects later to build the ResolvedLegs..
+     */
     SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(resolvedTokens);
     LOG.debug("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph));
 
@@ -82,7 +104,7 @@ final class GraphicalRouteChooser implements RouteChooser {
         .orElseGet(Collections::emptyList);
 
     LegEmbedding legEmbedding = newLegEmbedding(resolvedTokens);
-    return shortestPath.stream().map(legEmbedding).collect(Collectors.toList());
+    return shortestPath.stream().map(legEmbedding).collect(toList());
   }
 
   /**
@@ -95,13 +117,22 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
-    // add all the element-internal edges
-    resolvedTokens.forEach(resolvedSection -> resolvedSection.resolvedTokens()
-        .forEach(resolvedElement -> tokenGrapher.graphRepresentationOf(resolvedElement).forEach(link -> addLinkedLegTo(graph, link))));
+    List<List<LinkableToken>> linkable = resolvedTokens.stream()
+        .map(tokens -> tokens.resolvedTokens().stream()
+            .map(mapper::map)
+            .peek(token -> token.graphRepresentation().forEach(link -> addLinkedLegTo(graph, link)))
+            .collect(toList()))
+        .collect(toList());
 
-    // add the links between the adjacent ResolvedElements from various
-    fastslow(resolvedTokens, nonEmpty(), (previous, next, skip) -> cartesianProduct(previous.resolvedTokens(), next.resolvedTokens())
-        .forEach(pair -> linkingStrategy.links(pair.first(), pair.second()).forEach(link -> addLinkedLegTo(graph, link))));
+    fastslow(linkable, list -> !list.isEmpty(), (previous, next, skip) -> cartesianProduct(previous, next)
+        .forEach(pair -> pair.first().accept(pair.second()).links().forEach(link -> addLinkedLegTo(graph, link))));
+
+    return graph;
+  }
+
+  SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> constructRouteGraph2(List<LinkableTokens> linkableTokens){
+
+    SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
     return graph;
   }
@@ -178,6 +209,19 @@ final class GraphicalRouteChooser implements RouteChooser {
     }));
 
     return new LegEmbedding(legToElement, elementToSection);
+  }
+
+  private LinkableTokens makeLinkable(ResolvedTokens resolved) {
+    return new LinkableTokens();
+  }
+
+  private static final class LinkableTokens {
+
+    private RouteToken routeToken;
+
+    private Map<LinkableToken, ResolvedToken> linkableTokens;
+
+
   }
 
   /**

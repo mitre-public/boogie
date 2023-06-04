@@ -378,36 +378,36 @@ public interface Leg {
           .isPublishedHoldingFix(isPublishedHoldingFix());
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//      if (this == o) {
-//        return true;
-//      }
-//      if (o == null || getClass() != o.getClass()) {
-//        return false;
-//      }
-//      Standard standard = (Standard) o;
-//      return sequenceNumber == standard.sequenceNumber
-//          && isFlyOverFix == standard.isFlyOverFix
-//          && isPublishedHoldingFix == standard.isPublishedHoldingFix
-//          && Objects.equals(associatedFix, standard.associatedFix)
-//          && Objects.equals(recommendedNavaid, standard.recommendedNavaid)
-//          && Objects.equals(centerFix, standard.centerFix)
-//          && pathTerminator == standard.pathTerminator
-//          && Objects.equals(outboundMagneticCourse, standard.outboundMagneticCourse)
-//          && Objects.equals(rho, standard.rho) && Objects.equals(theta, standard.theta)
-//          && Objects.equals(rnp, standard.rnp) && Objects.equals(routeDistance, standard.routeDistance)
-//          && Objects.equals(holdTime, standard.holdTime)
-//          && Objects.equals(verticalAngle, standard.verticalAngle)
-//          && Objects.equals(speedConstraint, standard.speedConstraint)
-//          && Objects.equals(altitudeConstraint, standard.altitudeConstraint)
-//          && Objects.equals(turnDirection, standard.turnDirection);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix);
-//    }
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Standard standard = (Standard) o;
+      return sequenceNumber == standard.sequenceNumber
+          && isFlyOverFix == standard.isFlyOverFix
+          && isPublishedHoldingFix == standard.isPublishedHoldingFix
+          && Objects.equals(associatedFix, standard.associatedFix)
+          && Objects.equals(recommendedNavaid, standard.recommendedNavaid)
+          && Objects.equals(centerFix, standard.centerFix)
+          && pathTerminator == standard.pathTerminator
+          && Objects.equals(outboundMagneticCourse, standard.outboundMagneticCourse)
+          && Objects.equals(rho, standard.rho) && Objects.equals(theta, standard.theta)
+          && Objects.equals(rnp, standard.rnp) && Objects.equals(routeDistance, standard.routeDistance)
+          && Objects.equals(holdTime, standard.holdTime)
+          && Objects.equals(verticalAngle, standard.verticalAngle)
+          && Objects.equals(speedConstraint, standard.speedConstraint)
+          && Objects.equals(altitudeConstraint, standard.altitudeConstraint)
+          && Objects.equals(turnDirection, standard.turnDirection);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix);
+    }
 
     @Override
     public String toString() {

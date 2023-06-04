@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
@@ -13,12 +12,9 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.alg.resolve.FixTerminationLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
-import org.mitre.tdp.boogie.model.BoogieFix;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
-import org.mitre.tdp.boogie.util.Declinations;
 import org.mitre.tdp.boogie.util.Streams;
 
 import com.google.common.collect.ImmutableList;
@@ -74,13 +70,13 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.StandardAirport airport) {
-        Leg leg = FixTerminationLeg.IF(airport.infrastructure());
+        Leg leg = Leg.ifBuilder(airport.infrastructure(), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.DirectToAirport airport) {
-        Leg leg = FixTerminationLeg.DF(airport.infrastructure());
+        Leg leg = Leg.dfBuilder(airport.infrastructure(), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
@@ -102,25 +98,25 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.StandardFix fix) {
-        Leg leg = FixTerminationLeg.IF(fix.infrastructure());
+        Leg leg = Leg.ifBuilder(fix.infrastructure(), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.DirectToFix fix) {
-        Leg leg = FixTerminationLeg.DF(fix.infrastructure());
+        Leg leg = Leg.dfBuilder(fix.infrastructure(), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.StandardLatLong latLong) {
-        Leg leg = FixTerminationLeg.IF(createFix(latLong.infrastructure()));
+        Leg leg = Leg.ifBuilder(createFix(latLong.infrastructure()), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.DirectToLatLong latLong) {
-        Leg leg = FixTerminationLeg.DF(createFix(latLong.infrastructure()));
+        Leg leg = Leg.dfBuilder(createFix(latLong.infrastructure()), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
@@ -146,13 +142,13 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.StandardFrd frd) {
-        Leg leg = FixTerminationLeg.IF(frd.infrastructure());
+        Leg leg = Leg.ifBuilder(frd.infrastructure(), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.DirectToFrd frd) {
-        Leg leg = FixTerminationLeg.DF(frd.infrastructure());
+        Leg leg = Leg.dfBuilder(frd.infrastructure(), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
@@ -163,7 +159,6 @@ public interface TokenGrapher {
             .build();
       }
     }
-
 
     /**
      * Standard handler for converting incoming {@link Procedure} definitions to graphical representations.
