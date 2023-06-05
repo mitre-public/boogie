@@ -278,7 +278,8 @@ final class GraphicalRouteChooser implements RouteChooser {
   /**
    * Wrapper around a {@link Leg} marked with source information, see {@link #make(ResolvedTokens)} for context.
    *
-   * <p>The {@link #routeToken()} and {@link #resolvedToken()} are left optional as some legs may be invented...
+   * <p>The {@link #routeToken()} and {@link #resolvedToken()} are left optional as some legs may be invented... we can deal with
+   * this later on in the chooser implementation.
    */
   private static final class LinkableLeg implements Leg {
 

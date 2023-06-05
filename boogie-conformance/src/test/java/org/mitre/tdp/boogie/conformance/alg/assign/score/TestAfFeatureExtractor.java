@@ -75,7 +75,7 @@ class TestAfFeatureExtractor {
 
     Leg AF = AF();
 
-    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation().get();
     double projCourse = localVariation.magneticToTrue(AF.theta().get()) + 10.0;
 
     LatLong loc = AF.recommendedNavaid().get().projectOut(projCourse, AF.rho().get()).latLong();
@@ -92,7 +92,7 @@ class TestAfFeatureExtractor {
 
     Leg AF = AF();
 
-    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation().get();
     double projCourse = localVariation.magneticToTrue(AF.outboundMagneticCourse().get()) - 10.0;
 
     LatLong loc = AF.recommendedNavaid().get().projectOut(projCourse, AF.rho().get()).latLong();
@@ -108,7 +108,7 @@ class TestAfFeatureExtractor {
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
 
-    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation().get();
     double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
 
     LatLong loc = AF.recommendedNavaid().get().projectOut(halfTrueCourse, AF.rho().get()).latLong();
@@ -129,7 +129,7 @@ class TestAfFeatureExtractor {
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
 
-    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation().get();
     double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
 
     LatLong loc = AF.recommendedNavaid().get().projectOut(halfTrueCourse, AF.rho().get() - 1.0).latLong();
@@ -150,7 +150,7 @@ class TestAfFeatureExtractor {
     ConformablePoint point = mock(ConformablePoint.class);
     Leg AF = AF();
 
-    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation();
+    MagneticVariation localVariation = AF.recommendedNavaid().get().magneticVariation().get();
     double halfTrueCourse = localVariation.magneticToTrue((AF.outboundMagneticCourse().get() + AF.theta().get()) / 2.0d);
 
     LatLong loc = AF.recommendedNavaid().get().projectOut(halfTrueCourse, AF.rho().get() + 2.0).latLong();
@@ -185,8 +185,7 @@ class TestAfFeatureExtractor {
     when(navaid.distanceInNmTo(any())).thenCallRealMethod();
     when(navaid.projectOut(any(), any())).thenCallRealMethod();
 
-    MagneticVariation var = new MagneticVariation(19., 14.513932612651612);
-    when(navaid.magneticVariation()).thenReturn(var);
+    when(navaid.magneticVariation()).thenReturn((Optional) Optional.of(MagneticVariation.ofDegrees(19.)));
 
     TurnDirection td = mock(TurnDirection.class);
     when(td.isRight()).thenReturn(true);

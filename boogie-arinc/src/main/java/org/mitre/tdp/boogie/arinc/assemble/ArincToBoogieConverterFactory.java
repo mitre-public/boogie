@@ -9,12 +9,39 @@ import javax.annotation.Nullable;
 import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Spherical;
-import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.Runway;
+import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.TransitionType;
+import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
-import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincModel;
+import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
-import org.mitre.tdp.boogie.model.*;
+import org.mitre.tdp.boogie.model.BoogieAirport;
+import org.mitre.tdp.boogie.model.BoogieAirway;
+import org.mitre.tdp.boogie.model.BoogieFix;
+import org.mitre.tdp.boogie.model.BoogieLeg;
+import org.mitre.tdp.boogie.model.BoogieProcedure;
+import org.mitre.tdp.boogie.model.BoogieRunway;
+import org.mitre.tdp.boogie.model.BoogieTransition;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
@@ -64,7 +91,7 @@ public final class ArincToBoogieConverterFactory {
         ArincToBoogieConverterFactory::newProcedureLegFrom,
         ArincToBoogieConverterFactory::newTransitionFrom,
         ArincToBoogieConverterFactory::newProcedureFrom
-        );
+    );
   }
 
   static BoogieFix newFixFrom(ArincWaypoint waypoint) {
@@ -232,10 +259,9 @@ public final class ArincToBoogieConverterFactory {
       @Nullable ArincLocalizerGlideSlope primaryLocalizer,
       @Nullable ArincLocalizerGlideSlope secondaryLocalizer) {
 
-    MagneticVariation variation = new MagneticVariation(
-        arincAirport.magneticVariation().orElse(null),
-        magneticVariationAt(arincAirport)
-    );
+    MagneticVariation variation = arincAirport.magneticVariation()
+        .map(MagneticVariation::ofDegrees)
+        .orElseGet(() -> MagneticVariation.ofDegrees(magneticVariationAt(arincAirport)));
 
     return new BoogieRunway.Builder()
         .airportIdentifier(arrivalEnd.airportIdentifier())

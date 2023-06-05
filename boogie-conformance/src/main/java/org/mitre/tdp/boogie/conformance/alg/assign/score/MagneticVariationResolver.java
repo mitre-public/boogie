@@ -28,9 +28,9 @@ public final class MagneticVariationResolver {
    * or else as modeled at the location of the aircraft.
    */
   public MagneticVariation magneticVariation(ConformablePoint point, FlyableLeg flyableLeg) {
-    return flyableLeg.current().recommendedNavaid().map(Fix::magneticVariation)
-        .orElseGet(() -> Optional.of(flyableLeg).map(FlyableLeg::current).flatMap(Leg::associatedFix).map(Fix::magneticVariation)
-            .orElseGet(() -> flyableLeg.next().flatMap(Leg::associatedFix).map(Fix::magneticVariation)
-                .orElseGet(() -> new MagneticVariation(null, Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude().orElse(null), point.time())))));
+    return flyableLeg.current().recommendedNavaid().flatMap(Fix::magneticVariation)
+        .or(() -> Optional.of(flyableLeg).map(FlyableLeg::current).flatMap(Leg::associatedFix).flatMap(Fix::magneticVariation))
+        .or(() -> flyableLeg.next().flatMap(Leg::associatedFix).flatMap(Fix::magneticVariation))
+        .orElseGet(() -> MagneticVariation.ofDegrees(Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude().orElse(null), point.time())));
   }
 }

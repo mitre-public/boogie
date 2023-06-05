@@ -58,8 +58,7 @@ class TestCfFeatureExtractor {
     when(navaid.distanceInNmTo(any())).thenCallRealMethod();
     when(navaid.projectOut(any(), any())).thenCallRealMethod();
 
-    MagneticVariation var = new MagneticVariation(13.0, 11.482411518265646);
-    when(navaid.magneticVariation()).thenReturn(var);
+    when(navaid.magneticVariation()).thenReturn(Optional.of(MagneticVariation.ofDegrees(13.)));
 
     Leg CF = mock(Leg.class);
     when(CF.associatedFix()).thenReturn((Optional) Optional.of(navaid));

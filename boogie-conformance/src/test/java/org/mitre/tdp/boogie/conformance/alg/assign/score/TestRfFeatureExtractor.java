@@ -23,7 +23,7 @@ import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 
 /**
  * Models RF features against a pre-configured left turn RF leg from ~96 -> ~55 radials (upper right quadrant).
- *
+ * <p>
  * Generally this means points on the radial between 55 and 96 should be pure OTD - while ones outside that should be the segment
  * distance.
  */
@@ -216,9 +216,7 @@ class TestRfFeatureExtractor {
     when(pathTerminator.latLong()).thenReturn(ptLoc);
     when(pathTerminator.latitude()).thenCallRealMethod();
     when(pathTerminator.longitude()).thenCallRealMethod();
-    when(pathTerminator.publishedVariation()).thenReturn(Optional.of(-10.8));
-    when(pathTerminator.modeledVariation()).thenReturn(-10.829837);
-    when(pathTerminator.magneticVariation()).thenCallRealMethod();
+    when(pathTerminator.magneticVariation()).thenReturn(Optional.of(MagneticVariation.ofDegrees(-10.8)));
     when(pathTerminator.distanceInNmTo(any())).thenCallRealMethod();
     when(pathTerminator.courseInDegrees(any())).thenCallRealMethod();
     when(pathTerminator.projectOut(any(), any())).thenCallRealMethod();
@@ -227,9 +225,7 @@ class TestRfFeatureExtractor {
     when(centerFix.latLong()).thenReturn(cfLoc);
     when(centerFix.latitude()).thenCallRealMethod();
     when(centerFix.longitude()).thenCallRealMethod();
-    when(centerFix.publishedVariation()).thenReturn(Optional.of(-10.8));
-    when(centerFix.modeledVariation()).thenReturn(-10.794219);
-    when(centerFix.magneticVariation()).thenCallRealMethod();
+    when(pathTerminator.magneticVariation()).thenReturn(Optional.of(MagneticVariation.ofDegrees(-10.8)));
     when(centerFix.distanceInNmTo(any())).thenCallRealMethod();
     when(centerFix.courseInDegrees(any())).thenCallRealMethod();
     when(centerFix.projectOut(any(), any())).thenCallRealMethod();
@@ -248,7 +244,7 @@ class TestRfFeatureExtractor {
   }
 
   private Leg TF() {
-    MagneticVariation pathTermMagvar = new MagneticVariation(-10.8, -10.829837);
+    MagneticVariation pathTermMagvar = MagneticVariation.ofDegrees(-10.8);
 
     Leg rf = RF();
     LatLong ptLoc = rf.associatedFix().map(Fix::latLong).orElseThrow(AssertionError::new);
@@ -263,9 +259,7 @@ class TestRfFeatureExtractor {
     when(pathTerminator.latLong()).thenReturn(loc);
     when(pathTerminator.latitude()).thenCallRealMethod();
     when(pathTerminator.longitude()).thenCallRealMethod();
-    when(pathTerminator.publishedVariation()).thenReturn(Optional.of(-10.8));
-    when(pathTerminator.modeledVariation()).thenReturn(-10.829837);
-    when(pathTerminator.magneticVariation()).thenCallRealMethod();
+    when(pathTerminator.magneticVariation()).thenReturn(Optional.of(MagneticVariation.ofDegrees(-10.8)));
     when(pathTerminator.distanceInNmTo(any())).thenCallRealMethod();
     when(pathTerminator.courseInDegrees(any())).thenCallRealMethod();
     when(pathTerminator.projectOut(any(), any())).thenCallRealMethod();

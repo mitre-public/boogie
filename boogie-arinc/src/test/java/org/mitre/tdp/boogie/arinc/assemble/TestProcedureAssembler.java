@@ -91,7 +91,6 @@ class TestProcedureAssembler {
         "Assertions about the contents of our DEEZ5 procedure.",
         () -> assertEquals("DEEZZ5", DEEZZ5.procedureIdentifier()),
         () -> assertEquals("KJFK", DEEZZ5.airportIdentifier()),
-        () -> assertEquals("K6", DEEZZ5.airportRegion()),
         () -> assertEquals(ProcedureType.SID, DEEZZ5.procedureType()),
         () -> assertEquals(RequiredNavigationEquipage.RNAV, DEEZZ5.requiredNavigationEquipage()),
         () -> assertEquals(9, DEEZZ5.transitions().size()),
@@ -131,7 +130,6 @@ class TestProcedureAssembler {
         "Assertions about the contents of our H22LZ procedure.",
         () -> assertEquals("H22LZ", H22LZ.procedureIdentifier()),
         () -> assertEquals("KJFK", H22LZ.airportIdentifier()),
-        () -> assertEquals("K6", H22LZ.airportRegion()),
         () -> assertEquals(ProcedureType.APPROACH, H22LZ.procedureType()),
         () -> assertEquals(RequiredNavigationEquipage.RNP, H22LZ.requiredNavigationEquipage()),
         () -> assertEquals(3, H22LZ.transitions().size(), "Expected total transitions."),
@@ -171,7 +169,6 @@ class TestProcedureAssembler {
     assertAll(
         () -> assertEquals("I22L", I22L.procedureIdentifier()),
         () -> assertEquals("KJFK", I22L.airportIdentifier()),
-        () -> assertEquals("K6", I22L.airportRegion()),
         () -> assertEquals(ProcedureType.APPROACH, I22L.procedureType()),
         () -> assertEquals(RequiredNavigationEquipage.CONV, I22L.requiredNavigationEquipage()),
         () -> assertEquals(5, transitions.size(), "Expected 5 total transitions for I22L."),

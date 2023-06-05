@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -23,30 +24,27 @@ class TestMagneticVariationResolver {
     FlyableLeg leg = new FlyableLeg(null, leg(), null, Route.newRoute(Collections.emptyList(), new Object()));
     MagneticVariation magneticVariation = MagneticVariationResolver.getInstance().magneticVariation(point(), leg);
 
-    assertEquals(10., magneticVariation.modeled());
+    assertEquals(MagneticVariation.ofDegrees(10), magneticVariation);
   }
 
   @Test
   void testResolutionPrefersPathTermAfterNavaid() {
-    Leg l = leg();
-    when(l.recommendedNavaid()).thenReturn(Optional.empty());
+    Leg l = leg().toBuilder().recommendedNavaid(null).build();
 
     FlyableLeg leg = new FlyableLeg(null, l, null, Route.newRoute(Collections.emptyList(), new Object()));
     MagneticVariation magneticVariation = MagneticVariationResolver.getInstance().magneticVariation(point(), leg);
 
-    assertEquals(0., magneticVariation.modeled());
+    assertEquals(MagneticVariation.ofDegrees(0.), magneticVariation);
   }
 
   @Test
   void testResolutionFailoverToPointMagvar() {
-    Leg l = leg();
-    when(l.recommendedNavaid()).thenReturn(Optional.empty());
-    when(l.associatedFix()).thenReturn(Optional.empty());
+    Leg l = leg().toBuilder().recommendedNavaid(null).associatedFix(null).build();
 
     FlyableLeg leg = new FlyableLeg(null, l, null, Route.newRoute(Collections.emptyList(), new Object()));
     MagneticVariation magneticVariation = MagneticVariationResolver.getInstance().magneticVariation(point(), leg);
 
-    assertEquals(-4.546, magneticVariation.modeled(), 0.001);
+    assertEquals(-4.546, magneticVariation.angle().inDegrees(), .001);
   }
 
   private ConformablePoint point() {
@@ -58,19 +56,22 @@ class TestMagneticVariationResolver {
     return conformablePoint;
   }
 
-  private Leg leg() {
-    Fix navaid = mock(Fix.class);
-    when(navaid.modeledVariation()).thenReturn(10.);
-    when(navaid.magneticVariation()).thenCallRealMethod();
+  private Leg.Standard leg() {
 
-    Fix pathTerm = mock(Fix.class);
-    when(pathTerm.modeledVariation()).thenReturn(0.);
-    when(pathTerm.magneticVariation()).thenCallRealMethod();
+    Fix navaid = Fix.builder()
+        .fixIdentifier("navaid")
+        .latLong(LatLong.of(0., 0.))
+        .magneticVariation(MagneticVariation.ofDegrees(10.))
+        .build();
 
-    Leg leg = mock(Leg.class);
-    when(leg.associatedFix()).thenReturn((Optional) Optional.of(pathTerm));
-    when(leg.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
+    Fix associated = Fix.builder()
+        .fixIdentifier("associated")
+        .latLong(LatLong.of(0., 0.))
+        .magneticVariation(MagneticVariation.ofDegrees(0.))
+        .build();
 
-    return leg;
+    return Leg.dfBuilder(associated, 0)
+        .recommendedNavaid(navaid)
+        .build();
   }
 }

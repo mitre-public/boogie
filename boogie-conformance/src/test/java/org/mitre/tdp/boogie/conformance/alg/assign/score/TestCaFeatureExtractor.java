@@ -22,13 +22,11 @@ class TestCaFeatureExtractor {
 
   @Test
   void testFeatureExtraction() {
-    MagneticVariation magvar = mock(MagneticVariation.class);
-    when(magvar.published()).thenReturn(Optional.empty());
-    when(magvar.modeled()).thenReturn(0.);
-    when(magvar.trueToMagnetic(anyDouble())).thenCallRealMethod();
+
+    MagneticVariation magvar = MagneticVariation.ofDegrees(0.);
 
     Fix navaid = mock(Fix.class);
-    when(navaid.magneticVariation()).thenReturn(magvar);
+    when(navaid.magneticVariation()).thenReturn(Optional.of(magvar));
 
     Leg va = mock(Leg.class);
     when(va.outboundMagneticCourse()).thenReturn(Optional.of(100.));
