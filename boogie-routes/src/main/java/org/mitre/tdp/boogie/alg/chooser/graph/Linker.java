@@ -28,8 +28,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 
 /**
- * A linker is able to (on demand) return a collection of links (presumed to be between pairs of {@link ResolvedToken}s). This
- * interface is meant to support the {@link LinkingStrategy#standard()}.
+ * A linker is able to (on demand) return a collection of links (presumed to be between pairs of {@link ResolvedToken}s).
  */
 @FunctionalInterface
 public interface Linker {

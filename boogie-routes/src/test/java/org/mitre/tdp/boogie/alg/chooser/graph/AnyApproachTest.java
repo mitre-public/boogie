@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg.chooser.graph;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,7 +25,7 @@ import org.mitre.tdp.boogie.model.BoogieLeg;
 
 class AnyApproachTest {
 
-  private static final LinkingStrategy STRATEGY = LinkingStrategy.standard(TokenGrapher.standard());
+  private static final LinkingStrategy STRATEGY = new LinkingStrategy(TokenMapper.standard());
 
   /**
    * Test case to ensure that when an approach element starts with a non fix originating leg, an exception is thrown.
@@ -321,5 +322,18 @@ class AnyApproachTest {
         .latitude(lat)
         .longitude(lon)
         .build();
+  }
+
+  private static final class LinkingStrategy {
+
+    private final TokenMapper mapper;
+
+    private LinkingStrategy(TokenMapper mapper) {
+      this.mapper = requireNonNull(mapper);
+    }
+
+    private List<LinkedLegs> links(ResolvedToken left, ResolvedToken right) {
+      return new ArrayList<>(mapper.map(left).accept(mapper.map(right)).links());
+    }
   }
 }

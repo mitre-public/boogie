@@ -18,12 +18,11 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.alg.LookupService;
+import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.RouteContext;
 import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
-import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
-import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.fn.QuadFunction;
@@ -283,8 +282,8 @@ public final class FluentRouteExpander implements
      * Defines how the expander chooses the appropriate flyable route through the resolved infrastructure candidates across all
      * tokens in the route string.
      *
-     * @param routeChooser the route chooser implementation to use, default {@link RouteChooser#graphical(TokenGrapher, LinkingStrategy)}
-     *                     + {@link LinkingStrategy#standard(TokenGrapher)}
+     * @param routeChooser the route chooser implementation to use, default {@link RouteChooser#graphical(TokenMapper)} with
+     *                     {@link TokenMapper#standard()}
      */
     public Builder routeChooser(RouteChooser routeChooser) {
       this.routeExpander.routeChooser(routeChooser);

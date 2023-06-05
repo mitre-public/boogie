@@ -11,8 +11,6 @@ import java.util.function.UnaryOperator;
 
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
-import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
-import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
@@ -181,8 +179,8 @@ public interface RouteExpander {
        * Defines how the expander chooses the appropriate flyable route through the resolved infrastructure candidates across all
        * tokens in the route string.
        *
-       * @param routeChooser the route chooser implementation to use, default {@link RouteChooser#graphical(TokenGrapher, LinkingStrategy)}
-       *                     + {@link LinkingStrategy#standard(TokenGrapher)}
+       * @param routeChooser the route chooser implementation to use, default {@link RouteChooser#graphical(TokenMapper)} with
+       *                     {@link TokenMapper#standard()}
        */
       public Builder routeChooser(RouteChooser routeChooser) {
         this.routeChooser = requireNonNull(routeChooser);

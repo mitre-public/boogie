@@ -3,10 +3,8 @@ package org.mitre.tdp.boogie.alg.chooser;
 import java.util.List;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
-import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
-import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
