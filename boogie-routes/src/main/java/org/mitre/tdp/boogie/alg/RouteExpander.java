@@ -13,6 +13,7 @@ import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
@@ -130,7 +131,7 @@ public interface RouteExpander {
 
       private RouteTokenResolver routeTokenResolver = RouteTokenResolver.noop();
 
-      private RouteChooser routeChooser = RouteChooser.graphical(TokenGrapher.standard(), LinkingStrategy.standard(TokenGrapher.standard()));
+      private RouteChooser routeChooser = RouteChooser.graphical(TokenMapper.standard());
 
       private Builder() {
       }

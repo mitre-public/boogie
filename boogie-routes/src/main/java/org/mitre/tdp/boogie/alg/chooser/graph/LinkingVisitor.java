@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 /**
  * Package-private visitor for the built-in standard linking methodology.
  */
-interface LinkingVisitor {
+public interface LinkingVisitor {
 
   Linker visit(AnyAirport airport);
 

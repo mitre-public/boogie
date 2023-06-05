@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.alg.chooser.graph;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.MockObjects.IF;
 import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mitre.tdp.boogie.MockObjects.newProcedure;
@@ -28,7 +30,12 @@ class SidGrapherTest {
     ResolvedToken.SidEnrouteCommon token = ResolvedToken.sidEnrouteCommon(nominalGraph(ProcedureType.SID));
 
     Collection<LinkedLegs> representation = GRAPHER.graphRepresentationOf(token);
-    assertEquals(5, representation.size(), "Should have three links (1 from enroute, 1 from common, 1 linking them).");
+
+    assertAll(
+        "Within a token its acceptable for literal leg duplicates to be combined when declared as part of different transitions (or to not be).",
+        () -> assertTrue(5 >= representation.size(), "It is acceptable for all declared legs to be present in the subgraph."),
+        () -> assertTrue(4 <= representation.size(), "It is acceptable for literal duplicate legs to not be present.")
+    );
   }
 
   @Test

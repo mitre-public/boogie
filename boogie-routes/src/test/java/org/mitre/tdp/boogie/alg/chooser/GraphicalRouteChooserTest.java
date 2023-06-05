@@ -27,24 +27,25 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
+import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkingStrategy;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.ResolvedLeg;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
-import org.mitre.tdp.boogie.model.BoogieTransition;
-import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 class GraphicalRouteChooserTest {
 
   private static final RouteTokenizer sectionSplitter = RouteTokenizer.faaIfrFormat();
 
-  private static final GraphicalRouteChooser routeChooser = new GraphicalRouteChooser(
-      TokenGrapher.standard(),
-      LinkingStrategy.standard(TokenGrapher.standard())
-  );
+  private static final GraphicalRouteChooser routeChooser = new GraphicalRouteChooser(TokenMapper.standard());
+
+  @Test
+  void testMakeLinkableTokens() {
+
+  }
 
   @Test
   void testConnectedSubsets() {
@@ -97,7 +98,7 @@ class GraphicalRouteChooserTest {
 
   private SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> toGraph(String route) {
     List<ResolvedTokens> resolvedTokens = split().andThen(apfResolver()::applyTo).apply(route);
-    return routeChooser.constructRouteGraph(resolvedTokens);
+    return routeChooser.constructRouteGraph(routeChooser.toLinkableTokens(resolvedTokens));
   }
 
   private static RouteTokenResolver apfResolver() {
