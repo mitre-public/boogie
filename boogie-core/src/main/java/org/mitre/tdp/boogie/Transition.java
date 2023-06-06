@@ -97,7 +97,7 @@ public interface Transition {
     }
 
     @Override
-    public List<? extends Leg> legs() {
+    public List<Leg> legs() {
       return legs;
     }
 

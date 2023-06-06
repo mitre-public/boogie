@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.arinc.assemble;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Map;
@@ -11,7 +10,10 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.Course;
+import org.mitre.caasd.commons.Distance;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
@@ -20,10 +22,34 @@ import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.*;
+import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
+import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
+import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
+import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
+import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
-import org.mitre.tdp.boogie.model.BoogieAirport;
-import org.mitre.tdp.boogie.model.BoogieRunway;
 
 class TestAirportAssembler {
 
@@ -56,25 +82,20 @@ class TestAirportAssembler {
   void testKjfkAssembly() {
     Airport airport = assembler.apply(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
 
-//    Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
+    Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
 
     assertAll(
-        () -> assertEquals("KJFK", airport.airportIdentifier())
-//        () -> assertEquals("K6", airport.airportRegion()),
-//        () -> assertEquals(-13., airport.publishedVariation().orElseThrow(AssertionError::new)),
-//        () -> assertEquals(13., airport.elevation().orElseThrow(AssertionError::new)),
-//        () -> assertEquals(8, airport.runways().size(), "Expected KJFK to have 8 runways."),
-//        () -> assertTrue(airport.runways().stream().allMatch(runway -> runway.departureRunwayEnd().isPresent()), "All runways should have departure ends."),
-//
-//        () -> assertEquals("RW13R", runways.get("RW13R").runwayIdentifier()),
-//        () -> assertEquals(200., runways.get("RW13R").width().orElseThrow(AssertionError::new), "RW13R width"),
-//        () -> assertEquals(14511., runways.get("RW13R").length().orElseThrow(AssertionError::new), "RW13R length"),
-//        () -> assertEquals(121., runways.get("RW13R").trueCourse().orElseThrow(AssertionError::new), "RW13R true course"),
-//
-//        () -> assertEquals("RW31L", runways.get("RW31L").runwayIdentifier()),
-//        () -> assertEquals(200., runways.get("RW31L").width().orElseThrow(AssertionError::new), "RW31L width"),
-//        () -> assertEquals(14511., runways.get("RW31L").length().orElseThrow(AssertionError::new), "RW31L length"),
-//        () -> assertEquals(301., runways.get("RW31L").trueCourse().orElseThrow(AssertionError::new), "RW31L true course")
+        () -> assertEquals("KJFK", airport.airportIdentifier()),
+        () -> assertEquals(MagneticVariation.ofDegrees(-13.), airport.magneticVariation().orElseThrow(), "MagneticVariation"),
+        () -> assertEquals(8, airport.runways().size(), "Expected KJFK to have 8 runways."),
+
+        () -> assertEquals("RW13R", runways.get("RW13R").runwayIdentifier()),
+        () -> assertEquals(Distance.ofFeet(14511.), runways.get("RW13R").length(), "RW13R length"),
+        () -> assertEquals(Course.ofDegrees(121.), runways.get("RW13R").course(), "RW13R true course"),
+
+        () -> assertEquals("RW31L", runways.get("RW31L").runwayIdentifier()),
+        () -> assertEquals(Distance.ofFeet(14511.), runways.get("RW31L").length(), "RW31L length"),
+        () -> assertEquals(Course.ofDegrees(301.), runways.get("RW31L").course(), "RW31L true course")
     );
   }
 

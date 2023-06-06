@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.caasd.commons.Course;
+import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Runway;
 
@@ -61,37 +63,37 @@ public final class BoogieRunway implements Serializable, Runway {
     return airportRegion;
   }
 
-  @Override
   public Optional<Double> width() {
     return Optional.ofNullable(width);
   }
 
   @Override
-  public Optional<Double> length() {
-    return Optional.ofNullable(length);
+  public Distance length() {
+    return Optional.ofNullable(length).map(Distance::ofFeet).orElse(Distance.ZERO);
   }
 
   @Override
-  public Optional<Double> trueCourse() {
-    return Optional.ofNullable(trueCourse);
+  public Course course() {
+    return Optional.ofNullable(trueCourse).map(Course::ofDegrees).orElse(Course.ZERO);
   }
 
   @Override
+  public LatLong origin() {
+    return arrivalRunwayEnd;
+  }
+
   public LatLong arrivalRunwayEnd() {
     return arrivalRunwayEnd;
   }
 
-  @Override
   public Optional<Integer> landingThresholdElevation() {
     return Optional.ofNullable(landingThresholdElevation);
   }
 
-  @Override
   public Optional<LatLong> departureRunwayEnd() {
     return Optional.ofNullable(departureRunwayEnd);
   }
 
-  @Override
   public Optional<Integer> departureRunwayEndElevation() {
     return Optional.ofNullable(departureRunwayEndElevation);
   }
@@ -110,8 +112,8 @@ public final class BoogieRunway implements Serializable, Runway {
         .airportIdentifier(airportIdentifier())
         .airportRegion(airportRegion())
         .width(width().orElse(null))
-        .length(length().orElse(null))
-        .trueCourse(trueCourse().orElse(null))
+        .length(length().inFeet())
+        .trueCourse(trueCourse)
         .arrivalRunwayEnd(arrivalRunwayEnd())
         .departureRunwayEnd(departureRunwayEnd().orElse(null))
         .ilsGlsMls1(ilsGlsMls1().orElse(null))

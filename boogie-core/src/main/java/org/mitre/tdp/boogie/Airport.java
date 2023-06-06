@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -37,6 +39,8 @@ public interface Airport extends Fix {
    */
   String airportIdentifier();
 
+  Collection<? extends Runway> runways();
+
   @Override
   default String fixIdentifier() {
     return airportIdentifier();
@@ -50,10 +54,13 @@ public interface Airport extends Fix {
 
     private final MagneticVariation magneticVariation;
 
+    private final Collection<Runway> runways;
+
     private Standard(Builder builder) {
       this.airportIdentifier = requireNonNull(builder.airportIdentifier);
       this.latLong = requireNonNull(builder.latLong);
       this.magneticVariation = builder.magneticVariation;
+      this.runways = builder.runways;
     }
 
     @Override
@@ -71,11 +78,17 @@ public interface Airport extends Fix {
       return latLong;
     }
 
+    @Override
+    public Collection<Runway> runways() {
+      return runways;
+    }
+
     public Builder toBuilder() {
       return new Builder()
           .airportIdentifier(airportIdentifier)
           .latLong(latLong)
-          .magneticVariation(magneticVariation);
+          .magneticVariation(magneticVariation)
+          .runways(runways);
     }
 
     @Override
@@ -89,12 +102,13 @@ public interface Airport extends Fix {
       Airport.Standard standard = (Airport.Standard) o;
       return Objects.equals(airportIdentifier, standard.airportIdentifier)
           && Objects.equals(latLong, standard.latLong)
-          && Objects.equals(magneticVariation, standard.magneticVariation);
+          && Objects.equals(magneticVariation, standard.magneticVariation)
+          && Objects.equals(runways, standard.runways);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(airportIdentifier, latLong, magneticVariation);
+      return Objects.hash(airportIdentifier, latLong, magneticVariation, runways);
     }
 
     @Override
@@ -103,6 +117,7 @@ public interface Airport extends Fix {
           "airportIdentifier='" + airportIdentifier + '\'' +
           ", latLong=" + latLong +
           ", magneticVariation=" + magneticVariation +
+          ", runways=" + runways +
           '}';
     }
 
@@ -113,6 +128,8 @@ public interface Airport extends Fix {
       private LatLong latLong;
 
       private MagneticVariation magneticVariation;
+
+      private Collection<Runway> runways;
 
       private Builder() {
       }
@@ -129,6 +146,22 @@ public interface Airport extends Fix {
 
       public Builder magneticVariation(MagneticVariation magneticVariation) {
         this.magneticVariation = magneticVariation;
+        return this;
+      }
+
+      /**
+       * Override the current set of configured runways to be the provided collection.
+       */
+      public Builder runways(Collection<? extends Runway> runways) {
+        this.runways = new ArrayList<>(runways);
+        return this;
+      }
+
+      /**
+       * Append a new leg to the end of the current collection of runways.
+       */
+      public Builder add(Runway runway) {
+        this.runways.add(runway);
         return this;
       }
 
@@ -166,6 +199,11 @@ public interface Airport extends Fix {
     @Override
     public LatLong latLong() {
       return delegate.latLong();
+    }
+
+    @Override
+    public Collection<? extends Runway> runways() {
+      return delegate.runways();
     }
 
     @Override
