@@ -58,11 +58,6 @@ public final class ProcedureFactory {
     return graph;
   }
 
-  public static QueryableProcedure newQueryableProcedure(Procedure procedure) {
-    requireNonNull(procedure);
-    return new QueryableProcedure(procedure);
-  }
-
   /**
    * Returns the collection of paired final->initial legs from the input collections of (assumed sorted) transitions - filtered
    * to only those pairs who's {@link Leg#associatedFix()}s are populated and have matching identifiers.

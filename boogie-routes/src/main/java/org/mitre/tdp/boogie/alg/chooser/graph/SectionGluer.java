@@ -16,10 +16,8 @@ import java.util.regex.Pattern;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.model.BoogieLeg;
 
 import com.google.common.base.Preconditions;
 
@@ -118,20 +116,13 @@ final class SectionGluer implements BiFunction<Collection<LinkedLegs>, LinkableT
    * Converts the path terminator of the inputted leg to DF.
    */
   private Leg dfLegOf(Leg leg) {
-    return new BoogieLeg.Builder()
-        .associatedFix(leg.associatedFix().orElse(null))
+    return Leg.dfBuilder(leg.associatedFix().orElseThrow(), leg.sequenceNumber())
         .recommendedNavaid(leg.recommendedNavaid().orElse(null))
-        .centerFix(leg.centerFix().orElse(null))
-        .pathTerminator(PathTerminator.DF)
-        .sequenceNumber(leg.sequenceNumber())
-        .outboundMagneticCourse(leg.outboundMagneticCourse().orElse(null))
         .rho(leg.rho().orElse(null))
+        .theta(leg.theta().orElse(null))
         .rnp(leg.rnp().orElse(null))
-        .routeDistance(leg.routeDistance().orElse(null))
-        .holdTime(leg.holdTime().orElse(null))
-        .verticalAngle(leg.verticalAngle().orElse(null))
-        .speedConstraint(leg.speedConstraint())
         .altitudeConstraint(leg.altitudeConstraint())
+        .speedConstraint(leg.speedConstraint())
         .turnDirection(leg.turnDirection().orElse(null))
         .isFlyOverFix(leg.isFlyOverFix())
         .isPublishedHoldingFix(leg.isPublishedHoldingFix())

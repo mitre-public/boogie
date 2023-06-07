@@ -20,11 +20,34 @@ import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.*;
+import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
+import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
+import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
+import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
+import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
-import org.mitre.tdp.boogie.model.BoogieAirway;
-import org.mitre.tdp.boogie.model.BoogieFix;
-import org.mitre.tdp.boogie.model.BoogieLeg;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -52,7 +75,11 @@ class TestAirwayAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    AirwayAssembler<Airway, Fix, Leg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
+    AirwayAssembler<Airway, Fix, Leg> assembler = AirwayAssembler.create(
+        fixDatabase,
+        FixAssemblyStrategy.standard(),
+        AirwayAssemblyStrategy.standard()
+    );
 
     airwayMap = assembler.apply(testV18Consumer.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -14,43 +13,52 @@ import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
 /**
- * Functional class for converting a collection of {@link ArincAirwayLeg}s into grouped and sequenced {@link Airway} records for
- * use in conjunction with downstream packages such as boogie-routes.
- * <br>
- * This class is similar in to {@link ProcedureAssembler} in that it groups legs of the airway together by the airways identifier
- * and then splits out legs into different top-level airway records based on the
+ * Assembler class for converting collections of {@link ArincAirwayLeg} records into a client-defined output class of type
+ * {@code A} representing an Airway.
+ *
+ * <p>This class can be used with the {@link FixAssemblyStrategy#standard()} + {@link AirwayAssemblyStrategy#standard()} to
+ * generate lightweight Boogie-defined {@link Airway} implementations that can be used with other Boogie algorithms.
  */
-public final class AirwayAssembler<A,F,L> implements Function<Collection<ArincAirwayLeg>, Stream<A>> {
+public final class AirwayAssembler<A, F, L> implements Function<Collection<ArincAirwayLeg>, Stream<A>> {
 
-  /**
-   * Functional class for transforming a {@link ArincAirwayLeg} and a pair of matched fixes as AssociatedFix and RecommendedNavaid
-   * for the leg with the
-   */
-  private final ArincAirwayLegConverter<L,F> inflator;
+  private final ArincAirwayLegConverter<A, L, F> inflator;
 
   private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway;
 
-  private final BiFunction<ArincAirwayLeg, List<L>, A> airwayConverter;
+  private final AirwayAssemblyStrategy<A, F, L> strategy;
 
-  public AirwayAssembler(
+  private AirwayAssembler(
       FixDatabase fixDatabase,
-      Function<ArincModel, F> fixConverter,
-      TriFunction<ArincAirwayLeg, F, F, L> legConverter,
-      BiFunction<ArincAirwayLeg, List<L>, A> airwayConverter) {
-    this.airwayConverter = airwayConverter;
-    this.inflator = new ArincAirwayLegConverter<>(fixDatabase, fixConverter, legConverter);
+      FixAssemblyStrategy<F> fixStrategy,
+      AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
+    this.inflator = new ArincAirwayLegConverter<>(fixDatabase, fixStrategy, airwayStrategy);
+    this.strategy = requireNonNull(airwayStrategy);
     this.shouldSplitAirway = (previous, next) -> isSequenceNumberJump(previous, next)
         || isSequenceNumberReset(previous, next)
         || !previous.routeIdentifier().equals(next.routeIdentifier());
+  }
+
+  /**
+   * Create a new airway assembler with the given fix database and strategy for assembly as context. The assembler uses the database
+   * to lookup relevant 424 records whose contents clients may wish to include in the generated model type.
+   *
+   * <p>Template types here notionally represent client-defined "Airway", "Fix", and "Leg" classes.
+   *
+   * @param database       containing indexed fixes
+   * @param fixStrategy    strategy class for converting any resolved fix records referenced by airway legs into client-defined fix
+   *                       implementations
+   * @param airwayStrategy strategy class for converting 424 airway legs into client-defined leg types referencing the fixes created
+   *                       by the fix strategy
+   */
+  public static <A, F, L> AirwayAssembler<A, F, L> create(FixDatabase database, FixAssemblyStrategy<F> fixStrategy, AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
+    return new AirwayAssembler<>(database, fixStrategy, airwayStrategy);
   }
 
   @Override
@@ -85,25 +93,26 @@ public final class AirwayAssembler<A,F,L> implements Function<Collection<ArincAi
     ArincAirwayLeg representative = arincAirwayLegs.get(0);
 
     List<L> legs = arincAirwayLegs.stream().map(inflator).collect(Collectors.toList());
-    return airwayConverter.apply(representative, legs);
+    return strategy.convertAirway(representative, legs);
   }
 
-  /**
-   * Converter logic for transforming an {@link ArincAirwayLeg} to a {@link Leg} implementation - handling the complex parts of
-   * looking up the associated fix and recommended navaid for the leg.
-   */
-  public static final class ArincAirwayLegConverter<L,F> implements Function<ArincAirwayLeg, L> {
+  private static final class ArincAirwayLegConverter<A, L, F> implements Function<ArincAirwayLeg, L> {
 
     private final LegFixDereferencer<F> legFixDereferencer;
 
     private final TriFunction<ArincAirwayLeg, F, F, L> legConverter;
 
-    public ArincAirwayLegConverter(
+    private ArincAirwayLegConverter(
         FixDatabase fixDatabase,
-        Function<ArincModel, F> fixConverter,
-        TriFunction<ArincAirwayLeg, F, F, L> legConverter) {
-      this.legFixDereferencer = new LegFixDereferencer<>(fixConverter, ArincDatabaseFactory.emptyTerminalAreaDatabase(), fixDatabase);
-      this.legConverter = requireNonNull(legConverter);
+        FixAssemblyStrategy<F> fixStrategy,
+        AirwayAssemblyStrategy<A, F, L> airwayStrategy
+    ) {
+      this.legFixDereferencer = new LegFixDereferencer<>(
+          FixAssembler.create(fixStrategy),
+          ArincDatabaseFactory.emptyTerminalAreaDatabase(),
+          fixDatabase
+      );
+      this.legConverter = requireNonNull(airwayStrategy)::convertLeg;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package org.mitre.tdp.boogie;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.mitre.caasd.commons.Course;
@@ -50,15 +52,24 @@ public interface Runway {
    *
    * <p>Boogie reserves the right to use this field to determine which runways are candidates for arrival/departure of certain
    * classes of aircraft.
+   *
+   * <p>This field is left optional to support varied types of things which show up as "runways" in various data sources (lakes
+   * for seaplane bases in CIFP...). Clients are free to default this behind the interface but the framework can defer decisions
+   * about what to do if we don't know the length till later.
    */
-  Distance length();
+  Optional<Distance> length();
 
   /**
    * The <i>true</i> course of the runway (where it's pointing).
+   *
+   * <p>This field is left optional to support varied types of things which show up as "runways" in various data sources (lakes
+   * for seaplane bases in CIFP...). Clients are free to default this behind the interface but the framework can defer decisions
+   * about what to do if we don't know the length till later.
    */
-  Course course();
+  Optional<Course> course();
 
-  final class Standard {
+  final class Standard implements Runway {
+
     private final String runwayIdentifier;
 
     private final LatLong origin;
@@ -74,28 +85,32 @@ public interface Runway {
       this.course = requireNonNull(builder.course);
     }
 
+    @Override
     public String runwayIdentifier() {
       return runwayIdentifier;
     }
 
+    @Override
     public LatLong origin() {
       return origin;
     }
 
-    public Distance length() {
-      return length;
+    @Override
+    public Optional<Distance> length() {
+      return ofNullable(length);
     }
 
-    public Course course() {
-      return course;
+    @Override
+    public Optional<Course> course() {
+      return ofNullable(course);
     }
 
     public Builder toBuilder() {
       return builder()
           .runwayIdentifier(runwayIdentifier())
           .origin(origin())
-          .length(length())
-          .course(course());
+          .length(length().orElse(null))
+          .course(course().orElse(null));
     }
 
     @Override
@@ -192,12 +207,12 @@ public interface Runway {
     }
 
     @Override
-    public Distance length() {
+    public Optional<Distance> length() {
       return delegate.length();
     }
 
     @Override
-    public Course course() {
+    public Optional<Course> course() {
       return delegate.course();
     }
 

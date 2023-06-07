@@ -35,6 +35,14 @@ public final class Declinations {
     return declination(lat, lon, null, Instant.parse("2020-01-01T00:00:00Z"));
   }
 
+  public static double declination(double lat, double lon, Instant tau) {
+    return declination(lat, lon, null, tau);
+  }
+
+  public static MagneticVariation magneticVariation(double lat, double lon, Instant tau) {
+    return MagneticVariation.ofDegrees(declination(lat, lon, tau));
+  }
+
   /**
    * Returns the declination at a position (degrees), elevation (ft), and time.
    * <br>
@@ -58,5 +66,9 @@ public final class Declinations {
         .map(e -> (e * Spherical.METERS_PER_FOOT) / 1000.0d)
         .map(km -> magnetics.getDeclination(lat, lon, year, km))
         .orElse(magnetics.getDeclination(lat, lon, year, 0.0));
+  }
+
+  public static MagneticVariation magneticVariation(double lat, double lon, @Nullable Double elev, Instant tau) {
+    return MagneticVariation.ofDegrees(declination(lat, lon, elev, tau));
   }
 }

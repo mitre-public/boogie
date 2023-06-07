@@ -5,48 +5,38 @@ import static java.util.Objects.requireNonNull;
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincModel;
+import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 
 /**
- * Functional class for converting certain types of {@link ArincModel} records to {@link Fix} records based on their section and
- * subsection within the database. Currently the FixAssembler supports:
- * <br>
- * 1. Waypoints
- * 2. NDB/VHF Navaids
- * 3. Airports
- * 4. Runways
- * 5. Localizer/GlideSlope records
- * <br>
- * This is order to be reflective of what {@link ArincProcedureLeg}s can reference as "fix-like" objects within a procedure.
- * <br>
- * Standard "fixes" typically only encompass Waypoints + VHF/NDB Navaids.
+ * Assembler class for converting multiple flavors of fix-like 424 record types into client-defined fix data models.
+ *
+ * <p>This class can be used with the {@link FixAssemblyStrategy#standard()} to generate lightweight Boogie-defined {@link Fix}
+ * implementations that can be used with other Boogie algorithms.
  */
 public final class FixAssembler<F> implements Function<ArincModel, F> {
 
-  private final Function<ArincWaypoint, F> waypointConverter;
-  private final Function<ArincNdbNavaid, F> ndbNavaidConverter;
-  private final Function<ArincVhfNavaid, F> vhfNavaidConverter;
-  private final Function<ArincAirport, F> airportConverter;
-  private final Function<ArincRunway, F> runwayConverter;
-  private final Function<ArincLocalizerGlideSlope, F> localizerGlideSlopeConverter;
+  private final FixAssemblyStrategy<F> strategy;
 
-  private final Function<ArincGnssLandingSystem, F> gnssLandingSystemConverter;
+  private FixAssembler(FixAssemblyStrategy<F> strategy) {
+    this.strategy = requireNonNull(strategy);
+  }
 
-  public FixAssembler(
-      Function<ArincWaypoint, F> waypointConverter,
-      Function<ArincNdbNavaid, F> ndbNavaidConverter,
-      Function<ArincVhfNavaid, F> vhfNavaidConverter,
-      Function<ArincAirport, F> airportConverter,
-      Function<ArincRunway, F> runwayConverter,
-      Function<ArincLocalizerGlideSlope, F> localizerGlideSlopeConverter,
-      Function<ArincGnssLandingSystem, F> gnssLandingSystemConverter) {
-    this.waypointConverter = requireNonNull(waypointConverter);
-    this.ndbNavaidConverter = requireNonNull(ndbNavaidConverter);
-    this.vhfNavaidConverter = requireNonNull(vhfNavaidConverter);
-    this.airportConverter = requireNonNull(airportConverter);
-    this.runwayConverter = requireNonNull(runwayConverter);
-    this.localizerGlideSlopeConverter = requireNonNull(localizerGlideSlopeConverter);
-    this.gnssLandingSystemConverter = requireNonNull(gnssLandingSystemConverter);
+  /**
+   * Create a new fix assembler with the given assembly strategy handling conversion of all the common 424 record types that are
+   * referenced in airway/procedure leg definitions.
+   *
+   * @param strategy strategy class for converting the various 424 record types airway/procedure legs can reference as fixes into
+   *                 client-defined fix models
+   */
+  public static <F> FixAssembler<F> create(FixAssemblyStrategy<F> strategy) {
+    return new FixAssembler<>(strategy);
   }
 
   @Override
@@ -56,31 +46,31 @@ public final class FixAssembler<F> implements Function<ArincModel, F> {
     // airports
     switch (sectionSubSection) {
       case "PA":
-        return airportConverter.apply((ArincAirport) arincModel);
+        return strategy.convertAirport((ArincAirport) arincModel);
       // Enroute NDB Navaids
       case "DB":
-        return ndbNavaidConverter.apply((ArincNdbNavaid) arincModel);
+        return strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
       // Terminal NDB Navaids
       case "PN":
-        return ndbNavaidConverter.apply((ArincNdbNavaid) arincModel);
+        return strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
       // VHF Navaids
       case "D":
-        return vhfNavaidConverter.apply((ArincVhfNavaid) arincModel);
+        return strategy.convertVhfNavaid((ArincVhfNavaid) arincModel);
       // Enroute waypoints
       case "EA":
-        return waypointConverter.apply((ArincWaypoint) arincModel);
+        return strategy.convertWaypoint((ArincWaypoint) arincModel);
       // Terminal waypoints
       case "PC":
-        return waypointConverter.apply((ArincWaypoint) arincModel);
+        return strategy.convertWaypoint((ArincWaypoint) arincModel);
       // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
       case "PG":
-        return runwayConverter.apply((ArincRunway) arincModel);
+        return strategy.convertRunway((ArincRunway) arincModel);
       // localizerGlideSlopes - generally used as a recommended navaid on some approaches
       case "PI":
-        return localizerGlideSlopeConverter.apply((ArincLocalizerGlideSlope) arincModel);
+        return strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
       //gnss landing systems - usually used on gls approach or as rec navs rarely
       case "PT":
-        return gnssLandingSystemConverter.apply((ArincGnssLandingSystem) arincModel);
+        return strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
       // anything else is not explicitly supported as a reference object in a leg
       default:
         throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));

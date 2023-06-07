@@ -9,9 +9,9 @@ import java.util.Collection;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
-import org.mitre.tdp.boogie.model.BoogieFix;
 
 class FixGrapherTest {
 
@@ -52,12 +52,10 @@ class FixGrapherTest {
   }
 
   private Fix dummy() {
-    return new BoogieFix.Builder()
+    return Fix.builder()
         .fixIdentifier("SHERL")
-        .fixRegion("ANON")
-        .latitude(0.)
-        .longitude(0.)
-        .modeledVariation(0.)
+        .latLong(LatLong.of(0., 0.))
+        .magneticVariation(MagneticVariation.ZERO)
         .build();
   }
 }

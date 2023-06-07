@@ -22,6 +22,8 @@ public final class MagneticVariation implements Serializable {
 
   private static final Course MAX = Course.ofDegrees(180);
 
+  public static final MagneticVariation ZERO = new MagneticVariation(Course.ZERO);
+
   /**
    * This class wraps a {@link Course} object internally for safety around units and ease-of-use.
    */
@@ -42,10 +44,6 @@ public final class MagneticVariation implements Serializable {
   private MagneticVariation(Course angle) {
     this.angle = requireNonNull(angle);
     checkArgument(angle.abs().isLessThan(MAX), "Variation should be [-180 < {} < 180].", angle);
-  }
-
-  public static MagneticVariation none() {
-    return new MagneticVariation(Course.ofDegrees(0.));
   }
 
   public static MagneticVariation ofDegrees(double angle) {

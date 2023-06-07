@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.arinc.assemble;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.time.Duration;
@@ -31,12 +30,34 @@ import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.*;
+import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
+import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
+import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
+import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
+import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
-import org.mitre.tdp.boogie.model.BoogieFix;
-import org.mitre.tdp.boogie.model.BoogieLeg;
-import org.mitre.tdp.boogie.model.BoogieProcedure;
-import org.mitre.tdp.boogie.model.BoogieTransition;
 
 class TestProcedureAssembler {
 
@@ -71,7 +92,12 @@ class TestProcedureAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    assembler = ArincToBoogieConverterFactory.newProcedureAssembler(terminalAreaDatabase, fixDatabase);
+    assembler = ProcedureAssembler.create(
+        terminalAreaDatabase,
+        fixDatabase,
+        FixAssemblyStrategy.standard(),
+        ProcedureAssemblyStrategy.standard()
+    );
   }
 
   @Test
@@ -154,7 +180,7 @@ class TestProcedureAssembler {
   }
 
   @Test
-  void testAssemblyOfI22L_APPROACH(){
+  void testAssemblyOfI22L_APPROACH() {
     Collection<ArincProcedureLeg> I22LLegs = terminalAreaDatabase.legsForProcedure("KJFK", "I22L");
 
     Collection<Procedure> procedures = assembler.apply(I22LLegs).collect(Collectors.toSet());

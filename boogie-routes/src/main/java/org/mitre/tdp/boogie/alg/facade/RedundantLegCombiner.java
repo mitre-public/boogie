@@ -17,7 +17,6 @@ import java.util.function.UnaryOperator;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.fn.LeftMerger;
-import org.mitre.tdp.boogie.model.BoogieLeg;
 
 /**
  * A sequential leg combiner attempts to <i>safely</i> combine the definitions of two legs when certain conditions are met.
@@ -50,12 +49,11 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
   ExpandedRouteLeg safelyMergeLegs(ExpandedRouteLeg previous, ExpandedRouteLeg next) {
     ExpandedRouteLeg preferred = preferredLeg(previous, next);
 
-    Leg combined = new BoogieLeg.Builder()
+    // intentional - keep the previous path type (as the termination is identical)
+    // this should mostly be TF's anyway...
+    Leg combined = Leg.builder(previous.pathTerminator(), preferred.sequenceNumber())
         .associatedFix(preferred.associatedFix().orElse(null))
         .recommendedNavaid(preferred.recommendedNavaid().orElse(null))
-        // intentional - keep the previous path type (as the termination is identical)
-        // this should mostly be TF's anyway...
-        .pathTerminator(previous.pathTerminator())
         .sequenceNumber(preferred.sequenceNumber())
         .speedConstraint(preferred.speedConstraint())
         .altitudeConstraint(preferred.altitudeConstraint())

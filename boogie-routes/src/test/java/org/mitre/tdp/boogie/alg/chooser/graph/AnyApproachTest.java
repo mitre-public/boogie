@@ -13,15 +13,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airways;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
-import org.mitre.tdp.boogie.model.BoogieFix;
-import org.mitre.tdp.boogie.model.BoogieLeg;
 
 class AnyApproachTest {
 
@@ -284,7 +285,7 @@ class AnyApproachTest {
 
   private ResolvedToken.SidEnrouteCommon manualTerminatingSidWithOnlyOneFix(double endingLongitude) {
 
-    Leg l1_1 = new BoogieLeg.Builder().pathTerminator(PathTerminator.VA).associatedFix(null).build();
+    Leg l1_1 = Leg.builder(PathTerminator.VA, 0).build();
     Leg l1_2 = createLeg("manual terminating sid leg", 0.0, endingLongitude, PathTerminator.VM);
 
     Transition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
@@ -309,19 +310,12 @@ class AnyApproachTest {
     return ResolvedToken.standardApproach(newProcedureGraph(newProcedure(List.of(bc))));
   }
 
-  private static BoogieLeg createLeg(String name, double lat, double lon, PathTerminator type) {
-    return new BoogieLeg.Builder()
-        .pathTerminator(type)
-        .associatedFix(createFix(name, lat, lon))
-        .build();
+  private static Leg createLeg(String name, double lat, double lon, PathTerminator type) {
+    return Leg.builder(type, 0).associatedFix(createFix(name, lat, lon)).build();
   }
 
-  private static BoogieFix createFix(String name, double lat, double lon) {
-    return new BoogieFix.Builder()
-        .fixIdentifier(name)
-        .latitude(lat)
-        .longitude(lon)
-        .build();
+  private static Fix createFix(String name, double lat, double lon) {
+    return Fix.builder().fixIdentifier(name).latLong(LatLong.of(lat, lon)).magneticVariation(MagneticVariation.ZERO).build();
   }
 
   private static final class LinkingStrategy {

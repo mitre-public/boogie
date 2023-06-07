@@ -19,16 +19,12 @@ import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 @Tag("INTEGRATION")
 class TestAirwayAssemblerIntegration {
-
-  private static final Logger LOG = LoggerFactory.getLogger(TestAirwayAssemblerIntegration.class);
 
   private static Multimap<String, Airway> airwaysByName;
 
@@ -42,7 +38,12 @@ class TestAirwayAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    AirwayAssembler<Airway, Fix, Leg> assembler = ArincToBoogieConverterFactory.newAirwayAssembler(fixDatabase);
+    AirwayAssembler<Airway, Fix, Leg> assembler = AirwayAssembler.create(
+        fixDatabase,
+        FixAssemblyStrategy.standard(),
+        AirwayAssemblyStrategy.standard()
+    );
+
     airwaysByName = assembler.apply(EmbeddedCifpFile.instance().arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }
 
