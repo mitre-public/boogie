@@ -1,16 +1,9 @@
 name: Release Software
 
 on:
-  workflow_dispatch:
-    inputs:
-      username:
-        description: 'Your Github username - for tagging the release commit'
-        required: true
-        default: 'ttfs'
-      email:
-        description: 'Your Github email - for tagging the release commit'
-        required: true
-        default: 'bamboo@tdp.mitre.org'
+  push:
+    tags:
+      - '*'
 
 # when the action runs on a pull request trigger, then github.ref will be e.g. refs/pull/421/merge, so this gives us a consistent
 # way to reference the branch name
