@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -17,6 +18,8 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 
 public class TestRunwaySpec {
+  
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new RunwaySpec());
 
   public static final String runway1 = "SUSAP KJFKK6GRW04L   1120790440 N40372318W073470505+0000          00012046057200 IHIQ10000           CONC     090RBWT      155192003";
 
@@ -27,12 +30,12 @@ public class TestRunwaySpec {
 
   @Test
   void testValidatorPasses_Runway1(){
-    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway1).orElseThrow(AssertionError::new)));
+    assertTrue(new RunwayValidator().test(PARSER.parse(runway1).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseRunway1() {
-    ArincRecord record = ArincVersion.V18.parser().apply(runway1).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(runway1).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -72,12 +75,12 @@ public class TestRunwaySpec {
 
   @Test
   void testValidatorPasses_Runway2(){
-    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway2).orElseThrow(AssertionError::new)));
+    assertTrue(new RunwayValidator().test(PARSER.parse(runway2).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseRunway2() {
-    ArincRecord record = ArincVersion.V18.parser().apply(runway2).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(runway2).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -117,12 +120,12 @@ public class TestRunwaySpec {
 
   @Test
   void testValidatorPasses_Runway3(){
-    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway3).orElseThrow(AssertionError::new)));
+    assertTrue(new RunwayValidator().test(PARSER.parse(runway3).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseRunway3() {
-    ArincRecord record = ArincVersion.V18.parser().apply(runway3).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(runway3).orElseThrow(AssertionError::new);
     assertEquals(0.3, record.requiredField("runwayGradient"));
   }
 
@@ -135,12 +138,12 @@ public class TestRunwaySpec {
 
   @Test
   void testValidatorPasses_Runway4(){
-    assertTrue(new RunwayValidator().test(ArincVersion.V18.parser().apply(runway4).orElseThrow(AssertionError::new)));
+    assertTrue(new RunwayValidator().test(PARSER.parse(runway4).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseRunway4() {
-    ArincRecord record = ArincVersion.V18.parser().apply(runway4).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(runway4).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),

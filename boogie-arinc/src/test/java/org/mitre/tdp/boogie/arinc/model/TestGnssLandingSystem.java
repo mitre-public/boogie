@@ -1,10 +1,14 @@
 package org.mitre.tdp.boogie.arinc.model;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemSpec;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
@@ -12,11 +16,14 @@ import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
-public class TestGnssLandingSystem {
-  public static final String G16A1 = "SSPAP YSSYYMTG16A1   021146RW16R                   1550S33575258E151110525YSSY         300E0130  00021WGE     00034        464902003";
-  public static final String G25A1 = "SSPAP YSSYYMTG25A1   021557RW25                    2420S33575258E151110525YSSY         300E0130  00021WGE     00034        464922003";
+class TestGnssLandingSystem {
 
-  private static final GnssLandingSystemConverter converter = new GnssLandingSystemConverter();
+  private static final String G16A1 = "SSPAP YSSYYMTG16A1   021146RW16R                   1550S33575258E151110525YSSY         300E0130  00021WGE     00034        464902003";
+  private static final String G25A1 = "SSPAP YSSYYMTG25A1   021557RW25                    2420S33575258E151110525YSSY         300E0130  00021WGE     00034        464922003";
+
+  private static final Function<String, ArincGnssLandingSystem> PARSER = s -> ArincRecordParser.standard(new GnssLandingSystemSpec())
+      .parse(s).flatMap(new GnssLandingSystemConverter()).orElseThrow();
+
   @Test
   void testMatches() {
     Assertions.assertTrue(new GnssLandingSystemSpec().matchesRecord(G16A1));
@@ -24,12 +31,12 @@ public class TestGnssLandingSystem {
 
   @Test
   void testValidatorPasses_G16A1() {
-    Assertions.assertTrue(new GnssLandingSystemValidator().test(ArincVersion.V18.parser().apply(G16A1).orElseThrow(AssertionError::new)));
+    Assertions.assertTrue(new GnssLandingSystemValidator().test(ArincRecordParser.standard(new GnssLandingSystemSpec()).parse(G16A1).orElseThrow()));
   }
 
   @Test
   void testParse_G16A1() {
-    ArincGnssLandingSystem gls = ArincVersion.V18.parser().apply(G16A1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincGnssLandingSystem gls = PARSER.apply(G16A1).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, gls.recordType()),
@@ -61,7 +68,7 @@ public class TestGnssLandingSystem {
 
   @Test
   void testParse_G25A1() {
-    ArincGnssLandingSystem gls = ArincVersion.V18.parser().apply(G25A1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincGnssLandingSystem gls = PARSER.apply(G25A1).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, gls.recordType()),
@@ -90,6 +97,4 @@ public class TestGnssLandingSystem {
         () -> assertTrue(gls.stationType().isEmpty())
     );
   }
-
-
 }

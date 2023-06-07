@@ -3,13 +3,12 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mitre.tdp.boogie.arinc.v18.TestWaypointSpec.enrouteWaypoint;
-import static org.mitre.tdp.boogie.arinc.v18.TestWaypointSpec.terminalWaypoint;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
+import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -18,7 +17,11 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincWaypoint {
 
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new WaypointSpec());
+
   private static final WaypointConverter converter = new WaypointConverter();
+
+  private static final String enrouteWaypoint = "SSAMEAENRT   UMGOS SK1    R  RH N03190000W080465800                       W0023     WGE        P  UMGOS                    209142003";
 
   @Test
   void testEqualsHashCode() {
@@ -27,7 +30,7 @@ class TestArincWaypoint {
 
   @Test
   void testEnrouteFieldAccess() {
-    ArincWaypoint waypoint = ArincVersion.V18.parser().apply(enrouteWaypoint).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincWaypoint waypoint = PARSER.parse(enrouteWaypoint).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, waypoint.recordType()),
@@ -52,9 +55,11 @@ class TestArincWaypoint {
     );
   }
 
+  private static final String terminalWaypoint = "SUSAP KFMHK6CREDSX K61    RIF   N41552146W070140577                       W0154     NAR        P  REDSX                    520911902";
+
   @Test
   void tesTerminalFieldAccess() {
-    ArincWaypoint waypoint = ArincVersion.V18.parser().apply(terminalWaypoint).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincWaypoint waypoint = PARSER.parse(terminalWaypoint).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, waypoint.recordType()),

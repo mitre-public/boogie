@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
-import org.mitre.tdp.boogie.arinc.v18.TestRunwaySpec;
+import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -18,7 +18,11 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincRunway {
 
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new RunwaySpec());
+
   private static final RunwayConverter converter = new RunwayConverter();
+
+  private static final String runway1 = "SUSAP KJFKK6GRW04L   1120790440 N40372318W073470505+0000          00012046057200 IHIQ10000           CONC     090RBWT      155192003";
 
   @Test
   void testEqualsHashCode() {
@@ -27,7 +31,7 @@ class TestArincRunway {
 
   @Test
   void testFieldAccess() {
-    ArincRunway runway = ArincVersion.V18.parser().apply(TestRunwaySpec.runway1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincRunway runway = PARSER.parse(runway1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, runway.recordType()),

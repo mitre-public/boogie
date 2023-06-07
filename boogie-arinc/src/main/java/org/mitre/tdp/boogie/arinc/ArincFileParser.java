@@ -3,12 +3,16 @@ package org.mitre.tdp.boogie.arinc;
 import static java.util.Objects.requireNonNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
+import org.mitre.caasd.commons.util.DemotedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * With the standard parser implementations for the subset of currently supported record types parsing and then converting an
  * entire cycle of data should only take a few seconds.
  */
-public final class ArincFileParser implements Function<File, Collection<ArincRecord>> {
+public final class ArincFileParser implements Function<InputStream, Collection<ArincRecord>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ArincFileParser.class);
 
@@ -28,30 +32,38 @@ public final class ArincFileParser implements Function<File, Collection<ArincRec
    * <br>
    * The standard implementation of this is the {@link ArincRecordParser}.
    */
-  private final Function<String, Optional<ArincRecord>> recordParser;
+  private final ArincRecordParser recordParser;
 
   public ArincFileParser(RecordSpec... recordSpecs) {
-    this(new ArincRecordParser(recordSpecs));
+    this(ArincRecordParser.standard(recordSpecs));
   }
 
-  public ArincFileParser(Function<String, Optional<ArincRecord>> recordParser) {
+  public ArincFileParser(ArincRecordParser recordParser) {
     this.recordParser = requireNonNull(recordParser);
   }
 
-  @Override
   public Collection<ArincRecord> apply(File file) {
+    try (FileInputStream fis = new FileInputStream(file)) {
+      return apply(fis);
+    } catch (IOException e) {
+      throw DemotedException.demote("Error opening input 424 file: " + file, e);
+    }
+  }
+
+  @Override
+  public Collection<ArincRecord> apply(InputStream file) {
     requireNonNull(file);
-    try (FileLineIterator lineIterator = new FileLineIterator(file)) {
+    try (FileLineIterator lineIterator = new FileLineIterator(new InputStreamReader(file))) {
 
       LinkedHashSet<ArincRecord> records = new LinkedHashSet<>();
       LOG.info("Beginning scan of file {} for ARINC records.", file);
 
-      lineIterator.forEachRemaining(line -> recordParser.apply(line).ifPresent(records::add));
+      lineIterator.forEachRemaining(line -> recordParser.parse(line).ifPresent(records::add));
 
       LOG.info("Returning {} total ArincRecords from file.", records.size());
       return records;
     } catch (Exception e) {
-      throw new IllegalArgumentException("Error during parse of ARINC file at: ".concat(file.getAbsolutePath()), e);
+      throw new IllegalArgumentException("Error during parse of ARINC 424 record stream.", e);
     }
   }
 }

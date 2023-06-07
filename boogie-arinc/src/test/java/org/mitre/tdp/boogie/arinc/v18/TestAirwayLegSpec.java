@@ -3,19 +3,19 @@ package org.mitre.tdp.boogie.arinc.v18;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
 
 public class TestAirwayLegSpec {
+
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new AirwayLegSpec());
 
   public static final String airway1 = "SCANER       A1          0100XX   CYDB0N    O                         22250425     UNKNN                                   024131710";
 
@@ -25,13 +25,13 @@ public class TestAirwayLegSpec {
   }
 
   @Test
-  void testValidatorPasses_Airway1(){
-    assertTrue(new AirwayLegValidator().test(ArincVersion.V18.parser().apply(airway1).orElseThrow(AssertionError::new)));
+  void testValidatorPasses_Airway1() {
+    assertTrue(new AirwayLegValidator().test(PARSER.parse(airway1).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseAirway1() {
-    ArincRecord record = ArincVersion.V18.parser().apply(airway1).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(airway1).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -78,13 +78,13 @@ public class TestAirwayLegSpec {
   }
 
   @Test
-  void testValidatorPasses_Airway2(){
-    assertTrue(new AirwayLegValidator().test(ArincVersion.V18.parser().apply(airway2).orElseThrow(AssertionError::new)));
+  void testValidatorPasses_Airway2() {
+    assertTrue(new AirwayLegValidator().test(PARSER.parse(airway2).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseAirway2() {
-    ArincRecord record = ArincVersion.V18.parser().apply(airway2).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(airway2).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -123,7 +123,7 @@ public class TestAirwayLegSpec {
     );
   }
 
-  public static final String airway3 = "SCANER       A590        0210PASROPAEA0E C  OHFRA                     059422850590 FL180     FL600                         233652006";
+  private static final String airway3 = "SCANER       A590        0210PASROPAEA0E C  OHFRA                     059422850590 FL180     FL600                         233652006";
 
   @Test
   void testSpecMatchesAirwayRecord3() {
@@ -131,13 +131,13 @@ public class TestAirwayLegSpec {
   }
 
   @Test
-  void testValidatorPasses_Airway3(){
-    assertTrue(new AirwayLegValidator().test(ArincVersion.V18.parser().apply(airway3).orElseThrow(AssertionError::new)));
+  void testValidatorPasses_Airway3() {
+    assertTrue(new AirwayLegValidator().test(PARSER.parse(airway3).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseAirway3() {
-    ArincRecord record = ArincVersion.V18.parser().apply(airway3).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(airway3).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),

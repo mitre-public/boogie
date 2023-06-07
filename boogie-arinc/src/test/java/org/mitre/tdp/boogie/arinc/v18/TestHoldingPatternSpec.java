@@ -1,17 +1,23 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 
-public class TestHoldingPatternSpec {
+class TestHoldingPatternSpec {
+
+  private static final ArincRecordParser V18 = ArincRecordParser.standard(new HoldingPatternSpec());
+
+  private static final ArincRecordParser V19 = ArincRecordParser.standard(new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec());
+
   private static final String HOLD = "SUSAEPENRT                 00BARWUK7EA00540R040                                                   BARWU                    353392003";
 
   @Test
@@ -22,14 +28,14 @@ public class TestHoldingPatternSpec {
 
   @Test
   void validatorPasses() {
-    assertTrue(new HoldingPatternValidator().test(ArincVersion.V18.parser().apply(HOLD).orElseThrow()));
-    assertTrue(new HoldingPatternValidator().test(ArincVersion.V19.parser().apply(HOLD).orElseThrow()));
+    assertTrue(new HoldingPatternValidator().test(V18.parse(HOLD).orElseThrow()));
+    assertTrue(new HoldingPatternValidator().test(V19.parse(HOLD).orElseThrow()));
   }
 
   @Test
   void parse18() {
 
-    ArincRecord record = ArincVersion.V18.parser().apply(HOLD).orElseThrow(AssertionError::new);
+    ArincRecord record = V18.parse(HOLD).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),

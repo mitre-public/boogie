@@ -8,9 +8,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.TestVhfNavaidSpec;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -19,6 +19,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincVhfNavaid {
 
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new VhfNavaidSpec());
+
   private static final VhfNavaidConverter converter = new VhfNavaidConverter();
 
   @Test
@@ -26,9 +28,11 @@ class TestArincVhfNavaid {
     EqualsVerifier.forClass(ArincVhfNavaid.class).verify();
   }
 
+  private static final String navaid2 = "SUSAD        ABQ   K2111320VTHW N35023766W106485872ABQ N35023766W106485872E0130057492  423NARALBUQUERQUE                   057582003";
+
   @Test
   void testFieldAccess_2() {
-    ArincVhfNavaid navaid = ArincVersion.V18.parser().apply(TestVhfNavaidSpec.navaid2).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincVhfNavaid navaid = PARSER.parse(navaid2).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),
@@ -58,9 +62,11 @@ class TestArincVhfNavaid {
     );
   }
 
+  private static final String navaid3 = "SUSAD KJFKK6 IHIQ  K6011090 ITWN                   IHIQN40374382W073464058W0130000240     NARJOHN F KENNEDY INTL           242381808";
+
   @Test
   void testFieldAccess_3() {
-    ArincVhfNavaid navaid = ArincVersion.V18.parser().apply(TestVhfNavaidSpec.navaid3).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincVhfNavaid navaid = PARSER.parse(navaid3).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),

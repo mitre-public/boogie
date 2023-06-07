@@ -22,7 +22,7 @@ class TestArincFileParser {
 
   // statically configure V18 parsers - as that's the format of the sample data
   private static final ArincFileParser fileParser = new ArincFileParser(
-      new ArincRecordParser(
+      ArincRecordParser.standard(
           new AirportSpec(),
           new AirwayLegSpec(),
           new LocalizerGlideSlopeSpec(),

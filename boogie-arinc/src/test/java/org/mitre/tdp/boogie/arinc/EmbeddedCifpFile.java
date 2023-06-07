@@ -104,7 +104,7 @@ public final class EmbeddedCifpFile {
 
       ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
       while (iterator.hasNext()) {
-        parser.apply(iterator.next()).filter(continuationRecordFilter).ifPresent(parsedRecords::add);
+        parser.parse(iterator.next()).filter(continuationRecordFilter).ifPresent(parsedRecords::add);
       }
 
       LOG.info("Finished loading {} records from embedded file.", parsedRecords.size());

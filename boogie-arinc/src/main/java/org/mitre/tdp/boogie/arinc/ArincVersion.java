@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.arinc;
 
+import static java.util.Optional.ofNullable;
+
+import java.util.List;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
@@ -13,8 +16,6 @@ import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
 
 import com.google.common.collect.ImmutableMap;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * Pre-configured set of parsers for various well-known ARINC spec types and record formats.
@@ -63,10 +64,10 @@ public enum ArincVersion {
       .put(V19.name(), V19)
       .build();
 
-  private final ArincRecordParser parser;
+  private final List<RecordSpec> specs;
 
   ArincVersion(RecordSpec... specs) {
-    this.parser = new ArincRecordParser(specs);
+    this.specs = List.of(specs);
   }
 
   /**
@@ -78,9 +79,14 @@ public enum ArincVersion {
   }
 
   /**
-   * Returns the internally constructed parser instance.
+   * Return the collection of specs owned by Boogie which make up the supported record types for the given 424 version.
    */
+  public List<RecordSpec> specs() {
+    return specs;
+  }
+
+  @Deprecated
   public ArincRecordParser parser() {
-    return parser;
+    return ArincRecordParser.standard(specs);
   }
 }

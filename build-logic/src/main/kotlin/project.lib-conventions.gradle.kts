@@ -37,6 +37,23 @@ configure<JavaPluginExtension> {
     withJavadocJar()
 }
 
+semanticVersioning {
+    initialVersion.set("0.0.1")
+    tagPrefix.set("")
+
+    branches {
+        branch {
+            predicate.set { git -> git.branch.name == "main" }
+            useConventionalIncrementor()
+            formatter { "$baseVersion${-snapshot}" }
+        }
+        branch {
+            predicate.set { git -> git.branch.name != "main" }
+            formatter { "$baseVersion${-branchId}${+shortCommit}" }
+        }
+    }
+}
+
 caasdPublishing {
     publishTo {
         codev.javaArtifacts

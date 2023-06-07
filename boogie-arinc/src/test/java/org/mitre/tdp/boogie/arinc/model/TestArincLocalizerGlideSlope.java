@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -19,7 +21,8 @@ class TestArincLocalizerGlideSlope {
 
   private static final String glideslope1 = "SUSAP KJFKK6IIHIQ1   011090RW04LN40390697W0734543950440N40373108W0734654910605 1087    300W01305700009                     587752003";
 
-  private static final LocalizerGlideSlopeConverter converter = new LocalizerGlideSlopeConverter();
+  private static final Function<String, ArincLocalizerGlideSlope> PARSER = s -> ArincRecordParser.standard(new LocalizerGlideSlopeSpec())
+      .parse(s).flatMap(new LocalizerGlideSlopeConverter()).orElseThrow();
 
   @Test
   void testEqualsHashCode() {
@@ -28,7 +31,7 @@ class TestArincLocalizerGlideSlope {
 
   @Test
   void testFieldAccess() {
-    ArincLocalizerGlideSlope localizer = ArincVersion.V18.parser().apply(glideslope1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincLocalizerGlideSlope localizer = PARSER.apply(glideslope1).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, localizer.recordType(), "RecordType"),

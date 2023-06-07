@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.TestNdbNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -18,7 +18,11 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincNdbNavaid {
 
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new NdbNavaidSpec());
+
   private static final NdbNavaidConverter converter = new NdbNavaidConverter();
+
+  private static final String navaid1 = "SEEUPNUUOLUU D     UU104000HMLW N52431540E039313750                       E0100           RPELIPETSK LMM RW15              353032003";
 
   @Test
   void testEqualsHashCode() {
@@ -27,7 +31,7 @@ class TestArincNdbNavaid {
 
   @Test
   void testFieldAccess() {
-    ArincNdbNavaid navaid = ArincVersion.V18.parser().apply(TestNdbNavaidSpec.navaid1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincNdbNavaid navaid = PARSER.parse(navaid1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),

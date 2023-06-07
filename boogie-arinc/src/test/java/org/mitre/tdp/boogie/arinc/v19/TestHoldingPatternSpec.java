@@ -1,20 +1,26 @@
 package org.mitre.tdp.boogie.arinc.v19;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 
-public class TestHoldingPatternSpec {
+class TestHoldingPatternSpec {
+
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new HoldingPatternSpec());
 
   private static final String HOLD = "SUSAEPENRT                 00BARWUK7EA00540R040                                                   BARWU                    353392003";
+
   private static final String HOLD2 = "SAFREPENRT                 10ABU  HLD 01400L   15FL150FL290265                                    ABU ARGUB                141282101";
+
   @Test
   void matchesRecord19() {
     assertTrue(new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec().matchesRecord(HOLD));
@@ -22,13 +28,13 @@ public class TestHoldingPatternSpec {
 
   @Test
   void validatorPasses() {
-    assertTrue(new HoldingPatternValidator().test(ArincVersion.V19.parser().apply(HOLD).orElseThrow()));
+    assertTrue(new HoldingPatternValidator().test(PARSER.parse(HOLD).orElseThrow()));
   }
 
   @Test
   void parse19() {
-    ArincRecord record = ArincVersion.V19.parser().apply(HOLD).orElseThrow(AssertionError::new);
-    ArincRecord record1 = ArincVersion.V19.parser().apply(HOLD2).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(HOLD).orElseThrow(AssertionError::new);
+    ArincRecord record1 = PARSER.parse(HOLD2).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),

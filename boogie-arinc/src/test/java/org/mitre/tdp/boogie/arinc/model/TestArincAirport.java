@@ -8,8 +8,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.TestAirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
@@ -20,6 +21,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincAirport {
 
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new AirportSpec());
+
   @Test
   void testEqualsHashCode() {
     EqualsVerifier.forClass(ArincAirport.class).verify();
@@ -27,7 +30,7 @@ class TestArincAirport {
 
   @Test
   void testFieldAccess() {
-    ArincAirport airport = ArincVersion.V18.parser().apply(TestAirportSpec.KJFK).flatMap(new AirportConverter()).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincAirport airport = PARSER.parse(TestAirportSpec.KJFK).flatMap(new AirportConverter()).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, airport.recordType()),

@@ -7,14 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
-public class TestVhfNavaidSpec {
+class TestVhfNavaidSpec {
 
-  public static final String navaid1 = "SCAND        GAL   PA011480VDHW N64441727W156463774    N64441730W156463774E0170001502     NARGALENA                        002621711";
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new VhfNavaidSpec());
+
+  private static final String navaid1 = "SCAND        GAL   PA011480VDHW N64441727W156463774    N64441730W156463774E0170001502     NARGALENA                        002621711";
 
   @Test
   void testSpecMatchesNavaidRecord() {
@@ -23,12 +25,12 @@ public class TestVhfNavaidSpec {
 
   @Test
   void testValidatorPasses_Navaid1() {
-    assertTrue(new VhfNavaidValidator().test(ArincVersion.V18.parser().apply(navaid1).orElseThrow(AssertionError::new)));
+    assertTrue(new VhfNavaidValidator().test(PARSER.parse(navaid1).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseNavaid1() {
-    ArincRecord record = ArincVersion.V18.parser().apply(navaid1).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(navaid1).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -58,7 +60,7 @@ public class TestVhfNavaidSpec {
     );
   }
 
-  public static final String navaid2 = "SUSAD        ABQ   K2111320VTHW N35023766W106485872ABQ N35023766W106485872E0130057492  423NARALBUQUERQUE                   057582003";
+  private static final String navaid2 = "SUSAD        ABQ   K2111320VTHW N35023766W106485872ABQ N35023766W106485872E0130057492  423NARALBUQUERQUE                   057582003";
 
   @Test
   void testSpecMatchesNavaidRecord2() {
@@ -67,12 +69,12 @@ public class TestVhfNavaidSpec {
 
   @Test
   void testValidatorPasses_Navaid2() {
-    assertTrue(new VhfNavaidValidator().test(ArincVersion.V18.parser().apply(navaid2).orElseThrow(AssertionError::new)));
+    assertTrue(new VhfNavaidValidator().test(PARSER.parse(navaid2).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseNavaid2() {
-    ArincRecord record = ArincVersion.V18.parser().apply(navaid2).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(navaid2).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -102,7 +104,7 @@ public class TestVhfNavaidSpec {
     );
   }
 
-  public static final String navaid3 = "SUSAD KJFKK6 IHIQ  K6011090 ITWN                   IHIQN40374382W073464058W0130000240     NARJOHN F KENNEDY INTL           242381808";
+  private static final String navaid3 = "SUSAD KJFKK6 IHIQ  K6011090 ITWN                   IHIQN40374382W073464058W0130000240     NARJOHN F KENNEDY INTL           242381808";
 
   @Test
   void testSpecMatchesNavaidRecord3() {
@@ -111,12 +113,12 @@ public class TestVhfNavaidSpec {
 
   @Test
   void testValidatorPasses_Navaid3() {
-    assertTrue(new VhfNavaidValidator().test(ArincVersion.V18.parser().apply(navaid3).orElseThrow(AssertionError::new)));
+    assertTrue(new VhfNavaidValidator().test(PARSER.parse(navaid3).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseNavaid3() {
-    ArincRecord record = ArincVersion.V18.parser().apply(navaid3).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(navaid3).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),

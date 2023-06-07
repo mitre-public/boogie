@@ -5,11 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.TestAirwayLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
@@ -19,7 +20,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincAirwayLeg {
 
-  private static final AirwayLegConverter converter = new AirwayLegConverter();
+  private static final Function<String, ArincAirwayLeg> PARSER = s -> ArincRecordParser.standard(new AirwayLegSpec())
+      .parse(s).flatMap(new AirwayLegConverter()).orElseThrow();
+
+  private static final String airway3 = "SCANER       A590        0210PASROPAEA0E C  OHFRA                     059422850590 FL180     FL600                         233652006";
 
   @Test
   void testEqualsHashCode() {
@@ -28,7 +32,7 @@ class TestArincAirwayLeg {
 
   @Test
   void testFieldAccess() {
-    ArincAirwayLeg airway = ArincVersion.V18.parser().apply(TestAirwayLegSpec.airway3).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincAirwayLeg airway = PARSER.apply(airway3).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, airway.recordType()),

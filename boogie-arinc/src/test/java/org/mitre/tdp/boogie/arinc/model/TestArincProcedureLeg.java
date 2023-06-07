@@ -3,16 +3,15 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mitre.tdp.boogie.arinc.v18.TestProcedureLegSpec.AF;
-import static org.mitre.tdp.boogie.arinc.v18.TestProcedureLegSpec.TF;
 
 import java.time.Duration;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -22,8 +21,15 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class TestArincProcedureLeg {
 
-  public static final String HF = "SEEUP UITTUIFN12   ACI4   020CI   UIDB0EE AR   HF                     1210T053      04160                              S   785571907";
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new ProcedureLegSpec());
+
   private static final ProcedureLegConverter converter = new ProcedureLegConverter();
+
+  private static final String TF = "SUSAP KJFKK6FL22R  L      020MATTRK6EA0E  F    TF IJOCK6      0411006622130050PI  + 01900             -301          U NS   153382004";
+
+  private static final String HF = "SEEUP UITTUIFN12   ACI4   020CI   UIDB0EE AR   HF                     1210T053      04160                              S   785571907";
+
+  private static final String AF = "SLAMP MKJSMKEOMAXI51ENARI 050SIA13MKPC0EE  L   AF SIA MK      252301303430    D                                            533482014";
 
   @Test
   void testEqualsHashCode() {
@@ -32,7 +38,7 @@ class TestArincProcedureLeg {
 
   @Test
   void testFieldAccessTF() {
-    ArincProcedureLeg procedureLeg = ArincVersion.V18.parser().apply(TF).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincProcedureLeg procedureLeg = PARSER.parse(TF).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, procedureLeg.recordType()),
@@ -81,13 +87,13 @@ class TestArincProcedureLeg {
 
   @Test
   void testFieldAccessHF() {
-    ArincProcedureLeg procedureLeg = ArincVersion.V18.parser().apply(HF).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincProcedureLeg procedureLeg = PARSER.parse(HF).flatMap(converter).orElseThrow(AssertionError::new);
     assertEquals(Optional.of(Duration.ofSeconds(318)), procedureLeg.holdTime(), "HoldTime");
   }
 
   @Test
   void testFieldAccessAF() {
-    ArincProcedureLeg procedureLeg = ArincVersion.V18.parser().apply(AF).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincProcedureLeg procedureLeg = PARSER.parse(AF).flatMap(converter).orElseThrow(AssertionError::new);
     assertEquals(Optional.of(TurnDirection.L), procedureLeg.turnDirection(), "TurnDirection");
   }
 }

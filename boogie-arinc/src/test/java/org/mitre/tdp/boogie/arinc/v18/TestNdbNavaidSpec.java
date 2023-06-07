@@ -6,14 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
-public class TestNdbNavaidSpec {
+class TestNdbNavaidSpec {
 
-  public static final String navaid1 = "SEEUPNUUOLUU D     UU104000HMLW N52431540E039313750                       E0100           RPELIPETSK LMM RW15              353032003";
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new NdbNavaidSpec());
+
+  private static final String navaid1 = "SEEUPNUUOLUU D     UU104000HMLW N52431540E039313750                       E0100           RPELIPETSK LMM RW15              353032003";
 
   @Test
   void testSpecMatchesNavaidRecord1() {
@@ -22,12 +24,12 @@ public class TestNdbNavaidSpec {
 
   @Test
   void testValidatorPasses_Navaid1() {
-    assertTrue(new NdbNavaidValidator().test(ArincVersion.V18.parser().apply(navaid1).orElseThrow(AssertionError::new)));
+    assertTrue(new NdbNavaidValidator().test(PARSER.parse(navaid1).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseNavaid1() {
-    ArincRecord record = ArincVersion.V18.parser().apply(navaid1).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(navaid1).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -60,6 +62,6 @@ public class TestNdbNavaidSpec {
 
   @Test
   void testValidatorPasses_SU() {
-    assertTrue(new NdbNavaidValidator().test(ArincVersion.V18.parser().apply(SU).orElseThrow(AssertionError::new)));
+    assertTrue(new NdbNavaidValidator().test(PARSER.parse(SU).orElseThrow(AssertionError::new)));
   }
 }

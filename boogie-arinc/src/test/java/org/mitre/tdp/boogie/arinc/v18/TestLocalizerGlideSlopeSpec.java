@@ -6,13 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 class TestLocalizerGlideSlopeSpec {
+
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new LocalizerGlideSlopeSpec());
 
   private static final String glideslope1 = "SUSAP KJFKK6IIHIQ1   011090RW04LN40390697W0734543950440N40373108W0734654910605 1087    300W01305700009                     587752003";
 
@@ -22,13 +23,13 @@ class TestLocalizerGlideSlopeSpec {
   }
 
   @Test
-  void testValidatorPasses_GlideSlope1(){
-    assertTrue(new LocalizerGlideSlopeValidator().test(ArincVersion.V18.parser().apply(glideslope1).orElseThrow(AssertionError::new)));
+  void testValidatorPasses_GlideSlope1() {
+    assertTrue(new LocalizerGlideSlopeValidator().test(PARSER.parse(glideslope1).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseGlideslope1() {
-    ArincRecord record = ArincVersion.V18.parser().apply(glideslope1).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(glideslope1).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),

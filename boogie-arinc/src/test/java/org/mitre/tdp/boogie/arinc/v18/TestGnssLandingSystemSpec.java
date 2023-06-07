@@ -1,20 +1,25 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
-public class TestGnssLandingSystemSpec {
-  public static final String G16A1 = "SSPAP YSSYYMTG16A1   021146RW16R                   1550S33575258E151110525YSSY         300E0130  00021WGE     00034        464902003";
+class TestGnssLandingSystemSpec {
+
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new GnssLandingSystemSpec());
+
+  private static final String G16A1 = "SSPAP YSSYYMTG16A1   021146RW16R                   1550S33575258E151110525YSSY         300E0130  00021WGE     00034        464902003";
 
   @Test
   void testG16A1() {
-    ArincRecord gls = ArincVersion.V18.parser().apply(G16A1).orElseThrow();
+    ArincRecord gls = PARSER.parse(G16A1).orElseThrow();
 
     assertAll(
         () -> assertEquals(RecordType.S, gls.requiredField("recordType")),

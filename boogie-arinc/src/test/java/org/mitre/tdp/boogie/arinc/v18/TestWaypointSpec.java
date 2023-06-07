@@ -8,14 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
-public class TestWaypointSpec {
+class TestWaypointSpec {
 
-  public static final String enrouteWaypoint = "SSAMEAENRT   UMGOS SK1    R  RH N03190000W080465800                       W0023     WGE        P  UMGOS                    209142003";
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new WaypointSpec());
+
+  private static final String enrouteWaypoint = "SSAMEAENRT   UMGOS SK1    R  RH N03190000W080465800                       W0023     WGE        P  UMGOS                    209142003";
 
   @Test
   void testSpecMatchesEnrouteRecord() {
@@ -24,12 +26,12 @@ public class TestWaypointSpec {
 
   @Test
   void testValidatorPasses_EnrouteWaypoint() {
-    assertTrue(new WaypointValidator().test(ArincVersion.V18.parser().apply(enrouteWaypoint).orElseThrow(AssertionError::new)));
+    assertTrue(new WaypointValidator().test(PARSER.parse(enrouteWaypoint).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseEnrouteWaypoint() {
-    ArincRecord arincRecord = ArincVersion.V18.parser().apply(enrouteWaypoint).orElseThrow(AssertionError::new);
+    ArincRecord arincRecord = PARSER.parse(enrouteWaypoint).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, arincRecord.requiredField("recordType")),
@@ -54,7 +56,7 @@ public class TestWaypointSpec {
     );
   }
 
-  public static final String terminalWaypoint = "SUSAP KFMHK6CREDSX K61    RIF   N41552146W070140577                       W0154     NAR        P  REDSX                    520911902";
+  private static final String terminalWaypoint = "SUSAP KFMHK6CREDSX K61    RIF   N41552146W070140577                       W0154     NAR        P  REDSX                    520911902";
 
   @Test
   void testSpecMatchesTerminalRecord() {
@@ -63,12 +65,12 @@ public class TestWaypointSpec {
 
   @Test
   void testValidatorPasses_TerminalWaypoint() {
-    assertTrue(new WaypointValidator().test(ArincVersion.V18.parser().apply(terminalWaypoint).orElseThrow(AssertionError::new)));
+    assertTrue(new WaypointValidator().test(PARSER.parse(terminalWaypoint).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseTerminalWaypoint() {
-    ArincRecord arincRecord = ArincVersion.V18.parser().apply(terminalWaypoint).orElseThrow(AssertionError::new);
+    ArincRecord arincRecord = PARSER.parse(terminalWaypoint).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, arincRecord.requiredField("recordType")),
@@ -107,6 +109,6 @@ public class TestWaypointSpec {
 
   @Test
   void testValidatorPasses_PIRAT() {
-    assertTrue(new WaypointValidator().test(ArincVersion.V18.parser().apply(PIRAT).orElseThrow(AssertionError::new)));
+    assertTrue(new WaypointValidator().test(PARSER.parse(PIRAT).orElseThrow(AssertionError::new)));
   }
 }

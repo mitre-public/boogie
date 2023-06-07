@@ -10,13 +10,15 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 class TestProcedureLegSpec {
+
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new ProcedureLegSpec());
 
   private static final String IF = "SUSAP KJFKK6FH22LZ ADPK   010DPK  K6D 0V  A    IF                                             18000                 A FS   204071113";
 
@@ -27,12 +29,12 @@ class TestProcedureLegSpec {
 
   @Test
   void testValidatorPassesIF() {
-    assertTrue(new ProcedureLegValidator().test(ArincVersion.V19.parser().apply(IF).orElseThrow(AssertionError::new)));
+    assertTrue(new ProcedureLegValidator().test(PARSER.parse(IF).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseIF() {
-    ArincRecord record = ArincVersion.V19.parser().apply(IF).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(IF).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),

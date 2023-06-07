@@ -10,13 +10,15 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 public class TestAirportSpec {
+
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new AirportSpec());
 
   public static final String _01GE = "SUSAP 01GEK7A        110000025N N32402800W082461600W006000375250      1800018000PR00Y NAR    WRIGHTSVILLE/THE FARM         818881902";
 
@@ -27,12 +29,12 @@ public class TestAirportSpec {
 
   @Test
   void testValidatorPasses_01GE() {
-    assertTrue(new AirportValidator().test(ArincVersion.V18.parser().apply(_01GE).orElseThrow(AssertionError::new)));
+    assertTrue(new AirportValidator().test(PARSER.parse(_01GE).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseAirport_01GE() {
-    ArincRecord record = ArincVersion.V18.parser().apply(_01GE).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(_01GE).orElseThrow(AssertionError::new);
     assertNotNull(record);
 
     assertAll(
@@ -76,12 +78,12 @@ public class TestAirportSpec {
 
   @Test
   void testValidatorPasses_CAL4() {
-    assertTrue(new AirportValidator().test(ArincVersion.V18.parser().apply(_CAL4).orElseThrow(AssertionError::new)));
+    assertTrue(new AirportValidator().test(PARSER.parse(_CAL4).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseAirport_CAL4() {
-    ArincRecord record = ArincVersion.V18.parser().apply(_CAL4).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(_CAL4).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals(RecordType.S, record.requiredField("recordType")),
@@ -124,12 +126,12 @@ public class TestAirportSpec {
 
   @Test
   void testValidatorPasses_KJFK() {
-    assertTrue(new AirportValidator().test(ArincVersion.V18.parser().apply(KJFK).orElseThrow(AssertionError::new)));
+    assertTrue(new AirportValidator().test(PARSER.parse(KJFK).orElseThrow(AssertionError::new)));
   }
 
   @Test
   void testParseAirport_KJFK() {
-    ArincRecord record = ArincVersion.V18.parser().apply(KJFK).orElseThrow(AssertionError::new);
+    ArincRecord record = PARSER.parse(KJFK).orElseThrow(AssertionError::new);
     assertNotNull(record);
 
     assertAll(
