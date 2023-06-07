@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.alg.chooser.graph;
 
+import static java.util.stream.Collectors.toSet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
@@ -12,9 +15,6 @@ import org.mitre.tdp.boogie.HOBTT2;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
-
-import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StarToAirportLinkerTest {
 
@@ -57,8 +57,8 @@ class StarToAirportLinkerTest {
     return new AnyAirport(airport, GRAPHER.graphRepresentationOf(ResolvedToken.standardAirport(airport)));
   }
 
-  private AnyStar anyStar(Procedure sid, Function<Procedure, ResolvedToken<Procedure>> tokenizer) {
-    ResolvedToken<Procedure> token = tokenizer.apply(sid);
-    return new AnyStar(token.infrastructure(), GRAPHER.graphRepresentationOf(token));
+  private AnyStar anyStar(Procedure sid, Function<Procedure, ResolvedToken> tokenizer) {
+    ResolvedToken token = tokenizer.apply(sid);
+    return new AnyStar((Procedure) token.infrastructure(), GRAPHER.graphRepresentationOf(token));
   }
 }

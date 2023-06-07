@@ -32,7 +32,7 @@ import org.mitre.tdp.boogie.alg.split.RouteToken;
  * <p>Tokens are visit-able such that downstream classes can walk between the object graph of token types and make decisions about
  * how to interpret them where multiple are present for a given {@link RouteToken}.
  */
-public interface ResolvedToken<T> {
+public interface ResolvedToken {
 
   /**
    * Wraps a resolved {@link Airport} indicting it was filed as part of the route string in the standard fashion.
@@ -240,7 +240,7 @@ public interface ResolvedToken<T> {
    * Returns the infrastructure element associated with this resolved token. This could be an airway, an airport, a fix, FRD or
    * any other type of infrastructure that can be referred to in a route string.
    */
-  T infrastructure();
+  Object infrastructure();
 
   /**
    * Accepts a visitor for single-dispatch purposes where-in the visitor can handle elements of this token's concrete type and
@@ -248,7 +248,7 @@ public interface ResolvedToken<T> {
    */
   void accept(ResolvedTokenVisitor visitor);
 
-  final class StandardAirport implements ResolvedToken<Airport> {
+  final class StandardAirport implements ResolvedToken {
 
     private final Airport airport;
 
@@ -272,7 +272,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class DirectToAirport implements ResolvedToken<Airport> {
+  final class DirectToAirport implements ResolvedToken {
 
     private final Airport airport;
 
@@ -296,7 +296,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class StandardAirway implements ResolvedToken<Airway> {
+  final class StandardAirway implements ResolvedToken {
 
     private final Airway airway;
 
@@ -320,7 +320,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class StandardApproach implements ResolvedToken<Procedure> {
+  final class StandardApproach implements ResolvedToken {
 
     private final Procedure procedure;
 
@@ -344,7 +344,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class StandardFix implements ResolvedToken<Fix> {
+  final class StandardFix implements ResolvedToken {
 
     private final Fix fix;
 
@@ -368,7 +368,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class DirectToFix implements ResolvedToken<Fix> {
+  final class DirectToFix implements ResolvedToken {
 
     private final Fix fix;
 
@@ -392,7 +392,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class StandardLatLong implements ResolvedToken<LatLong> {
+  final class StandardLatLong implements ResolvedToken {
 
     private final LatLong latLong;
 
@@ -416,7 +416,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class DirectToLatLong implements ResolvedToken<LatLong> {
+  final class DirectToLatLong implements ResolvedToken {
 
     private final LatLong latLong;
 
@@ -440,7 +440,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class SidEnrouteCommon implements ResolvedToken<Procedure> {
+  final class SidEnrouteCommon implements ResolvedToken {
 
     private final Procedure sid;
 
@@ -464,7 +464,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class SidRunway implements ResolvedToken<Procedure> {
+  final class SidRunway implements ResolvedToken {
 
     private final Procedure sid;
 
@@ -488,7 +488,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class StarEnrouteCommon implements ResolvedToken<Procedure> {
+  final class StarEnrouteCommon implements ResolvedToken {
 
     private final Procedure star;
 
@@ -512,7 +512,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class StarRunway implements ResolvedToken<Procedure> {
+  final class StarRunway implements ResolvedToken {
 
     private final Procedure star;
 
@@ -536,7 +536,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class StandardFrd implements ResolvedToken<Fix.FixRadialDistance> {
+  final class StandardFrd implements ResolvedToken {
 
     private final Fix.FixRadialDistance frd;
 
@@ -560,7 +560,7 @@ public interface ResolvedToken<T> {
     }
   }
 
-  final class DirectToFrd implements ResolvedToken<Fix.FixRadialDistance> {
+  final class DirectToFrd implements ResolvedToken {
 
     private final Fix.FixRadialDistance frd;
 

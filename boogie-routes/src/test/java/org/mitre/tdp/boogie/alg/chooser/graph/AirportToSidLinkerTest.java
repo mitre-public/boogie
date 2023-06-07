@@ -57,8 +57,9 @@ class AirportToSidLinkerTest {
     return new AnyAirport(airport, GRAPHER.graphRepresentationOf(ResolvedToken.standardAirport(airport)));
   }
 
-  private AnySid anySid(Procedure sid, Function<Procedure, ResolvedToken<Procedure>> tokenizer) {
-    ResolvedToken<Procedure> token = tokenizer.apply(sid);
-    return new AnySid(token.infrastructure(), GRAPHER.graphRepresentationOf(token));
+  private AnySid anySid(Procedure sid, Function<Procedure, ResolvedToken> tokenizer) {
+    ResolvedToken token = tokenizer.apply(sid);
+    return new AnySid((Procedure) token.infrastructure(), GRAPHER.graphRepresentationOf(token));
+
   }
 }

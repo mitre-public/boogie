@@ -96,7 +96,7 @@ class DirectToConverterTest {
     return fix;
   }
 
-  private static final class Dummy implements ResolvedToken<Object> {
+  private static final class Dummy implements ResolvedToken {
 
     private final Object object = new Object();
 
