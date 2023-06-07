@@ -21,14 +21,15 @@ import java.util.function.Function;
  *   is the start fix of the runway transitions.</li>
  * </ol>
  *
- * <p>Approach procedures operate somewhat similarly but they don't have runway transitions. They have "approach" transitions which
+ * <p>Approach procedures operate somewhat similarly, but don't have runway transitions. They have "approach" transitions which
  * typically either directly connect to a STAR or serve to collect traffic of the end of a STAR/from terminal airspace onto the
  * final straight-in common portion of the approach.
  *
  * <p>Optionally most approach procedures will contain a MISSED transition which can be flown when the aircraft initiates a go-around
- * due to something that occurred during the approach. Often MISSED transitions will end in a leg that indicates it's associated
- * fix is {@link Leg#isPublishedHoldingFix()} - so the aircraft can be held before being re-inserted into the arrival sequencing
- * at the airport.
+ * due to something that occurred during the approach.
+ *
+ * <p>Often MISSED transitions will end in a leg that indicates it's associated fix is {@link Leg#isPublishedHoldingFix()} - so
+ * the aircraft can be held before being re-inserted into the arrival sequencing at the airport.
  */
 public interface Transition {
 
@@ -72,6 +73,19 @@ public interface Transition {
    */
   List<? extends Leg> legs();
 
+  void accept(Visitor visitor);
+
+  /**
+   * Visitor interface for standard {@link Transition} implementations to allow clients to easily unwrap their own objects or handle
+   * ones that Boogie generated after-the-fact.
+   */
+  interface Visitor {
+
+    void visit(Standard standard);
+
+    void visit(Record<?> record);
+  }
+
   final class Standard implements Transition {
 
     private final String transitionIdentifier;
@@ -106,6 +120,11 @@ public interface Transition {
           .transitionIdentifier(transitionIdentifier)
           .transitionType(transitionType)
           .legs(legs);
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -207,6 +226,11 @@ public interface Transition {
     @Override
     public List<? extends Leg> legs() {
       return delegate.legs();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override

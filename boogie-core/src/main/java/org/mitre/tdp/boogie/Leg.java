@@ -61,6 +61,20 @@ public interface Leg {
   }
 
   /**
+   * Returns a new constrained instance of a builder for {@link Leg.Standard} specific to {@link PathTerminator#AF} legs.
+   *
+   * <p>This builder contains a subset of the setters available on the {@link Standard.Builder} and will throw exceptions when
+   * building if the required fields aren't present.
+   */
+  static AfBuilder afBuilder(Fix associatedFix, Fix recommendedNavaid, int sequenceNumber, double outboundMagneticCourse) {
+    return new AfBuilder()
+        .associatedFix(associatedFix)
+        .recommendedNavaid(recommendedNavaid)
+        .sequenceNumber(sequenceNumber)
+        .outboundMagneticCourse(outboundMagneticCourse);
+  }
+
+  /**
    * Returns a new constrained instance of a builder for {@link Leg.Standard} specific to {@link PathTerminator#IF} legs.
    *
    * <p>This builder contains a subset of the setters available on the {@link Standard.Builder} and will throw exceptions when
@@ -216,6 +230,19 @@ public interface Leg {
    * Typically this can be inferred from the waypoint description information in the concrete leg definition (e.g. from ARINC).
    */
   boolean isPublishedHoldingFix();
+
+  void accept(Visitor visitor);
+
+  /**
+   * Visitor interface for standard {@link Leg} implementations to allow clients to easily unwrap their own objects or handle
+   * ones that Boogie generated after-the-fact.
+   */
+  interface Visitor {
+
+    void visit(Standard standard);
+
+    void visit(Record<?> record);
+  }
 
   final class Standard implements Leg {
 
@@ -376,6 +403,11 @@ public interface Leg {
           .turnDirection(turnDirection().orElse(null))
           .isFlyOverFix(isFlyOverFix())
           .isPublishedHoldingFix(isPublishedHoldingFix());
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -645,6 +677,11 @@ public interface Leg {
     }
 
     @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
@@ -681,35 +718,6 @@ public interface Leg {
       super("Missing required field: " + fieldName);
     }
   }
-
-//  final class AfView {
-//
-//    private final Leg delegate;
-//
-//    private AfView(Leg delegate) {
-//      checkArgument(PathTerminator.AF.equals(delegate.pathTerminator()), "Should be an AF terminating leg.");
-//      this.delegate = requireNonNull(delegate);
-//    }
-//
-//    public Fix associatedFix() {
-//      return delegate.associatedFix().orElseThrow(() -> new MissingRequiredFieldException("Associated Fix"));
-//    }
-//
-//    public Fix recommendedNavaid() {
-//      return delegate.recommendedNavaid().orElseThrow(() -> new MissingRequiredFieldException("Recommended Navaid"));
-//    }
-//
-//    /**
-//     * Called the OBMG in ARINC424, this contains the boundary radial of the AF leg.
-//     */
-//    public double outboundMagneticCourse() {
-//      return delegate.outboundMagneticCourse().orElseThrow(() -> new MissingRequiredFieldException("Outbound Magnetic Course"));
-//    }
-//
-//    public double rho() {
-//      return de
-//    }
-//  }
 
   final class AfBuilder {
 

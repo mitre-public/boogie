@@ -1,18 +1,15 @@
 package org.mitre.tdp.boogie;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.util.Declinations;
-import org.mitre.tdp.boogie.util.Preconditions;
 
 
 /**
@@ -155,7 +152,7 @@ public final class MockObjects {
         .stream().map(MockObjects::newProcedure).collect(Collectors.toList());
   }
 
-  private static String createGroupKey(Transition transition){
+  private static String createGroupKey(Transition transition) {
     return Optional.of(transition)
         .filter(t -> t instanceof CompatTransition)
         .map(CompatTransition.class::cast)
@@ -213,6 +210,11 @@ public final class MockObjects {
     @Override
     public List<? extends Leg> legs() {
       return delegate.legs();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      delegate.accept(visitor);
     }
 
     private static final class Builder {

@@ -60,6 +60,9 @@ public final class JIIMS3 implements Procedure {
     return this.transitions.get(tname);
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
 
   private static Transition SWL() {
     Leg SWL = IF("SWL", 38.05659444444444, -75.46390000000001);

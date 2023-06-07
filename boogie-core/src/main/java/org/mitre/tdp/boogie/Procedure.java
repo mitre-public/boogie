@@ -146,6 +146,19 @@ public interface Procedure {
     return finalTransitions().stream().flatMap(transition -> transition.legs().stream().filter(filter).reduce((l1, l2) -> l2).stream()).collect(toList());
   }
 
+  void accept(Visitor visitor);
+
+  /**
+   * Visitor interface for standard {@link Procedure} implementations to allow clients to easily unwrap their own objects or handle
+   * ones that Boogie generated after-the-fact.
+   */
+  interface Visitor {
+
+    void visit(Standard standard);
+
+    void visit(Record<?> record);
+  }
+
   final class Standard implements Procedure {
 
     private final String procedureIdentifier;
@@ -189,6 +202,11 @@ public interface Procedure {
     @Override
     public Collection<? extends Transition> transitions() {
       return transitions;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -310,6 +328,11 @@ public interface Procedure {
     }
 
     @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
@@ -370,6 +393,11 @@ public interface Procedure {
     @Override
     public Collection<? extends Transition> transitions() {
       return filteredTransitions;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      procedure.accept(visitor);
     }
   }
 }

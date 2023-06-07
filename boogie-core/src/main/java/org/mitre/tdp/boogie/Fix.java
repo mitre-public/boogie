@@ -68,6 +68,21 @@ public interface Fix extends HasPosition {
    */
   Optional<MagneticVariation> magneticVariation();
 
+  void accept(Visitor visitor);
+
+  /**
+   * Visitor interface for standard {@link Fix} implementations to allow clients to easily unwrap their own objects or handle
+   * ones that Boogie generated after-the-fact.
+   */
+  interface Visitor {
+
+    void visit(Standard standard);
+
+    void visit(Record<?> record);
+
+    void visit(FixRadialDistance frd);
+  }
+
   final class Standard implements Fix {
 
     private final String fixIdentifier;
@@ -88,13 +103,13 @@ public interface Fix extends HasPosition {
     }
 
     @Override
-    public Optional<MagneticVariation> magneticVariation() {
-      return ofNullable(magneticVariation);
+    public LatLong latLong() {
+      return latLong;
     }
 
     @Override
-    public LatLong latLong() {
-      return latLong;
+    public Optional<MagneticVariation> magneticVariation() {
+      return ofNullable(magneticVariation);
     }
 
     public Builder toBuilder() {
@@ -102,6 +117,11 @@ public interface Fix extends HasPosition {
           .fixIdentifier(fixIdentifier)
           .latLong(latLong)
           .magneticVariation(magneticVariation);
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -185,13 +205,18 @@ public interface Fix extends HasPosition {
     }
 
     @Override
+    public LatLong latLong() {
+      return delegate.latLong();
+    }
+
+    @Override
     public Optional<MagneticVariation> magneticVariation() {
       return delegate.magneticVariation();
     }
 
     @Override
-    public LatLong latLong() {
-      return delegate.latLong();
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -275,6 +300,11 @@ public interface Fix extends HasPosition {
 
     public Distance distance() {
       return distance;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override

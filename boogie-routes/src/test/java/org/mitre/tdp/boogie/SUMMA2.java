@@ -62,6 +62,10 @@ public class SUMMA2 implements Procedure {
     return this.transitions.get(tname);
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition RW34C() {
     Leg vi = VI();
     Leg NEZUG = CF("NEZUG", 47.56866666666667, -122.30966666666666);

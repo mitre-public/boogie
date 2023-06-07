@@ -63,6 +63,10 @@ public final class PLMMR2 implements Procedure {
     return this.transitions.get(tname);
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition RW28() {
     Leg VI = VI();
     Leg WLSON = CF("WLSON", 33.573975000000004, -84.58462499999999);

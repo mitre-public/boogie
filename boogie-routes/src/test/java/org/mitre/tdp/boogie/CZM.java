@@ -44,6 +44,10 @@ public class CZM implements Procedure {
     return transitions.values();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private CZM() {
     Map<String, Transition> map = Stream.of(DUPIX(), ALL(), AVSIM(), ITAKU(), LIDEK(), BOTOP(), OTEDI(), KESPO(), DAXUM(), ANIKO(), GOSUL(), ITPIG(), VOBED())
         .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse(null), Function.identity()));

@@ -64,6 +64,10 @@ public class COSTR3 implements Procedure {
     return transitions.values();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition ALL() {
     Leg COSTR = IF("COSTR", 28.111158333333336, -81.75830555555555);
     Leg BIGGR = TF("BIGGR", 28.241666666666667, -81.54944444444445);

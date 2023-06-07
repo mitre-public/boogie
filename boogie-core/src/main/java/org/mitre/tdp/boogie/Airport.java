@@ -9,13 +9,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.LatLong;
 
 /**
- * In a gross simplification, Boogie's worldview of an airport is as a specialized version of a {@link Fix}. This specialization
+ * Boogie's simplified view of an {@link Airport} is  This specialization
  * allows various algorithms to use and categorize the two independently where necessary.
  */
-public interface Airport extends Fix {
+public interface Airport extends HasPosition {
 
   static Standard.Builder builder() {
     return new Airport.Standard.Builder();
@@ -39,11 +40,25 @@ public interface Airport extends Fix {
    */
   String airportIdentifier();
 
+  /**
+   * The local magnetic variation at the airport - this is typically published with the airport in infrastructure data sources and
+   * is often the magnetic variation used by the FMS when converting magnetic to true headings/courses in the terminal airspace.
+   */
+  Optional<MagneticVariation> magneticVariation();
+
   Collection<? extends Runway> runways();
 
-  @Override
-  default String fixIdentifier() {
-    return airportIdentifier();
+  void accept(Visitor visitor);
+
+  /**
+   * Visitor interface for standard {@link Airport} implementations to allow clients to easily unwrap their own objects or handle
+   * ones that Boogie generated after-the-fact.
+   */
+  interface Visitor {
+
+    void visit(Standard standard);
+
+    void visit(Record<?> record);
   }
 
   final class Standard implements Airport {
@@ -92,6 +107,11 @@ public interface Airport extends Fix {
     }
 
     @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
@@ -99,7 +119,7 @@ public interface Airport extends Fix {
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
-      Airport.Standard standard = (Airport.Standard) o;
+      Standard standard = (Standard) o;
       return Objects.equals(airportIdentifier, standard.airportIdentifier)
           && Objects.equals(latLong, standard.latLong)
           && Objects.equals(magneticVariation, standard.magneticVariation)
@@ -166,7 +186,7 @@ public interface Airport extends Fix {
       }
 
       public Airport.Standard build() {
-        return new Airport.Standard(this);
+        return new Standard(this);
       }
     }
   }
@@ -188,7 +208,7 @@ public interface Airport extends Fix {
 
     @Override
     public String airportIdentifier() {
-      return delegate.fixIdentifier();
+      return delegate.airportIdentifier();
     }
 
     @Override
@@ -204,6 +224,11 @@ public interface Airport extends Fix {
     @Override
     public Collection<? extends Runway> runways() {
       return delegate.runways();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override

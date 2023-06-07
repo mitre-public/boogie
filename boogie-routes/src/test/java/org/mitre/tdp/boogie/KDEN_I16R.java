@@ -65,6 +65,10 @@ public final class KDEN_I16R implements Procedure {
     return transitions.values();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition KIPPR() {
     Leg KIPPR = IF("KIPPR", 40.34953333333333, -104.56333055555555);
     Leg HAYLY = TF("HAYLY", 40.33148611111111, -104.66150277777778);

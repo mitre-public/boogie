@@ -149,6 +149,11 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
   }
 
   @Override
+  public void accept(Visitor visitor) {
+    leg.accept(visitor);
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;

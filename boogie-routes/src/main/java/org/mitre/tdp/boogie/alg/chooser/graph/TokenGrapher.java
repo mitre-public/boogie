@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
@@ -70,13 +71,13 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.StandardAirport airport) {
-        Leg leg = Leg.ifBuilder(airport.infrastructure(), 0).build();
+        Leg leg = Leg.ifBuilder(createFix(airport.infrastructure()), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.DirectToAirport airport) {
-        Leg leg = Leg.dfBuilder(airport.infrastructure(), 0).build();
+        Leg leg = Leg.dfBuilder(createFix(airport.infrastructure()), 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
@@ -156,6 +157,14 @@ public interface TokenGrapher {
         return Fix.builder()
             .fixIdentifier(latLong.toBase64())
             .latLong(latLong)
+            .build();
+      }
+
+      private Fix createFix(Airport airport) {
+        return Fix.builder()
+            .fixIdentifier(airport.airportIdentifier())
+            .latLong(airport.latLong())
+            .magneticVariation(airport.magneticVariation().orElse(null))
             .build();
       }
     }

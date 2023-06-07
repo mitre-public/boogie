@@ -68,6 +68,19 @@ public interface Runway {
    */
   Optional<Course> course();
 
+  void accept(Visitor visitor);
+
+  /**
+   * Visitor interface for standard {@link Runway} implementations to allow clients to easily unwrap their own objects or handle
+   * ones that Boogie generated after-the-fact.
+   */
+  interface Visitor {
+
+    void visit(Standard standard);
+
+    void visit(Record<?> record);
+  }
+
   final class Standard implements Runway {
 
     private final String runwayIdentifier;
@@ -111,6 +124,11 @@ public interface Runway {
           .origin(origin())
           .length(length().orElse(null))
           .course(course().orElse(null));
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -214,6 +232,11 @@ public interface Runway {
     @Override
     public Optional<Course> course() {
       return delegate.course();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override

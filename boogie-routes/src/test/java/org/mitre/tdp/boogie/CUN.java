@@ -50,6 +50,10 @@ public class CUN implements Procedure {
     return transitions.values();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition AGNIX(){
     Leg AGNIX=IF ( "AGNIX" , 21.889930555555555 , -87.70383611111112);
     Leg ALSEG=TF ( "ALSEG" , 21.87 , -87.68416666666667);

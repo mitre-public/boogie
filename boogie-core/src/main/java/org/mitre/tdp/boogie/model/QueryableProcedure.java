@@ -136,6 +136,11 @@ public final class QueryableProcedure implements Procedure {
     return procedure.transitions();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+    procedure.accept(visitor);
+  }
+
   private static final class TransitionPage {
 
     private final Transition transition;

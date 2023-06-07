@@ -115,4 +115,9 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
   private String legSignature(Leg leg) {
     return leg.pathTerminator().name().concat(leg.associatedFix().map(Fix::fixIdentifier).orElse(""));
   }
+
+  @Override
+  public void accept(Visitor visitor) {
+    procedure.accept(visitor);
+  }
 }

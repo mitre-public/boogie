@@ -51,6 +51,10 @@ public class STAR_FAKE implements Procedure {
     return transitions.values();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition ALL() {
     Leg ZALLE = TF("ZALLE", 33.45709166666667, -84.58449444444445);
     Leg GGOLF = TF("GGOLF", 33.45582777777778, -84.33613333333332);

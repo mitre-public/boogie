@@ -37,6 +37,19 @@ public interface Airway {
    */
   List<? extends Leg> legs();
 
+  void accept(Visitor visitor);
+
+  /**
+   * Visitor interface for standard {@link Airway} implementations to allow clients to easily unwrap their own objects or handle
+   * ones that Boogie generated after-the-fact.
+   */
+  interface Visitor {
+
+    void visit(Standard standard);
+
+    void visit(Record<?> record);
+  }
+
   final class Standard implements Airway {
 
     private final String airwayIdentifier;
@@ -60,6 +73,11 @@ public interface Airway {
 
     public Builder toBuilder() {
       return new Builder().airwayIdentifier(airwayIdentifier).legs(legs);
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override
@@ -147,6 +165,11 @@ public interface Airway {
     @Override
     public List<? extends Leg> legs() {
       return delegate.legs();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+      visitor.visit(this);
     }
 
     @Override

@@ -65,6 +65,10 @@ public final class HOBTT2 implements Procedure {
     return transitions.values();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition DRSDN() {
     Leg DRSDN = IF("DRSDN", 33.06475, -86.183083);
     Leg SMAWG = TF("SMAWG", 33.02375833333333, -85.22195555555555);

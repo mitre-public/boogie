@@ -401,6 +401,11 @@ final class GraphicalRouteChooser implements RouteChooser {
     }
 
     @Override
+    public void accept(Visitor visitor) {
+      leg.accept(visitor);
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;

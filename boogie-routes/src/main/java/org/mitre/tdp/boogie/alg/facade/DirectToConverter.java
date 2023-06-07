@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.alg.resolve.FixTerminationLeg;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
@@ -60,7 +59,15 @@ final class DirectToConverter implements UnaryOperator<List<ResolvedLeg>> {
   }
 
   private ResolvedLeg makeUpdatedNext(ResolvedLeg next) {
-    Leg tf = FixTerminationLeg.TF(next.leg().associatedFix().orElseThrow());
+
+    Leg base = next.leg();
+
+    Leg tf = Leg.tfBuilder(base.associatedFix().orElseThrow(), base.sequenceNumber())
+        .rnp(base.rnp().orElse(null))
+        .altitudeConstraint(base.altitudeConstraint())
+        .speedConstraint(base.speedConstraint())
+        .build();
+
     return ResolvedLeg.create(next.routeToken(), next.resolvedToken(), tf);
   }
 

@@ -67,6 +67,10 @@ public final class CONNR5 implements Procedure {
     return this.transitions.get(tname);
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition RW17L() {
     Leg VI = VI();
     Leg GOROC = CF("GOROC", 39.75694444444444, -104.71472222222222);

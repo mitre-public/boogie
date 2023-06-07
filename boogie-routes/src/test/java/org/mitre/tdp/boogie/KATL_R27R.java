@@ -26,7 +26,6 @@ public class KATL_R27R implements Procedure {
     this.transitions = ImmutableMap.copyOf(map);
   }
 
-
   @Override
   public String procedureIdentifier() {
     return "R27R";
@@ -50,6 +49,10 @@ public class KATL_R27R implements Procedure {
   @Override
   public Collection<? extends Transition> transitions() {
     return transitions.values();
+  }
+
+  @Override
+  public void accept(Visitor visitor) {
   }
 
   private static Transition ALL() {

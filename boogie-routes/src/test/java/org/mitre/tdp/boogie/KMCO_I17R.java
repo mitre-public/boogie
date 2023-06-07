@@ -60,6 +60,10 @@ public final class KMCO_I17R implements Procedure {
     return transitions.values();
   }
 
+  @Override
+  public void accept(Visitor visitor) {
+  }
+
   private static Transition ALL() {
     Leg SACRO = IF("SACRO", 28.74290277777778, -81.29910555555556);
     Leg TACOT = CF("TACOT", 28.690266666666666, -81.29855277777777);

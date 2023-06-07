@@ -61,7 +61,6 @@ class AirportGrapherTest {
 
     when(airport.airportIdentifier()).thenReturn(identifier);
     when(airport.latLong()).thenReturn(location);
-    when(airport.fixIdentifier()).thenCallRealMethod();
 
     return airport;
   }
