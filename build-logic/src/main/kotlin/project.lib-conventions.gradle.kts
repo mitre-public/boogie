@@ -41,16 +41,12 @@ semanticVersioning {
     initialVersion.set("0.0.1")
     tagPrefix.set("")
 
-    branches {
-        branch {
-            predicate.set { git -> git.branch.name == "main" }
-            useConventionalIncrementor()
-            formatter { "$baseVersion${-snapshot}" }
-        }
-        branch {
-            predicate.set { git -> git.branch.name != "main" }
-            formatter { "$baseVersion${-branchId}${+shortCommit}" }
-        }
+    branches.main {
+        useConventionalIncrementor()
+        formatter { "$baseVersion${-snapshot}" }
+    }
+    defaultBranch {
+        formatter { "$baseVersion${-branchId}${+shortCommit}" }
     }
 }
 
