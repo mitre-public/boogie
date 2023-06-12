@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -18,6 +20,7 @@ import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.ContinuationRecordFilter;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
+import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
@@ -53,6 +56,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 class TestAirwayAssembler {
+  private static SplitList shouldSplit = SplitList.INSTANCE;
 
   /**
    * This file contains all the airway legs for J121 + T222 plus any record which mentions any of the associated fixes or recommended
@@ -103,6 +107,21 @@ class TestAirwayAssembler {
         () -> assertEquals("T222", T222.airwayIdentifier()),
         () -> assertEquals("BAERE|SPY|HYLEE|ALIEN|RUFVY|BET|HOLIN|CABOT|ANIAK|ZIDMU|UTICE|JOANY|MCG|MEFRA|SUCOD|HEMRO|ENN|FAI", associatedFixSequence(T222.legs())),
         () -> assertEquals("", recommendedNavaidSequence(T222.legs()))
+    );
+  }
+
+  @Test
+  void testSorting() {
+    List<ArincAirwayLeg> sorted = AirwayMocks.legs().stream().sorted(new ArincAirwayLegComparator()).collect(Collectors.toList());
+    assertEquals("first|second|third|fourth|fifth|sixth|seventh", sorted.stream().map(ArincAirwayLeg::fixIdentifier).collect(Collectors.joining("|")));
+  }
+
+  @Test
+  void listSplitting() {
+    List<List<ArincAirwayLeg>> legs = AirwayMocks.legs().stream().sorted(new ArincAirwayLegComparator()).collect(Partitioners.newListCollector((list, next) -> shouldSplit.negate().test(list.get(list.size() - 1), next)));
+    assertAll(
+        () -> assertEquals(3, legs.size(), "Two US airways and one CAN"),
+        () -> assertEquals("first|second|third|fourth|fifth|sixth|seventh", legs.stream().flatMap(Collection::stream).map(ArincAirwayLeg::fixIdentifier).collect(Collectors.joining("|")), "Sorting should be the same just in different lists")
     );
   }
 

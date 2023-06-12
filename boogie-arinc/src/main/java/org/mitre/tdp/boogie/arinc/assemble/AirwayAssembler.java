@@ -30,7 +30,7 @@ public final class AirwayAssembler<A, F, L> implements Function<Collection<Arinc
 
   private final ArincAirwayLegConverter<A, L, F> inflator;
 
-  private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway;
+  private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway = SplitList.INSTANCE;
 
   private final AirwayAssemblyStrategy<A, F, L> strategy;
 
@@ -40,9 +40,6 @@ public final class AirwayAssembler<A, F, L> implements Function<Collection<Arinc
       AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
     this.inflator = new ArincAirwayLegConverter<>(fixDatabase, fixStrategy, airwayStrategy);
     this.strategy = requireNonNull(airwayStrategy);
-    this.shouldSplitAirway = (previous, next) -> isSequenceNumberJump(previous, next)
-        || isSequenceNumberReset(previous, next)
-        || !previous.routeIdentifier().equals(next.routeIdentifier());
   }
 
   /**
@@ -68,25 +65,6 @@ public final class AirwayAssembler<A, F, L> implements Function<Collection<Arinc
         .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
         .stream()
         .map(this::toAirway);
-  }
-
-  boolean isSequenceNumberReset(ArincAirwayLeg previous, ArincAirwayLeg next) {
-    return next.sequenceNumber() <= previous.sequenceNumber();
-  }
-
-  /**
-   * Splits subsequent singleton airway records when their initial sequence number jumps by at least 1.
-   * <br>
-   * i.e. most sequence number are 0010, 0020, 1020, 3050 - we want to split on 0010 -> 1020.
-   * <br>
-   * Context in {@link SequenceNumber}.
-   */
-  boolean isSequenceNumberJump(ArincAirwayLeg previous, ArincAirwayLeg next) {
-    return !formattedSequenceNumber(previous).startsWith(formattedSequenceNumber(next).substring(0, 1));
-  }
-
-  String formattedSequenceNumber(ArincAirwayLeg arincAirwayLeg) {
-    return String.format("%04d", arincAirwayLeg.sequenceNumber());
   }
 
   private A toAirway(List<ArincAirwayLeg> arincAirwayLegs) {

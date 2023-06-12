@@ -59,6 +59,10 @@
 .idea/modules
 *.iml
 *.ipr
+.idea/checkstyle-idea.xml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/kotlinc.xml
 
 # CMake
 cmake-build-*/
