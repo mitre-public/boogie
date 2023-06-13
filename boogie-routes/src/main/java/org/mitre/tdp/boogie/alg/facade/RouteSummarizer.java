@@ -54,7 +54,7 @@ final class RouteSummarizer implements Function<List<ResolvedLeg>, Optional<Rout
 
     if (departureAirport.isPresent() || arrivalAirport.isPresent()) {
 
-      RouteSummary.Builder builder = new RouteSummary.Builder()
+      RouteSummary.Builder builder = RouteSummary.builder()
           .arrivalAirport(arrivalAirport.orElse(null))
           .departureAirport(departureAirport.orElse(null));
 

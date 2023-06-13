@@ -17,7 +17,7 @@ class RouteSummaryTest {
 
   @Test
   void testRouteSummaryToFromBuilder() {
-    RouteSummary summary = new RouteSummary.Builder()
+    RouteSummary summary = RouteSummary.builder()
         .route("ROUTE")
         .arrivalAirport("ARR")
         .arrivalRunway("RW")
