@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.alg.facade;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -105,6 +104,10 @@ public final class RouteSummary implements Serializable {
     this.approachEntryFix = builder.approachEntryFix;
     this.requiredApproachEquipage = builder.requiredApproachEquipage;
     checkArgument(departureAirport != null || arrivalAirport != null, "Arrival or Departure airport should be populated.");
+  }
+
+  public static RouteSummary.Builder builder() {
+    return new RouteSummary.Builder();
   }
 
   public String route() {
@@ -262,6 +265,9 @@ public final class RouteSummary implements Serializable {
     private String approach;
     private String approachEntryFix;
     private RequiredNavigationEquipage requiredApproachEquipage;
+
+    private Builder() {
+    }
 
     public Builder route(String route) {
       this.route = route;
