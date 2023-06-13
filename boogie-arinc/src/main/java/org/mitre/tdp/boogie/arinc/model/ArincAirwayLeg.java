@@ -256,8 +256,8 @@ public final class ArincAirwayLeg implements ArincModel {
     return Optional.ofNullable(fixSubSectionCode);
   }
 
-  public String continuationRecordNumber() {
-    return continuationRecordNumber;
+  public Optional<String> continuationRecordNumber() {
+    return Optional.ofNullable(continuationRecordNumber);
   }
 
   public Optional<String> waypointDescription() {
@@ -365,7 +365,7 @@ public final class ArincAirwayLeg implements ArincModel {
         .fixIcaoRegion(fixIcaoRegion())
         .fixSectionCode(fixSectionCode())
         .fixSubSectionCode(fixSubSectionCode().orElse(null))
-        .continuationRecordNumber(continuationRecordNumber())
+        .continuationRecordNumber(continuationRecordNumber().orElse(null))
         .waypointDescription(waypointDescription().orElse(null))
         .boundaryCode(boundaryCode().orElse(null))
         .routeType(routeType().orElse(null))

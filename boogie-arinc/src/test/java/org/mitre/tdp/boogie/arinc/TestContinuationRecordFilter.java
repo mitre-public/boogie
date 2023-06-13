@@ -11,24 +11,26 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 
 class TestContinuationRecordFilter {
 
   private final ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
+  private final PrimaryRecord isPrimary = PrimaryRecord.INSTANCE;
 
   @Test
   void testRecordNumberLessThanOrEqualTo1IsNotContinuation() {
-    assertFalse(continuationRecordFilter.isContinuationRecord("1"));
+    assertTrue(isPrimary.test("1"));
   }
 
   @Test
   void testRecordNumberGreaterThanOrEqualTo1IsContinuation() {
-    assertTrue(continuationRecordFilter.isContinuationRecord("2"));
+    assertFalse(isPrimary.test("2"));
   }
 
   @Test
   void testRecordNumberIsAlphaIsContinuation() {
-    assertTrue(continuationRecordFilter.isContinuationRecord("a"));
+    assertFalse(isPrimary.test("a"));
   }
 
   @Test
@@ -45,7 +47,10 @@ class TestContinuationRecordFilter {
     ArincRecord record4 = mock(ArincRecord.class);
     when(record4.optionalField(matches("continuationRecordNumber"))).thenReturn(Optional.empty());
 
-    long total = Stream.of(record1, record2, record3, record4).filter(continuationRecordFilter).count();
-    assertEquals(1, total);
+    ArincRecord record5 = mock(ArincRecord.class);
+    when(record4.optionalField(matches("continuationRecordNumber"))).thenReturn(Optional.of("0"));
+
+    long total = Stream.of(record1, record2, record3, record4, record5).filter(continuationRecordFilter).count();
+    assertEquals(2, total, "zero, and 1 are primary records");
   }
 }

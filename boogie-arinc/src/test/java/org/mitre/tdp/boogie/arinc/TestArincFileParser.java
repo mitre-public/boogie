@@ -38,6 +38,6 @@ class TestArincFileParser {
   @Test
   void testParserOnAll_KJFK_RelatedRecords() {
     Collection<ArincRecord> records = fileParser.apply(arincTestFile);
-    assertEquals(558, records.size(), "Expected 558 records given the explicitly configured list of specs in the test parser.");
-  }
+    assertEquals(546, records.size(), "Expected 558 records given the explicitly configured list of specs in the test parser. Except for the 12 continuation records that should not parse into their primary record models");
+  } //7 jfk runway continuations // 5 procedure legs with a continuation
 }

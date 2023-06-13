@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
 import org.mitre.tdp.boogie.arinc.v18.field.AltitudeDescription;
 import org.mitre.tdp.boogie.arinc.v18.field.ArcRadius;
@@ -117,7 +118,7 @@ public final class ProcedureLegSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return Stream.of("PD", "PE", "PF")
-        .anyMatch(ss -> arincRecord.regionMatches(4, ss, 0, 1) && arincRecord.regionMatches(12, ss, 1, 1));
+    return (Stream.of("PD", "PE", "PF").anyMatch(ss -> arincRecord.regionMatches(4, ss, 0, 1) && arincRecord.regionMatches(12, ss, 1, 1)))
+        && PrimaryRecord.INSTANCE.test(arincRecord.substring(38, 39));
   }
 }

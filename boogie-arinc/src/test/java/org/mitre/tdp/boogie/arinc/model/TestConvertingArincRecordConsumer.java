@@ -56,6 +56,8 @@ class TestConvertingArincRecordConsumer {
   private static final ConvertingArincRecordConsumer testV18Consumer = new ConvertingArincRecordConsumer.Builder()
       .airportDelegator(new AirportValidator())
       .airportConverter(new AirportConverter())
+      .airportContinuationConverter(new AirportPrimaryExtensionConverter())
+      .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
       .airwayLegDelegator(new AirwayLegValidator())
       .airwayLegConverter(new AirwayLegConverter())
       .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())

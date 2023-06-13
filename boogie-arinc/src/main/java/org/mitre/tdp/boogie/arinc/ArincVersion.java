@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 import java.util.List;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemSpec;
@@ -13,6 +14,7 @@ import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
 import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
+
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
 
 import com.google.common.collect.ImmutableMap;
@@ -31,6 +33,7 @@ public enum ArincVersion {
    * Returns a static implementation of a parser for V18 ARINC 424 data.
    */
   V18(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
       new AirwayLegSpec(),
@@ -48,6 +51,7 @@ public enum ArincVersion {
    * contents other than for procedures where a few more categorical {@link RouteTypeQualifier}s were added.
    */
   V19(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
       new AirwayLegSpec(),

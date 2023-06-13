@@ -17,6 +17,56 @@ public final class ArincRecordConverterFactory {
     throw new IllegalStateException("Unable to instantiate static factory class");
   }
 
+  private static ConvertingArincRecordConsumer.Builder standardConsumer() {
+    return new ConvertingArincRecordConsumer.Builder()
+        .airportDelegator(new AirportValidator())
+        .airportConverter(new AirportConverter())
+        .airportContinuationConverter(new AirportPrimaryExtensionConverter())
+        .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
+        .airwayLegDelegator(new AirwayLegValidator())
+        .airwayLegConverter(new AirwayLegConverter())
+        .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
+        .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
+        .ndbNavaidDelegator(new NdbNavaidValidator())
+        .ndbNavaidConverter(new NdbNavaidConverter())
+        .procedureLegDelegator(new ProcedureLegValidator())
+        .procedureLegConverter(new ProcedureLegConverter())
+        .runwayDelegator(new RunwayValidator())
+        .runwayConverter(new RunwayConverter())
+        .vhfNavaidDelegator(new VhfNavaidValidator())
+        .vhfNavaidConverter(new VhfNavaidConverter())
+        .waypointDelegator(new WaypointValidator())
+        .waypointConverter(new WaypointConverter())
+        .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+        .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+        .holdingPatternDelegator(new HoldingPatternValidator());
+  }
+
+  private static ConvertingArincRecordMapper.Builder standardMapper() {
+    return new ConvertingArincRecordMapper.Builder()
+        .airportDelegator(new AirportValidator())
+        .airportConverter(new AirportConverter())
+        .airportContinuationConverter(new AirportPrimaryExtensionConverter())
+        .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
+        .airwayLegDelegator(new AirwayLegValidator())
+        .airwayLegConverter(new AirwayLegConverter())
+        .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
+        .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
+        .ndbNavaidDelegator(new NdbNavaidValidator())
+        .ndbNavaidConverter(new NdbNavaidConverter())
+        .procedureLegDelegator(new ProcedureLegValidator())
+        .procedureLegConverter(new ProcedureLegConverter())
+        .runwayDelegator(new RunwayValidator())
+        .runwayConverter(new RunwayConverter())
+        .vhfNavaidDelegator(new VhfNavaidValidator())
+        .vhfNavaidConverter(new VhfNavaidConverter())
+        .waypointDelegator(new WaypointValidator())
+        .waypointConverter(new WaypointConverter())
+        .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+        .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+        .holdingPatternDelegator(new GnssLandingSystemValidator());
+  }
+
   /**
    * Factory instantiation of a {@link ConvertingArincRecordConsumer} using all ARINC Version 18 adapter and conversion classes
    * for the {@link ArincRecord} -> boogie.arinc.model data classes.
@@ -63,51 +113,5 @@ public final class ArincRecordConverterFactory {
       default:
         throw new UnsupportedOperationException("No factory method support for provided pre-canned version spec: ".concat(version.name()));
     }
-  }
-
-  private static ConvertingArincRecordConsumer.Builder standardConsumer() {
-    return new ConvertingArincRecordConsumer.Builder()
-        .airportDelegator(new AirportValidator())
-        .airportConverter(new AirportConverter())
-        .airwayLegDelegator(new AirwayLegValidator())
-        .airwayLegConverter(new AirwayLegConverter())
-        .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
-        .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
-        .ndbNavaidDelegator(new NdbNavaidValidator())
-        .ndbNavaidConverter(new NdbNavaidConverter())
-        .procedureLegDelegator(new ProcedureLegValidator())
-        .procedureLegConverter(new ProcedureLegConverter())
-        .runwayDelegator(new RunwayValidator())
-        .runwayConverter(new RunwayConverter())
-        .vhfNavaidDelegator(new VhfNavaidValidator())
-        .vhfNavaidConverter(new VhfNavaidConverter())
-        .waypointDelegator(new WaypointValidator())
-        .waypointConverter(new WaypointConverter())
-        .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
-        .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-        .holdingPatternDelegator(new HoldingPatternValidator());
-  }
-
-  private static ConvertingArincRecordMapper.Builder standardMapper() {
-    return new ConvertingArincRecordMapper.Builder()
-        .airportDelegator(new AirportValidator())
-        .airportConverter(new AirportConverter())
-        .airwayLegDelegator(new AirwayLegValidator())
-        .airwayLegConverter(new AirwayLegConverter())
-        .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
-        .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
-        .ndbNavaidDelegator(new NdbNavaidValidator())
-        .ndbNavaidConverter(new NdbNavaidConverter())
-        .procedureLegDelegator(new ProcedureLegValidator())
-        .procedureLegConverter(new ProcedureLegConverter())
-        .runwayDelegator(new RunwayValidator())
-        .runwayConverter(new RunwayConverter())
-        .vhfNavaidDelegator(new VhfNavaidValidator())
-        .vhfNavaidConverter(new VhfNavaidConverter())
-        .waypointDelegator(new WaypointValidator())
-        .waypointConverter(new WaypointConverter())
-        .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
-        .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-        .holdingPatternDelegator(new GnssLandingSystemValidator());
   }
 }

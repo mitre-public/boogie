@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMaximumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMinimumLevel;
@@ -61,6 +62,6 @@ public final class HoldingPatternSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.regionMatches(4, "EP", 0, 2);
+    return arincRecord.regionMatches(4, "EP", 0, 2) && PrimaryRecord.INSTANCE.test(arincRecord.substring(38, 39));
   }
 }

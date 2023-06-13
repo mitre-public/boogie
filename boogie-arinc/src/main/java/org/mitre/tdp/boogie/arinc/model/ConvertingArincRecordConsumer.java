@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableList;
 public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord> {
 
   private final DelegatableCollection<ArincAirport> arincAirports;
+  private final DelegatableCollection<ArincAirportPrimaryExtension> arincAirportExtensions;
   private final DelegatableCollection<ArincRunway> arincRunways;
   private final DelegatableCollection<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes;
   private final DelegatableCollection<ArincNdbNavaid> arincNdbNavaids;
@@ -49,6 +50,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
   private ConvertingArincRecordConsumer(Builder builder) {
     this.arincAirports = new DelegatableCollection<>(builder.airportDelegator, builder.airportConverter);
+    this.arincAirportExtensions = new DelegatableCollection<>(builder.airportContinuationDelegator, builder.airportContinuationConverter);
     this.arincRunways = new DelegatableCollection<>(builder.runwayDelegator, builder.runwayConverter);
     this.arincLocalizerGlideSlopes = new DelegatableCollection<>(builder.localizerGlideSlopeDelegator, builder.localizerGlideSlopeConverter);
     this.arincNdbNavaids = new DelegatableCollection<>(builder.ndbNavaidDelegator, builder.ndbNavaidConverter);
@@ -61,6 +63,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     this.consumer = new MRUDequeConsumer<>(
         this.arincAirports,
+        this.arincAirportExtensions,
         this.arincRunways,
         this.arincLocalizerGlideSlopes,
         this.arincNdbNavaids,
@@ -77,6 +80,9 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     return arincAirports.records();
   }
 
+  public Collection<ArincAirportPrimaryExtension> arincAirportExtensions() {
+    return arincAirportExtensions.records();
+  }
   public Collection<ArincRunway> arincRunways() {
     return arincRunways.records();
   }
@@ -184,9 +190,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   }
 
   public static class Builder {
-
     private Predicate<ArincRecord> airportDelegator;
     private Function<ArincRecord, Optional<ArincAirport>> airportConverter;
+    private Predicate<ArincRecord> airportContinuationDelegator;
+    private Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> airportContinuationConverter;
     private Predicate<ArincRecord> airwayDelegator;
     private Function<ArincRecord, Optional<ArincAirwayLeg>> airwayConverter;
     private Predicate<ArincRecord> localizerGlideSlopeDelegator;
@@ -209,6 +216,16 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     private Predicate<ArincRecord> holdingPatternDelegator;
 
     private Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter;
+
+    public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
+      this.airportContinuationDelegator = airportContinuationDelegator;
+      return this;
+    }
+
+    public Builder airportContinuationConverter(Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> airportContinuationConverter) {
+      this.airportContinuationConverter = airportContinuationConverter;
+      return this;
+    }
 
     public Builder airportDelegator(Predicate<ArincRecord> airportDelegator) {
       this.airportDelegator = requireNonNull(airportDelegator);

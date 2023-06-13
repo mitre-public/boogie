@@ -23,6 +23,7 @@ import org.mitre.tdp.boogie.arinc.ArincRecord;
 public final class ConvertingArincRecordMapper implements Function<ArincRecord, Optional<?>> {
 
   private final DelegatingMapper<ArincAirport> arincAirports;
+  private final DelegatingMapper<ArincAirportPrimaryExtension> arincAirportPrimaryExtensions;
   private final DelegatingMapper<ArincRunway> arincRunways;
   private final DelegatingMapper<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes;
   private final DelegatingMapper<ArincNdbNavaid> arincNdbNavaids;
@@ -37,6 +38,7 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
   private ConvertingArincRecordMapper(Builder builder) {
     this.arincAirports = new DelegatingMapper<>(builder.airportDelegator, builder.airportConverter);
+    this.arincAirportPrimaryExtensions = new DelegatingMapper<>(builder.airportContinuationDelegator, builder.airportContinuationConverter);
     this.arincRunways = new DelegatingMapper<>(builder.runwayDelegator, builder.runwayConverter);
     this.arincLocalizerGlideSlopes = new DelegatingMapper<>(builder.localizerGlideSlopeDelegator, builder.localizerGlideSlopeConverter);
     this.arincNdbNavaids = new DelegatingMapper<>(builder.ndbNavaidDelegator, builder.ndbNavaidConverter);
@@ -58,6 +60,9 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     }
     if (arincAirports.test(arincRecord)) {
       return arincAirports.apply(arincRecord);
+    }
+    if (arincAirportPrimaryExtensions.test(arincRecord)) {
+      return arincAirportPrimaryExtensions.apply(arincRecord);
     }
     if (arincRunways.test(arincRecord)) {
       return arincRunways.apply(arincRecord);
@@ -108,6 +113,9 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
     private Predicate<ArincRecord> airportDelegator;
     private Function<ArincRecord, Optional<ArincAirport>> airportConverter;
+
+    private Predicate<ArincRecord> airportContinuationDelegator;
+    private Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> airportContinuationConverter;
     private Predicate<ArincRecord> airwayDelegator;
     private Function<ArincRecord, Optional<ArincAirwayLeg>> airwayConverter;
     private Predicate<ArincRecord> localizerGlideSlopeDelegator;
@@ -130,6 +138,16 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     private Predicate<ArincRecord> holdingPatternDelegator;
 
     private Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter;
+
+    public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
+      this.airportContinuationDelegator = airportContinuationDelegator;
+      return this;
+    }
+
+    public Builder airportContinuationConverter(Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> airportContinuationConverter) {
+      this.airportContinuationConverter = airportContinuationConverter;
+      return this;
+    }
 
     public Builder airportDelegator(Predicate<ArincRecord> airportDelegator) {
       this.airportDelegator = requireNonNull(airportDelegator);

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 
 /**
  * Filter for dropping ARINC continuation records.
@@ -15,17 +16,11 @@ import org.apache.commons.lang3.StringUtils;
  * converter classes wish to skip them for parsing.
  */
 public final class ContinuationRecordFilter implements Predicate<ArincRecord> {
+  private static final PrimaryRecord PRIMARY = PrimaryRecord.INSTANCE;
 
   @Override
   public boolean test(ArincRecord arincRecord) {
     Optional<String> continuationRecordNumber = arincRecord.optionalField("continuationRecordNumber");
-    return continuationRecordNumber.map(record -> !isContinuationRecord(record)).orElse(false);
-  }
-
-  /**
-   * Continuation record numbers are [1-9a-z].
-   */
-  Boolean isContinuationRecord(String recordNumber) {
-    return StringUtils.isAlpha(recordNumber) || 1 < Integer.parseInt(recordNumber);
+    return continuationRecordNumber.filter(PRIMARY).isPresent();
   }
 }

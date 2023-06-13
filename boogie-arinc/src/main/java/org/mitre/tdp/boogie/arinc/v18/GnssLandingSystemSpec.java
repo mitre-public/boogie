@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 import com.google.common.collect.ImmutableList;
@@ -61,6 +62,6 @@ public final class GnssLandingSystemSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'T';
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'T' && PrimaryRecord.INSTANCE.test(arincRecord.substring(21,22));
   }
 }

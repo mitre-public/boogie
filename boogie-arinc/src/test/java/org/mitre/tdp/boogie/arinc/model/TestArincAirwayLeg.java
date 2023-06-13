@@ -46,7 +46,7 @@ class TestArincAirwayLeg {
         () -> assertEquals("PA", airway.fixIcaoRegion()),
         () -> assertEquals(SectionCode.E, airway.fixSectionCode()),
         () -> assertEquals(Optional.of("A"), airway.fixSubSectionCode()),
-        () -> assertEquals("0", airway.continuationRecordNumber()),
+        () -> assertEquals("0", airway.continuationRecordNumber().get()),
         () -> assertEquals("E C ", airway.waypointDescription().orElseThrow(AssertionError::new)),
         () -> assertFalse(airway.boundaryCode().isPresent()),
         () -> assertEquals("O", airway.routeType().orElseThrow(AssertionError::new)),

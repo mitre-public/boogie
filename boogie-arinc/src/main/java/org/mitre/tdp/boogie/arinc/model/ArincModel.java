@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.model;
 import java.io.Serializable;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.v18.field.ApplicationType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 /**
@@ -23,4 +24,14 @@ public interface ArincModel extends Serializable {
    * null values.
    */
   Optional<String> subSectionCode();
+
+  Optional<String> continuationRecordNumber();
+
+  /**
+   * Primary records do not have application types, but you need this information at this level of abstraction.
+   * @return defaults to empty as most implemented models are primary records.
+   */
+  default Optional<ApplicationType> applicationType() {
+    return Optional.empty();
+  }
 }

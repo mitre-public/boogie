@@ -58,6 +58,8 @@ class TestConvertingArincRecordMapper {
   private static final ConvertingArincRecordMapper testV18Mapper = new ConvertingArincRecordMapper.Builder()
       .airportDelegator(new AirportValidator())
       .airportConverter(new AirportConverter())
+      .airportContinuationConverter(new AirportPrimaryExtensionConverter())
+      .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
       .airwayLegDelegator(new AirwayLegValidator())
       .airwayLegConverter(new AirwayLegConverter())
       .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())

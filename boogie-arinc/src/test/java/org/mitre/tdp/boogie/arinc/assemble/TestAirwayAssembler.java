@@ -24,6 +24,8 @@ import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
@@ -154,6 +156,8 @@ class TestAirwayAssembler {
   private static final ConvertingArincRecordConsumer testV18Consumer = new ConvertingArincRecordConsumer.Builder()
       .airportDelegator(new AirportValidator())
       .airportConverter(new AirportConverter())
+      .airportContinuationConverter(new AirportPrimaryExtensionConverter())
+      .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
       .airwayLegDelegator(new AirwayLegValidator())
       .airwayLegConverter(new AirwayLegConverter())
       .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
@@ -15,7 +16,7 @@ public class AirwayMocks {
     when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.CAN);
     when(leg.routeIdentifier()).thenReturn("Q802");
     when(leg.sequenceNumber()).thenReturn(1);
-    when(leg.continuationRecordNumber()).thenReturn("0");
+    when(leg.continuationRecordNumber()).thenReturn(Optional.of("0"));
     when(leg.fixIdentifier()).thenReturn("first");
     return leg;
   }
@@ -25,7 +26,7 @@ public class AirwayMocks {
     when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.CAN);
     when(leg.routeIdentifier()).thenReturn("Q802");
     when(leg.sequenceNumber()).thenReturn(2);
-    when(leg.continuationRecordNumber()).thenReturn("0");
+    when(leg.continuationRecordNumber()).thenReturn(Optional.of("0"));
     when(leg.fixIdentifier()).thenReturn("second");
     return leg;
   }
@@ -35,7 +36,7 @@ public class AirwayMocks {
     when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.USA);
     when(leg.routeIdentifier()).thenReturn("Q802");
     when(leg.sequenceNumber()).thenReturn(1);
-    when(leg.continuationRecordNumber()).thenReturn("0");
+    when(leg.continuationRecordNumber()).thenReturn(Optional.of("0"));
     when(leg.fixIdentifier()).thenReturn("fifth");
     return leg;
   }
@@ -45,7 +46,7 @@ public class AirwayMocks {
     when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.USA);
     when(leg.routeIdentifier()).thenReturn("Q802");
     when(leg.sequenceNumber()).thenReturn(2);
-    when(leg.continuationRecordNumber()).thenReturn("0");
+    when(leg.continuationRecordNumber()).thenReturn(Optional.of("0"));
     when(leg.fixIdentifier()).thenReturn("sixth");
     return leg;
   }
@@ -55,7 +56,7 @@ public class AirwayMocks {
     when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.USA);
     when(leg.routeIdentifier()).thenReturn("Q802");
     when(leg.sequenceNumber()).thenReturn(10);
-    when(leg.continuationRecordNumber()).thenReturn("0");
+    when(leg.continuationRecordNumber()).thenReturn(Optional.of("0"));
     when(leg.fixIdentifier()).thenReturn("seventh");
     return leg;
   }
@@ -65,7 +66,7 @@ public class AirwayMocks {
     when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.USA);
     when(leg.routeIdentifier()).thenReturn("J2");
     when(leg.sequenceNumber()).thenReturn(2);
-    when(leg.continuationRecordNumber()).thenReturn("0");
+    when(leg.continuationRecordNumber()).thenReturn(Optional.of("0"));
     when(leg.fixIdentifier()).thenReturn("third");
     return leg;
   }
@@ -75,7 +76,7 @@ public class AirwayMocks {
     when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.USA);
     when(leg.routeIdentifier()).thenReturn("J2");
     when(leg.sequenceNumber()).thenReturn(10);
-    when(leg.continuationRecordNumber()).thenReturn(null);
+    when(leg.continuationRecordNumber()).thenReturn(Optional.empty());
     when(leg.fixIdentifier()).thenReturn("fourth");
     return leg;
   }

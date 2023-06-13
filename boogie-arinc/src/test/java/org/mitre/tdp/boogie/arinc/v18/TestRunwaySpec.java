@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;

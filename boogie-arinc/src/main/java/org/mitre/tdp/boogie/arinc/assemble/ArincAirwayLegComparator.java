@@ -14,7 +14,7 @@ public final class ArincAirwayLegComparator implements Comparator<ArincAirwayLeg
         .compare(l.customerAreaCode().toString(), r.customerAreaCode().toString())
         .compare(l.routeIdentifier(), r.routeIdentifier())
         .compare(l.sequenceNumber(), r.sequenceNumber())
-        .compare(l.continuationRecordNumber(), l.continuationRecordNumber(), Ordering.natural().nullsFirst())
+        .compare(l.continuationRecordNumber().orElse(null), l.continuationRecordNumber().orElse(null), Ordering.natural().nullsFirst())
         .result();
   }
 }

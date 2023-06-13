@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.BoundaryCode;
 import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
@@ -99,6 +100,6 @@ public final class AirwayLegSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.regionMatches(4, "ER", 0, 2);
+    return arincRecord.regionMatches(4, "ER", 0, 2) && PrimaryRecord.INSTANCE.test(arincRecord.substring(38,39));
   }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportElevation;
 import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
 import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
@@ -91,6 +92,6 @@ public final class AirportSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A';
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A' && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
   }
 }
