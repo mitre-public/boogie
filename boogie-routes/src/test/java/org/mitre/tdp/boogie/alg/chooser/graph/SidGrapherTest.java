@@ -7,18 +7,17 @@ import static org.mitre.tdp.boogie.MockObjects.IF;
 import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mitre.tdp.boogie.MockObjects.newProcedure;
 import static org.mitre.tdp.boogie.MockObjects.transition;
-import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
-import org.mitre.tdp.boogie.model.ProcedureGraph;
 
 class SidGrapherTest {
 
@@ -47,7 +46,7 @@ class SidGrapherTest {
     assertEquals(1, representation.size(), "Should have two links (1 from each runway, 0 linking them).");
   }
 
-  private static ProcedureGraph nominalGraph(ProcedureType type) {
+  private static Procedure nominalGraph(ProcedureType type) {
 
     Leg l1_1 = IF("AAA", 0.0, 0.0);
     Leg l1_2 = TF("BBB", 0.0, 0.1);
@@ -65,6 +64,6 @@ class SidGrapherTest {
     Leg l4_2 = TF("EEE", 0.0, 0.5);
     Transition ce = transition("E", "ALPHA1", "APT", TransitionType.ENROUTE, type, Arrays.asList(l4_1, l4_2));
 
-    return newProcedureGraph(newProcedure(Arrays.asList(ab, bc, cd, ce)));
+    return newProcedure(Arrays.asList(ab, bc, cd, ce));
   }
 }

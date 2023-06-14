@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,6 +26,8 @@ import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.model.ProcedureFactory;
+import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +94,26 @@ class TestProcedureAssemblerIntegration {
   }
 
   @Test
+  void testProcedureGraphAssembly() {
+
+    List<Procedure> notGraphable = proceduresByAirport.values().stream()
+        .flatMap(Collection::stream)
+        .filter(this::notGraphable)
+        .collect(toList());
+
+    assertEquals(0, notGraphable.size(), "Expected 0 procedures to not be graphable.");
+  }
+
+  private boolean notGraphable(Procedure procedure) {
+    try {
+      ProcedureFactory.newProcedureGraph(procedure);
+      return false;
+    } catch (Exception e) {
+      return true;
+    }
+  }
+
+  @Test
   void testCountsByRequiredNavigationEquipage() {
     Map<RequiredNavigationEquipage, Long> countsByEquip = proceduresByAirport.values().stream()
         .flatMap(Collection::stream).map(Procedure::requiredNavigationEquipage).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
@@ -121,8 +144,8 @@ class TestProcedureAssemblerIntegration {
 
     Map<PathTerminator, Pair<List<Leg>, List<Leg>>> invalidValid = legsByPathTerminator.asMap().entrySet().stream()
         .map(entry -> {
-          List<Leg> validLegs = entry.getValue().stream().filter(validLeg).collect(Collectors.toList());
-          List<Leg> invalidLegs = entry.getValue().stream().filter(validLeg.negate()).collect(Collectors.toList());
+          List<Leg> validLegs = entry.getValue().stream().filter(validLeg).collect(toList());
+          List<Leg> invalidLegs = entry.getValue().stream().filter(validLeg.negate()).collect(toList());
 
           LOG.debug("PathTerminator {}: Invalid {}, Valid {}.", entry.getKey(), invalidLegs.size(), validLegs.size());
           return Pair.of(entry.getKey(), Pair.of(invalidLegs, validLegs));

@@ -24,6 +24,7 @@ import org.mitre.tdp.boogie.PLMMR2;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.ROYAL9;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -212,6 +213,19 @@ class TestProcedureGraph {
         () -> assertTrue(ci.pathExists(PLMMR2.INSTANCE.get("RW09B").legs().get(0), PLMMR2.INSTANCE.get("SPA", "SPA"))),
         () -> assertTrue(ci.pathExists(PLMMR2.INSTANCE.get("RW28").legs().get(0), PLMMR2.INSTANCE.get("SPA", "SPA"))),
         () -> assertTrue(ci.pathExists(PLMMR2.INSTANCE.get("RW26R").legs().get(0), PLMMR2.INSTANCE.get("SPA", "SPA")))
+    );
+  }
+
+  @Test
+  void testROYAL9Connections() {
+    ProcedureGraph pg = ProcedureFactory.newProcedureGraph(ROYAL9.INSTANCE);
+
+    ConnectivityInspector<Leg, DefaultEdge> ci = new ConnectivityInspector<>(pg);
+
+    assertAll(
+        () -> assertTrue(ci.pathExists(ROYAL9.INSTANCE.get("ALL").legs().get(0), ROYAL9.INSTANCE.get("TONCE", "TONCE"))),
+        () -> assertTrue(ci.pathExists(ROYAL9.INSTANCE.get("ALL").legs().get(0), ROYAL9.INSTANCE.get("ARENZ", "ARENZ"))),
+        () -> assertTrue(ci.pathExists(ROYAL9.INSTANCE.get("ALL").legs().get(0), ROYAL9.INSTANCE.get("BODYN", "BODYN")))
     );
   }
 

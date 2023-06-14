@@ -73,7 +73,10 @@ public final class ProcedureFactory {
     return Combinatorics.cartesianProduct(finalLegs, initialLegs).stream()
         .filter(legPair -> legPair.first().associatedFix().isPresent())
         .filter(legPair -> legPair.second().associatedFix().isPresent())
-        .filter(legPair -> legPair.first().associatedFix().get().fixIdentifier().equals(legPair.second().associatedFix().get().fixIdentifier()));
+        .filter(legPair -> legPair.first().associatedFix().get().fixIdentifier().equals(legPair.second().associatedFix().get().fixIdentifier()))
+        // remove any pairs where the legs are literally identical - these will be linked implicitly anyway when the graphs
+        // edge set is iterated over
+        .filter(legPair -> !legPair.first().equals(legPair.second()));
   }
 
   private static Optional<Leg> initialLegOf(Transition transition) {

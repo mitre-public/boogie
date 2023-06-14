@@ -34,6 +34,7 @@ import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
+import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
@@ -105,6 +106,16 @@ final class GraphicalRouteChooser implements RouteChooser {
     return graph;
   }
 
+  /**
+   * Occasionally as part of the linking process new legs, not directly part of a {@link ResolvedToken}'s {@link TokenGrapher}
+   * representation, may be "invented" on the fly (see {@code Any->Approach} linking).
+   *
+   * <p>When this happens the invented on-the-fly leg won't be associated with any {@link ResolvedToken}, this method exists to
+   * propagate the resolved token of the last non-invented element into the invented leg.
+   *
+   * <p>In the context of approaches this means the glue leg between say a STAR and the approach will be associated with the token
+   * from the STAR (as opposed to the Approach).
+   */
   private Map<LinkableLeg, LinkableLeg> fixupInventedLegs(List<LinkableLeg> linkableLegs) {
 
     Map<LinkableLeg, LinkableLeg> fixedUp = new HashMap<>();
@@ -210,7 +221,7 @@ final class GraphicalRouteChooser implements RouteChooser {
   }
 
   /**
-   * We are going to want deterministic ordering between runs here - enfore the use of a {@link LinkedHashMap}.
+   * We are going to want deterministic ordering between runs here - enforce the use of a {@link LinkedHashMap}.
    */
   public static <T, K, U> Collector<T, ?, LinkedHashMap<K, U>> toMap(
       Function<? super T, ? extends K> keyMapper,
@@ -239,6 +250,8 @@ final class GraphicalRouteChooser implements RouteChooser {
     /**
      * Some linkers will create new legs (e.g. Any->Approach), it's hard in here to decide what RouteToken/ResolvedToken should
      * be their parent, so we defer this until later on.
+     *
+     * <p>See {@link #fixupInventedLegs(List)}.
      */
     LinkableLeg linkableLeg(Leg leg) {
       return ofNullable(linkableLegs.get(leg)).orElseGet(() -> LinkableLeg.builder().leg(leg).build());
