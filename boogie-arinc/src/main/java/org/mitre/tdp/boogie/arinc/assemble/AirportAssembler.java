@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.Pair;
@@ -21,15 +20,10 @@ import org.mitre.tdp.boogie.arinc.model.ArincRunway;
  * <p>This class can be used with the {@link AirportAssemblyStrategy#standard()} to generate lightweight Boogie-defined {@link Airport}
  * implementations that can be used with other Boogie algorithms.
  */
-public final class AirportAssembler<A, R> implements Function<ArincAirport, A> {
+public interface AirportAssembler<A> {
 
-  private final TerminalAreaDatabase terminalAreaDatabase;
-
-  private final AirportAssemblyStrategy<A, R> strategy;
-
-  public AirportAssembler(TerminalAreaDatabase terminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
-    this.terminalAreaDatabase = requireNonNull(terminalAreaDatabase);
-    this.strategy = requireNonNull(strategy);
+  static AirportAssembler<Airport> standard(TerminalAreaDatabase terminalAreaDatabase) {
+    return usingStrategy(terminalAreaDatabase, AirportAssemblyStrategy.standard());
   }
 
   /**
@@ -42,41 +36,58 @@ public final class AirportAssembler<A, R> implements Function<ArincAirport, A> {
    * @param strategy             strategy class for converting related 424 records into runways and then combining those runways
    *                             into airports see {@link AirportAssemblyStrategy#standard()}
    */
-  public static <A, R> AirportAssembler<A, R> create(TerminalAreaDatabase terminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
-    return new AirportAssembler<>(terminalAreaDatabase, strategy);
+  static <A, R> AirportAssembler<A> usingStrategy(TerminalAreaDatabase terminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
+    return new Standard<>(terminalAreaDatabase, strategy);
   }
 
-  @Override
-  public A apply(ArincAirport arincAirport) {
-    requireNonNull(arincAirport);
+  /**
+   * Creates a new airport of type {@code A} from the provided {@link ArincAirport} record.
+   */
+  A create(ArincAirport airport);
 
-    Collection<ArincRunway> arincRunways = terminalAreaDatabase.runwaysAt(
-        arincAirport.airportIdentifier(),
-        arincAirport.airportIcaoRegion()
-    );
+  final class Standard<A, R> implements AirportAssembler<A> {
 
-    List<R> runways = new ArrayList<>();
+    private final TerminalAreaDatabase terminalAreaDatabase;
 
-    if (!arincRunways.isEmpty()) {
-      ReciprocalRunwayPairer.INSTANCE.apply(arincRunways).stream()
-          // add in the other direction for the reciprocal pairing (a,b) -> (a,b),(b,a)
-          .flatMap(pair -> pair.second() != null ? Stream.of(pair, Pair.of(pair.second(), pair.first())) : Stream.of(pair))
-          .map(pair -> strategy.convertRunway(
-              arincAirport,
-              pair.first(),
-              pair.second(),
-              terminalAreaDatabase.primaryLocalizerGlideSlopeOf(
-                  arincAirport.airportIdentifier(),
-                  arincAirport.airportIcaoRegion(),
-                  pair.first().runwayIdentifier()).orElse(null),
-              terminalAreaDatabase.secondaryLocalizerGlideSlopeOf(
-                  arincAirport.airportIdentifier(),
-                  arincAirport.airportIcaoRegion(),
-                  pair.first().runwayIdentifier()).orElse(null)
-          ))
-          .forEach(runways::add);
+    private final AirportAssemblyStrategy<A, R> strategy;
+
+    public Standard(TerminalAreaDatabase terminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
+      this.terminalAreaDatabase = requireNonNull(terminalAreaDatabase);
+      this.strategy = requireNonNull(strategy);
     }
 
-    return strategy.convertAirport(arincAirport, runways);
+    @Override
+    public A create(ArincAirport arincAirport) {
+      requireNonNull(arincAirport);
+
+      Collection<ArincRunway> arincRunways = terminalAreaDatabase.runwaysAt(
+          arincAirport.airportIdentifier(),
+          arincAirport.airportIcaoRegion()
+      );
+
+      List<R> runways = new ArrayList<>();
+
+      if (!arincRunways.isEmpty()) {
+        ReciprocalRunwayPairer.INSTANCE.apply(arincRunways).stream()
+            // add in the other direction for the reciprocal pairing (a,b) -> (a,b),(b,a)
+            .flatMap(pair -> pair.second() != null ? Stream.of(pair, Pair.of(pair.second(), pair.first())) : Stream.of(pair))
+            .map(pair -> strategy.convertRunway(
+                arincAirport,
+                pair.first(),
+                pair.second(),
+                terminalAreaDatabase.primaryLocalizerGlideSlopeOf(
+                    arincAirport.airportIdentifier(),
+                    arincAirport.airportIcaoRegion(),
+                    pair.first().runwayIdentifier()).orElse(null),
+                terminalAreaDatabase.secondaryLocalizerGlideSlopeOf(
+                    arincAirport.airportIdentifier(),
+                    arincAirport.airportIcaoRegion(),
+                    pair.first().runwayIdentifier()).orElse(null)
+            ))
+            .forEach(runways::add);
+      }
+
+      return strategy.convertAirport(arincAirport, runways);
+    }
   }
 }

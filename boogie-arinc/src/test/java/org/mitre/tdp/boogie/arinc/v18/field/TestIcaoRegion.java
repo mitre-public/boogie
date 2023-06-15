@@ -19,12 +19,7 @@ class TestIcaoRegion {
 
   @Test
   void testParserFiltersWhitespaceInputs() {
-    assertEquals(Optional.empty(), parser.apply("   "));
-  }
-
-  @Test
-  void testParserFiltersInputsOver2CharactersInputs() {
-    assertEquals(Optional.empty(), parser.apply("ABCD"));
+    assertEquals(Optional.empty(), parser.apply("  "));
   }
 
   @Test

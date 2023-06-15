@@ -1,8 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static com.google.common.collect.Sets.newHashSet;
-
-import java.util.HashSet;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
@@ -72,24 +69,56 @@ public final class WaypointDescription implements FieldSpec<String> {
   @Override
   public Optional<String> apply(String fieldValue) {
     return Optional.of(fieldValue)
-        .filter(s -> s.length() == 4)
-        .map(s -> ""
-            .concat(inSetOrBlank(s.substring(0, 1), allowedColumn1))
-            .concat(inSetOrBlank(s.substring(1, 2), allowedColumn2))
-            .concat(inSetOrBlank(s.substring(2, 3), allowedColumn3))
-            .concat(inSetOrBlank(s.substring(3, 4), allowedColumn4))
-        );
+        .map(s -> new StringBuilder()
+            .append(allowedColumn1(s.charAt(0)) ? s.charAt(0) : ' ')
+            .append(allowedColumn2(s.charAt(1)) ? s.charAt(1) : ' ')
+            .append(allowedColumn3(s.charAt(2)) ? s.charAt(2) : ' ')
+            .append(allowedColumn4(s.charAt(3)) ? s.charAt(3) : ' ')
+            .toString());
   }
 
-  private String inSetOrBlank(String s, HashSet<String> set) {
-    return set.contains(s) ? s : " ";
+  private boolean allowedColumn1(char c) {
+    return 'A' == c
+        || 'E' == c
+        || 'F' == c
+        || 'G' == c
+        || 'H' == c
+        || 'N' == c
+        || 'P' == c
+        || 'R' == c
+        || 'T' == c
+        || 'V' == c;
   }
 
-  private static final HashSet<String> allowedColumn1 = newHashSet("A", "E", "F", "G", "H", "N", "P", "R", "T", "V");
+  private boolean allowedColumn2(char c) {
+    return 'B' == c
+        || 'E' == c
+        || 'U' == c
+        || 'V' == c;
+  }
 
-  private static final HashSet<String> allowedColumn2 = newHashSet("B", "E", "U", "Y");
+  private boolean allowedColumn3(char c) {
+    return 'A' == c
+        || 'B' == c
+        || 'C' == c
+        || 'G' == c
+        || 'M' == c
+        || 'P' == c
+        || 'R' == c
+        || 'S' == c;
+  }
 
-  private static final HashSet<String> allowedColumn3 = newHashSet("A", "B", "C", "G", "M", "P", "R", "S");
-
-  private static final HashSet<String> allowedColumn4 = newHashSet("A", "B", "C", "D", "E", "F", "G", "H", "I", "M", "N");
+  private boolean allowedColumn4(char c) {
+    return 'A' == c
+        || 'B' == c
+        || 'C' == c
+        || 'D' == c
+        || 'E' == c
+        || 'F' == c
+        || 'G' == c
+        || 'H' == c
+        || 'I' == c
+        || 'M' == c
+        || 'N' == c;
+  }
 }

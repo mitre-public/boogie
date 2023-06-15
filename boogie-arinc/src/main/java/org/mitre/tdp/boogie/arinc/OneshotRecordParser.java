@@ -160,8 +160,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
   }
 
   private Collection<APT> assembleAirports(TerminalAreaDatabase terminalAreaDatabase, Collection<ArincAirport> airports) {
-    AirportAssembler<APT, RWY> assembler = AirportAssembler.create(terminalAreaDatabase, airportStrategy);
-    return airports.stream().map(assembler).collect(toList());
+    AirportAssembler<APT> assembler = AirportAssembler.usingStrategy(terminalAreaDatabase, airportStrategy);
+    return airports.stream().map(assembler::create).collect(toList());
   }
 
   private Collection<ArincRecord> parseRecords(InputStream inputStream) {

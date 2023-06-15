@@ -45,8 +45,8 @@ class TestAirportAssemblerIntegration {
         EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
-    AirportAssembler<Airport, Runway> assembler = AirportAssembler.create(terminalAreaDatabase, AirportAssemblyStrategy.standard());
-    airports = EmbeddedCifpFile.instance().arincAirports().stream().map(assembler).collect(Collectors.groupingBy(Airport::airportIdentifier));
+    AirportAssembler<Airport> assembler = AirportAssembler.standard(terminalAreaDatabase);
+    airports = EmbeddedCifpFile.instance().arincAirports().stream().map(assembler::create).collect(Collectors.groupingBy(Airport::airportIdentifier));
   }
 
   @Test
@@ -69,8 +69,8 @@ class TestAirportAssemblerIntegration {
 
   /**
    * The majority of our unpaired runways are due to missing runways in the input CIFP source data.
-   * <br>
-   * The other standard case is runways labeled S/N, E/W, NE/SW, etc. these are fairly non-standard and so we leave them unsupported
+   *
+   * <p>The other standard case is runways labeled S/N, E/W, NE/SW, etc. these are fairly non-standard and so we leave them unsupported
    * for now.
    */
   @Test

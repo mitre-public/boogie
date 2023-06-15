@@ -59,7 +59,7 @@ class TestAirportAssembler {
 
   private static TerminalAreaDatabase terminalAreaDatabase;
 
-  private static AirportAssembler<Airport, Runway> assembler;
+  private static AirportAssembler<Airport> assembler;
 
   @BeforeAll
   static void setup() {
@@ -77,12 +77,12 @@ class TestAirportAssembler {
         testV18Consumer.arincGnssLandingSystems()
     );
 
-    assembler = AirportAssembler.create(terminalAreaDatabase, AirportAssemblyStrategy.standard());
+    assembler = AirportAssembler.standard(terminalAreaDatabase);
   }
 
   @Test
   void testKjfkAssembly() {
-    Airport airport = assembler.apply(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
+    Airport airport = assembler.create(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
 
     Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
 

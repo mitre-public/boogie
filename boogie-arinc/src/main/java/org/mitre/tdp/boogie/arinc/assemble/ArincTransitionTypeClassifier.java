@@ -3,8 +3,34 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Comparator.comparing;
-import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.*;
-import static org.mitre.tdp.boogie.util.Preconditions.allMatch;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_1;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_2;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_3;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_4;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_5;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_6;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_F;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_M;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_N;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_P;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_R;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_S;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_T;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_V;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_1;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_2;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_3;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_4;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_5;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_6;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_7;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_9;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_F;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_M;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_N;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_P;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_R;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_S;
 
 import java.util.List;
 import java.util.Set;
@@ -35,7 +61,6 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
 
   @Override
   public TransitionType apply(List<ArincProcedureLeg> arincProcedureLegs) {
-    checkArgument(allFromSameTransition(arincProcedureLegs), "Legs must be from the same logical transition.");
 
     List<ArincProcedureLeg> sorted = arincProcedureLegs.stream()
         .sorted(comparing(ArincProcedureLeg::sequenceNumber))
@@ -46,14 +71,6 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
     } else {
       return sidStarClassifier.apply(sorted);
     }
-  }
-
-  private boolean allFromSameTransition(List<ArincProcedureLeg> arincProcedureLegs) {
-    return allMatch(arincProcedureLegs, ArincProcedureLeg::sidStarIdentifier)
-        && allMatch(arincProcedureLegs, ArincProcedureLeg::airportIdentifier)
-        && allMatch(arincProcedureLegs, ArincProcedureLeg::airportIcaoRegion)
-        && allMatch(arincProcedureLegs, leg -> StandardizedTransitionName.INSTANCE.apply(leg.transitionIdentifier().orElse(null)))
-        && allMatch(arincProcedureLegs, ArincProcedureLeg::subSectionCode);
   }
 
   /**

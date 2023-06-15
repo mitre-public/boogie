@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -89,10 +88,12 @@ public final class AiracCycle {
     return new AiracCycle(cycle).startDate();
   }
 
-  private static final Predicate<String> isAiracCycle = Pattern.compile("^(\\d{2})(\\d{2})$").asPredicate();
-
   public static boolean isValidCycle(String cycle) {
-    return isAiracCycle.test(requireNonNull(cycle));
+    return cycle.length() == 4
+        && Character.isDigit(cycle.charAt(0))
+        && Character.isDigit(cycle.charAt(1))
+        && Character.isDigit(cycle.charAt(2))
+        && Character.isDigit(cycle.charAt(3));
   }
 
   /**
