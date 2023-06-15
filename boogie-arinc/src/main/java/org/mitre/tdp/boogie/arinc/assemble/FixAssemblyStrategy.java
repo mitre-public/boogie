@@ -1,8 +1,10 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.util.Declinations.magneticVariation;
 
 import java.time.Instant;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
@@ -11,6 +13,7 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
@@ -28,6 +31,21 @@ public interface FixAssemblyStrategy<F> {
    */
   static FixAssemblyStrategy<Fix> standard() {
     return new Standard();
+  }
+
+  /**
+   * Returns a new implementation of a {@link FixAssemblyStrategy} decorating the provided delegate strategy with a thin layer
+   * of caching such that when the same input object is provided for conversion, the previously assembled version of it will be
+   * used if it's already been converted once.
+   *
+   * <p>This helps keep down memory when assembling procedures and airways which reference the same underlying fix multiple times
+   * in multiple different records.
+   *
+   * @param delegate the delegate strategy to use to build the cached fixes
+   */
+  static <F> FixAssemblyStrategy<F> caching(FixAssemblyStrategy<F> delegate) {
+    requireNonNull(delegate, "Delegate strategy cannot be null.");
+    return delegate instanceof Caching ? delegate : new Caching<>(delegate);
   }
 
   /**
@@ -191,6 +209,53 @@ public interface FixAssemblyStrategy<F> {
 
     private IllegalStateException missingField(String fieldName) {
       return new IllegalStateException("Missing required field: " + fieldName);
+    }
+  }
+
+  final class Caching<F> implements FixAssemblyStrategy<F> {
+
+    private final FixAssemblyStrategy<F> delegate;
+
+    private final ConcurrentHashMap<ArincModel, F> cache;
+
+    private Caching(FixAssemblyStrategy<F> delegate) {
+      this.delegate = requireNonNull(delegate);
+      this.cache = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public F convertWaypoint(ArincWaypoint waypoint) {
+      return cache.computeIfAbsent(waypoint, w -> delegate.convertWaypoint((ArincWaypoint) w));
+    }
+
+    @Override
+    public F convertNdbNavaid(ArincNdbNavaid navaid) {
+      return cache.computeIfAbsent(navaid, n -> delegate.convertNdbNavaid((ArincNdbNavaid) n));
+    }
+
+    @Override
+    public F convertVhfNavaid(ArincVhfNavaid navaid) {
+      return cache.computeIfAbsent(navaid, n -> delegate.convertVhfNavaid((ArincVhfNavaid) n));
+    }
+
+    @Override
+    public F convertAirport(ArincAirport airport) {
+      return cache.computeIfAbsent(airport, a -> delegate.convertAirport((ArincAirport) a));
+    }
+
+    @Override
+    public F convertRunway(ArincRunway runway) {
+      return cache.computeIfAbsent(runway, r -> delegate.convertRunway((ArincRunway) r));
+    }
+
+    @Override
+    public F convertLocalizerGlideSlope(ArincLocalizerGlideSlope ilsGls) {
+      return cache.computeIfAbsent(ilsGls, i -> delegate.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) i));
+    }
+
+    @Override
+    public F convertGnssLandingSystem(ArincGnssLandingSystem gnss) {
+      return cache.computeIfAbsent(gnss, g -> delegate.convertGnssLandingSystem((ArincGnssLandingSystem) g));
     }
   }
 }

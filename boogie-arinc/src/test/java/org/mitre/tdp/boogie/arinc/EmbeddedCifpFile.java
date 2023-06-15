@@ -1,15 +1,26 @@
 package org.mitre.tdp.boogie.arinc;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.zip.GZIPInputStream;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
-import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +49,10 @@ public final class EmbeddedCifpFile {
    */
   public static EmbeddedCifpFile instance() {
     return SingletonHolder.INSTANCE;
+  }
+
+  public static InputStream getInputStream() throws IOException {
+    return new GZIPInputStream(Resources.getResource(EMBEDDED_FILE_NAME).openStream());
   }
 
   public Collection<ArincAirport> arincAirports() {
@@ -76,7 +91,9 @@ public final class EmbeddedCifpFile {
     return new HashSet<>();
   }
 
-  public Collection<ArincHoldingPattern> arincHoldingPatterns() {return new HashSet<>();}
+  public Collection<ArincHoldingPattern> arincHoldingPatterns() {
+    return new HashSet<>();
+  }
 
   public int totalRecords() {
     return arincAirports().size()
@@ -96,8 +113,7 @@ public final class EmbeddedCifpFile {
     ArincRecordParser parser = ArincVersion.V19.parser();
     LOG.info("Loading records from embedded CIFP file.");
 
-    URL resourceUrl = Resources.getResource(EMBEDDED_FILE_NAME);
-    try (InputStreamReader reader = new InputStreamReader(new GZIPInputStream(resourceUrl.openStream()))) {
+    try (InputStreamReader reader = new InputStreamReader(getInputStream())) {
       FileLineIterator iterator = new FileLineIterator(reader);
 
       LinkedHashSet<ArincRecord> parsedRecords = new LinkedHashSet<>();

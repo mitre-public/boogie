@@ -66,7 +66,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     this.version = requireNonNull(builder.version);
     this.dropRecord = requireNonNull(builder.dropRecord);
     this.airportStrategy = requireNonNull(builder.airportStrategy);
-    this.fixStrategy = requireNonNull(builder.fixStrategy);
+    this.fixStrategy = FixAssemblyStrategy.caching(builder.fixStrategy);
     this.airwayStrategy = requireNonNull(builder.airwayStrategy);
     this.procedureStrategy = requireNonNull(builder.procedureStrategy);
   }

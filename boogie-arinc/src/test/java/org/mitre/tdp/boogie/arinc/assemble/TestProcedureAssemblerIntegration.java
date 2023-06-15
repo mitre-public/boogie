@@ -64,7 +64,12 @@ class TestProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(terminalAreaDatabase, fixDatabase);
+    ProcedureAssembler<Procedure> assembler = ProcedureAssembler.withStrategy(
+        terminalAreaDatabase,
+        fixDatabase,
+        FixAssemblyStrategy.caching(FixAssemblyStrategy.standard()),
+        ProcedureAssemblyStrategy.standard()
+    );
 
     proceduresByAirport = assembler.assemble(EmbeddedCifpFile.instance().arincProcedureLegs()).collect(Collectors.groupingBy(Procedure::airportIdentifier));
   }
