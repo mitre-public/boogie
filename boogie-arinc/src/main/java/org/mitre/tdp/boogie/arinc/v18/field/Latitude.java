@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.util.CoordinateParser;
 
 /**
  * The “Latitude” field contains the latitude of the navigational feature identified in the record.
@@ -33,9 +32,36 @@ public final class Latitude implements FieldSpec<Double> {
     return Optional.of(fieldValue)
         .map(String::trim)
         .filter(s -> !s.isEmpty())
+        .filter(this::isNumeric)
         // move the trailing N/S to the back as expected by the coordinate parser
-        .map(s -> s.substring(1).concat(s.substring(0, 1)))
-        .flatMap(CoordinateParser::reformatLatCoordinate)
-        .map(CoordinateParser::convertToDegrees);
+        .map(this::convert);
+  }
+
+  private double convert(String d) {
+
+    double sign = d.charAt(0) == 'N' ? 1 : -1;
+
+    double degree = charNumber(d, 1) * 10 + charNumber(d, 2);
+    double minute = (charNumber(d, 3) * 10 + charNumber(d, 4)) / 60.;
+    double second = (charNumber(d, 5) * 10 + charNumber(d, 6)) / 3600.;
+    double decimal = charNumber(d, 7) / 36000. + charNumber(d, 8) / 360000.;
+
+    return sign * (degree + minute + second + decimal);
+  }
+
+  // elide the first non-numeric character
+  private boolean isNumeric(String d) {
+    return Character.isDigit(d.charAt(1))
+        && Character.isDigit(d.charAt(2))
+        && Character.isDigit(d.charAt(3))
+        && Character.isDigit(d.charAt(4))
+        && Character.isDigit(d.charAt(5))
+        && Character.isDigit(d.charAt(6))
+        && Character.isDigit(d.charAt(7))
+        && Character.isDigit(d.charAt(8));
+  }
+
+  private int charNumber(String s, int idx) {
+    return Character.getNumericValue(s.charAt(idx));
   }
 }

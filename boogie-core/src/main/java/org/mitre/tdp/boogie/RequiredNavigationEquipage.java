@@ -1,8 +1,11 @@
 package org.mitre.tdp.boogie;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.mitre.tdp.boogie.model.ProcedureFactory;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * High level indicator as to the the relative performance capabilities aircraft need to fly the procedure.
@@ -34,5 +37,19 @@ public enum RequiredNavigationEquipage {
    * a placeholder for those situations. e.g. within the {@link ProcedureFactory#newProcedure(Collection)} method - where required
    * equipage can't be inferred based solely on the transition interface.
    */
-  UNKNOWN
+  UNKNOWN;
+
+  private static final ImmutableMap<String, RequiredNavigationEquipage> LOOKUP = ImmutableMap.<String, RequiredNavigationEquipage>builder()
+      .put(CONV.name(), CONV)
+      .put(RNAV.name(), RNAV)
+      .put(RNP.name(), RNP)
+      .build();
+
+  /**
+   * Parse the provided {@link RequiredNavigationEquipage} string to a proper enum value <em>safely</em> without the chance of
+   * throwing an exception (as normal {@link Enum#valueOf(Class, String)} does).
+   */
+  public static Optional<RequiredNavigationEquipage> parse(String requiredNavigationEquipage) {
+    return Optional.of(requiredNavigationEquipage).map(s -> s.trim().toUpperCase()).map(LOOKUP::get);
+  }
 }

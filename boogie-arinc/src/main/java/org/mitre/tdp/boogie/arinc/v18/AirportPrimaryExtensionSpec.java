@@ -47,6 +47,6 @@ public final class AirportPrimaryExtensionSpec implements RecordSpec {
     String section = arincRecord.substring(4, 5);
     String subSection = arincRecord.substring(12, 13);
     String applicationType = arincRecord.substring(22, 23);
-    return "P".equals(section) && "A".equals(subSection) && PrimaryRecord.INSTANCE.negate().test(arincRecord.substring(21, 22)) && "E".equals(applicationType);
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A' && PrimaryRecord.INSTANCE.negate().test(arincRecord.substring(21, 22)) && arincRecord.charAt(22) == 'E';
   }
 }

@@ -92,7 +92,7 @@ class TestProcedureAssemblerIntegration {
         () -> assertEquals(41, proceduresByAirport.get("KSFO").size(), "KSFO counts")
     );
   }
-
+  
   @Test
   void testProcedureGraphAssembly() {
 
