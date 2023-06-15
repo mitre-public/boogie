@@ -46,7 +46,7 @@ class TestAirportAssemblerIntegration {
     );
 
     AirportAssembler<Airport> assembler = AirportAssembler.standard(terminalAreaDatabase);
-    airports = EmbeddedCifpFile.instance().arincAirports().stream().map(assembler::create).collect(Collectors.groupingBy(Airport::airportIdentifier));
+    airports = EmbeddedCifpFile.instance().arincAirports().stream().map(assembler::assemble).collect(Collectors.groupingBy(Airport::airportIdentifier));
   }
 
   @Test

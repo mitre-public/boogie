@@ -68,7 +68,7 @@ class TestProcedureAssembler {
   private static TerminalAreaDatabase terminalAreaDatabase;
   private static FixDatabase fixDatabase;
 
-  private static ProcedureAssembler<Procedure, Transition, Leg, Fix> assembler;
+  private static ProcedureAssembler<Procedure> assembler;
 
   @BeforeAll
   static void setup() {
@@ -94,19 +94,14 @@ class TestProcedureAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    assembler = ProcedureAssembler.create(
-        terminalAreaDatabase,
-        fixDatabase,
-        FixAssemblyStrategy.standard(),
-        ProcedureAssemblyStrategy.standard()
-    );
+    assembler = ProcedureAssembler.standard(terminalAreaDatabase, fixDatabase);
   }
 
   @Test
   void testAssemblyOfDEEZZ5_SID() {
     Collection<ArincProcedureLeg> DEEZZ5Legs = terminalAreaDatabase.legsForProcedure("KJFK", "DEEZZ5");
 
-    Collection<Procedure> procedures = assembler.apply(DEEZZ5Legs).collect(Collectors.toSet());
+    Collection<Procedure> procedures = assembler.assemble(DEEZZ5Legs).collect(Collectors.toSet());
 
     assertEquals(1, procedures.size(), "Expected the assembly of only one procedure (DEEZZ5) from DEEZZ5 legs.");
 
@@ -145,7 +140,7 @@ class TestProcedureAssembler {
   void testAssemblyOfH22LZ_APPROACH() {
     Collection<ArincProcedureLeg> H22LZLegs = terminalAreaDatabase.legsForProcedure("KJFK", "H22LZ");
 
-    Collection<Procedure> procedures = assembler.apply(H22LZLegs).collect(Collectors.toSet());
+    Collection<Procedure> procedures = assembler.assemble(H22LZLegs).collect(Collectors.toSet());
 
     assertEquals(1, procedures.size(), "Expected the assembly of only one procedure (H22LZ) from H22LZ legs.");
 
@@ -185,7 +180,7 @@ class TestProcedureAssembler {
   void testAssemblyOfI22L_APPROACH() {
     Collection<ArincProcedureLeg> I22LLegs = terminalAreaDatabase.legsForProcedure("KJFK", "I22L");
 
-    Collection<Procedure> procedures = assembler.apply(I22LLegs).collect(Collectors.toSet());
+    Collection<Procedure> procedures = assembler.assemble(I22LLegs).collect(Collectors.toSet());
 
     assertEquals(1, procedures.size(), "Expected the assembly of only one procedure (I22L) from I22L legs.");
 

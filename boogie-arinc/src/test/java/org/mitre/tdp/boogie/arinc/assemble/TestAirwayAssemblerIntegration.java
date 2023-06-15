@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
@@ -38,13 +37,9 @@ class TestAirwayAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    AirwayAssembler<Airway, Fix, Leg> assembler = AirwayAssembler.create(
-        fixDatabase,
-        FixAssemblyStrategy.standard(),
-        AirwayAssemblyStrategy.standard()
-    );
+    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDatabase);
 
-    airwaysByName = assembler.apply(EmbeddedCifpFile.instance().arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
+    airwaysByName = assembler.assemble(EmbeddedCifpFile.instance().arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }
 
   @Test

@@ -81,13 +81,9 @@ class TestAirwayAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    AirwayAssembler<Airway, Fix, Leg> assembler = AirwayAssembler.create(
-        fixDatabase,
-        FixAssemblyStrategy.standard(),
-        AirwayAssemblyStrategy.standard()
-    );
+    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDatabase);
 
-    airwayMap = assembler.apply(testV18Consumer.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
+    airwayMap = assembler.assemble(testV18Consumer.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }
 
   @Test

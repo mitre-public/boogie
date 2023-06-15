@@ -16,7 +16,6 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
 /**
@@ -26,20 +25,10 @@ import org.mitre.tdp.boogie.fn.TriFunction;
  * <p>This class can be used with the {@link FixAssemblyStrategy#standard()} + {@link AirwayAssemblyStrategy#standard()} to
  * generate lightweight Boogie-defined {@link Airway} implementations that can be used with other Boogie algorithms.
  */
-public final class AirwayAssembler<A, F, L> implements Function<Collection<ArincAirwayLeg>, Stream<A>> {
+public interface AirwayAssembler<A> {
 
-  private final ArincAirwayLegConverter<A, L, F> inflator;
-
-  private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway = SplitList.INSTANCE;
-
-  private final AirwayAssemblyStrategy<A, F, L> strategy;
-
-  private AirwayAssembler(
-      FixDatabase fixDatabase,
-      FixAssemblyStrategy<F> fixStrategy,
-      AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
-    this.inflator = new ArincAirwayLegConverter<>(fixDatabase, fixStrategy, airwayStrategy);
-    this.strategy = requireNonNull(airwayStrategy);
+  static AirwayAssembler<Airway> standard(FixDatabase fixDatabase) {
+    return usingStrategy(fixDatabase, FixAssemblyStrategy.standard(), AirwayAssemblyStrategy.standard());
   }
 
   /**
@@ -54,68 +43,87 @@ public final class AirwayAssembler<A, F, L> implements Function<Collection<Arinc
    * @param airwayStrategy strategy class for converting 424 airway legs into client-defined leg types referencing the fixes created
    *                       by the fix strategy
    */
-  public static <A, F, L> AirwayAssembler<A, F, L> create(FixDatabase database, FixAssemblyStrategy<F> fixStrategy, AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
-    return new AirwayAssembler<>(database, fixStrategy, airwayStrategy);
+  static <A, F, L> AirwayAssembler<A> usingStrategy(FixDatabase database, FixAssemblyStrategy<F> fixStrategy, AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
+    return new Standard<>(database, fixStrategy, airwayStrategy);
   }
 
-  @Override
-  public Stream<A> apply(Collection<ArincAirwayLeg> arincAirwayLegs) {
-    return arincAirwayLegs.stream()
-        .sorted(Comparator.comparing(ArincAirwayLeg::fileRecordNumber))
-        .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
-        .stream()
-        .map(this::toAirway);
-  }
+  Stream<A> assemble(Collection<ArincAirwayLeg> legs);
 
-  private A toAirway(List<ArincAirwayLeg> arincAirwayLegs) {
-    ArincAirwayLeg representative = arincAirwayLegs.get(0);
+  final class Standard<A, F, L> implements AirwayAssembler<A> {
 
-    List<L> legs = arincAirwayLegs.stream().map(inflator).collect(Collectors.toList());
-    return strategy.convertAirway(representative, legs);
-  }
+    private final ArincAirwayLegConverter<A, L, F> inflator;
 
-  private static final class ArincAirwayLegConverter<A, L, F> implements Function<ArincAirwayLeg, L> {
+    private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway = SplitList.INSTANCE;
 
-    private final LegFixDereferencer<F> legFixDereferencer;
+    private final AirwayAssemblyStrategy<A, F, L> strategy;
 
-    private final TriFunction<ArincAirwayLeg, F, F, L> legConverter;
-
-    private ArincAirwayLegConverter(
+    private Standard(
         FixDatabase fixDatabase,
         FixAssemblyStrategy<F> fixStrategy,
-        AirwayAssemblyStrategy<A, F, L> airwayStrategy
-    ) {
-      this.legFixDereferencer = new LegFixDereferencer<>(
-          FixAssembler.create(fixStrategy),
-          ArincDatabaseFactory.emptyTerminalAreaDatabase(),
-          fixDatabase
-      );
-      this.legConverter = requireNonNull(airwayStrategy)::convertLeg;
+        AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
+      this.inflator = new ArincAirwayLegConverter<>(fixDatabase, fixStrategy, airwayStrategy);
+      this.strategy = requireNonNull(airwayStrategy);
     }
 
     @Override
-    public L apply(ArincAirwayLeg arincAirwayLeg) {
-      return legConverter.apply(arincAirwayLeg, associatedFix(arincAirwayLeg).orElse(null), recommendedNavaid(arincAirwayLeg).orElse(null));
+    public Stream<A> assemble(Collection<ArincAirwayLeg> arincAirwayLegs) {
+      return arincAirwayLegs.stream()
+          .sorted(Comparator.comparing(ArincAirwayLeg::fileRecordNumber))
+          .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
+          .stream()
+          .map(this::toAirway);
     }
 
-    Optional<F> associatedFix(ArincAirwayLeg arincAirwayLeg) {
-      return legFixDereferencer.dereference(
-          arincAirwayLeg.fixIdentifier(),
-          null,
-          arincAirwayLeg.fixIcaoRegion(),
-          arincAirwayLeg.fixSectionCode(),
-          arincAirwayLeg.fixSubSectionCode().orElse(null)
-      );
+    private A toAirway(List<ArincAirwayLeg> arincAirwayLegs) {
+      ArincAirwayLeg representative = arincAirwayLegs.get(0);
+
+      List<L> legs = arincAirwayLegs.stream().map(inflator).collect(Collectors.toList());
+      return strategy.convertAirway(representative, legs);
     }
 
-    Optional<F> recommendedNavaid(ArincAirwayLeg arincAirwayLeg) {
-      if (arincAirwayLeg.recommendedNavaidIdentifier().isPresent() && arincAirwayLeg.recommendedNavaidIcaoRegion().isPresent()) {
-        return legFixDereferencer.dereferenceNavaid(
-            arincAirwayLeg.recommendedNavaidIdentifier().orElseThrow(IllegalStateException::new),
-            arincAirwayLeg.recommendedNavaidIcaoRegion().orElseThrow(IllegalStateException::new)
+    private static final class ArincAirwayLegConverter<A, L, F> implements Function<ArincAirwayLeg, L> {
+
+      private final LegFixDereferencer<F> legFixDereferencer;
+
+      private final TriFunction<ArincAirwayLeg, F, F, L> legConverter;
+
+      private ArincAirwayLegConverter(
+          FixDatabase fixDatabase,
+          FixAssemblyStrategy<F> fixStrategy,
+          AirwayAssemblyStrategy<A, F, L> airwayStrategy
+      ) {
+        this.legFixDereferencer = new LegFixDereferencer<>(
+            FixAssembler.withStrategy(fixStrategy),
+            ArincDatabaseFactory.emptyTerminalAreaDatabase(),
+            fixDatabase
+        );
+        this.legConverter = requireNonNull(airwayStrategy)::convertLeg;
+      }
+
+      @Override
+      public L apply(ArincAirwayLeg arincAirwayLeg) {
+        return legConverter.apply(arincAirwayLeg, associatedFix(arincAirwayLeg).orElse(null), recommendedNavaid(arincAirwayLeg).orElse(null));
+      }
+
+      Optional<F> associatedFix(ArincAirwayLeg arincAirwayLeg) {
+        return legFixDereferencer.dereference(
+            arincAirwayLeg.fixIdentifier(),
+            null,
+            arincAirwayLeg.fixIcaoRegion(),
+            arincAirwayLeg.fixSectionCode(),
+            arincAirwayLeg.fixSubSectionCode().orElse(null)
         );
       }
-      return Optional.empty();
+
+      Optional<F> recommendedNavaid(ArincAirwayLeg arincAirwayLeg) {
+        if (arincAirwayLeg.recommendedNavaidIdentifier().isPresent() && arincAirwayLeg.recommendedNavaidIcaoRegion().isPresent()) {
+          return legFixDereferencer.dereferenceNavaid(
+              arincAirwayLeg.recommendedNavaidIdentifier().orElseThrow(IllegalStateException::new),
+              arincAirwayLeg.recommendedNavaidIcaoRegion().orElseThrow(IllegalStateException::new)
+          );
+        }
+        return Optional.empty();
+      }
     }
   }
 }

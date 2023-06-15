@@ -139,29 +139,29 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
 
   private Collection<PRC> assembleProcedures(FixDatabase fixDatabase, TerminalAreaDatabase terminalAreaDatabase,
       Collection<ArincProcedureLeg> procedureLegs) {
-    ProcedureAssembler<PRC, TRS, LEG, FIX> assembler = ProcedureAssembler.create(terminalAreaDatabase, fixDatabase, fixStrategy, procedureStrategy);
-    return assembler.apply(procedureLegs).collect(toList());
+    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(terminalAreaDatabase, fixDatabase, fixStrategy, procedureStrategy);
+    return assembler.assemble(procedureLegs).collect(toList());
   }
 
   private Collection<AWY> assembleAirways(FixDatabase fixDatabase, Collection<ArincAirwayLeg> airwayLeg) {
-    AirwayAssembler<AWY, FIX, LEG> assembler = AirwayAssembler.create(fixDatabase, fixStrategy, airwayStrategy);
-    return assembler.apply(airwayLeg).collect(toList());
+    AirwayAssembler<AWY> assembler = AirwayAssembler.usingStrategy(fixDatabase, fixStrategy, airwayStrategy);
+    return assembler.assemble(airwayLeg).collect(toList());
   }
 
   private Collection<FIX> assembleFixes(Collection<ArincWaypoint> waypoints, Collection<ArincNdbNavaid> ndbs,
       Collection<ArincVhfNavaid> vhfs) {
 
-    FixAssembler<FIX> assembler = FixAssembler.create(fixStrategy);
+    FixAssembler<FIX> assembler = FixAssembler.withStrategy(fixStrategy);
 
     return Stream.of(waypoints.stream(), ndbs.stream(), vhfs.stream())
         .flatMap(stream -> stream)
-        .map(assembler)
+        .map(assembler::assemble)
         .collect(toList());
   }
 
   private Collection<APT> assembleAirports(TerminalAreaDatabase terminalAreaDatabase, Collection<ArincAirport> airports) {
     AirportAssembler<APT> assembler = AirportAssembler.usingStrategy(terminalAreaDatabase, airportStrategy);
-    return airports.stream().map(assembler::create).collect(toList());
+    return airports.stream().map(assembler::assemble).collect(toList());
   }
 
   private Collection<ArincRecord> parseRecords(InputStream inputStream) {

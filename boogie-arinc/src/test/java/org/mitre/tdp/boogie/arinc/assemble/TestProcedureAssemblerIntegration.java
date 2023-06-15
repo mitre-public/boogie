@@ -16,18 +16,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
-import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,14 +64,9 @@ class TestProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    ProcedureAssembler<Procedure, Transition, Leg, Fix> assembler = ProcedureAssembler.create(
-        terminalAreaDatabase,
-        fixDatabase,
-        FixAssemblyStrategy.standard(),
-        ProcedureAssemblyStrategy.standard()
-    );
+    ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(terminalAreaDatabase, fixDatabase);
 
-    proceduresByAirport = assembler.apply(EmbeddedCifpFile.instance().arincProcedureLegs()).collect(Collectors.groupingBy(Procedure::airportIdentifier));
+    proceduresByAirport = assembler.assemble(EmbeddedCifpFile.instance().arincProcedureLegs()).collect(Collectors.groupingBy(Procedure::airportIdentifier));
   }
 
   @Test
@@ -92,7 +84,7 @@ class TestProcedureAssemblerIntegration {
         () -> assertEquals(41, proceduresByAirport.get("KSFO").size(), "KSFO counts")
     );
   }
-  
+
   @Test
   void testProcedureGraphAssembly() {
 

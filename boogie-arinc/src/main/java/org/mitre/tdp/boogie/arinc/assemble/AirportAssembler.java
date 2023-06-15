@@ -20,8 +20,15 @@ import org.mitre.tdp.boogie.arinc.model.ArincRunway;
  * <p>This class can be used with the {@link AirportAssemblyStrategy#standard()} to generate lightweight Boogie-defined {@link Airport}
  * implementations that can be used with other Boogie algorithms.
  */
+@FunctionalInterface
 public interface AirportAssembler<A> {
 
+  /**
+   * Assembler using the {@link AirportAssemblyStrategy#standard()} to create Boogie airport records when provided a backing
+   * database for 424 records in the terminal airspace.
+   *
+   * @param terminalAreaDatabase containing indexed terminal area 424 records
+   */
   static AirportAssembler<Airport> standard(TerminalAreaDatabase terminalAreaDatabase) {
     return usingStrategy(terminalAreaDatabase, AirportAssemblyStrategy.standard());
   }
@@ -43,7 +50,7 @@ public interface AirportAssembler<A> {
   /**
    * Creates a new airport of type {@code A} from the provided {@link ArincAirport} record.
    */
-  A create(ArincAirport airport);
+  A assemble(ArincAirport airport);
 
   final class Standard<A, R> implements AirportAssembler<A> {
 
@@ -57,7 +64,7 @@ public interface AirportAssembler<A> {
     }
 
     @Override
-    public A create(ArincAirport arincAirport) {
+    public A assemble(ArincAirport arincAirport) {
       requireNonNull(arincAirport);
 
       Collection<ArincRunway> arincRunways = terminalAreaDatabase.runwaysAt(

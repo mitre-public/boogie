@@ -82,7 +82,7 @@ class TestAirportAssembler {
 
   @Test
   void testKjfkAssembly() {
-    Airport airport = assembler.create(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
+    Airport airport = assembler.assemble(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
 
     Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
 

@@ -27,11 +27,11 @@ public final class LegFixDereferencer<F> {
    * Generally speaking this will either be the {@link FixAssembler} or some version of a fix assembler with injected
    * converters.
    */
-  private final Function<ArincModel, F> fixAssembler;
+  private final FixAssembler<F> fixAssembler;
   private final TerminalAreaDatabase terminalAreaDatabase;
   private final FixDatabase fixDatabase;
 
-  LegFixDereferencer(Function<ArincModel, F> fixAssembler, TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
+  LegFixDereferencer(FixAssembler<F> fixAssembler, TerminalAreaDatabase terminalAreaDatabase, FixDatabase fixDatabase) {
     this.fixAssembler = requireNonNull(fixAssembler);
     this.terminalAreaDatabase = requireNonNull(terminalAreaDatabase);
     this.fixDatabase = requireNonNull(fixDatabase);
@@ -50,31 +50,31 @@ public final class LegFixDereferencer<F> {
 
     switch (sectionSubSection) {
       case "PA":  // airports
-        return fixDatabase.airport(identifier, icaoRegion).map(fixAssembler);
+        return fixDatabase.airport(identifier, icaoRegion).map(fixAssembler::assemble);
       // Enroute NDB Navaids
       case "DB":
-        return fixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler);
+        return fixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
       // Terminal NDB Navaids
       case "PN":
-        return fixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler);
+        return fixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
       // VHF Navaids
       case "D":
-        return fixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler);
+        return fixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
       // Enroute waypoints
       case "EA":
-        return fixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler);
+        return fixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
       // Terminal waypoints
       case "PC":
-        return fixDatabase.terminalWaypoint(identifier, icaoRegion).map(fixAssembler);
+        return fixDatabase.terminalWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
       // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
       case "PG":
-        return airport == null ? Optional.empty() : terminalAreaDatabase.runwayAt(airport, identifier).map(fixAssembler);
+        return airport == null ? Optional.empty() : terminalAreaDatabase.runwayAt(airport, identifier).map(fixAssembler::assemble);
       // localizerGlideSlopes - generally used as a recommended navaid on some approaches
       case "PI":
-        return airport == null ? Optional.empty() : terminalAreaDatabase.localizerGlideSlopeAt(airport, identifier).map(fixAssembler);
+        return airport == null ? Optional.empty() : terminalAreaDatabase.localizerGlideSlopeAt(airport, identifier).map(fixAssembler::assemble);
       case "PT":
-        return airport == null ? Optional.empty() : terminalAreaDatabase.gnssLandingSystemAt(airport, identifier).map(fixAssembler);
-        // anything else is not explicitly supported as a reference object in a leg
+        return airport == null ? Optional.empty() : terminalAreaDatabase.gnssLandingSystemAt(airport, identifier).map(fixAssembler::assemble);
+      // anything else is not explicitly supported as a reference object in a leg
       default:
         throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
     }
