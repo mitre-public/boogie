@@ -27,7 +27,7 @@ public final class WeightFunctions {
   }
 
   /**
-   * Generates a new function which is linear between the two points and when d < x0 = y0 & d > x1 = y1.
+   * Generates a new function which is linear between the two points and when {@code d < x0 = y0 & d > x1 = y1}.
    */
   public static UnaryOperator<Double> linearBetween(double x0, double y0, double x1, double y1) {
     return d -> {

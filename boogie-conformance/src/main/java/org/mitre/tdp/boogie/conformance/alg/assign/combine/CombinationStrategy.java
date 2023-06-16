@@ -16,9 +16,9 @@ import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 public interface CombinationStrategy {
 
   /**
-   * Takes a collection of input {@link FlyableLeg}s and reduces it them to an output mapping from leg->representative.
+   * Takes a collection of input {@link FlyableLeg}s and reduces it them to an output mapping from {@code leg->representative}.
    *
-   * This signature is chosen so that the results of the {@link LinkingStrategy} can be done between candidates from the pre
+   * <p>This signature is chosen so that the results of the {@link LinkingStrategy} can be done between candidates from the pre
    * combination phase and then mapped to the appropriate post-combination legs.
    */
   Map<FlyableLeg, CompositeLeg> combineSimilar(Collection<FlyableLeg> flyableLegs);

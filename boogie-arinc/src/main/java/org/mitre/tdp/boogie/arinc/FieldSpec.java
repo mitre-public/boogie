@@ -26,8 +26,7 @@ public interface FieldSpec<T> extends Function<String, Optional<T>> {
   /**
    * The default field name for the spec field in a {@link ArincRecord}.
    * <br>
-   * The field name to use in accordance with {@link RecordField(FieldSpec)} when no explicit field name is otherwise provided
-   * in the {@link RecordSpec}.
+   * The field name to use in accordance with {@link RecordField} when no explicit field name is otherwise provided in the {@link RecordSpec}.
    * <br>
    * Default value for this is camelCase version of the implementing class's simple name. Note that within a {@link RecordSpec}
    * these can be cross-checked to prevent mismatches with the {@link RecordSpecValidator}.

@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
  * Extension interfaces include:
  *
  * 1) {@link FeatureBasedViterbiScoringStrategy} - for scoring functions for stage/state combinations which can be broken into a
- * feature extraction -> feature normalization/combination pair of distinct stages.
+ * feature extraction to feature normalization/combination pair of distinct stages.
  *
  * 2) {@link RuleBasedViterbiScoringStrategy} - which uses predicates to delegate stage/state combinations to a fixed set of
  * functions capable of converting the combination into a likelihood.

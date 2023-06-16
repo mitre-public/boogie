@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
  * Also note this class returns pairs in only one direction when the runways have been deemed to be reciprocals. I.e. if A/B are
  * reciprocals and C/D are not this class returns:
  * <br>
- * List{A, B, C, D} --> Pair{A, B}, Pair{C, null}, Pair{D, null}
+ * {@code List[A, B, C, D] --> Pair[A, B], Pair[C, null], Pair[D, null]}
  */
 public final class ReciprocalRunwayPairer implements Function<Collection<ArincRunway>, Collection<Pair<ArincRunway, ArincRunway>>> {
 

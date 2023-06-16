@@ -22,14 +22,14 @@ import org.slf4j.LoggerFactory;
  * With this formulation:
  *
  * 1) The valid transitions from a state are the set of downstream connected states of a given state (i.e. there exists a directed
- * edge from state A -> B)
+ * edge from state A to B)
  * 2) The transitions scores are based on the weight of the edge between the two states
  *
  * This simplifies the more generic scoring problem by allowing for us to hook into a pre-computed graphical representation of
  * the state set with pre-set weights.
  *
  * One key thing to note is that in the current formulation this transition strategy does not implicitly include the current
- * state in the set of transition targets unless the provided graph contains a self loop A->A. This is done to maintain simplicity
+ * state in the set of transition targets unless the provided graph contains a self loop A to A. This is done to maintain simplicity
  * in the interpretation logic on top of the graph.
  */
 public final class GraphBackedViterbiTransitionStrategy<STAGE, STATE> implements ViterbiTransitionStrategy<STAGE, STATE> {

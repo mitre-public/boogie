@@ -58,7 +58,7 @@ public final class Iterators {
   }
 
   /**
-   * Method for iterating through triples of elements within a list of size >= 1.
+   * Method for iterating through triples of elements within a list of size {@code >= 1}.
    */
   public static <T> void triples2(List<T> list, TriConsumer<Optional<T>, T, Optional<T>> consumer) {
     Preconditions.checkArgument(!list.isEmpty());
@@ -78,7 +78,7 @@ public final class Iterators {
   }
 
   /**
-   * Returns whether the given predicate has enough matches in the list (>=2) to perform the {@link Iterators#fastslow2(List, Predicate, TriConsumer)}
+   * Returns whether the given predicate has enough matches in the list {@code >=2} to perform the {@link Iterators#fastslow2(List, Predicate, TriConsumer)}
    * operation.
    */
   public static <T> boolean checkMatchCount(List<T> list, Predicate<T> match) {
@@ -86,10 +86,10 @@ public final class Iterators {
   }
 
   /**
-   * Fast/Slow iterator for list of elements. When both the fast and slow iterators have a match the the consumer is called on
+   * Fast/Slow iterator for list of elements. When both the fast and slow iterators have a match the consumer is called on
    * the pair along with the list of skipped elements between the fast and slow iterators.
    *
-   * Note - This method requires that there be at least two elements which match the supplied predicate to avoid silently never
+   * <p>Note - This method requires that there be at least two elements which match the supplied predicate to avoid silently never
    * calling the consumer.
    */
   public static <T> void fastslow2(List<T> list, Predicate<T> match, TriConsumer<T, T, List<T>> consumer) {
@@ -120,7 +120,7 @@ public final class Iterators {
    * than the hi condition. The close bipredicate provides arguments as (lo, hi) in case the lo element is necessary as well for
    * determining a close condition.
    *
-   * Note - There are no checks in this method to ensure the close ever returns true - this means the iteration may run without
+   * <p>Note - There are no checks in this method to ensure the close ever returns true - this means the iteration may run without
    * ever directly calling the consumer.
    */
   public static <T> void openClose2(List<T> list, Predicate<T> open, BiPredicate<T, T> close, TriConsumer<T, T, List<T>> consumer) {

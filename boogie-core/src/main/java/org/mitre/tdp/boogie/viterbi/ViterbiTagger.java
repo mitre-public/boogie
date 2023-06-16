@@ -47,7 +47,7 @@ public final class ViterbiTagger<STAGE, STATE> {
   private boolean interrupted = false;
 
   /**
-   * This function can take a long time to execute since its basically a m x n^2 computation where m is the number of stages
+   * This function can take a long time to execute since it's basically a {@code m x n^2} computation where m is the number of stages
    * and n is the number of available states - assuming all transitions are valid.
    */
   private Supplier<ViterbiTrellis<STAGE, STATE>> interruptedReturnSupplier = ViterbiTrellis::empty;
@@ -71,7 +71,7 @@ public final class ViterbiTagger<STAGE, STATE> {
   }
 
   /**
-   * Instantiates a new {@link ViterbiTagger} but with stage/state scoring and state->state transition scoring taken from a
+   * Instantiates a new {@link ViterbiTagger} but with stage/state scoring and state-to-state transition scoring taken from a
    * provided {@link ViterbiScoringStrategy}.
    */
   public static <STAGE, STATE> ViterbiTagger<STAGE, STATE> with(

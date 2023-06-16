@@ -46,9 +46,9 @@ public final class Streams {
    * Returns a stream based on the input list via combining subsequent elements via the provided {@link BiFunction} using null
    * for elements outside the bounds of the stream.
    * <br>
-   * list.size()==0: fn is called once with two null args
-   * list.size()==1: fn is called once with list.get(0), null
-   * list.size()>1: fn is called pairwise with list.get(i), list.get(i+1)
+   * {@code list.size()==0}: fn is called once with two null args
+   * {@code list.size()==1}: fn is called once with {@code list.get(0), null}
+   * {@code list.size()>1}: fn is called pairwise with {@code list.get(i), list.get(i+1)}
    */
   public static <U, V> Stream<V> pairwiseWithNulls(List<U> list, BiFunction<U, U, V> fn) {
     IntFunction<U> getOrNull = i -> i >= 0 && i < list.size() ? list.get(i) : null;

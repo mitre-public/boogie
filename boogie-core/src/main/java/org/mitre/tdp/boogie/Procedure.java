@@ -100,9 +100,9 @@ public interface Procedure {
    * Returns the collection of transitions which represent the "initial" or "entry" transitions into the Procedure. Preference
    * order for these by {@link ProcedureType} is:
    * <ol>
-   *   <li>SID - runway > common > enroute</li>
-   *   <li>STAR - enroute > common > runway</li>
-   *   <li>APPROACH - approach > common > ruwnay > missed</li>
+   *   <li>SID - {@code runway > common > enroute}</li>
+   *   <li>STAR - {@code enroute > common > runway}</li>
+   *   <li>APPROACH - {@code approach > common > runway > missed}</li>
    * </ol>
    *
    * <p>This method is intended to help identify candidate entry points where aircraft are likely to merge onto the procedure.
@@ -115,9 +115,9 @@ public interface Procedure {
    * Returns the collection of transitions which represent the "final" or "exit" transitions into the Procedure. Preference
    * order for these by {@link ProcedureType} is:
    * <ol>
-   *   <li>SID - enroute > common > runway</li>
-   *   <li>STAR - runway > common > enroute</li>
-   *   <li>APPROACH - missed > runway > common > approach</li>
+   *   <li>SID - {@code runway > common > enroute}</li>
+   *   <li>STAR - {@code enroute > common > runway}</li>
+   *   <li>APPROACH - {@code approach > common > runway > missed}</li>
    * </ol>
    *
    * <p>This method is intended to help identify candidate exit points where aircraft are likely to leave the procedure.

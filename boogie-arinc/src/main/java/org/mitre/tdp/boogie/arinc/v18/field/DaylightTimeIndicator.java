@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.arinc.utils.BooleanStringParser;
  * character “N” if the airport does not observe Daylight time or if it is unknown.
  * <br>
  * For most sources we see in the real world this is often not populated... lol. In accordance with the spec though null==unknown
- * and unknown=false -> so no it is.
+ * and unknown=false, so no it is.
  */
 public final class DaylightTimeIndicator implements FieldSpec<Boolean> {
 

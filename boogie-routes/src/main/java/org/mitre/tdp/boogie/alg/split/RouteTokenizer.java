@@ -6,7 +6,7 @@ import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 
 /**
  * Responsible for splitting an input route string into a sequence of elements matchable to infrastructure elements based on ID
- * e.g. {@code KATL.CHPPR1.DRSDN.J121.JMACK..HOBTT.GNDLF1.KORD} -> {@code [KATL, CHPPR1, J121, DRSDN, etc.]}.
+ * e.g. {@code KATL.CHPPR1.DRSDN.J121.JMACK..HOBTT.GNDLF1.KORD} to {@code [KATL, CHPPR1, J121, DRSDN, etc.]}.
  */
 @FunctionalInterface
 public interface RouteTokenizer {

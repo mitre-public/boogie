@@ -155,8 +155,8 @@ public final class FluentRouteExpander implements
    * @param arrivalRunway   the arrival runway used, if provided the appropriate arrival runway transition will be included in the
    *                        final expanded route
    * @param equipage        the equipage of the aircraft, if provided (along with an arrival runway) this will determine the type of
-   *                        approach procedure included in the final expansion, the varargs list represents the preference order (e.g. RNP > RNAV), if
-   *                        the listing is incomplete (doesn't cover all options) procedures with unlisted equipages will be ignored (not returned as
+   *                        approach procedure included in the final expansion, the varargs list represents the preference order (e.g. {@code RNP > RNAV}),
+   *                        if the listing is incomplete (doesn't cover all options) procedures with unlisted equipages will be ignored (not returned as
    *                        candidates) and not be included in the final expansion
    * @return This class may occasionally return {@link Optional#empty()} when the input route either doesn't contain enough information to
    * build a path or if too many of its component elements can't be found within the provided {@link LookupService}s.

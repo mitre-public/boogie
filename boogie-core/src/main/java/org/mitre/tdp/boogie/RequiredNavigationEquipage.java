@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie;
 
-import java.util.Collection;
 import java.util.Optional;
-
-import org.mitre.tdp.boogie.model.ProcedureFactory;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -34,8 +31,7 @@ public enum RequiredNavigationEquipage {
   RNP,
   /**
    * Placeholder - the required high-level equipage can't always be inferred for various procedure sources - this is provided as
-   * a placeholder for those situations. e.g. within the {@link ProcedureFactory#newProcedure(Collection)} method - where required
-   * equipage can't be inferred based solely on the transition interface.
+   * a placeholder for those situations.
    */
   UNKNOWN;
 

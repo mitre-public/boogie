@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.viterbi;
 
 /**
- * An extension of a {@link ViterbiScoringStrategy} wherein the {(stage, state) -> likelihood} computation can be naturally
+ * An extension of a {@link ViterbiScoringStrategy} wherein the {@code (stage, state) -> likelihood} computation can be naturally
  * split into two parts:
  *
  * 1) A feature derivation portion - in which features are computed from the stage/state combination

@@ -75,7 +75,7 @@ public final class ViterbiFeatureVectorExtractor<STAGE, STATE> implements BiFunc
     private final Map<String, BiFunction<Stage, State, List<Pair<String, Double>>>> extractors = new HashMap<>();
 
     /**
-     * Attempts to add a one->many extractor for cases where some upstream computation in feature computation should be shared
+     * Attempts to add a one-to-many extractor for cases where some upstream computation in feature computation should be shared
      * (typically for efficiency reasons) between features. A good example is a cross/along track distance computation which may
      * be run a non-trivial number of times internally within the {@link ViterbiTagger}.
      *

@@ -33,7 +33,7 @@ public final class ArincDecimalParser implements BiFunction<String, Integer, Opt
   /**
    * Common utility for parsing doubles encoded as #### where the last number is the tenths.
    * <br>
-   * e.g. 0456 -> 45.6, 1245 -> 124.5, 0005 -> 0.5, 0001234 -> 123.4
+   * e.g. {@code 0456 -> 45.6}, {@code 1245 -> 124.5}, {@code 0005 -> 0.5}, {@code 0001234 -> 123.4}
    */
   public Optional<Double> parseDoubleWithTenths(String value) {
     return apply(value, TENTHS);

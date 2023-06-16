@@ -8,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.v19.HoldingPatternConverter;
 /**
  * Factory class for common instantiations of {@link ConvertingArincRecordConsumer}s.
  * <br>
- * Note that the consumer classes do allow hybridization of generic->specific record converter implementations (with some smart
+ * Note that the consumer classes do allow hybridization of generic-to-specific record converter implementations (with some smart
  * functional composition) - however we provide as standard parts of the API only single-version factory implementations.
  */
 public final class ArincRecordConverterFactory {
@@ -69,10 +69,10 @@ public final class ArincRecordConverterFactory {
 
   /**
    * Factory instantiation of a {@link ConvertingArincRecordConsumer} using all ARINC Version 18 adapter and conversion classes
-   * for the {@link ArincRecord} -> boogie.arinc.model data classes.
+   * for the {@link ArincRecord} to boogie.arinc.model data classes.
    * <br>
    * The V18 converters work perfectly fine with the V19 record specifications in {@link ArincVersion#V19} (as they share the same
-   * fieldsets and overall structure - albeit with slightly different contents && holding patterns). However, because
+   * fieldsets and overall structure - albeit with slightly different contents and holding patterns). However, because
    * the newer holding pattern has new fields, a new consumer bust me bade for 18 vs 19. However, the same validator works
    * for both 19/18 holds as only optional fields were added.
    */
@@ -93,10 +93,10 @@ public final class ArincRecordConverterFactory {
 
   /**
    * Factory instantiation of a {@link ConvertingArincRecordMapper} using all ARINC Version 18 adapter and conversion classes for
-   * the {@link ArincRecord} -> boogie.arinc.model data classes.
+   * the {@link ArincRecord} to boogie.arinc.model data classes.
    * <br>
    * The V18 converters work perfectly fine with the V19 record specifications in {@link ArincVersion#V19} (as they share the same
-   * fieldsets and overall structure - albeit with slightly different contents&& holding patterns). However, because
+   * fieldsets and overall structure - albeit with slightly different contents and holding patterns). However, because
    * the newer holding pattern has new fields, a new consumer bust me bade for 18 vs 19. However, the same validator works
    * for both 19/18 holds as only optional fields were added.
    */

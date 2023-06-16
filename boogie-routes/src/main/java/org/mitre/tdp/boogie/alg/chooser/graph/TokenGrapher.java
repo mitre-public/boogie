@@ -31,8 +31,8 @@ public interface TokenGrapher {
    * Convert a {@link ResolvedToken} to a graphical representation (a collection of {@link LinkedLegs}) which can be traversed as
    * part of the route choosing process.
    *
-   * <p>For simple elements this may be linked legs from an element to itself (e.g. FIX->FIX) while for more complex ones it may
-   * represent a full sub-graph itself (e.g. a SID or STAR).
+   * <p>For simple elements this may be linked legs from an element to itself (e.g. {@code FIX->FIX}) while for more complex ones
+   * it may represent a full sub-graph itself (e.g. a SID or STAR).
    *
    * @param token the {@link ResolvedToken} to generate a representation for
    */

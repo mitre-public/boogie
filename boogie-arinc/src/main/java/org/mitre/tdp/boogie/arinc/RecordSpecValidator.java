@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * <br>
  * At a high level this class is checking three primary things:
  * <br>
- * 1. That the supplied {@link RecordSpec#recordLength()} > 0
+ * 1. That the supplied {@code RecordSpec#recordLength() > 0}
  * 2. That the sum of the field lengths in the spec is equal to the provided expected record length
  * 3. That there are no non-unique {@link RecordField#fieldName()}s that were provided within the spec
  */

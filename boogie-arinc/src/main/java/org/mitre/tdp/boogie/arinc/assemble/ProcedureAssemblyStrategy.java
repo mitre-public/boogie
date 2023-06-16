@@ -52,7 +52,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    * @param representative a 424 procedure leg elected the "representative" of the transition, provided at the top-level to allow
    *                       client code easy access to procedure/transition metadata
    * @param transitionType the inferred transition type, the transition type is useful for sequencing likely transition transit
-   *                       order (e.g. RUNWAY->COMMON->ENROUTE for a SID)
+   *                       order (e.g. {@code RUNWAY->COMMON->ENROUTE} for a SID)
    * @param legs           the sequence of converted procedure legs that make up the transition, converted with {@code .convertLeg(...)}
    */
   T convertTransition(ArincProcedureLeg representative, TransitionType transitionType, List<L> legs);

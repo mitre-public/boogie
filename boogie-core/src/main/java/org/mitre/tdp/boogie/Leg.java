@@ -108,9 +108,9 @@ public interface Leg {
    * The associated fix for the leg if one was specified in the leg definition.
    * <p>For example:
    * <ol>
-   *   <li>TF (track-to-fix) -> this will be a navaid or a waypoint as a location is required to specify the end of the 2D path
+   *   <li>TF (track-to-fix), this will be a navaid or a waypoint as a location is required to specify the end of the 2D path
    *   segment</li>
-   *   <li>CA (course-to-altitude) -> this will be empty as the leg doesn't end in a concrete location - instead it ends when the
+   *   <li>CA (course-to-altitude), this will be empty as the leg doesn't end in a concrete location - instead it ends when the
    *   flight reaches some altitude while flying the specified heading</li>
    * </ol>
    */
@@ -192,15 +192,15 @@ public interface Leg {
    * <br>
    * The interpretation of this field should be as follows:
    * <br>
-   * If {@link Range#hasLowerBound()} == {@link Range#hasUpperBound()}...
+   * If {@link Range#hasLowerBound()} equals {@link Range#hasUpperBound()}...
    * <br>
-   * 1. Both bounds exist and are equal -> <i>AT</i>
-   * 2. Both bounds exist and are not equal -> <i>BETWEEN</i>
-   * 2. Neither bound exists -> <i>UNCONSTRAINED</i>
+   * 1. Both bounds exist and are equal, implies <i>AT</i>
+   * 2. Both bounds exist and are not equal, implies <i>BETWEEN</i>
+   * 2. Neither bound exists, implies <i>UNCONSTRAINED</i>
    * <br>
-   * If !{@link Range#hasLowerBound()} && {@link Range#hasUpperBound()} -> <i>AT OR BELOW</i> the upper bound.
+   * If !{@link Range#hasLowerBound()} and {@link Range#hasUpperBound()}, implies <i>AT OR BELOW</i> the upper bound.
    * <br>
-   * If {@link Range#hasLowerBound()} && !{@link Range#hasUpperBound()} -> <i>AT OR ABOVE</i> the lower bound.
+   * If {@link Range#hasLowerBound()} and !{@link Range#hasUpperBound()}, implies <i>AT OR ABOVE</i> the lower bound.
    */
   Range<Double> speedConstraint();
 

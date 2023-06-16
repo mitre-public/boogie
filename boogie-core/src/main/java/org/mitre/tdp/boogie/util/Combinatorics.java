@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Most of this class can be replace when we are able to bump guava deps in dependent libs from 18->21 with powerset logic.
+ * Most of this class can be replace when we are able to bump guava deps in dependent libs from {@code 18->21} with powerset logic.
  */
 public final class Combinatorics {
 

@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.arinc.utils.BooleanStringParser;
  * approach is coded in the data base.)
  * <br>
  * Similar to {@link DaylightTimeIndicator}, most sources we see in the real world this is often not populated... lol. In accordance
- * with the spec though null==unknown and unknown=false -> so not present -> no it is.
+ * with the spec though {@code null==unknown} and {@code unknown=false}, therefore not present implies no.
  */
 public final class IfrCapability implements FieldSpec<Boolean> {
 

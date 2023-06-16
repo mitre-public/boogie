@@ -74,7 +74,7 @@ public interface Linker {
 
   /**
    * A linker which builds connections between any airport and any SID. This linker is a special case prioritizing connecting the
-   * airport to the ends of the runway > common > enroute transition portions of the SID.
+   * airport to the ends of the {@code runway > common > enroute} transition portions of the SID.
    *
    * <p>Without this linker down-selecting to the ends of these transitions, depending on the geometry of the SID, a linker like
    * the {@link #closestPointBetween(LinkableToken, LinkableToken)} may link the airport to the middle of a runway transition.
@@ -88,7 +88,7 @@ public interface Linker {
 
   /**
    * A linker which builds connections between any STAR and any airport. This linker is a special case prioritizing connecting the
-   * airport to the ends of the runway > common > enroute transition portions of the STAR.
+   * airport to the ends of the {@code runway > common > enroute} transition portions of the STAR.
    *
    * <p>Without this linker down-selecting to the ends of these transitions, depending on the geometry of the STAR, specifically
    * the runway transitions with long downwinds, using the {@link #closestPointBetween(LinkableToken, LinkableToken)} linker may

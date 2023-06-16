@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableList;
  * A non-thread-safe version of a {@link Consumer} class which can eat {@link ArincRecord}s from a collection or stream and saves
  * them as internal state within itself.
  * <br>
- * This class is built with a pre-configured set of record -> Java POJO delegators and a set of record -> POJO converters for a
+ * This class is built with a pre-configured set of record-to-Java POJO delegators and a set of record-to-POJO converters for a
  * pre-configured set of data types. {@link ArincRecordConverterFactory} provides some default implementations for a subset of
  * {@link ArincRecord} versions.
  * <br>
