@@ -56,3 +56,23 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: testIntegration
+
+  javadoc-test:
+    name: JavaDoc Tests
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: mitre-actions/setup-gradle@v1
+        with:
+          java-distribution: corretto
+          java-version: 11
+          caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_USERS }}
+          caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
+
+      - name: Run Integration Tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: javadoc
