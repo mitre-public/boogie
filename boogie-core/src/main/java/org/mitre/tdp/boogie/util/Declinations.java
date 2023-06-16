@@ -1,10 +1,9 @@
 package org.mitre.tdp.boogie.util;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.EnumMap;
-import java.util.GregorianCalendar;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
@@ -56,16 +55,19 @@ public final class Declinations {
     Geomagnetics magnetics = magnetics(tau);
 
     // include the decimal year to actually get variation within the 20XX-20XX cycle
-    ZonedDateTime zdt = ZonedDateTime.ofInstant(tau, ZoneId.of("UTC"));
-    GregorianCalendar greg = GregorianCalendar.from(zdt);
-    double year = magnetics.decimalYear(greg);
+    OffsetDateTime odt = tau.atOffset(ZoneOffset.UTC);
+    int year = odt.getYear();
+    int day = odt.getDayOfYear();
+
+    // ignore leap years, being off by .1 of a day shouldn't affect the declination lol
+    double decimalYear = year + (day / 365.);
 
     // note the Geomagnetics class is expecting km for the vertical datum
     return Optional.ofNullable(elev)
         // ft -> km
         .map(e -> (e * Spherical.METERS_PER_FOOT) / 1000.0d)
         .map(km -> magnetics.getDeclination(lat, lon, year, km))
-        .orElse(magnetics.getDeclination(lat, lon, year, 0.0));
+        .orElse(magnetics.getDeclination(lat, lon, decimalYear, 0.0));
   }
 
   public static MagneticVariation magneticVariation(double lat, double lon, @Nullable Double elev, Instant tau) {

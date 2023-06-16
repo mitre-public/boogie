@@ -48,7 +48,7 @@ public final class PatternBasedFileLocator implements Function<String, File> {
   }
 
   private Path dateReplacedPath(String cycle) {
-    Instant startDate = new AiracCycle(cycle).startDate();
+    Instant startDate = AiracCycle.startDate(cycle);
     LocalDateTime localDate = startDate.atOffset(ZoneOffset.UTC).toLocalDateTime();
 
     String replacedPath = filePathPattern

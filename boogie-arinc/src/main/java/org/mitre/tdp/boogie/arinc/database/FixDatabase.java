@@ -1,19 +1,21 @@
 package org.mitre.tdp.boogie.arinc.database;
 
-import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.model.*;
-import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
+import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import com.google.common.collect.LinkedHashMultimap;
@@ -54,31 +56,24 @@ public final class FixDatabase {
   }
 
   public Optional<ArincWaypoint> terminalWaypoint(String identifier) {
-    Collection<ArincWaypoint> waypoints = castingLookup(
+    return castingLookup(
         ArincWaypoint.class,
         new ArincKey(identifier, null, SectionCode.P, "C")
     );
-    return highlander(waypoints);
   }
 
   public Optional<ArincWaypoint> enrouteWaypoint(String identifier) {
-    Collection<ArincWaypoint> waypoints = castingLookup(
+    return castingLookup(
         ArincWaypoint.class,
         new ArincKey(identifier, null, SectionCode.E, "A")
     );
-    return highlander(waypoints);
   }
 
   public Collection<ArincWaypoint> waypoints(String... identifiers) {
     return Arrays.stream(identifiers)
-        .flatMap(identifier -> {
-          Collection<ArincWaypoint> waypoints = castingLookup(
-              ArincWaypoint.class,
-              new ArincKey(identifier, null, SectionCode.E, "A"), // enroute
-              new ArincKey(identifier, null, SectionCode.P, "C")  // terminal
-          );
-          return waypoints.stream();
-        })
+        .flatMap(identifier -> castingLookup(ArincWaypoint.class, new ArincKey(identifier, null, SectionCode.E, "A"))
+            .or(() -> castingLookup(ArincWaypoint.class, new ArincKey(identifier, null, SectionCode.P, "C")))
+            .stream())
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
@@ -90,19 +85,17 @@ public final class FixDatabase {
   }
 
   public Optional<ArincWaypoint> terminalWaypoint(String identifier, String icaoRegion) {
-    Collection<ArincWaypoint> waypoints = castingLookup(
+    return castingLookup(
         ArincWaypoint.class,
         new ArincKey(identifier, icaoRegion, SectionCode.P, "C")
     );
-    return highlander(waypoints);
   }
 
   public Optional<ArincWaypoint> enrouteWaypoint(String identifier, String icaoRegion) {
-    Collection<ArincWaypoint> waypoints = castingLookup(
+    return castingLookup(
         ArincWaypoint.class,
         new ArincKey(identifier, icaoRegion, SectionCode.E, "A")
     );
-    return highlander(waypoints);
   }
 
   public Optional<ArincAirport> airport(String identifier) {
@@ -111,22 +104,15 @@ public final class FixDatabase {
 
   public Collection<ArincAirport> airports(String... identifiers) {
     return Arrays.stream(identifiers)
-        .flatMap(identifier -> {
-          Collection<ArincAirport> airports = castingLookup(
-              ArincAirport.class,
-              new ArincKey(identifier, null, SectionCode.P, "A")
-          );
-          return airports.stream();
-        })
+        .flatMap(identifier -> castingLookup(ArincAirport.class, new ArincKey(identifier, null, SectionCode.P, "A")).stream())
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   public Optional<ArincAirport> airport(String identifier, String icaoRegion) {
-    Collection<ArincAirport> airports = castingLookup(
+    return castingLookup(
         ArincAirport.class,
         new ArincKey(identifier, icaoRegion, SectionCode.P, "A")
     );
-    return highlander(airports);
   }
 
   public Optional<ArincNdbNavaid> ndbNavaid(String identifier) {
@@ -134,31 +120,24 @@ public final class FixDatabase {
   }
 
   public Optional<ArincNdbNavaid> terminalNdbNavaid(String identifier) {
-    Collection<ArincNdbNavaid> navaids = castingLookup(
+    return castingLookup(
         ArincNdbNavaid.class,
         new ArincKey(identifier, null, SectionCode.P, "N")
     );
-    return highlander(navaids);
   }
 
   public Optional<ArincNdbNavaid> enrouteNdbNavaid(String identifier) {
-    Collection<ArincNdbNavaid> navaids = castingLookup(
+    return castingLookup(
         ArincNdbNavaid.class,
         new ArincKey(identifier, null, SectionCode.D, "B")
     );
-    return highlander(navaids);
   }
 
   public Collection<ArincNdbNavaid> ndbNavaids(String... identifiers) {
     return Arrays.stream(identifiers)
-        .flatMap(identifier -> {
-          Collection<ArincNdbNavaid> navaids = castingLookup(
-              ArincNdbNavaid.class,
-              new ArincKey(identifier, null, SectionCode.P, "N"),
-              new ArincKey(identifier, null, SectionCode.D, "B")
-          );
-          return navaids.stream();
-        })
+        .flatMap(identifier -> castingLookup(ArincNdbNavaid.class, new ArincKey(identifier, null, SectionCode.P, "N"))
+            .or(() -> castingLookup(ArincNdbNavaid.class, new ArincKey(identifier, null, SectionCode.D, "B")))
+            .stream())
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
@@ -170,19 +149,17 @@ public final class FixDatabase {
   }
 
   public Optional<ArincNdbNavaid> terminalNdbNavaid(String identifier, String icaoRegion) {
-    Collection<ArincNdbNavaid> navaids = castingLookup(
+    return castingLookup(
         ArincNdbNavaid.class,
         new ArincKey(identifier, icaoRegion, SectionCode.P, "N")
     );
-    return highlander(navaids);
   }
 
   public Optional<ArincNdbNavaid> enrouteNdbNavaid(String identifier, String icaoRegion) {
-    Collection<ArincNdbNavaid> navaids = castingLookup(
+    return castingLookup(
         ArincNdbNavaid.class,
         new ArincKey(identifier, icaoRegion, SectionCode.D, "B")
     );
-    return highlander(navaids);
   }
 
   public Optional<ArincVhfNavaid> vhfNavaid(String identifier) {
@@ -191,35 +168,33 @@ public final class FixDatabase {
 
   public Collection<ArincVhfNavaid> vhfNavaids(String... identifiers) {
     return Arrays.stream(identifiers)
-        .flatMap(identifier -> {
-          Collection<ArincVhfNavaid> navaids = castingLookup(
-              ArincVhfNavaid.class,
-              new ArincKey(identifier, null, SectionCode.D, null)
-          );
-          return navaids.stream();
-        })
+        .flatMap(identifier -> castingLookup(ArincVhfNavaid.class, new ArincKey(identifier, null, SectionCode.D, null)).stream())
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   public Optional<ArincVhfNavaid> vhfNavaid(String identifier, String icaoRegion) {
-    Collection<ArincVhfNavaid> navaids = castingLookup(
+    return castingLookup(
         ArincVhfNavaid.class,
         new ArincKey(identifier, icaoRegion, SectionCode.D, null)
     );
-    return highlander(navaids);
   }
 
   /**
    * Returns the collection of holding fixes at that fixIdent/regionCode.
+   *
    * @param fixIdentifier holding fix identifier
    * @param fixIcaoRegion holding fix region code
    * @return A collection of holds or empty collection to go with that key
    */
   public Collection<ArincHoldingPattern> enrouteHolds(String fixIdentifier, String fixIcaoRegion) {
-    return castingLookup(
+    return castingLookups(
         ArincHoldingPattern.class,
         new ArincKey(fixIdentifier, fixIcaoRegion, SectionCode.E, "P")
     );
+  }
+
+  public <T> Optional<T> castingLookup(Class<T> clz, ArincKey key) {
+    return fixLookup.get(key).stream().filter(clz::isInstance).map(clz::cast).findFirst();
   }
 
   /**
@@ -228,7 +203,7 @@ public final class FixDatabase {
    * <br>
    * As this class does internal class filtering it won't throw a {@link ClassCastException}, so it's at least somewhat safe.
    */
-  public <T> Collection<T> castingLookup(Class<T> clz, ArincKey... keys) {
+  public <T> Collection<T> castingLookups(Class<T> clz, ArincKey... keys) {
     return Arrays.stream(keys).map(fixLookup::get).flatMap(Collection::stream)
         .filter(o -> clz.isAssignableFrom(o.getClass())).map(clz::cast).collect(Collectors.toCollection(LinkedHashSet::new));
   }

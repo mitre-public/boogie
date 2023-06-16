@@ -139,7 +139,14 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
 
   private Collection<PRC> assembleProcedures(FixDatabase fixDatabase, TerminalAreaDatabase terminalAreaDatabase,
       Collection<ArincProcedureLeg> procedureLegs) {
-    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(terminalAreaDatabase, fixDatabase, fixStrategy, procedureStrategy);
+
+    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(
+        terminalAreaDatabase,
+        fixDatabase,
+        fixStrategy,
+        procedureStrategy
+    );
+
     return assembler.assemble(procedureLegs).collect(toList());
   }
 

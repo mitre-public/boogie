@@ -1,16 +1,13 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.util.Streams.triplesWithNulls;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableList;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
@@ -22,7 +19,9 @@ import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 
-import com.google.common.collect.ImmutableList;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+import static org.mitre.tdp.boogie.util.Streams.triplesWithNulls;
 
 /**
  * A {@link RouteTokenResolver} exists to resolve infrastructure elements which are considered to be associated with an input
@@ -167,11 +166,13 @@ public interface RouteTokenResolver {
   }
 
   /**
-   * Composes the given {@link RouteTokenResolver} with the provided {@link RouteTokenResolver} to produce a new resolver which returns
-   * the outputs of both calls to {@link RouteTokenResolver#resolve(RouteToken, RouteToken, RouteToken)} as a single list.
+   * Combine this resolver with the provided resolver to create a new resolver returning the tokens resolved by this resolver
+   * <em>and</em> the tokens from the provided resolver.
+   *
+   * @param that the other token resolver whose contents should be merged with this resolvers
    */
   default RouteTokenResolver and(RouteTokenResolver that) {
-    checkNotNull(that, "Input resolver cannot be null.");
+    requireNonNull(that, "That cannot be null.");
     return (p, c, n) -> {
       LinkedHashSet<ResolvedToken> allElements = new LinkedHashSet<>();
 
@@ -184,6 +185,21 @@ public interface RouteTokenResolver {
       allElements.addAll(thatSection.resolvedTokens());
 
       return new ResolvedTokens(thisSection.routeToken(), allElements);
+    };
+  }
+
+  /**
+   * Combine this resolver with the provided resolver to create a new resolver returning the tokens of the first resolver if it
+   * finds any <em>or</em> the tokens resolved by the provided resolver.
+   *
+   * @param that the other token resolver whose contents should be returned if the current resolver resolves nothing
+   */
+  default RouteTokenResolver or(RouteTokenResolver that) {
+    requireNonNull(that, "That cannot be null.");
+    return (p, c, n) -> {
+
+      ResolvedTokens thisTokens = this.resolve(p, c, n);
+      return !thisTokens.resolvedTokens().isEmpty() ? thisTokens : that.resolve(p, c, n);
     };
   }
 
