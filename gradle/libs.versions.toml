@@ -12,7 +12,7 @@ commons-lang = "org.apache.commons:commons-lang3:3.12.0"
 
 guava = "com.google.guava:guava:31.1-jre"
 
-equalsverifier = "nl.jqno.equalsverifier:equalsverifier:3.14.2"
+equalsverifier = "nl.jqno.equalsverifier:equalsverifier:3.14.3"
 
 jgrapht-core = { module = "org.jgrapht:jgrapht-core", version.ref = "jgrapht" }
 jgrapht-io = { module = "org.jgrapht:jgrapht-io", version.ref = "jgrapht" }
