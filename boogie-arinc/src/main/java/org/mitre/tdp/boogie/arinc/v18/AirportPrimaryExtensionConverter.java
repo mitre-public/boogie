@@ -27,7 +27,7 @@ public class AirportPrimaryExtensionConverter implements Function<ArincRecord, O
         .customerAreaCode(arincRecord.requiredField("customerAreaCode"))
         .sectionCode(arincRecord.requiredField("sectionCode"))
         .airportIdentifier(arincRecord.requiredField("airportIdentifier"))
-        .airportIcaoRegion(arincRecord.requiredField("airportIcaoRegion"))
+        .airportIcaoRegion(arincRecord.requiredField("icaoRegion"))
         .subSectionCode(arincRecord.requiredField("subSectionCode"))
         .iataDesignator(iataDesignator.orElse(null))
         .continuationRecordNumber(arincRecord.requiredField("continuationRecordNumber"))
