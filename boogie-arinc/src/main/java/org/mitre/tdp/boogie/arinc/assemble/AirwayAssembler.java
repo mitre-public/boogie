@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -51,10 +50,9 @@ public interface AirwayAssembler<A> {
 
   final class Standard<A, F, L> implements AirwayAssembler<A> {
 
+    private static final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway = SplitList.INSTANCE;
+    private static final ArincAirwayLegComparator LEG_COMPARATOR = new ArincAirwayLegComparator();
     private final ArincAirwayLegConverter<A, L, F> inflator;
-
-    private final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway = SplitList.INSTANCE;
-
     private final AirwayAssemblyStrategy<A, F, L> strategy;
 
     private Standard(
@@ -68,7 +66,7 @@ public interface AirwayAssembler<A> {
     @Override
     public Stream<A> assemble(Collection<ArincAirwayLeg> arincAirwayLegs) {
       return arincAirwayLegs.stream()
-          .sorted(Comparator.comparing(ArincAirwayLeg::fileRecordNumber))
+          .sorted(LEG_COMPARATOR)
           .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
           .stream()
           .map(this::toAirway);
