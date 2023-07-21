@@ -104,6 +104,10 @@ public interface Leg {
     return new TfBuilder().associatedFix(associatedFix).sequenceNumber(sequenceNumber);
   }
 
+  static CfBuilder cfBuilder(Fix associatedFix, int sequenceNumber, double outboundMagneticCourse) {
+    return new CfBuilder().associatedFix(associatedFix).sequenceNumber(sequenceNumber).outboundMagneticCourse(outboundMagneticCourse);
+  }
+
   /**
    * The associated fix for the leg if one was specified in the leg definition.
    * <p>For example:
@@ -874,16 +878,94 @@ public interface Leg {
     }
   }
 
-  final class CfBuilder {
 
+  final class CfBuilder {
     private final Standard.Builder delegate = new Standard.Builder(PathTerminator.CF);
 
     private CfBuilder() {
+
     }
 
     public CfBuilder associatedFix(Fix associatedFix) {
       this.delegate.associatedFix(requireNonNull(associatedFix));
       return this;
+    }
+
+    public CfBuilder recommendedNavaid(Fix recommendedNavaid) {
+      this.delegate.recommendedNavaid(recommendedNavaid);
+      return this;
+    }
+
+    public CfBuilder sequenceNumber(int sequenceNumber) {
+      this.delegate.sequenceNumber(sequenceNumber);
+      return this;
+    }
+
+    public CfBuilder outboundMagneticCourse(Double outboundMagneticCourse) {
+      this.delegate.outboundMagneticCourse(outboundMagneticCourse);
+      return this;
+    }
+
+    public CfBuilder rho(Double rho) {
+      this.delegate.rho(rho);
+      return this;
+    }
+
+    public CfBuilder theta(Double theta) {
+      this.delegate.theta(theta);
+      return this;
+    }
+
+    public CfBuilder rnp(Double rnp) {
+      this.delegate.rnp(rnp);
+      return this;
+    }
+
+    public CfBuilder routeDistance(Double routeDistance) {
+      this.delegate.routeDistance(routeDistance);
+      return this;
+    }
+
+    public CfBuilder holdTime(Duration holdTime) {
+      this.delegate.holdTime(holdTime);
+      return this;
+    }
+
+    public CfBuilder verticalAngle(Double verticalAngle) {
+      this.delegate.verticalAngle(verticalAngle);
+      return this;
+    }
+
+    public CfBuilder speedConstraint(Range<java.lang.Double> speedConstraint) {
+      this.delegate.speedConstraint(speedConstraint);
+      return this;
+    }
+
+    public CfBuilder altitudeConstraint(Range<java.lang.Double> altitudeConstraint) {
+      this.delegate.altitudeConstraint(altitudeConstraint);
+      return this;
+    }
+
+    public CfBuilder turnDirection(TurnDirection turnDirection) {
+      this.delegate.turnDirection(turnDirection);
+      return this;
+    }
+
+    public CfBuilder isFlyOverFix(boolean isFlyOverFix) {
+      this.delegate.isFlyOverFix(isFlyOverFix);
+      return this;
+    }
+
+    public CfBuilder isPublishedHoldingFix(boolean isPublishedHoldingFix) {
+      this.delegate.isPublishedHoldingFix(isPublishedHoldingFix);
+      return this;
+    }
+
+    public Standard build() {
+      requireNonNull(delegate.associatedFix, "Required: Associated Fix");
+      requireNonNull(delegate.sequenceNumber, "Required: Sequence Number");
+      requireNonNull(delegate.outboundMagneticCourse, "Required: Outbound Magnetic Course");
+      return delegate.build();
     }
   }
 

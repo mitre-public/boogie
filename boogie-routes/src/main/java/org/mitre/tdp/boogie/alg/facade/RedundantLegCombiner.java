@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.fn.LeftMerger;
 
@@ -49,15 +50,32 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
   ExpandedRouteLeg safelyMergeLegs(ExpandedRouteLeg previous, ExpandedRouteLeg next) {
     ExpandedRouteLeg preferred = preferredLeg(previous, next);
 
-    // intentional - keep the previous path type (as the termination is identical)
-    // this should mostly be TF's anyway...
-    Leg combined = Leg.builder(previous.pathTerminator(), preferred.sequenceNumber())
+    Leg merged = merge(previous, preferred);
+
+    ElementType inferredElementType = specialElementTypeBetween(previous.elementType(), next.elementType()).orElse(preferred.elementType());
+
+    return new ExpandedRouteLeg(preferred.section(), inferredElementType, previous.wildcards().concat(next.wildcards()), merged);
+  }
+
+  /**
+   * This combines two legs while keeping course information if the previous was a CF/CI leg.
+   * We intentionally keep the previous legs path terminator.
+   * @param previous the previous leg that would typically end a transition.
+   * @param preferred the leg we are keeping most constraints from
+   * @return a collapsed leg that keeps constraints from preferred leg and courses if needed.
+   */
+  private Leg merge(ExpandedRouteLeg previous, ExpandedRouteLeg preferred) {
+    Double course = Optional.of(previous)
+        .filter(i -> i.pathTerminator() == PathTerminator.CI || i.pathTerminator() == PathTerminator.CF) //we need to keep the course from these if its these leg types
+        .map(i -> i.outboundMagneticCourse().orElseThrow(IllegalStateException::new))
+        .orElse(preferred.outboundMagneticCourse().orElse(null));
+    return Leg.builder(previous.pathTerminator(), preferred.sequenceNumber())
         .associatedFix(preferred.associatedFix().orElse(null))
         .recommendedNavaid(preferred.recommendedNavaid().orElse(null))
         .sequenceNumber(preferred.sequenceNumber())
         .speedConstraint(preferred.speedConstraint())
         .altitudeConstraint(preferred.altitudeConstraint())
-        .outboundMagneticCourse(preferred.outboundMagneticCourse().orElse(null))
+        .outboundMagneticCourse(course)
         .theta(preferred.theta().orElse(null))
         .rho(preferred.rho().orElse(null))
         .rnp(preferred.rnp().orElse(null))
@@ -66,10 +84,6 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
         .isPublishedHoldingFix(preferred.isPublishedHoldingFix())
         .isFlyOverFix(preferred.isFlyOverFix())
         .build();
-
-    ElementType inferredElementType = specialElementTypeBetween(previous.elementType(), next.elementType()).orElse(preferred.elementType());
-
-    return new ExpandedRouteLeg(preferred.section(), inferredElementType, previous.wildcards().concat(next.wildcards()), combined);
   }
 
   /**

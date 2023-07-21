@@ -26,11 +26,11 @@ public final class MockObjects {
   }
 
   public static Leg leg(String name, double lat, double lon, PathTerminator type) {
-    return leg(name, lat, lon, type, 0);
+    return leg(name, lat, lon, type, 0, null);
   }
 
-  public static Leg leg(String name, double lat, double lon, PathTerminator type, int sequence) {
-    return Leg.builder(type, sequence).associatedFix(fix(name, lat, lon)).build();
+  public static Leg leg(String name, double lat, double lon, PathTerminator type, int sequence, Double crs) {
+    return Leg.builder(type, sequence).associatedFix(fix(name, lat, lon)).outboundMagneticCourse(crs).build();
   }
 
   public static Leg TF(String name, double lat, double lon) {
@@ -38,7 +38,7 @@ public final class MockObjects {
   }
 
   public static Leg TF(String name, double lat, double lon, int sequence) {
-    return leg(name, lat, lon, PathTerminator.TF, sequence);
+    return leg(name, lat, lon, PathTerminator.TF, sequence, null);
   }
 
   public static Leg IF(String name, double lat, double lon) {
@@ -46,7 +46,7 @@ public final class MockObjects {
   }
 
   public static Leg IF(String name, double lat, double lon, int sequence) {
-    return leg(name, lat, lon, PathTerminator.IF, sequence);
+    return leg(name, lat, lon, PathTerminator.IF, sequence, null);
   }
 
   public static Leg DF(String name, double lat, double lon) {
@@ -54,11 +54,11 @@ public final class MockObjects {
   }
 
   public static Leg DF(String name, double lat, double lon, int sequence) {
-    return leg(name, lat, lon, PathTerminator.DF, sequence);
+    return leg(name, lat, lon, PathTerminator.DF, sequence, null);
   }
 
   public static Leg CF(String name, double lat, double lon) {
-    return leg(name, lat, lon, PathTerminator.CF);
+    return leg(name, lat, lon, PathTerminator.CF, 0, 100.0);
   }
 
   public static Leg FM(String name, double lat, double lon) {
@@ -70,7 +70,7 @@ public final class MockObjects {
   }
 
   public static Leg HM(String name, double lat, double lon, int sequence) {
-    return leg(name, lat, lon, PathTerminator.HM, sequence);
+    return leg(name, lat, lon, PathTerminator.HM, sequence, null);
   }
 
   public static Leg CA() {
