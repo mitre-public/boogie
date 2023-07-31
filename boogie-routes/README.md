@@ -2,16 +2,14 @@
 
 ## Module overview
 
-This module resolves the physical planned path of an aircraft through the NAS based on the route strings filed in it’s flightplans. Depending on the configured infrastructure data this route expansions can 
-be generated both domestically and internationally.
+This module provides a configurable API for converting input route strings into 2D paths through navigation infrastructure.
 
 ## Quick start
 
-The entry point to the code is the ```RouteExpanderFactory.java``` class. This class provides (among others) a pair of methods for generating a ```RouteExpander``` based on either 
-collections of cached infrastructure data or based on various ```LookupService(s)``` which can be used to lookup infrastructure elements by identifier (as one would see them 
-referenced by in a flightplan).
+The primary entrypoint into the codebase is `FluentRouteExpander.java`. It provides an easy-to-use out-of-the-box route expander implementation while allowing 
+client's to quickly customize its features later.
 
-Assuming you have a collection of infrastructure records on hand implementing the associated ```boogie-core``` interfaces instantiating a ```RouteExpander``` is as simple as:
+Assuming you have collections of `Procedure`, `Airway`, `Fix`, and `Airport` implementations on hand (e.g. from `boogie-arinc`):
 
 ```java
 Collection<Procedure> procedures...
@@ -21,7 +19,7 @@ Collection<Airport> airports...
 
 String myRouteString....
 
-RouteExpander routeExpander = RouteExpanderFactory.newGraphicalRouteExpander(fixes, airways, airports, procedures);
+FluentRouteExpander routeExpander = FluentRouteExpander.inMemoryBuilder(airports, procedures, airways, fixes).build();
 
 // expansion through the common portion of the SID/STAR (if present)
 Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString);
@@ -35,6 +33,22 @@ Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDep
 // expansion through the appropriate runway transitions and then onto the RNP approach (if one exists) or else the RNAV (if one exists) or else the CONV (if one exists)
 Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway, RNP, RNAV, CONV);
 ```
+
+## Design
+
+Boogie has a highly modular design, allowing clients to swap out significant portions of the logic backing the expansion process with their own should they need that level of 
+customization.
+
+The four key abstractions that Boogie allows clients to override (and provides a few implementations of internally) tell Boogie how to:
+
+1. `RouteTokenizer` - break apart the route into `RouteTokens` which should be processed independently
+2. `RouteTokenResolver` - resolve individual `RouteTokens` to known navigation infrastructure `ResolvedTokens`
+3. `SectionInferrer` - infer additional infrastructure beyond what appears in the route based on additional context
+4. `RouteChooser` - choose an unambiguous path through all `ResolvedTokens`
+
+Boogie ships with support for ICAO and FAA formatted route strings, token resolvers for all the commonly filed infrastructure element types (see [below](#what-are-route-strings?)), and a graph-based route chooser implementation to handle ambiguous elements in filings.
+
+Clients should refer to the defined interfaces in the code to see what all are supported out-of-the-box.
 
 ## What are route strings?
 
@@ -93,38 +107,3 @@ flightplan, while + can be either military in nature in which case it means to e
 
 ![International Filed Routes](docs/international-filed-routes-1.png)
 ![International Filed Routes](docs/international-filed-routes-2.png)
-
-
-## How the algorithm works
-
-The expansion algorithm itself is relatively simple and can be split into 3 primary parts:
-
-1. <b>Section Splitting</b> - this process performs the initial subdivision of the route string along the ```.``` character to prepare for matching the subsections against known infrastructure.
-e.g. ```KDFW*..LOPEZ → (id=KDFW, wildcards=*), (id=LOPEZ)```
-2. <b>Section Resolution</b> - this portion takes the cleaned sections from the splitting process and preforms a broad match against all known pieces of infrastructure with the same primary 
-identifier, while allowing for some simple filters to be applied on top (e.g. SID exists at departure airport, etc.).
-3. <b>Shortest Path Resolution</b> - the matched sections are then fed into a directed graph and zipped together based on their declared order in the route string. Some simple rules are then applied 
-to determine edge weights between adjacent sections (e.g. distance to nearest fix) and the shortest path is computed. The shortest path through the candidate sequence of infrastructure elements 
-is then taken to be the assigned route.
-
-The approach above allows us to keep the algorithm itself reasonably generic and relatively robust without needing to add too many rules/special cases to the underlying code as the graphically 
-resolved path generally does a good job of handling things like repeated airways in the route string, etc.
-
-Additionally boogie provides the legs within this path in a "flyable" form - this means the leg types accurately reflect the way the aircraft should actually fly them.
-
-## Extra Docs
-Approaches are assigned by taking an arrival runway and a set of tiered equipage preferences to down-select the available approaches at the airport to just those for the target runway and with the preferred required equipage. If no procedures match these filters, no approach will be used.
-
-<b>Available Equipages</b>
-1. CONV - Conventional procedures are ones where aircraft fly directly between pairs of physical facilities or with direct reference to particular ones.
-2. RNAV - An RNAV procedure is any procedure which can be flown without direct reference to conventional physical infrastructure such as NDB/VORs/etc. RNAV waypoints don't always directly correspond to traditional infrastructure but can be the product of pairs of VORs, etc. Basically remember you can do RNAV without GPS, same with RNP.
-3. RNP - RNP is really any RNAV procedure which has onboard alerting for the aircraft. This gets a bit weird because its less of a procedure thing and more of an aircraft equipage question. Basically a RNP procedure is a procedure any RNAV equipped aircraft can fly but which has been encoded in such a way that the aircraft (if equipped) will provide alerts when it is too far off route.
-<br>So whether an aircraft flies the RNAV procedure as RNP depends on whether they have the onboard equipage for the notifications <i>and</i> whether the procedure itself was encoded with RNP tolerances on the legs.
-4. UNKNOWN - Placeholder - the required high-level equipage can't always be inferred for various procedure sources - this is provided as a placeholder for those situations. e.g. within the ProcedureFactory.newProcedure() method - where required equipage can't be inferred based solely on the transition interface.
-
-<b>Things to Note/Watch Out For</b>
-1. A route will start with a DF (direct to fix) leg if there is no departure procedure. 
-2. Legs are collapsed to keep the 'most restrictive leg' between sid-airway or airway-star/approach.
-3. Stars-approaches that do not link will have an extra DF leg created to link them.
-4. You will need to add arrival runways/missed approaches if you need them. 
-5. The expanded route string will start/end with the airports from the route string when airports are provided in the route string
