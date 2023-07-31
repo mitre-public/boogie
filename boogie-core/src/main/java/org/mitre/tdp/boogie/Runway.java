@@ -94,8 +94,8 @@ public interface Runway {
     private Standard(Builder builder) {
       this.runwayIdentifier = requireNonNull(builder.runwayIdentifier);
       this.origin = requireNonNull(builder.origin);
-      this.length = requireNonNull(builder.length);
-      this.course = requireNonNull(builder.course);
+      this.length = builder.length;
+      this.course = builder.course;
     }
 
     @Override
