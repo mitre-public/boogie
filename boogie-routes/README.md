@@ -39,16 +39,17 @@ Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDep
 Boogie has a highly modular design, allowing clients to swap out significant portions of the logic backing the expansion process with their own should they need that level of 
 customization.
 
-The four key abstractions that Boogie allows clients to override (and provides a few implementations of internally) tell Boogie how to:
+Boogie provides four key extension points that allow clients to customize the expander to meet their needs:
 
 1. `RouteTokenizer` - break apart the route into `RouteTokens` which should be processed independently
 2. `RouteTokenResolver` - resolve individual `RouteTokens` to known navigation infrastructure `ResolvedTokens`
 3. `SectionInferrer` - infer additional infrastructure beyond what appears in the route based on additional context
 4. `RouteChooser` - choose an unambiguous path through all `ResolvedTokens`
 
-Boogie ships with support for ICAO and FAA formatted route strings, token resolvers for all the commonly filed infrastructure element types (see [below](#what-are-route-strings?)), and a graph-based route chooser implementation to handle ambiguous elements in filings.
+Boogie ships with support for ICAO and FAA formatted route strings, token resolvers for all the commonly filed infrastructure element types (see [below](#what-are-route-strings?)) 
+and a graph-based route chooser implementation to handle ambiguous elements in filings (and more).
 
-Clients should refer to the defined interfaces in the code to see what all are supported out-of-the-box.
+Clients should refer to the above interfaces in the code to see what all are supported out-of-the-box.
 
 ## What are route strings?
 
