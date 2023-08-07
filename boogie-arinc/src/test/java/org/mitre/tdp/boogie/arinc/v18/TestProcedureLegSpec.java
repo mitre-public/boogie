@@ -10,11 +10,14 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 
 public class TestProcedureLegSpec {
@@ -22,7 +25,17 @@ public class TestProcedureLegSpec {
   private static final ArincRecordParser V18 = ArincRecordParser.standard(new ProcedureLegSpec());
 
   private static final String IF = "SUSAP KJFKK6FV13R  V      010ASALTK6EA1E  D    IF CRI K6      22480060        D     03000     18000                 3 DS   154932004";
+  private static final String ENG_OUT = "SPACP VVTHVVDEO03  0RW03  010         1        VA                     0290        + 01600     09022                        720981902\n";
 
+  @Test
+  void testEngineOutParse() {
+    ArincRecord leg = V18.parse(ENG_OUT).orElseThrow();
+    assertAll(
+        () -> assertEquals("EO03", leg.requiredField("sidStarIdentifier"), "get it E .. 0 ... Runway Name"),
+        () -> assertEquals("D", leg.requiredField("subSectionCode"), "its a sid"),
+        () -> assertEquals("0", leg.requiredField("routeType"), "its an engine out sid")
+    );
+  }
   @Test
   void testSpecMatchesIF() {
     assertTrue(new ProcedureLegSpec().matchesRecord(IF));

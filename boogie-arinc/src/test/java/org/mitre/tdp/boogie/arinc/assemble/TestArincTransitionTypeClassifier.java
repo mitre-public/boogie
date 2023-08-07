@@ -22,11 +22,13 @@ class TestArincTransitionTypeClassifier {
     ArincProcedureLeg common = newProcedureLeg("D", "2");
     ArincProcedureLeg enroute = newProcedureLeg("D", "3");
     ArincProcedureLeg runway = newProcedureLeg("D", "1");
+    ArincProcedureLeg engineOut = newProcedureLeg("D", "0");
 
     assertAll(
         () -> assertEquals(TransitionType.COMMON, classifier.apply(singletonList(common))),
         () -> assertEquals(TransitionType.ENROUTE, classifier.apply(singletonList(enroute))),
-        () -> assertEquals(TransitionType.RUNWAY, classifier.apply(singletonList(runway)))
+        () -> assertEquals(TransitionType.RUNWAY, classifier.apply(singletonList(runway))),
+        () -> assertEquals(TransitionType.COMMON, classifier.apply(singletonList(engineOut)))
     );
   }
 
@@ -65,15 +67,17 @@ class TestArincTransitionTypeClassifier {
   }
 
   private ArincProcedureLeg newProcedureLeg(String subSection, String routeType, String transitionIdentifier, String waypointDescription) {
-    ArincProcedureLeg arincProcedureLeg = mock(ArincProcedureLeg.class);
-    when(arincProcedureLeg.sidStarIdentifier()).thenReturn("MOCK");
-    when(arincProcedureLeg.airportIdentifier()).thenReturn("MOCK");
-    when(arincProcedureLeg.airportIcaoRegion()).thenReturn("MOCK");
-    when(arincProcedureLeg.sectionCode()).thenReturn(SectionCode.P);
-    when(arincProcedureLeg.subSectionCode()).thenReturn(Optional.of(subSection));
-    when(arincProcedureLeg.routeType()).thenReturn(routeType);
-    when(arincProcedureLeg.transitionIdentifier()).thenReturn(Optional.ofNullable(transitionIdentifier));
-    when(arincProcedureLeg.waypointDescription()).thenReturn(Optional.ofNullable(waypointDescription));
-    return arincProcedureLeg;
+    return new ArincProcedureLeg.Builder()
+        .sequenceNumber(10)
+        .fileRecordNumber(20)
+        .sidStarIdentifier("MOCK")
+        .airportIdentifier("MOCK")
+        .airportIcaoRegion("MOCK")
+        .sectionCode(SectionCode.P)
+        .subSectionCode(subSection)
+        .routeType(routeType)
+        .transitionIdentifier(transitionIdentifier)
+        .waypointDescription(waypointDescription)
+        .build();
   }
 }

@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Comparator.comparing;
+import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_0;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_1;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_2;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_3;
@@ -101,7 +102,7 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
     /**
      * The set of concatenated {subSection, routeType} qualifiers indicating a transition is {@link TransitionType#COMMON}.
      */
-    private static final Set<ArincRouteType> LABELED_COMMON = newHashSet(PD_2, PD_5, PD_M, PE_2, PE_5, PE_M, PD_N, PE_N);
+    private static final Set<ArincRouteType> LABELED_COMMON = newHashSet(PD_2, PD_5, PD_M, PD_0, PE_2, PE_5, PE_M, PD_N, PE_N);
 
     /**
      * The set of concatenated {subSection, routeType} qualifiers indicating a transition is {@link TransitionType#ENROUTE}.
