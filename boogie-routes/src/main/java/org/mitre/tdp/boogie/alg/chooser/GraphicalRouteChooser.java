@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -60,13 +61,13 @@ final class GraphicalRouteChooser implements RouteChooser {
     List<LinkableTokens> linkableTokens = toLinkableTokens(resolvedTokens);
 
     SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(linkableTokens);
-    LOG.debug("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph));
+    ifDebugEnabled(l -> l.debug("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph)));
 
     Set<Leg> resolvedEntryPoints = resolveEntryPoints(linkableTokens);
-    LOG.debug("Resolved {} candidate entry points into the route graph.", resolvedEntryPoints.size());
+    ifDebugEnabled(l -> l.debug("Resolved {} candidate entry points into the route graph.", resolvedEntryPoints.size()));
 
     Set<Leg> resolvedExitPoints = resolveExitPoints(linkableTokens);
-    LOG.debug("Resolved {} candidate exit points from the route graph.", resolvedExitPoints.size());
+    ifDebugEnabled(l -> l.debug("Resolved {} candidate exit points from the route graph.", resolvedExitPoints.size()));
 
     DijkstraShortestPath<Leg, DefaultWeightedEdge> shortestPathAlgorithm = new DijkstraShortestPath<>(routeGraph);
 
@@ -227,6 +228,12 @@ final class GraphicalRouteChooser implements RouteChooser {
       Function<? super T, ? extends K> keyMapper,
       Function<? super T, ? extends U> valueMapper) {
     return Collectors.toMap(keyMapper, valueMapper, (a, b) -> b, LinkedHashMap::new);
+  }
+
+  private static void ifDebugEnabled(Consumer<Logger> log) {
+    if (LOG.isDebugEnabled()) {
+      log.accept(LOG);
+    }
   }
 
   /**

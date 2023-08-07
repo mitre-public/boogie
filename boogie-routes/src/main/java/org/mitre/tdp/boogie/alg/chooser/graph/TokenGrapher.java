@@ -155,7 +155,7 @@ public interface TokenGrapher {
 
       private Fix createFix(LatLong latLong) {
         return Fix.builder()
-            .fixIdentifier(latLong.toBase64())
+            .fixIdentifier(String.format("[%f,%f]", latLong.latitude(), latLong.longitude()))
             .latLong(latLong)
             .build();
       }
