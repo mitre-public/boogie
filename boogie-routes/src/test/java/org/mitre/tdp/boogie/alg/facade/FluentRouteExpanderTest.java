@@ -55,7 +55,7 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  * P - Procedure
  * T - Tailored Fix
  * <br>
- * e.g. TestAPF would indicated a test for Airport.Procedure.Fix one of the more common composite route elements.
+ * e.g. TestAPF would indicate a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class FluentRouteExpanderTest {
 

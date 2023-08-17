@@ -7,11 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.alg.resolve.ResolvedToken.directToAirport;
 import static org.mitre.tdp.boogie.alg.resolve.ResolvedToken.directToFix;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
@@ -63,8 +60,7 @@ class DirectToConverterTest {
 
   private ResolvedLeg create(PathTerminator terminator) {
 
-    Leg leg = mock(Leg.class);
-    when(leg.pathTerminator()).thenReturn(terminator);
+    Leg leg = Leg.builder(terminator, 10).build();
 
     return ResolvedLeg.create(
         RouteToken.standard("fix", 0.),
@@ -75,9 +71,7 @@ class DirectToConverterTest {
 
   private ResolvedLeg create(ResolvedToken resolvedToken) {
 
-    Leg leg = mock(Leg.class);
-    when(leg.associatedFix()).thenReturn((Optional) Optional.of(mockFix()));
-    when(leg.pathTerminator()).thenReturn(PathTerminator.DF);
+    Leg leg = Leg.dfBuilder(mockFix(), 10).build();
 
     return ResolvedLeg.create(
         RouteToken.standard("fix", 0.),
@@ -87,13 +81,11 @@ class DirectToConverterTest {
   }
 
   private Airport mockAirport() {
-    Airport airport = mock(Airport.class);
-    return airport;
+    return Airport.builder().airportIdentifier("MOCK").latLong(LatLong.of(0., 0.)).build();
   }
 
   private Fix mockFix() {
-    Fix fix = mock(Fix.class);
-    return fix;
+    return Fix.builder().fixIdentifier("MOCK").latLong(LatLong.of(0., 0.)).build();
   }
 
   private static final class Dummy implements ResolvedToken {

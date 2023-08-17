@@ -297,8 +297,8 @@ public interface Leg {
       this.routeDistance = builder.routeDistance;
       this.holdTime = builder.holdTime;
       this.verticalAngle = builder.verticalAngle;
-      this.speedConstraint = builder.speedConstraint;
-      this.altitudeConstraint = builder.altitudeConstraint;
+      this.speedConstraint = requireNonNull(builder.speedConstraint, "Use Range.all()");
+      this.altitudeConstraint = requireNonNull(builder.altitudeConstraint, "Use Range.all()");
       this.turnDirection = builder.turnDirection;
       this.isFlyOverFix = builder.isFlyOverFix;
       this.isPublishedHoldingFix = builder.isPublishedHoldingFix;
@@ -481,8 +481,8 @@ public interface Leg {
       private Double routeDistance;
       private Duration holdTime;
       private Double verticalAngle;
-      private Range<java.lang.Double> speedConstraint;
-      private Range<java.lang.Double> altitudeConstraint;
+      private Range<java.lang.Double> speedConstraint = Range.all();
+      private Range<java.lang.Double> altitudeConstraint = Range.all();
       private TurnDirection turnDirection;
       private boolean isFlyOverFix;
       private boolean isPublishedHoldingFix;
@@ -547,12 +547,12 @@ public interface Leg {
       }
 
       public Builder speedConstraint(Range<java.lang.Double> speedConstraint) {
-        this.speedConstraint = speedConstraint;
+        this.speedConstraint = requireNonNull(speedConstraint, "Use Range.all()");
         return this;
       }
 
       public Builder altitudeConstraint(Range<java.lang.Double> altitudeConstraint) {
-        this.altitudeConstraint = altitudeConstraint;
+        this.altitudeConstraint = requireNonNull(altitudeConstraint, "Use Range.all()");
         return this;
       }
 
