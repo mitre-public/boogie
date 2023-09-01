@@ -2,12 +2,24 @@ package org.mitre.tdp.boogie.arinc.database;
 
 import static java.util.Collections.emptyList;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,19 +63,19 @@ public final class ArincDatabaseFactory {
 
     LinkedHashMultimap<ArincKey, Object> lookup = LinkedHashMultimap.create();
 
-    LOG.info("Indexing {} NDB Navaids in the FixDatabase.", ndbNavaids.size());
+    LOG.debug("Indexing {} NDB Navaids in the FixDatabase.", ndbNavaids.size());
     ndbNavaids.forEach(ndb -> lookup.put(ndbNavaidToFixIndex.apply(ndb), ndb));
 
-    LOG.info("Indexing {} VHF Navaids in the FixDatabase.", vhfNavaids.size());
+    LOG.debug("Indexing {} VHF Navaids in the FixDatabase.", vhfNavaids.size());
     vhfNavaids.forEach(vhf -> lookup.put(vhfNavaidToFixIndex.apply(vhf), vhf));
 
-    LOG.info("Indexing {} Waypoints in the FixDatabase.", waypoints.size());
+    LOG.debug("Indexing {} Waypoints in the FixDatabase.", waypoints.size());
     waypoints.forEach(waypoint -> lookup.put(waypointToFixIndex.apply(waypoint), waypoint));
 
-    LOG.info("Indexing {} Airports in the FixDatabase.", airports.size());
+    LOG.debug("Indexing {} Airports in the FixDatabase.", airports.size());
     airports.forEach(airport -> lookup.put(airportToFixIndex.apply(airport), airport));
 
-    LOG.info("Indexing {} Holding Patterns in the FixDatabase.", airports.size());
+    LOG.debug("Indexing {} Holding Patterns in the FixDatabase.", airports.size());
     holdingPatterns.forEach(arincHoldingPattern -> lookup.put(holdingToHoldingIndex.apply(arincHoldingPattern), arincHoldingPattern));
 
     return new FixDatabase(lookup);

@@ -45,17 +45,17 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
 
 /**
  * Route inflation tests (the full package) used to test specific component expansions.
- * <br>
- * Test names are abbreviated based on the composed infrastructure elements:
- * <br>
- * A - Airport
- * W - Airway
- * F - Fix
- * L - LatLon
- * P - Procedure
- * T - Tailored Fix
- * <br>
- * e.g. TestAPF would indicate a test for Airport.Procedure.Fix one of the more common composite route elements.
+ *
+ * <p>Test names are abbreviated based on the composed infrastructure elements:
+ * <ol>
+ *   <li>A - Airport</li>
+ *   <li>W - Airway</li>
+ *   <li>F - Fix</li>
+ *   <li>L - LatLon</li>
+ *   <li>P - Procedure</li>
+ *   <li>T - Tailored Waypoint</li>
+ * </ol>
+ * <p>e.g. TestAPF would indicate a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class FluentRouteExpanderTest {
 

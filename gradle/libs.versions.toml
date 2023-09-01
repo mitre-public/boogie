@@ -26,25 +26,27 @@ mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito
 tdpoet = "org.mitre.tdp:tdpoet:1.0.1"
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-log4j12 = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j" }
 
 [bundles]
 
 commons = [
-    "slf4j-api",
-    "commons-caasd",
-    "guava",
-    "commons-math",
+  "slf4j-api",
+  "commons-caasd",
+  "guava",
+  "commons-math",
 ]
 
 jgrapht = [
-    "jgrapht-core",
-    "jgrapht-io",
+  "jgrapht-core",
+  "jgrapht-io",
 ]
 
 test-tools = [
-    "mockito-core",
-    "mockito-inline",
-    "equalsverifier",
-    "junit-jupiter",
-    "tdpoet",
+  "mockito-core",
+  "mockito-inline",
+  "equalsverifier",
+  "junit-jupiter",
+  "tdpoet",
+  "slf4j-log4j12",
 ]

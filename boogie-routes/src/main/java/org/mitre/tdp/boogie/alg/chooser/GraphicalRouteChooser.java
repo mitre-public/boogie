@@ -61,20 +61,19 @@ final class GraphicalRouteChooser implements RouteChooser {
     List<LinkableTokens> linkableTokens = toLinkableTokens(resolvedTokens);
 
     SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(linkableTokens);
-    ifDebugEnabled(l -> l.debug("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph)));
+    ifTraceEnabled(l -> l.trace("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph)));
 
-    Set<Leg> resolvedEntryPoints = resolveEntryPoints(linkableTokens);
-    ifDebugEnabled(l -> l.debug("Resolved {} candidate entry points into the route graph.", resolvedEntryPoints.size()));
-
-    Set<Leg> resolvedExitPoints = resolveExitPoints(linkableTokens);
-    ifDebugEnabled(l -> l.debug("Resolved {} candidate exit points from the route graph.", resolvedExitPoints.size()));
+    Set<Leg> resolvedEntryPoints = logResolvedPoints("entry", resolveEntryPoints(linkableTokens));
+    Set<Leg> resolvedExitPoints = logResolvedPoints("exit", resolveExitPoints(linkableTokens));
 
     DijkstraShortestPath<Leg, DefaultWeightedEdge> shortestPathAlgorithm = new DijkstraShortestPath<>(routeGraph);
 
+    ifDebugEnabled(l -> l.debug("- Identifying shortest path: {}", resolvedEntryPoints.size() * resolvedExitPoints.size()));
+    ifDebugEnabled(l -> l.debug(String.format("  %10s %10s %10s %30s", "Start", "End", "Length", "Weight")));
     List<LinkableLeg> shortestPath = cartesianProduct(resolvedEntryPoints, resolvedExitPoints).stream()
         .map(pair -> shortestPathAlgorithm.getPath(pair.first(), pair.second()))
         .filter(Objects::nonNull)
-        .peek(path -> LOG.debug("Identified shortest path of length {} with weight {}.", path.getWeight(), path.getVertexList().size()))
+        .peek(this::logPathCandidate)
         .min(Comparator.comparing(GraphPath::getWeight))
         .map(GraphPath::getVertexList)
         .stream()
@@ -233,6 +232,42 @@ final class GraphicalRouteChooser implements RouteChooser {
   private static void ifDebugEnabled(Consumer<Logger> log) {
     if (LOG.isDebugEnabled()) {
       log.accept(LOG);
+    }
+  }
+
+  private static void ifTraceEnabled(Consumer<Logger> log) {
+    if (LOG.isTraceEnabled()) {
+      log.accept(LOG);
+    }
+  }
+
+  private Set<Leg> logResolvedPoints(String type, Set<Leg> legs) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("- Resolved {} points:", type);
+      LOG.debug(String.format("  %20s %10s", "Fix", "Terminator"));
+      legs.forEach(leg -> LOG.debug(
+              String.format("  %20s %10s",
+                  leg.associatedFix().map(Fix::fixIdentifier).orElse("None"),
+                  leg.pathTerminator().name()
+              )
+          )
+      );
+    }
+    return legs;
+  }
+
+  private void logPathCandidate(GraphPath<Leg, DefaultWeightedEdge> path) {
+    if (LOG.isDebugEnabled()) {
+      List<Leg> vertices = path.getVertexList();
+      LOG.debug(
+          String.format(
+              "  %10s %10s %10s %30s",
+              vertices.get(0).associatedFix().map(Fix::fixIdentifier).orElse("None"),
+              vertices.get(vertices.size() - 1).associatedFix().map(Fix::fixIdentifier).orElse("None"),
+              vertices.size(),
+              path.getWeight()
+          )
+      );
     }
   }
 

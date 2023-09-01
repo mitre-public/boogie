@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
@@ -143,7 +144,7 @@ public final class FluentRouteExpander implements
    */
   @Override
   public Optional<ExpandedRoute> apply(String route, @Nullable String departureRunway, @Nullable String arrivalRunway) {
-    return apply(route, departureRunway, arrivalRunway, null);
+    return apply(route, departureRunway, arrivalRunway, new RequiredNavigationEquipage[]{});
   }
 
   /**
@@ -175,7 +176,7 @@ public final class FluentRouteExpander implements
 
   public Optional<ExpandedRoute> apply(String route, RouteDetails details) {
 
-    LOG.info("Beginning expansion of route {} with details: {}", route, details);
+    logInputs(route, details);
 
     RouteContext context = RouteContext.standard()
         .proceduresByName(procedureService)
@@ -195,6 +196,20 @@ public final class FluentRouteExpander implements
                 .arrivalRunway(details.arrivalRunway().orElse(null))
                 .build()
             ));
+  }
+
+  private void logInputs(String route, RouteDetails details) {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("- Beginning expansion of route: {}", route);
+      LOG.debug(String.format("  %20s %20s %30s", "Departure Runway", "Arrival Runway", "Equipage Preferences"));
+      LOG.debug(
+          String.format("  %20s %20s %30s",
+              details.departureRunway().orElse("None"),
+              details.arrivalRunway().orElse("None"),
+              details.equipagePreference().stream().map(Enum::name).collect(Collectors.joining(">"))
+          )
+      );
+    }
   }
 
   private ExpandedRoute createExpandedRoute(List<ResolvedLeg> legs) {

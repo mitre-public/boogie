@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparingDouble;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
@@ -93,23 +94,20 @@ public interface RouteExpander {
 
       checkArgument(route != null && !route.isEmpty(), "Route cannot be null or empty.");
 
-      List<RouteToken> sectionSplits = routeTokenizer.tokenize(route);
-      LOG.info("Generated {} SectionSplits from route {}.", sectionSplits.size(), route);
+      List<RouteToken> routeTokens = logRouteTokens(routeTokenizer.tokenize(route));
 
-      HashedLinkedSequence<ResolvedTokens> initial = newHashedLinkedSequence(routeTokenResolver.applyTo(sectionSplits));
-      LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.resolvedTokens().size()).sum(), initial.size());
+      HashedLinkedSequence<ResolvedTokens> resolvedTokens =
+          newHashedLinkedSequence(routeTokenResolver.applyTo(routeTokens));
 
       for (SectionInferrer inferrer : context.inferrers()) {
-        appendInferredSections(initial, inferrer);
+        appendInferredSections(resolvedTokens, inferrer);
       }
 
-      LOG.info("Resolved {} Elements across {} Sections.", initial.stream().mapToInt(section -> section.resolvedTokens().size()).sum(), initial.size());
-
-      List<ResolvedTokens> sortedByIndex = initial.stream()
+      List<ResolvedTokens> sortedByIndex = resolvedTokens.stream()
           .sorted(comparingDouble(r -> r.routeToken().index()))
           .collect(toList());
 
-      return routeChooser.chooseRoute(sortedByIndex);
+      return routeChooser.chooseRoute(logResolvedTokens(sortedByIndex));
     }
 
     private void appendInferredSections(HashedLinkedSequence<ResolvedTokens> sequence, SectionInferrer inferrer) {
@@ -121,6 +119,38 @@ public interface RouteExpander {
           previous = section;
         }
       });
+    }
+
+    private List<RouteToken> logRouteTokens(List<RouteToken> routeTokens) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("- RouteTokens: {}", routeTokens.size());
+        LOG.debug(String.format("  %10s %10s", "Identifier", "Index"));
+        routeTokens.forEach(token -> LOG.debug(
+                String.format(
+                    "  %10s %10s",
+                    token.infrastructureName(),
+                    token.index()
+                )
+            )
+        );
+      }
+      return routeTokens;
+    }
+
+    private List<ResolvedTokens> logResolvedTokens(List<ResolvedTokens> resolvedTokens) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("- ResolvedTokens: {}", resolvedTokens.stream().mapToInt(tokens -> tokens.resolvedTokens().size()).sum());
+        LOG.debug(String.format("  %10s %50s", "Identifier", "Types"));
+        resolvedTokens.forEach(tokens -> LOG.debug(
+                String.format(
+                    "  %10s %50s",
+                    tokens.routeToken().infrastructureName(),
+                    "[" + tokens.resolvedTokens().stream().map(token -> token.getClass().getSimpleName()).collect(joining(",")) + "]"
+                )
+            )
+        );
+      }
+      return resolvedTokens;
     }
 
     public static final class Builder {
