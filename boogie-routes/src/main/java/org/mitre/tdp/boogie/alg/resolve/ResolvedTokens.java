@@ -24,8 +24,8 @@ public final class ResolvedTokens {
    */
   private final Collection<ResolvedToken> resolvedTokens;
 
-  public ResolvedTokens(RouteToken split, Collection<ResolvedToken> resolvedTokens) {
-    this.routeToken = requireNonNull(split);
+  public ResolvedTokens(RouteToken routeToken, Collection<ResolvedToken> resolvedTokens) {
+    this.routeToken = requireNonNull(routeToken);
     this.resolvedTokens = resolvedTokens;
   }
 

@@ -12,6 +12,10 @@ package org.mitre.tdp.boogie.alg.split;
  */
 public interface RouteTokenVisitor {
 
+  /**
+   * Holdover for feature parity with the original route expander implementation - this will be removed in a future release.
+   */
+  @Deprecated
   static String wildcards(RouteToken token) {
     WildcardVisitor visitor = new WildcardVisitor();
     token.accept(visitor);
