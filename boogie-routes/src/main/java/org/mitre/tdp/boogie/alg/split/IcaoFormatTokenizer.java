@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -29,17 +30,37 @@ final class IcaoFormatTokenizer implements RouteTokenizer {
       (l1, l2) -> Strings.isNullOrEmpty(l1.infrastructureName()),
       (l1, l2) -> l2.toBuilder().wildcards(l2.wildcards().orElse("").concat(l1.wildcards().orElse(""))).build()
   );
-  static Pattern speedLevel = Pattern.compile("/[A-Z0-9]{8,10}$");
+  private static final Pattern speedLevel = Pattern.compile("/[KMN][0-9]{3,4}[FSAM][0-9]{3,4}$");
+
+  //these show up as tokens vs items modifying the actual token
+  private static final Pattern cruiseSpeedLevel = Pattern.compile("^-?[KMN][0-9]{3,4}[FSAM][0-9]{3,4}");
+
+  private static final Pattern changeInCruiseWindow = Pattern.compile("/[KMN][0-9]{3,4}[FSAM][0-9]{3,4}[FSAM][0-9]{3,4}$");
+  private static final Pattern changeInCruisePlus = Pattern.compile("/[KMN][0-9]{3,4}[FSAM][0-9]{3,4}PLUS$");
+
 
   IcaoFormatTokenizer() {
   }
 
-  static String findSpeedLevel(String val) {
+  private static String findSpeedLevel(String val) {
     Matcher matcher = speedLevel.matcher(val);
     return matcher.find() ? matcher.group(0).replace("/", "") : null;
   }
 
-  static String flightRuleChange(String val) {
+  private static String findChangeInCruiseSpeedLevel(String val) {
+    Matcher window = changeInCruiseWindow.matcher(val);
+    Matcher plus = changeInCruisePlus.matcher(val);
+    return Optional.of(val)
+        .filter(i -> window.find())
+        .map(i -> window.group(0).replace("/", ""))
+        .orElseGet(() -> Optional.of(val)
+            .filter(i -> plus.find())
+            .map(i -> plus.group(0).replace("/", ""))
+            .orElse(null)
+        );
+  }
+
+  private static String flightRuleChange(String val) {
     return "VFR".equals(val) || "IFR".equals(val) ? val : null;
   }
 
@@ -55,13 +76,19 @@ final class IcaoFormatTokenizer implements RouteTokenizer {
             return null;
           }
 
+          if(cruiseSpeedLevel.matcher(s).find()) {
+            return null;
+          }
+
           String etaEet = FaaIfrFormatTokenizer.etaEet(s);
 
           String sl = findSpeedLevel(s);
+          sl = isNull(sl) ? findChangeInCruiseSpeedLevel(s) : sl; //check for windows
 
           String frc = flightRuleChange(s);
 
           String ns = isNull(etaEet) ? s : s.replace("/" + etaEet, "");
+
           ns = isNull(sl) ? ns : ns.replace("/" + sl, "");
           ns = isNull(frc) ? ns : "";
 
@@ -75,6 +102,12 @@ final class IcaoFormatTokenizer implements RouteTokenizer {
           if ("/".equals(clean)) {
             clean = "";
             wildcards += "/";
+          }
+
+          //special case for change in cruise
+          if (clean.startsWith("C/")) {
+            clean = clean.replace("C/", "");
+            wildcards += "C/";
           }
 
           return RouteToken.icaoBuilder(clean, i)
