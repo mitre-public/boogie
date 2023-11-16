@@ -62,10 +62,19 @@ class StandardRouteResolverTest {
     Transition cstl6 = transition("CSTL6", TransitionType.COMMON, ProcedureType.SID, singletonList(ifSherl));
     Transition jiims2 = transition("JIIMS2", TransitionType.COMMON, ProcedureType.STAR, singletonList(ifBrigs));
 
-    SidStarResolver sidStarResolver = new SidStarResolver(inMemory(
-        MockObjects.newProcedures(newArrayList(cstl6, jiims2)),
-        p -> Stream.of(p.procedureIdentifier())
-    ));
+    SidResolver sidResolver = new SidResolver(
+        inMemory(
+            MockObjects.newProcedures(newArrayList(cstl6, jiims2)),
+            p -> Stream.of(p.procedureIdentifier())
+        )
+    );
+
+    StarResolver starResolver = new StarResolver(
+        inMemory(
+            MockObjects.newProcedures(newArrayList(cstl6, jiims2)),
+            p -> Stream.of(p.procedureIdentifier())
+        )
+    );
 
     Airport kbdl = airport("KBDL", 0.0, 0.0);
     Airport kphl = airport("KPHL", 0.0, 0.0);
@@ -92,7 +101,8 @@ class StandardRouteResolverTest {
     ));
 
     return RouteTokenResolver.composite()
-        .addResolver(sidStarResolver)
+        .addResolver(sidResolver)
+        .addResolver(starResolver)
         .addResolver(airportResolver)
         .addResolver(airwayResolver)
         .addResolver(fixResolver)

@@ -48,11 +48,11 @@ public interface LookupService<I> extends Function<String, Collection<I>> {
     return new InMemory<>(lookup.build());
   }
 
-  default LookupService<I> thenFilterWith(Predicate<I> predicate) {
+  default LookupService<I> filtered(Predicate<I> predicate) {
     return s -> this.apply(s).stream().filter(predicate).collect(Collectors.toList());
   }
 
-  default LookupService<I> thenApply(Function<Collection<I>, Collection<I>> function) {
+  default LookupService<I> transformed(Function<Collection<I>, Collection<I>> function) {
     return s -> function.apply(this.apply(s));
   }
 

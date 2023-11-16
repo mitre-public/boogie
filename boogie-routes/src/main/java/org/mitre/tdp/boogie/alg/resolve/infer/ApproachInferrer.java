@@ -43,9 +43,9 @@ final class ApproachInferrer implements SectionInferrer {
     this.arrivalRunway = requireNonNull(arrivalRunway);
     this.equippedProcedures = PreferredProcedures.equipagePreference(requiredNavigationEquipages);
     this.proceduresByAirport = requireNonNull(proceduresByAirport)
-        .thenFilterWith(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
+        .filtered(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
         // mask the missed-approach portions of the approach procedure
-        .thenApply(procedure -> procedure.stream().map(p -> Procedure.maskTransitions(p, MISSED)).collect(toList()));
+        .transformed(procedure -> procedure.stream().map(p -> Procedure.maskTransitions(p, MISSED)).collect(toList()));
   }
 
   @Override

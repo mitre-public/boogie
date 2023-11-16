@@ -1,13 +1,15 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+import static org.mitre.tdp.boogie.util.Streams.triplesWithNulls;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
@@ -19,9 +21,7 @@ import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.util.Streams.triplesWithNulls;
+import com.google.common.collect.ImmutableList;
 
 /**
  * A {@link RouteTokenResolver} exists to resolve infrastructure elements which are considered to be associated with an input
@@ -55,7 +55,8 @@ public interface RouteTokenResolver {
   ) {
     return composite()
         .addResolver(airport(airportsByName))
-        .addResolver(sidStar(proceduresByName))
+        .addResolver(sid(proceduresByName))
+        .addResolver(star(proceduresByName))
         .addResolver(airway(airwaysByName))
         .addResolver(fix(fixesByName))
         .addResolver(frd(fixesByName))
@@ -104,14 +105,25 @@ public interface RouteTokenResolver {
   }
 
   /**
-   * Returns a new {@link RouteTokenResolver} resolving route string tokens to concrete procedure SID/STAR procedure definitions,
-   * note that this resolver will mask the
+   * Returns a new {@link RouteTokenResolver} resolving route string tokens to concrete procedure SID procedure definitions, note
+   * that this resolver will mask the runway transitions of returned SIDs.
    *
    * @param proceduresByIdentifier lookup service providing procedures indexed by their identifier (e.g. CHPPR1, GNDLF2) as they
    *                               would be referenced in an input route string.
    */
-  static RouteTokenResolver sidStar(LookupService<Procedure> proceduresByIdentifier) {
-    return new SidStarResolver(proceduresByIdentifier);
+  static RouteTokenResolver sid(LookupService<Procedure> proceduresByIdentifier) {
+    return new SidResolver(proceduresByIdentifier);
+  }
+
+  /**
+   * Returns a new {@link RouteTokenResolver} resolving route string tokens to concrete procedure STAR procedure definitions, note
+   * that this resolver will mask the runway transitions of returned STARs.
+   *
+   * @param proceduresByIdentifier lookup service providing procedures indexed by their identifier (e.g. CHPPR1, GNDLF2) as they
+   *                               would be referenced in an input route string.
+   */
+  static RouteTokenResolver star(LookupService<Procedure> proceduresByIdentifier) {
+    return new StarResolver(proceduresByIdentifier);
   }
 
   /**

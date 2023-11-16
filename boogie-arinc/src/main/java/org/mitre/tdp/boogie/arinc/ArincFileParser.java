@@ -56,11 +56,8 @@ public final class ArincFileParser implements Function<InputStream, Collection<A
     try (FileLineIterator lineIterator = new FileLineIterator(new InputStreamReader(file))) {
 
       LinkedHashSet<ArincRecord> records = new LinkedHashSet<>();
-      LOG.info("Beginning scan of file {} for ARINC records.", file);
-
       lineIterator.forEachRemaining(line -> recordParser.parse(line).ifPresent(records::add));
 
-      LOG.info("Returning {} total ArincRecords from file.", records.size());
       return records;
     } catch (Exception e) {
       throw new IllegalArgumentException("Error during parse of ARINC 424 record stream.", e);

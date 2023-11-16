@@ -70,6 +70,7 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     ifDebugEnabled(l -> l.debug("- Identifying shortest path: {}", resolvedEntryPoints.size() * resolvedExitPoints.size()));
     ifDebugEnabled(l -> l.debug(String.format("  %10s %10s %10s %30s", "Start", "End", "Length", "Weight")));
+
     List<LinkableLeg> shortestPath = cartesianProduct(resolvedEntryPoints, resolvedExitPoints).stream()
         .map(pair -> shortestPathAlgorithm.getPath(pair.first(), pair.second()))
         .filter(Objects::nonNull)

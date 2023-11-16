@@ -106,7 +106,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     ConvertingArincRecordConsumer consumer = consumerForVersion(version);
 
     parseRecords(inputStream).stream().filter(dropRecord.negate()).forEach(consumer);
-    LOG.info("Finished parsing and converting supported record types.");
+    LOG.debug("Finished parsing and converting supported record types.");
 
     FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(
         consumer.arincNdbNavaids(),
@@ -115,7 +115,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
         consumer.arincAirports(),
         consumer.arincHoldingPatterns()
     );
-    LOG.info("Finished instantiation of FixDatabase.");
+    LOG.debug("Finished instantiation of FixDatabase.");
 
     TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         consumer.arincAirports(),
@@ -127,7 +127,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
         consumer.arincProcedureLegs(),
         consumer.arincGnssLandingSystems()
     );
-    LOG.info("Finished instantiation of TerminalAreaDatabase.");
+    LOG.debug("Finished instantiation of TerminalAreaDatabase.");
 
     return records
         .addAirports(assembleAirports(terminalAreaDatabase, consumer.arincAirports()))
