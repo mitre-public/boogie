@@ -110,6 +110,10 @@ public final class FixDatabase {
     return highlander(airports(identifier));
   }
 
+  public Collection<ArincAirport> airports(String identifier) {
+    return multiCastLookup(ArincAirport.class, new ArincKey(identifier, null, SectionCode.P, "A")).collect(Collectors.toSet());
+  }
+
   public Collection<ArincAirport> airports(String... identifiers) {
     return Arrays.stream(identifiers)
         .flatMap(identifier -> castingLookup(ArincAirport.class, new ArincKey(identifier, null, SectionCode.P, "A")).stream())
@@ -149,6 +153,13 @@ public final class FixDatabase {
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
+  public Collection<ArincNdbNavaid> allNdbNavaids(String identifier) {
+    return Stream.concat(
+        multiCastLookup(ArincNdbNavaid.class, new ArincKey(identifier, null, SectionCode.P, "N")),
+        multiCastLookup(ArincNdbNavaid.class, new ArincKey(identifier, null, SectionCode.D, "B"))
+    ).collect(Collectors.toSet());
+  }
+
   public Optional<ArincNdbNavaid> ndbNavaid(String identifier, String icaoRegion) {
     return highlander(Stream.of(
         terminalNdbNavaid(identifier, icaoRegion),
@@ -185,6 +196,11 @@ public final class FixDatabase {
         ArincVhfNavaid.class,
         new ArincKey(identifier, icaoRegion, SectionCode.D, null)
     );
+  }
+
+  public Collection<ArincVhfNavaid> allVhfNavaids(String identifier) {
+    return  multiCastLookup(ArincVhfNavaid.class, new ArincKey(identifier, null, SectionCode.D, null))
+        .collect(Collectors.toSet());
   }
 
   /**
