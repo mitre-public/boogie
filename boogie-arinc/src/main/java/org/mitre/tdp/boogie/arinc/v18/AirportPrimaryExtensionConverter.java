@@ -6,11 +6,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.checkerframework.checker.units.qual.A;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincAirportPrimaryExtension;
 
-public class AirportPrimaryExtensionConverter implements Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> {
+public final class AirportPrimaryExtensionConverter implements Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> {
   private static final Predicate<ArincRecord> isInvalidRecord = new AirportPrimaryExtensionValidator().negate();
+
   @Override
   public Optional<ArincAirportPrimaryExtension> apply(ArincRecord arincRecord) {
     requireNonNull(arincRecord, "Cannot convert null ArincRecord.");
@@ -34,7 +36,7 @@ public class AirportPrimaryExtensionConverter implements Function<ArincRecord, O
         .applicationType(arincRecord.requiredField("applicationType"))
         .notes(arincRecord.requiredField("notes"))
         .fileRecordNumber(arincRecord.requiredField("fileRecordNumber"))
-        .lastUpdatedCycle(arincRecord.requiredField("lastUpdateCycle"))
+        .lastUpdatedCycle(arincRecord.requiredField("cycle"))
         .build();
 
     return Optional.of(extension);

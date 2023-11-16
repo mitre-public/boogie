@@ -59,8 +59,6 @@ public final class ArincAirportPrimaryExtension implements ArincModel {
    */
   private final String lastUpdateCycle;
 
-
-
   private ArincAirportPrimaryExtension(Builder builder) {
     this.recordType = requireNonNull(builder.recordType);
     this.customerAreaCode = requireNonNull(builder.customerAreaCode);
@@ -68,9 +66,9 @@ public final class ArincAirportPrimaryExtension implements ArincModel {
     this.airportIdentifier = requireNonNull(builder.airportIdentifier);
     this.airportIcaoRegion = requireNonNull(builder.airportIcaoRegion);
     this.subSectionCode = requireNonNull(builder.subSectionCode);
-    this.iataDesignator = requireNonNull(builder.iataDesignator);
+    this.iataDesignator = builder.iataDesignator;
     this.continuationRecordNumber = requireNonNull(builder.continuationRecordNumber);
-    this.notes = requireNonNull(builder.notes);
+    this.notes = builder.notes;
     this.applicationType = requireNonNull(builder.applicationType);
     this.fileRecordNumber = builder.fileRecordNumber;
     this.lastUpdateCycle = requireNonNull(builder.lastUpdatedCycle);
