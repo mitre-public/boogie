@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Streams;
 
 /**
  * The FixDatabase is meant to provide simple key-value access to all ARINC 424 record types which can be uniquely identified
@@ -82,6 +83,13 @@ public final class FixDatabase {
         terminalWaypoint(identifier, icaoRegion),
         enrouteWaypoint(identifier, icaoRegion)
     ).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toSet()));
+  }
+
+  public Collection<ArincWaypoint> waypoints(String identifier) {
+    return Streams.concat(multiCastLookup(ArincWaypoint.class, new ArincKey(identifier, null, SectionCode.E, "A")),
+            multiCastLookup(ArincWaypoint.class, new ArincKey(identifier, null, SectionCode.P, "C")))
+        .collect(Collectors.toSet());
+
   }
 
   public Optional<ArincWaypoint> terminalWaypoint(String identifier, String icaoRegion) {
@@ -195,6 +203,10 @@ public final class FixDatabase {
 
   public <T> Optional<T> castingLookup(Class<T> clz, ArincKey key) {
     return fixLookup.get(key).stream().filter(clz::isInstance).map(clz::cast).findFirst();
+  }
+
+  public <T> Stream<T> multiCastLookup(Class<T> clz, ArincKey key) {
+    return fixLookup.get(key).stream().filter(clz::isInstance).map(clz::cast);
   }
 
   /**

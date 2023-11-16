@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.database;
 import static java.util.Objects.requireNonNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.arinc.model.*;
@@ -36,6 +37,10 @@ public final class TerminalAreaDatabase {
 
   public Optional<ArincAirport> airport(String identifier, String icaoRegion) {
     return highlander(airportLookup.get(Pair.of(identifier, icaoRegion))).map(AirportPage::airport);
+  }
+
+  public Set<ArincAirport> airports(String identifier) {
+    return airportLookup.get(Pair.of(identifier, null)).stream().map(AirportPage::airport).collect(Collectors.toSet());
   }
 
   public Optional<ArincRunway> runwayAt(String airport, String runwayId) {
@@ -112,6 +117,10 @@ public final class TerminalAreaDatabase {
 
   public Collection<ArincNdbNavaid> ndbNavaidsAt(String airport, String icaoRegion) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::ndbNavaids).orElse(Collections.emptySet());
+  }
+
+  public Collection<ArincProcedureLeg> allProcedureLegsAtAll(String airport) {
+    return airportLookup.get(Pair.of(airport, null)).stream().map(AirportPage::procedureLegs).flatMap(Collection::stream).collect(Collectors.toSet());
   }
 
   public Collection<ArincProcedureLeg> allProcedureLegsAt(String airport) {
