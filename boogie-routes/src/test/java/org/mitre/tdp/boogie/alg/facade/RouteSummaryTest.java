@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.mitre.tdp.boogie.alg.facade.RouteSummary;
 
 class RouteSummaryTest {
 

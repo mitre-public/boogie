@@ -29,7 +29,7 @@ import org.mitre.tdp.boogie.alg.resolve.ElementType;
 
 import com.google.common.collect.ImmutableMap;
 
-class TestSequentialLegCollapser {
+class SequentialLegCollapserTest {
   private static final RedundantLegCombiner COLLAPSER = new RedundantLegCombiner();
   private static final ExpandedRouteLeg CF = new ExpandedRouteLeg("STAR", STAR, "", Leg.cfBuilder(Fix.builder().fixIdentifier("VAN").latLong(LatLong.of(0.0, 0.0)).build(), 10, 100.0).rnp(2.).build());
 

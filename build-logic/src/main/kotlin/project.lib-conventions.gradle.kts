@@ -6,6 +6,7 @@ plugins {
     id("caasd.auto-semver")
     id("caasd.test-conventions")
     id("caasd.test-logging-conventions")
+    id("me.champeau.jmh")
 }
 
 group = "org.mitre.tdp"
