@@ -1,17 +1,6 @@
 # Boogie
 ![Build Status](https://github.com/mitre-tdp/boogie/actions/workflows/test.yaml/badge.svg)
 
-**NOTE**: If you're coming here from a local installation of Boogie (the one on MITRE bitbucket), please ensure you:
-```bash
-git remote set-url origin git@github.com:mitre-tdp/boogie.git
-```
-From within your existing repo to update the remote location of the Boogie repo to its new home in Github.
-
-**NOTE**: Github hosted Boogie has been updated to Java 11 - if you're still primarily using Java 8 the recommended way to run is:
-```bash
-./gradlew <command> -Dorg.gradle.java.home=/path/to/your/jdk11/install
-```
-
 ### Project overview
 
 Boogie serves as an entry point for navigation data parsing, route expansion, route conformance, and eventually flight modeling 
