@@ -1,7 +1,5 @@
 # Boogie
 ![Build Status](https://github.com/mitre-tdp/boogie/actions/workflows/test.yaml/badge.svg)
-<br>
-[![Concourse Pipeline](https://img.shields.io/badge/Concourse-Pipeline-blue)](https://concourse-cre-ops.cre.gov.aws.mitre.org/teams/cre-streaming/pipelines/boogie)
 
 **NOTE**: If you're coming here from a local installation of Boogie (the one on MITRE bitbucket), please ensure you:
 ```bash
