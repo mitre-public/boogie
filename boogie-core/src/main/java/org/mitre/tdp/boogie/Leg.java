@@ -284,6 +284,8 @@ public interface Leg {
 
     private final boolean isPublishedHoldingFix;
 
+    private int hashCode;
+
     private Standard(Builder builder) {
       this.associatedFix = builder.associatedFix;
       this.recommendedNavaid = builder.recommendedNavaid;
@@ -442,6 +444,13 @@ public interface Leg {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix);
     }
 
@@ -586,6 +595,8 @@ public interface Leg {
 
     private final Leg delegate;
 
+    private int hashCode;
+
     private Record(T datum, Leg delegate) {
       this.datum = requireNonNull(datum);
       this.delegate = requireNonNull(delegate);
@@ -700,6 +711,13 @@ public interface Leg {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(datum, delegate);
     }
 

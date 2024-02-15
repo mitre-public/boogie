@@ -56,6 +56,8 @@ public interface Airway {
 
     private final List<Leg> legs;
 
+    private int hashCode;
+
     private Standard(Builder builder) {
       this.airwayIdentifier = requireNonNull(builder.airwayIdentifier);
       this.legs = builder.legs;
@@ -95,6 +97,13 @@ public interface Airway {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(airwayIdentifier, legs);
     }
 
@@ -148,6 +157,8 @@ public interface Airway {
 
     private final Airway delegate;
 
+    private int hashCode;
+
     private Record(T datum, Airway delegate) {
       this.datum = requireNonNull(datum);
       this.delegate = requireNonNull(delegate);
@@ -187,6 +198,13 @@ public interface Airway {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(datum, delegate);
     }
 

@@ -71,6 +71,8 @@ public interface Airport extends HasPosition {
 
     private final Collection<Runway> runways;
 
+    private int hashCode;
+
     private Standard(Builder builder) {
       this.airportIdentifier = requireNonNull(builder.airportIdentifier);
       this.latLong = requireNonNull(builder.latLong);
@@ -128,6 +130,14 @@ public interface Airport extends HasPosition {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    // used by EqualsVerifier
+    private int computeHashCode() {
       return Objects.hash(airportIdentifier, latLong, magneticVariation, runways);
     }
 
@@ -197,6 +207,8 @@ public interface Airport extends HasPosition {
 
     private final Airport delegate;
 
+    private int hashCode;
+
     private Record(T datum, Airport delegate) {
       this.datum = requireNonNull(datum);
       this.delegate = requireNonNull(delegate);
@@ -246,6 +258,13 @@ public interface Airport extends HasPosition {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(datum, delegate);
     }
 

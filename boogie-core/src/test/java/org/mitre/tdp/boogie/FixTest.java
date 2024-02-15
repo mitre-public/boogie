@@ -15,12 +15,16 @@ class FixTest {
 
   @Test
   void testEqualsAndHashCode_Standard() {
-    EqualsVerifier.forClass(Fix.Standard.class).verify();
+    EqualsVerifier.forClass(Fix.Standard.class)
+        .withCachedHashCode("hashCode", "computeHashCode", testFix())
+        .verify();
   }
 
   @Test
   void testEqualsAndHashCode_Record() {
-    EqualsVerifier.forClass(Fix.Record.class).verify();
+    EqualsVerifier.forClass(Fix.Record.class)
+        .withCachedHashCode("hashCode", "computeHashCode", Fix.record("WHATEVER", testFix()))
+        .verify();
   }
 
   @Test
@@ -57,5 +61,13 @@ class FixTest {
         Course.ofDegrees(0.),
         Distance.ofNauticalMiles(11.)
     );
+  }
+
+  private Fix.Standard testFix() {
+    return Fix.builder()
+        .fixIdentifier("FIX")
+        .latLong(LatLong.of(0., 0.))
+        .magneticVariation(MagneticVariation.ZERO)
+        .build();
   }
 }

@@ -94,6 +94,8 @@ public interface Transition {
 
     private final List<Leg> legs;
 
+    private int hashCode;
+
     private Standard(Builder builder) {
       this.transitionIdentifier = builder.transitionIdentifier;
       this.transitionType = requireNonNull(builder.transitionType);
@@ -143,6 +145,13 @@ public interface Transition {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(transitionIdentifier, transitionType, legs);
     }
 
@@ -204,6 +213,8 @@ public interface Transition {
 
     private final Transition delegate;
 
+    private int hashCode;
+
     private Record(T datum, Transition delegate) {
       this.datum = requireNonNull(datum);
       this.delegate = requireNonNull(delegate);
@@ -248,6 +259,13 @@ public interface Transition {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(datum, delegate);
     }
 

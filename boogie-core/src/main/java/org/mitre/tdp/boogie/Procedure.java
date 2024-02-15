@@ -171,6 +171,8 @@ public interface Procedure {
 
     private final Collection<Transition> transitions;
 
+    private int hashCode;
+
     private Standard(Builder builder) {
       this.procedureIdentifier = requireNonNull(builder.procedureIdentifier);
       this.airportIdentifier = requireNonNull(builder.airportIdentifier);
@@ -227,6 +229,13 @@ public interface Procedure {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(procedureIdentifier, airportIdentifier, procedureType, requiredNavigationEquipage, transitions);
     }
 
@@ -281,7 +290,7 @@ public interface Procedure {
         return this;
       }
 
-      public Procedure build() {
+      public Procedure.Standard build() {
         return new Standard(this);
       }
     }
@@ -292,6 +301,8 @@ public interface Procedure {
     private final T datum;
 
     private final Procedure delegate;
+
+    private int hashCode;
 
     private Record(T datum, Procedure delegate) {
       this.datum = requireNonNull(datum);
@@ -347,6 +358,13 @@ public interface Procedure {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(datum, delegate);
     }
 

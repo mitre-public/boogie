@@ -91,6 +91,8 @@ public interface Fix extends HasPosition {
 
     private final MagneticVariation magneticVariation;
 
+    private int hashCode;
+
     private Standard(Builder builder) {
       this.fixIdentifier = requireNonNull(builder.fixIdentifier);
       this.latLong = requireNonNull(builder.latLong);
@@ -140,6 +142,13 @@ public interface Fix extends HasPosition {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(fixIdentifier, latLong, magneticVariation);
     }
 
@@ -190,6 +199,8 @@ public interface Fix extends HasPosition {
 
     private final Fix delegate;
 
+    private int hashCode;
+
     private Record(T datum, Fix delegate) {
       this.datum = requireNonNull(datum);
       this.delegate = requireNonNull(delegate);
@@ -234,6 +245,13 @@ public interface Fix extends HasPosition {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(datum, delegate);
     }
 

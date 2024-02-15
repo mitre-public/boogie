@@ -91,6 +91,8 @@ public interface Runway {
 
     private final Course course;
 
+    private int hashCode;
+
     private Standard(Builder builder) {
       this.runwayIdentifier = requireNonNull(builder.runwayIdentifier);
       this.origin = requireNonNull(builder.origin);
@@ -148,6 +150,13 @@ public interface Runway {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(runwayIdentifier, origin, length, course);
     }
 
@@ -205,6 +214,8 @@ public interface Runway {
 
     private final Runway delegate;
 
+    private int hashCode;
+
     private Record(T datum, Runway delegate) {
       this.datum = requireNonNull(datum);
       this.delegate = requireNonNull(delegate);
@@ -254,6 +265,13 @@ public interface Runway {
 
     @Override
     public int hashCode() {
+      if (hashCode == 0) {
+        this.hashCode = computeHashCode();
+      }
+      return hashCode;
+    }
+
+    private int computeHashCode() {
       return Objects.hash(datum, delegate);
     }
 
