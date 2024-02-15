@@ -111,13 +111,25 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.StandardLatLong latLong) {
-        Leg leg = Leg.ifBuilder(createFix(latLong.infrastructure()), 0).build();
+
+        Fix fix = Fix.builder()
+            .fixIdentifier(latLong.identifier())
+            .latLong(latLong.infrastructure())
+            .build();
+
+        Leg leg = Leg.ifBuilder(fix, 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
       @Override
       public void visit(ResolvedToken.DirectToLatLong latLong) {
-        Leg leg = Leg.dfBuilder(createFix(latLong.infrastructure()), 0).build();
+
+        Fix fix = Fix.builder()
+            .fixIdentifier(latLong.identifier())
+            .latLong(latLong.infrastructure())
+            .build();
+
+        Leg leg = Leg.dfBuilder(fix, 0).build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
@@ -153,9 +165,9 @@ public interface TokenGrapher {
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
-      private Fix createFix(LatLong latLong) {
+      private Fix createFix(String original, LatLong latLong) {
         return Fix.builder()
-            .fixIdentifier(String.format("[%f,%f]", latLong.latitude(), latLong.longitude()))
+            .fixIdentifier(original)
             .latLong(latLong)
             .build();
       }

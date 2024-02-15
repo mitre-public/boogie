@@ -410,6 +410,7 @@ class FluentRouteExpanderTest {
 
         () -> assertEquals("5300N/14000W", legs.get(1).section()),
         () -> assertEquals(PathTerminator.TF, legs.get(1).pathTerminator()),
+        () -> assertEquals("5300N/14000W", legs.get(1).associatedFix().map(Fix::fixIdentifier).orElse(null)),
         () -> assertEquals(LatLong.of(53.0, -140.0), legs.get(1).associatedFix().map(Fix::latLong).orElse(null)),
 
         () -> assertEquals("BARTL", legs.get(2).section()),

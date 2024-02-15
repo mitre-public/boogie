@@ -37,7 +37,7 @@ class DirectToConverterTest {
         () -> assertFalse(CONVERTER.isCandidatePair(create(PathTerminator.VA), create(directToFix(mockFix()))),
             "DirectToFix tokens should not be convertable to TF legs when previous leg is not fix-terminating"),
 
-        () -> assertTrue(CONVERTER.isCandidatePair(create(PathTerminator.TF), create(ResolvedToken.directToLatLong(LatLong.of(0., 0.)))),
+        () -> assertTrue(CONVERTER.isCandidatePair(create(PathTerminator.TF), create(ResolvedToken.directToLatLong("0000N/00000W", LatLong.of(0., 0.)))),
             "DirectToLatLong tokens should be convertable to TF legs when previous leg is fix-terminating.")
     );
   }

@@ -113,9 +113,12 @@ public interface ResolvedToken {
    * <p>It's typically to see these filed as "initial fixes" after a tailoring indicator in a flightplan, {@code APT./.LL}. Normally
    * post-tailoring elements are fix-radial-distances (FRDs) denoting the current position of the aircraft but may be a LatLon
    * if there are no appropriate fixes nearby (e.g. tailoring over the ocean).
+   *
+   * @param original the original text-encoding of the LatLong, requested as the without this Boogie can't faithfully reproduce
+   *                 the original element name as the {@link Fix#fixIdentifier()} in the final route
    */
-  static StandardLatLong standardLatLong(LatLong latLong) {
-    return new StandardLatLong(latLong);
+  static StandardLatLong standardLatLong(String original, LatLong latLong) {
+    return new StandardLatLong(original, latLong);
   }
 
   /**
@@ -128,9 +131,12 @@ public interface ResolvedToken {
    * on the given day and can instead get back specifically flyable and easily interpretable LL values to fly.
    *
    * <p>Generally these show up as a series of direct-tos in the FP {@code 5300N/14000W..5400N/14200W}.
+   *
+   * @param original the original text-encoding of the LatLong, requested as the without this Boogie can't faithfully reproduce
+   *                 the original element name as the {@link Fix#fixIdentifier()} in the final route
    */
-  static DirectToLatLong directToLatLong(LatLong latLong) {
-    return new DirectToLatLong(latLong);
+  static DirectToLatLong directToLatLong(String original, LatLong latLong) {
+    return new DirectToLatLong(original, latLong);
   }
 
   /**
@@ -394,15 +400,18 @@ public interface ResolvedToken {
 
   final class StandardLatLong implements ResolvedToken {
 
+    private final String original;
+
     private final LatLong latLong;
 
-    private StandardLatLong(LatLong latLong) {
+    private StandardLatLong(String original, LatLong latLong) {
+      this.original = requireNonNull(original);
       this.latLong = requireNonNull(latLong);
     }
 
     @Override
     public String identifier() {
-      return String.format("[%f,%f]", latLong.latitude(), latLong.longitude());
+      return original;
     }
 
     @Override
@@ -418,15 +427,18 @@ public interface ResolvedToken {
 
   final class DirectToLatLong implements ResolvedToken {
 
+    private final String original;
+
     private final LatLong latLong;
 
-    private DirectToLatLong(LatLong latLong) {
+    private DirectToLatLong(String original, LatLong latLong) {
+      this.original = requireNonNull(original);
       this.latLong = requireNonNull(latLong);
     }
 
     @Override
     public String identifier() {
-      return String.format("[%f,%f]", latLong.latitude(), latLong.longitude());
+      return original;
     }
 
     @Override

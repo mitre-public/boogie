@@ -28,7 +28,9 @@ final class LatLongResolver implements SingleTokenResolver {
 
   private ResolvedToken makeResolved(RouteToken token) {
     LatLong latLong = parseLatLong(token.infrastructureName());
-    return isTailoredBefore(token) ? standardLatLong(latLong) : directToLatLong(latLong);
+    return isTailoredBefore(token)
+        ? standardLatLong(token.infrastructureName(), latLong)
+        : directToLatLong(token.infrastructureName(), latLong);
   }
 
   private LatLong parseLatLong(String s) {
