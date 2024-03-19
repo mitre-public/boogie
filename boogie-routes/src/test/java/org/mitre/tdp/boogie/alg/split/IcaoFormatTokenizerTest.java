@@ -24,6 +24,13 @@ class IcaoFormatTokenizerTest {
   static final String plan3 = "WOOST/N0501F360 WXI/K0946S0890";
   static final String plan4 = "-N0200A050 RECHI PONJO WSD4 PONJO RECHI N0200A050";
   static final String plan5 = "C/48N050W/M082F290F350 C/RECHI/M082F290PLUS";
+  static final String plan6 = "VOBL BLI DCT VOBL MMW";
+
+  @Test
+  void directTo() {
+    List<RouteToken.Icao> splits = SPLITTER.apply(plan6);
+    assertEquals(" ", splits.get(2).wildcards().orElse(""));
+  }
 
   @Test
   void cruiseClimb() {

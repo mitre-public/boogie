@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.mitre.tdp.boogie.fn.LeftMerger;
@@ -73,7 +74,7 @@ final class IcaoFormatTokenizer implements RouteTokenizer {
           String s = splits[i];
 
           if ("DCT".equals(s)) {
-            return null;
+            s = "";
           }
 
           if(cruiseSpeedLevel.matcher(s).find()) {

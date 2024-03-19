@@ -25,6 +25,12 @@ class FaaIfrFormatTokenizerTest {
       "KBDL./.HTO354018..CCC..MANTA.J121.BRIGS.JIIMS2.KPHL/1814");
 
   @Test
+  void testAirportInMiddle() {
+    List<RouteToken.FaaIfr> splits = SPLITTER.apply("VOBL.BLI..VOBL..MMW");
+    assertEquals(" ", splits.get(2).wildcards().orElse(""));
+  }
+
+  @Test
   void testRoute0_0() {
     List<RouteToken.FaaIfr> splits = SPLITTER.apply(ROUTE0.get(0));
 
