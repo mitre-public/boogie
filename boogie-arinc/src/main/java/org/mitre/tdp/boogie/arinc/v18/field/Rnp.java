@@ -36,8 +36,9 @@ public final class Rnp implements FieldSpec<Double> {
    */
   @Override
   public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(ValidArincNumeric.INSTANCE)
-        .filter(s -> s.length() > 2)
+    return Optional.of(fieldValue)
+        .filter(ValidArincNumeric.INSTANCE)
+        .filter(s -> s.trim().length() > 2)
         .map(s -> {
           int value = Integer.parseInt(fieldValue.substring(0, 2));
           int exp = -Integer.parseInt(fieldValue.substring(2));

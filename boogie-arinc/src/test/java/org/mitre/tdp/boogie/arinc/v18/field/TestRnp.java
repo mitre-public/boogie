@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
@@ -9,6 +10,11 @@ import org.junit.jupiter.api.Test;
 class TestRnp {
 
   private static final Rnp parser = new Rnp();
+
+  @Test
+  void testBogus() {
+    assertTrue(parser.apply("0  ").isEmpty());
+  }
 
   @Test
   void testParseValidRnp100() {
