@@ -100,7 +100,7 @@ public final class TerminalAreaDatabase {
   }
 
   public Optional<ArincWaypoint> waypointAt(String airport, String icaoRegion, String waypoint) {
-    return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(page -> page.waypoint(waypoint));
+    return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(i -> i.waypoint(waypoint));
   }
 
   public Collection<ArincWaypoint> waypointsAt(String airport) {

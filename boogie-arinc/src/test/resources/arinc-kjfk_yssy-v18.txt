@@ -1631,6 +1631,7 @@ SSPAP YSSYYMBI61     0          S33562550E151095061                             
 SSPAP YSSYYMBI63     0          S33562384E151095042                                                                        459242003
 SSPAP YSSYYMBI8      0          S33560267E151100280                                                                        459252003
 SSPAP YSSYYMBI9      0          S33560547E151100338                                                                        459262003
+SSPAP YSSYYMCAROKE YM0    R     N40282056W073540760                       W0129     NAR           AROKE                    224091710
 SSPAP YSSYYMCABBEY YM1    W D   S34241066E151054124                       E0127     WGE        P  ABBEY                    459272003
 SSPAP YSSYYMCABBEY YM2PYMMMYMMM                                                                                            459282003
 SSPAP YSSYYMCATRET YM1    RAF   S34032872E151121794                       E0127     WGE        B  RW34L-155/D5.7           459292003

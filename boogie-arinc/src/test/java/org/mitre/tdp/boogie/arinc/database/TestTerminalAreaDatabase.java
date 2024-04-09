@@ -86,7 +86,9 @@ class TestTerminalAreaDatabase {
         () -> assertEquals(Optional.of("AROKE"), terminalAreaDatabase.waypointAt("KJFK", "AROKE").map(ArincWaypoint::waypointIdentifier)),
         () -> assertEquals(Optional.of("AROKE"), terminalAreaDatabase.waypointAt("KJFK", "K6", "AROKE").map(ArincWaypoint::waypointIdentifier)),
         () -> assertEquals(Optional.empty(), terminalAreaDatabase.waypointAt("KJFK", "K4", "AROKE")),
-        () -> assertEquals(Optional.empty(), terminalAreaDatabase.waypointAt("KJFK", "AROME"))
+        () -> assertEquals(Optional.empty(), terminalAreaDatabase.waypointAt("KJFK", "AROME")),
+        () -> assertEquals("K6", terminalAreaDatabase.waypointAt("KJFK", "K6", "AROKE").get().waypointIcaoRegion()),
+        () -> assertEquals("YM", terminalAreaDatabase.waypointAt("YSSY", "YM", "AROKE").get().waypointIcaoRegion())
     );
   }
 

@@ -65,7 +65,7 @@ public final class LegFixDereferencer<F> {
         return fixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
       // Terminal waypoints
       case "PC":
-        return fixDatabase.terminalWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
+        return terminalAreaDatabase.waypointAt(airport, icaoRegion, identifier).map(fixAssembler::assemble);
       // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
       case "PG":
         return airport == null ? Optional.empty() : terminalAreaDatabase.runwayAt(airport, identifier).map(fixAssembler::assemble);

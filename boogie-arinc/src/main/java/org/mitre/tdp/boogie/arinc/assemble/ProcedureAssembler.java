@@ -21,6 +21,8 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -157,10 +159,15 @@ public interface ProcedureAssembler<P> {
 
       Optional<F> associatedFix(ArincProcedureLeg arincProcedureLeg) {
         if (arincProcedureLeg.fixIdentifier().isPresent() && arincProcedureLeg.fixIcaoRegion().isPresent() && arincProcedureLeg.fixSectionCode().isPresent()) {
+          String icaoRegion = Optional.of(arincProcedureLeg.airportIcaoRegion())
+              .filter(i -> arincProcedureLeg.fixSectionCode().filter(s -> s.equals(SectionCode.P)).isPresent() && arincProcedureLeg.fixSubSectionCode().filter(ss -> ss.equals("C")).isPresent())
+              .or(arincProcedureLeg::fixIcaoRegion)
+              .orElseThrow(IllegalStateException::new);
+
           return legFixDereferencer.dereference(
               arincProcedureLeg.fixIdentifier().orElseThrow(IllegalStateException::new),
               arincProcedureLeg.airportIdentifier(),
-              arincProcedureLeg.fixIcaoRegion().orElseThrow(IllegalStateException::new),
+              icaoRegion,
               arincProcedureLeg.fixSectionCode().orElseThrow(IllegalStateException::new),
               arincProcedureLeg.fixSubSectionCode().orElse(null)
           );
@@ -183,10 +190,14 @@ public interface ProcedureAssembler<P> {
 
       Optional<F> centerFix(ArincProcedureLeg arincProcedureLeg) {
         if (arincProcedureLeg.centerFixIdentifier().isPresent() && arincProcedureLeg.centerFixIcaoRegion().isPresent() && arincProcedureLeg.centerFixSectionCode().isPresent()) {
+          String icaoRegion = Optional.of(arincProcedureLeg.airportIcaoRegion())
+              .filter(i -> arincProcedureLeg.fixSectionCode().filter(s -> s.equals(SectionCode.P)).isPresent() && arincProcedureLeg.fixSubSectionCode().filter(ss -> ss.equals("C")).isPresent())
+              .or(arincProcedureLeg::fixIcaoRegion)
+              .orElseThrow(IllegalStateException::new);
           return legFixDereferencer.dereference(
               arincProcedureLeg.centerFixIdentifier().orElseThrow(IllegalStateException::new),
               arincProcedureLeg.airportIdentifier(),
-              arincProcedureLeg.centerFixIcaoRegion().orElseThrow(IllegalStateException::new),
+              icaoRegion,
               arincProcedureLeg.centerFixSectionCode().orElseThrow(IllegalStateException::new),
               arincProcedureLeg.centerFixSubSectionCode().orElse(null)
           );
