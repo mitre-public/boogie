@@ -2,6 +2,7 @@ rootProject.name = "boogie"
 
 include(":boogie-core")
 include(":boogie-arinc")
+include("boogie-dafif")
 include(":boogie-routes")
 include(":boogie-conformance")
 

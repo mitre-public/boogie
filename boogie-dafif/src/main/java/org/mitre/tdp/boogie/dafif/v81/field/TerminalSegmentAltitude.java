@@ -1,0 +1,54 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * INDICATES THE REFERENCED ALTITUDES EXPRESSED IN FEET ABOVE OR BELOW SEA LEVEL, OR A FLIGHT LEVEL (FL) ASSOCIATED WITH THE TRACK DEFINED BY THE TRACK DESCRIPTION CODE.
+ *
+ * FOR FLIGHT LEVELS SEE DAFIF SPECIFICATION, CHAPTER 3, TERMS AND DEFINITIONS.
+ *
+ * THE REFERENCED ALTITUDE EXPRESSED IN FEET ABOVE MSL OR FLIGHT LEVEL, INCLUDING AND SPECIFIED AS:
+ * FL - FLIGHT LEVEL
+ *
+ * TRM_SEG POPULATION IS DEPENDENT UPON THE ALTITUDE DESCRIPTION CODE.
+ *
+ * EXAMPLE(S):
+ * 00004
+ * 00965
+ * 14000
+ * FL65
+ *
+ * FIELD TYPE: A/N
+ *
+ * ALLOWED VALUES:
+ * -1299 THROUGH 99999 (PADDED WITH LEADING ZEROS)
+ *  OR
+ *  FL10 THROUGH FL999
+ *  OR
+ *  NULL
+ *
+ * SOURCE: HOST NATION PUBLICATION OR DOD ORIGINATED
+ *
+ * INTENDED USE:
+ * ***CRITICAL CHANGE*** DAFIF 8.1 ALLOWS FOR NEGATIVE ALTITUDE VALUES.
+ *
+ * SOURCE = ANALYST DERIVED FROM HOST NATION PUBLICATION OR HOST NATION PUBLICATION IF PROVIDED.
+ *
+ * NGA has developed a MAP Altitude Calculator Tool for calculating ALT_ONE.  In the absence of source values, the tool will be used to calculate the MAP altitude using industry standard calculations and rules.  If source values are provided, this tool will be used to verify and validate those values.
+ *
+ * WHEN MULTIPLE ALTITUDE RESTRICTIONS BASED UPON AIRCRAFT PERFORMANCE FOR A SINGLE SEGMENT ARE PROVIDED BY HOST SOURCE, THE JET RESTRICTION WILL BE CODED. FOR INSTANCE, ON A STAR THAT HAS A CROSSING RESTRICTION OF 23000 FOR JET AND 19000 FOR TURBO PROP, 23000 WILL BE CODED.
+ */
+public final class TerminalSegmentAltitude extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 5;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 23;
+  }
+
+  @Override
+  public String regex() {
+    return "(([0-9]{5}|\\-[0-1][0-2][0-9]{2}|FL([1-9][0-9]{1,2}))?)";
+  }
+}

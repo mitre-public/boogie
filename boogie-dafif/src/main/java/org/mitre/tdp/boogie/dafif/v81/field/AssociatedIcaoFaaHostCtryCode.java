@@ -1,0 +1,41 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * THE FOUR LETTER ICAO OF THE ASSOCIATED AIRPORT/HELIPORT, THE THREE OR FOUR LETTER FAA CODE,
+ * OR HOST COUNTRY CODE WHEN THE ICAO IS NOT AVAILABLE AT THE ASSOCIATED AIRPORT/HELIPORT.
+ *
+ * EXAMPLE(S):
+ * 02A
+ * UMMS
+ * CHT
+ *
+ * IF THE NAVAID SERVES MORE THAN ONE AIRPORT/HELIPORT, THE MAJOR AIRPORT WILL TAKE PRECEDENCE.
+ *
+ * FIELD TYPE: A/N
+ *
+ * ALLOWED VALUES:
+ * COMBINATIONS OF NUMBERS 0-9 AND LETTERS A-Z
+ * OR
+ * NULL
+ *
+ * SOURCE: TRANSLATED/FORMATTED FROM HOST NATION PUBLICATION
+ *
+ * INTENDED USE:
+ * THIS FIELD IS NO LONGER BEING USED. OUTPUT WILL BE NULL. REFERENCE THE ARPT.ANAV TABLE FOR AIRPORT NAVAID REFERENCES.
+ */
+public final class AssociatedIcaoFaaHostCtryCode extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 4;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 32;
+  }
+
+  @Override
+  public String regex() {
+    return "(^$)";
+  }
+}

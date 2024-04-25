@@ -1,0 +1,30 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * COUNTRY CODE IS A TWO LETTER COUNTRY IDENTIFICATION DESIGNATED BY FIPS PUB 10-X.
+ *
+ * FIELD TYPE: A
+ *
+ * ALLOWED VALUES:
+ * COMBINATIONS OF LETTERS AA-ZZ
+ * OR
+ * NULL
+ *
+ * SOURCE: HOST NATION PUBLICATION
+ */
+public final class ArcWaypointCountryCode extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 2;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 336;
+  }
+
+  @Override
+  public String regex() {
+    return "((A[ACEFGJLMNOQRSTUVY]|B[ABCDEFGHKLMNOPQRSTUVXY]|C[ABDEFGHIJKMNOQRSTUVWY]|D[AJOQR]|E[CGIKNRSTUZ]|F[GIJKMOPQRS]|G[ABGHIJKLMOPQRTVYZ]|H[AKMOQRU]|I[CDMNOPRSTVZ]|J[AEMNOQU]|K[EGNQRSTUVZ]|L[AEGHIOQSTUY]|M[ABCDFGHIJKLNOPQRTUVXYZ]|N[CEFGHILNOPRSUZ]|OD|P[ACEFGKLMOPSU]|QA|R[EIMNOPQSW]|S[ABCEFGHILMNOPTUVWYZ]|T[BDEHIKLNOPSTUVWXZ]|U[CGKPSVYZ]|V[CEIMQT]|W[AEFIQSZ]|YM|ZA|ZI)|^$)";
+  }
+}

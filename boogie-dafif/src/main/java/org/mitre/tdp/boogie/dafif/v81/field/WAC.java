@@ -1,0 +1,38 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * THE WAC INDEX OF WORLD COVERAGE IS COMPOSED OF 1857 AREAS.  EACH OF THE AREAS CONTAIN A  STANDARD FOUR (4) DEGREE LATITUDE BAND WITH VARIABLE LONGITUDE COVERAGE DEPENDING ON
+ *  THE LATITUDE OF THE AREA.  THE BASIC NUMBERING SYSTEM STARTS WITH WAC 0001 AT THE NORTH  POLE AND PROGRESSES THROUGH WAC 1851 AT THE SOUTH POLE.
+ *
+ *  NOTE:  FALLING IN A CIRCLE AROUND WAC 0001 ARE SIX ADDITIONAL WACS, 1A THROUGH 1F, BRINGING  THE TOTAL TO 1857.  (DAFIF)
+ *
+ * EXAMPLE(S):
+ * 0007
+ * 1851
+ * 1A
+ *
+ * FIELD TYPE: A/N
+ *
+ * ALLOWED VALUES:
+ * 0001 - 1851 (VALUES ARE PADDED WITH LEADING ZEROS)
+ *  OR
+ *  1A - 1F
+ *
+ * SOURCE: SYSTEM GENERATED
+ */
+public final class WAC extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 4;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 335;
+  }
+
+  @Override
+  public String regex() {
+    return "(1[A-F]|0[0-9]{2}[1-9]|0[0-9][1-9][0-9]|0[1-9][0-9]{2}|1[0-7][0-9]{2}|18[0-4][0-9]|185[0-1])";
+  }
+}

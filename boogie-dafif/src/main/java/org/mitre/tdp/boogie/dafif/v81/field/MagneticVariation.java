@@ -1,0 +1,41 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * THE ANGULAR DIFFERENCE BETWEEN TRUE NORTH AND MAGNETIC NORTH.  (GENERAL PLANNING)
+ *
+ * "DYNAMIC MAGNETIC VARIATION" IS A COMPUTER DERIVED VALUE THAT TAKES LOCATION AND DATE  INTO CONSIDERATION.  THIS VALUE IS UPDATED A MINIMUM OF ONCE PER YEAR, TYPICALLY EVERY
+ * JANUARY.  THE ALGORITHM IS UPDATED EVERY FIVE YEARS IN ACCORDANCE WITH THE  EPOCH CYCLE  (2005, 2010, ETC.).
+ *
+ * W179599 = WEST 179 DEGREES, 59 MINUTES, AND NINE TENTHS OF A MINUTE.
+ * LAST FOUR CHARACTERS INDICATE THE MONTH AND YEAR OF VARIATION.
+ *
+ * EXAMPLE(S):
+ * W010170 0413
+ * E001254 1212
+ *
+ * FIELD TYPE: A/N
+ *
+ * ALLOWED VALUES:
+ * E000000 0100 - E180000 1299
+ * OR
+ * W000001 0100 TO W179599 1299
+ * (EIGHTH POSITION IS A SPACE)
+ *
+ * SOURCE: SYSTEM GENERATED
+ */
+public final class MagneticVariation extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 12;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 181;
+  }
+
+  @Override
+  public String regex() {
+    return "((((E0[0-9]{2}|E1[0-7][0-9]|E180)[0-5][0-9]{2})|((W0([1-9][0-9]|[0-9][1-9]))|(W1[0-7][0-9]))000|((W0[0-9]{2}|W1[0-7][0-9])([0-5][1-9][0-9]|[0-5][0-9][1-9]|[1-5][0-9]{2})))[ ](0[1-9][0-9]{2}|1[0-2][0-9]{2}))";
+  }
+}

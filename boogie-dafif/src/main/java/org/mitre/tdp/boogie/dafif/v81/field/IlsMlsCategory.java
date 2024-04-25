@@ -1,0 +1,45 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * THE LOCALIZER/MICROWAVE LANDING SYSTEM PERFORMANCE CATEGORIES HAVE ESTABLISHED
+ * OPERATING MINIMUMS AND ARE LISTED AS CATEGORY I, II AND III.  THIS FIELD IS ALSO
+ * USED TO DEFINE  THE CLASSIFICATION OF OTHER NON-ILS/MLS LOCALIZER INSTALLATIONS.
+ *
+ * 0 - ILS LOCALIZER ONLY, NO GLIDEPATH
+ * 1 - ILS LOCALIZER/MLS CATEGORY I
+ * 2 - ILS LOCALIZER/MLS CATEGORY II
+ * 3 - ILS LOCALIZER/MLS CATEGORY III
+ * A - LDA FACILITY NO GLIDESLOPE
+ * F - SDF FACILITY NO GLIDESLOPE
+ * I - IGS FACILITY
+ * L - LDA FACILITY WITH GLIDESLOPE
+ * S - SDF FACILITY WITH GLIDESLOPE
+ *
+ * FIELD TYPE: A/N
+ *
+ * ALLOWED VALUES:
+ * 0, 1, 2, 3, A, F, I, L, S
+ *  OR
+ *  NULL
+ *
+ * SOURCE: HOST NATION PUBLICATION
+ *
+ * INTENDED USE:
+ *
+ */
+public final class IlsMlsCategory extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 1;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 152;
+  }
+
+  @Override
+  public String regex() {
+    return "((0|1|2|3|A|F|I|L|S)?)";
+  }
+}
