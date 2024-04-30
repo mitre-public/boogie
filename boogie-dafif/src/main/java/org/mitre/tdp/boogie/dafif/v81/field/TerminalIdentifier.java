@@ -97,6 +97,6 @@ public final class TerminalIdentifier extends TrimmableString {
 
   @Override
   public String regex() {
-    return "([A-Z0-9\\- ]{1,6}[ ][A-Z0-9\\/\\(\\)\\- ]{0,21}|[A-Z0-9\\- ]{1,6})";
+    return "([A-Z0-9\\- ]{1,6}[ ][A-Z0-9\\/\\(\\)\\-\\. ]{0,21}|[A-Z0-9\\- ]{1,6})";
   }
 }

@@ -36,6 +36,6 @@ public class Slope extends TrimmableString {
 
   @Override
   public String regex() {
-    return "(((\\-[0-9]|[0-9])\\.[0-9])|U)";
+    return "(((\\-?[0-9]\\.[0-9])|U)?)";
   }
 }

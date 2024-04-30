@@ -32,6 +32,6 @@ public final class ProcedureDesignCriteria extends TrimmableString {
 
   @Override
   public String regex() {
-    return "(([0-9A-Z \\-]{1,15})?)";
+    return "(([0-9A-Za-z \\-]{1,15})?)";
   }
 }

@@ -27,8 +27,9 @@ public final class NavaidFrequencyNav extends TrimmableString {
     return 382;
   }
 
+  // TBD - allegedly
   @Override
   public String regex() {
-    return "(((1750|17[0-4][0-9]|19[0-9]|[2-9][0-9]{2}|1[0-6][0-9]{2})[0257]00K|(117|10[8-9]|11[0-6])[0-9][05]0M)?)";
+    return "(.*)";
   }
 }

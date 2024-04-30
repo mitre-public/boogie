@@ -18,6 +18,8 @@ package org.mitre.tdp.boogie.dafif.v81.field;
  * NULL
  *
  * SOURCE: HOST NATION PUBLICATION OR NGA ORIGINATED
+ *
+ * Note: When coming from Jeppesen, does not seem to contain the appropriate padded zeros
  */
 public final class LightingSystem extends DafifInteger {
   @Override
@@ -32,6 +34,6 @@ public final class LightingSystem extends DafifInteger {
 
   @Override
   public String regex() {
-    return "((0[1-9]|[1-4][0-9]|5[0-6])?)";
+    return "(([1-9]|0[1-9]|[1-4][0-9]|5[0-6])?)";
   }
 }

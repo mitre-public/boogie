@@ -20,6 +20,8 @@ package org.mitre.tdp.boogie.dafif.v81.field;
  *  NULL
  *
  * SOURCE: HOST NATION PUBLICATION
+ *
+ * Note: When coming from Jeppesen, does not seem to contain the appropriate padded zeros
  */
 public class IlsGlideSlopeAngle extends DafifDouble {
   @Override
@@ -34,6 +36,6 @@ public class IlsGlideSlopeAngle extends DafifDouble {
 
   @Override
   public String regex() {
-    return "((([1-9]|1[0-2])\\.[0-9]{2}|13.00)?)";
+    return "((([1-9]|1[0-2])\\.[0-9]{2}|[1-9]|[1-9]\\.[1-9]|13.00)?)";
   }
 }

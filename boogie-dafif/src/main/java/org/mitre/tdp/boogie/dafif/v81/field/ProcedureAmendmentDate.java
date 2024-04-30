@@ -32,6 +32,6 @@ public final class ProcedureAmendmentDate extends TrimmableString {
 
   @Override
   public String regex() {
-    return "(([0-9]{2}[A-Z]{3}[0-9]{2})?)";
+    return "(([0-9]{2}[A-Za-z]{3}[0-9]{2})?)";
   }
 }
