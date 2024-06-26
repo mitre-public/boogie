@@ -4,6 +4,6 @@ pluginManagement {
         maven { name = "caasd-plugin-portal" }
     }
     plugins {
-        id("caasd.repositories") version "1.1.+"
+        id("caasd.repositories") version "3.1.1"
     }
 }
