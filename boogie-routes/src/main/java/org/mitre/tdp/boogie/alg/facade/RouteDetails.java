@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.alg.facade;
 
 import static java.util.Optional.ofNullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,9 +18,25 @@ import org.mitre.tdp.boogie.RequiredNavigationEquipage;
  */
 public final class RouteDetails {
 
+  /**
+   * The name of the departure runway e.g., RW26
+   */
   private final String departureRunway;
 
+  /**
+   * The name of the arrival runway e.g., RW34
+   */
   private final String arrivalRunway;
+
+  /**
+   * The name of the sid to be used as a default if no sid is in the flight plan.
+   */
+  private final String defaultSid;
+
+  /**
+   * The name of the star to be used as a default if no star is in the flight plan.
+   */
+  private final String defaultStar;
 
   private final List<RequiredNavigationEquipage> equipagePreference;
 
@@ -27,6 +44,8 @@ public final class RouteDetails {
     this.departureRunway = builder.departureRunway;
     this.arrivalRunway = builder.arrivalRunway;
     this.equipagePreference = builder.equipagePreference;
+    this.defaultSid = builder.defaultSid;
+    this.defaultStar = builder.defaultStar;
   }
 
   public static Builder builder() {
@@ -42,33 +61,42 @@ public final class RouteDetails {
   }
 
   public List<RequiredNavigationEquipage> equipagePreference() {
-    return equipagePreference;
+    return Optional.ofNullable(equipagePreference).orElse(Collections.emptyList());
+  }
+
+  public Optional<String> defaultSid() {
+    return ofNullable(defaultSid);
+  }
+
+  public Optional<String> defaultStar() {
+    return ofNullable(defaultStar);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
+    if (this == o)
       return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     RouteDetails that = (RouteDetails) o;
-    return Objects.equals(departureRunway, that.departureRunway)
-        && Objects.equals(arrivalRunway, that.arrivalRunway)
+    return Objects.equals(departureRunway, that.departureRunway) && Objects.equals(arrivalRunway, that.arrivalRunway)
+        && Objects.equals(defaultSid, that.defaultSid) && Objects.equals(defaultStar, that.defaultStar)
         && Objects.equals(equipagePreference, that.equipagePreference);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(departureRunway, arrivalRunway, equipagePreference);
+    return Objects.hash(departureRunway, arrivalRunway, defaultSid, defaultStar, equipagePreference);
   }
 
   @Override
-  public String toString() {
+  public String
+  toString() {
     return "RouteDetails{" +
         "departureRunway='" + departureRunway + '\'' +
         ", arrivalRunway='" + arrivalRunway + '\'' +
+        ", defaultSid='" + defaultSid + '\'' +
+        ", defaultStar='" + defaultStar + '\'' +
         ", equipagePreference=" + equipagePreference +
         '}';
   }
@@ -78,6 +106,10 @@ public final class RouteDetails {
     private String departureRunway;
 
     private String arrivalRunway;
+
+    private String defaultSid;
+
+    private String defaultStar;
 
     private List<RequiredNavigationEquipage> equipagePreference;
 
@@ -115,6 +147,16 @@ public final class RouteDetails {
      */
     public Builder equipagePreference(List<RequiredNavigationEquipage> equipagePreference) {
       this.equipagePreference = equipagePreference;
+      return this;
+    }
+
+    public Builder defaultSid(String defaultSid) {
+      this.defaultSid = defaultSid;
+      return this;
+    }
+
+    public Builder defaultStar(String defaultStar) {
+      this.defaultStar = defaultStar;
       return this;
     }
 

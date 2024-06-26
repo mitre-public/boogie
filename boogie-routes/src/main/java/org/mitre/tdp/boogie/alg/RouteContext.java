@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 
 /**

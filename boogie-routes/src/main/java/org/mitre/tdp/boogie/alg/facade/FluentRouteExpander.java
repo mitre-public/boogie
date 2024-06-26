@@ -171,10 +171,10 @@ public final class FluentRouteExpander implements
         .equipagePreference(equipage)
         .build();
 
-    return apply(route, details);
+    return expand(route, details);
   }
 
-  public Optional<ExpandedRoute> apply(String route, RouteDetails details) {
+  public Optional<ExpandedRoute> expand(String route, RouteDetails details) {
 
     logInputs(route, details);
 
@@ -184,6 +184,8 @@ public final class FluentRouteExpander implements
         .arrivalRunway(details.arrivalRunway().orElse(null))
         .proceduresByAirport(proceduresAtAirport)
         .equipagePreference(details.equipagePreference())
+        .defaultSid(details.defaultSid().orElse(null))
+        .defaultStar(details.defaultStar().orElse(null))
         .build();
 
     return of(routeExpander.expand(route, context))
