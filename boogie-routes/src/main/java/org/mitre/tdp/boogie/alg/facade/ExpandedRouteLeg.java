@@ -153,6 +153,11 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
   }
 
   @Override
+  public Optional<Double> arcRadius() {
+    return leg.arcRadius();
+  }
+
+  @Override
   public void accept(Visitor visitor) {
     leg.accept(visitor);
   }

@@ -452,6 +452,11 @@ final class GraphicalRouteChooser implements RouteChooser {
       return leg.isPublishedHoldingFix();
     }
 
+    @Override
+    public Optional<Double> arcRadius() {
+      return leg.arcRadius();
+    }
+
     public Builder toBuilder() {
       return new Builder().routeToken(routeToken).resolvedToken(resolvedToken).leg(leg);
     }

@@ -38,11 +38,13 @@ class LegTest {
 
     Leg leg = Leg.builder(PathTerminator.TF, 10)
         .associatedFix(fix)
+        .arcRadius(29.)
         .build();
 
     assertAll(
         () -> assertEquals(Range.all(), leg.altitudeConstraint(), "Should be all by default."),
-        () -> assertEquals(Range.all(), leg.speedConstraint(), "Should be all by default.")
+        () -> assertEquals(Range.all(), leg.speedConstraint(), "Should be all by default."),
+        () -> assertEquals(29., leg.arcRadius().orElse(0.))
     );
   }
 
@@ -72,6 +74,7 @@ class LegTest {
         .routeDistance(10.)
         .theta(10.)
         .routeDistance(10.)
+        .arcRadius(15.)
         .build();
   }
 }

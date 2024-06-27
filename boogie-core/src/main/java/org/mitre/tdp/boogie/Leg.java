@@ -228,6 +228,12 @@ public interface Leg {
   boolean isFlyOverFix();
 
   /**
+   * The arc radius that is used when this is an RF leg
+   * @return arc radius
+   */
+  Optional<Double> arcRadius();
+
+  /**
    * Indicates whether the terminal fix of the leg is a published holding fix. These are typically encountered at the end of
    * missed approach procedures.
    * <br>
@@ -284,6 +290,8 @@ public interface Leg {
 
     private final boolean isPublishedHoldingFix;
 
+    private final Double arcRadius;
+
     private int hashCode;
 
     private Standard(Builder builder) {
@@ -304,6 +312,7 @@ public interface Leg {
       this.turnDirection = builder.turnDirection;
       this.isFlyOverFix = builder.isFlyOverFix;
       this.isPublishedHoldingFix = builder.isPublishedHoldingFix;
+      this.arcRadius = builder.arcRadius;
     }
 
     @Override
@@ -391,6 +400,11 @@ public interface Leg {
       return isPublishedHoldingFix;
     }
 
+    @Override
+    public Optional<Double> arcRadius() {
+      return Optional.ofNullable(arcRadius);
+    }
+
     public Builder toBuilder() {
       return new Builder(pathTerminator())
           .associatedFix(associatedFix().orElse(null))
@@ -408,7 +422,8 @@ public interface Leg {
           .altitudeConstraint(altitudeConstraint())
           .turnDirection(turnDirection().orElse(null))
           .isFlyOverFix(isFlyOverFix())
-          .isPublishedHoldingFix(isPublishedHoldingFix());
+          .isPublishedHoldingFix(isPublishedHoldingFix())
+          .arcRadius(arcRadius().orElse(null));
     }
 
     @Override
@@ -439,7 +454,8 @@ public interface Leg {
           && Objects.equals(verticalAngle, standard.verticalAngle)
           && Objects.equals(speedConstraint, standard.speedConstraint)
           && Objects.equals(altitudeConstraint, standard.altitudeConstraint)
-          && Objects.equals(turnDirection, standard.turnDirection);
+          && Objects.equals(turnDirection, standard.turnDirection)
+          && Objects.equals(arcRadius, standard.arcRadius);
     }
 
     @Override
@@ -451,7 +467,7 @@ public interface Leg {
     }
 
     private int computeHashCode() {
-      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix);
+      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix, arcRadius);
     }
 
     @Override
@@ -474,6 +490,7 @@ public interface Leg {
           ", turnDirection=" + turnDirection +
           ", isFlyOverFix=" + isFlyOverFix +
           ", isPublishedHoldingFix=" + isPublishedHoldingFix +
+          ", arcRadius=" + arcRadius +
           '}';
     }
 
@@ -495,6 +512,7 @@ public interface Leg {
       private TurnDirection turnDirection;
       private boolean isFlyOverFix;
       private boolean isPublishedHoldingFix;
+      private Double arcRadius;
 
       private Builder(PathTerminator pathTerminator) {
         this.pathTerminator = requireNonNull(pathTerminator);
@@ -577,6 +595,11 @@ public interface Leg {
 
       public Builder isPublishedHoldingFix(boolean isPublishedHoldingFix) {
         this.isPublishedHoldingFix = isPublishedHoldingFix;
+        return this;
+      }
+
+      public Builder arcRadius(Double arcRadius) {
+        this.arcRadius = arcRadius;
         return this;
       }
 
@@ -689,6 +712,11 @@ public interface Leg {
     @Override
     public boolean isPublishedHoldingFix() {
       return delegate.isPublishedHoldingFix();
+    }
+
+    @Override
+    public Optional<Double> arcRadius() {
+      return delegate.arcRadius();
     }
 
     @Override
