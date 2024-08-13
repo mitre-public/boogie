@@ -1,0 +1,44 @@
+package org.mitre.tdp.boogie.arinc.v18.field;
+
+/**
+ * The Boundary VIA defines the path of the boundary from the position identified in the record to the next defined position.
+ *
+ * The path of the boundary will be determined from official government sources or the rule listed below and the Boundary
+ * VIA will be selected from the table below.
+ *
+ * Examples: Pos1, Pos2
+ * C, null - Circle
+ * G, null - Great Circle
+ * H, null - Rhumb Line
+ * L, null - Counter Clockwise ARC
+ * R, null - Clockwise ARC
+ * null, E - End of description, return to origin point
+ *
+ * Application Rules:
+ * 1. Special Use Airspace designated as following rivers, country, state or other political boundaries will be averaged
+ * in coding by using a series of straight lines so that no path will be greater than two miles from the actual boundary.
+ * The Boundary VIA will be G.
+ *
+ * 2. If there is a named waypoint on an airway which crossed an irregular FIR/UIR boundary, the waypoint coordinates
+ * will be used to define a point in the path defining that FIR/UIR boundary. The Boundary VIA will appropriate to the
+ * path definition.
+ *
+ * 3. Paths that follow lines of latitude will be coded with a Boundary Via of H. Paths that follow lines of longitude
+ * may be coded with a Boundary Via of G or H. Consistent use of one or the other with a single airspace is desired.
+ *
+ * 4. Other than for lines of latitude and longitude, the Boundary VIA of H shall only be used when specifically stated
+ * in the official government source. If not stated as Rhumb Line or not along latitude/longitude, all straight lines
+ * will be coded as G.
+ */
+
+public final class BoundaryVia extends TrimmableString {
+  @Override
+  public int fieldLength() {
+    return 2;
+  }
+
+  @Override
+  public String fieldCode() {
+    return "5.118";
+  }
+}
