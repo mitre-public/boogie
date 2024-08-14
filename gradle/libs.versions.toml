@@ -9,7 +9,7 @@ jmh = "0.9"
 
 commons-caasd = "org.mitre.caasd:commons:0.0.53"
 commons-math = "org.apache.commons:commons-math3:3.6.1"
-commons-lang = "org.apache.commons:commons-lang3:3.14.0"
+commons-lang = "org.apache.commons:commons-lang3:3.16.0"
 
 guava = "com.google.guava:guava:31.1-jre"
 
