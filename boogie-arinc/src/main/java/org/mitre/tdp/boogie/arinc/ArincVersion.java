@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceSpec;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemSpec;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
 import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
@@ -44,7 +44,7 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec(),
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec(),
-      new ControlledAirspaceSpec()
+      new ControlledAirspaceLegSpec()
   ),
   /**
    * Returns a static implementation of a parser for V19 ARINC 424 data.
@@ -63,7 +63,7 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec(),
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
-      new ControlledAirspaceSpec()
+      new ControlledAirspaceLegSpec()
   );
 
   private static final ImmutableMap<String, ArincVersion> LOOKUP = ImmutableMap.<String, ArincVersion>builder()

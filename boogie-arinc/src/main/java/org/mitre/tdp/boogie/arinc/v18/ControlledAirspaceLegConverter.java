@@ -1,10 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspace;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import java.util.Optional;
@@ -13,12 +11,12 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-public final class ControlledAirspaceConverter implements Function<ArincRecord, Optional<ArincControlledAirspace>> {
+public final class ControlledAirspaceLegConverter implements Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> {
   
   private static final Predicate<ArincRecord> isInvalidRecord = new ControlledAirspaceValidator().negate();
   
   @Override
-  public Optional<ArincControlledAirspace> apply(ArincRecord arincRecord) {
+  public Optional<ArincControlledAirspaceLeg> apply(ArincRecord arincRecord) {
     requireNonNull(arincRecord, "Cannot convert null ArincRecord.");
 
     if (isInvalidRecord.test(arincRecord)) {
@@ -29,7 +27,6 @@ public final class ControlledAirspaceConverter implements Function<ArincRecord, 
     Optional<SectionCode> supplierSectionCode = arincRecord.optionalField("sectionCode2");
     Optional<String> supplierSubSectionCode = arincRecord.optionalField("subSectionCode2");
     Optional<String> multipleCode = arincRecord.optionalField("multipleCode");
-    Optional<Integer> sequenceNumber = arincRecord.optionalField("sequenceNumber");
     Optional<String> continuationRecordNumber = arincRecord.optionalField("continuationRecordNumber");
     Optional<Level> level = arincRecord.optionalField("level");
     Optional<String> timeCode = arincRecord.optionalField("timeCode");
@@ -45,7 +42,7 @@ public final class ControlledAirspaceConverter implements Function<ArincRecord, 
     Optional<String> upperUnitIndicator = arincRecord.optionalField("upperIndicator");
     Optional<String> controlledAirspaceName = arincRecord.optionalField("controlledAirspaceName");
 
-    ArincControlledAirspace controlledAirspace = new ArincControlledAirspace.Builder()
+    ArincControlledAirspaceLeg controlledAirspace = new ArincControlledAirspaceLeg.Builder()
         .recordType(arincRecord.requiredField("recordType"))
         .customerAreaCode(arincRecord.requiredField("customerAreaCode"))
         .sectionCode(arincRecord.requiredField("sectionCode"))
@@ -57,7 +54,7 @@ public final class ControlledAirspaceConverter implements Function<ArincRecord, 
         .supplierSubSectionCode(supplierSubSectionCode.orElse(null))
         .airspaceClassification(arincRecord.requiredField("airspaceClassification"))
         .multipleCode(multipleCode.orElse(null))
-        .sequenceNumber(sequenceNumber.orElse(null))
+        .sequenceNumber(arincRecord.requiredField("sequenceNumber"))
         .continuationRecordNumber(continuationRecordNumber.orElse(null))
         .level(level.orElse(null))
         .timeCode(timeCode.orElse(null))

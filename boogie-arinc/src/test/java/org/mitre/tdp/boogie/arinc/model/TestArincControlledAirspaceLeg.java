@@ -1,34 +1,34 @@
 package org.mitre.tdp.boogie.arinc.model;
 
-import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
-import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceConverter;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceSpec;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
-import org.mitre.tdp.boogie.arinc.v18.field.AirspaceType;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Level;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
+import org.mitre.tdp.boogie.arinc.v18.field.AirspaceType;
+import org.mitre.tdp.boogie.arinc.v18.field.BoundaryVia;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.Level;
+import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
-public class TestArincControlledAirspace {
+public class TestArincControlledAirspaceLeg {
 
-  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new ControlledAirspaceSpec());
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new ControlledAirspaceLegSpec());
 
   private static final Predicate<ArincRecord> VALIDATOR = new ControlledAirspaceValidator();
 
-  private static final Function<ArincRecord, Optional<ArincControlledAirspace>> CONVERTER = new ControlledAirspaceConverter();
+  private static final Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> CONVERTER = new ControlledAirspaceLegConverter();
 
   private String CONTROLLED_AIRSPACE = "SSPAUCAGCAGGG UFA  A00010H    H S04500000E159000000                              FL245MFL660MHONIARA CTA                   794722210";
 
@@ -53,7 +53,7 @@ public class TestArincControlledAirspace {
         () -> assertEquals(Level.H, record.requiredField("level")),
         () -> assertFalse(record.optionalField("timeCode").isPresent()),
         () -> assertFalse(record.optionalField("notam").isPresent()),
-        () -> assertEquals("H", record.requiredField("boundaryVia")),
+        () -> assertEquals(BoundaryVia.H, record.requiredField("boundaryVia")),
         () -> assertEquals(-4.833333333333333, record.requiredField("latitude")),
         () -> assertEquals(159.0, record.requiredField("longitude")),
         () -> assertFalse(record.optionalField("arcOriginLatitude").isPresent()),
@@ -72,7 +72,7 @@ public class TestArincControlledAirspace {
 
     assertTrue(VALIDATOR.test(record));
     
-    ArincControlledAirspace controlledAirspace = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+    ArincControlledAirspaceLeg controlledAirspace = CONVERTER.apply(record).orElseThrow(AssertionError::new);
     
     assertAll(
         () -> assertEquals(RecordType.S, controlledAirspace.recordType()),
@@ -91,7 +91,7 @@ public class TestArincControlledAirspace {
         () -> assertEquals(Level.H, controlledAirspace.level().get()),
         () -> assertTrue(controlledAirspace.timeCode().isEmpty()),
         () -> assertTrue(controlledAirspace.notam().isEmpty()),
-        () -> assertEquals("H", controlledAirspace.boundaryVia()),
+        () -> assertEquals(BoundaryVia.H, controlledAirspace.boundaryVia()),
         () -> assertEquals(-4.833333333333333, controlledAirspace.latitude()),
         () -> assertEquals(159.0, controlledAirspace.longitude()),
         () -> assertTrue(controlledAirspace.arcOriginLatitude().isEmpty()),

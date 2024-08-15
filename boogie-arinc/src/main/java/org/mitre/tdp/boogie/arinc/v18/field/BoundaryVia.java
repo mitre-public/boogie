@@ -1,5 +1,12 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import java.util.Optional;
+import java.util.Set;
+
+import org.mitre.tdp.boogie.arinc.FieldSpec;
+
+import com.google.common.collect.ImmutableSet;
+
 /**
  * The Boundary VIA defines the path of the boundary from the position identified in the record to the next defined position.
  *
@@ -31,7 +38,35 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * will be coded as G.
  */
 
-public final class BoundaryVia extends TrimmableString {
+public enum BoundaryVia implements FieldSpec<BoundaryVia> {
+  SPEC,
+  /**
+   * Circle
+   */
+  C,
+  /**
+   * Great Circle
+   */
+  G,
+  /**
+   * Rhumb LIne
+   */
+  H,
+  /**
+   * Counterclockwise Arc
+   */
+  L,
+  /**
+   * Clockwise Arc
+   */
+  R,
+  /**
+   * End of description, return to point of origin
+   */
+  E;
+
+  private static final Set<String> VALUES = ImmutableSet.of("C", "G", "H", "L", "R", "E");
+
   @Override
   public int fieldLength() {
     return 2;
@@ -40,5 +75,13 @@ public final class BoundaryVia extends TrimmableString {
   @Override
   public String fieldCode() {
     return "5.118";
+  }
+
+  @Override
+  public Optional<BoundaryVia> apply(String string) {
+    return Optional.ofNullable(string)
+        .map(String::trim)
+        .filter(VALUES::contains)
+        .map(BoundaryVia::valueOf);
   }
 }

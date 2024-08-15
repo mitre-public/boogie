@@ -34,11 +34,11 @@ import org.mitre.tdp.boogie.arinc.v18.field.UnitIndicator;
 
 import java.util.List;
 
-public final class ControlledAirspaceSpec implements RecordSpec {
+public final class ControlledAirspaceLegSpec implements RecordSpec {
 
   private final List<RecordField<?>> recordFields;
 
-  public ControlledAirspaceSpec() {
+  public ControlledAirspaceLegSpec() {
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -58,7 +58,7 @@ public final class ControlledAirspaceSpec implements RecordSpec {
         new RecordField<>(new TimeCode()),
         new RecordField<>(new Notam()),
         new RecordField<>("blank2", new BlankSpec(2)),
-        new RecordField<>(new BoundaryVia()),
+        new RecordField<>(BoundaryVia.SPEC),
         new RecordField<>(new Latitude()),
         new RecordField<>(new Longitude()),
         new RecordField<>("arcOriginLatitude", new Latitude()),

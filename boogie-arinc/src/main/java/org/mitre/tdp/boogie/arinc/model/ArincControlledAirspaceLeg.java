@@ -31,7 +31,7 @@ import java.util.Optional;
 /**
  * Section/Subsection = UC
  */
-public class ArincControlledAirspace implements ArincModel {
+public class ArincControlledAirspaceLeg implements ArincModel {
   /**
    * See {@link RecordType}.
    */
@@ -99,7 +99,7 @@ public class ArincControlledAirspace implements ArincModel {
   /**
    * See {@link BoundaryVia}
    */
-  private final String boundaryVia;
+  private final BoundaryVia boundaryVia;
   /**
    * See {@link Latitude}
    */
@@ -157,7 +157,7 @@ public class ArincControlledAirspace implements ArincModel {
    */
   private final String cycleDate;
 
-  private ArincControlledAirspace(Builder builder) {
+  private ArincControlledAirspaceLeg(Builder builder) {
     this.recordType = builder.recordType;
     this.customerAreaCode = builder.customerAreaCode;
     this.sectionCode = builder.sectionCode;
@@ -258,7 +258,7 @@ public class ArincControlledAirspace implements ArincModel {
     return Optional.ofNullable(notam);
   }
 
-  public String boundaryVia() {
+  public BoundaryVia boundaryVia() {
     return boundaryVia;
   }
 
@@ -335,7 +335,7 @@ public class ArincControlledAirspace implements ArincModel {
     private Level level;
     private String timeCode;
     private String notam;
-    private String boundaryVia;
+    private BoundaryVia boundaryVia;
     private Double latitude;
     private Double longitude;
     private Double arcOriginLatitude;
@@ -431,7 +431,7 @@ public class ArincControlledAirspace implements ArincModel {
       return this;
     }
 
-    public Builder boundaryVia(String boundaryVia) {
+    public Builder boundaryVia(BoundaryVia boundaryVia) {
       this.boundaryVia = boundaryVia;
       return this;
     }
@@ -506,8 +506,8 @@ public class ArincControlledAirspace implements ArincModel {
       return this;
     }
 
-    public ArincControlledAirspace build() {
-      return new ArincControlledAirspace(this);
+    public ArincControlledAirspaceLeg build() {
+      return new ArincControlledAirspaceLeg(this);
     }
 
 

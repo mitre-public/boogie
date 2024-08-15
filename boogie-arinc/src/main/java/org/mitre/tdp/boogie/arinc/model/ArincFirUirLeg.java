@@ -67,7 +67,7 @@ public class ArincFirUirLeg implements ArincModel {
   /**
    * See {@link BoundaryVia}.
    */
-  private final String boundaryVia;
+  private final BoundaryVia boundaryVia;
   /**
    * See {@link Latitude}.
    */
@@ -211,7 +211,7 @@ public class ArincFirUirLeg implements ArincModel {
     return entryReport;
   }
 
-  public String boundaryVia() {
+  public BoundaryVia boundaryVia() {
     return boundaryVia;
   }
 
@@ -282,7 +282,7 @@ public class ArincFirUirLeg implements ArincModel {
     private String reportingUnitsSpeed;
     private String reportingUnitsAltitude;
     private String entryReport;
-    private String boundaryVia;
+    private BoundaryVia boundaryVia;
     private Double firUirLatitude;
     private Double firUirLongitude;
     private Double arcOriginLatitude;
@@ -367,7 +367,7 @@ public class ArincFirUirLeg implements ArincModel {
       return this;
     }
 
-    public Builder boundaryVia(String boundaryVia) {
+    public Builder boundaryVia(BoundaryVia boundaryVia) {
       this.boundaryVia = boundaryVia;
       return this;
     }

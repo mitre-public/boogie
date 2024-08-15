@@ -30,7 +30,7 @@ public final class ArincFirUirLegSpec implements RecordSpec {
         new RecordField<>(new ReportingUnitsAltitude()),
         new RecordField<>(new EntryReport()),
         new RecordField<>("blank1", new BlankSpec(1)),
-        new RecordField<>(new BoundaryVia()),
+        new RecordField<>(BoundaryVia.SPEC),
         new RecordField<>(new Latitude()),
         new RecordField<>(new Longitude()),
         new RecordField<>("arcOriginLatitude", new Latitude()),
