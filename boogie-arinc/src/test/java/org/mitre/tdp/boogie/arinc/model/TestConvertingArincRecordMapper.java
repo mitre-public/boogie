@@ -77,6 +77,8 @@ class TestConvertingArincRecordMapper {
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
       .holdingPatternConverter(new HoldingPatternConverter())
-      .holdingPatternDelegator(new GnssLandingSystemValidator())
+      .holdingPatternDelegator(new HoldingPatternValidator())
+      .firUirConverter(new ArincFirUirLegConverter())
+      .firUirDelegator(new ArincFirUirLegValidator())
       .build();
 }

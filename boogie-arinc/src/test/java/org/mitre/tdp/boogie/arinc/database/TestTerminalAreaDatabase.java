@@ -142,5 +142,7 @@ class TestTerminalAreaDatabase {
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .holdingPatternConverter(new HoldingPatternConverter())
       .holdingPatternDelegator(new HoldingPatternValidator())
+      .firUirConverter(new ArincFirUirLegConverter())
+      .firUirDelegator(new ArincFirUirLegValidator())
       .build();
 }

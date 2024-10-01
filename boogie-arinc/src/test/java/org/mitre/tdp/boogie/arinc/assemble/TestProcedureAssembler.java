@@ -38,6 +38,8 @@ import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
@@ -280,5 +282,7 @@ class TestProcedureAssembler {
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .holdingPatternDelegator(new HoldingPatternValidator())
       .holdingPatternConverter(new HoldingPatternConverter())
+      .firUirDelegator(new ArincFirUirLegValidator())
+      .firUirConverter(new ArincFirUirLegConverter())
       .build();
 }

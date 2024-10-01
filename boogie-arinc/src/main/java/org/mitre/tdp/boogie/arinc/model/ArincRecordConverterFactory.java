@@ -2,7 +2,29 @@ package org.mitre.tdp.boogie.arinc.model;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.*;
+import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionValidator;
+import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
+import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
+import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
+import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
+import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
+import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
+import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
+import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
 import org.mitre.tdp.boogie.arinc.v19.HoldingPatternConverter;
 
 /**
@@ -39,7 +61,9 @@ public final class ArincRecordConverterFactory {
         .waypointConverter(new WaypointConverter())
         .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
         .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-        .holdingPatternDelegator(new HoldingPatternValidator());
+        .holdingPatternDelegator(new HoldingPatternValidator())
+        .firUirDelegator(new ArincFirUirLegValidator())
+        .firUirConverter(new ArincFirUirLegConverter());
   }
 
   private static ConvertingArincRecordMapper.Builder standardMapper() {
@@ -64,7 +88,9 @@ public final class ArincRecordConverterFactory {
         .waypointConverter(new WaypointConverter())
         .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
         .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-        .holdingPatternDelegator(new GnssLandingSystemValidator());
+        .holdingPatternDelegator(new GnssLandingSystemValidator())
+        .firUirDelegator(new ArincFirUirLegValidator())
+        .firUirConverter(new ArincFirUirLegConverter());
   }
 
   /**

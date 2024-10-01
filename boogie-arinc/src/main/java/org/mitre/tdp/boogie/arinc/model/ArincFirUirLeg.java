@@ -1,8 +1,29 @@
 package org.mitre.tdp.boogie.arinc.model;
 
-import org.mitre.tdp.boogie.arinc.v18.field.*;
-
 import java.util.Optional;
+
+import org.mitre.tdp.boogie.arinc.v18.field.ArcBearing;
+import org.mitre.tdp.boogie.arinc.v18.field.ArcDistance;
+import org.mitre.tdp.boogie.arinc.v18.field.BoundaryVia;
+import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.CruiseTableIndicator;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
+import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirAddress;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirEntryReport;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirIndicator;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirName;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirReportingUnitsAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirReportingUnitsSpeed;
+import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
+import org.mitre.tdp.boogie.arinc.v18.field.Limit;
+import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
+import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 
 /**
  * Section/Subsection = UF
@@ -35,7 +56,7 @@ public class ArincFirUirLeg implements ArincModel {
   /**
    * See {@link FirUirIndicator}.
    */
-  private final String firUirIndicator;
+  private final FirUirIndicator firUirIndicator;
   /**
    * See {@link SequenceNumber}.
    */
@@ -53,17 +74,17 @@ public class ArincFirUirLeg implements ArincModel {
    */
   private final String adjacentUirIdentifier;
   /**
-   * See {@link ReportingUnitsSpeed}.
+   * See {@link FirUirReportingUnitsSpeed}.
    */
   private final String reportingUnitsSpeed;
   /**
-   * See {@link ReportingUnitsAltitude}.
+   * See {@link FirUirReportingUnitsAltitude}.
    */
   private final String reportingUnitsAltitude;
   /**
-   * See {@link EntryReport}.
+   * See {@link FirUirEntryReport}.
    */
-  private final String entryReport;
+  private final Boolean firUirEntryReport;
   /**
    * See {@link BoundaryVia}.
    */
@@ -95,15 +116,15 @@ public class ArincFirUirLeg implements ArincModel {
   /**
    * See {@link Limit}.
    */
-  private final String firUpperLimit;
+  private final Double firUpperLimit;
   /**
    * See {@link Limit}.
    */
-  private final String uirLowerLimit;
+  private final Double uirLowerLimit;
   /**
    * See {@link Limit}.
    */
-  private final String uirUpperLimit;
+  private final Double uirUpperLimit;
   /**
    * See {@link CruiseTableIndicator}.
    */
@@ -135,7 +156,7 @@ public class ArincFirUirLeg implements ArincModel {
     this.adjacentUirIdentifier = builder.adjacentUirIdentifier;
     this.reportingUnitsSpeed = builder.reportingUnitsSpeed;
     this.reportingUnitsAltitude = builder.reportingUnitsAltitude;
-    this.entryReport = builder.entryReport;
+    this.firUirEntryReport = builder.firUirEntryReport;
     this.boundaryVia = builder.boundaryVia;
     this.firUirLatitude = builder.firUirLatitude;
     this.firUirLongitude = builder.firUirLongitude;
@@ -179,11 +200,11 @@ public class ArincFirUirLeg implements ArincModel {
     return firUirIdentifier;
   }
 
-  public String firUirAddress() {
-    return firUirAddress;
+  public Optional<String> firUirAddress() {
+    return Optional.ofNullable(firUirAddress);
   }
 
-  public String firUirIndicator() {
+  public FirUirIndicator firUirIndicator() {
     return firUirIndicator;
   }
 
@@ -191,24 +212,24 @@ public class ArincFirUirLeg implements ArincModel {
     return sequenceNumber;
   }
 
-  public String adjacentFirIdentifier() {
-    return adjacentFirIdentifier;
+  public Optional<String> adjacentFirIdentifier() {
+    return Optional.ofNullable(adjacentFirIdentifier);
   }
 
-  public String adjacentUirIdentifier() {
-    return adjacentUirIdentifier;
+  public Optional<String> adjacentUirIdentifier() {
+    return Optional.ofNullable(adjacentUirIdentifier);
   }
 
-  public String reportingUnitsSpeed() {
-    return reportingUnitsSpeed;
+  public Optional<String> reportingUnitsSpeed() {
+    return Optional.ofNullable(reportingUnitsSpeed);
   }
 
-  public String reportingUnitsAltitude() {
-    return reportingUnitsAltitude;
+  public Optional<String> reportingUnitsAltitude() {
+    return Optional.ofNullable(reportingUnitsAltitude);
   }
 
-  public String entryReport() {
-    return entryReport;
+  public Boolean entryReport() {
+    return firUirEntryReport;
   }
 
   public BoundaryVia boundaryVia() {
@@ -223,40 +244,40 @@ public class ArincFirUirLeg implements ArincModel {
     return firUirLongitude;
   }
 
-  public Double arcOriginLatitude() {
-    return arcOriginLatitude;
+  public Optional<Double> arcOriginLatitude() {
+    return Optional.ofNullable(arcOriginLatitude);
   }
 
-  public Double arcOriginLongitude() {
-    return arcOriginLongitude;
+  public Optional<Double> arcOriginLongitude() {
+    return Optional.ofNullable(arcOriginLongitude);
   }
 
-  public Integer arcDistance() {
-    return arcDistance;
+  public Optional<Integer> arcDistance() {
+    return Optional.ofNullable(arcDistance);
   }
 
-  public Integer arcBearing() {
-    return arcBearing;
+  public Optional<Integer> arcBearing() {
+    return Optional.ofNullable(arcBearing);
   }
 
-  public String firUpperLimit() {
-    return firUpperLimit;
+  public Optional<Double> firUpperLimit() {
+    return Optional.ofNullable(firUpperLimit);
   }
 
-  public String uirLowerLimit() {
-    return uirLowerLimit;
+  public Optional<Double> uirLowerLimit() {
+    return Optional.ofNullable(uirLowerLimit);
   }
 
-  public String uirUpperLimit() {
-    return uirUpperLimit;
+  public Optional<Double> uirUpperLimit() {
+    return Optional.ofNullable(uirUpperLimit);
   }
 
-  public String cruiseTableIndicator() {
-    return cruiseTableIndicator;
+  public Optional<String> cruiseTableIndicator() {
+    return Optional.ofNullable(cruiseTableIndicator);
   }
 
-  public String firUirName() {
-    return firUirName;
+  public Optional<String> firUirName() {
+    return Optional.ofNullable(firUirName);
   }
 
   public Integer fileRecordNumber() {
@@ -274,14 +295,14 @@ public class ArincFirUirLeg implements ArincModel {
     private String subSectionCode;
     private String firUirIdentifier;
     private String firUirAddress;
-    private String firUirIndicator;
+    private FirUirIndicator firUirIndicator;
     private Integer sequenceNumber;
     private String continuationRecordNumber;
     private String adjacentFirIdentifier;
     private String adjacentUirIdentifier;
     private String reportingUnitsSpeed;
     private String reportingUnitsAltitude;
-    private String entryReport;
+    private Boolean firUirEntryReport;
     private BoundaryVia boundaryVia;
     private Double firUirLatitude;
     private Double firUirLongitude;
@@ -289,9 +310,9 @@ public class ArincFirUirLeg implements ArincModel {
     private Double arcOriginLongitude;
     private Integer arcDistance;
     private Integer arcBearing;
-    private String firUpperLimit;
-    private String uirLowerLimit;
-    private String uirUpperLimit;
+    private Double firUpperLimit;
+    private Double uirLowerLimit;
+    private Double uirUpperLimit;
     private String cruiseTableIndicator;
     private String firUirName;
     private Integer fileRecordNumber;
@@ -327,7 +348,7 @@ public class ArincFirUirLeg implements ArincModel {
       return this;
     }
 
-    public Builder firUirIndicator(String firUirIndicator) {
+    public Builder firUirIndicator(FirUirIndicator firUirIndicator) {
       this.firUirIndicator = firUirIndicator;
       return this;
     }
@@ -362,8 +383,8 @@ public class ArincFirUirLeg implements ArincModel {
       return this;
     }
 
-    public Builder entryReport(String entryReport) {
-      this.entryReport = entryReport;
+    public Builder firUirEntryReport(Boolean entryReport) {
+      this.firUirEntryReport = entryReport;
       return this;
     }
 
@@ -402,17 +423,17 @@ public class ArincFirUirLeg implements ArincModel {
       return this;
     }
 
-    public Builder firUpperLimit(String firUpperLimit) {
+    public Builder firUpperLimit(Double firUpperLimit) {
       this.firUpperLimit = firUpperLimit;
       return this;
     }
 
-    public Builder uirLowerLimit(String uirLowerLimit) {
+    public Builder uirLowerLimit(Double uirLowerLimit) {
       this.uirLowerLimit = uirLowerLimit;
       return this;
     }
 
-    public Builder uirUpperLimit(String uirUpperLimit) {
+    public Builder uirUpperLimit(Double uirUpperLimit) {
       this.uirUpperLimit = uirUpperLimit;
       return this;
     }

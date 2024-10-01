@@ -120,5 +120,7 @@ class TestFixDatabase {
       .holdingPatternDelegator(new HoldingPatternValidator())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
+      .firUirConverter(new ArincFirUirLegConverter())
+      .firUirDelegator(new AirwayLegValidator())
       .build();
 }

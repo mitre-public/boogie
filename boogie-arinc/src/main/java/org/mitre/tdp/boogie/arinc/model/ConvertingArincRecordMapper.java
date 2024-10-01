@@ -36,6 +36,8 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
   private final DelegatingMapper<ArincHoldingPattern> arincHoldingPatterns;
 
+  private final DelegatingMapper<ArincFirUirLeg> arincFirUirLegs;
+
   private ConvertingArincRecordMapper(Builder builder) {
     this.arincAirports = new DelegatingMapper<>(builder.airportDelegator, builder.airportConverter);
     this.arincAirportPrimaryExtensions = new DelegatingMapper<>(builder.airportContinuationDelegator, builder.airportContinuationConverter);
@@ -48,6 +50,7 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     this.arincProcedureLegs = new DelegatingMapper<>(builder.procedureDelegator, builder.procedureConverter);
     this.arincGnssLandingSystems = new DelegatingMapper<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
     this.arincHoldingPatterns = new DelegatingMapper<>(builder.holdingPatternDelegator, builder.holdingPatternConverter);
+    this.arincFirUirLegs = new DelegatingMapper<>(builder.firUirDelegator, builder.firUirConverter);
   }
 
   @Override
@@ -84,6 +87,9 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     }
     if (arincHoldingPatterns.test(arincRecord)) {
       return arincHoldingPatterns.apply(arincRecord);
+    }
+    if (arincFirUirLegs.test(arincRecord)) {
+      return arincFirUirLegs.apply(arincRecord);
     }
     return Optional.empty();
   }
@@ -138,6 +144,10 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     private Predicate<ArincRecord> holdingPatternDelegator;
 
     private Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter;
+
+    private Predicate<ArincRecord> firUirDelegator;
+
+    private Function<ArincRecord, Optional<ArincFirUirLeg>> firUirConverter;
 
     public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
       this.airportContinuationDelegator = airportContinuationDelegator;
@@ -246,6 +256,16 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
     public Builder holdingPatternConverter(Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter) {
       this.holdingPatternConverter = holdingPatternConverter;
+      return this;
+    }
+
+    public Builder firUirDelegator(Predicate<ArincRecord> firUirDelegator) {
+      this.firUirDelegator = firUirDelegator;
+      return this;
+    }
+
+    public Builder firUirConverter(Function<ArincRecord, Optional<ArincFirUirLeg>> firUirConverter) {
+      this.firUirConverter = firUirConverter;
       return this;
     }
 
