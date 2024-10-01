@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableSet;
  * The path of the boundary will be determined from official government sources or the rule listed below and the Boundary
  * VIA will be selected from the table below.
  *
- * Examples: Pos1, Pos2
+ * Definition: Pos1, Pos2
  * C, null - Circle
  * G, null - Great Circle
  * H, null - Rhumb Line
@@ -49,7 +49,7 @@ public enum BoundaryVia implements FieldSpec<BoundaryVia> {
    */
   G,
   /**
-   * Rhumb LIne
+   * Rhumb Line
    */
   H,
   /**
@@ -63,9 +63,29 @@ public enum BoundaryVia implements FieldSpec<BoundaryVia> {
   /**
    * End of description, return to point of origin
    */
-  E;
+  E,
+  /**
+   * Circle and End of description, return to point of origin
+   */
+  CE,
+  /**
+   * Great Circle and End of description, return to point of origin
+   */
+  GE,
+  /**
+   * Rhumb Line and End of description, return to point of origin
+   */
+  HE,
+  /**
+   * Counterclockwise Arc and End of description, return to point of origin
+   */
+  LE,
+  /**
+   * Clockwise Arc and End of description, return to point of origin
+   */
+  RE;
 
-  private static final Set<String> VALUES = ImmutableSet.of("C", "G", "H", "L", "R", "E");
+  private static final Set<String> VALUES = ImmutableSet.of("C", "G", "H", "L", "R", "E", "CE", "GE", "HE", "LE", "RE");
 
   @Override
   public int fieldLength() {
