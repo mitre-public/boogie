@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.util.DemotedException;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
@@ -21,7 +22,7 @@ class OneshotRecordParserTest {
   @Test
   void testParse() {
 
-    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure> records;
+    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace> records;
 
     try (FileInputStream fis = new FileInputStream(arincTestFile)) {
       records = OneshotRecordParser.standard(ArincVersion.V19).assembleFrom(fis);
@@ -33,7 +34,8 @@ class OneshotRecordParserTest {
         () -> assertEquals(358, records.airports().size(), "Airports"),
         () -> assertEquals(1293, records.fixes().size(), "Fixes"),
         () -> assertEquals(204, records.airways().size(), "Airways"),
-        () -> assertEquals(1436, records.procedures().size(), "Procedures")
+        () -> assertEquals(1436, records.procedures().size(), "Procedures"),
+        () -> assertEquals(1, records.firUirs().size(), "FIR-UIRs")
     );
   }
 }

@@ -11,6 +11,7 @@ import java.util.zip.GZIPInputStream;
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
@@ -88,11 +89,15 @@ public final class EmbeddedCifpFile {
   }
 
   public Collection<ArincGnssLandingSystem> arincGnssLandingSystems() {
-    return new HashSet<>();
+    return records.arincGnssLandingSystems();
   }
 
   public Collection<ArincHoldingPattern> arincHoldingPatterns() {
-    return new HashSet<>();
+    return records.arincHoldingPatterns();
+  }
+
+  public Collection<ArincFirUirLeg> arincFirUirLegs() {
+    return records.arincfirUirLegs();
   }
 
   public int totalRecords() {
@@ -103,7 +108,10 @@ public final class EmbeddedCifpFile {
         + arincVhfNavaids().size()
         + arincWaypoints().size()
         + arincAirwayLegs().size()
-        + arincProcedureLegs().size();
+        + arincProcedureLegs().size()
+        + arincGnssLandingSystems().size()
+        + arincHoldingPatterns().size()
+        + arincFirUirLegs().size();
   }
 
   /**

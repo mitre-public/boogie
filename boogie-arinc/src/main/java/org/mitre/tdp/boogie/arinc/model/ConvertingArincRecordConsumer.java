@@ -41,11 +41,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   private final DelegatableCollection<ArincWaypoint> arincWaypoints;
   private final DelegatableCollection<ArincAirwayLeg> arincAirwayLegs;
   private final DelegatableCollection<ArincProcedureLeg> arincProcedureLegs;
-
   private final DelegatableCollection<ArincGnssLandingSystem> gnssLandingSystems;
-
   private final DelegatableCollection<ArincHoldingPattern> arincHoldingPatterns;
-
   private final DelegatableCollection<ArincFirUirLeg> arincFirUirLeg;
 
   private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;

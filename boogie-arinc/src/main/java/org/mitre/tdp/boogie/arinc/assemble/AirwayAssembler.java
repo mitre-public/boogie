@@ -81,7 +81,7 @@ public interface AirwayAssembler<A> {
 
     private static final class ArincAirwayLegConverter<A, L, F> implements Function<ArincAirwayLeg, L> {
 
-      private final LegFixDereferencer<F> legFixDereferencer;
+      private final FixDereferencer<F> fixDereferencer;
 
       private final TriFunction<ArincAirwayLeg, F, F, L> legConverter;
 
@@ -90,7 +90,7 @@ public interface AirwayAssembler<A> {
           FixAssemblyStrategy<F> fixStrategy,
           AirwayAssemblyStrategy<A, F, L> airwayStrategy
       ) {
-        this.legFixDereferencer = new LegFixDereferencer<>(
+        this.fixDereferencer = new FixDereferencer<>(
             FixAssembler.withStrategy(fixStrategy),
             ArincDatabaseFactory.emptyTerminalAreaDatabase(),
             fixDatabase
@@ -104,7 +104,7 @@ public interface AirwayAssembler<A> {
       }
 
       Optional<F> associatedFix(ArincAirwayLeg arincAirwayLeg) {
-        return legFixDereferencer.dereference(
+        return fixDereferencer.dereference(
             arincAirwayLeg.fixIdentifier(),
             null,
             arincAirwayLeg.fixIcaoRegion(),
@@ -115,7 +115,7 @@ public interface AirwayAssembler<A> {
 
       Optional<F> recommendedNavaid(ArincAirwayLeg arincAirwayLeg) {
         if (arincAirwayLeg.recommendedNavaidIdentifier().isPresent() && arincAirwayLeg.recommendedNavaidIcaoRegion().isPresent()) {
-          return legFixDereferencer.dereferenceNavaid(
+          return fixDereferencer.dereferenceNavaid(
               arincAirwayLeg.recommendedNavaidIdentifier().orElseThrow(IllegalStateException::new),
               arincAirwayLeg.recommendedNavaidIcaoRegion().orElseThrow(IllegalStateException::new)
           );

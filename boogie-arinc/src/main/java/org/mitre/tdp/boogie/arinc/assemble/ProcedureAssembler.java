@@ -22,7 +22,6 @@ import org.mitre.tdp.boogie.arinc.database.FixDatabase;
 import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -137,7 +136,7 @@ public interface ProcedureAssembler<P> {
     static final class ArincProcedureLegConverter<P, T, L, F> implements Function<ArincProcedureLeg, L> {
 
       private final ProcedureAssemblyStrategy<P, T, L, F> strategy;
-      private final LegFixDereferencer<F> legFixDereferencer;
+      private final FixDereferencer<F> fixDereferencer;
 
       ArincProcedureLegConverter(
           TerminalAreaDatabase terminalAreaDatabase,
@@ -145,7 +144,7 @@ public interface ProcedureAssembler<P> {
           ProcedureAssemblyStrategy<P, T, L, F> procedureStrategy,
           FixAssemblyStrategy<F> fixStrategy) {
         this.strategy = requireNonNull(procedureStrategy);
-        this.legFixDereferencer = new LegFixDereferencer<>(FixAssembler.withStrategy(fixStrategy), terminalAreaDatabase, fixDatabase);
+        this.fixDereferencer = new FixDereferencer<>(FixAssembler.withStrategy(fixStrategy), terminalAreaDatabase, fixDatabase);
       }
 
       @Override
@@ -165,7 +164,7 @@ public interface ProcedureAssembler<P> {
               .or(arincProcedureLeg::fixIcaoRegion)
               .orElseThrow(IllegalStateException::new);
 
-          return legFixDereferencer.dereference(
+          return fixDereferencer.dereference(
               arincProcedureLeg.fixIdentifier().orElseThrow(IllegalStateException::new),
               arincProcedureLeg.airportIdentifier(),
               icaoRegion,
@@ -178,7 +177,7 @@ public interface ProcedureAssembler<P> {
 
       Optional<F> recommendedNavaid(ArincProcedureLeg arincProcedureLeg) {
         if (arincProcedureLeg.recommendedNavaidIdentifier().isPresent() && arincProcedureLeg.recommendedNavaidIcaoRegion().isPresent() && arincProcedureLeg.recommendedNavaidSectionCode().isPresent()) {
-          return legFixDereferencer.dereference(
+          return fixDereferencer.dereference(
               arincProcedureLeg.recommendedNavaidIdentifier().orElseThrow(IllegalStateException::new),
               arincProcedureLeg.airportIdentifier(),
               arincProcedureLeg.recommendedNavaidIcaoRegion().orElseThrow(IllegalStateException::new),
@@ -196,7 +195,7 @@ public interface ProcedureAssembler<P> {
               .filter(i -> arincProcedureLeg.centerFixSectionCode().filter(s -> s.equals(SectionCode.P)).isPresent())
               .or(arincProcedureLeg::centerFixIcaoRegion)
               .orElseThrow(IllegalStateException::new);
-          return legFixDereferencer.dereference(
+          return fixDereferencer.dereference(
               arincProcedureLeg.centerFixIdentifier().orElseThrow(IllegalStateException::new),
               arincProcedureLeg.airportIdentifier(),
               icaoRegion,

@@ -22,7 +22,10 @@ class TestEmbeddedCifpFile {
         () -> assertEquals(969, EmbeddedCifpFile.instance().arincNdbNavaids().size(), "NDB Navaids"),
         () -> assertEquals(2066, EmbeddedCifpFile.instance().arincVhfNavaids().size(), "VHF Navaids"),
         () -> assertEquals(19775, EmbeddedCifpFile.instance().arincAirwayLegs().size(), "Airway Legs"),
-        () -> assertEquals(192312, EmbeddedCifpFile.instance().arincProcedureLegs().size(), "Procedure Legs")
+        () -> assertEquals(192312, EmbeddedCifpFile.instance().arincProcedureLegs().size(), "Procedure Legs"),
+        () -> assertEquals(0, EmbeddedCifpFile.instance().arincHoldingPatterns().size(), "Holding Patterns"),
+        () -> assertEquals(0, EmbeddedCifpFile.instance().arincGnssLandingSystems().size(), "GNSS Landing Systems"),
+        () -> assertEquals(0, EmbeddedCifpFile.instance().arincFirUirLegs().size(), "FIR/UIR")
     );
   }
 }
