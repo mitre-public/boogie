@@ -30,12 +30,12 @@ public class TestFirUirAssembler {
 
   @Test
   void test() {
-    Map<String, Airspace> airspaces = assembler.assemble(V18_CONSUMER.arincfirUirLegs()).collect(Collectors.toMap(i -> i.area().concat(i.airspaceType().name()).concat(i.identifier()), Function.identity()));
+    Map<String, Airspace> airspaces = assembler.assemble(V18_CONSUMER.arincfirUirLegs()).collect(Collectors.toMap(i -> i.identifier().concat(i.airspaceType().name()), Function.identity()));
     assertAll(
         () -> assertEquals(3, airspaces.size(), "Split the FIR/UIR and then the next one"),
-        () -> assertEquals(754, airspaces.get("USAFIRKZAB").sequences().size()),
-        () -> assertEquals(754, airspaces.get("USAUIRKZAB").sequences().size()),
-        () -> assertEquals(3, airspaces.get("USAFIRKZAK").sequences().size())
+        () -> assertEquals(754, airspaces.get("KZAB-ZRZXFIR").sequences().size()),
+        () -> assertEquals(754, airspaces.get("KZAB-ZRZXUIR").sequences().size()),
+        () -> assertEquals(3, airspaces.get("KZAK-ZOZXFIR").sequences().size())
     );
   }
 }

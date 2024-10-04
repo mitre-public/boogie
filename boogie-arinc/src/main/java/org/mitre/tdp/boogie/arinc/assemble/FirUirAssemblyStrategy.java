@@ -35,7 +35,7 @@ public interface FirUirAssemblyStrategy<A, S> {
             Range<Double> firLimit = i.firUpperLimit().map(Range::atMost).orElseGet(Range::all);
             return Airspace.builder()
                 .area(i.customerAreaCode().name())
-                .identifier(i.firUirIdentifier())
+                .identifier(i.firUirAddress().map(a -> i.firUirIdentifier().concat("-").concat(a)).orElse(i.firUirIdentifier()))
                 .altitudeLimit(firLimit)
                 .airspaceType(AirspaceType.FIR)
                 .sequences(allLegs)
@@ -49,7 +49,7 @@ public interface FirUirAssemblyStrategy<A, S> {
             Range<Double> uirLimit = LimitsToRange.INSTANCE.apply(i.uirLowerLimit().orElse(null), i.uirUpperLimit().orElse(null));
             return Airspace.builder()
                 .area(i.customerAreaCode().name())
-                .identifier(i.firUirIdentifier())
+                .identifier(i.firUirAddress().map(a -> i.firUirIdentifier().concat("-").concat(a)).orElse(i.firUirIdentifier()))
                 .altitudeLimit(uirLimit)
                 .airspaceType(AirspaceType.UIR)
                 .sequences(allLegs)
