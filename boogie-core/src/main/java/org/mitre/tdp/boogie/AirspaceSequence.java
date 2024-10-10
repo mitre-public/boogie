@@ -46,6 +46,18 @@ public interface AirspaceSequence {
   Optional<LatLong> centerFix();
 
   /**
+   * The radius of the arc or circle in nm
+   * @return said radius in nm
+   */
+  Optional<Double> arcRadius();
+
+  /**
+   * Tor ARC/Circle geometry types this is the bearing from the arc center where the leg ends.
+   * @return said bearing in degrees
+   */
+  Optional<Double> arcBearing();
+
+  /**
    * Airspace segments represent a path defined by generic geodesic concepts.
    *
    * @return the geometry of this sequence
@@ -76,6 +88,8 @@ public interface AirspaceSequence {
   final class Standard implements AirspaceSequence {
     private final LatLong associatedFix;
     private final LatLong centerFix;
+    private final Double arcRadius;
+    private final Double arcBearing;
     private final Geometry geometry;
     private final int sequenceNumber;
     private int hashCode;
@@ -83,6 +97,8 @@ public interface AirspaceSequence {
     private Standard(Builder builder) {
       this.associatedFix = requireNonNull(builder.associatedFix);
       this.centerFix = builder.centerFix;
+      this.arcRadius = builder.arcRadius;
+      this.arcBearing = builder.arcBearing;
       this.geometry = requireNonNull(builder.geometry);
       this.sequenceNumber = builder.sequenceNumber;
     }
@@ -91,6 +107,8 @@ public interface AirspaceSequence {
       return new Builder()
           .associatedFix(associatedFix)
           .centerFix(centerFix)
+          .arcRadius(arcRadius)
+          .arcBearing(arcBearing)
           .geometry(geometry)
           .sequenceNumber(sequenceNumber);
     }
@@ -103,6 +121,16 @@ public interface AirspaceSequence {
     @Override
     public Optional<LatLong> centerFix() {
       return Optional.ofNullable(centerFix);
+    }
+
+    @Override
+    public Optional<Double> arcRadius() {
+      return Optional.ofNullable(arcRadius);
+    }
+
+    @Override
+    public Optional<Double> arcBearing() {
+      return Optional.ofNullable(arcBearing);
     }
 
     @Override
@@ -124,7 +152,7 @@ public interface AirspaceSequence {
         return false;
       }
       Standard standard = (Standard) o;
-      return sequenceNumber == standard.sequenceNumber && hashCode == standard.hashCode && Objects.equals(associatedFix, standard.associatedFix) && Objects.equals(centerFix, standard.centerFix) && geometry == standard.geometry;
+      return sequenceNumber == standard.sequenceNumber && Objects.equals(associatedFix, standard.associatedFix) && Objects.equals(centerFix, standard.centerFix) && Objects.equals(arcRadius, standard.arcRadius) && Objects.equals(arcBearing, standard.arcBearing) && geometry == standard.geometry;
     }
 
     @Override
@@ -136,7 +164,7 @@ public interface AirspaceSequence {
     }
 
     private int computeHashCode() {
-      return Objects.hash(associatedFix, centerFix, geometry, sequenceNumber);
+      return Objects.hash(associatedFix, centerFix, arcRadius, arcBearing, geometry, sequenceNumber);
     }
 
     @Override
@@ -144,6 +172,8 @@ public interface AirspaceSequence {
       return "Standard{" +
           "associatedFix=" + associatedFix +
           ", centerFix=" + centerFix +
+          ", arcRadius=" + arcRadius +
+          ", arcBearing=" + arcBearing +
           ", geometry=" + geometry +
           ", sequenceNumber=" + sequenceNumber +
           '}';
@@ -157,6 +187,8 @@ public interface AirspaceSequence {
     public static final class Builder {
       private LatLong associatedFix;
       private LatLong centerFix;
+      private Double arcRadius;
+      private Double arcBearing;
       private Geometry geometry;
       private int sequenceNumber;
 
@@ -170,6 +202,16 @@ public interface AirspaceSequence {
 
       public Builder centerFix(LatLong centerFix) {
         this.centerFix = centerFix;
+        return this;
+      }
+
+      public Builder arcRadius(Double arcRadius) {
+        this.arcRadius = arcRadius;
+        return this;
+      }
+
+      public Builder arcBearing(Double arcBearing) {
+        this.arcBearing = arcBearing;
         return this;
       }
 
@@ -209,6 +251,16 @@ public interface AirspaceSequence {
     @Override
     public Optional<LatLong> centerFix() {
       return delegate.centerFix();
+    }
+
+    @Override
+    public Optional<Double> arcRadius() {
+      return delegate.arcRadius();
+    }
+
+    @Override
+    public Optional<Double> arcBearing() {
+      return delegate.arcBearing();
     }
 
     @Override

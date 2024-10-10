@@ -11,6 +11,8 @@ class AirspaceSequenceTest {
   static AirspaceSequence sequence = AirspaceSequence.builder(Geometry.CIRCLE, 10)
       .associatedFix(LatLong.of(0., 1.))
       .centerFix(LatLong.of(2., 3.))
+      .arcRadius(10D)
+      .arcBearing(11D)
       .build();
 
   @Test
@@ -33,7 +35,9 @@ class AirspaceSequenceTest {
         () -> assertEquals(0., sequence.associatedFix().latitude()),
         () -> assertEquals(1., sequence.associatedFix().longitude()),
         () -> assertEquals(2, sequence.centerFix().get().latitude()),
-        () -> assertEquals(3, sequence.centerFix().get().longitude())
+        () -> assertEquals(3, sequence.centerFix().get().longitude()),
+        () -> assertEquals(10, sequence.arcRadius().get()),
+        () -> assertEquals(11, sequence.arcBearing().get())
     );
 
   }
@@ -42,6 +46,8 @@ class AirspaceSequenceTest {
     return AirspaceSequence.builder(Geometry.CIRCLE, 10)
         .associatedFix(LatLong.of(0., 0.))
         .centerFix(LatLong.of(0., 0.))
+        .arcRadius(10D)
+        .arcBearing(11D)
         .build();
   }
 
