@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifTerminalParentConverter;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifTerminalParentSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifTerminalParentValidator;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifTerminalParentSpec {
 
-  private static final DafifRecordParser parser = DafifRecordParser.all();
+  private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifTerminalParentSpec());
 
   private static final DafifTerminalParentValidator validator = new DafifTerminalParentValidator();
 

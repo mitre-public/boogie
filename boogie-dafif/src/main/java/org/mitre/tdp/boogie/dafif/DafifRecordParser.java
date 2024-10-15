@@ -28,20 +28,6 @@ public interface DafifRecordParser {
     return standard(List.of(recordSpecs));
   }
 
-  static DafifRecordParser all() {
-    return standard(
-        new DafifAirportSpec(),
-        new DafifRunwaySpec(),
-        new DafifIlsSpec(),
-        new DafifNavaidSpec(),
-        new DafifTerminalParentSpec(),
-        new DafifTerminalSegmentSpec(),
-        new DafifWaypointSpec(),
-        new DafifAtsSpec(),
-        new DafifAddRuwaySpec()
-    );
-  }
-
   static DafifRecordParser standard(List<DafifRecordSpec> recordSpecs) {
     return new Standard(recordSpecs);
   }

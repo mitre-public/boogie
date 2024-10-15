@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifFileParser;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
+import org.mitre.tdp.boogie.dafif.DafifRecordSpec;
 import org.mitre.tdp.boogie.dafif.DafifVersion;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class TestConvertingDafifRecordConsumer {
   private static final File dafifTestAtsFile = new File(System.getProperty("user.dir").concat("/src/test/resources/ATS.TXT"));
   private static final File dafifTestAddRunwayFile = new File(System.getProperty("user.dir").concat("/src/test/resources/ADD_RWY.TXT"));
 
-  private static final DafifFileParser fileParser = new DafifFileParser(DafifRecordParser.all());
+  private static final DafifFileParser fileParser = new DafifFileParser(DafifVersion.V81);
 
   private static final ConvertingDafifRecordConsumer consumer = DafifRecordConverterFactory.consumerForVersion(DafifVersion.V81);
 

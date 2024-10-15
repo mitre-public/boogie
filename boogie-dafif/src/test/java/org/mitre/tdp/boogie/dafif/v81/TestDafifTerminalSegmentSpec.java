@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifTerminalSegmentConverter;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifTerminalSegmentSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifTerminalSegmentValidator;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifTerminalSegmentSpec {
 
-  private static final DafifRecordParser parser = DafifRecordParser.all();
+  private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifTerminalSegmentSpec());
 
   private static final DafifTerminalSegmentValidator validator = new DafifTerminalSegmentValidator();
 

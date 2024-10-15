@@ -13,11 +13,12 @@ import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.model.DafifAirport;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifAirportConverter;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifAirportSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifAirportValidator;
 
 public class TestDafifAirportSpec {
 
-  private static final DafifRecordParser parser = DafifRecordParser.all();
+  private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifAirportSpec());
 
   private static final DafifAirportValidator validator = new DafifAirportValidator();
   private static final DafifAirportConverter converter = new DafifAirportConverter();

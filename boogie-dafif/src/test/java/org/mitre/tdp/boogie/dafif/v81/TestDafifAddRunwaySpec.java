@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.model.DafifAddRunway;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifAddRunwayConverter;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifAddRuwaySpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifAddRunwayValidator;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifAddRunwaySpec {
 
-  private static final DafifRecordParser parser = DafifRecordParser.all();
+  private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifAddRuwaySpec());
 
   private static final DafifAddRunwayValidator validator = new DafifAddRunwayValidator();
   private static final DafifAddRunwayConverter converter = new DafifAddRunwayConverter();

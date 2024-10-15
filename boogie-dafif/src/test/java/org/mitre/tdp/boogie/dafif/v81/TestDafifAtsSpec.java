@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficService;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifAtsConverter;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifAtsSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifAtsValidator;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifAtsSpec {
 
-  private static final DafifRecordParser parser = DafifRecordParser.all();
+  private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifAtsSpec());
 
   private static final DafifAtsValidator validator = new DafifAtsValidator();
   private static final DafifAtsConverter converter = new DafifAtsConverter();

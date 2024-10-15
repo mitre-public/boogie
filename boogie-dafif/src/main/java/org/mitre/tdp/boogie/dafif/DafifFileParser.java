@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -18,6 +19,10 @@ import static java.util.Objects.requireNonNull;
 public class DafifFileParser implements Function<File, Collection<DafifRecord>> {
 
   private final DafifRecordParser recordParser;
+
+  public DafifFileParser(DafifVersion version) {
+    this(DafifRecordParser.standard(version.specs()));
+  }
 
   public DafifFileParser(DafifRecordSpec... recordSpecs) {
     this(DafifRecordParser.standard(recordSpecs));

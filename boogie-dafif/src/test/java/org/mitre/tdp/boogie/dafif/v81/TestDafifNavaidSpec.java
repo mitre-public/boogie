@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifNavaidConverter;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifNavaidSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifNavaidValidator;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifNavaidSpec {
 
-  private static final DafifRecordParser parser = DafifRecordParser.all();
+  private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifNavaidSpec());
 
   private static final DafifNavaidValidator validator = new DafifNavaidValidator();
 

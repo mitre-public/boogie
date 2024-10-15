@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.model.DafifIls;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifIlsConverter;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifIlsSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifIlsValidator;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifIlsSpec {
 
-  private static final DafifRecordParser parser = DafifRecordParser.all();
+  private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifIlsSpec());
 
   private static final DafifIlsValidator validator = new DafifIlsValidator();
   private static final DafifIlsConverter converter = new DafifIlsConverter();
