@@ -12,6 +12,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.OverrunSurface;
 import org.mitre.tdp.boogie.dafif.v81.field.CycleDate;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class DafifAddRunway {
   /**
@@ -158,104 +159,104 @@ public final class DafifAddRunway {
     return Objects.hash(airportIdentification, highEndRunwayIdentifier, lowEndRunwayIdentifier, icaoCode, highEndDisplacedThresholdGeodeticLatitude, highEndDisplacedThresholdDegreesLatitude, highEndDisplacedThresholdGeodeticLongitude, highEndDisplacedThresholdDegreesLongitude, highEndOverrunDistance, highEndOverrunSurface, highEndOverrunGeodeticLatitude, highEndOverrunDegreesLatitude, highEndOverrunGeodeticLongitude, highEndOverrunDegreesLongitude, lowEndDisplacedThresholdGeodeticLatitude, lowEndDisplacedThresholdDegreesLatitude, lowEndDisplacedThresholdGeodeticLongitude, lowEndDisplacedThresholdDegreesLongitude, lowEndOverrunDistance, lowEndOverrunSurface, lowEndOverrunGeodeticLatitude, lowEndOverrunDegreesLatitude, lowEndOverrunGeodeticLongitude, lowEndOverrunDegreesLongitude, cycleDate);
   }
 
-  public String getAirportIdentification() {
+  public String airportIdentification() {
     return airportIdentification;
   }
 
-  public String getHighEndRunwayIdentifier() {
+  public String highEndRunwayIdentifier() {
     return highEndRunwayIdentifier;
   }
 
-  public String getLowEndRunwayIdentifier() {
+  public String lowEndRunwayIdentifier() {
     return lowEndRunwayIdentifier;
   }
 
-  public String getIcaoCode() {
+  public String icaoCode() {
     return icaoCode;
   }
 
-  public String getHighEndDisplacedThresholdGeodeticLatitude() {
-    return highEndDisplacedThresholdGeodeticLatitude;
-  }
-
-  public Double getHighEndDisplacedThresholdDegreesLatitude() {
-    return highEndDisplacedThresholdDegreesLatitude;
-  }
-
-  public String getHighEndDisplacedThresholdGeodeticLongitude() {
-    return highEndDisplacedThresholdGeodeticLongitude;
-  }
-
-  public Double getHighEndDisplacedThresholdDegreesLongitude() {
-    return highEndDisplacedThresholdDegreesLongitude;
-  }
-
-  public Integer getHighEndOverrunDistance() {
-    return highEndOverrunDistance;
-  }
-
-  public String getHighEndOverrunSurface() {
+  public String highEndOverrunSurface() {
     return highEndOverrunSurface;
   }
 
-  public String getHighEndOverrunGeodeticLatitude() {
-    return highEndOverrunGeodeticLatitude;
-  }
-
-  public Double getHighEndOverrunDegreesLatitude() {
-    return highEndOverrunDegreesLatitude;
-  }
-
-  public String getHighEndOverrunGeodeticLongitude() {
-    return highEndOverrunGeodeticLongitude;
-  }
-
-  public Double getHighEndOverrunDegreesLongitude() {
-    return highEndOverrunDegreesLongitude;
-  }
-
-  public String getLowEndDisplacedThresholdGeodeticLatitude() {
-    return lowEndDisplacedThresholdGeodeticLatitude;
-  }
-
-  public Double getLowEndDisplacedThresholdDegreesLatitude() {
-    return lowEndDisplacedThresholdDegreesLatitude;
-  }
-
-  public String getLowEndDisplacedThresholdGeodeticLongitude() {
-    return lowEndDisplacedThresholdGeodeticLongitude;
-  }
-
-  public Double getLowEndDisplacedThresholdDegreesLongitude() {
-    return lowEndDisplacedThresholdDegreesLongitude;
-  }
-
-  public Integer getLowEndOverrunDistance() {
-    return lowEndOverrunDistance;
-  }
-
-  public String getLowEndOverrunSurface() {
+  public String lowEndOverrunSurface() {
     return lowEndOverrunSurface;
   }
 
-  public String getLowEndOverrunGeodeticLatitude() {
-    return lowEndOverrunGeodeticLatitude;
-  }
-
-  public Double getLowEndOverrunDegreesLatitude() {
-    return lowEndOverrunDegreesLatitude;
-  }
-
-  public String getLowEndOverrunGeodeticLongitude() {
-    return lowEndOverrunGeodeticLongitude;
-  }
-
-  public Double getLowEndOverrunDegreesLongitude() {
-    return lowEndOverrunDegreesLongitude;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
+  }
+
+  public Optional<String> highEndDisplacedThresholdGeodeticLatitude() {
+    return Optional.ofNullable(highEndDisplacedThresholdGeodeticLatitude);
+  }
+
+  public Optional<Double> highEndDisplacedThresholdDegreesLatitude() {
+    return Optional.ofNullable(highEndDisplacedThresholdDegreesLatitude);
+  }
+
+  public Optional<String> highEndDisplacedThresholdGeodeticLongitude() {
+    return Optional.ofNullable(highEndDisplacedThresholdGeodeticLongitude);
+  }
+
+  public Optional<Double> highEndDisplacedThresholdDegreesLongitude() {
+    return Optional.ofNullable(highEndDisplacedThresholdDegreesLongitude);
+  }
+
+  public Optional<Integer> highEndOverrunDistance() {
+    return Optional.ofNullable(highEndOverrunDistance);
+  }
+
+  public Optional<String> highEndOverrunGeodeticLatitude() {
+    return Optional.ofNullable(highEndOverrunGeodeticLatitude);
+  }
+
+  public Optional<Double> highEndOverrunDegreesLatitude() {
+    return Optional.ofNullable(highEndOverrunDegreesLatitude);
+  }
+
+  public Optional<String> highEndOverrunGeodeticLongitude() {
+    return Optional.ofNullable(highEndOverrunGeodeticLongitude);
+  }
+
+  public Optional<Double> highEndOverrunDegreesLongitude() {
+    return Optional.ofNullable(highEndOverrunDegreesLongitude);
+  }
+
+  public Optional<String> lowEndDisplacedThresholdGeodeticLatitude() {
+    return Optional.ofNullable(lowEndDisplacedThresholdGeodeticLatitude);
+  }
+
+  public Optional<Double> lowEndDisplacedThresholdDegreesLatitude() {
+    return Optional.ofNullable(lowEndDisplacedThresholdDegreesLatitude);
+  }
+
+  public Optional<String> lowEndDisplacedThresholdGeodeticLongitude() {
+    return Optional.ofNullable(lowEndDisplacedThresholdGeodeticLongitude);
+  }
+
+  public Optional<Double> lowEndDisplacedThresholdDegreesLongitude() {
+    return Optional.ofNullable(lowEndDisplacedThresholdDegreesLongitude);
+  }
+
+  public Optional<Integer> lowEndOverrunDistance() {
+    return Optional.ofNullable(lowEndOverrunDistance);
+  }
+
+  public Optional<String> lowEndOverrunGeodeticLatitude() {
+    return Optional.ofNullable(lowEndOverrunGeodeticLatitude);
+  }
+
+  public Optional<Double> lowEndOverrunDegreesLatitude() {
+    return Optional.ofNullable(lowEndOverrunDegreesLatitude);
+  }
+
+  public Optional<String> lowEndOverrunGeodeticLongitude() {
+    return Optional.ofNullable(lowEndOverrunGeodeticLongitude);
+  }
+
+  public Optional<Double> lowEndOverrunDegreesLongitude() {
+    return Optional.ofNullable(lowEndOverrunDegreesLongitude);
   }
 
   public static class Builder {

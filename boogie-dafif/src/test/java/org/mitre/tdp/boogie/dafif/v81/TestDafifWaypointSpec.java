@@ -63,22 +63,22 @@ public class TestDafifWaypointSpec {
     DafifWaypoint waypoint = converter.apply(record).orElseThrow(AssertionError::new);
 
     assertAll(
-        () -> assertEquals("02PAR", waypoint.getWaypointIdentifierWptIdent()),
-        () -> assertEquals("GR", waypoint.getCountryCode()),
-        () -> assertEquals("I", waypoint.getWaypointType()),
-        () -> assertEquals("(PAR 245.0/002.0 HOST)", waypoint.getWaypointDescriptionName()),
-        () -> assertEquals("LGRP", waypoint.getIcaoCode()),
-        () -> assertEquals("T", waypoint.getWaypointUsageCode()),
-        () -> assertEquals("0342", waypoint.getWac()),
-        () -> assertEquals("WGE", waypoint.getLocalHorizontalDatum()),
-        () -> assertEquals("WGE", waypoint.getGeodeticDatum()),
-        () -> assertEquals("N36231860", waypoint.getGeodeticLatitude()),
-        () -> assertEquals(36.388500, waypoint.getDegreesLatitude()),
-        () -> assertEquals("E028013490", waypoint.getGeodeticLongitude()),
-        () -> assertEquals(28.026361, waypoint.getDegreesLongitude()),
-        () -> assertEquals("E005209 0124", waypoint.getMagneticVariation()),
-        () -> assertEquals(202313, waypoint.getCycleDate()),
-        () -> assertEquals(0, waypoint.getCoordinatePrecision())
+        () -> assertEquals("02PAR", waypoint.waypointIdentifierWptIdent()),
+        () -> assertEquals("GR", waypoint.countryCode()),
+        () -> assertEquals("I", waypoint.waypointType()),
+        () -> assertEquals("(PAR 245.0/002.0 HOST)", waypoint.waypointDescriptionName().orElseThrow()),
+        () -> assertEquals("LGRP", waypoint.icaoCode()),
+        () -> assertEquals("T", waypoint.waypointUsageCode()),
+        () -> assertEquals("0342", waypoint.wac()),
+        () -> assertEquals("WGE", waypoint.localHorizontalDatum().orElseThrow()),
+        () -> assertEquals("WGE", waypoint.geodeticDatum().orElseThrow()),
+        () -> assertEquals("N36231860", waypoint.geodeticLatitude().orElseThrow()),
+        () -> assertEquals(36.388500, waypoint.degreesLatitude().orElseThrow()),
+        () -> assertEquals("E028013490", waypoint.geodeticLongitude().orElseThrow()),
+        () -> assertEquals(28.026361, waypoint.degreesLongitude().orElseThrow()),
+        () -> assertEquals("E005209 0124", waypoint.magneticVariation()),
+        () -> assertEquals(202313, waypoint.cycleDate()),
+        () -> assertEquals(0, waypoint.coordinatePrecision().orElseThrow())
     );
   }
 }

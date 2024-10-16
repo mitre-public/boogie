@@ -29,6 +29,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.TerrainImpacted;
 import org.mitre.tdp.boogie.dafif.v81.field.WAC;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class DafifAirport {
 
@@ -197,112 +198,112 @@ public final class DafifAirport {
     this.magVarOfRecord = builder.magVarOfRecord;
   }
 
-  public String getAirportIdentification() {
+  public String airportIdentification() {
     return airportIdentification;
   }
 
-  public String getName() {
+  public String name() {
     return name;
   }
 
-  public Integer getStateProvinceCode() {
-    return stateProvinceCode;
-  }
-
-  public String getIcaoCode() {
+  public String icaoCode() {
     return icaoCode;
   }
 
-  public String getFaaHostCountryIdentifier() {
-    return faaHostCountryIdentifier;
-  }
-
-  public String getLocalHorizontalDatum() {
+  public String localHorizontalDatum() {
     return localHorizontalDatum;
   }
 
-  public String getGeodeticDatum() {
-    return geodeticDatum;
-  }
-
-  public String getGeodeticLatitude() {
-    return geodeticLatitude;
-  }
-
-  public Double getDegreesLatitude() {
-    return degreesLatitude;
-  }
-
-  public String getGeodeticLongitude() {
-    return geodeticLongitude;
-  }
-
-  public Double getDegreesLongitude() {
-    return degreesLongitude;
-  }
-
-  public Integer getElevation() {
+  public Integer elevation() {
     return elevation;
   }
 
-  public String getAirportType() {
+  public String airportType() {
     return airportType;
   }
 
-  public String getMagneticVariation() {
+  public String magneticVariation() {
     return magneticVariation;
   }
 
-  public String getWac() {
+  public String wac() {
     return wac;
   }
 
-  public String getBeacon() {
-    return beacon;
-  }
-
-  public String getSecondaryAirport() {
-    return secondaryAirport;
-  }
-
-  public String getPrimaryOperatingAgency() {
+  public String primaryOperatingAgency() {
     return primaryOperatingAgency;
   }
 
-  public String getSecondaryName() {
-    return secondaryName;
-  }
-
-  public String getSecondaryIcaoCode() {
-    return secondaryIcaoCode;
-  }
-
-  public String getSecondaryFaaHost() {
-    return secondaryFaaHost;
-  }
-
-  public String getSecondaryOperatingAgency() {
-    return secondaryOperatingAgency;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
   }
 
-  public String getTerrainImpacted() {
-    return terrainImpacted;
+  public Optional<Integer> stateProvinceCode() {
+    return Optional.ofNullable(stateProvinceCode);
   }
 
-  public String getShoreline() {
-    return shoreline;
+  public Optional<String> faaHostCountryIdentifier() {
+    return Optional.ofNullable(faaHostCountryIdentifier);
   }
 
-  public Integer getCoordinatePrecision() {
-    return coordinatePrecision;
+  public Optional<String> geodeticDatum() {
+    return Optional.ofNullable(geodeticDatum);
   }
 
-  public String getMagVarOfRecord() {
-    return magVarOfRecord;
+  public Optional<String> geodeticLatitude() {
+    return Optional.ofNullable(geodeticLatitude);
+  }
+
+  public Optional<Double> degreesLatitude() {
+    return Optional.ofNullable(degreesLatitude);
+  }
+
+  public Optional<String> geodeticLongitude() {
+    return Optional.ofNullable(geodeticLongitude);
+  }
+
+  public Optional<Double> degreesLongitude() {
+    return Optional.ofNullable(degreesLongitude);
+  }
+
+  public Optional<String> beacon() {
+    return Optional.ofNullable(beacon);
+  }
+
+  public Optional<String> secondaryAirport() {
+    return Optional.ofNullable(secondaryAirport);
+  }
+
+  public Optional<String> secondaryName() {
+    return Optional.ofNullable(secondaryName);
+  }
+
+  public Optional<String> secondaryIcaoCode() {
+    return Optional.ofNullable(secondaryIcaoCode);
+  }
+
+  public Optional<String> secondaryFaaHost() {
+    return Optional.ofNullable(secondaryFaaHost);
+  }
+
+  public Optional<String> secondaryOperatingAgency() {
+    return Optional.ofNullable(secondaryOperatingAgency);
+  }
+
+  public Optional<String> terrainImpacted() {
+    return Optional.ofNullable(terrainImpacted);
+  }
+
+  public Optional<String> shoreline() {
+    return Optional.ofNullable(shoreline);
+  }
+
+  public Optional<Integer> coordinatePrecision() {
+    return Optional.ofNullable(coordinatePrecision);
+  }
+
+  public Optional<String> magVarOfRecord() {
+    return Optional.ofNullable(magVarOfRecord);
   }
 
   @Override

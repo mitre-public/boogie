@@ -24,6 +24,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.LevelOfService3;
 import org.mitre.tdp.boogie.dafif.v81.field.ProcedureDesignMagvar;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class DafifTerminalParent {
   /**
@@ -166,100 +167,100 @@ public final class DafifTerminalParent {
     return Objects.hash(airportIdentification, terminalProcedureType, terminalIdentifier, icaoCode, emergencySafeAltitude, julianDate, amendmentNumber, officeOfPrimaryResponsibility, hostCountryAuthority, cycleDate, alternateTakeoffMinimums, transitionAltitude, transitionLevel, procedureDesignCriteria, procedureAmendmentDate, approachRouteQualifier1, approachRouteQualifier2, levelOfService1, levelOfServiceName1, levelOfService2, levelOfServiceName2, levelOfService3, levelOfServiceName3, procedureDesignMagvar);
   }
 
-  public String getAirportIdentification() {
+  public String airportIdentification() {
     return airportIdentification;
   }
 
-  public Integer getTerminalProcedureType() {
+  public Integer terminalProcedureType() {
     return terminalProcedureType;
   }
 
-  public String getTerminalIdentifier() {
+  public String terminalIdentifier() {
     return terminalIdentifier;
   }
 
-  public String getIcaoCode() {
+  public String icaoCode() {
     return icaoCode;
   }
 
-  public Integer getEmergencySafeAltitude() {
-    return emergencySafeAltitude;
-  }
-
-  public Integer getJulianDate() {
+  public Integer julianDate() {
     return julianDate;
   }
 
-  public String getAmendmentNumber() {
-    return amendmentNumber;
-  }
-
-  public String getOfficeOfPrimaryResponsibility() {
+  public String officeOfPrimaryResponsibility() {
     return officeOfPrimaryResponsibility;
   }
 
-  public String getHostCountryAuthority() {
-    return hostCountryAuthority;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
   }
 
-  public String getAlternateTakeoffMinimums() {
-    return alternateTakeoffMinimums;
-  }
-
-  public Integer getTransitionAltitude() {
-    return transitionAltitude;
-  }
-
-  public Integer getTransitionLevel() {
-    return transitionLevel;
-  }
-
-  public String getProcedureDesignCriteria() {
-    return procedureDesignCriteria;
-  }
-
-  public String getProcedureAmendmentDate() {
-    return procedureAmendmentDate;
-  }
-
-  public String getApproachRouteQualifier1() {
-    return approachRouteQualifier1;
-  }
-
-  public String getApproachRouteQualifier2() {
-    return approachRouteQualifier2;
-  }
-
-  public String getLevelOfService1() {
+  public String levelOfService1() {
     return levelOfService1;
   }
 
-  public String getLevelOfServiceName1() {
-    return levelOfServiceName1;
-  }
-
-  public String getLevelOfService2() {
+  public String levelOfService2() {
     return levelOfService2;
   }
 
-  public String getLevelOfServiceName2() {
-    return levelOfServiceName2;
-  }
-
-  public String getLevelOfService3() {
+  public String levelOfService3() {
     return levelOfService3;
   }
 
-  public String getLevelOfServiceName3() {
-    return levelOfServiceName3;
+  public Optional<Integer> emergencySafeAltitude() {
+    return Optional.ofNullable(emergencySafeAltitude);
   }
 
-  public String getProcedureDesignMagvar() {
-    return procedureDesignMagvar;
+  public Optional<String> amendmentNumber() {
+    return Optional.ofNullable(amendmentNumber);
+  }
+
+  public Optional<String> hostCountryAuthority() {
+    return Optional.ofNullable(hostCountryAuthority);
+  }
+
+  public Optional<String> alternateTakeoffMinimums() {
+    return Optional.ofNullable(alternateTakeoffMinimums);
+  }
+
+  public Optional<Integer> transitionAltitude() {
+    return Optional.ofNullable(transitionAltitude);
+  }
+
+  public Optional<Integer> transitionLevel() {
+    return Optional.ofNullable(transitionLevel);
+  }
+
+  public Optional<String> procedureDesignCriteria() {
+    return Optional.ofNullable(procedureDesignCriteria);
+  }
+
+  public Optional<String> procedureAmendmentDate() {
+    return Optional.ofNullable(procedureAmendmentDate);
+  }
+
+  public Optional<String> approachRouteQualifier1() {
+    return Optional.ofNullable(approachRouteQualifier1);
+  }
+
+  public Optional<String> approachRouteQualifier2() {
+    return Optional.ofNullable(approachRouteQualifier2);
+  }
+
+  public Optional<String> levelOfServiceName1() {
+    return Optional.ofNullable(levelOfServiceName1);
+  }
+
+  public Optional<String> levelOfServiceName2() {
+    return Optional.ofNullable(levelOfServiceName2);
+  }
+
+  public Optional<String> levelOfServiceName3() {
+    return Optional.ofNullable(levelOfServiceName3);
+  }
+
+  public Optional<String> procedureDesignMagvar() {
+    return Optional.ofNullable(procedureDesignMagvar);
   }
 
   public static class Builder {

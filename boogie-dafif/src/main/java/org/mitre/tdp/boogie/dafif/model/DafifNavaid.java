@@ -35,6 +35,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.StateProvinceCode;
 import org.mitre.tdp.boogie.dafif.v81.field.WAC;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class DafifNavaid {
 
@@ -222,136 +223,136 @@ public final class DafifNavaid {
     return Objects.hash(navaidIdentifier, navaidType, countryCode, navaidKeyCode, stateProvinceCode, name, icaoRegion, wac, navaidFrequencyNav, navaidUsageCode, navaidChannel, navaidRadioClassCode, frequencyProtection, navaidPower, navaidRange, localHorizontalDatum, geodeticDatum, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, navaidSlavedVariation, magneticVariation, ilsNavaidElevation, dmeGeodeticLatitude, dmeDegreesLatitude, dmeGeodeticLongitude, dmeDegreesLongitude, dmeElevation, associatedIcaoFaaHostCtryCode, navaidStatus, cycleDate, coordinatePrecision);
   }
 
-  public String getNavaidIdentifier() {
+  public String navaidIdentifier() {
     return navaidIdentifier;
   }
 
-  public Integer getNavaidType() {
+  public Integer navaidType() {
     return navaidType;
   }
 
-  public String getCountryCode() {
+  public String countryCode() {
     return countryCode;
   }
 
-  public Integer getNavaidKeyCode() {
+  public Integer navaidKeyCode() {
     return navaidKeyCode;
   }
 
-  public Integer getStateProvinceCode() {
-    return stateProvinceCode;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getIcaoRegion() {
+  public String icaoRegion() {
     return icaoRegion;
   }
 
-  public String getWac() {
+  public String wac() {
     return wac;
   }
 
-  public String getNavaidFrequencyNav() {
-    return navaidFrequencyNav;
-  }
-
-  public String getNavaidUsageCode() {
+  public String navaidUsageCode() {
     return navaidUsageCode;
   }
 
-  public String getNavaidChannel() {
-    return navaidChannel;
-  }
-
-  public String getNavaidRadioClassCode() {
+  public String navaidRadioClassCode() {
     return navaidRadioClassCode;
   }
 
-  public String getFrequencyProtection() {
-    return frequencyProtection;
-  }
-
-  public String getNavaidPower() {
+  public String navaidPower() {
     return navaidPower;
   }
 
-  public String getNavaidRange() {
+  public String navaidRange() {
     return navaidRange;
   }
 
-  public String getLocalHorizontalDatum() {
-    return localHorizontalDatum;
-  }
-
-  public String getGeodeticDatum() {
-    return geodeticDatum;
-  }
-
-  public String getGeodeticLatitude() {
-    return geodeticLatitude;
-  }
-
-  public Double getDegreesLatitude() {
-    return degreesLatitude;
-  }
-
-  public String getGeodeticLongitude() {
-    return geodeticLongitude;
-  }
-
-  public Double getDegreesLongitude() {
-    return degreesLongitude;
-  }
-
-  public String getNavaidSlavedVariation() {
-    return navaidSlavedVariation;
-  }
-
-  public String getMagneticVariation() {
+  public String magneticVariation() {
     return magneticVariation;
   }
 
-  public String getIlsNavaidElevation() {
+  public String ilsNavaidElevation() {
     return ilsNavaidElevation;
   }
 
-  public String getDmeGeodeticLatitude() {
-    return dmeGeodeticLatitude;
-  }
-
-  public Double getDmeDegreesLatitude() {
-    return dmeDegreesLatitude;
-  }
-
-  public String getDmeGeodeticLongitude() {
-    return dmeGeodeticLongitude;
-  }
-
-  public Double getDmeDegreesLongitude() {
-    return dmeDegreesLongitude;
-  }
-
-  public String getDmeElevation() {
+  public String dmeElevation() {
     return dmeElevation;
   }
 
-  public String getAssociatedIcaoFaaHostCtryCode() {
-    return associatedIcaoFaaHostCtryCode;
-  }
-
-  public String getNavaidStatus() {
-    return navaidStatus;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
   }
 
-  public Integer getCoordinatePrecision() {
-    return coordinatePrecision;
+  public String navaidStatus() {
+    return navaidStatus;
+  }
+
+  public Optional<Integer> stateProvinceCode() {
+    return Optional.ofNullable(stateProvinceCode);
+  }
+
+  public Optional<String> name() {
+    return Optional.ofNullable(name);
+  }
+
+  public Optional<String> navaidFrequencyNav() {
+    return Optional.ofNullable(navaidFrequencyNav);
+  }
+
+  public Optional<String> navaidChannel() {
+    return Optional.ofNullable(navaidChannel);
+  }
+
+  public Optional<String> frequencyProtection() {
+    return Optional.ofNullable(frequencyProtection);
+  }
+
+  public Optional<String> localHorizontalDatum() {
+    return Optional.ofNullable(localHorizontalDatum);
+  }
+
+  public Optional<String> geodeticDatum() {
+    return Optional.ofNullable(geodeticDatum);
+  }
+
+  public Optional<String> geodeticLatitude() {
+    return Optional.ofNullable(geodeticLatitude);
+  }
+
+  public Optional<Double> degreesLatitude() {
+    return Optional.ofNullable(degreesLatitude);
+  }
+
+  public Optional<String> geodeticLongitude() {
+    return Optional.ofNullable(geodeticLongitude);
+  }
+
+  public Optional<Double> degreesLongitude() {
+    return Optional.ofNullable(degreesLongitude);
+  }
+
+  public Optional<String> navaidSlavedVariation() {
+    return Optional.ofNullable(navaidSlavedVariation);
+  }
+
+  public Optional<String> dmeGeodeticLatitude() {
+    return Optional.ofNullable(dmeGeodeticLatitude);
+  }
+
+  public Optional<Double> dmeDegreesLatitude() {
+    return Optional.ofNullable(dmeDegreesLatitude);
+  }
+
+  public Optional<String> dmeGeodeticLongitude() {
+    return Optional.ofNullable(dmeGeodeticLongitude);
+  }
+
+  public Optional<Double> dmeDegreesLongitude() {
+    return Optional.ofNullable(dmeDegreesLongitude);
+  }
+
+  public Optional<String> associatedIcaoFaaHostCtryCode() {
+    return Optional.ofNullable(associatedIcaoFaaHostCtryCode);
+  }
+
+  public Optional<Integer> coordinatePrecision() {
+    return Optional.ofNullable(coordinatePrecision);
   }
 
   public static final class Builder {

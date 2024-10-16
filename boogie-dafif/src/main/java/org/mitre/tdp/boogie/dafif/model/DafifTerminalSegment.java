@@ -46,6 +46,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.ArcWaypointCountryCode;
 import org.mitre.tdp.boogie.dafif.v81.field.ArcRadius;
 
 import java.util.Objects;
+import java.util.Optional;
 
 
 public final class DafifTerminalSegment {
@@ -408,276 +409,276 @@ public final class DafifTerminalSegment {
     return Objects.hash(airportIdentification, terminalProcedureType, terminalIdentifier, terminalSequenceNumber, terminalApproachType, transitionIdentifier, icaoCode, trackDescriptionCode, termSegWaypointIdentifier, waypointCountryCode, terminalWaypointDescriptionCode1Arpt, terminalWaypointDescriptionCode2, terminalWaypointDescriptionCode3, terminalWaypointDescriptionCode4, terminalSegmentTurnDirection, navaid1Identifier, navaid1Type, navaid1CountryCode, navaid1KeyCode, fix1Bearing, fix1Distance, navaid2Identifier, navaid2Type, navaid2CountryCode, navaid2KeyCode, fix2Bearing, fix2Distance, terminalMagneticCourse, distance, altitudeDescription, altitude1, altitude2, requiredNavPerformance, cycleDate, waypointGeodeticLatitude, waypointDegreesLatitude, waypointGeodeticLongitude, waypointDegreesLongitude, waypointMagneticVariation, navaid1GeodeticLatitude, navaid1DegreesLatitude, navaid1GeodeticLongitude, navaid1DegreesLongitude, navaid1MagneticVariation, navaid1DmeGeodeticLatitude, navaid1DmeDegreesLatitude, navaid1DmeGeodeticLongitude, navaid1DmeDegreesLongitude, navaid2GeodeticLatitude, navaid2DegreesLatitude, navaid2GeodeticLongitude, navaid2DegreesLongitude, navaid2MagneticVariation, navaid2DmeGeodeticLatitude, navaid2DmeDegreesLatitude, navaid2DmeGeodeticLongitude, navaid2DmeDegreesLongitude, speedLimit1, speedLimitAircraftType1, speedLimitAltitude1, speedLimit2, speedLimitAircraftType2, speedLimitAltitude2, verticalNavigationVnav, thresholdCrossingHeight, arcWaypointIdentifier, arcWaypointCountryCode, arcRadius);
   }
 
-  public String getAirportIdentification() {
+  public String airportIdentification() {
     return airportIdentification;
   }
 
-  public Integer getTerminalProcedureType() {
+  public Integer terminalProcedureType() {
     return terminalProcedureType;
   }
 
-  public String getTerminalIdentifier() {
+  public String terminalIdentifier() {
     return terminalIdentifier;
   }
 
-  public Integer getTerminalSequenceNumber() {
+  public Integer terminalSequenceNumber() {
     return terminalSequenceNumber;
   }
 
-  public String getTerminalApproachType() {
+  public String terminalApproachType() {
     return terminalApproachType;
   }
 
-  public String getTransitionIdentifier() {
+  public String transitionIdentifier() {
     return transitionIdentifier;
   }
 
-  public String getIcaoCode() {
+  public String icaoCode() {
     return icaoCode;
   }
 
-  public String getTrackDescriptionCode() {
+  public String trackDescriptionCode() {
     return trackDescriptionCode;
   }
 
-  public String getTermSegWaypointIdentifier() {
-    return termSegWaypointIdentifier;
-  }
-
-  public String getWaypointCountryCode() {
-    return waypointCountryCode;
-  }
-
-  public String getTerminalWaypointDescriptionCode1Arpt() {
-    return terminalWaypointDescriptionCode1Arpt;
-  }
-
-  public String getTerminalWaypointDescriptionCode2() {
-    return terminalWaypointDescriptionCode2;
-  }
-
-  public String getTerminalWaypointDescriptionCode3() {
-    return terminalWaypointDescriptionCode3;
-  }
-
-  public String getTerminalWaypointDescriptionCode4() {
-    return terminalWaypointDescriptionCode4;
-  }
-
-  public String getTerminalSegmentTurnDirection() {
-    return terminalSegmentTurnDirection;
-  }
-
-  public String getNavaid1Identifier() {
-    return navaid1Identifier;
-  }
-
-  public String getNavaid1Type() {
-    return navaid1Type;
-  }
-
-  public String getNavaid1CountryCode() {
-    return navaid1CountryCode;
-  }
-
-  public Integer getNavaid1KeyCode() {
-    return navaid1KeyCode;
-  }
-
-  public Double getFix1Bearing() {
-    return fix1Bearing;
-  }
-
-  public Double getFix1Distance() {
-    return fix1Distance;
-  }
-
-  public String getNavaid2Identifier() {
-    return navaid2Identifier;
-  }
-
-  public String getNavaid2Type() {
-    return navaid2Type;
-  }
-
-  public String getNavaid2CountryCode() {
-    return navaid2CountryCode;
-  }
-
-  public Integer getNavaid2KeyCode() {
-    return navaid2KeyCode;
-  }
-
-  public Double getFix2Bearing() {
-    return fix2Bearing;
-  }
-
-  public Double getFix2Distance() {
-    return fix2Distance;
-  }
-
-  public String getTerminalMagneticCourse() {
-    return terminalMagneticCourse;
-  }
-
-  public Double getDistance() {
-    return distance;
-  }
-
-  public String getAltitudeDescription() {
-    return altitudeDescription;
-  }
-
-  public String getAltitude1() {
-    return altitude1;
-  }
-
-  public String getAltitude2() {
-    return altitude2;
-  }
-
-  public Double getRequiredNavPerformance() {
-    return requiredNavPerformance;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
   }
 
-  public String getWaypointGeodeticLatitude() {
-    return waypointGeodeticLatitude;
+  public Optional<String> termSegWaypointIdentifier() {
+    return Optional.ofNullable(termSegWaypointIdentifier);
   }
 
-  public Double getWaypointDegreesLatitude() {
-    return waypointDegreesLatitude;
+  public Optional<String> waypointCountryCode() {
+    return Optional.ofNullable(waypointCountryCode);
   }
 
-  public String getWaypointGeodeticLongitude() {
-    return waypointGeodeticLongitude;
+  public Optional<String> terminalWaypointDescriptionCode1Arpt() {
+    return Optional.ofNullable(terminalWaypointDescriptionCode1Arpt);
   }
 
-  public Double getWaypointDegreesLongitude() {
-    return waypointDegreesLongitude;
+  public Optional<String> terminalWaypointDescriptionCode2() {
+    return Optional.ofNullable(terminalWaypointDescriptionCode2);
   }
 
-  public Double getWaypointMagneticVariation() {
-    return waypointMagneticVariation;
+  public Optional<String> terminalWaypointDescriptionCode3() {
+    return Optional.ofNullable(terminalWaypointDescriptionCode3);
   }
 
-  public String getNavaid1GeodeticLatitude() {
-    return navaid1GeodeticLatitude;
+  public Optional<String> terminalWaypointDescriptionCode4() {
+    return Optional.ofNullable(terminalWaypointDescriptionCode4);
   }
 
-  public Double getNavaid1DegreesLatitude() {
-    return navaid1DegreesLatitude;
+  public Optional<String> terminalSegmentTurnDirection() {
+    return Optional.ofNullable(terminalSegmentTurnDirection);
   }
 
-  public String getNavaid1GeodeticLongitude() {
-    return navaid1GeodeticLongitude;
+  public Optional<String> navaid1Identifier() {
+    return Optional.ofNullable(navaid1Identifier);
   }
 
-  public Double getNavaid1DegreesLongitude() {
-    return navaid1DegreesLongitude;
+  public Optional<String> navaid1Type() {
+    return Optional.ofNullable(navaid1Type);
   }
 
-  public Double getNavaid1MagneticVariation() {
-    return navaid1MagneticVariation;
+  public Optional<String> navaid1CountryCode() {
+    return Optional.ofNullable(navaid1CountryCode);
   }
 
-  public String getNavaid1DmeGeodeticLatitude() {
-    return navaid1DmeGeodeticLatitude;
+  public Optional<Integer> navaid1KeyCode() {
+    return Optional.ofNullable(navaid1KeyCode);
   }
 
-  public Double getNavaid1DmeDegreesLatitude() {
-    return navaid1DmeDegreesLatitude;
+  public Optional<Double> fix1Bearing() {
+    return Optional.ofNullable(fix1Bearing);
   }
 
-  public String getNavaid1DmeGeodeticLongitude() {
-    return navaid1DmeGeodeticLongitude;
+  public Optional<Double> fix1Distance() {
+    return Optional.ofNullable(fix1Distance);
   }
 
-  public Double getNavaid1DmeDegreesLongitude() {
-    return navaid1DmeDegreesLongitude;
+  public Optional<String> navaid2Identifier() {
+    return Optional.ofNullable(navaid2Identifier);
   }
 
-  public String getNavaid2GeodeticLatitude() {
-    return navaid2GeodeticLatitude;
+  public Optional<String> navaid2Type() {
+    return Optional.ofNullable(navaid2Type);
   }
 
-  public Double getNavaid2DegreesLatitude() {
-    return navaid2DegreesLatitude;
+  public Optional<String> navaid2CountryCode() {
+    return Optional.ofNullable(navaid2CountryCode);
   }
 
-  public String getNavaid2GeodeticLongitude() {
-    return navaid2GeodeticLongitude;
+  public Optional<Integer> navaid2KeyCode() {
+    return Optional.ofNullable(navaid2KeyCode);
   }
 
-  public Double getNavaid2DegreesLongitude() {
-    return navaid2DegreesLongitude;
+  public Optional<Double> fix2Bearing() {
+    return Optional.ofNullable(fix2Bearing);
   }
 
-  public Double getNavaid2MagneticVariation() {
-    return navaid2MagneticVariation;
+  public Optional<Double> fix2Distance() {
+    return Optional.ofNullable(fix2Distance);
   }
 
-  public String getNavaid2DmeGeodeticLatitude() {
-    return navaid2DmeGeodeticLatitude;
+  public Optional<String> terminalMagneticCourse() {
+    return Optional.ofNullable(terminalMagneticCourse);
   }
 
-  public Double getNavaid2DmeDegreesLatitude() {
-    return navaid2DmeDegreesLatitude;
+  public Optional<Double> distance() {
+    return Optional.ofNullable(distance);
   }
 
-  public String getNavaid2DmeGeodeticLongitude() {
-    return navaid2DmeGeodeticLongitude;
+  public Optional<String> altitudeDescription() {
+    return Optional.ofNullable(altitudeDescription);
   }
 
-  public Double getNavaid2DmeDegreesLongitude() {
-    return navaid2DmeDegreesLongitude;
+  public Optional<String> altitude1() {
+    return Optional.ofNullable(altitude1);
   }
 
-  public Double getSpeedLimit1() {
-    return speedLimit1;
+  public Optional<String> altitude2() {
+    return Optional.ofNullable(altitude2);
   }
 
-  public String getSpeedLimitAircraftType1() {
-    return speedLimitAircraftType1;
+  public Optional<Double> requiredNavPerformance() {
+    return Optional.ofNullable(requiredNavPerformance);
   }
 
-  public String getSpeedLimitAltitude1() {
-    return speedLimitAltitude1;
+  public Optional<String> waypointGeodeticLatitude() {
+    return Optional.ofNullable(waypointGeodeticLatitude);
   }
 
-  public Double getSpeedLimit2() {
-    return speedLimit2;
+  public Optional<Double> waypointDegreesLatitude() {
+    return Optional.ofNullable(waypointDegreesLatitude);
   }
 
-  public String getSpeedLimitAircraftType2() {
-    return speedLimitAircraftType2;
+  public Optional<String> waypointGeodeticLongitude() {
+    return Optional.ofNullable(waypointGeodeticLongitude);
   }
 
-  public String getSpeedLimitAltitude2() {
-    return speedLimitAltitude2;
+  public Optional<Double> waypointDegreesLongitude() {
+    return Optional.ofNullable(waypointDegreesLongitude);
   }
 
-  public Double getVerticalNavigationVnav() {
-    return verticalNavigationVnav;
+  public Optional<Double> waypointMagneticVariation() {
+    return Optional.ofNullable(waypointMagneticVariation);
   }
 
-  public Integer getThresholdCrossingHeight() {
-    return thresholdCrossingHeight;
+  public Optional<String> navaid1GeodeticLatitude() {
+    return Optional.ofNullable(navaid1GeodeticLatitude);
   }
 
-  public String getArcWaypointIdentifier() {
-    return arcWaypointIdentifier;
+  public Optional<Double> navaid1DegreesLatitude() {
+    return Optional.ofNullable(navaid1DegreesLatitude);
   }
 
-  public String getArcWaypointCountryCode() {
-    return arcWaypointCountryCode;
+  public Optional<String> navaid1GeodeticLongitude() {
+    return Optional.ofNullable(navaid1GeodeticLongitude);
   }
 
-  public Double getArcRadius() {
-    return arcRadius;
+  public Optional<Double> navaid1DegreesLongitude() {
+    return Optional.ofNullable(navaid1DegreesLongitude);
+  }
+
+  public Optional<Double> navaid1MagneticVariation() {
+    return Optional.ofNullable(navaid1MagneticVariation);
+  }
+
+  public Optional<String> navaid1DmeGeodeticLatitude() {
+    return Optional.ofNullable(navaid1DmeGeodeticLatitude);
+  }
+
+  public Optional<Double> navaid1DmeDegreesLatitude() {
+    return Optional.ofNullable(navaid1DmeDegreesLatitude);
+  }
+
+  public Optional<String> navaid1DmeGeodeticLongitude() {
+    return Optional.ofNullable(navaid1DmeGeodeticLongitude);
+  }
+
+  public Optional<Double> navaid1DmeDegreesLongitude() {
+    return Optional.ofNullable(navaid1DmeDegreesLongitude);
+  }
+
+  public Optional<String> navaid2GeodeticLatitude() {
+    return Optional.ofNullable(navaid2GeodeticLatitude);
+  }
+
+  public Optional<Double> navaid2DegreesLatitude() {
+    return Optional.ofNullable(navaid2DegreesLatitude);
+  }
+
+  public Optional<String> navaid2GeodeticLongitude() {
+    return Optional.ofNullable(navaid2GeodeticLongitude);
+  }
+
+  public Optional<Double> navaid2DegreesLongitude() {
+    return Optional.ofNullable(navaid2DegreesLongitude);
+  }
+
+  public Optional<Double> navaid2MagneticVariation() {
+    return Optional.ofNullable(navaid2MagneticVariation);
+  }
+
+  public Optional<String> navaid2DmeGeodeticLatitude() {
+    return Optional.ofNullable(navaid2DmeGeodeticLatitude);
+  }
+
+  public Optional<Double> navaid2DmeDegreesLatitude() {
+    return Optional.ofNullable(navaid2DmeDegreesLatitude);
+  }
+
+  public Optional<String> navaid2DmeGeodeticLongitude() {
+    return Optional.ofNullable(navaid2DmeGeodeticLongitude);
+  }
+
+  public Optional<Double> navaid2DmeDegreesLongitude() {
+    return Optional.ofNullable(navaid2DmeDegreesLongitude);
+  }
+
+  public Optional<Double> speedLimit1() {
+    return Optional.ofNullable(speedLimit1);
+  }
+
+  public Optional<String> speedLimitAircraftType1() {
+    return Optional.ofNullable(speedLimitAircraftType1);
+  }
+
+  public Optional<String> speedLimitAltitude1() {
+    return Optional.ofNullable(speedLimitAltitude1);
+  }
+
+  public Optional<Double> speedLimit2() {
+    return Optional.ofNullable(speedLimit2);
+  }
+
+  public Optional<String> speedLimitAircraftType2() {
+    return Optional.ofNullable(speedLimitAircraftType2);
+  }
+
+  public Optional<String> speedLimitAltitude2() {
+    return Optional.ofNullable(speedLimitAltitude2);
+  }
+
+  public Optional<Double> verticalNavigationVnav() {
+    return Optional.ofNullable(verticalNavigationVnav);
+  }
+
+  public Optional<Integer> thresholdCrossingHeight() {
+    return Optional.ofNullable(thresholdCrossingHeight);
+  }
+
+  public Optional<String> arcWaypointIdentifier() {
+    return Optional.ofNullable(arcWaypointIdentifier);
+  }
+
+  public Optional<String> arcWaypointCountryCode() {
+    return Optional.ofNullable(arcWaypointCountryCode);
+  }
+
+  public Optional<Double> arcRadius() {
+    return Optional.ofNullable(arcRadius);
   }
 
   public static class Builder {

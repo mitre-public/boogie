@@ -62,24 +62,23 @@ public class TestDafifTerminalParentSpec {
     DafifTerminalParent terminalParent = converter.apply(record).orElseThrow(AssertionError::new);
 
     assertAll(
-        () -> assertEquals("AA30079", terminalParent.getAirportIdentification()),
-        () -> assertEquals(1, terminalParent.getTerminalProcedureType()),
-        () -> assertEquals("ADRI1C ADRIV 1C (RNAV)", terminalParent.getTerminalIdentifier()),
-        () -> assertEquals("TNCA", terminalParent.getIcaoCode()),
-        () -> assertEquals(2021336, terminalParent.getJulianDate()),
-        () -> assertEquals("2", terminalParent.getAmendmentNumber()),
-        () -> assertEquals("USN", terminalParent.getOfficeOfPrimaryResponsibility()),
-        () -> assertEquals("CIV", terminalParent.getHostCountryAuthority()),
-        () -> assertEquals(202112, terminalParent.getCycleDate()),
-        () -> assertEquals(2500, terminalParent.getTransitionAltitude()),
-        () -> assertEquals(4000, terminalParent.getTransitionLevel()),
-        () -> assertEquals("PANS-OPS", terminalParent.getProcedureDesignCriteria()),
-        () -> assertEquals("02DEC21", terminalParent.getProcedureAmendmentDate()),
-        () -> assertEquals("N", terminalParent.getLevelOfService1()),
-        () -> assertEquals("N", terminalParent.getLevelOfService2()),
-        () -> assertEquals("N", terminalParent.getLevelOfService3()),
-        () -> assertEquals("W011020", terminalParent.getProcedureDesignMagvar())
+        () -> assertEquals("AA30079", terminalParent.airportIdentification()),
+        () -> assertEquals(1, terminalParent.terminalProcedureType()),
+        () -> assertEquals("ADRI1C ADRIV 1C (RNAV)", terminalParent.terminalIdentifier()),
+        () -> assertEquals("TNCA", terminalParent.icaoCode()),
+        () -> assertEquals(2021336, terminalParent.julianDate()),
+        () -> assertEquals("2", terminalParent.amendmentNumber().orElseThrow()),
+        () -> assertEquals("USN", terminalParent.officeOfPrimaryResponsibility()),
+        () -> assertEquals("CIV", terminalParent.hostCountryAuthority().orElseThrow()),
+        () -> assertEquals(202112, terminalParent.cycleDate()),
+        () -> assertEquals(2500, terminalParent.transitionAltitude().orElseThrow()),
+        () -> assertEquals(4000, terminalParent.transitionLevel().orElseThrow()),
+        () -> assertEquals("PANS-OPS", terminalParent.procedureDesignCriteria().orElseThrow()),
+        () -> assertEquals("02DEC21", terminalParent.procedureAmendmentDate().orElseThrow()),
+        () -> assertEquals("N", terminalParent.levelOfService1()),
+        () -> assertEquals("N", terminalParent.levelOfService2()),
+        () -> assertEquals("N", terminalParent.levelOfService3()),
+        () -> assertEquals("W011020", terminalParent.procedureDesignMagvar().orElseThrow())
     );
-
   }
 }

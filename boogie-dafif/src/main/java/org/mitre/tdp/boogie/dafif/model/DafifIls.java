@@ -33,6 +33,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.RunwayIdentifier;
 import org.mitre.tdp.boogie.dafif.v81.field.ThresholdCrossingHeight;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class DafifIls {
 
@@ -240,128 +241,128 @@ public final class DafifIls {
     return Objects.hash(airportIdentification, runwayIdentifier, componentType, collocation, name, navaidFrequency, navaidChannel, ilsGlideSlopeAngle, localizerOrGlideSlopeLocation, locatorOrMarkerLocation, ilsNavaidElevation, localHorizontalDatum, geodeticDatum, ilsMlsCategory, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, ilsNavaidIdentifier, navaidType, countryCode, navaidKeyCode, magneticVariation, ilsSlaveVariation, ilsBearingCourse, localizerWidth, thresholdCrossingHeight, ilsDmeBias, cycleDate, mlsDmePrecision, coordinatePrecision);
   }
 
-  public String getAirportIdentification() {
+  public String airportIdentification() {
     return airportIdentification;
   }
 
-  public String getRunwayIdentifier() {
+  public String runwayIdentifier() {
     return runwayIdentifier;
   }
 
-  public String getComponentType() {
+  public String componentType() {
     return componentType;
   }
 
-  public String getCollocation() {
-    return collocation;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getNavaidFrequency() {
-    return navaidFrequency;
-  }
-
-  public String getNavaidChannel() {
-    return navaidChannel;
-  }
-
-  public Double getIlsGlideSlopeAngle() {
-    return ilsGlideSlopeAngle;
-  }
-
-  public String getLocalizerOrGlideSlopeLocation() {
-    return localizerOrGlideSlopeLocation;
-  }
-
-  public String getLocatorOrMarkerLocation() {
-    return locatorOrMarkerLocation;
-  }
-
-  public String getIlsNavaidElevation() {
+  public String ilsNavaidElevation() {
     return ilsNavaidElevation;
   }
 
-  public String getLocalHorizontalDatum() {
-    return localHorizontalDatum;
-  }
-
-  public String getGeodeticDatum() {
+  public String geodeticDatum() {
     return geodeticDatum;
   }
 
-  public String getIlsMlsCategory() {
-    return ilsMlsCategory;
-  }
-
-  public String getGeodeticLatitude() {
-    return geodeticLatitude;
-  }
-
-  public Double getDegreesLatitude() {
-    return degreesLatitude;
-  }
-
-  public String getGeodeticLongitude() {
-    return geodeticLongitude;
-  }
-
-  public Double getDegreesLongitude() {
-    return degreesLongitude;
-  }
-
-  public String getIlsNavaidIdentifier() {
-    return ilsNavaidIdentifier;
-  }
-
-  public Integer getNavaidType() {
-    return navaidType;
-  }
-
-  public String getCountryCode() {
-    return countryCode;
-  }
-
-  public Integer getNavaidKeyCode() {
-    return navaidKeyCode;
-  }
-
-  public String getMagneticVariation() {
+  public String magneticVariation() {
     return magneticVariation;
   }
 
-  public String getIlsSlaveVariation() {
-    return ilsSlaveVariation;
-  }
-
-  public String getIlsBearingCourse() {
-    return ilsBearingCourse;
-  }
-
-  public Double getLocalizerWidth() {
-    return localizerWidth;
-  }
-
-  public Integer getThresholdCrossingHeight() {
-    return thresholdCrossingHeight;
-  }
-
-  public Double getIlsDmeBias() {
-    return ilsDmeBias;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
   }
 
-  public String getMlsDmePrecision() {
-    return mlsDmePrecision;
+  public Optional<String> collocation() {
+    return Optional.ofNullable(collocation);
   }
 
-  public Integer getCoordinatePrecision() {
-    return coordinatePrecision;
+  public Optional<String> name() {
+    return Optional.ofNullable(name);
+  }
+
+  public Optional<String> navaidFrequency() {
+    return Optional.ofNullable(navaidFrequency);
+  }
+
+  public Optional<String> navaidChannel() {
+    return Optional.ofNullable(navaidChannel);
+  }
+
+  public Optional<Double> ilsGlideSlopeAngle() {
+    return Optional.ofNullable(ilsGlideSlopeAngle);
+  }
+
+  public Optional<String> localizerOrGlideSlopeLocation() {
+    return Optional.ofNullable(localizerOrGlideSlopeLocation);
+  }
+
+  public Optional<String> locatorOrMarkerLocation() {
+    return Optional.ofNullable(locatorOrMarkerLocation);
+  }
+
+  public Optional<String> localHorizontalDatum() {
+    return Optional.ofNullable(localHorizontalDatum);
+  }
+
+  public Optional<String> ilsMlsCategory() {
+    return Optional.ofNullable(ilsMlsCategory);
+  }
+
+  public Optional<String> geodeticLatitude() {
+    return Optional.ofNullable(geodeticLatitude);
+  }
+
+  public Optional<Double> degreesLatitude() {
+    return Optional.ofNullable(degreesLatitude);
+  }
+
+  public Optional<String> geodeticLongitude() {
+    return Optional.ofNullable(geodeticLongitude);
+  }
+
+  public Optional<Double> degreesLongitude() {
+    return Optional.ofNullable(degreesLongitude);
+  }
+
+  public Optional<String> ilsNavaidIdentifier() {
+    return Optional.ofNullable(ilsNavaidIdentifier);
+  }
+
+  public Optional<Integer> navaidType() {
+    return Optional.ofNullable(navaidType);
+  }
+
+  public Optional<String> countryCode() {
+    return Optional.ofNullable(countryCode);
+  }
+
+  public Optional<Integer> navaidKeyCode() {
+    return Optional.ofNullable(navaidKeyCode);
+  }
+
+  public Optional<String> ilsSlaveVariation() {
+    return Optional.ofNullable(ilsSlaveVariation);
+  }
+
+  public Optional<String> ilsBearingCourse() {
+    return Optional.ofNullable(ilsBearingCourse);
+  }
+
+  public Optional<Double> localizerWidth() {
+    return Optional.ofNullable(localizerWidth);
+  }
+
+  public Optional<Integer> thresholdCrossingHeight() {
+    return Optional.ofNullable(thresholdCrossingHeight);
+  }
+
+  public Optional<Double> ilsDmeBias() {
+    return Optional.ofNullable(ilsDmeBias);
+  }
+
+  public Optional<String> mlsDmePrecision() {
+    return Optional.ofNullable(mlsDmePrecision);
+  }
+
+  public Optional<Integer> coordinatePrecision() {
+    return Optional.ofNullable(coordinatePrecision);
   }
 
   public static final class Builder {

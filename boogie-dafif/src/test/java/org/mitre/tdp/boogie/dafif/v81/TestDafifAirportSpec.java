@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
@@ -67,33 +69,33 @@ public class TestDafifAirportSpec {
     DafifAirport airport = converter.apply(record).orElseThrow(AssertionError::new);
 
     assertAll(
-        () -> assertEquals("AA30079", airport.getAirportIdentification()),
-        () -> assertEquals("REINA BEATRIX INTL", airport.getName()),
-        () -> assertNull(airport.getStateProvinceCode()),
-        () -> assertEquals("TNCA", airport.getIcaoCode()),
-        () -> assertEquals("N", airport.getFaaHostCountryIdentifier()),
-        () -> assertEquals("WGE", airport.getLocalHorizontalDatum()),
-        () -> assertEquals("WGE", airport.getGeodeticDatum()),
-        () -> assertEquals("N12300529", airport.getGeodeticLatitude()),
-        () -> assertEquals(12.501469, airport.getDegreesLatitude()),
-        () -> assertEquals("W070005618", airport.getGeodeticLongitude()),
-        () -> assertEquals(-70.015606, airport.getDegreesLongitude()),
-        () -> assertEquals(62, airport.getElevation()),
-        () -> assertEquals("A", airport.getAirportType()),
-        () -> assertEquals("W011263 0124", airport.getMagneticVariation()),
-        () -> assertEquals("0707", airport.getWac()),
-        () -> assertEquals("Y", airport.getBeacon()),
-        () -> assertNull(airport.getSecondaryAirport()),
-        () -> assertEquals("CI", airport.getPrimaryOperatingAgency()),
-        () -> assertNull(airport.getSecondaryName()),
-        () -> assertNull(airport.getSecondaryIcaoCode()),
-        () -> assertNull(airport.getSecondaryFaaHost()),
-        () -> assertNull(airport.getSecondaryOperatingAgency()),
-        () -> assertEquals(202402, airport.getCycleDate()),
-        () -> assertNull(airport.getTerrainImpacted()),
-        () -> assertNull(airport.getShoreline()),
-        () -> assertEquals(0, airport.getCoordinatePrecision()),
-        () -> assertEquals("W011020", airport.getMagVarOfRecord())
+        () -> assertEquals("AA30079", airport.airportIdentification()),
+        () -> assertEquals("REINA BEATRIX INTL", airport.name()),
+        () -> assertEquals(Optional.empty(), airport.stateProvinceCode()),
+        () -> assertEquals("TNCA", airport.icaoCode()),
+        () -> assertEquals("N", airport.faaHostCountryIdentifier().orElseThrow()),
+        () -> assertEquals("WGE", airport.localHorizontalDatum()),
+        () -> assertEquals("WGE", airport.geodeticDatum().orElseThrow()),
+        () -> assertEquals("N12300529", airport.geodeticLatitude().orElseThrow()),
+        () -> assertEquals(12.501469, airport.degreesLatitude().orElseThrow()),
+        () -> assertEquals("W070005618", airport.geodeticLongitude().orElseThrow()),
+        () -> assertEquals(-70.015606, airport.degreesLongitude().orElseThrow()),
+        () -> assertEquals(62, airport.elevation()),
+        () -> assertEquals("A", airport.airportType()),
+        () -> assertEquals("W011263 0124", airport.magneticVariation()),
+        () -> assertEquals("0707", airport.wac()),
+        () -> assertEquals("Y", airport.beacon().orElseThrow()),
+        () -> assertEquals(Optional.empty(), airport.secondaryAirport()),
+        () -> assertEquals("CI", airport.primaryOperatingAgency()),
+        () -> assertEquals(Optional.empty(), airport.secondaryName()),
+        () -> assertEquals(Optional.empty(), airport.secondaryIcaoCode()),
+        () -> assertEquals(Optional.empty(), airport.secondaryFaaHost()),
+        () -> assertEquals(Optional.empty(), airport.secondaryOperatingAgency()),
+        () -> assertEquals(202402, airport.cycleDate()),
+        () -> assertEquals(Optional.empty(), airport.terrainImpacted()),
+        () -> assertEquals(Optional.empty(), airport.shoreline()),
+        () -> assertEquals(0, airport.coordinatePrecision().orElseThrow()),
+        () -> assertEquals("W011020", airport.magVarOfRecord().orElseThrow())
     );
   }
 }

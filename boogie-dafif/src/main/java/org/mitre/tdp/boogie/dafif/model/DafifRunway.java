@@ -1,5 +1,9 @@
 package org.mitre.tdp.boogie.dafif.model;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.dafif.v81.field.AccelerateStopDistanceAvailable;
 import org.mitre.tdp.boogie.dafif.v81.field.AirportIdentification;
 import org.mitre.tdp.boogie.dafif.v81.field.CoordinatePrecision;
@@ -28,10 +32,6 @@ import org.mitre.tdp.boogie.dafif.v81.field.TakeoffDistanceAvailable;
 import org.mitre.tdp.boogie.dafif.v81.field.TakeoffRunwayAvailable;
 import org.mitre.tdp.boogie.dafif.v81.field.UsableRunway;
 import org.mitre.tdp.boogie.dafif.v81.field.Width;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public final class DafifRunway {
 
@@ -290,171 +290,172 @@ public final class DafifRunway {
     this.coordinatePrecision = builder.coordinatePrecision;
   }
 
-  public String getAirportIdentification() {
+  public String airportIdentification() {
     return airportIdentification;
   }
 
-  public String getHighEndIdentifier() {
+  public String highEndIdentifier() {
     return highEndIdentifier;
   }
 
-  public String getLowEndIdentifier() {
+  public String lowEndIdentifier() {
     return lowEndIdentifier;
   }
 
-  public Double getHighEndMagneticHeading() {
-    return highEndMagneticHeading;
-  }
-
-  public Double getLowEndMagneticHeading() {
-    return lowEndMagneticHeading;
-  }
-
-  public Integer getLength() {
-    return length;
-  }
-
-  public Integer getWidth() {
+  public Integer width() {
     return width;
   }
 
-  public String getSurface() {
-    return surface;
+  public Integer length() {
+    return length;
   }
 
-  public String getPavementClassificationNumber() {
-    return pavementClassificationNumber;
-  }
-
-  public String getHighEndGeodeticLatitude() {
-    return highEndGeodeticLatitude;
-  }
-
-  public Double getHighEndDegreesLatitude() {
-    return highEndDegreesLatitude;
-  }
-
-  public String getHighEndGeodeticLongitude() {
-    return highEndGeodeticLongitude;
-  }
-
-  public Double getHighEndDegreesLongitude() {
-    return highEndDegreesLongitude;
-  }
-
-  public String getHighEndElevation() {
-    return highEndElevation;
-  }
-
-  public String getHighEndSlope() {
+  public String highEndSlope() {
     return highEndSlope;
   }
 
-  public String getHighEndTDZE() {
-    return highEndTDZE;
-  }
-
-  public Integer getHighEndDisplacedThreshold() {
-    return highEndDisplacedThreshold;
-  }
-
-  public String getHighEndDisplacedThresholdElevation() {
-    return highEndDisplacedThresholdElevation;
-  }
-
-  public List<Integer> getHighEndLightingSystem() {
-    return highEndLightingSystem.stream().filter(Objects::nonNull).collect(Collectors.toList());
-  }
-
-  public String getLowEndGeodeticLatitude() {
-    return lowEndGeodeticLatitude;
-  }
-
-  public Double getLowEndDegreesLatitude() {
-    return lowEndDegreesLatitude;
-  }
-
-  public String getLowEndGeodeticLongitude() {
-    return lowEndGeodeticLongitude;
-  }
-
-  public Double getLowEndDegreesLongitude() {
-    return lowEndDegreesLongitude;
-  }
-
-  public String getLowEndElevation() {
-    return lowEndElevation;
-  }
-
-  public String getLowEndSlope() {
+  public String lowEndSlope() {
     return lowEndSlope;
   }
 
-  public String getLowEndTDZE() {
-    return lowEndTDZE;
-  }
-
-  public Integer getLowEndDisplacedThreshold() {
-    return lowEndDisplacedThreshold;
-  }
-
-  public String getLowEndDisplacedThresholdElevation() {
-    return lowEndDisplacedThresholdElevation;
-  }
-
-  public List<Integer> getLowEndLightingSystem() {
-    return lowEndLightingSystem.stream().filter(Objects::nonNull).collect(Collectors.toList());
-  }
-
-  public Double getTrueHeadingHighEnd() {
+  public Double trueHeadingHighEnd() {
     return trueHeadingHighEnd;
   }
 
-  public Double getTrueHeadingLowEnd() {
+  public Double trueHeadingLowEnd() {
     return trueHeadingLowEnd;
   }
 
-  public String getUsableRunway() {
-    return usableRunway;
-  }
-
-  public Integer getHighEndLandingDistance() {
-    return highEndLandingDistance;
-  }
-
-  public Integer getHighEndRunwayDistance() {
-    return highEndRunwayDistance;
-  }
-  public Integer getHighEndTakeOffDistance() {
-    return highEndTakeOffDistance;
-  }
-
-  public Integer getHighEndAccelerateStopDistance() {
-    return highEndAccelerateStopDistance;
-  }
-
-  public Integer getLowEndLandingDistance() {
-    return lowEndLandingDistance;
-  }
-
-  public Integer getLowEndRunwayDistance() {
-    return lowEndRunwayDistance;
-  }
-
-  public Integer getLowEndTakeOffDistance() {
-    return lowEndTakeOffDistance;
-  }
-
-  public Integer getLowEndAccelerateStopDistance() {
-    return lowEndAccelerateStopDistance;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
   }
 
-  public Integer getCoordinatePrecision() {
-    return coordinatePrecision;
+  public Optional<Double> highEndMagneticHeading() {
+    return Optional.ofNullable(highEndMagneticHeading);
+  }
+
+  public Optional<Double> lowEndMagneticHeading() {
+    return Optional.ofNullable(lowEndMagneticHeading);
+  }
+
+  public Optional<String> surface() {
+    return Optional.ofNullable(surface);
+  }
+
+  public Optional<String> pavementClassificationNumber() {
+    return Optional.ofNullable(pavementClassificationNumber);
+  }
+
+  public Optional<String> highEndGeodeticLatitude() {
+    return Optional.ofNullable(highEndGeodeticLatitude);
+  }
+
+  public Optional<Double> highEndDegreesLatitude() {
+    return Optional.ofNullable(highEndDegreesLatitude);
+  }
+
+  public Optional<String> highEndGeodeticLongitude() {
+    return Optional.ofNullable(highEndGeodeticLongitude);
+  }
+
+  public Optional<Double> highEndDegreesLongitude() {
+    return Optional.ofNullable(highEndDegreesLongitude);
+  }
+
+  public Optional<String> highEndElevation() {
+    return Optional.ofNullable(highEndElevation);
+  }
+
+  public Optional<String> highEndTDZE() {
+    return Optional.ofNullable(highEndTDZE);
+  }
+
+  public Optional<Integer> highEndDisplacedThreshold() {
+    return Optional.ofNullable(highEndDisplacedThreshold);
+  }
+
+  public Optional<String> highEndDisplacedThresholdElevation() {
+    return Optional.ofNullable(highEndDisplacedThresholdElevation);
+  }
+
+  public Optional<List<Integer>> highEndLightingSystem() {
+    return Optional.ofNullable(highEndLightingSystem);
+  }
+
+  public Optional<String> lowEndGeodeticLatitude() {
+    return Optional.ofNullable(lowEndGeodeticLatitude);
+  }
+
+  public Optional<Double> lowEndDegreesLatitude() {
+    return Optional.ofNullable(lowEndDegreesLatitude);
+  }
+
+  public Optional<String> lowEndGeodeticLongitude() {
+    return Optional.ofNullable(lowEndGeodeticLongitude);
+  }
+
+  public Optional<Double> lowEndDegreesLongitude() {
+    return Optional.ofNullable(lowEndDegreesLongitude);
+  }
+
+  public Optional<String> lowEndElevation() {
+    return Optional.ofNullable(lowEndElevation);
+  }
+
+  public Optional<String> lowEndTDZE() {
+    return Optional.ofNullable(lowEndTDZE);
+  }
+
+  public Optional<Integer> lowEndDisplacedThreshold() {
+    return Optional.ofNullable(lowEndDisplacedThreshold);
+  }
+
+  public Optional<String> lowEndDisplacedThresholdElevation() {
+    return Optional.ofNullable(lowEndDisplacedThresholdElevation);
+  }
+
+  public Optional<List<Integer>> lowEndLightingSystem() {
+    return Optional.ofNullable(lowEndLightingSystem);
+  }
+
+  public Optional<String> usableRunway() {
+    return Optional.ofNullable(usableRunway);
+  }
+
+  public Optional<Integer> highEndLandingDistance() {
+    return Optional.ofNullable(highEndLandingDistance);
+  }
+
+  public Optional<Integer> highEndRunwayDistance() {
+    return Optional.ofNullable(highEndRunwayDistance);
+  }
+
+  public Optional<Integer> highEndTakeOffDistance() {
+    return Optional.ofNullable(highEndTakeOffDistance);
+  }
+
+  public Optional<Integer> highEndAccelerateStopDistance() {
+    return Optional.ofNullable(highEndAccelerateStopDistance);
+  }
+
+  public Optional<Integer> lowEndLandingDistance() {
+    return Optional.ofNullable(lowEndLandingDistance);
+  }
+
+  public Optional<Integer> lowEndRunwayDistance() {
+    return Optional.ofNullable(lowEndRunwayDistance);
+  }
+
+  public Optional<Integer> lowEndTakeOffDistance() {
+    return Optional.ofNullable(lowEndTakeOffDistance);
+  }
+
+  public Optional<Integer> lowEndAccelerateStopDistance() {
+    return Optional.ofNullable(lowEndAccelerateStopDistance);
+  }
+
+  public Optional<Integer> coordinatePrecision() {
+    return Optional.ofNullable(coordinatePrecision);
   }
 
   @Override

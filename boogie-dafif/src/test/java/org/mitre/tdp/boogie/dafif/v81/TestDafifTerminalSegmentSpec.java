@@ -106,25 +106,25 @@ public class TestDafifTerminalSegmentSpec {
     DafifTerminalSegment terminalSegment = converter.apply(record).orElseThrow(AssertionError::new);
 
     assertAll(
-        () -> assertEquals("AA30079", terminalSegment.getAirportIdentification()),
-        () -> assertEquals(1, terminalSegment.getTerminalProcedureType()),
-        () -> assertEquals("ADRI1C ADRIV 1C (RNAV)", terminalSegment.getTerminalIdentifier()),
-        () -> assertEquals(10, terminalSegment.getTerminalSequenceNumber()),
-        () -> assertEquals("5", terminalSegment.getTerminalApproachType()),
-        () -> assertEquals("RW29", terminalSegment.getTransitionIdentifier()),
-        () -> assertEquals("TNCA", terminalSegment.getIcaoCode()),
-        () -> assertEquals("IF", terminalSegment.getTrackDescriptionCode()),
-        () -> assertEquals("ADRIV", terminalSegment.getTermSegWaypointIdentifier()),
-        () -> assertEquals("AA", terminalSegment.getWaypointCountryCode()),
-        () -> assertEquals("E", terminalSegment.getTerminalWaypointDescriptionCode1Arpt()),
-        () -> assertEquals("+", terminalSegment.getAltitudeDescription()),
-        () -> assertEquals("FL40", terminalSegment.getAltitude1()),
-        () -> assertEquals(201707, terminalSegment.getCycleDate()),
-        () -> assertEquals("N12234179", terminalSegment.getWaypointGeodeticLatitude()),
-        () -> assertEquals(12.394942, terminalSegment.getWaypointDegreesLatitude()),
-        () -> assertEquals("W069361217", terminalSegment.getWaypointGeodeticLongitude()),
-        () -> assertEquals(-69.603381, terminalSegment.getWaypointDegreesLongitude()),
-        () -> assertEquals(-11.652500, terminalSegment.getWaypointMagneticVariation())
+        () -> assertEquals("AA30079", terminalSegment.airportIdentification()),
+        () -> assertEquals(1, terminalSegment.terminalProcedureType()),
+        () -> assertEquals("ADRI1C ADRIV 1C (RNAV)", terminalSegment.terminalIdentifier()),
+        () -> assertEquals(10, terminalSegment.terminalSequenceNumber()),
+        () -> assertEquals("5", terminalSegment.terminalApproachType()),
+        () -> assertEquals("RW29", terminalSegment.transitionIdentifier()),
+        () -> assertEquals("TNCA", terminalSegment.icaoCode()),
+        () -> assertEquals("IF", terminalSegment.trackDescriptionCode()),
+        () -> assertEquals("ADRIV", terminalSegment.termSegWaypointIdentifier().orElseThrow()),
+        () -> assertEquals("AA", terminalSegment.waypointCountryCode().orElseThrow()),
+        () -> assertEquals("E", terminalSegment.terminalWaypointDescriptionCode1Arpt().orElseThrow()),
+        () -> assertEquals("+", terminalSegment.altitudeDescription().orElseThrow()),
+        () -> assertEquals("FL40", terminalSegment.altitude1().orElseThrow()),
+        () -> assertEquals(201707, terminalSegment.cycleDate()),
+        () -> assertEquals("N12234179", terminalSegment.waypointGeodeticLatitude().orElseThrow()),
+        () -> assertEquals(12.394942, terminalSegment.waypointDegreesLatitude().orElseThrow()),
+        () -> assertEquals("W069361217", terminalSegment.waypointGeodeticLongitude().orElseThrow()),
+        () -> assertEquals(-69.603381, terminalSegment.waypointDegreesLongitude().orElseThrow()),
+        () -> assertEquals(-11.652500, terminalSegment.waypointMagneticVariation().orElseThrow())
     );
   }
 }

@@ -1,13 +1,17 @@
 package org.mitre.tdp.boogie.dafif.v81.converter;
 
-import org.mitre.tdp.boogie.dafif.DafifRecord;
-import org.mitre.tdp.boogie.dafif.model.DafifRunway;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNull;
+import org.mitre.tdp.boogie.dafif.DafifRecord;
+import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 
 public class DafifRunwayConverter implements Function<DafifRecord, Optional<DafifRunway>> {
 
@@ -20,7 +24,7 @@ public class DafifRunwayConverter implements Function<DafifRecord, Optional<Dafi
     String lowEndIdentifier = dafifRecord.requiredField("lowEndIdentifier");
     Optional<Double> highEndMagneticHeading = dafifRecord.optionalField("highEndMagneticHeading");
     Optional<Double> lowEndMagneticHeading = dafifRecord.optionalField("lowEndMagneticHeading");
-    Integer length  = dafifRecord.requiredField("length");
+    Integer length = dafifRecord.requiredField("length");
     Integer width = dafifRecord.requiredField("width");
     Optional<String> surface = dafifRecord.optionalField("surface");
     Optional<String> pavementClassificationNumber = dafifRecord.optionalField("pavementClassificationNumber");
@@ -72,6 +76,29 @@ public class DafifRunwayConverter implements Function<DafifRecord, Optional<Dafi
     Integer cycleDate = dafifRecord.requiredField("cycleDate");
     Optional<Integer> coordinatePrecision = dafifRecord.optionalField("coordinatePrecision");
 
+    List<Integer> highEndLighting = Stream.of(
+        highEndLightingSystem1.orElse(null),
+        highEndLightingSystem2.orElse(null),
+        highEndLightingSystem3.orElse(null),
+        highEndLightingSystem4.orElse(null),
+        highEndLightingSystem5.orElse(null),
+        highEndLightingSystem6.orElse(null),
+        highEndLightingSystem7.orElse(null),
+        highEndLightingSystem8.orElse(null))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+    List<Integer> lowEndLighting = Stream.of(
+        lowEndLightingSystem1.orElse(null),
+        lowEndLightingSystem2.orElse(null),
+        lowEndLightingSystem3.orElse(null),
+        lowEndLightingSystem4.orElse(null),
+        lowEndLightingSystem5.orElse(null),
+        lowEndLightingSystem6.orElse(null),
+        lowEndLightingSystem7.orElse(null),
+        lowEndLightingSystem8.orElse(null))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
     DafifRunway dafifRunway = new DafifRunway.Builder()
         .airportIdentification(airportIdentification)
         .highEndIdentifier(highEndIdentifier)
@@ -91,15 +118,7 @@ public class DafifRunwayConverter implements Function<DafifRecord, Optional<Dafi
         .highEndTDZE(highEndTDZE.orElse(null))
         .highEndDisplacedThreshold(highEndDisplacedThreshold.orElse(null))
         .highEndDisplacedThresholdElevation(highEndDisplacedThresholdElevation.orElse(null))
-        .highEndLightingSystem(Arrays.asList(
-            highEndLightingSystem1.orElse(null),
-            highEndLightingSystem2.orElse(null),
-            highEndLightingSystem3.orElse(null),
-            highEndLightingSystem4.orElse(null),
-            highEndLightingSystem5.orElse(null),
-            highEndLightingSystem6.orElse(null),
-            highEndLightingSystem7.orElse(null),
-            highEndLightingSystem8.orElse(null)))
+        .highEndLightingSystem(highEndLighting)
         .lowEndGeodeticLatitude(lowEndGeodeticLatitude.orElse(null))
         .lowEndDegreesLatitude(lowEndDegreesLatitude.orElse(null))
         .lowEndGeodeticLongitude(lowEndGeodeticLongitude.orElse(null))
@@ -109,15 +128,7 @@ public class DafifRunwayConverter implements Function<DafifRecord, Optional<Dafi
         .lowEndTDZE(lowEndTDZE.orElse(null))
         .lowEndDisplacedThreshold(lowEndDisplacedThreshold.orElse(null))
         .lowEndDisplacedThresholdElevation(lowEndDisplacedThresholdElevation.orElse(null))
-        .lowEndLightingSystem(Arrays.asList(
-            lowEndLightingSystem1.orElse(null),
-            lowEndLightingSystem2.orElse(null),
-            lowEndLightingSystem3.orElse(null),
-            lowEndLightingSystem4.orElse(null),
-            lowEndLightingSystem5.orElse(null),
-            lowEndLightingSystem6.orElse(null),
-            lowEndLightingSystem7.orElse(null),
-            lowEndLightingSystem8.orElse(null)))
+        .lowEndLightingSystem(lowEndLighting)
         .trueHeadingHighEnd(highEndTrueHeading)
         .trueHeadingLowEnd(lowEndTrueHeading)
         .usableRunway(usableRunway.orElse(null))

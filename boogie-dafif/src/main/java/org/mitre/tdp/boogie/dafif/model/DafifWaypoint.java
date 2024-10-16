@@ -1,32 +1,33 @@
 package org.mitre.tdp.boogie.dafif.model;
 
-import org.mitre.tdp.boogie.dafif.v81.field.WaypointIdentifierWptIdent;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.mitre.tdp.boogie.dafif.v81.field.CoordinatePrecision;
 import org.mitre.tdp.boogie.dafif.v81.field.CountryCode;
-import org.mitre.tdp.boogie.dafif.v81.field.StateProvinceCode;
-import org.mitre.tdp.boogie.dafif.v81.field.WaypointPointNavaidFlag;
-import org.mitre.tdp.boogie.dafif.v81.field.WaypointType;
-import org.mitre.tdp.boogie.dafif.v81.field.WaypointDescriptionName;
-import org.mitre.tdp.boogie.dafif.v81.field.IcaoCode;
-import org.mitre.tdp.boogie.dafif.v81.field.WaypointUsageCode;
-import org.mitre.tdp.boogie.dafif.v81.field.WaypointBearing;
+import org.mitre.tdp.boogie.dafif.v81.field.CycleDate;
+import org.mitre.tdp.boogie.dafif.v81.field.DegreesLatitude;
+import org.mitre.tdp.boogie.dafif.v81.field.DegreesLongitude;
 import org.mitre.tdp.boogie.dafif.v81.field.Distance;
-import org.mitre.tdp.boogie.dafif.v81.field.WAC;
-import org.mitre.tdp.boogie.dafif.v81.field.LocalHorizontalDatum;
 import org.mitre.tdp.boogie.dafif.v81.field.GeodeticDatum;
 import org.mitre.tdp.boogie.dafif.v81.field.GeodeticLatitude;
-import org.mitre.tdp.boogie.dafif.v81.field.DegreesLatitude;
 import org.mitre.tdp.boogie.dafif.v81.field.GeodeticLongitude;
-import org.mitre.tdp.boogie.dafif.v81.field.DegreesLongitude;
+import org.mitre.tdp.boogie.dafif.v81.field.IcaoCode;
+import org.mitre.tdp.boogie.dafif.v81.field.LocalHorizontalDatum;
 import org.mitre.tdp.boogie.dafif.v81.field.MagneticVariation;
 import org.mitre.tdp.boogie.dafif.v81.field.NavaidIdentifier;
-import org.mitre.tdp.boogie.dafif.v81.field.NavaidType;
 import org.mitre.tdp.boogie.dafif.v81.field.NavaidKeyCode;
-import org.mitre.tdp.boogie.dafif.v81.field.CycleDate;
+import org.mitre.tdp.boogie.dafif.v81.field.NavaidType;
+import org.mitre.tdp.boogie.dafif.v81.field.StateProvinceCode;
+import org.mitre.tdp.boogie.dafif.v81.field.WAC;
+import org.mitre.tdp.boogie.dafif.v81.field.WaypointBearing;
+import org.mitre.tdp.boogie.dafif.v81.field.WaypointDescriptionName;
+import org.mitre.tdp.boogie.dafif.v81.field.WaypointIdentifierWptIdent;
+import org.mitre.tdp.boogie.dafif.v81.field.WaypointPointNavaidFlag;
 import org.mitre.tdp.boogie.dafif.v81.field.WaypointRunwayIdent;
 import org.mitre.tdp.boogie.dafif.v81.field.WaypointRwyIcao;
-import org.mitre.tdp.boogie.dafif.v81.field.CoordinatePrecision;
-
-import java.util.Objects;
+import org.mitre.tdp.boogie.dafif.v81.field.WaypointType;
+import org.mitre.tdp.boogie.dafif.v81.field.WaypointUsageCode;
 
 public final class DafifWaypoint {
   /**
@@ -178,108 +179,108 @@ public final class DafifWaypoint {
     return Objects.hash(waypointIdentifierWptIdent, countryCode, stateProvinceCode, waypointPointNavaidFlag, waypointType, waypointDescriptionName, icaoCode, waypointUsageCode, waypointBearing, distance, wac, localHorizontalDatum, geodeticDatum, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, magneticVariation, navaidIdentifier, navaidType, navaidCountryCode, navaidKeyCode, cycleDate, waypointRunwayIdent, waypointRwyIcao, coordinatePrecision);
   }
 
-  public String getWaypointIdentifierWptIdent() {
+  public String waypointIdentifierWptIdent() {
     return waypointIdentifierWptIdent;
   }
 
-  public String getCountryCode() {
+  public String countryCode() {
     return countryCode;
   }
 
-  public Integer getStateProvinceCode() {
-    return stateProvinceCode;
-  }
-
-  public String getWaypointPointNavaidFlag() {
-    return waypointPointNavaidFlag;
-  }
-
-  public String getWaypointType() {
+  public String waypointType() {
     return waypointType;
   }
 
-  public String getWaypointDescriptionName() {
-    return waypointDescriptionName;
-  }
-
-  public String getIcaoCode() {
+  public String icaoCode() {
     return icaoCode;
   }
 
-  public String getWaypointUsageCode() {
+  public String waypointUsageCode() {
     return waypointUsageCode;
   }
 
-  public Double getWaypointBearing() {
-    return waypointBearing;
-  }
-
-  public Double getDistance() {
-    return distance;
-  }
-
-  public String getWac() {
+  public String wac() {
     return wac;
   }
 
-  public String getLocalHorizontalDatum() {
-    return localHorizontalDatum;
+  public Optional<String> geodeticDatum() {
+    return Optional.ofNullable(geodeticDatum);
   }
 
-  public String getGeodeticDatum() {
-    return geodeticDatum;
-  }
-
-  public String getGeodeticLatitude() {
-    return geodeticLatitude;
-  }
-
-  public Double getDegreesLatitude() {
-    return degreesLatitude;
-  }
-
-  public String getGeodeticLongitude() {
-    return geodeticLongitude;
-  }
-
-  public Double getDegreesLongitude() {
-    return degreesLongitude;
-  }
-
-  public String getMagneticVariation() {
+  public String magneticVariation() {
     return magneticVariation;
   }
 
-  public String getNavaidIdentifier() {
-    return navaidIdentifier;
-  }
-
-  public Integer getNavaidType() {
-    return navaidType;
-  }
-
-  public String getNavaidCountryCode() {
-    return navaidCountryCode;
-  }
-
-  public Integer getNavaidKeyCode() {
-    return navaidKeyCode;
-  }
-
-  public Integer getCycleDate() {
+  public Integer cycleDate() {
     return cycleDate;
   }
 
-  public String getWaypointRunwayIdent() {
-    return waypointRunwayIdent;
+  public Optional<Integer> stateProvinceCode() {
+    return Optional.ofNullable(stateProvinceCode);
   }
 
-  public String getWaypointRwyIcao() {
-    return waypointRwyIcao;
+  public Optional<String> waypointPointNavaidFlag() {
+    return Optional.ofNullable(waypointPointNavaidFlag);
   }
 
-  public Integer getCoordinatePrecision() {
-    return coordinatePrecision;
+  public Optional<String> waypointDescriptionName() {
+    return Optional.ofNullable(waypointDescriptionName);
+  }
+
+  public Optional<Double> waypointBearing() {
+    return Optional.ofNullable(waypointBearing);
+  }
+
+  public Optional<Double> distance() {
+    return Optional.ofNullable(distance);
+  }
+
+  public Optional<String> localHorizontalDatum() {
+    return Optional.ofNullable(localHorizontalDatum);
+  }
+
+  public Optional<String> geodeticLatitude() {
+    return Optional.ofNullable(geodeticLatitude);
+  }
+
+  public Optional<Double> degreesLatitude() {
+    return Optional.ofNullable(degreesLatitude);
+  }
+
+  public Optional<String> geodeticLongitude() {
+    return Optional.ofNullable(geodeticLongitude);
+  }
+
+  public Optional<Double> degreesLongitude() {
+    return Optional.ofNullable(degreesLongitude);
+  }
+
+  public Optional<String> navaidIdentifier() {
+    return Optional.ofNullable(navaidIdentifier);
+  }
+
+  public Optional<Integer> navaidType() {
+    return Optional.ofNullable(navaidType);
+  }
+
+  public Optional<String> navaidCountryCode() {
+    return Optional.ofNullable(navaidCountryCode);
+  }
+
+  public Optional<Integer> navaidKeyCode() {
+    return Optional.ofNullable(navaidKeyCode);
+  }
+
+  public Optional<String> waypointRunwayIdent() {
+    return Optional.ofNullable(waypointRunwayIdent);
+  }
+
+  public Optional<String> waypointRwyIcao() {
+    return Optional.ofNullable(waypointRwyIcao);
+  }
+
+  public Optional<Integer> coordinatePrecision() {
+    return Optional.ofNullable(coordinatePrecision);
   }
 
   public static final class Builder {

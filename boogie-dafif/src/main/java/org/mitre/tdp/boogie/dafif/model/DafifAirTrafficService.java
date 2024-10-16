@@ -33,6 +33,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.CycleDate;
 import org.mitre.tdp.boogie.dafif.v81.field.AtsDesignator;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class DafifAirTrafficService {
   /**
@@ -274,180 +275,180 @@ public final class DafifAirTrafficService {
     return Objects.hash(atsIdentifier, atsRouteSequenceNumber, atsRouteDirection, atsRouteType, icaoCode, biDirectional, frequencyClass, level, atsRouteStatus, waypoint1IcaoCode, waypoint1NavaidType, waypoint1WaypointIdentifierWptIdent, waypoint1CountryCode, waypoint1AtsWaypointDescriptionCode1, waypoint1AtsWaypointDescriptionCode2, waypoint1AtsWaypointDescriptionCode3, waypoint1AtsWaypointDescriptionCode4, waypoint1GeodeticLatitude, waypoint1DegreesLatitude, waypoint1GeodeticLongitude, waypoint1DegreesLongitude, waypoint2IcaoCode, waypoint2NavaidType, waypoint2WaypointIdentifierWptIdent, waypoint2CountryCode, waypoint2AtsWaypointDescriptionCode1, waypoint2AtsWaypointDescriptionCode2, waypoint2AtsWaypointDescriptionCode3, waypoint2AtsWaypointDescriptionCode4, waypoint2GeodeticLatitude, waypoint2DegreesLatitude, waypoint2GeodeticLongitude, waypoint2DegreesLongitude, atsRouteOutboundMagneticCourse, atsRouteDistance, atsRouteInboundMagneticCourse, minimumAltitude, upperLimit, lowerLimit, maxAuthorizedAltitude, cruiseLevelIndicator, requiredNavPerformance, cycleDate, atsDesignator);
   }
 
-  public String getAtsIdentifier() {
+  public String atsIdentifier() {
     return atsIdentifier;
   }
 
-  public Integer getAtsRouteSequenceNumber() {
+  public Integer atsRouteSequenceNumber() {
     return atsRouteSequenceNumber;
   }
 
-  public String getAtsRouteDirection() {
+  public String atsRouteDirection() {
     return atsRouteDirection;
   }
 
-  public String getAtsRouteType() {
+  public String atsRouteType() {
     return atsRouteType;
   }
 
-  public String getIcaoCode() {
+  public String icaoCode() {
     return icaoCode;
   }
 
-  public String getBiDirectional() {
-    return biDirectional;
-  }
-
-  public String getFrequencyClass() {
+  public String frequencyClass() {
     return frequencyClass;
   }
 
-  public String getLevel() {
+  public String level() {
     return level;
   }
 
-  public String getAtsRouteStatus() {
+  public String atsRouteStatus() {
     return atsRouteStatus;
   }
 
-  public String getWaypoint1IcaoCode() {
+  public String waypoint1IcaoCode() {
     return waypoint1IcaoCode;
   }
 
-  public Integer getWaypoint1NavaidType() {
-    return waypoint1NavaidType;
-  }
-
-  public String getWaypoint1WaypointIdentifierWptIdent() {
+  public String waypoint1WaypointIdentifierWptIdent() {
     return waypoint1WaypointIdentifierWptIdent;
   }
 
-  public String getWaypoint1CountryCode() {
+  public String waypoint1CountryCode() {
     return waypoint1CountryCode;
   }
 
-  public String getWaypoint1AtsWaypointDescriptionCode1() {
+  public String waypoint1AtsWaypointDescriptionCode1() {
     return waypoint1AtsWaypointDescriptionCode1;
   }
 
-  public String getWaypoint1AtsWaypointDescriptionCode2() {
-    return waypoint1AtsWaypointDescriptionCode2;
-  }
-
-  public String getWaypoint1AtsWaypointDescriptionCode3() {
-    return waypoint1AtsWaypointDescriptionCode3;
-  }
-
-  public String getWaypoint1AtsWaypointDescriptionCode4() {
-    return waypoint1AtsWaypointDescriptionCode4;
-  }
-
-  public String getWaypoint1GeodeticLatitude() {
-    return waypoint1GeodeticLatitude;
-  }
-
-  public Double getWaypoint1DegreesLatitude() {
-    return waypoint1DegreesLatitude;
-  }
-
-  public String getWaypoint1GeodeticLongitude() {
-    return waypoint1GeodeticLongitude;
-  }
-
-  public Double getWaypoint1DegreesLongitude() {
-    return waypoint1DegreesLongitude;
-  }
-
-  public String getWaypoint2IcaoCode() {
+  public String waypoint2IcaoCode() {
     return waypoint2IcaoCode;
   }
 
-  public Integer getWaypoint2NavaidType() {
-    return waypoint2NavaidType;
-  }
-
-  public String getWaypoint2WaypointIdentifierWptIdent() {
+  public String waypoint2WaypointIdentifierWptIdent() {
     return waypoint2WaypointIdentifierWptIdent;
   }
 
-  public String getWaypoint2CountryCode() {
+  public String waypoint2CountryCode() {
     return waypoint2CountryCode;
   }
 
-  public String getWaypoint2AtsWaypointDescriptionCode1() {
+  public String waypoint2AtsWaypointDescriptionCode1() {
     return waypoint2AtsWaypointDescriptionCode1;
   }
 
-  public String getWaypoint2AtsWaypointDescriptionCode2() {
-    return waypoint2AtsWaypointDescriptionCode2;
+  public Optional<String> biDirectional() {
+    return Optional.ofNullable(biDirectional);
   }
 
-  public String getWaypoint2AtsWaypointDescriptionCode3() {
-    return waypoint2AtsWaypointDescriptionCode3;
+  public Optional<Integer> waypoint1NavaidType() {
+    return Optional.ofNullable(waypoint1NavaidType);
   }
 
-  public String getWaypoint2AtsWaypointDescriptionCode4() {
-    return waypoint2AtsWaypointDescriptionCode4;
+  public Optional<String> waypoint1AtsWaypointDescriptionCode2() {
+    return Optional.ofNullable(waypoint1AtsWaypointDescriptionCode2);
   }
 
-  public String getWaypoint2GeodeticLatitude() {
-    return waypoint2GeodeticLatitude;
+  public Optional<String> waypoint1AtsWaypointDescriptionCode3() {
+    return Optional.ofNullable(waypoint1AtsWaypointDescriptionCode3);
   }
 
-  public Double getWaypoint2DegreesLatitude() {
-    return waypoint2DegreesLatitude;
+  public Optional<String> waypoint1AtsWaypointDescriptionCode4() {
+    return Optional.ofNullable(waypoint1AtsWaypointDescriptionCode4);
   }
 
-  public String getWaypoint2GeodeticLongitude() {
-    return waypoint2GeodeticLongitude;
+  public Optional<String> waypoint1GeodeticLatitude() {
+    return Optional.ofNullable(waypoint1GeodeticLatitude);
   }
 
-  public Double getWaypoint2DegreesLongitude() {
-    return waypoint2DegreesLongitude;
+  public Optional<Double> waypoint1DegreesLatitude() {
+    return Optional.ofNullable(waypoint1DegreesLatitude);
   }
 
-  public String getAtsRouteOutboundMagneticCourse() {
-    return atsRouteOutboundMagneticCourse;
+  public Optional<String> waypoint1GeodeticLongitude() {
+    return Optional.ofNullable(waypoint1GeodeticLongitude);
   }
 
-  public Double getAtsRouteDistance() {
-    return atsRouteDistance;
+  public Optional<Double> waypoint1DegreesLongitude() {
+    return Optional.ofNullable(waypoint1DegreesLongitude);
   }
 
-  public String getAtsRouteInboundMagneticCourse() {
-    return atsRouteInboundMagneticCourse;
+  public Optional<Integer> waypoint2NavaidType() {
+    return Optional.ofNullable(waypoint2NavaidType);
   }
 
-  public String getMinimumAltitude() {
-    return minimumAltitude;
+  public Optional<String> waypoint2AtsWaypointDescriptionCode2() {
+    return Optional.ofNullable(waypoint2AtsWaypointDescriptionCode2);
   }
 
-  public String getUpperLimit() {
-    return upperLimit;
+  public Optional<String> waypoint2AtsWaypointDescriptionCode3() {
+    return Optional.ofNullable(waypoint2AtsWaypointDescriptionCode3);
   }
 
-  public String getLowerLimit() {
-    return lowerLimit;
+  public Optional<String> waypoint2AtsWaypointDescriptionCode4() {
+    return Optional.ofNullable(waypoint2AtsWaypointDescriptionCode4);
   }
 
-  public String getMaxAuthorizedAltitude() {
-    return maxAuthorizedAltitude;
+  public Optional<String> waypoint2GeodeticLatitude() {
+    return Optional.ofNullable(waypoint2GeodeticLatitude);
   }
 
-  public String getCruiseLevelIndicator() {
-    return cruiseLevelIndicator;
+  public Optional<Double> waypoint2DegreesLatitude() {
+    return Optional.ofNullable(waypoint2DegreesLatitude);
   }
 
-  public Integer getRequiredNavPerformance() {
-    return requiredNavPerformance;
+  public Optional<String> waypoint2GeodeticLongitude() {
+    return Optional.ofNullable(waypoint2GeodeticLongitude);
   }
 
-  public Integer getCycleDate() {
-    return cycleDate;
+  public Optional<Double> waypoint2DegreesLongitude() {
+    return Optional.ofNullable(waypoint2DegreesLongitude);
   }
 
-  public String getAtsDesignator() {
-    return atsDesignator;
+  public Optional<String> atsRouteOutboundMagneticCourse() {
+    return Optional.ofNullable(atsRouteOutboundMagneticCourse);
+  }
+
+  public Optional<Double> atsRouteDistance() {
+    return Optional.ofNullable(atsRouteDistance);
+  }
+
+  public Optional<String> atsRouteInboundMagneticCourse() {
+    return Optional.ofNullable(atsRouteInboundMagneticCourse);
+  }
+
+  public Optional<String> minimumAltitude() {
+    return Optional.ofNullable(minimumAltitude);
+  }
+
+  public Optional<String> upperLimit() {
+    return Optional.ofNullable(upperLimit);
+  }
+
+  public Optional<String> lowerLimit() {
+    return Optional.ofNullable(lowerLimit);
+  }
+
+  public Optional<String> maxAuthorizedAltitude() {
+    return Optional.ofNullable(maxAuthorizedAltitude);
+  }
+
+  public Optional<String> cruiseLevelIndicator() {
+    return Optional.ofNullable(cruiseLevelIndicator);
+  }
+
+  public Optional<Integer> requiredNavPerformance() {
+    return Optional.ofNullable(requiredNavPerformance);
+  }
+
+  public Optional<Integer> cycleDate() {
+    return Optional.ofNullable(cycleDate);
+  }
+
+  public Optional<String> atsDesignator() {
+    return Optional.ofNullable(atsDesignator);
   }
 
   public static final class Builder {

@@ -69,22 +69,22 @@ public class TestDafifIlsSpec {
     DafifIls ils = converter.apply(record).orElseThrow(AssertionError::new);
 
     assertAll(
-        () -> assertEquals("AA30079", ils.getAirportIdentification()),
-        () -> assertEquals("11", ils.getRunwayIdentifier()),
-        () -> assertEquals("D", ils.getComponentType()),
-        () -> assertEquals("U", ils.getNavaidFrequency()),
-        () -> assertEquals("024X", ils.getNavaidChannel()),
-        () -> assertEquals("00011", ils.getIlsNavaidElevation()),
-        () -> assertEquals("WGE", ils.getLocalHorizontalDatum()),
-        () -> assertEquals("WGE", ils.getGeodeticDatum()),
-        () -> assertEquals("N12300951", ils.getGeodeticLatitude()),
-        () -> assertEquals(12.502642, ils.getDegreesLatitude()),
-        () -> assertEquals("W070013023", ils.getGeodeticLongitude()),
-        () -> assertEquals(-70.025064, ils.getDegreesLongitude()),
-        () -> assertEquals("IBE", ils.getIlsNavaidIdentifier()),
-        () -> assertEquals("W011264 0124", ils.getMagneticVariation()),
-        () -> assertEquals(202402, ils.getCycleDate()),
-        () -> assertEquals(0, ils.getCoordinatePrecision())
+        () -> assertEquals("AA30079", ils.airportIdentification()),
+        () -> assertEquals("11", ils.runwayIdentifier()),
+        () -> assertEquals("D", ils.componentType()),
+        () -> assertEquals("U", ils.navaidFrequency().orElseThrow()),
+        () -> assertEquals("024X", ils.navaidChannel().orElseThrow()),
+        () -> assertEquals("00011", ils.ilsNavaidElevation()),
+        () -> assertEquals("WGE", ils.localHorizontalDatum().orElseThrow()),
+        () -> assertEquals("WGE", ils.geodeticDatum()),
+        () -> assertEquals("N12300951", ils.geodeticLatitude().orElseThrow()),
+        () -> assertEquals(12.502642, ils.degreesLatitude().orElseThrow()),
+        () -> assertEquals("W070013023", ils.geodeticLongitude().orElseThrow()),
+        () -> assertEquals(-70.025064, ils.degreesLongitude().orElseThrow()),
+        () -> assertEquals("IBE", ils.ilsNavaidIdentifier().orElseThrow()),
+        () -> assertEquals("W011264 0124", ils.magneticVariation()),
+        () -> assertEquals(202402, ils.cycleDate()),
+        () -> assertEquals(0, ils.coordinatePrecision().orElseThrow())
     );
 
   }
