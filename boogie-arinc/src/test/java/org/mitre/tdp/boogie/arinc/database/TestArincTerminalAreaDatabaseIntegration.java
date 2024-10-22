@@ -13,13 +13,13 @@ import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
 @Tag("INTEGRATION")
-class TestTerminalAreaDatabaseIntegration {
+class TestArincTerminalAreaDatabaseIntegration {
 
-  private static TerminalAreaDatabase terminalAreaDatabase;
+  private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
 
   @BeforeAll
   static void setup() {
-    terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         EmbeddedCifpFile.instance().arincAirports(),
         EmbeddedCifpFile.instance().arincRunways(),
         EmbeddedCifpFile.instance().arincLocalizerGlideSlopes(),
@@ -39,7 +39,7 @@ class TestTerminalAreaDatabaseIntegration {
         .collect(Collectors.toList());
 
     List<ArincRunway> runwaysWithMatchingPrimaryIlsMlsGlsReference = runwaysWithPrimaryIlsMlsGlsReference.stream()
-        .filter(arincRunway -> terminalAreaDatabase.primaryLocalizerGlideSlopeOf(arincRunway.airportIdentifier(), arincRunway.runwayIdentifier()).isPresent())
+        .filter(arincRunway -> arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf(arincRunway.airportIdentifier(), arincRunway.runwayIdentifier()).isPresent())
         .collect(Collectors.toList());
 
     int missingPrimaryReferences = runwaysWithPrimaryIlsMlsGlsReference.size() - runwaysWithMatchingPrimaryIlsMlsGlsReference.size();
@@ -49,7 +49,7 @@ class TestTerminalAreaDatabaseIntegration {
         .collect(Collectors.toList());
 
     List<ArincRunway> runwaysWithMatchingSecondaryIlsMlsGlsReference = runwaysWithSecondaryIlsMlsGlsReference.stream()
-        .filter(arincRunway -> terminalAreaDatabase.secondaryLocalizerGlideSlopeOf(arincRunway.airportIdentifier(), arincRunway.runwayIdentifier()).isPresent())
+        .filter(arincRunway -> arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf(arincRunway.airportIdentifier(), arincRunway.runwayIdentifier()).isPresent())
         .collect(Collectors.toList());
 
     int missingSecondaryReferences = runwaysWithSecondaryIlsMlsGlsReference.size() - runwaysWithMatchingSecondaryIlsMlsGlsReference.size();

@@ -19,7 +19,7 @@ import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.ContinuationRecordFilter;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
@@ -59,7 +59,7 @@ class TestAirportAssembler {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
-  private static TerminalAreaDatabase terminalAreaDatabase;
+  private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
 
   private static AirportAssembler<Airport> assembler;
 
@@ -68,7 +68,7 @@ class TestAirportAssembler {
     ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
     fileParser.apply(arincTestFile).stream().filter(continuationRecordFilter).forEach(testV18Consumer);
 
-    terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         testV18Consumer.arincAirports(),
         testV18Consumer.arincRunways(),
         testV18Consumer.arincLocalizerGlideSlopes(),
@@ -79,12 +79,12 @@ class TestAirportAssembler {
         testV18Consumer.arincGnssLandingSystems()
     );
 
-    assembler = AirportAssembler.standard(terminalAreaDatabase);
+    assembler = AirportAssembler.standard(arincTerminalAreaDatabase);
   }
 
   @Test
   void testKjfkAssembly() {
-    Airport airport = assembler.assemble(terminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
+    Airport airport = assembler.assemble(arincTerminalAreaDatabase.airport("KJFK").orElseThrow(AssertionError::new));
 
     Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
 

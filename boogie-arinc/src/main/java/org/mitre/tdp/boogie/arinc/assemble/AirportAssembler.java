@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
@@ -27,10 +27,10 @@ public interface AirportAssembler<A> {
    * Assembler using the {@link AirportAssemblyStrategy#standard()} to create Boogie airport records when provided a backing
    * database for 424 records in the terminal airspace.
    *
-   * @param terminalAreaDatabase containing indexed terminal area 424 records
+   * @param arincTerminalAreaDatabase containing indexed terminal area 424 records
    */
-  static AirportAssembler<Airport> standard(TerminalAreaDatabase terminalAreaDatabase) {
-    return usingStrategy(terminalAreaDatabase, AirportAssemblyStrategy.standard());
+  static AirportAssembler<Airport> standard(ArincTerminalAreaDatabase arincTerminalAreaDatabase) {
+    return usingStrategy(arincTerminalAreaDatabase, AirportAssemblyStrategy.standard());
   }
 
   /**
@@ -39,12 +39,12 @@ public interface AirportAssembler<A> {
    *
    * <p>Template types here notionally represent client-defined "Airport" and "Runway" classes.
    *
-   * @param terminalAreaDatabase containing indexed terminal area 424 records
+   * @param arincTerminalAreaDatabase containing indexed terminal area 424 records
    * @param strategy             strategy class for converting related 424 records into runways and then combining those runways
    *                             into airports see {@link AirportAssemblyStrategy#standard()}
    */
-  static <A, R> AirportAssembler<A> usingStrategy(TerminalAreaDatabase terminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
-    return new Standard<>(terminalAreaDatabase, strategy);
+  static <A, R> AirportAssembler<A> usingStrategy(ArincTerminalAreaDatabase arincTerminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
+    return new Standard<>(arincTerminalAreaDatabase, strategy);
   }
 
   /**
@@ -54,12 +54,12 @@ public interface AirportAssembler<A> {
 
   final class Standard<A, R> implements AirportAssembler<A> {
 
-    private final TerminalAreaDatabase terminalAreaDatabase;
+    private final ArincTerminalAreaDatabase arincTerminalAreaDatabase;
 
     private final AirportAssemblyStrategy<A, R> strategy;
 
-    public Standard(TerminalAreaDatabase terminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
-      this.terminalAreaDatabase = requireNonNull(terminalAreaDatabase);
+    public Standard(ArincTerminalAreaDatabase arincTerminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
+      this.arincTerminalAreaDatabase = requireNonNull(arincTerminalAreaDatabase);
       this.strategy = requireNonNull(strategy);
     }
 
@@ -67,7 +67,7 @@ public interface AirportAssembler<A> {
     public A assemble(ArincAirport arincAirport) {
       requireNonNull(arincAirport);
 
-      Collection<ArincRunway> arincRunways = terminalAreaDatabase.runwaysAt(
+      Collection<ArincRunway> arincRunways = arincTerminalAreaDatabase.runwaysAt(
           arincAirport.airportIdentifier(),
           arincAirport.airportIcaoRegion()
       );
@@ -82,11 +82,11 @@ public interface AirportAssembler<A> {
                 arincAirport,
                 pair.first(),
                 pair.second(),
-                terminalAreaDatabase.primaryLocalizerGlideSlopeOf(
+                arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf(
                     arincAirport.airportIdentifier(),
                     arincAirport.airportIcaoRegion(),
                     pair.first().runwayIdentifier()).orElse(null),
-                terminalAreaDatabase.secondaryLocalizerGlideSlopeOf(
+                arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf(
                     arincAirport.airportIdentifier(),
                     arincAirport.airportIcaoRegion(),
                     pair.first().runwayIdentifier()).orElse(null)

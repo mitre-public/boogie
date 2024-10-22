@@ -19,7 +19,7 @@ import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.ContinuationRecordFilter;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.FixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
@@ -75,7 +75,7 @@ class TestAirwayAssembler {
     ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
     fileParser.apply(arincTestFile).stream().filter(continuationRecordFilter).forEach(testV18Consumer);
 
-    FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         testV18Consumer.arincNdbNavaids(),
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
@@ -83,7 +83,7 @@ class TestAirwayAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDatabase);
+    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(arincFixDatabase);
 
     airwayMap = assembler.assemble(testV18Consumer.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }

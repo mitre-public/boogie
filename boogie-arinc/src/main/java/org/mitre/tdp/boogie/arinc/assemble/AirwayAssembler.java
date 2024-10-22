@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.FixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
@@ -26,8 +26,8 @@ import org.mitre.tdp.boogie.fn.TriFunction;
  */
 public interface AirwayAssembler<A> {
 
-  static AirwayAssembler<Airway> standard(FixDatabase fixDatabase) {
-    return usingStrategy(fixDatabase, FixAssemblyStrategy.standard(), AirwayAssemblyStrategy.standard());
+  static AirwayAssembler<Airway> standard(ArincFixDatabase arincFixDatabase) {
+    return usingStrategy(arincFixDatabase, FixAssemblyStrategy.standard(), AirwayAssemblyStrategy.standard());
   }
 
   /**
@@ -42,7 +42,7 @@ public interface AirwayAssembler<A> {
    * @param airwayStrategy strategy class for converting 424 airway legs into client-defined leg types referencing the fixes created
    *                       by the fix strategy
    */
-  static <A, F, L> AirwayAssembler<A> usingStrategy(FixDatabase database, FixAssemblyStrategy<F> fixStrategy, AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
+  static <A, F, L> AirwayAssembler<A> usingStrategy(ArincFixDatabase database, FixAssemblyStrategy<F> fixStrategy, AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
     return new Standard<>(database, fixStrategy, airwayStrategy);
   }
 
@@ -56,10 +56,10 @@ public interface AirwayAssembler<A> {
     private final AirwayAssemblyStrategy<A, F, L> strategy;
 
     private Standard(
-        FixDatabase fixDatabase,
+        ArincFixDatabase arincFixDatabase,
         FixAssemblyStrategy<F> fixStrategy,
         AirwayAssemblyStrategy<A, F, L> airwayStrategy) {
-      this.inflator = new ArincAirwayLegConverter<>(fixDatabase, fixStrategy, airwayStrategy);
+      this.inflator = new ArincAirwayLegConverter<>(arincFixDatabase, fixStrategy, airwayStrategy);
       this.strategy = requireNonNull(airwayStrategy);
     }
 
@@ -86,14 +86,14 @@ public interface AirwayAssembler<A> {
       private final TriFunction<ArincAirwayLeg, F, F, L> legConverter;
 
       private ArincAirwayLegConverter(
-          FixDatabase fixDatabase,
+          ArincFixDatabase arincFixDatabase,
           FixAssemblyStrategy<F> fixStrategy,
           AirwayAssemblyStrategy<A, F, L> airwayStrategy
       ) {
         this.fixDereferencer = new FixDereferencer<>(
             FixAssembler.withStrategy(fixStrategy),
             ArincDatabaseFactory.emptyTerminalAreaDatabase(),
-            fixDatabase
+            arincFixDatabase
         );
         this.legConverter = requireNonNull(airwayStrategy)::convertLeg;
       }

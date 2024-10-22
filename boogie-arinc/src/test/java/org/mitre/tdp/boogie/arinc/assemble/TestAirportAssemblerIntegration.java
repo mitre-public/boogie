@@ -21,7 +21,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ class TestAirportAssemblerIntegration {
 
   @BeforeAll
   static void setup() {
-    TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         EmbeddedCifpFile.instance().arincAirports(),
         EmbeddedCifpFile.instance().arincRunways(),
         EmbeddedCifpFile.instance().arincLocalizerGlideSlopes(),
@@ -45,7 +45,7 @@ class TestAirportAssemblerIntegration {
         EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
-    AirportAssembler<Airport> assembler = AirportAssembler.standard(terminalAreaDatabase);
+    AirportAssembler<Airport> assembler = AirportAssembler.standard(arincTerminalAreaDatabase);
     airports = EmbeddedCifpFile.instance().arincAirports().stream().map(assembler::assemble).collect(Collectors.groupingBy(Airport::airportIdentifier));
   }
 

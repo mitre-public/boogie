@@ -60,26 +60,26 @@ to either NDB/VHF Navaids, Enroute/Terminal Waypoints, Airports, or even Runways
 provides a collection of easy-to-instantiate and pre-configured (and relatively simple) databases with the appropriate indexing for these records set-up.
 
 ```java
-FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(ndbNavaids, vhfNavaids, waypoints, airports);
+FixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(ndbNavaids, vhfNavaids, waypoints, airports);
 
 // unique lookups (via) including the ICAO region in the query
-Optional<ArincWaypoint> jmack = fixDatabase.waypoint("JMACK", "K6");
-Optional<ArincNdbNavaid> dtw = fixDatabase.ndbNavaid("DTW", "K2");
+Optional<ArincWaypoint> jmack = arincFixDatabase.waypoint("JMACK", "K6");
+Optional<ArincNdbNavaid> dtw = arincFixDatabase.ndbNavaid("DTW", "K2");
 
 // queries purely by ID (return value only when there is a single match)
-Optional<ArincWaypoint> jmack = fixDatabase.waypoint("JMACK");  // etc. for other fix types
+Optional<ArincWaypoint> jmack = arincFixDatabase.waypoint("JMACK");  // etc. for other fix types
  
 // queries for all matches
-Collection<ArincWaypoint> l254 = fixDatabase.waypoints("JMACK", "DKUN1"); // etc. for other fix types
+Collection<ArincWaypoint> l254 = arincFixDatabase.waypoints("JMACK", "DKUN1"); // etc. for other fix types
 
 // the other common database instantiation is:
-TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(airports, runways, localizerGlideSlopes, ndbNavaids, vhfNavaids, waypoints, procedureLegs);
+TerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(airports, runways, localizerGlideSlopes, ndbNavaids, vhfNavaids, waypoints, procedureLegs);
 
 // the above is an airport-indexed view of all of the listed argument data and is useful for common queries 
 // about records which can be directly related to an airport
-Optional<ArincLocalizerGlideSlope> rw13RLocalizerGlideSlope = terminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "RW13R");
+Optional<ArincLocalizerGlideSlope> rw13RLocalizerGlideSlope = arincTerminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "RW13R");
 
-Collection<ArincProcedureLeg> rober2Legs = terminalAreaDatabase.legsForProcedure("KJFK", "ROBER2"); // etc.
+Collection<ArincProcedureLeg> rober2Legs = arincTerminalAreaDatabase.legsForProcedure("KJFK", "ROBER2"); // etc.
 ```
 
 Most of the database implementations under ```org.mitre.tdp.boogie.database``` provide similar collections of methods for accessing pre-indexed data. The ```ArincDatabaseFactory``` is the de facto 
@@ -93,7 +93,7 @@ which can be used to construct concrete implementations of these models.
 
 ```java
 // database implementations are used to dereference fixes, etc. as referenced in procedures and airways as part of the assembly process
-FixDatabase fixDatabase;
+FixDatabase arincFixDatabase;
 TermialAreaDatabase terminalDatabase;
 
 // procedure legs are sequenced by transition and then composed into overall procedure records adding transition type (COMMON, ENROUTE, etc.) indicators
@@ -102,13 +102,13 @@ TermialAreaDatabase terminalDatabase;
 List<ArincProcedureLeg> allProcedureLegs;
 
 // because the conversion to a procedure involves an aggregation step internally - the assembler must be applied to all the available legs at once
-List<Procedure> procedures = new ProcedureAssembler(terminalDatabase, fixDatabase).apply(allProcedureLegs);
+List<Procedure> procedures = new ProcedureAssembler(terminalDatabase, arincFixDatabase).apply(allProcedureLegs);
 
 // airway legs are sequenced by identifier and sequence number and split in accordance with the 424 airways sequencing logic
 List<ArincAirwayLeg> allAirwayLegs;
 
 // similar to the procedure assembler there is an internal aggregation and sequencing step - so the assembler must be applied to all available legs at once
-List<Airway> airways = new AirwayAssembler(fixDatabase).apply(allAirwayLegs);
+List<Airway> airways = new AirwayAssembler(arincFixDatabase).apply(allAirwayLegs);
 
 // airports are zipped together with their runways and potentially runway localizer information as composite records
 List<ArincAirport> allAirports;
@@ -137,7 +137,7 @@ clients to inject their own construction logic.
 
 ```java
 // database implementations are still needed as above to dereference the appropriate objects from the 424
-FixDatabase fixDatabase;
+FixDatabase arincFixDatabase;
 TermialAreaDatabase terminalDatabase;
 
 // all parsed procedure legs
@@ -153,7 +153,7 @@ FixAssembler myCustomFixAssembler = new FixAssembler(
 // my composite procedure assembler with custom assembly logic
 // to see how the Boogie ones work see ArincToBoogieConverterFactory, these are the default injected ones used in the previous section
 ProcedureAssembler myCustomProcedureAssembler = new ProcedureAssembler(
-   fixDatabase,
+   arincFixDatabase,
    terminalDatabase,
    myCustomFixAssembler,
    // the generic Fixes provided to this are the concrete ones built by myCustomFixAssembler

@@ -19,14 +19,14 @@ import com.google.common.collect.Multimap;
  * This implementation is probably not yet complete from a user perspective - if there is a feature that should be added feel free
  * to add it to this implementation and submit a PR.
  */
-public final class TerminalAreaDatabase {
+public final class ArincTerminalAreaDatabase {
 
   /**
    * Multimap of {Identifier, ICAO Region} for airports.
    */
   private final Multimap<Pair<String, String>, AirportPage> airportLookup;
 
-  TerminalAreaDatabase(Multimap<Pair<String, String>, AirportPage> airportLookup) {
+  ArincTerminalAreaDatabase(Multimap<Pair<String, String>, AirportPage> airportLookup) {
     this.airportLookup = requireNonNull(airportLookup);
     this.addIdentifierOnlyIndices();
   }

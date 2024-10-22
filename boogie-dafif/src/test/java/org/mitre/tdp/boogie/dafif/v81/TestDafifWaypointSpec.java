@@ -63,7 +63,7 @@ public class TestDafifWaypointSpec {
     DafifWaypoint waypoint = converter.apply(record).orElseThrow(AssertionError::new);
 
     assertAll(
-        () -> assertEquals("02PAR", waypoint.waypointIdentifierWptIdent()),
+        () -> assertEquals("02PAR", waypoint.waypointIdentifier()),
         () -> assertEquals("GR", waypoint.countryCode()),
         () -> assertEquals("I", waypoint.waypointType()),
         () -> assertEquals("(PAR 245.0/002.0 HOST)", waypoint.waypointDescriptionName().orElseThrow()),
@@ -78,7 +78,8 @@ public class TestDafifWaypointSpec {
         () -> assertEquals(28.026361, waypoint.degreesLongitude().orElseThrow()),
         () -> assertEquals("E005209 0124", waypoint.magneticVariation()),
         () -> assertEquals(202313, waypoint.cycleDate()),
-        () -> assertEquals(0, waypoint.coordinatePrecision().orElseThrow())
+        () -> assertEquals(0, waypoint.coordinatePrecision().orElseThrow()),
+        () -> assertFalse(waypoint.waypointPointNavaidFlag())
     );
   }
 }

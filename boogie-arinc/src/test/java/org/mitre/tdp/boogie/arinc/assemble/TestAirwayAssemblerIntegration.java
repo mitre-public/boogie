@@ -16,7 +16,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.FixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -29,7 +29,7 @@ class TestAirwayAssemblerIntegration {
 
   @BeforeAll
   static void setup() {
-    FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         EmbeddedCifpFile.instance().arincNdbNavaids(),
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
@@ -37,7 +37,7 @@ class TestAirwayAssemblerIntegration {
         EmbeddedCifpFile.instance().arincHoldingPatterns()
     );
 
-    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDatabase);
+    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(arincFixDatabase);
 
     airwaysByName = assembler.assemble(EmbeddedCifpFile.instance().arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }

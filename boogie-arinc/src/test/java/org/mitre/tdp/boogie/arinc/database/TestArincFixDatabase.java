@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.arinc.database;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,17 +15,17 @@ import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 
-class TestFixDatabase {
+class TestArincFixDatabase {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
-  private static FixDatabase fixDatabase;
+  private static ArincFixDatabase arincFixDatabase;
 
   @BeforeAll
   static void setup() {
     fileParser.apply(arincTestFile).forEach(testV18Consumer);
 
-    fixDatabase = ArincDatabaseFactory.newFixDatabase(
+    arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         testV18Consumer.arincNdbNavaids(),
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
@@ -37,8 +36,8 @@ class TestFixDatabase {
 
   @Test
   void testHoldingFunctionality() {
-    ArincHoldingPattern abu = fixDatabase.enrouteHolds("ABU", "HL").stream().findFirst().orElseThrow();
-    List<ArincHoldingPattern> vegers = fixDatabase.enrouteHolds("VEGER", "EE").stream().sorted().collect(Collectors.toList());
+    ArincHoldingPattern abu = arincFixDatabase.enrouteHolds("ABU", "HL").stream().findFirst().orElseThrow();
+    List<ArincHoldingPattern> vegers = arincFixDatabase.enrouteHolds("VEGER", "EE").stream().sorted().collect(Collectors.toList());
     assertAll(
         () -> assertEquals("ABU", abu.fixIdentifier()),
         () -> assertEquals(90, abu.legTime().orElseThrow().getSeconds(), "Should be 90 seconds aka 1.5 min a normal hold"),
@@ -52,19 +51,19 @@ class TestFixDatabase {
   void testDatabaseWaypointFunctionality() {
     assertAll(
         "Collection of common database waypoint queries and their expected outcomes (based on real embedded data).",
-        () -> assertEquals(Optional.of("AROKE"), fixDatabase.waypoint("AROKE").map(ArincWaypoint::waypointIdentifier), "Waypoint AROKE should be in the database."),
-        () -> assertEquals(Optional.empty(), fixDatabase.enrouteWaypoint("AROKE"), "AROKE is a terminal waypoint - it's indexed in the database but should not be returned by this call."),
-        () -> assertEquals(Optional.of("AROKE"), fixDatabase.terminalWaypoint("AROKE").map(ArincWaypoint::waypointIdentifier), "AROKE is a terminal waypoint - and therefore should be returned."),
-        () -> assertEquals("AROKE,CAXUN", fixDatabase.waypoints("AROKE", "CAXUN").stream().map(ArincWaypoint::waypointIdentifier).collect(Collectors.joining(",")), "Both waypoints exist in the database and so both should be returned.")
+        () -> assertEquals(Optional.of("AROKE"), arincFixDatabase.waypoint("AROKE").map(ArincWaypoint::waypointIdentifier), "Waypoint AROKE should be in the database."),
+        () -> assertEquals(Optional.empty(), arincFixDatabase.enrouteWaypoint("AROKE"), "AROKE is a terminal waypoint - it's indexed in the database but should not be returned by this call."),
+        () -> assertEquals(Optional.of("AROKE"), arincFixDatabase.terminalWaypoint("AROKE").map(ArincWaypoint::waypointIdentifier), "AROKE is a terminal waypoint - and therefore should be returned."),
+        () -> assertEquals("AROKE,CAXUN", arincFixDatabase.waypoints("AROKE", "CAXUN").stream().map(ArincWaypoint::waypointIdentifier).collect(Collectors.joining(",")), "Both waypoints exist in the database and so both should be returned.")
     );
   }
 
   @Test
   void testDatabaseNavaidFunctionality() {
     assertAll(
-        () -> assertEquals(Optional.of("LGA"), fixDatabase.vhfNavaid("LGA").map(ArincVhfNavaid::vhfIdentifier), "VHF LGA should be in the database."),
-        () -> assertEquals(Optional.of("SIE"), fixDatabase.vhfNavaid("SIE").map(ArincVhfNavaid::vhfIdentifier), "VHF SIE should be in the database."),
-        () -> assertEquals("LGA,SIE", fixDatabase.vhfNavaids("LGA", "SIE").stream().map(ArincVhfNavaid::vhfIdentifier).collect(Collectors.joining(",")))
+        () -> assertEquals(Optional.of("LGA"), arincFixDatabase.vhfNavaid("LGA").map(ArincVhfNavaid::vhfIdentifier), "VHF LGA should be in the database."),
+        () -> assertEquals(Optional.of("SIE"), arincFixDatabase.vhfNavaid("SIE").map(ArincVhfNavaid::vhfIdentifier), "VHF SIE should be in the database."),
+        () -> assertEquals("LGA,SIE", arincFixDatabase.vhfNavaids("LGA", "SIE").stream().map(ArincVhfNavaid::vhfIdentifier).collect(Collectors.joining(",")))
     );
   }
 
@@ -72,9 +71,9 @@ class TestFixDatabase {
   void testDatabaseAirportFunctionality() {
     assertAll(
         "Collection of common database airport queries and their expected outcomes (based on real embedded data).",
-        () -> assertEquals(Optional.of("KJFK"), fixDatabase.airport("KJFK").map(ArincAirport::airportIdentifier), "Airport KJFK should be in the database."),
-        () -> assertEquals(Optional.empty(), fixDatabase.airport("KCLT"), "KCLT is not in the database and shouldn't be returned."),
-        () -> assertEquals("KJFK", fixDatabase.airports("KJFK").stream().map(ArincAirport::airportIdentifier).collect(Collectors.joining(",")), "KJFK is the only airport in the database and should be returned.")
+        () -> assertEquals(Optional.of("KJFK"), arincFixDatabase.airport("KJFK").map(ArincAirport::airportIdentifier), "Airport KJFK should be in the database."),
+        () -> assertEquals(Optional.empty(), arincFixDatabase.airport("KCLT"), "KCLT is not in the database and shouldn't be returned."),
+        () -> assertEquals("KJFK", arincFixDatabase.airports("KJFK").stream().map(ArincAirport::airportIdentifier).collect(Collectors.joining(",")), "KJFK is the only airport in the database and should be returned.")
     );
   }
 

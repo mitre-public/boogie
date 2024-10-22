@@ -18,8 +18,8 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.arinc.database.FixDatabase;
-import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
@@ -35,12 +35,12 @@ import com.google.common.collect.Multimap;
  */
 public interface ProcedureAssembler<P> {
 
-  static ProcedureAssembler<Procedure> standard(TerminalAreaDatabase terminalDatabase, FixDatabase fixDatabase) {
-    return withStrategy(terminalDatabase, fixDatabase, FixAssemblyStrategy.standard(), ProcedureAssemblyStrategy.standard());
+  static ProcedureAssembler<Procedure> standard(ArincTerminalAreaDatabase terminalDatabase, ArincFixDatabase arincFixDatabase) {
+    return withStrategy(terminalDatabase, arincFixDatabase, FixAssemblyStrategy.standard(), ProcedureAssemblyStrategy.standard());
   }
 
-  static <P, T, L, F> ProcedureAssembler<P> withStrategy(TerminalAreaDatabase terminalDatabase, FixDatabase fixDatabase, FixAssemblyStrategy<F> fixStrategy, ProcedureAssemblyStrategy<P, T, L, F> procedureStrategy) {
-    return new Standard<>(terminalDatabase, fixDatabase, fixStrategy, procedureStrategy);
+  static <P, T, L, F> ProcedureAssembler<P> withStrategy(ArincTerminalAreaDatabase terminalDatabase, ArincFixDatabase arincFixDatabase, FixAssemblyStrategy<F> fixStrategy, ProcedureAssemblyStrategy<P, T, L, F> procedureStrategy) {
+    return new Standard<>(terminalDatabase, arincFixDatabase, fixStrategy, procedureStrategy);
   }
 
   Stream<P> assemble(Collection<ArincProcedureLeg> legs);
@@ -61,12 +61,12 @@ public interface ProcedureAssembler<P> {
     private final ProcedureAssemblyStrategy<P, T, L, F> strategy;
 
     private Standard(
-        TerminalAreaDatabase terminalAreaDatabase,
-        FixDatabase fixDatabase,
+        ArincTerminalAreaDatabase arincTerminalAreaDatabase,
+        ArincFixDatabase arincFixDatabase,
         FixAssemblyStrategy<F> fixStrategy,
         ProcedureAssemblyStrategy<P, T, L, F> procedureStrategy
     ) {
-      this.inflator = new ArincProcedureLegConverter<>(terminalAreaDatabase, fixDatabase, procedureStrategy, fixStrategy);
+      this.inflator = new ArincProcedureLegConverter<>(arincTerminalAreaDatabase, arincFixDatabase, procedureStrategy, fixStrategy);
       this.shouldSplitTransition = (l1, l2) -> IsFirstLegOfMissedApproach.INSTANCE.test(l2);
       this.strategy = requireNonNull(procedureStrategy);
     }
@@ -130,7 +130,7 @@ public interface ProcedureAssembler<P> {
      * ARINC database into the more usable form expected by downstream algorithms (i.e. the {@link Leg}) interface.
      * <br>
      * Legs as provided by ARINC contain references to other records (primarily {@link Fix}-like) which are necessary to construct
-     * the more complex interface implementation. This class leverages the {@link FixDatabase} & {@link TerminalAreaDatabase} to
+     * the more complex interface implementation. This class leverages the {@link ArincFixDatabase} & {@link ArincTerminalAreaDatabase} to
      * identify and dereference these.
      */
     static final class ArincProcedureLegConverter<P, T, L, F> implements Function<ArincProcedureLeg, L> {
@@ -139,12 +139,12 @@ public interface ProcedureAssembler<P> {
       private final FixDereferencer<F> fixDereferencer;
 
       ArincProcedureLegConverter(
-          TerminalAreaDatabase terminalAreaDatabase,
-          FixDatabase fixDatabase,
+          ArincTerminalAreaDatabase arincTerminalAreaDatabase,
+          ArincFixDatabase arincFixDatabase,
           ProcedureAssemblyStrategy<P, T, L, F> procedureStrategy,
           FixAssemblyStrategy<F> fixStrategy) {
         this.strategy = requireNonNull(procedureStrategy);
-        this.fixDereferencer = new FixDereferencer<>(FixAssembler.withStrategy(fixStrategy), terminalAreaDatabase, fixDatabase);
+        this.fixDereferencer = new FixDereferencer<>(FixAssembler.withStrategy(fixStrategy), arincTerminalAreaDatabase, arincFixDatabase);
       }
 
       @Override

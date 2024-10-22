@@ -31,8 +31,8 @@ import org.mitre.tdp.boogie.arinc.assemble.FixAssemblyStrategy;
 import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssembler;
 import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssemblyStrategy;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.FixDatabase;
-import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
@@ -117,7 +117,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     parseRecords(inputStream).stream().filter(dropRecord.negate()).forEach(consumer);
     LOG.debug("Finished parsing and converting supported record types.");
 
-    FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         consumer.arincNdbNavaids(),
         consumer.arincVhfNavaids(),
         consumer.arincWaypoints(),
@@ -126,7 +126,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     );
     LOG.debug("Finished instantiation of FixDatabase.");
 
-    TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         consumer.arincAirports(),
         consumer.arincRunways(),
         consumer.arincLocalizerGlideSlopes(),
@@ -139,20 +139,20 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     LOG.debug("Finished instantiation of TerminalAreaDatabase.");
 
     return records
-        .addAirports(assembleAirports(terminalAreaDatabase, consumer.arincAirports()))
+        .addAirports(assembleAirports(arincTerminalAreaDatabase, consumer.arincAirports()))
         .addFixes(assembleFixes(consumer.arincWaypoints(), consumer.arincNdbNavaids(), consumer.arincVhfNavaids()))
-        .addAirways(assembleAirways(fixDatabase, consumer.arincAirwayLegs()))
-        .addProcedures(assembleProcedures(fixDatabase, terminalAreaDatabase, consumer.arincProcedureLegs()))
+        .addAirways(assembleAirways(arincFixDatabase, consumer.arincAirwayLegs()))
+        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, consumer.arincProcedureLegs()))
         .addFirUirs(assembleFirUirs(consumer.arincfirUirLegs()))
         .build();
   }
 
-  private Collection<PRC> assembleProcedures(FixDatabase fixDatabase, TerminalAreaDatabase terminalAreaDatabase,
-      Collection<ArincProcedureLeg> procedureLegs) {
+  private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase,
+                                             Collection<ArincProcedureLeg> procedureLegs) {
 
     ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(
-        terminalAreaDatabase,
-        fixDatabase,
+        arincTerminalAreaDatabase,
+        arincFixDatabase,
         fixStrategy,
         procedureStrategy
     );
@@ -160,8 +160,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     return assembler.assemble(procedureLegs).collect(toList());
   }
 
-  private Collection<AWY> assembleAirways(FixDatabase fixDatabase, Collection<ArincAirwayLeg> airwayLeg) {
-    AirwayAssembler<AWY> assembler = AirwayAssembler.usingStrategy(fixDatabase, fixStrategy, airwayStrategy);
+  private Collection<AWY> assembleAirways(ArincFixDatabase arincFixDatabase, Collection<ArincAirwayLeg> airwayLeg) {
+    AirwayAssembler<AWY> assembler = AirwayAssembler.usingStrategy(arincFixDatabase, fixStrategy, airwayStrategy);
     return assembler.assemble(airwayLeg).collect(toList());
   }
 
@@ -176,8 +176,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
         .collect(toList());
   }
 
-  private Collection<APT> assembleAirports(TerminalAreaDatabase terminalAreaDatabase, Collection<ArincAirport> airports) {
-    AirportAssembler<APT> assembler = AirportAssembler.usingStrategy(terminalAreaDatabase, airportStrategy);
+  private Collection<APT> assembleAirports(ArincTerminalAreaDatabase arincTerminalAreaDatabase, Collection<ArincAirport> airports) {
+    AirportAssembler<APT> assembler = AirportAssembler.usingStrategy(arincTerminalAreaDatabase, airportStrategy);
     return airports.stream().map(assembler::assemble).collect(toList());
   }
 

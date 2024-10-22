@@ -33,7 +33,7 @@ public final class DafifWaypoint {
   /**
    * {@link WaypointIdentifierWptIdent}
    */
-  private final String waypointIdentifierWptIdent;
+  private final String waypointIdentifier;
   /**
    * {@link CountryCode}
    */
@@ -45,7 +45,7 @@ public final class DafifWaypoint {
   /**
    * {@link WaypointPointNavaidFlag}
    */
-  private final String waypointPointNavaidFlag;
+  private final Boolean waypointPointNavaidFlag;
   /**
    * {@link WaypointType}
    */
@@ -136,7 +136,7 @@ public final class DafifWaypoint {
   private final Integer coordinatePrecision;
 
   private DafifWaypoint(Builder builder) {
-    this.waypointIdentifierWptIdent = builder.waypointIdentifierWptIdent;
+    this.waypointIdentifier = builder.waypointIdentifier;
     this.countryCode = builder.countryCode;
     this.stateProvinceCode = builder.stateProvinceCode;
     this.waypointPointNavaidFlag = builder.waypointPointNavaidFlag;
@@ -171,16 +171,16 @@ public final class DafifWaypoint {
     if (o == null || getClass() != o.getClass())
       return false;
     DafifWaypoint that = (DafifWaypoint) o;
-    return Objects.equals(waypointIdentifierWptIdent, that.waypointIdentifierWptIdent) && Objects.equals(countryCode, that.countryCode) && Objects.equals(stateProvinceCode, that.stateProvinceCode) && Objects.equals(waypointPointNavaidFlag, that.waypointPointNavaidFlag) && Objects.equals(waypointType, that.waypointType) && Objects.equals(waypointDescriptionName, that.waypointDescriptionName) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(waypointUsageCode, that.waypointUsageCode) && Objects.equals(waypointBearing, that.waypointBearing) && Objects.equals(distance, that.distance) && Objects.equals(wac, that.wac) && Objects.equals(localHorizontalDatum, that.localHorizontalDatum) && Objects.equals(geodeticDatum, that.geodeticDatum) && Objects.equals(geodeticLatitude, that.geodeticLatitude) && Objects.equals(degreesLatitude, that.degreesLatitude) && Objects.equals(geodeticLongitude, that.geodeticLongitude) && Objects.equals(degreesLongitude, that.degreesLongitude) && Objects.equals(magneticVariation, that.magneticVariation) && Objects.equals(navaidIdentifier, that.navaidIdentifier) && Objects.equals(navaidType, that.navaidType) && Objects.equals(navaidCountryCode, that.navaidCountryCode) && Objects.equals(navaidKeyCode, that.navaidKeyCode) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(waypointRunwayIdent, that.waypointRunwayIdent) && Objects.equals(waypointRwyIcao, that.waypointRwyIcao) && Objects.equals(coordinatePrecision, that.coordinatePrecision);
+    return Objects.equals(waypointIdentifier, that.waypointIdentifier) && Objects.equals(countryCode, that.countryCode) && Objects.equals(stateProvinceCode, that.stateProvinceCode) && Objects.equals(waypointPointNavaidFlag, that.waypointPointNavaidFlag) && Objects.equals(waypointType, that.waypointType) && Objects.equals(waypointDescriptionName, that.waypointDescriptionName) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(waypointUsageCode, that.waypointUsageCode) && Objects.equals(waypointBearing, that.waypointBearing) && Objects.equals(distance, that.distance) && Objects.equals(wac, that.wac) && Objects.equals(localHorizontalDatum, that.localHorizontalDatum) && Objects.equals(geodeticDatum, that.geodeticDatum) && Objects.equals(geodeticLatitude, that.geodeticLatitude) && Objects.equals(degreesLatitude, that.degreesLatitude) && Objects.equals(geodeticLongitude, that.geodeticLongitude) && Objects.equals(degreesLongitude, that.degreesLongitude) && Objects.equals(magneticVariation, that.magneticVariation) && Objects.equals(navaidIdentifier, that.navaidIdentifier) && Objects.equals(navaidType, that.navaidType) && Objects.equals(navaidCountryCode, that.navaidCountryCode) && Objects.equals(navaidKeyCode, that.navaidKeyCode) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(waypointRunwayIdent, that.waypointRunwayIdent) && Objects.equals(waypointRwyIcao, that.waypointRwyIcao) && Objects.equals(coordinatePrecision, that.coordinatePrecision);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(waypointIdentifierWptIdent, countryCode, stateProvinceCode, waypointPointNavaidFlag, waypointType, waypointDescriptionName, icaoCode, waypointUsageCode, waypointBearing, distance, wac, localHorizontalDatum, geodeticDatum, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, magneticVariation, navaidIdentifier, navaidType, navaidCountryCode, navaidKeyCode, cycleDate, waypointRunwayIdent, waypointRwyIcao, coordinatePrecision);
+    return Objects.hash(waypointIdentifier, countryCode, stateProvinceCode, waypointPointNavaidFlag, waypointType, waypointDescriptionName, icaoCode, waypointUsageCode, waypointBearing, distance, wac, localHorizontalDatum, geodeticDatum, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, magneticVariation, navaidIdentifier, navaidType, navaidCountryCode, navaidKeyCode, cycleDate, waypointRunwayIdent, waypointRwyIcao, coordinatePrecision);
   }
 
-  public String waypointIdentifierWptIdent() {
-    return waypointIdentifierWptIdent;
+  public String waypointIdentifier() {
+    return waypointIdentifier;
   }
 
   public String countryCode() {
@@ -219,8 +219,8 @@ public final class DafifWaypoint {
     return Optional.ofNullable(stateProvinceCode);
   }
 
-  public Optional<String> waypointPointNavaidFlag() {
-    return Optional.ofNullable(waypointPointNavaidFlag);
+  public Boolean waypointPointNavaidFlag() {
+    return waypointPointNavaidFlag;
   }
 
   public Optional<String> waypointDescriptionName() {
@@ -284,10 +284,10 @@ public final class DafifWaypoint {
   }
 
   public static final class Builder {
-    private String waypointIdentifierWptIdent;
+    private String waypointIdentifier;
     private String countryCode;
     private Integer stateProvinceCode;
-    private String waypointPointNavaidFlag;
+    private Boolean waypointPointNavaidFlag;
     private String waypointType;
     private String waypointDescriptionName;
     private String icaoCode;
@@ -311,8 +311,8 @@ public final class DafifWaypoint {
     private String waypointRwyIcao;
     private Integer coordinatePrecision;
 
-    public Builder waypointIdentifierWptIdent(String waypointIdentifierWptIdent) {
-      this.waypointIdentifierWptIdent = waypointIdentifierWptIdent;
+    public Builder waypointIdentifier(String waypointIdentifier) {
+      this.waypointIdentifier = waypointIdentifier;
       return this;
     }
 
@@ -326,7 +326,7 @@ public final class DafifWaypoint {
       return this;
     }
 
-    public Builder waypointPointNavaidFlag(String waypointPointNavaidFlag) {
+    public Builder waypointPointNavaidFlag(Boolean waypointPointNavaidFlag) {
       this.waypointPointNavaidFlag = waypointPointNavaidFlag;
       return this;
     }

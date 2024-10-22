@@ -40,14 +40,14 @@ import com.google.common.collect.Streams;
  * Navaids. In each case there are enroute and terminal sections of each type - and therefore there are both joint and disparate
  * query methods provided within the database API.
  */
-public final class FixDatabase {
+public final class ArincFixDatabase {
 
   /**
    * The indexed collection of fix-like objects maintained by the database.
    */
   private final LinkedHashMultimap<ArincKey, Object> fixLookup;
 
-  FixDatabase(LinkedHashMultimap<ArincKey, Object> fixLookup) {
+  ArincFixDatabase(LinkedHashMultimap<ArincKey, Object> fixLookup) {
     this.fixLookup = requireNonNull(fixLookup);
     this.addIdentifierOnlyIndices();
   }

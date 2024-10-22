@@ -42,10 +42,10 @@ public class DafifWaypointConverter implements Function<DafifRecord, Optional<Da
     Optional<Integer> coordinatePrecision = dafifRecord.optionalField("coordinatePrecision");
 
     DafifWaypoint dafifWaypoint = new DafifWaypoint.Builder()
-        .waypointIdentifierWptIdent(waypointIdentifierWptIdent)
+        .waypointIdentifier(waypointIdentifierWptIdent)
         .countryCode(countryCode)
         .stateProvinceCode(stateProvinceCode.orElse(null))
-        .waypointPointNavaidFlag(waypointPointNavaidFlag.orElse(null))
+        .waypointPointNavaidFlag(waypointPointNavaidFlag.filter("Y"::equals).isPresent())
         .waypointType(waypointType)
         .waypointDescriptionName(waypointDescriptionName.orElse(null))
         .icaoCode(icaoCode)

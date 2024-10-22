@@ -22,8 +22,8 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.FixDatabase;
-import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ class TestProcedureAssemblerIntegration {
 
   @BeforeAll
   static void setup() {
-    TerminalAreaDatabase terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         EmbeddedCifpFile.instance().arincAirports(),
         EmbeddedCifpFile.instance().arincRunways(),
         EmbeddedCifpFile.instance().arincLocalizerGlideSlopes(),
@@ -56,7 +56,7 @@ class TestProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
-    FixDatabase fixDatabase = ArincDatabaseFactory.newFixDatabase(
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         EmbeddedCifpFile.instance().arincNdbNavaids(),
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
@@ -65,8 +65,8 @@ class TestProcedureAssemblerIntegration {
     );
 
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.withStrategy(
-        terminalAreaDatabase,
-        fixDatabase,
+        arincTerminalAreaDatabase,
+        arincFixDatabase,
         FixAssemblyStrategy.caching(FixAssemblyStrategy.standard()),
         ProcedureAssemblyStrategy.standard()
     );

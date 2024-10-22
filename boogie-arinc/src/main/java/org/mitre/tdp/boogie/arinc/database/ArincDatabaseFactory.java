@@ -42,19 +42,19 @@ public final class ArincDatabaseFactory {
     throw new IllegalStateException("Cannot instantiate static factory class.");
   }
 
-  public static FixDatabase emptyFixDatabase() {
-    return new FixDatabase(LinkedHashMultimap.create());
+  public static ArincFixDatabase emptyFixDatabase() {
+    return new ArincFixDatabase(LinkedHashMultimap.create());
   }
 
   /**
-   * Factory method for generating a new {@link FixDatabase} which indexes various fix-like ARINC data models by:
+   * Factory method for generating a new {@link ArincFixDatabase} which indexes various fix-like ARINC data models by:
    * <br>
    * 1. Identifier
    * 2. ICAO Region
    * 3. Section
    * 4. SubSection (if present for the record type)
    */
-  public static FixDatabase newFixDatabase(
+  public static ArincFixDatabase newFixDatabase(
       Collection<ArincNdbNavaid> ndbNavaids,
       Collection<ArincVhfNavaid> vhfNavaids,
       Collection<ArincWaypoint> waypoints,
@@ -78,18 +78,18 @@ public final class ArincDatabaseFactory {
     LOG.debug("Indexing {} Holding Patterns in the FixDatabase.", airports.size());
     holdingPatterns.forEach(arincHoldingPattern -> lookup.put(holdingToHoldingIndex.apply(arincHoldingPattern), arincHoldingPattern));
 
-    return new FixDatabase(lookup);
+    return new ArincFixDatabase(lookup);
   }
 
-  public static TerminalAreaDatabase emptyTerminalAreaDatabase() {
-    return new TerminalAreaDatabase(LinkedHashMultimap.create());
+  public static ArincTerminalAreaDatabase emptyTerminalAreaDatabase() {
+    return new ArincTerminalAreaDatabase(LinkedHashMultimap.create());
   }
 
   /**
-   * Factory method for generating a new {@link TerminalAreaDatabase} which indexes various ARINC records native to Airports by
+   * Factory method for generating a new {@link ArincTerminalAreaDatabase} which indexes various ARINC records native to Airports by
    * their associated airport identifier and ICAO region.
    */
-  public static TerminalAreaDatabase newTerminalAreaDatabase(
+  public static ArincTerminalAreaDatabase newTerminalAreaDatabase(
       Collection<ArincAirport> airports,
       Collection<ArincRunway> runways,
       Collection<ArincLocalizerGlideSlope> localizerGlideSlopes,
@@ -150,7 +150,7 @@ public final class ArincDatabaseFactory {
       lookup.put(index, airportPage);
     });
 
-    return new TerminalAreaDatabase(lookup);
+    return new ArincTerminalAreaDatabase(lookup);
   }
 
   /**

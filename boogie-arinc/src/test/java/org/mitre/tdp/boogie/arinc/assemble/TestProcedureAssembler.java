@@ -25,8 +25,8 @@ import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.ContinuationRecordFilter;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.FixDatabase;
-import org.mitre.tdp.boogie.arinc.database.TerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
@@ -67,8 +67,8 @@ class TestProcedureAssembler {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
-  private static TerminalAreaDatabase terminalAreaDatabase;
-  private static FixDatabase fixDatabase;
+  private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
+  private static ArincFixDatabase arincFixDatabase;
 
   private static ProcedureAssembler<Procedure> assembler;
 
@@ -77,7 +77,7 @@ class TestProcedureAssembler {
     ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
     fileParser.apply(arincTestFile).stream().filter(continuationRecordFilter).forEach(testV18Consumer);
 
-    terminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         testV18Consumer.arincAirports(),
         testV18Consumer.arincRunways(),
         testV18Consumer.arincLocalizerGlideSlopes(),
@@ -88,7 +88,7 @@ class TestProcedureAssembler {
         testV18Consumer.arincGnssLandingSystems()
     );
 
-    fixDatabase = ArincDatabaseFactory.newFixDatabase(
+    arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         testV18Consumer.arincNdbNavaids(),
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
@@ -96,12 +96,12 @@ class TestProcedureAssembler {
         testV18Consumer.arincHoldingPatterns()
     );
 
-    assembler = ProcedureAssembler.standard(terminalAreaDatabase, fixDatabase);
+    assembler = ProcedureAssembler.standard(arincTerminalAreaDatabase, arincFixDatabase);
   }
 
   @Test
   void testAssemblyOfDEEZZ5_SID() {
-    Collection<ArincProcedureLeg> DEEZZ5Legs = terminalAreaDatabase.legsForProcedure("KJFK", "DEEZZ5");
+    Collection<ArincProcedureLeg> DEEZZ5Legs = arincTerminalAreaDatabase.legsForProcedure("KJFK", "DEEZZ5");
 
     Collection<Procedure> procedures = assembler.assemble(DEEZZ5Legs).collect(Collectors.toSet());
 
@@ -140,7 +140,7 @@ class TestProcedureAssembler {
 
   @Test
   void testAssemblyOfH22LZ_APPROACH() {
-    Collection<ArincProcedureLeg> H22LZLegs = terminalAreaDatabase.legsForProcedure("KJFK", "H22LZ");
+    Collection<ArincProcedureLeg> H22LZLegs = arincTerminalAreaDatabase.legsForProcedure("KJFK", "H22LZ");
 
     Collection<Procedure> procedures = assembler.assemble(H22LZLegs).collect(Collectors.toSet());
 
@@ -180,7 +180,7 @@ class TestProcedureAssembler {
 
   @Test
   void testAssemblyOfI22L_APPROACH() {
-    Collection<ArincProcedureLeg> I22LLegs = terminalAreaDatabase.legsForProcedure("KJFK", "I22L");
+    Collection<ArincProcedureLeg> I22LLegs = arincTerminalAreaDatabase.legsForProcedure("KJFK", "I22L");
 
     Collection<Procedure> procedures = assembler.assemble(I22LLegs).collect(Collectors.toSet());
 
