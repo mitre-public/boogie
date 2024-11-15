@@ -59,13 +59,7 @@ public interface Airspace {
 
   /**
    * This is a fix that the airspace is based on, which might actually be its center or not.
-   * They used to have navaids in the middle, but now could be whatever or not even actually a fix in the database.
-   * @return the name of the center.
-   */
-  Optional<String> centerIdent();
-  /**
-   * This is a fix that the airspace is based on, which might actually be its center or not.
-   * They used to have navaids in the middle, but now could be whatever fix, or not even actually a fix in the database.
+   * They used to have navaids in the middle, but now could be whatever
    * @return a fix which might exist
    */
   Optional<? extends Fix> center();
@@ -84,7 +78,6 @@ public interface Airspace {
     private final String identifier;
     private final AirspaceType airspaceType;
     private final List<AirspaceSequence> sequences;
-    private final String centerIdent;
     private final Fix center;
     private final Range<Double> altitudeLimit;
     private int hashCode;
@@ -94,18 +87,16 @@ public interface Airspace {
       this.identifier = builder.identifier;
       this.airspaceType = builder.airspaceType;
       this.sequences = builder.sequences;
-      this.centerIdent = builder.centerIdent;
       this.center = builder.center;
       this.altitudeLimit = builder.altitudeLimit;
     }
 
     public Builder toBuilder() {
       return new Builder()
-          .area(this.area)
-          .identifier(this.identifier)
-          .airspaceType(this.airspaceType)
-          .sequences(this.sequences)
-          .centerIdent(this.centerIdent)
+          .area(area)
+          .identifier(identifier)
+          .airspaceType(airspaceType)
+          .sequences(sequences)
           .center(this.center)
           .altitudeLimit(this.altitudeLimit);
     }
@@ -131,11 +122,6 @@ public interface Airspace {
     }
 
     @Override
-    public Optional<String> centerIdent() {
-      return Optional.ofNullable(centerIdent);
-    }
-
-    @Override
     public Optional<Fix> center() {
       return Optional.ofNullable(center);
     }
@@ -157,7 +143,7 @@ public interface Airspace {
       if (o == null || getClass() != o.getClass())
         return false;
       Standard standard = (Standard) o;
-      return Objects.equals(area, standard.area) && Objects.equals(identifier, standard.identifier) && airspaceType == standard.airspaceType && Objects.equals(sequences, standard.sequences) && Objects.equals(centerIdent, standard.centerIdent) && Objects.equals(center, standard.center) && Objects.equals(altitudeLimit, standard.altitudeLimit);
+      return Objects.equals(area, standard.area) && Objects.equals(identifier, standard.identifier) && airspaceType == standard.airspaceType && Objects.equals(sequences, standard.sequences) && Objects.equals(center, standard.center) && Objects.equals(altitudeLimit, standard.altitudeLimit);
     }
 
     @Override
@@ -169,7 +155,7 @@ public interface Airspace {
     }
 
     private int computeHashCode() {
-      return Objects.hash(area, identifier, airspaceType, sequences, centerIdent, center, altitudeLimit);
+      return Objects.hash(area, identifier, airspaceType, sequences, center, altitudeLimit);
     }
 
     @Override
@@ -179,7 +165,6 @@ public interface Airspace {
           "identifier='" + identifier + '\'' +
           ", airspaceType=" + airspaceType +
           ", sequences=" + sequences +
-          ", centerIdent='" + centerIdent + '\'' +
           ", center=" + center +
           ", altitudeLimit=" + altitudeLimit +
           '}';
@@ -190,7 +175,6 @@ public interface Airspace {
       private String identifier;
       private AirspaceType airspaceType;
       private List<AirspaceSequence> sequences;
-      private String centerIdent;
       private Fix center;
       private Range<Double> altitudeLimit;
 
@@ -213,11 +197,6 @@ public interface Airspace {
 
       public Builder sequences(List<AirspaceSequence> sequences) {
         this.sequences = sequences;
-        return this;
-      }
-
-      public Builder centerIdent(String centerIdent) {
-        this.centerIdent = centerIdent;
         return this;
       }
 
@@ -271,11 +250,6 @@ public interface Airspace {
     @Override
     public List<? extends AirspaceSequence> sequences() {
       return delegate.sequences();
-    }
-
-    @Override
-    public Optional<String> centerIdent() {
-      return delegate.centerIdent();
     }
 
     @Override

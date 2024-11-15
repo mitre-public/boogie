@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * The Multiple Code field will be used to indicate Restrictive Airspace Areas or MSA Centers having the
  * same designator but subdivided or differently divided by lateral and/or vertical detail.

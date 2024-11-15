@@ -50,7 +50,7 @@ public interface AirwayAssembler<A> {
 
   final class Standard<A, F, L> implements AirwayAssembler<A> {
 
-    private static final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway = ShouldSplitAirway.INSTANCE;
+    private static final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> shouldSplitAirway = SplitList.INSTANCE;
     private static final ArincAirwayLegComparator LEG_COMPARATOR = new ArincAirwayLegComparator();
     private final ArincAirwayLegConverter<A, L, F> inflator;
     private final AirwayAssemblyStrategy<A, F, L> strategy;

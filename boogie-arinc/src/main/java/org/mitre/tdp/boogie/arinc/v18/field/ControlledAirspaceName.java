@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * The Controlled Airspace Name field will contain the name of the controlled airspace when assigned.
  *

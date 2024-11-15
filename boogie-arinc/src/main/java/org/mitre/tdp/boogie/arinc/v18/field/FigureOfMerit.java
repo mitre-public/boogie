@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.ArincInteger;
-
 /**
  * The “Figure of Merit” field is used to specify VHF Navaid facility usable ranges beyond that specified in the Class field.
  * It is also used to specify when a VHF Navaid contained in the database is not available for operational use, i.e., is out

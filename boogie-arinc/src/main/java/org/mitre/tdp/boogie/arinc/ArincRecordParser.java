@@ -1,10 +1,14 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+
+import com.google.common.collect.ImmutableList;
+
+import org.mitre.caasd.commons.Pair;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -53,7 +57,7 @@ public interface ArincRecordParser {
     private final List<RecordSpec> recordSpecs;
 
     private Standard(List<RecordSpec> recordSpecs) {
-      this.recordSpecs = List.copyOf(recordSpecs);
+      this.recordSpecs = ImmutableList.copyOf(recordSpecs);
       this.recordSpecs.forEach(RecordSpecValidator.INSTANCE);
     }
 
@@ -76,7 +80,7 @@ public interface ArincRecordParser {
     ArincRecord createParsedRecord(String rawRecord, RecordSpec recordSpec) {
       int capacity = recordSpec.recordFields().size();
 
-      LinkedHashMap<String, ArincField> namedData = new LinkedHashMap<>(capacity);
+      LinkedHashMap<String, Pair<FieldSpec<?>, String>> namedData = new LinkedHashMap<>(capacity);
 
       int i = 0;
       int offset = 0;
@@ -86,7 +90,7 @@ public interface ArincRecordParser {
         RecordField<?> field = recordSpec.recordFields().get(i);
 
         String value = rawRecord.substring(offset, offset + field.fieldSpec().fieldLength()).intern();
-        namedData.put(field.fieldName(), new ArincField(field.fieldSpec(), value));
+        namedData.put(field.fieldName(), Pair.of(field.fieldSpec(), value));
 
         i++;
         offset += field.fieldSpec().fieldLength();

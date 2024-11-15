@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * The Controlled Airspace Classification field will contain an alpha character indicating the published
  * classification of the controlled airspace, when assigned.

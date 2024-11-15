@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * Enroute airway records have an optional sixth character on the route name.
  */

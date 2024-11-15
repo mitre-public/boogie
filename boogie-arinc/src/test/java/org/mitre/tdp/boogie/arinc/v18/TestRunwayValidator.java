@@ -28,61 +28,55 @@ class TestRunwayValidator {
 
   @Test
   void testValidatorRejectsRecordsWithoutRecordType() {
-    ArincRecord record = newArincRecord("airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "runwayMagneticBearing", "fileRecordNumber", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "fileRecordNumber", "lastUpdateCycle");
     assertFalse(validator.test(record), "Validator should fail records missing RecordType.");
   }
 
   @Test
   void testValidatorRejectsRecordsWithoutAirportIdentifier() {
-    ArincRecord record = newArincRecord("recordType", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "runwayMagneticBearing", "fileRecordNumber", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("recordType", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "fileRecordNumber", "lastUpdateCycle");
     assertFalse(validator.test(record), "Validator should fail records missing AirportIdentifier.");
   }
 
   @Test
   void testValidatorRejectsRecordsWithoutAirportIcaoRegion() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "runwayIdentifier", "latitude", "longitude", "runwayMagneticBearing", "fileRecordNumber", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "runwayIdentifier", "latitude", "longitude", "fileRecordNumber", "lastUpdateCycle");
     assertFalse(validator.test(record), "Validator should fail records missing AirportIcaoRegion.");
   }
 
   @Test
   void testValidatorRejectsRecordsWithoutRunwayIdentifier() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "latitude", "longitude", "runwayMagneticBearing", "fileRecordNumber", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "latitude", "longitude", "fileRecordNumber", "lastUpdateCycle");
     assertFalse(validator.test(record), "Validator should fail records missing RunwayIdentifier.");
   }
 
   @Test
   void testValidatorRejectsRecordsWithoutLatitude() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "longitude", "runwayMagneticBearing", "fileRecordNumber", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "longitude", "fileRecordNumber", "lastUpdateCycle");
     assertFalse(validator.test(record), "Validator should fail records missing Latitude.");
   }
 
   @Test
   void testValidatorRejectsRecordsWithoutLongitude() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "runwayMagneticBearing", "fileRecordNumber", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "fileRecordNumber", "lastUpdateCycle");
     assertFalse(validator.test(record), "Validator should fail records missing Longitude.");
   }
 
   @Test
   void testValidatorRejectsRecordsWithoutFileRecordNumber() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "runwayMagneticBearing", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "lastUpdateCycle");
     assertFalse(validator.test(record), "Validator should fail records missing FileRecordNumber.");
   }
 
   @Test
   void testValidatorRejectsRecordsWithoutLastUpdateCycle() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "runwayMagneticBearing", "fileRecordNumber");
+    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "fileRecordNumber");
     assertFalse(validator.test(record), "Validator should fail records missing LastUpdateCycle.");
   }
 
   @Test
-  void testValidatorRejectsRecordWithNoBearings() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "fileRecordNumber", "lastUpdateCycle");
-    assertFalse(validator.test(record), "Validator should pass record with all required fields.");
-  }
-
-  @Test
   void testValidatorAcceptsRecordWithAllRequiredFields() {
-    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "runwayMagneticBearing", "fileRecordNumber", "lastUpdateCycle");
+    ArincRecord record = newArincRecord("recordType", "airportIdentifier", "airportIcaoRegion", "runwayIdentifier", "latitude", "longitude", "fileRecordNumber", "lastUpdateCycle");
     assertTrue(validator.test(record), "Validator should pass record with all required fields.");
   }
 

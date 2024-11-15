@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.mitre.caasd.commons.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class represents the most basic semi-structured view of an ARINC record. At this point the parser has been "applied" in
  * the sense that it has been used to deconstruct the underlying ARINC record into it's component fields/substrings.
@@ -16,18 +20,21 @@ import java.util.stream.Collectors;
  * the {@link RecordSpec} inline with querying them for explicit values.
  */
 public final class ArincRecord implements Serializable {
+
+  private static final Logger LOG = LoggerFactory.getLogger(ArincRecord.class);
+
   /**
    * An map from the {@link RecordField#fieldName()} to a pair of the associated {@link RecordField#fieldSpec()} and to it's
    * extracted substring of associated data from within the source raw ARINC record string.
    */
-  private final Map<String, ArincField> namedData;
+  private final Map<String, Pair<FieldSpec<?>, String>> namedData;
 
-  ArincRecord(Map<String, ArincField> namedData) {
+  ArincRecord(Map<String, Pair<FieldSpec<?>, String>> namedData) {
     this.namedData = namedData;
   }
 
   public String rawRecord() {
-    return namedData.values().stream().map(ArincField::data).collect(Collectors.joining(""));
+    return namedData.values().stream().map(Pair::second).collect(Collectors.joining(""));
   }
 
   /**
@@ -42,14 +49,14 @@ public final class ArincRecord implements Serializable {
   }
 
   public <U, T extends FieldSpec<U>> Optional<T> specForField(String fieldName) {
-    return Optional.ofNullable(namedData.get(fieldName)).map(p -> (T) p.spec());
+    return Optional.ofNullable(namedData.get(fieldName)).map(p -> (T) p.first());
   }
 
   /**
    * Returns the substring of content from the associated raw ARINC record which is associated with this named field in the spec.
    */
   public String rawField(String fieldName) {
-    return Optional.ofNullable(namedData.get(fieldName)).map(ArincField::data).orElseThrow(() -> new MissingRequiredFieldException(fieldName));
+    return Optional.ofNullable(namedData.get(fieldName)).map(Pair::second).orElseThrow(() -> new MissingRequiredFieldException(fieldName));
   }
 
   /**
@@ -61,8 +68,8 @@ public final class ArincRecord implements Serializable {
    * any hard exceptions due to bad input record content (e.g. NumberFormatException, etc.).
    */
   public <T> Optional<T> optionalField(String fieldName) {
-    Optional<ArincField> spec = Optional.ofNullable(namedData.get(fieldName));
-    return spec.flatMap(field -> (Optional<T>) field.spec().apply(field.data()));
+    Optional<Pair<FieldSpec<?>, String>> spec = Optional.ofNullable(namedData.get(fieldName));
+    return spec.flatMap(pair -> (Optional<T>) pair.first().apply(pair.second()));
   }
 
   /**

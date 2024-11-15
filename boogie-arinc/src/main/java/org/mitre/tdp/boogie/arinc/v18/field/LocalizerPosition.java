@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.ArincInteger;
-
 /**
  * The “Localizer/Azimuth Position” field defines the location of the facility antenna relative to one end of the runway.
  * <br>

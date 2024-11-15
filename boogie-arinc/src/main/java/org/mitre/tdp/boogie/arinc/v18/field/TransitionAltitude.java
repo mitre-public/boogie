@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.ArincDouble;
-
 /**
  * The “Transition Altitude” field defines the altitude in the vicinity of an airport or heliport at or below which the vertical
  * position of an aircraft is controlled by reference to altitudes (MSL).

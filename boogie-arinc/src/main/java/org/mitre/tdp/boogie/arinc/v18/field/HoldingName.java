@@ -1,8 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
-public final class HoldingName extends TrimmableString {
+public class HoldingName extends TrimmableString {
 
   @Override
   public int fieldLength() {

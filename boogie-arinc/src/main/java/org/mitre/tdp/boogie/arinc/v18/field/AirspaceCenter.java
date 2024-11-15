@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * The Controlled Airspace Center field is used to define the navigation element upon which the controlled airspace
  * being defined is predicated, but not necessarily centered. Where the Airspace is not defined then the Region

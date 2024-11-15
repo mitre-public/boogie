@@ -7,7 +7,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 /**
  * The “Latitude” field contains the latitude of the navigational feature identified in the record.
  * <br>
- * Geographic positions whose latitudes must be included in the data are defined during route design, many of them in official
+ * Geographic positions whose latitudes must be included in the data base are defined during route design, many of them in official
  * government publications. The field is constructed as follows. The first character position contains the alpha character “N” or
  * “S” indicating whether the latitude is north or south of the equator. “N” is entered for latitudes falling on the equator.
  * The following eight numeric characters define the latitude in degrees, minutes, seconds, tenths of seconds and hundredths of

@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 
 /**

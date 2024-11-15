@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.ArincInteger;
-
 /**
  * The elevation of the landing threshold of the runway described in a runway record is defined in the “Landing Threshold Elevation” field.
  */

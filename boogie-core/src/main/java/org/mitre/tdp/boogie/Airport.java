@@ -5,7 +5,6 @@ import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -20,7 +19,7 @@ import org.mitre.caasd.commons.LatLong;
 public interface Airport extends HasPosition {
 
   static Standard.Builder builder() {
-    return new Airport.Standard.Builder();
+    return new Standard.Builder();
   }
 
   static <T> Record<T> record(T datum, Airport delegate) {
@@ -49,8 +48,6 @@ public interface Airport extends HasPosition {
 
   Collection<? extends Runway> runways();
 
-  Collection<? extends Helipad> helipads();
-
   void accept(Visitor visitor);
 
   /**
@@ -74,8 +71,6 @@ public interface Airport extends HasPosition {
 
     private final Collection<Runway> runways;
 
-    private final Collection<Helipad> helipads;
-
     private int hashCode;
 
     private Standard(Builder builder) {
@@ -83,7 +78,6 @@ public interface Airport extends HasPosition {
       this.latLong = requireNonNull(builder.latLong);
       this.magneticVariation = builder.magneticVariation;
       this.runways = builder.runways;
-      this.helipads = builder.helipads;
     }
 
     @Override
@@ -106,18 +100,12 @@ public interface Airport extends HasPosition {
       return runways;
     }
 
-    @Override
-    public Collection<Helipad> helipads() {
-      return helipads;
-    }
-
     public Builder toBuilder() {
       return new Builder()
           .airportIdentifier(airportIdentifier)
           .latLong(latLong)
           .magneticVariation(magneticVariation)
-          .runways(runways)
-          .helipads(helipads);
+          .runways(runways);
     }
 
     @Override
@@ -137,8 +125,7 @@ public interface Airport extends HasPosition {
       return Objects.equals(airportIdentifier, standard.airportIdentifier)
           && Objects.equals(latLong, standard.latLong)
           && Objects.equals(magneticVariation, standard.magneticVariation)
-          && Objects.equals(runways, standard.runways)
-          && Objects.equals(helipads, standard.helipads);
+          && Objects.equals(runways, standard.runways);
     }
 
     @Override
@@ -151,7 +138,7 @@ public interface Airport extends HasPosition {
 
     // used by EqualsVerifier
     private int computeHashCode() {
-      return Objects.hash(airportIdentifier, latLong, magneticVariation, runways, helipads);
+      return Objects.hash(airportIdentifier, latLong, magneticVariation, runways);
     }
 
     @Override
@@ -161,7 +148,6 @@ public interface Airport extends HasPosition {
           ", latLong=" + latLong +
           ", magneticVariation=" + magneticVariation +
           ", runways=" + runways +
-          ", helipads=" + helipads +
           '}';
     }
 
@@ -174,8 +160,6 @@ public interface Airport extends HasPosition {
       private MagneticVariation magneticVariation;
 
       private Collection<Runway> runways;
-
-      private Collection<Helipad> helipads;
 
       private Builder() {
       }
@@ -211,27 +195,7 @@ public interface Airport extends HasPosition {
         return this;
       }
 
-      /**
-       * Provide a list of helipads
-       * @param helipads this list will be copied into a new list
-       * @return the builder
-       */
-      public Builder helipads(Collection<? extends Helipad> helipads) {
-        this.helipads = new ArrayList<>(helipads);
-        return this;
-      }
-
-      /**
-       * Add a helipad to the list in the builder
-       * @param helipad to add
-       * @return the builder
-       */
-      public Builder add(Helipad helipad) {
-        this.helipads.add(helipad);
-        return this;
-      }
-
-      public Airport.Standard build() {
+      public Standard build() {
         return new Standard(this);
       }
     }
@@ -275,11 +239,6 @@ public interface Airport extends HasPosition {
     }
 
     @Override
-    public Collection<? extends Helipad> helipads() {
-      return delegate.helipads();
-    }
-
-    @Override
     public void accept(Visitor visitor) {
       visitor.visit(this);
     }
@@ -292,7 +251,7 @@ public interface Airport extends HasPosition {
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
-      Airport.Record<?> record = (Airport.Record<?>) o;
+      Record<?> record = (Record<?>) o;
       return Objects.equals(datum, record.datum)
           && Objects.equals(delegate, record.delegate);
     }

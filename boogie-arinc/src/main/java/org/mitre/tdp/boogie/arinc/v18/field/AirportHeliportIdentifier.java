@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * The content of this field is derived from official government sources. It will be the four character ICAO Location Identifier
  * of the airport or heliport when such is published. It will be the three or four character Domestic Identifier when published

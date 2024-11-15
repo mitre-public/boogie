@@ -31,8 +31,6 @@ public final class ControlledAirspaceLegConverter implements Function<ArincRecor
     Optional<Level> level = arincRecord.optionalField("level");
     Optional<String> timeCode = arincRecord.optionalField("timeCode");
     Optional<String> notam = arincRecord.optionalField("notam");
-    Optional<Double> latitude = arincRecord.optionalField("latitude");
-    Optional<Double> longitude = arincRecord.optionalField("longitude");
     Optional<Double> arcOriginLatitude = arincRecord.optionalField("arcOriginLatitude");
     Optional<Double> arcOriginLongitude = arincRecord.optionalField("arcOriginLongitude");
     Optional<Integer> arcDistance = arincRecord.optionalField("arcDistance");
@@ -43,7 +41,6 @@ public final class ControlledAirspaceLegConverter implements Function<ArincRecor
     Optional<Double> upperLimit = arincRecord.optionalField("upperLimit");
     Optional<String> upperUnitIndicator = arincRecord.optionalField("upperIndicator");
     Optional<String> controlledAirspaceName = arincRecord.optionalField("controlledAirspaceName");
-    Optional<String> airspaceClassification = arincRecord.optionalField("airspaceClassification");
 
     ArincControlledAirspaceLeg controlledAirspace = new ArincControlledAirspaceLeg.Builder()
         .recordType(arincRecord.requiredField("recordType"))
@@ -53,9 +50,9 @@ public final class ControlledAirspaceLegConverter implements Function<ArincRecor
         .icaoCode(arincRecord.requiredField("icaoRegion"))
         .airspaceType(arincRecord.requiredField("airspaceType"))
         .airspaceCenter(arincRecord.requiredField("airspaceCenter"))
-        .suppliedSectionCode(supplierSectionCode.map(Enum::name).orElse(null))
+        .suppliedSectionCode(supplierSectionCode.orElse(null))
         .supplierSubSectionCode(supplierSubSectionCode.orElse(null))
-        .airspaceClassification(airspaceClassification.orElse(null))
+        .airspaceClassification(arincRecord.requiredField("airspaceClassification"))
         .multipleCode(multipleCode.orElse(null))
         .sequenceNumber(arincRecord.requiredField("sequenceNumber"))
         .continuationRecordNumber(continuationRecordNumber.orElse(null))
@@ -63,8 +60,8 @@ public final class ControlledAirspaceLegConverter implements Function<ArincRecor
         .timeCode(timeCode.orElse(null))
         .notam(notam.orElse(null))
         .boundaryVia(arincRecord.requiredField("boundaryVia"))
-        .latitude(latitude.orElse(null))
-        .longitude(longitude.orElse(null))
+        .latitude(arincRecord.requiredField("latitude"))
+        .longitude(arincRecord.requiredField("longitude"))
         .arcOriginLatitude(arcOriginLatitude.orElse(null))
         .arcOriginLongitude(arcOriginLongitude.orElse(null))
         .arcDistance(arcDistance.orElse(null))

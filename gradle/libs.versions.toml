@@ -1,5 +1,5 @@
 [versions]
-junit = "5.11.4"
+junit = "5.11.2"
 slf4j = "1.7.36"
 mockito = "5.2.0"
 jgrapht = "1.5.2"
@@ -7,13 +7,13 @@ jmh = "1.37"
 
 [libraries]
 
-commons-caasd = "org.mitre:commons:0.0.57"
+commons-caasd = "org.mitre:commons:0.0.54"
 commons-math = "org.apache.commons:commons-math3:3.6.1"
 commons-lang = "org.apache.commons:commons-lang3:3.17.0"
 
-guava = "com.google.guava:guava:33.4.0-jre"
+guava = "com.google.guava:guava:31.1-jre"
 
-equalsverifier = "nl.jqno.equalsverifier:equalsverifier:3.18.1"
+equalsverifier = "nl.jqno.equalsverifier:equalsverifier:3.17.1"
 
 jgrapht-core = { module = "org.jgrapht:jgrapht-core", version.ref = "jgrapht" }
 jgrapht-io = { module = "org.jgrapht:jgrapht-io", version.ref = "jgrapht" }
@@ -27,35 +27,33 @@ junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito" }
 
-tdpoet = "org.mitre.tdp:tdpoet:1.0.1"
-
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-log4j12 = { module = "org.slf4j:slf4j-log4j12", version.ref = "slf4j" }
 
 [bundles]
 
 commons = [
-  "slf4j-api",
-  "commons-caasd",
-  "guava",
-  "commons-math",
+    "slf4j-api",
+    "commons-caasd",
+    "guava",
+    "commons-math",
+    "commons-lang"
 ]
 
 jgrapht = [
-  "jgrapht-core",
-  "jgrapht-io",
+    "jgrapht-core",
+    "jgrapht-io",
 ]
 
 jmh = [
-  "jmh-core",
-  "jmh-generator",
+    "jmh-core",
+    "jmh-generator",
 ]
 
 test-tools = [
-  "mockito-core",
-  "mockito-inline",
-  "equalsverifier",
-  "junit-jupiter",
-  "tdpoet",
-  "slf4j-log4j12",
+    "mockito-core",
+    "mockito-inline",
+    "equalsverifier",
+    "junit-jupiter",
+    "slf4j-log4j12",
 ]

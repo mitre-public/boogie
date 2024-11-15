@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * The “FIR/UIR ATC Reporting Units Speed” is used to indicate the units of measurement concerning True Air Speed used in the specific FIR/UIR to fulfill the requirements of ICAO flight plan.
  * 0 - not specified
@@ -9,7 +7,7 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
  * 2 - mach
  * 3 - kilometers/hr
  */
-public final class FirUirReportingUnitsSpeed extends TrimmableString {
+public class FirUirReportingUnitsSpeed extends TrimmableString {
   @Override
   public int fieldLength() {
     return 1;

@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
-import org.mitre.tdp.boogie.arinc.utils.LegTimeFromString;
+import org.mitre.tdp.boogie.arinc.v18.field.LegTimeFromString;
 
 /**
  * Because the holding pattern only changed by ARINC version by adding fields, this class creates the baseline

@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * The “Route Identifier” field identifies a route of flight or traffic orientation, using the coding employed on aeronautical
  * navigation charts and related publications.

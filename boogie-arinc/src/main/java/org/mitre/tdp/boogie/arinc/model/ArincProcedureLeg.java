@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.v18.field.AltitudeDescription;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -35,10 +34,6 @@ public final class ArincProcedureLeg implements ArincModel {
   private final String sidStarIdentifier;
   private final String routeType;
   private final String transitionIdentifier;
-  /**
-   * See {@link CategoryOrType}.
-   */
-  private final String categoryOrType;
   private final int sequenceNumber;
   private final String fixIdentifier;
   private final String fixIcaoRegion;
@@ -55,7 +50,6 @@ public final class ArincProcedureLeg implements ArincModel {
   private final Boolean turnDirectionValid;
   private final String recommendedNavaidIdentifier;
   private final String recommendedNavaidIcaoRegion;
-  private final String legInboundOutboundIdentifier;
   private final Float arcRadius;
   private final Float theta;
   private final Float rho;
@@ -78,15 +72,12 @@ public final class ArincProcedureLeg implements ArincModel {
   private final String centerFixIcaoRegion;
   private final SectionCode centerFixSectionCode;
   private final String centerFixSubSectionCode;
-  private final String gnssFmsIndicator;
   /**
    * See {@link SpeedLimitDescription} for options - and note "blank"s are mapped to "@"s.
    */
   private final String speedLimitDescription;
   private final String routeTypeQualifier1;
   private final String routeTypeQualifier2;
-  private final String routeTypeQualifier3;
-  private final String preferredMultipleApproachIndicator;
   private final int fileRecordNumber;
   private final String lastUpdateCycle;
 
@@ -100,7 +91,6 @@ public final class ArincProcedureLeg implements ArincModel {
     this.sidStarIdentifier = builder.sidStarIdentifier;
     this.routeType = builder.routeType;
     this.transitionIdentifier = builder.transitionIdentifier;
-    this.categoryOrType = builder.categoryOrType;
     this.sequenceNumber = builder.sequenceNumber;
     this.fixIdentifier = builder.fixIdentifier;
     this.fixIcaoRegion = builder.fixIcaoRegion;
@@ -114,7 +104,6 @@ public final class ArincProcedureLeg implements ArincModel {
     this.turnDirectionValid = builder.turnDirectionValid;
     this.recommendedNavaidIdentifier = builder.recommendedNavaidIdentifier;
     this.recommendedNavaidIcaoRegion = builder.recommendedNavaidIcaoRegion;
-    this.legInboundOutboundIdentifier = builder.legInboundOutboundIndicator;
     this.arcRadius = ofNullable(builder.arcRadius).map(Double::floatValue).orElse(null);
     this.theta = ofNullable(builder.theta).map(Double::floatValue).orElse(null);
     this.rho = ofNullable(builder.rho).map(Double::floatValue).orElse(null);
@@ -134,12 +123,9 @@ public final class ArincProcedureLeg implements ArincModel {
     this.centerFixIcaoRegion = builder.centerFixIcaoRegion;
     this.centerFixSectionCode = builder.centerFixSectionCode;
     this.centerFixSubSectionCode = builder.centerFixSubSectionCode;
-    this.gnssFmsIndicator = builder.gnssFmsIndicator;
     this.speedLimitDescription = builder.speedLimitDescription;
     this.routeTypeQualifier1 = builder.routeTypeQualifier1;
     this.routeTypeQualifier2 = builder.routeTypeQualifier2;
-    this.routeTypeQualifier3 = builder.routeTypeQualifier3;
-    this.preferredMultipleApproachIndicator = builder.preferredMultipleApproachIndicator;
     this.fileRecordNumber = builder.fileRecordNumber;
     this.lastUpdateCycle = builder.lastUpdateCycle;
   }
@@ -180,10 +166,6 @@ public final class ArincProcedureLeg implements ArincModel {
 
   public Optional<String> transitionIdentifier() {
     return ofNullable(transitionIdentifier);
-  }
-
-  public Optional<String> categoryOrType() {
-    return ofNullable(categoryOrType);
   }
 
   public int sequenceNumber() {
@@ -274,10 +256,6 @@ public final class ArincProcedureLeg implements ArincModel {
     return ofNullable(recommendedNavaidSubSectionCode);
   }
 
-  public Optional<String> legInboundOutboundIdentifier() {
-    return ofNullable(legInboundOutboundIdentifier);
-  }
-
   public Optional<String> altitudeDescription() {
     return ofNullable(altitudeDescription);
   }
@@ -318,10 +296,6 @@ public final class ArincProcedureLeg implements ArincModel {
     return ofNullable(centerFixSubSectionCode);
   }
 
-  public Optional<String> gnssFmsIndicator() {
-    return ofNullable(gnssFmsIndicator);
-  }
-
   public Optional<String> speedLimitDescription() {
     return ofNullable(speedLimitDescription);
   }
@@ -332,14 +306,6 @@ public final class ArincProcedureLeg implements ArincModel {
 
   public Optional<String> routeTypeQualifier2() {
     return ofNullable(routeTypeQualifier2);
-  }
-
-  public Optional<String> routeTypeQualifier3() {
-    return ofNullable(routeTypeQualifier3);
-  }
-
-  public Optional<String> preferredMultipleApproachIndicator() {
-    return ofNullable(preferredMultipleApproachIndicator);
   }
 
   public int fileRecordNumber() {
@@ -361,7 +327,6 @@ public final class ArincProcedureLeg implements ArincModel {
         .sidStarIdentifier(sidStarIdentifier())
         .routeType(routeType())
         .transitionIdentifier(transitionIdentifier().orElse(null))
-        .categoryOrType(categoryOrType().orElse(null))
         .sequenceNumber(sequenceNumber())
         .fixIdentifier(fixIdentifier().orElse(null))
         .fixIcaoRegion(fixIcaoRegion().orElse(null))
@@ -375,7 +340,6 @@ public final class ArincProcedureLeg implements ArincModel {
         .turnDirectionValid(turnDirectionValid().orElse(null))
         .recommendedNavaidIdentifier(recommendedNavaidIdentifier().orElse(null))
         .recommendedNavaidIcaoRegion(recommendedNavaidIcaoRegion().orElse(null))
-        .legInboundOutboundIndicator(legInboundOutboundIdentifier().orElse(null))
         .arcRadius(arcRadius().orElse(null))
         .theta(theta().orElse(null))
         .rho(rho().orElse(null))
@@ -395,12 +359,9 @@ public final class ArincProcedureLeg implements ArincModel {
         .centerFixIcaoRegion(centerFixIcaoRegion().orElse(null))
         .centerFixSectionCode(centerFixSectionCode().orElse(null))
         .centerFixSubSectionCode(centerFixSubSectionCode().orElse(null))
-        .gnssFmsIndicator(gnssFmsIndicator().orElse(null))
         .speedLimitDescription(speedLimitDescription().orElse(null))
         .routeTypeQualifier1(routeTypeQualifier1().orElse(null))
         .routeTypeQualifier2(routeTypeQualifier2().orElse(null))
-        .routeTypeQualifier3(routeTypeQualifier3().orElse(null))
-        .preferredMultipleApproachIndicator(preferredMultipleApproachIndicator().orElse(null))
         .fileRecordNumber(fileRecordNumber())
         .lastUpdateCycle(lastUpdateCycle());
   }
@@ -423,7 +384,6 @@ public final class ArincProcedureLeg implements ArincModel {
         Objects.equals(sidStarIdentifier, that.sidStarIdentifier) &&
         Objects.equals(routeType, that.routeType) &&
         Objects.equals(transitionIdentifier, that.transitionIdentifier) &&
-        Objects.equals(categoryOrType, that.categoryOrType) &&
         Objects.equals(sequenceNumber, that.sequenceNumber) &&
         Objects.equals(fixIdentifier, that.fixIdentifier) &&
         Objects.equals(fixIcaoRegion, that.fixIcaoRegion) &&
@@ -437,7 +397,6 @@ public final class ArincProcedureLeg implements ArincModel {
         Objects.equals(turnDirectionValid, that.turnDirectionValid) &&
         Objects.equals(recommendedNavaidIdentifier, that.recommendedNavaidIdentifier) &&
         Objects.equals(recommendedNavaidIcaoRegion, that.recommendedNavaidIcaoRegion) &&
-        Objects.equals(legInboundOutboundIdentifier, that.legInboundOutboundIdentifier) &&
         Objects.equals(arcRadius, that.arcRadius) &&
         Objects.equals(theta, that.theta) &&
         Objects.equals(rho, that.rho) &&
@@ -457,19 +416,16 @@ public final class ArincProcedureLeg implements ArincModel {
         Objects.equals(centerFixIcaoRegion, that.centerFixIcaoRegion) &&
         centerFixSectionCode == that.centerFixSectionCode &&
         Objects.equals(centerFixSubSectionCode, that.centerFixSubSectionCode) &&
-        Objects.equals(gnssFmsIndicator, that.gnssFmsIndicator) &&
         Objects.equals(speedLimitDescription, that.speedLimitDescription) &&
         Objects.equals(routeTypeQualifier1, that.routeTypeQualifier1) &&
         Objects.equals(routeTypeQualifier2, that.routeTypeQualifier2) &&
-        Objects.equals(routeTypeQualifier3, that.routeTypeQualifier3) &&
-        Objects.equals(preferredMultipleApproachIndicator, that.preferredMultipleApproachIndicator) &&
         Objects.equals(fileRecordNumber, that.fileRecordNumber) &&
         Objects.equals(lastUpdateCycle, that.lastUpdateCycle);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, sidStarIdentifier, routeType, transitionIdentifier, categoryOrType, sequenceNumber, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubSectionCode, continuationRecordNumber, waypointDescription, turnDirection, rnp, pathTerminator, turnDirectionValid, recommendedNavaidIdentifier, recommendedNavaidIcaoRegion, legInboundOutboundIdentifier, arcRadius, theta, rho, outboundMagneticCourse, routeHoldDistanceTime, holdTime, routeDistance, recommendedNavaidSectionCode, recommendedNavaidSubSectionCode, altitudeDescription, minAltitude1, minAltitude2, transitionAltitude, speedLimit, verticalAngle, centerFixIdentifier, centerFixIcaoRegion, centerFixSectionCode, centerFixSubSectionCode, gnssFmsIndicator, speedLimitDescription, routeTypeQualifier1, routeTypeQualifier2, routeTypeQualifier3, preferredMultipleApproachIndicator, fileRecordNumber, lastUpdateCycle);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, sidStarIdentifier, routeType, transitionIdentifier, sequenceNumber, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubSectionCode, continuationRecordNumber, waypointDescription, turnDirection, rnp, pathTerminator, turnDirectionValid, recommendedNavaidIdentifier, recommendedNavaidIcaoRegion, arcRadius, theta, rho, outboundMagneticCourse, routeHoldDistanceTime, holdTime, routeDistance, recommendedNavaidSectionCode, recommendedNavaidSubSectionCode, altitudeDescription, minAltitude1, minAltitude2, transitionAltitude, speedLimit, verticalAngle, centerFixIdentifier, centerFixIcaoRegion, centerFixSectionCode, centerFixSubSectionCode, speedLimitDescription, routeTypeQualifier1, routeTypeQualifier2, fileRecordNumber, lastUpdateCycle);
   }
 
   @Override
@@ -484,7 +440,6 @@ public final class ArincProcedureLeg implements ArincModel {
         ", sidStarIdentifier='" + sidStarIdentifier + '\'' +
         ", routeType='" + routeType + '\'' +
         ", transitionIdentifier='" + transitionIdentifier + '\'' +
-        ", categoryOrType='" + categoryOrType + '\'' +
         ", sequenceNumber=" + sequenceNumber +
         ", fixIdentifier='" + fixIdentifier + '\'' +
         ", fixIcaoRegion='" + fixIcaoRegion + '\'' +
@@ -498,7 +453,6 @@ public final class ArincProcedureLeg implements ArincModel {
         ", turnDirectionValid=" + turnDirectionValid +
         ", recommendedNavaidIdentifier='" + recommendedNavaidIdentifier + '\'' +
         ", recommendedNavaidIcaoRegion='" + recommendedNavaidIcaoRegion + '\'' +
-        ", legInboundOutboundIdentifier='" + legInboundOutboundIdentifier + '\'' +
         ", arcRadius=" + arcRadius +
         ", theta=" + theta +
         ", rho=" + rho +
@@ -518,12 +472,9 @@ public final class ArincProcedureLeg implements ArincModel {
         ", centerFixIcaoRegion='" + centerFixIcaoRegion + '\'' +
         ", centerFixSectionCode=" + centerFixSectionCode +
         ", centerFixSubSectionCode='" + centerFixSubSectionCode + '\'' +
-        ", gnssFmsIndicator='" + gnssFmsIndicator + '\'' +
         ", speedLimitDescription=" + speedLimitDescription +
         ", routeTypeQualifier1='" + routeTypeQualifier1 + '\'' +
         ", routeTypeQualifier2='" + routeTypeQualifier2 + '\'' +
-        ", routeTypeQualifier3='" + routeTypeQualifier3 + '\'' +
-        ", preferredMultipleApproachIndicator='" + preferredMultipleApproachIndicator + '\'' +
         ", fileRecordNumber=" + fileRecordNumber +
         ", lastUpdateCycle='" + lastUpdateCycle + '\'' +
         '}';
@@ -539,7 +490,6 @@ public final class ArincProcedureLeg implements ArincModel {
     private String sidStarIdentifier;
     private String routeType;
     private String transitionIdentifier;
-    private String categoryOrType;
     private Integer sequenceNumber;
     private String fixIdentifier;
     private String fixIcaoRegion;
@@ -562,7 +512,6 @@ public final class ArincProcedureLeg implements ArincModel {
     private Double routeDistance;
     private SectionCode recommendedNavaidSectionCode;
     private String recommendedNavaidSubSectionCode;
-    private String legInboundOutboundIndicator;
     private String altitudeDescription;
     private Double minAltitude1;
     private Double minAltitude2;
@@ -573,12 +522,9 @@ public final class ArincProcedureLeg implements ArincModel {
     private String centerFixIcaoRegion;
     private SectionCode centerFixSectionCode;
     private String centerFixSubSectionCode;
-    private String gnssFmsIndicator;
     private String speedLimitDescription;
     private String routeTypeQualifier1;
     private String routeTypeQualifier2;
-    private String routeTypeQualifier3;
-    private String preferredMultipleApproachIndicator;
     private Integer fileRecordNumber;
     private String lastUpdateCycle;
 
@@ -624,11 +570,6 @@ public final class ArincProcedureLeg implements ArincModel {
 
     public Builder transitionIdentifier(String transitionIdentifier) {
       this.transitionIdentifier = transitionIdentifier;
-      return this;
-    }
-
-    public Builder categoryOrType(String categoryOrType) {
-      this.categoryOrType = categoryOrType;
       return this;
     }
 
@@ -694,11 +635,6 @@ public final class ArincProcedureLeg implements ArincModel {
 
     public Builder recommendedNavaidIcaoRegion(String recommendedNavaidIcaoRegion) {
       this.recommendedNavaidIcaoRegion = recommendedNavaidIcaoRegion;
-      return this;
-    }
-
-    public Builder legInboundOutboundIndicator(String legInboundOutboundIndicator) {
-      this.legInboundOutboundIndicator = legInboundOutboundIndicator;
       return this;
     }
 
@@ -797,11 +733,6 @@ public final class ArincProcedureLeg implements ArincModel {
       return this;
     }
 
-    public Builder gnssFmsIndicator(String gnssFmsIndicator) {
-      this.gnssFmsIndicator = gnssFmsIndicator;
-      return this;
-    }
-
     public Builder speedLimitDescription(String speedLimitDescription) {
       this.speedLimitDescription = speedLimitDescription;
       return this;
@@ -814,16 +745,6 @@ public final class ArincProcedureLeg implements ArincModel {
 
     public Builder routeTypeQualifier2(String routeTypeQualifier2) {
       this.routeTypeQualifier2 = routeTypeQualifier2;
-      return this;
-    }
-
-    public Builder routeTypeQualifier3(String routeTypeQualifier3) {
-      this.routeTypeQualifier3 = routeTypeQualifier3;
-      return this;
-    }
-
-    public Builder preferredMultipleApproachIndicator(String preferredMultipleApproachIndicator) {
-      this.preferredMultipleApproachIndicator = preferredMultipleApproachIndicator;
       return this;
     }
 

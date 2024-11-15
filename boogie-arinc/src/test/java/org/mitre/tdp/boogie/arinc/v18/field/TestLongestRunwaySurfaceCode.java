@@ -23,15 +23,15 @@ class TestLongestRunwaySurfaceCode {
   @Test
   void testParserFiltersInvalidLongestRunwaySurfaceCodeValues() {
     assertAll(
-        () -> assertFalse(LongestRunwaySurfaceCode.VALID.contains("1")),
+        () -> assertFalse(LongestRunwaySurfaceCode.enumValues.contains("1")),
         () -> assertEquals(Optional.empty(), LongestRunwaySurfaceCode.SPEC.apply("1")),
-        () -> assertFalse(LongestRunwaySurfaceCode.VALID.contains("A")),
+        () -> assertFalse(LongestRunwaySurfaceCode.enumValues.contains("A")),
         () -> assertEquals(Optional.empty(), LongestRunwaySurfaceCode.SPEC.apply("A"))
     );
   }
 
   @Test
   void testParserReturnsAllValidLongestRunwaySurfaceCodes() {
-    LongestRunwaySurfaceCode.VALID.forEach(val -> assertEquals(Optional.of(LongestRunwaySurfaceCode.valueOf(val)), LongestRunwaySurfaceCode.SPEC.apply(val)));
+    LongestRunwaySurfaceCode.enumValues.forEach(val -> assertEquals(Optional.of(LongestRunwaySurfaceCode.valueOf(val)), LongestRunwaySurfaceCode.SPEC.apply(val)));
   }
 }

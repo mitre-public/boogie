@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.ArincInteger;
-
 /**
  * The “Glide Slope/Elevation Position” field defines the location of the antenna with respect to the approach end of the runway.
  */

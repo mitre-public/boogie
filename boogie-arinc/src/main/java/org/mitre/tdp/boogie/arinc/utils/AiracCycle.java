@@ -7,7 +7,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,23 +22,8 @@ public final class AiracCycle {
   private AiracCycle() {
   }
 
-  /**
-   * This method returns the starting Instant for the input AIRAC cycle.
-   * @param cycle the YYCC cycle
-   * @return an instant that starts that cycle
-   */
   public static Instant startDate(String cycle) {
     return CYCLE_TO_DATE.computeIfAbsent(cycle, c -> Airac.fromIdentifier(cycle).getEffective());
-  }
-
-  /**
-   * This method returns the expiration Instant for the input AIRAC cycle.
-   * @param cycle the YYCC cycle
-   * @return an instant that ends that cycle (and starts the next cycle)
-   */
-  public static Instant endDate(String cycle) {
-    Airac nextCycle = Airac.fromIdentifier(cycle).getNext();
-    return startDate(nextCycle.toString());
   }
 
   public static boolean isValidCycle(String cycle) {
@@ -48,19 +32,6 @@ public final class AiracCycle {
         && Character.isDigit(cycle.charAt(1))
         && Character.isDigit(cycle.charAt(2))
         && Character.isDigit(cycle.charAt(3));
-  }
-
-  /**
-   * Provides the AIRAC cycle for the given time.
-   * @param time the time you want to see the cycle for.
-   * @return the AIRAC cycle which is YYCC where the YY is the year and the CC is the cycle for the year.
-   */
-  public static String cycleFor(Instant time) {
-    return Optional.of(time)
-        .filter(i -> i.isAfter(Airac.epoch))
-        .map(Airac::fromInstant)
-        .map(Airac::toString)
-        .orElseThrow(() -> new IllegalArgumentException("Could not convert the time to an airac cycle: " + time));
   }
 
   /**

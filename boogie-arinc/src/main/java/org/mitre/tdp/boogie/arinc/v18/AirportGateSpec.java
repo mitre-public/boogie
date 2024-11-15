@@ -21,7 +21,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 
 import java.util.List;
 
-public final class AirportGateSpec implements RecordSpec {
+public class AirportGateSpec implements RecordSpec {
   private final List<RecordField<?>> recordFields;
 
   public AirportGateSpec() {

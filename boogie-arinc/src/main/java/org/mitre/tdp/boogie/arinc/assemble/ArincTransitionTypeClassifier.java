@@ -135,8 +135,6 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
 
       if (IsFirstLegOfMissedApproach.INSTANCE.test(firstLeg)) {
         return TransitionType.MISSED;
-      } else if ("Z".equals(firstLeg.routeType())) {
-        return TransitionType.MISSED;
       } else if ("ALL".equals(adjustedTransitionName)) {
         return TransitionType.COMMON;
       } else {

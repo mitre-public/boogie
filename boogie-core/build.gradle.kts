@@ -1,11 +1,31 @@
 plugins {
-    id("project.lib-conventions")
+    id("java")
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
-    api(libs.bundles.commons)
-    api(libs.bundles.jgrapht)
+    implementation(libs.guava)
+    implementation(libs.bundles.commons)
+    implementation(libs.bundles.jgrapht)
 
     testImplementation(platform(rootProject.libs.junit.bom))
     testImplementation(rootProject.libs.bundles.test.tools)
+}
+
+tasks.test {
+    useJUnitPlatform() // Use JUnit 5 platform
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
+
+configure<JavaPluginExtension> {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+    withSourcesJar()
+    withJavadocJar()
 }

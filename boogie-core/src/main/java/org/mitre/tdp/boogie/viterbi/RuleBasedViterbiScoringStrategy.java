@@ -34,8 +34,8 @@ public final class RuleBasedViterbiScoringStrategy<STAGE, STATE> implements Vite
     return score;
   }
 
-  public static <Stage, State> RuleBasedViterbiScoringStrategy.Builder<Stage, State> newBuilder() {
-    return new RuleBasedViterbiScoringStrategy.Builder<>();
+  public static <Stage, State> Builder<Stage, State> newBuilder() {
+    return new Builder<>();
   }
 
   public static final class Builder<Stage, State> {

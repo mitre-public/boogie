@@ -214,12 +214,11 @@ The current set of java POJO conversions are based on the V18 record <i>format</
 about the specific contents of any field and should therefore be valid targets for data from any of the following versions and record types (i.e. the extracted content of a field may change - but 
 since the <i>structure</i> of the records has remained consistent the java POJOs have valid landing grounds for that info).
 
-| Version | Airport (PA) | Runway (PG) | Helipad (PH) | Loc/GlideSlope (PI) | NDB Navaid (DB, PN) | VHF Navaid (D) | Waypoints (EA, PC) | Legs (PD, PE, PF) | Airways (ER) | Airspace (UR) |
-|:-------:|:------------:|:-----------:|:------------:|:-------------------:|:-------------------:|:--------------:|:------------------:|:-----------------:|:------------:|:-------------:|
-| 18      |y             |y            |y             |y                    |y                    |y               |y                   |y                  |y             |Y
-| 19a     |y             |y            |y             |y                    |y                    |y               |y                   |y                  |y             |Y
-| 21      |y             |y            |y             |y                    |y                    |y               |y                   |y                  |y             |Y
-| 22      |y             |y            |y             |y                    |y                    |y               |y                   |y                  |y             |Y
+| Version | Airport (PA) | Runway (PG) | Loc/GlideSlope (PI) | NDB Navaid (DB, PN) | VHF Navaid (D) | Waypoints (EA, PC) | ProcedureLegs (PD, PE, PF) | Airways (ER) | Airspace (UR) |
+|:-------:|:------------:|:-----------:|:-------------------:|:-------------------:|:--------------:|:------------------:|:--------------------------:|:------------:|:-------------:|
+| 18      |y             |y            |y                    |y                    |y               |y                   |y                           |y             |y              |
+| 19a     |y             |y            |y                    |y                    |y               |y                   |y                           |y             |y              |
+| 21      |y             |y            |y                    |y                    |y               |y                   |y                           |y             |y              |
 
 It should be noted that the above *is not* a complete parsing of all of the available record types within the 424 spec - and is instead a focused (high value) subset for general use in aviation 
 research.

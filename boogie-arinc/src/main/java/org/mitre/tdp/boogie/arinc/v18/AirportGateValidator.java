@@ -10,9 +10,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.arinc.ValidationHelper.containsParsedField;
+import static org.mitre.tdp.boogie.arinc.v18.ValidationHelper.containsParsedField;
 
-public final class AirportGateValidator implements Predicate<ArincRecord> {
+public class AirportGateValidator implements Predicate<ArincRecord> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AirportGateValidator.class);
 

@@ -61,7 +61,7 @@ public interface Leg {
   }
 
   /**
-   * Returns a new constrained instance of a builder for {@link Leg.Standard} specific to {@link PathTerminator#AF} legs.
+   * Returns a new constrained instance of a builder for {@link Standard} specific to {@link PathTerminator#AF} legs.
    *
    * <p>This builder contains a subset of the setters available on the {@link Standard.Builder} and will throw exceptions when
    * building if the required fields aren't present.
@@ -75,7 +75,7 @@ public interface Leg {
   }
 
   /**
-   * Returns a new constrained instance of a builder for {@link Leg.Standard} specific to {@link PathTerminator#IF} legs.
+   * Returns a new constrained instance of a builder for {@link Standard} specific to {@link PathTerminator#IF} legs.
    *
    * <p>This builder contains a subset of the setters available on the {@link Standard.Builder} and will throw exceptions when
    * building if the required fields aren't present.
@@ -85,7 +85,7 @@ public interface Leg {
   }
 
   /**
-   * Returns a new constrained instance of a builder for {@link Leg.Standard} specific to {@link PathTerminator#DF} legs.
+   * Returns a new constrained instance of a builder for {@link Standard} specific to {@link PathTerminator#DF} legs.
    *
    * <p>This builder contains a subset of the setters available on the {@link Standard.Builder} and will throw exceptions when
    * building if the required fields aren't present.
@@ -95,7 +95,7 @@ public interface Leg {
   }
 
   /**
-   * Returns a new constrained instance of a builder for {@link Leg.Standard} specific to {@link PathTerminator#TF} legs.
+   * Returns a new constrained instance of a builder for {@link Standard} specific to {@link PathTerminator#TF} legs.
    *
    * <p>This builder contains a subset of the setters available on the {@link Standard.Builder} and will throw exceptions when
    * building if the required fields aren't present.
@@ -376,12 +376,12 @@ public interface Leg {
     }
 
     @Override
-    public Range<java.lang.Double> speedConstraint() {
+    public Range<Double> speedConstraint() {
       return speedConstraint;
     }
 
     @Override
-    public Range<java.lang.Double> altitudeConstraint() {
+    public Range<Double> altitudeConstraint() {
       return altitudeConstraint;
     }
 
@@ -507,8 +507,8 @@ public interface Leg {
       private Double routeDistance;
       private Duration holdTime;
       private Double verticalAngle;
-      private Range<java.lang.Double> speedConstraint = Range.all();
-      private Range<java.lang.Double> altitudeConstraint = Range.all();
+      private Range<Double> speedConstraint = Range.all();
+      private Range<Double> altitudeConstraint = Range.all();
       private TurnDirection turnDirection;
       private boolean isFlyOverFix;
       private boolean isPublishedHoldingFix;
@@ -573,12 +573,12 @@ public interface Leg {
         return this;
       }
 
-      public Builder speedConstraint(Range<java.lang.Double> speedConstraint) {
+      public Builder speedConstraint(Range<Double> speedConstraint) {
         this.speedConstraint = requireNonNull(speedConstraint, "Use Range.all()");
         return this;
       }
 
-      public Builder altitudeConstraint(Range<java.lang.Double> altitudeConstraint) {
+      public Builder altitudeConstraint(Range<Double> altitudeConstraint) {
         this.altitudeConstraint = requireNonNull(altitudeConstraint, "Use Range.all()");
         return this;
       }
@@ -982,12 +982,12 @@ public interface Leg {
       return this;
     }
 
-    public CfBuilder speedConstraint(Range<java.lang.Double> speedConstraint) {
+    public CfBuilder speedConstraint(Range<Double> speedConstraint) {
       this.delegate.speedConstraint(speedConstraint);
       return this;
     }
 
-    public CfBuilder altitudeConstraint(Range<java.lang.Double> altitudeConstraint) {
+    public CfBuilder altitudeConstraint(Range<Double> altitudeConstraint) {
       this.delegate.altitudeConstraint(altitudeConstraint);
       return this;
     }
@@ -1052,12 +1052,12 @@ public interface Leg {
       return this;
     }
 
-    public IfBuilder speedConstraint(Range<java.lang.Double> speedConstraint) {
+    public IfBuilder speedConstraint(Range<Double> speedConstraint) {
       this.delegate.speedConstraint(speedConstraint);
       return this;
     }
 
-    public IfBuilder altitudeConstraint(Range<java.lang.Double> altitudeConstraint) {
+    public IfBuilder altitudeConstraint(Range<Double> altitudeConstraint) {
       this.delegate.altitudeConstraint(altitudeConstraint);
       return this;
     }
@@ -1111,12 +1111,12 @@ public interface Leg {
       return this;
     }
 
-    public DfBuilder speedConstraint(Range<java.lang.Double> speedConstraint) {
+    public DfBuilder speedConstraint(Range<Double> speedConstraint) {
       this.delegate.speedConstraint(speedConstraint);
       return this;
     }
 
-    public DfBuilder altitudeConstraint(Range<java.lang.Double> altitudeConstraint) {
+    public DfBuilder altitudeConstraint(Range<Double> altitudeConstraint) {
       this.delegate.altitudeConstraint(altitudeConstraint);
       return this;
     }
@@ -1200,12 +1200,12 @@ public interface Leg {
       return this;
     }
 
-    public TfBuilder speedConstraint(Range<java.lang.Double> speedConstraint) {
+    public TfBuilder speedConstraint(Range<Double> speedConstraint) {
       this.delegate.speedConstraint(speedConstraint);
       return this;
     }
 
-    public TfBuilder altitudeConstraint(Range<java.lang.Double> altitudeConstraint) {
+    public TfBuilder altitudeConstraint(Range<Double> altitudeConstraint) {
       this.delegate.altitudeConstraint(altitudeConstraint);
       return this;
     }

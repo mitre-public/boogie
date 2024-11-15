@@ -36,7 +36,7 @@ public interface AirspaceSequence {
   /**
    * The associated fix for the sequence.
    */
-  Optional<LatLong> associatedFix();
+  LatLong associatedFix();
 
   /**
    * For geometries which define arcs as a constant radius turn between fixes this will contain the information about the center
@@ -95,7 +95,7 @@ public interface AirspaceSequence {
     private int hashCode;
 
     private Standard(Builder builder) {
-      this.associatedFix = builder.associatedFix;
+      this.associatedFix = requireNonNull(builder.associatedFix);
       this.centerFix = builder.centerFix;
       this.arcRadius = builder.arcRadius;
       this.arcBearing = builder.arcBearing;
@@ -114,8 +114,8 @@ public interface AirspaceSequence {
     }
 
     @Override
-    public Optional<LatLong> associatedFix() {
-      return Optional.ofNullable(associatedFix);
+    public LatLong associatedFix() {
+      return associatedFix;
     }
 
     @Override
@@ -244,7 +244,7 @@ public interface AirspaceSequence {
     }
 
     @Override
-    public Optional<LatLong> associatedFix() {
+    public LatLong associatedFix() {
       return delegate.associatedFix();
     }
 

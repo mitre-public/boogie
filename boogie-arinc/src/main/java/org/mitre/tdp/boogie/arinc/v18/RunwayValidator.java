@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.arinc.ValidationHelper.containsParsedField;
+import static org.mitre.tdp.boogie.arinc.v18.ValidationHelper.containsParsedField;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -35,7 +35,6 @@ public final class RunwayValidator implements Predicate<ArincRecord> {
         && containsParsedField(arincRecord, "runwayIdentifier", missingFieldConsumer)
         && containsParsedField(arincRecord, "latitude", missingFieldConsumer)
         && containsParsedField(arincRecord, "longitude", missingFieldConsumer)
-        && containsParsedField(arincRecord, "runwayMagneticBearing", missingFieldConsumer)
         && containsParsedField(arincRecord, "fileRecordNumber", missingFieldConsumer)
         && containsParsedField(arincRecord, "lastUpdateCycle", missingFieldConsumer);
   }

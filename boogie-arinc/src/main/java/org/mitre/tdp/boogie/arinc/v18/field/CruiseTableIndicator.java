@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * A standard cruising level table is established by ICAO and is to be observed except when, on the basis of regional air navigation agreements,
  * a modified table of cruising levels is prescribed for use. This field permits the enroute airway record to identify the Cruise Table record

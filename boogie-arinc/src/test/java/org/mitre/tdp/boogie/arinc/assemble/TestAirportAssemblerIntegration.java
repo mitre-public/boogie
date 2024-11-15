@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
 @Tag("INTEGRATION")
 class TestAirportAssemblerIntegration {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TestCifpProcedureAssemblerIntegration.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestProcedureAssemblerIntegration.class);
 
   private static Map<String, List<Airport>> airports;
 
@@ -43,8 +42,7 @@ class TestAirportAssemblerIntegration {
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincProcedureLegs(),
-        EmbeddedCifpFile.instance().arincGnssLandingSystems(),
-        Collections.emptySet()
+        EmbeddedCifpFile.instance().arincGnssLandingSystems()
     );
 
     AirportAssembler<Airport> assembler = AirportAssembler.standard(arincTerminalAreaDatabase);

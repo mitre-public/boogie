@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * When used on the Primary or Primary Extension Continuation Record of the possible record types, with the
  * exception of the Airway Restriction Records, the Time Code field is used to indicate that the data
@@ -34,7 +32,7 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
  *
  */
 
-public final class TimeCode extends TrimmableString {
+public final class TimeCode extends TrimmableString{
   @Override
   public int fieldLength() {
     return 1;

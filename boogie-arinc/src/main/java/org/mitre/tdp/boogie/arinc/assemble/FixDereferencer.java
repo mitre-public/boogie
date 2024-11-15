@@ -46,18 +46,36 @@ public final class FixDereferencer<F> {
    */
   Optional<F> dereference(String identifier, @Nullable String airport, String icaoRegion, SectionCode sectionCode, @Nullable String subSectionCode) {
     String sectionSubSection = sectionCode.name().concat(Optional.ofNullable(subSectionCode).orElse(""));
-    return switch (sectionSubSection) {
-      case "PA" -> arincFixDatabase.airport(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "DB" -> arincFixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "PN" -> arincFixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "D" -> arincFixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "EA" -> arincFixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "PC" -> arincTerminalAreaDatabase.waypointAt(airport, icaoRegion, identifier).map(fixAssembler::assemble);
-      case "PG" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.runwayAt(a, identifier).map(fixAssembler::assemble));
-      case "PI" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.localizerGlideSlopeAt(a, identifier).map(fixAssembler::assemble));
-      case "PT" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.gnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));
-      case "PH" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.helipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
-      default -> throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
-    };
+
+    switch (sectionSubSection) {
+      case "PA":  // airports
+        return arincFixDatabase.airport(identifier, icaoRegion).map(fixAssembler::assemble);
+      // Enroute NDB Navaids
+      case "DB":
+        return arincFixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
+      // Terminal NDB Navaids
+      case "PN":
+        return arincFixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
+      // VHF Navaids
+      case "D":
+        return arincFixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
+      // Enroute waypoints
+      case "EA":
+        return arincFixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
+      // Terminal waypoints
+      case "PC":
+        return arincTerminalAreaDatabase.waypointAt(airport, icaoRegion, identifier).map(fixAssembler::assemble);
+      // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
+      case "PG":
+        return airport == null ? Optional.empty() : arincTerminalAreaDatabase.runwayAt(airport, identifier).map(fixAssembler::assemble);
+      // localizerGlideSlopes - generally used as a recommended navaid on some approaches
+      case "PI":
+        return airport == null ? Optional.empty() : arincTerminalAreaDatabase.localizerGlideSlopeAt(airport, identifier).map(fixAssembler::assemble);
+      case "PT":
+        return airport == null ? Optional.empty() : arincTerminalAreaDatabase.gnssLandingSystemAt(airport, identifier).map(fixAssembler::assemble);
+      // anything else is not explicitly supported as a reference object in a leg
+      default:
+        throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
+    }
   }
 }

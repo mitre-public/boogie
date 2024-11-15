@@ -28,7 +28,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 /**
  * Section/Subsection = UF
  */
-public final class ArincFirUirLeg implements ArincModel {
+public class ArincFirUirLeg implements ArincModel {
   /**
    * See {@link RecordType}.
    */
@@ -228,20 +228,20 @@ public final class ArincFirUirLeg implements ArincModel {
     return Optional.ofNullable(reportingUnitsAltitude);
   }
 
-  public Optional<Boolean> entryReport() {
-    return Optional.ofNullable(firUirEntryReport);
+  public Boolean entryReport() {
+    return firUirEntryReport;
   }
 
   public BoundaryVia boundaryVia() {
     return boundaryVia;
   }
 
-  public Optional<Double> firUirLatitude() {
-    return Optional.ofNullable(firUirLatitude);
+  public Double firUirLatitude() {
+    return firUirLatitude;
   }
 
-  public Optional<Double> firUirLongitude() {
-    return Optional.ofNullable(firUirLongitude);
+  public Double firUirLongitude() {
+    return firUirLongitude;
   }
 
   public Optional<Double> arcOriginLatitude() {

@@ -1,11 +1,11 @@
 package org.mitre.tdp.boogie.arinc.v19.field;
 
-import org.mitre.tdp.boogie.arinc.ArincInteger;
+import org.mitre.tdp.boogie.arinc.v18.field.ArincInteger;
 
 /**
  * Definition/Description: RVSM Maximum Level is the highest defined cruising level for an airway or holding pattern.
  */
-public final class RvsmMaximumLevel extends ArincInteger {
+public class RvsmMaximumLevel extends ArincInteger {
   @Override
   public int fieldLength() {
     return 3;

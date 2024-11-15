@@ -82,6 +82,6 @@ public final class VhfNavaidSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.regionMatches(4, "D ", 0, 2)  && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
+    return arincRecord.charAt(4) == 'D' && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
   }
 }

@@ -1,12 +1,5 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.mitre.tdp.boogie.arinc.v21.field.qualifiers.ApproachQualifier3;
-
 public enum ArincRouteQualifier {
   // Type 1 Qualifiers
   /**
@@ -80,9 +73,5 @@ public enum ArincRouteQualifier {
   /**
    * Used for copter approaches to helipads as Qualifier 2
    */
-  H;
-
-  public static final Set<String> VALID = Arrays.stream(ArincRouteQualifier.values())
-      .map(ArincRouteQualifier::name)
-      .collect(Collectors.toSet());
+  H
 }

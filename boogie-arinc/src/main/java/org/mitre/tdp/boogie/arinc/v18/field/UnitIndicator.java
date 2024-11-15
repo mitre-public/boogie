@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.TrimmableString;
-
 /**
  * Restrictive Airspace lower and upper limits are specified as above Mean Sea Level (MSL) or Above
  * Ground Level (AGL). This field permits the unit of measurement to be indicated.

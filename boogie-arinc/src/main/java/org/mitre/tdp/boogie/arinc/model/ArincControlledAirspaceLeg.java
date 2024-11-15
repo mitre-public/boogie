@@ -31,7 +31,7 @@ import java.util.Optional;
 /**
  * Section/Subsection = UC
  */
-public final class ArincControlledAirspaceLeg implements ArincModel {
+public class ArincControlledAirspaceLeg implements ArincModel {
   /**
    * See {@link RecordType}.
    */
@@ -63,7 +63,7 @@ public final class ArincControlledAirspaceLeg implements ArincModel {
   /**
    * See {@link SectionCode}.
    */
-  private final String supplierSectionCode;
+  private final SectionCode supplierSectionCode;
   /**
    * See {@link SubSectionCode}.
    */
@@ -227,15 +227,15 @@ public final class ArincControlledAirspaceLeg implements ArincModel {
   }
 
   public Optional<SectionCode> supplierSectionCode() {
-    return Optional.ofNullable(supplierSectionCode).map(SectionCode::valueOf);
+    return Optional.ofNullable(supplierSectionCode);
   }
 
-  public Optional<String> supplierSubSectionCode() {
-    return Optional.ofNullable(supplierSubSectionCode);
+  public String supplierSubSectionCode() {
+    return supplierSubSectionCode;
   }
 
-  public Optional<String> airspaceClassification() {
-    return Optional.ofNullable(airspaceClassification);
+  public String airspaceClassification() {
+    return airspaceClassification;
   }
 
   public Optional<String> multipleCode() {
@@ -262,12 +262,12 @@ public final class ArincControlledAirspaceLeg implements ArincModel {
     return boundaryVia;
   }
 
-  public Optional<Double> latitude() {
-    return Optional.ofNullable(latitude);
+  public Double latitude() {
+    return latitude;
   }
 
-  public Optional<Double> longitude() {
-    return Optional.ofNullable(longitude);
+  public Double longitude() {
+    return longitude;
   }
 
   public Optional<Double> arcOriginLatitude() {
@@ -326,7 +326,7 @@ public final class ArincControlledAirspaceLeg implements ArincModel {
     private String icaoCode;
     private AirspaceType airspaceType;
     private String airspaceCenter;
-    private String supplierSectionCode;
+    private SectionCode supplierSectionCode;
     private String supplierSubSectionCode;
     private String airspaceClassification;
     private String multipleCode;
@@ -386,7 +386,7 @@ public final class ArincControlledAirspaceLeg implements ArincModel {
       return this;
     }
 
-    public Builder suppliedSectionCode(String suppliedSectionCode) {
+    public Builder suppliedSectionCode(SectionCode suppliedSectionCode) {
       this.supplierSectionCode = suppliedSectionCode;
       return this;
     }

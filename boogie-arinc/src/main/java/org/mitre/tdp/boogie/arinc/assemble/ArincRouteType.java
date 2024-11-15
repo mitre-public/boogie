@@ -2,11 +2,6 @@ package org.mitre.tdp.boogie.arinc.assemble;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
@@ -52,10 +47,6 @@ public enum ArincRouteType {
    */
   ER_S,
   /**
-   * TACAN Airway
-   */
-  ER_T,
-  /**
    * North American routes for North Atlantic Traffic Common Portion
    */
   ET_C,
@@ -78,7 +69,7 @@ public enum ArincRouteType {
   /**
    * Preferred/Preferential Overflight Routes
    */
-  ET_O,
+  ET_0,
   /**
    * Preferred Routes
    */
@@ -236,8 +227,7 @@ public enum ArincRouteType {
    */
   PF_Q,
   /**
-   * Area Navigation (RNAV) Approach
-   * e.g., RNAV (GPS) RWY 09, RNAV (GNSS) RWY 09, or RNAV (RNP) RWY 09, or RNAV RWY 09 (AR)
+   * RNAV Approach
    */
   PF_R,
   /**
@@ -274,11 +264,10 @@ public enum ArincRouteType {
   PF_Z,
   /**
    * Used in RNP CIFP/LIDO procedures reflective of later ARINC specs
-   * e.g. RNP RWY 09 or RNP RWY 09 (AR)
    */
   PF_H,
 
-  // These fields were present in -20 and get used in "18+" arinc data sets but then ~removed to route qualifier 3 in -21/22
+  // V20+ Fields
   /**
    * RNP SID runway transition
    */
@@ -308,17 +297,14 @@ public enum ArincRouteType {
     return name().split("_")[1];
   }
 
-  public static final Set<String> VALID = Arrays.stream(ArincRouteType.values())
-      .map(ArincRouteType::name)
-      .collect(Collectors.toSet());
-
   static ArincRouteType from(ArincProcedureLeg arincProcedureLeg) {
     requireNonNull(arincProcedureLeg);
-    String candidate = arincProcedureLeg.sectionCode().name()
-        .concat(arincProcedureLeg.subSectionCode().orElseThrow(IllegalStateException::new))
-        .concat("_")
-        .concat(arincProcedureLeg.routeType());
 
-    return Optional.of(candidate).filter(VALID::contains).map(ArincRouteType::valueOf).orElse(null);
+    return ArincRouteType.valueOf(
+        arincProcedureLeg.sectionCode().name()
+            .concat(arincProcedureLeg.subSectionCode().orElseThrow(IllegalStateException::new))
+            .concat("_")
+            .concat(arincProcedureLeg.routeType())
+    );
   }
 }

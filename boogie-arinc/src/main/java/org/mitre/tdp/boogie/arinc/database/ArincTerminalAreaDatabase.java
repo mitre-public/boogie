@@ -59,32 +59,16 @@ public final class ArincTerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::runways).orElse(Collections.emptySet());
   }
 
-  public Optional<ArincHelipad> helipadAt(String airport, String helipadID) {
-    return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.helipad(helipadID));
-  }
-
-  public Optional<ArincHelipad> helipadAt(String airport, String icaoRegion, String helipadID) {
-    return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(page -> page.helipad(helipadID));
-  }
-
-  public Collection<ArincHelipad> helipadsAt(String helipadID) {
-    return highlander(airportLookup.get(Pair.of(helipadID, null))).map(AirportPage::helipads).orElse(Collections.emptySet());
-  }
-
-  public Collection<ArincHelipad> helipadsAt(String airport, String icaoRegion) {
-    return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::helipads).orElse(Collections.emptySet());
-  }
-
   public Optional<ArincLocalizerGlideSlope> localizerGlideSlopeAt(String airport, String identifier) {
     return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.localizerGlideSlope(identifier));
   }
 
   public Map<String, ArincLocalizerGlideSlope> allLocalizerGlideSlopeAt(String airportIdent, String airportRegion) {
-    return highlander(airportLookup.get(Pair.of(airportIdent, airportRegion))).map(AirportPage::runwayLocalizerGlideSlopes).orElseGet(Collections::emptyMap);
+    return highlander(airportLookup.get(Pair.of(airportIdent, airportRegion))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyMap);
   }
 
   public Map<String, ArincLocalizerGlideSlope> localizerGlideSlopesAt(String airport) {
-    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::runwayLocalizerGlideSlopes).orElseGet(Collections::emptyMap);
+    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::localizerGlideSlopes).orElseGet(Collections::emptyMap);
   }
 
   public Optional<ArincGnssLandingSystem> gnssLandingSystemAt(String airport, String identifier) {
@@ -92,7 +76,7 @@ public final class ArincTerminalAreaDatabase {
   }
 
   public Map<String, ArincGnssLandingSystem> gnssLandingSystemsAt(String airport) {
-    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::runwayGnssLandingSystems).orElseGet(Collections::emptyMap);
+    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::gnssLandingSystems).orElseGet(Collections::emptyMap);
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeOf(String airport, String runway) {

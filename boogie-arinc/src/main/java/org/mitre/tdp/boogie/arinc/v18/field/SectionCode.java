@@ -7,7 +7,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 import com.google.common.collect.ImmutableBiMap;
 
 /**
- * Definition/Description: The “Section Code” field defines the major section of the navigation system data in which the
+ * Definition/Description: The “Section Code” field defines the major section of the navigation system data base in which the
  * record resides.
  */
 public enum SectionCode implements FieldSpec<SectionCode> {

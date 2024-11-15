@@ -55,8 +55,6 @@ public final class ArincRunway implements ArincModel {
   private final Integer stopway;
   private final String secondaryIlsMlsGlsIdentifier;
   private final String secondaryIlsMlsGlsCategory;
-  private final String runwayAccuracyComplianceFlag;
-  private final String landingThresholdAccuracyComplianceFlag;
   private final String runwayDescription;
   private final int fileRecordNumber;
   private final String lastUpdateCycle;
@@ -84,8 +82,6 @@ public final class ArincRunway implements ArincModel {
     this.stopway = builder.stopway;
     this.secondaryIlsMlsGlsIdentifier = builder.secondaryIlsMlsGlsIdentifier;
     this.secondaryIlsMlsGlsCategory = builder.secondaryIlsMlsGlsCategory;
-    this.runwayAccuracyComplianceFlag = builder.runwayAccuracyComplianceFlag;
-    this.landingThresholdAccuracyComplianceFlag = builder.landingThresholdElevationComplianceFlag;
     this.runwayDescription = builder.runwayDescription;
     this.fileRecordNumber = builder.fileRecordNumber;
     this.lastUpdateCycle = builder.lastUpdateCycle;
@@ -181,14 +177,6 @@ public final class ArincRunway implements ArincModel {
     return Optional.ofNullable(secondaryIlsMlsGlsCategory);
   }
 
-  public Optional<String> runwayAccuracyComplianceFlag() {
-    return Optional.ofNullable(runwayAccuracyComplianceFlag);
-  }
-
-  public Optional<String> landingThresholdAccuracyComplianceFlag() {
-    return Optional.ofNullable(landingThresholdAccuracyComplianceFlag);
-  }
-
   public Optional<String> runwayDescription() {
     return Optional.ofNullable(runwayDescription);
   }
@@ -225,8 +213,6 @@ public final class ArincRunway implements ArincModel {
         .stopway(stopway().orElse(null))
         .secondaryIlsMlsGlsIdentifier(secondaryIlsMlsGlsIdentifier().orElse(null))
         .secondaryIlsMlsGlsCategory(secondaryIlsMlsGlsCategory().orElse(null))
-        .runwayAccuracyComplianceFlag(runwayAccuracyComplianceFlag().orElse(null))
-        .landingThresholdElevationComplianceFlag(runwayAccuracyComplianceFlag().orElse(null))
         .runwayDescription(runwayDescription().orElse(null))
         .fileRecordNumber(fileRecordNumber())
         .lastUpdateCycle(lastUpdateCycle());
@@ -263,8 +249,6 @@ public final class ArincRunway implements ArincModel {
         Objects.equals(stopway, that.stopway) &&
         Objects.equals(secondaryIlsMlsGlsIdentifier, that.secondaryIlsMlsGlsIdentifier) &&
         Objects.equals(secondaryIlsMlsGlsCategory, that.secondaryIlsMlsGlsCategory) &&
-        Objects.equals(runwayAccuracyComplianceFlag, that.runwayAccuracyComplianceFlag) &&
-        Objects.equals(landingThresholdAccuracyComplianceFlag, that.landingThresholdAccuracyComplianceFlag) &&
         Objects.equals(runwayDescription, that.runwayDescription) &&
         Objects.equals(fileRecordNumber, that.fileRecordNumber) &&
         Objects.equals(lastUpdateCycle, that.lastUpdateCycle);
@@ -272,12 +256,12 @@ public final class ArincRunway implements ArincModel {
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, runwayIdentifier, continuationRecordNumber, runwayLength, runwayMagneticBearing, latitude, longitude, runwayGradient, landingThresholdElevation, thresholdDisplacementDistance, thresholdCrossingHeight, runwayWidth, ilsMlsGlsIdentifier, ilsMlsGlsCategory, stopway, secondaryIlsMlsGlsIdentifier, secondaryIlsMlsGlsCategory, runwayAccuracyComplianceFlag, landingThresholdAccuracyComplianceFlag, runwayDescription, fileRecordNumber, lastUpdateCycle);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, runwayIdentifier, continuationRecordNumber, runwayLength, runwayMagneticBearing, latitude, longitude, runwayGradient, landingThresholdElevation, thresholdDisplacementDistance, thresholdCrossingHeight, runwayWidth, ilsMlsGlsIdentifier, ilsMlsGlsCategory, stopway, secondaryIlsMlsGlsIdentifier, secondaryIlsMlsGlsCategory, runwayDescription, fileRecordNumber, lastUpdateCycle);
   }
 
   @Override
   public String toString() {
-    return "ArincRunway{" +
+    return "ArincRunway2{" +
         "recordType=" + recordType +
         ", customerAreaCode=" + customerAreaCode +
         ", sectionCode=" + sectionCode +
@@ -300,8 +284,6 @@ public final class ArincRunway implements ArincModel {
         ", stopway=" + stopway +
         ", secondaryIlsMlsGlsIdentifier='" + secondaryIlsMlsGlsIdentifier + '\'' +
         ", secondaryIlsMlsGlsCategory='" + secondaryIlsMlsGlsCategory + '\'' +
-        ", runwayAccuracyComplianceFlag='" + runwayAccuracyComplianceFlag + '\'' +
-        ", landingThresholdAccuracyComplianceFlag='" + landingThresholdAccuracyComplianceFlag + '\'' +
         ", runwayDescription='" + runwayDescription + '\'' +
         ", fileRecordNumber=" + fileRecordNumber +
         ", lastUpdateCycle='" + lastUpdateCycle + '\'' +
@@ -331,8 +313,6 @@ public final class ArincRunway implements ArincModel {
     private Integer stopway;
     private String secondaryIlsMlsGlsIdentifier;
     private String secondaryIlsMlsGlsCategory;
-    private String runwayAccuracyComplianceFlag;
-    private String landingThresholdElevationComplianceFlag;
     private String runwayDescription;
     private Integer fileRecordNumber;
     private String lastUpdateCycle;
@@ -444,17 +424,6 @@ public final class ArincRunway implements ArincModel {
 
     public Builder secondaryIlsMlsGlsCategory(String secondaryIlsMlsGlsCategory) {
       this.secondaryIlsMlsGlsCategory = secondaryIlsMlsGlsCategory;
-      return this;
-    }
-
-
-    public Builder runwayAccuracyComplianceFlag(String runwayAccuracyComplianceFlag) {
-      this.runwayAccuracyComplianceFlag = runwayAccuracyComplianceFlag;
-      return this;
-    }
-
-    public Builder landingThresholdElevationComplianceFlag(String landingThresholdElevationComplianceFlag) {
-      this.landingThresholdElevationComplianceFlag = landingThresholdElevationComplianceFlag;
       return this;
     }
 

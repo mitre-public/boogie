@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.ArincInteger;
-
 /**
  * The distance from the extremity of a runway to a threshold not located at that extremity of that runway.
  * <br>
