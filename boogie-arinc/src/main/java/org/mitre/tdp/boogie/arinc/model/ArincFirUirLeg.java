@@ -236,12 +236,12 @@ public class ArincFirUirLeg implements ArincModel {
     return boundaryVia;
   }
 
-  public Double firUirLatitude() {
-    return firUirLatitude;
+  public Optional<Double> firUirLatitude() {
+    return Optional.ofNullable(firUirLatitude);
   }
 
-  public Double firUirLongitude() {
-    return firUirLongitude;
+  public Optional<Double> firUirLongitude() {
+    return Optional.ofNullable(firUirLongitude);
   }
 
   public Optional<Double> arcOriginLatitude() {

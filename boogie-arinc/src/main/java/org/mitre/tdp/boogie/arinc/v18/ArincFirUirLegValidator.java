@@ -37,8 +37,6 @@ public class ArincFirUirLegValidator implements Predicate<ArincRecord> {
         && containsParsedField(arincRecord, "sequenceNumber", missingFieldConsumer)
         && containsParsedField(arincRecord, "firUirEntryReport", missingFieldConsumer)
         && containsParsedField(arincRecord, "boundaryVia", missingFieldConsumer)
-        && containsParsedField(arincRecord, "firUirLatitude", missingFieldConsumer)
-        && containsParsedField(arincRecord, "firUirLongitude", missingFieldConsumer)
         && containsParsedField(arincRecord, "fileRecordNumber", missingFieldConsumer)
         && containsParsedField(arincRecord, "cycle", missingFieldConsumer);
   }

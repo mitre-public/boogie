@@ -36,7 +36,7 @@ public interface AirspaceSequence {
   /**
    * The associated fix for the sequence.
    */
-  LatLong associatedFix();
+  Optional<LatLong> associatedFix();
 
   /**
    * For geometries which define arcs as a constant radius turn between fixes this will contain the information about the center
@@ -114,8 +114,8 @@ public interface AirspaceSequence {
     }
 
     @Override
-    public LatLong associatedFix() {
-      return associatedFix;
+    public Optional<LatLong> associatedFix() {
+      return Optional.ofNullable(associatedFix);
     }
 
     @Override
@@ -244,7 +244,7 @@ public interface AirspaceSequence {
     }
 
     @Override
-    public LatLong associatedFix() {
+    public Optional<LatLong> associatedFix() {
       return delegate.associatedFix();
     }
 

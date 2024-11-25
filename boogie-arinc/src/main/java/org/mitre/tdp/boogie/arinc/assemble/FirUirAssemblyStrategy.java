@@ -67,9 +67,13 @@ public interface FirUirAssemblyStrategy<A, S> {
           .filter(lat -> leg.arcOriginLongitude().isPresent())
           .map(lat -> LatLong.of(lat, leg.arcOriginLongitude().get()))
           .orElse(null);
+      LatLong associatedFix = leg.firUirLatitude()
+          .filter(lat -> leg.firUirLongitude().isPresent())
+          .map(lat -> LatLong.of(lat, leg.firUirLongitude().get()))
+          .orElse(null);
       return AirspaceSequence.builder(geometry, leg.sequenceNumber())
           .centerFix(centerFix)
-          .associatedFix(LatLong.of(leg.firUirLatitude(), leg.firUirLongitude()))
+          .associatedFix(associatedFix)
           .build();
     }
   }

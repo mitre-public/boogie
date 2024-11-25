@@ -32,8 +32,8 @@ class AirspaceSequenceTest {
   @Test
   void testBuilder() {
     assertAll(
-        () -> assertEquals(0., sequence.associatedFix().latitude()),
-        () -> assertEquals(1., sequence.associatedFix().longitude()),
+        () -> assertEquals(0., sequence.associatedFix().get().latitude()),
+        () -> assertEquals(1., sequence.associatedFix().get().longitude()),
         () -> assertEquals(2, sequence.centerFix().get().latitude()),
         () -> assertEquals(3, sequence.centerFix().get().longitude()),
         () -> assertEquals(10, sequence.arcRadius().get()),

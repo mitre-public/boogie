@@ -36,6 +36,8 @@ public class ArincFirUirLegConverter implements Function<ArincRecord, Optional<A
     Optional<Double> uirUpperLimit = arincRecord.optionalField("uirUpperLimit");
     Optional<String> cruiseTableIndicator = arincRecord.optionalField("cruiseTableIndicator");
     Optional<String> firUirName = arincRecord.optionalField("firUirName");
+    Optional<Double> firUirLatitude = arincRecord.optionalField("firUirLatitude");
+    Optional<Double> firUirLongitude = arincRecord.optionalField("firUirLongitude");
 
     ArincFirUirLeg leg = new ArincFirUirLeg.Builder()
         .recordType(arincRecord.requiredField("recordType"))
@@ -53,8 +55,8 @@ public class ArincFirUirLegConverter implements Function<ArincRecord, Optional<A
         .reportingUnitsAltitude(reportingUnitsAltitude.orElse(null))
         .firUirEntryReport(arincRecord.requiredField("firUirEntryReport"))
         .boundaryVia(arincRecord.requiredField("boundaryVia"))
-        .firUirLatitude(arincRecord.requiredField("firUirLatitude"))
-        .firUirLongitude(arincRecord.requiredField("firUirLongitude"))
+        .firUirLatitude(firUirLatitude.orElse(null))
+        .firUirLongitude(firUirLongitude.orElse(null))
         .arcOriginLatitude(arcOriginLatitude.orElse(null))
         .arcOriginLongitude(arcOriginLongitude.orElse(null))
         .arcDistance(arcDistance.orElse(null))

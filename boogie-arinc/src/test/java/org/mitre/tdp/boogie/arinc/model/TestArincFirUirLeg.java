@@ -50,8 +50,8 @@ public class TestArincFirUirLeg {
         () -> assertEquals(Optional.of("2"), record.optionalField("reportingUnitsAltitude")),
         () -> assertEquals(Boolean.FALSE, record.requiredField("firUirEntryReport")),
         () -> assertEquals(BoundaryVia.G, record.requiredField("boundaryVia")),
-        () -> assertEquals(Double.valueOf(13.574502777777777), record.requiredField("firUirLatitude")),
-        () -> assertEquals(Double.valueOf(6.451247222222222), record.requiredField("firUirLongitude")),
+        () -> assertEquals(Double.valueOf(13.574502777777777), record.optionalField("firUirLatitude").get()),
+        () -> assertEquals(Double.valueOf(6.451247222222222), record.optionalField("firUirLongitude").get()),
         () -> assertTrue(record.optionalField("arcOriginLatitude").isEmpty()),
         () -> assertTrue(record.optionalField("arcOriginLongitude").isEmpty()),
         () -> assertTrue(record.optionalField("arcDistance").isEmpty()),
@@ -90,8 +90,8 @@ public class TestArincFirUirLeg {
         () -> assertEquals(Optional.of("2"), firUirLeg.reportingUnitsAltitude()),
         () -> assertEquals(Boolean.FALSE, firUirLeg.entryReport()),  // Assuming `firUirEntryReport` maps to a Boolean
         () -> assertEquals(BoundaryVia.G, firUirLeg.boundaryVia()),
-        () -> assertEquals(13.574502777777777, firUirLeg.firUirLatitude()),
-        () -> assertEquals(6.451247222222222, firUirLeg.firUirLongitude()),
+        () -> assertEquals(13.574502777777777, firUirLeg.firUirLatitude().get()),
+        () -> assertEquals(6.451247222222222, firUirLeg.firUirLongitude().get()),
         () -> assertTrue(firUirLeg.arcOriginLatitude().isEmpty()),
         () -> assertTrue(firUirLeg.arcOriginLongitude().isEmpty()),
         () -> assertTrue(firUirLeg.arcDistance().isEmpty()),
@@ -105,5 +105,15 @@ public class TestArincFirUirLeg {
         () -> assertEquals("2313", firUirLeg.cycleDate())
     );
 
+  }
+
+  static String ARC = "SPACUFPGZUZRZXF00010        13N CE                   N13320480E14454306025000672UNLTD          RR GUAM CERAP               405972003";
+
+  @Test
+  void testArc() {
+    ArincRecord record = PARSER.parse(ARC).orElseThrow(AssertionError::new);
+    assertTrue(VALIDATOR.test(record));
+    ArincFirUirLeg firUirLeg = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+    assertEquals("CE", firUirLeg.boundaryVia().name());
   }
 }
