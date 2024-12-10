@@ -95,7 +95,7 @@ public interface AirspaceSequence {
     private int hashCode;
 
     private Standard(Builder builder) {
-      this.associatedFix = requireNonNull(builder.associatedFix);
+      this.associatedFix = builder.associatedFix;
       this.centerFix = builder.centerFix;
       this.arcRadius = builder.arcRadius;
       this.arcBearing = builder.arcBearing;
