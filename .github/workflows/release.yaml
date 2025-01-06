@@ -32,7 +32,7 @@ jobs:
           caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
           caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
           java-distribution: corretto
-          java-version: 11
+          java-version: 17
 
       # can get alot of this stuff (including the version w/o the tag) from gradle outputs
       - name: Publish
