@@ -12,4 +12,9 @@ class AiracCycleTest {
   void testAiracCycleStartDate() {
     assertEquals(Instant.parse("2019-01-03T00:00:00.00Z"), AiracCycle.startDate("1901"));
   }
+
+  @Test
+  void testCycleFromDate() {
+    assertEquals("1901", AiracCycle.cycleFor(Instant.parse("2019-01-03T00:00:00.00Z")));
+  }
 }
