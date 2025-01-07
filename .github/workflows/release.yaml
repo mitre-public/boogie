@@ -1,57 +1,23 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - '*'
-      
-env:
-  COMMIT_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
-  BRANCH: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+  workflow_dispatch:
 
 jobs:
+  tag-release:
+    name: Tag Library Version
+    uses: mitre-actions/paved-roads/.github/workflows/tag-library-release.yaml@main
+    secrets: inherit
+    with:
+      branch: ${{ github.ref_name }}
 
-  release:
+  publish:
     name: Publish and Release
-    runs-on: ubuntu-latest
-    if: github.ref_type == 'tag'
-
-    steps:
-      # need fetch-depth: 0 to get all tags so that the semver increment works
-      # AND need to use the branch name as `ref` to avoid detatched head state
-      # so that the semver branch matching will work
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ env.BRANCH }}
-
-      - name: Set Up Gradle
-        uses: mitre-actions/setup-gradle@v1
-        with:
-          caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
-          caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
-          java-distribution: corretto
-          java-version: 17
-
-      # can get alot of this stuff (including the version w/o the tag) from gradle outputs
-      - name: Publish
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Release
-        id: create-release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - TODO ref prev step
-          draft: false
-          prerelease: false
+    needs: [tag-release]
+    uses: mitre-actions/paved-roads/.github/workflows/publish-library.yaml@main
+    secrets: inherit
+    with:
+      tag: ${{ needs.tag-release.outputs.new_tag }}
+      branch: ${{ github.ref_name }}
+      java-distribution: corretto
+      java-version: 17

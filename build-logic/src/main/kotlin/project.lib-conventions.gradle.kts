@@ -54,6 +54,7 @@ semanticVersioning {
 caasdPublishing {
     publishTo {
         codev.javaArtifacts
+        github.projectRepo
     }
     publications {
         create<MavenPublication>(project.name) {
