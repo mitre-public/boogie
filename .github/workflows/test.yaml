@@ -25,12 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: mitre-actions/setup-gradle@v1
+      - uses: mitre-actions/setup-gradle@v3
         with:
           java-distribution: corretto
           java-version: 17
-          caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
-          caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
+          plugin-source: github
+          repo-tokens: |
+            codev.idaass: ${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
+            ghprMitreTdp: ${{ secrets.GH_TOKEN_PACKAGES_READ }}
 
       - name: Run Unit Tests
         uses: gradle/gradle-build-action@v2
@@ -45,12 +47,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: mitre-actions/setup-gradle@v1
+      - uses: mitre-actions/setup-gradle@v3
         with:
           java-distribution: corretto
           java-version: 17
-          caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
-          caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
+          plugin-source: github
+          repo-tokens: |
+            codev.idaass: ${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
+            ghprMitreTdp: ${{ secrets.GH_TOKEN_PACKAGES_READ }}
 
       - name: Run Integration Tests
         uses: gradle/gradle-build-action@v2
@@ -65,12 +69,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: mitre-actions/setup-gradle@v1
+      - uses: mitre-actions/setup-gradle@v3
         with:
           java-distribution: corretto
           java-version: 17
-          caasd-plugin-repo-username: ${{ secrets.CODEV_NAME_IDAASS_DEVELOPERS }}
-          caasd-plugin-repo-password: ${{ secrets.CODEV_TOKEN_IDAASS_DEVELOPERS }}
+          plugin-source: github
+          repo-tokens: |
+            codev.idaass: ${{ secrets.CODEV_TOKEN_IDAASS_USERS }}
+            ghprMitreTdp: ${{ secrets.GH_TOKEN_PACKAGES_READ }}
 
       - name: Run Integration Tests
         uses: gradle/gradle-build-action@v2

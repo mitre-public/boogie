@@ -6,11 +6,8 @@ plugins {
 
 caasdRepositories {
     mavenCentral
-    codev.gradlePlugins
-}
-
-repositories {
-    gradlePluginPortal() // for test logging plugin dep
+    gradlePluginPortal
+    caasdPluginPortal
 }
 
 dependencies {
