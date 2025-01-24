@@ -74,6 +74,8 @@ public final class FixDereferencer<F> {
       case "PT":
         return airport == null ? Optional.empty() : arincTerminalAreaDatabase.gnssLandingSystemAt(airport, identifier).map(fixAssembler::assemble);
       // anything else is not explicitly supported as a reference object in a leg
+      case "PH":
+        return airport == null ? Optional.empty() : arincTerminalAreaDatabase.helipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble);
       default:
         throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
     }

@@ -10,7 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.arinc.v18.ValidationHelper.containsParsedField;
+import static org.mitre.tdp.boogie.arinc.ValidationHelper.containsParsedField;
 
 public final class ControlledAirspaceValidator implements Predicate<ArincRecord> {
 

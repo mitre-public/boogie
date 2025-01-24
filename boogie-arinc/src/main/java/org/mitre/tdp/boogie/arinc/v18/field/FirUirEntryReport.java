@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap;
  * “Y” in this field indicates Entry Report is required, “N” in this field indicates no Entry Report is required.
  * The field will be entered on the first record only for each FIR/UIR identifier.
  */
-public class FirUirEntryReport implements FieldSpec<Boolean> {
+public final class FirUirEntryReport implements FieldSpec<Boolean> {
   @Override
   public int fieldLength() {
     return 1;

@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -48,6 +49,8 @@ public interface Airport extends HasPosition {
 
   Collection<? extends Runway> runways();
 
+  Collection<? extends Helipad> helipads();
+
   void accept(Visitor visitor);
 
   /**
@@ -71,6 +74,8 @@ public interface Airport extends HasPosition {
 
     private final Collection<Runway> runways;
 
+    private final Collection<Helipad> helipads;
+
     private int hashCode;
 
     private Standard(Builder builder) {
@@ -78,6 +83,7 @@ public interface Airport extends HasPosition {
       this.latLong = requireNonNull(builder.latLong);
       this.magneticVariation = builder.magneticVariation;
       this.runways = builder.runways;
+      this.helipads = builder.helipads;
     }
 
     @Override
@@ -100,12 +106,18 @@ public interface Airport extends HasPosition {
       return runways;
     }
 
+    @Override
+    public Collection<Helipad> helipads() {
+      return helipads;
+    }
+
     public Builder toBuilder() {
       return new Builder()
           .airportIdentifier(airportIdentifier)
           .latLong(latLong)
           .magneticVariation(magneticVariation)
-          .runways(runways);
+          .runways(runways)
+          .helipads(helipads);
     }
 
     @Override
@@ -125,7 +137,8 @@ public interface Airport extends HasPosition {
       return Objects.equals(airportIdentifier, standard.airportIdentifier)
           && Objects.equals(latLong, standard.latLong)
           && Objects.equals(magneticVariation, standard.magneticVariation)
-          && Objects.equals(runways, standard.runways);
+          && Objects.equals(runways, standard.runways)
+          && Objects.equals(helipads, standard.helipads);
     }
 
     @Override
@@ -138,7 +151,7 @@ public interface Airport extends HasPosition {
 
     // used by EqualsVerifier
     private int computeHashCode() {
-      return Objects.hash(airportIdentifier, latLong, magneticVariation, runways);
+      return Objects.hash(airportIdentifier, latLong, magneticVariation, runways, helipads);
     }
 
     @Override
@@ -148,6 +161,7 @@ public interface Airport extends HasPosition {
           ", latLong=" + latLong +
           ", magneticVariation=" + magneticVariation +
           ", runways=" + runways +
+          ", helipads=" + helipads +
           '}';
     }
 
@@ -160,6 +174,8 @@ public interface Airport extends HasPosition {
       private MagneticVariation magneticVariation;
 
       private Collection<Runway> runways;
+
+      private Collection<Helipad> helipads;
 
       private Builder() {
       }
@@ -192,6 +208,26 @@ public interface Airport extends HasPosition {
        */
       public Builder add(Runway runway) {
         this.runways.add(runway);
+        return this;
+      }
+
+      /**
+       * Provide a list of helipads
+       * @param helipads this list will be copied into a new list
+       * @return the builder
+       */
+      public Builder helipads(Collection<? extends Helipad> helipads) {
+        this.helipads = new ArrayList<>(helipads);
+        return this;
+      }
+
+      /**
+       * Add a helipad to the list in the builder
+       * @param helipad to add
+       * @return the builder
+       */
+      public Builder add(Helipad helipad) {
+        this.helipads.add(helipad);
         return this;
       }
 
@@ -236,6 +272,11 @@ public interface Airport extends HasPosition {
     @Override
     public Collection<? extends Runway> runways() {
       return delegate.runways();
+    }
+
+    @Override
+    public Collection<? extends Helipad> helipads() {
+      return delegate.helipads();
     }
 
     @Override

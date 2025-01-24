@@ -11,6 +11,7 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
 /**
@@ -43,7 +44,7 @@ public interface AirportAssembler<A> {
    * @param strategy             strategy class for converting related 424 records into runways and then combining those runways
    *                             into airports see {@link AirportAssemblyStrategy#standard()}
    */
-  static <A, R> AirportAssembler<A> usingStrategy(ArincTerminalAreaDatabase arincTerminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
+  static <A, R, H> AirportAssembler<A> usingStrategy(ArincTerminalAreaDatabase arincTerminalAreaDatabase, AirportAssemblyStrategy<A, R, H> strategy) {
     return new Standard<>(arincTerminalAreaDatabase, strategy);
   }
 
@@ -52,13 +53,13 @@ public interface AirportAssembler<A> {
    */
   A assemble(ArincAirport airport);
 
-  final class Standard<A, R> implements AirportAssembler<A> {
+  final class Standard<A, R, H> implements AirportAssembler<A> {
 
     private final ArincTerminalAreaDatabase arincTerminalAreaDatabase;
 
-    private final AirportAssemblyStrategy<A, R> strategy;
+    private final AirportAssemblyStrategy<A, R, H> strategy;
 
-    public Standard(ArincTerminalAreaDatabase arincTerminalAreaDatabase, AirportAssemblyStrategy<A, R> strategy) {
+    public Standard(ArincTerminalAreaDatabase arincTerminalAreaDatabase, AirportAssemblyStrategy<A, R, H> strategy) {
       this.arincTerminalAreaDatabase = requireNonNull(arincTerminalAreaDatabase);
       this.strategy = requireNonNull(strategy);
     }
@@ -94,7 +95,10 @@ public interface AirportAssembler<A> {
             .forEach(runways::add);
       }
 
-      return strategy.convertAirport(arincAirport, runways);
+      Collection<ArincHelipad> arincHelipads = arincTerminalAreaDatabase.helipadsAt(arincAirport.airportIdentifier(), arincAirport.airportIcaoRegion());
+      List<H> helipads = arincHelipads.stream().map(strategy::convertHelipad).toList();
+
+      return strategy.convertAirport(arincAirport, runways, helipads);
     }
   }
 }

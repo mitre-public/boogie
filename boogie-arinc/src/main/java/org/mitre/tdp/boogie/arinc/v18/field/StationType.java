@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-public class StationType extends TrimmableString {
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
+public final class StationType extends TrimmableString {
   @Override
   public int fieldLength() {
     return 3;

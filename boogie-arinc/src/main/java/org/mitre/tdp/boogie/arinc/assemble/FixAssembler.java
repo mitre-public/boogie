@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -77,6 +78,8 @@ public interface FixAssembler<F> {
         //gnss landing systems - usually used on gls approach or as rec navs rarely
         case "PT":
           return strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
+        case "PH": //helipads at airports
+          return strategy.convertHelipad((ArincHelipad) arincModel);
         // anything else is not explicitly supported as a reference object in a leg
         default:
           throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));

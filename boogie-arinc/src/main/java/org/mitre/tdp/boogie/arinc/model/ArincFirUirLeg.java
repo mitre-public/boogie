@@ -228,8 +228,8 @@ public class ArincFirUirLeg implements ArincModel {
     return Optional.ofNullable(reportingUnitsAltitude);
   }
 
-  public Boolean entryReport() {
-    return firUirEntryReport;
+  public Optional<Boolean> entryReport() {
+    return Optional.ofNullable(firUirEntryReport);
   }
 
   public BoundaryVia boundaryVia() {

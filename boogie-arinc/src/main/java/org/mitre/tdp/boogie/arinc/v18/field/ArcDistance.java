@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
 /**
  * The Arc Distance field is used to define the distance in nautical miles from the Arc Origin position to the arc
  * defining the lateral boundary of a FIR/UIR or Restrictive Airspace.

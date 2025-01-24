@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-public class LegLength extends ArincDouble {
+import org.mitre.tdp.boogie.arinc.ArincDouble;
+
+public final class LegLength extends ArincDouble {
 
   @Override
   public int fieldLength() {

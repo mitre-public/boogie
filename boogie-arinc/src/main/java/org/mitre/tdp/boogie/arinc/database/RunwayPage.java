@@ -18,7 +18,6 @@ final class RunwayPage {
   private final ArincRunway runway;
   private final ArincLocalizerGlideSlope localizerGlideSlope;
   private final ArincLocalizerGlideSlope secondaryLocalizerGlideSlope;
-
   private final Collection<ArincGnssLandingSystem> gnssLandingSystem;
 
   RunwayPage(

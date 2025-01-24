@@ -11,9 +11,9 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.BoundaryVia;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.FirUirIndicator;
@@ -22,14 +22,15 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 public class TestArincFirUirLeg {
 
-  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new ArincFirUirLegSpec());
+  private static final ArincRecordParser PARSER = ArincRecordParser.standard(new FirUirLegSpec());
 
-  private static final Predicate<ArincRecord> VALIDATOR = new ArincFirUirLegValidator();
+  private static final Predicate<ArincRecord> VALIDATOR = new FirUirLegValidator();
 
-  private static final Function<ArincRecord, Optional<ArincFirUirLeg>> CONVERTER = new ArincFirUirLegConverter();
+  private static final Function<ArincRecord, Optional<ArincFirUirLeg>> CONVERTER = new FirUirLegConverter();
 
   private static final String ARINC_FIR_UIR = "SAFRUFDRRRZRZXB10950DNKK    12N G N13342821E006270449                           FL245FL245UNLTDRR NIAMEY FIR/UIR           923192313";
 
+  private static final String PROBLEM = "SSPAUFWIIFZRZXF00940WBFC        G N01312508E109030528                                                                      563692403";
   @Test
   void testParseFirUirLeg() {
     ArincRecord record = PARSER.parse(ARINC_FIR_UIR).orElseThrow(AssertionError::new);
@@ -68,6 +69,16 @@ public class TestArincFirUirLeg {
   }
 
   @Test
+  void testProblem() {
+    ArincRecord record = PARSER.parse(PROBLEM).orElseThrow(AssertionError::new);
+
+    assertTrue(VALIDATOR.test(record));
+    ArincFirUirLeg firUirLeg = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+
+    firUirLeg.toString();
+  }
+
+  @Test
   void testConvertFirUirLeg() {
     ArincRecord record = PARSER.parse(ARINC_FIR_UIR).orElseThrow(AssertionError::new);
 
@@ -88,7 +99,7 @@ public class TestArincFirUirLeg {
         () -> assertTrue(firUirLeg.adjacentUirIdentifier().isEmpty()),
         () -> assertEquals(Optional.of("1"), firUirLeg.reportingUnitsSpeed()),
         () -> assertEquals(Optional.of("2"), firUirLeg.reportingUnitsAltitude()),
-        () -> assertEquals(Boolean.FALSE, firUirLeg.entryReport()),  // Assuming `firUirEntryReport` maps to a Boolean
+        () -> assertEquals(Boolean.FALSE, firUirLeg.entryReport().get()),  // Assuming `firUirEntryReport` maps to a Boolean
         () -> assertEquals(BoundaryVia.G, firUirLeg.boundaryVia()),
         () -> assertEquals(13.574502777777777, firUirLeg.firUirLatitude().get()),
         () -> assertEquals(6.451247222222222, firUirLeg.firUirLongitude().get()),

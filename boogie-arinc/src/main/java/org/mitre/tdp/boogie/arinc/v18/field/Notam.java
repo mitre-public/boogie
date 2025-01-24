@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * Restrictive Airspace areas may not have established active times and are activated by NOTAM or
  * may be active by NOTAM in addition to established times.

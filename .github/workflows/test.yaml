@@ -42,10 +42,12 @@ jobs:
   integration-test:
     name: Integration Tests
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: ubuntu-latest
+    runs-on: linux-x64-ubuntu-22.04-4-core-16GB-150GB-SSD
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          lfs: true
 
       - uses: mitre-actions/setup-gradle@v3
         with:

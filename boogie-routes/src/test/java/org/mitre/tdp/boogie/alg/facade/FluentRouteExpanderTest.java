@@ -389,6 +389,21 @@ class FluentRouteExpanderTest {
   }
 
   @Test
+  void testLongLatLong() {
+    String route = "MILIE..0530N13946E..BARTL";
+    FluentRouteExpander expander = newExpander(
+        asList(
+            fix("MILIE", 31.328622222222222, -81.17371944444444),
+            fix("BARTL", 34.303177777777776, -78.65149444444445)),
+        emptyList(),
+        emptyList(),
+        emptyList());
+
+    ExpandedRoute expandedRoute = expander.apply(route).get();
+    assertEquals(LatLong.of(5.5, 139.76666666666668 ), expandedRoute.legs().get(1).associatedFix().get().latLong());
+  }
+
+  @Test
   void testFLF() {
     String route = "MILIE..5300N/14000W..BARTL";
 

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * The “Region Code” permits the categorization of waypoints and holding patterns as either enroute or terminal area waypoints.
  * In the latter case the terminal area airport is identified in the field.

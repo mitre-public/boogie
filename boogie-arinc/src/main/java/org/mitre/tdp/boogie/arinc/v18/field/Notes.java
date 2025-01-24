@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-public class Notes extends TrimmableString{
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
+public final class Notes extends TrimmableString {
   private final int length;
 
   public Notes(int length) {

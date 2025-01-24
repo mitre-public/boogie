@@ -22,6 +22,7 @@ import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+import org.mitre.tdp.boogie.arinc.v20.field.ProcedureDesignAircraftCategoryOrType;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -74,12 +75,16 @@ public interface ProcedureAssembler<P> {
     @Override
     public Stream<P> assemble(Collection<ArincProcedureLeg> arincProcedureLegs) {
       return arincProcedureLegs.stream()
-          .sorted(comparing(ArincProcedureLeg::sequenceNumber))
+          .sorted(comparing(ArincProcedureLeg::sequenceNumber).thenComparing(i -> i.categoryOrType().orElse("UNK")))
           .collect(groupingBy(this::procedureGroupKey))
           .values().stream()
           .map(this::toProcedure);
     }
 
+    public static final String DEFAULT_TRANSITION = "ALL";
+    public static final String DEFAULT_CAT_TYPE = "ANY";
+
+    private static final Function<ArincProcedureLeg, String> GROUPER = leg -> leg.transitionIdentifier().orElse(DEFAULT_TRANSITION).concat(leg.categoryOrType().orElse(DEFAULT_CAT_TYPE));
     /**
      * Converts the list of {@link ArincProcedureLeg}s known to be part of the same procedure into a composite {@link Procedure}
      * object. This method uses two helper classes to provided value-add features:
@@ -91,7 +96,7 @@ public interface ProcedureAssembler<P> {
     private P toProcedure(List<ArincProcedureLeg> arincProcedureLegs) {
 
       Collection<List<ArincProcedureLeg>> byTransition = arincProcedureLegs.stream()
-          .collect(Collectors.groupingBy(leg -> leg.transitionIdentifier().orElse("ALL"))).values();
+          .collect(Collectors.groupingBy(GROUPER)).values();
 
       Multimap<TransitionType, List<ArincProcedureLeg>> byType = LinkedHashMultimap.create();
 

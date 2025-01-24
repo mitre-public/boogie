@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.database;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -12,16 +13,23 @@ import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
+import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
+import org.mitre.tdp.boogie.arinc.v21.HelipadSpec;
+import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
 class TestArincTerminalAreaDatabase {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-kjfk_yssy-v18.txt"));
+  private static final File withHelipad = new File(System.getProperty("user.dir").concat("/src/test/resources/02nh-helipads.txt"));
+  private static final File withLoc = new File(System.getProperty("user.dir").concat("/src/test/resources/loc.txt"));
 
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
 
   @BeforeAll
   static void setup() {
     fileParser.apply(arincTestFile).forEach(testV18Consumer);
+    fileParser.apply(withHelipad).forEach(testV18Consumer); //this only works because the default consumer has a helipad implementation
+    fileParser.apply(withLoc).forEach(testV18Consumer);
 
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         testV18Consumer.arincAirports(),
@@ -31,8 +39,31 @@ class TestArincTerminalAreaDatabase {
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincProcedureLegs(),
-        testV18Consumer.arincGnssLandingSystems()
+        testV18Consumer.arincGnssLandingSystems(),
+        testV18Consumer.arincHelipads()
     );
+  }
+
+  @Test
+  void ruwwaysNoLocs() {
+    Map<String, ArincLocalizerGlideSlope> theOne = arincTerminalAreaDatabase.allLocalizerGlideSlopeAt("KLYH", "K6");
+    assertAll("need to make sure that rec navs work out even if the runway did not tag it",
+        () -> assertEquals(1, theOne.entrySet().size(), "only one here"),
+        () -> assertEquals("RW04", theOne.values().stream().findFirst().orElseThrow().runwayIdentifier(), "it made it to the runway via the db"),
+        () -> assertEquals("ILYH", arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").orElseThrow().localizerIdentifier(), "search works"),
+        () -> assertTrue(arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").isEmpty(), "did not end up secondary also")
+    );
+  }
+
+  @Test
+  void noHelipads() {
+    assertTrue(arincTerminalAreaDatabase.helipadsAt("KJFK").isEmpty());
+  }
+
+  @Test
+  void helipads() {
+    ArincHelipad pad = arincTerminalAreaDatabase.helipadAt("02NH", "H1").orElseThrow();
+    assertEquals("H1", pad.helipadIdentifier());
   }
 
   @Test
@@ -113,7 +144,8 @@ class TestArincTerminalAreaDatabase {
       new ProcedureLegSpec(),
       new RunwaySpec(),
       new VhfNavaidSpec(),
-      new WaypointSpec()
+      new WaypointSpec(),
+      new HelipadSpec() //not really v18 but will be ok with the default consumer
   );
 
   /**
@@ -142,7 +174,9 @@ class TestArincTerminalAreaDatabase {
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .holdingPatternConverter(new HoldingPatternConverter())
       .holdingPatternDelegator(new HoldingPatternValidator())
-      .firUirConverter(new ArincFirUirLegConverter())
-      .firUirDelegator(new ArincFirUirLegValidator())
+      .firUirConverter(new FirUirLegConverter())
+      .firUirDelegator(new FirUirLegValidator())
+      .helipadDelegator(new HelipadValidator())
+      .helipadConverter(new HelipadConverter()) //they need a consumer
       .build();
 }

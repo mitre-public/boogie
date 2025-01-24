@@ -12,19 +12,19 @@ public class TestEmbeddedLidoFile {
   void testInstantiation() {
     EmbeddedLidoFile file = EmbeddedLidoFile.instance();
     assertEquals(file, EmbeddedLidoFile.instance(), "Singleton instance should be the same.");
-
     assertAll(
-        () -> assertEquals(12927, EmbeddedLidoFile.instance().arincAirports().size(), "Airports"),
-        () -> assertEquals(14352, EmbeddedLidoFile.instance().arincRunways().size(), "Runways"),
-        () -> assertEquals(1520, EmbeddedLidoFile.instance().arincLocalizerGlideSlopes().size(), "LocalizerGlideSlopes"),
-        () -> assertEquals(61913, EmbeddedLidoFile.instance().arincWaypoints().size(), "Waypoints"),
-        () -> assertEquals(448, EmbeddedLidoFile.instance().arincNdbNavaids().size(), "NDB Navaids"),
-        () -> assertEquals(1900, EmbeddedLidoFile.instance().arincVhfNavaids().size(), "VHF Navaids"),
-        () -> assertEquals(17454, EmbeddedLidoFile.instance().arincAirwayLegs().size(), "Airway Legs"),
-        () -> assertEquals(216436, EmbeddedLidoFile.instance().arincProcedureLegs().size(), "Procedure Legs"),
-        () -> assertEquals(4445, EmbeddedLidoFile.instance().arincHoldingPatterns().size(), "Holding Patterns"),
-        () -> assertEquals(23, EmbeddedLidoFile.instance().arincGnssLandingSystems().size(), "Gnss Landing Systems"),
-        () -> assertEquals(2600, EmbeddedLidoFile.instance().arincFirUirLegs().size(), "FIR and UIRs")
+        () -> assertEquals(26960, EmbeddedLidoFile.instance().arincAirports().size(), "Airports"),
+        () -> assertEquals(34218, EmbeddedLidoFile.instance().arincRunways().size(), "Runways"),
+        () -> assertEquals(4426, EmbeddedLidoFile.instance().arincLocalizerGlideSlopes().size(), "LocalizerGlideSlopes"),
+        () -> assertEquals(257014, EmbeddedLidoFile.instance().arincWaypoints().size(), "Waypoints"),
+        () -> assertEquals(3854, EmbeddedLidoFile.instance().arincNdbNavaids().size(), "NDB Navaids"),
+        () -> assertEquals(8361, EmbeddedLidoFile.instance().arincVhfNavaids().size(), "VHF Navaids"),
+        () -> assertEquals(109403, EmbeddedLidoFile.instance().arincAirwayLegs().size(), "Airway Legs"),
+        () -> assertEquals(858981, EmbeddedLidoFile.instance().arincProcedureLegs().size(), "Procedure Legs"),
+        () -> assertEquals(31656, EmbeddedLidoFile.instance().arincHoldingPatterns().size(), "Holding Patterns"),
+        () -> assertEquals(315, EmbeddedLidoFile.instance().arincGnssLandingSystems().size(), "Gnss Landing Systems"),
+        () -> assertEquals(308661, EmbeddedLidoFile.instance().arincFirUirLegs().size(), "FIR and UIRs"),
+        () -> assertEquals(1477, EmbeddedLidoFile.instance().arincHelipads().size(), "Helipads")
     );
   }
 }

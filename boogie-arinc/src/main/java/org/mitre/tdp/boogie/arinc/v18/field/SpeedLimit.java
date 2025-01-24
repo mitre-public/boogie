@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
 /**
  * The speed limit will be derived from official government source documentation and shown in Knots. When used on an Airport or
  * Heliport Record, the field is an indication of the maximum allowed speed and applies to all flight segments departing or arriving

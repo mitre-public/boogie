@@ -1,0 +1,16 @@
+SUSAP KLYHK6ALYH     110000071YHN37193140W079120440W008000938250      1800018000CR00YMNAR    LYNCHBURG RGNL/PRESTON GLENN *990282210
+SUSAP KLYHK6ALYH     2PKZDCKZDC                                                                                            990292210
+SUSAP KLYHK6GRW04    1071000360 N37185298W079122869+0600          008930000  150I     0000     055                         992352210
+SUSAP KLYHK6GRW04    2E                                                                     ASPHH000007100071000680006800B 992362210
+SUSAP KLYHK6GRW04    3S                            02800Y        T00905                                                    992372211
+SUSAP KLYHK6GRW17    1033861690 N37200275W079120337+0400    +02491009220000  075R     0000     040                         992382210
+SUSAP KLYHK6GRW17    2E                                                                     ASPHH000003386033860338603386B 992392210
+SUSAP KLYHK6GRW17    3S                            16100N        T00933                                                    992402211
+SUSAP KLYHK6GRW22    1071002160 N37195507W079114769               009380000  150R     0000     051                         992412413
+SUSAP KLYHK6GRW22    2E                                                                     ASPHH000007100071000710007100B 992422210
+SUSAP KLYHK6GRW22    3S                            20800Y        T00938                                                    992432211
+SUSAP KLYHK6GRW35    1033863490 N37193108W079114980+0400          009210000  075R     0000     040                         992442210
+SUSAP KLYHK6GRW35    2E                                                                     ASPHH000003386033860338603386B 992452210
+SUSAP KLYHK6GRW35    3S                            34100N        T00933                                                    992462211
+SUSAP KLYHK6IILYH1   111010RW04 N37200211W0791143040360N37185969W0791218520805 09830499300W0080  00887        055          992472211
+SUSAP KLYHK6IILYH1   2S    S  U                    02670N                                                                  992482307

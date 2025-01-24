@@ -41,7 +41,6 @@ class AirportAssemblerTest {
     Stream.of(testDafifAirportFile, testDafifRunwayFile, testDafifAddRunwayFile, testDafifIlsFile)
         .map(fileParser)
         .forEach(i -> i.forEach(recordConsumer));
-    fileParser.apply(testDafifAirportFile).forEach(recordConsumer);
     dafifTerminalAreaDatabase = DafifDatabaseFactory.newTerminalAreaDatabase(recordConsumer);
     airportAssembler = AirportAssembler.standard(dafifTerminalAreaDatabase);
   }

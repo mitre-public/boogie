@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
 /**
  * The Arc Bearing field contains the true bearing from the Arc Origin position to the beginning of the arc.
  *
@@ -10,7 +12,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
  * Examples: 0900, 1800, 3450
  */
 
-public final class ArcBearing extends ArincInteger  {
+public final class ArcBearing extends ArincInteger {
   @Override
   public int fieldLength() {
     return 4;

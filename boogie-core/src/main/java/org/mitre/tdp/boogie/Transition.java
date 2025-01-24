@@ -4,9 +4,11 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -64,8 +66,15 @@ public interface Transition {
 
   /**
    * See {@link TransitionType} - used by Boogie to sequence transitions by intended traversal order within a {@link Procedure}.
+   * @return the type of transition
    */
   TransitionType transitionType();
+
+  /**
+   * See {@link CategoryOrType} this provides the category or type supported by the {@link Transition}.
+   * @return
+   */
+  Set<CategoryOrType> categoryOrTypes();
 
   /**
    * Returns the ordered sequence of legs which make up the transition. In general Boogie ignores the {@link Leg#sequenceNumber()}
@@ -94,12 +103,15 @@ public interface Transition {
 
     private final List<Leg> legs;
 
+    private final Set<CategoryOrType> categoryOrTypes;
+
     private int hashCode;
 
     private Standard(Builder builder) {
       this.transitionIdentifier = builder.transitionIdentifier;
       this.transitionType = requireNonNull(builder.transitionType);
       this.legs = builder.legs;
+      this.categoryOrTypes = builder.categoryOrTypes;
     }
 
     @Override
@@ -115,6 +127,11 @@ public interface Transition {
     @Override
     public List<Leg> legs() {
       return legs;
+    }
+
+    @Override
+    public Set<CategoryOrType> categoryOrTypes() {
+      return categoryOrTypes;
     }
 
     public Builder toBuilder() {
@@ -140,7 +157,8 @@ public interface Transition {
       Standard standard = (Standard) o;
       return Objects.equals(transitionIdentifier, standard.transitionIdentifier)
           && transitionType == standard.transitionType
-          && Objects.equals(legs, standard.legs);
+          && Objects.equals(legs, standard.legs)
+          && Objects.equals(categoryOrTypes, standard.categoryOrTypes);
     }
 
     @Override
@@ -152,7 +170,7 @@ public interface Transition {
     }
 
     private int computeHashCode() {
-      return Objects.hash(transitionIdentifier, transitionType, legs);
+      return Objects.hash(transitionIdentifier, transitionType, legs, categoryOrTypes);
     }
 
     @Override
@@ -161,6 +179,7 @@ public interface Transition {
           "transitionIdentifier='" + transitionIdentifier + '\'' +
           ", transitionType=" + transitionType +
           ", legs=" + legs +
+          ", categoryOrTypes=" + categoryOrTypes +
           '}';
     }
 
@@ -171,6 +190,8 @@ public interface Transition {
       private TransitionType transitionType;
 
       private List<Leg> legs = new ArrayList<>();
+
+      private Set<CategoryOrType> categoryOrTypes = new HashSet<>();
 
       private Builder() {
       }
@@ -198,6 +219,16 @@ public interface Transition {
        */
       public Builder add(Leg leg) {
         this.legs.add(leg);
+        return this;
+      }
+
+      /**
+       * Override the current list of types
+       * @param categoryOrTypes the list for this transition
+       * @return this builder
+       */
+      public Builder categoryOrTypes(Set<? extends CategoryOrType> categoryOrTypes) {
+        this.categoryOrTypes = new HashSet<>(categoryOrTypes);
         return this;
       }
 
@@ -237,6 +268,11 @@ public interface Transition {
     @Override
     public List<? extends Leg> legs() {
       return delegate.legs();
+    }
+
+    @Override
+    public Set<CategoryOrType> categoryOrTypes() {
+      return delegate.categoryOrTypes();
     }
 
     @Override

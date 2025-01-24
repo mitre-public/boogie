@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.LatLong;
@@ -205,6 +206,11 @@ public final class MockObjects {
     @Override
     public TransitionType transitionType() {
       return delegate.transitionType();
+    }
+
+    @Override
+    public Set<CategoryOrType> categoryOrTypes() {
+      return delegate.categoryOrTypes();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
 /**
  * The “File Record Number” is a reference number assigned to the record for housekeeping purposes. Records are numbered consecutively,
  * the first record on the file being assigned the number 00001, the second the number 00002, and so on through the final record on the
