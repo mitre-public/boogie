@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 
 /**
@@ -38,7 +39,15 @@ public final class RouteDetails {
    */
   private final String defaultStar;
 
+  /**
+   * The list of equipages we want to support for approach expansion
+   */
   private final List<RequiredNavigationEquipage> equipagePreference;
+
+  /**
+   * The list of categories or types we want to support.
+   */
+  private final CategoryAndType categoryAndType;
 
   private RouteDetails(Builder builder) {
     this.departureRunway = builder.departureRunway;
@@ -46,6 +55,7 @@ public final class RouteDetails {
     this.equipagePreference = builder.equipagePreference;
     this.defaultSid = builder.defaultSid;
     this.defaultStar = builder.defaultStar;
+    this.categoryAndType = builder.categoryAndType;
   }
 
   public static Builder builder() {
@@ -72,6 +82,10 @@ public final class RouteDetails {
     return ofNullable(defaultStar);
   }
 
+  public Optional<CategoryAndType> categoryAndType() {
+    return ofNullable(categoryAndType);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -81,12 +95,13 @@ public final class RouteDetails {
     RouteDetails that = (RouteDetails) o;
     return Objects.equals(departureRunway, that.departureRunway) && Objects.equals(arrivalRunway, that.arrivalRunway)
         && Objects.equals(defaultSid, that.defaultSid) && Objects.equals(defaultStar, that.defaultStar)
-        && Objects.equals(equipagePreference, that.equipagePreference);
+        && Objects.equals(equipagePreference, that.equipagePreference)
+        && Objects.equals(categoryAndType, that.categoryAndType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(departureRunway, arrivalRunway, defaultSid, defaultStar, equipagePreference);
+    return Objects.hash(departureRunway, arrivalRunway, defaultSid, defaultStar, equipagePreference, categoryAndType);
   }
 
   @Override
@@ -98,6 +113,7 @@ public final class RouteDetails {
         ", defaultSid='" + defaultSid + '\'' +
         ", defaultStar='" + defaultStar + '\'' +
         ", equipagePreference=" + equipagePreference +
+        ", categoryOrTypes=" + categoryAndType +
         '}';
   }
 
@@ -112,6 +128,8 @@ public final class RouteDetails {
     private String defaultStar;
 
     private List<RequiredNavigationEquipage> equipagePreference;
+
+    private CategoryAndType categoryAndType;
 
     private Builder() {
     }
@@ -157,6 +175,16 @@ public final class RouteDetails {
 
     public Builder defaultStar(String defaultStar) {
       this.defaultStar = defaultStar;
+      return this;
+    }
+
+    /**
+     * Sets the category or type preferences for the flight plan expansion.
+     * @param categoryAndType the set of types that we want to capture
+     * @return this builder
+     */
+    public Builder categoryOrTypes(CategoryAndType categoryAndType) {
+      this.categoryAndType = categoryAndType;
       return this;
     }
 

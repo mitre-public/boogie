@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 
@@ -18,7 +19,7 @@ class SidRunwayTransitionInferrerTest {
 
   @Test
   void testNonDepartureRunwayTransitionFilter() {
-    SidRunwayTransitionInferrer inferrer = new SidRunwayTransitionInferrer(procedureId -> Collections.emptyList(), "RW09");
+    SidRunwayTransitionInferrer inferrer = new SidRunwayTransitionInferrer(procedureId -> Collections.emptyList(), "RW09", CategoryAndType.NULL);
 
     Predicate<Transition> transitionPredicate = inferrer.nonDepartureRunwayTransitionFilter();
 

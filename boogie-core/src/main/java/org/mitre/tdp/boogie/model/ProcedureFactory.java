@@ -39,10 +39,7 @@ public final class ProcedureFactory {
     ProcedureGraph graph = new ProcedureGraph(procedure);
 
     // add all transition legs and their associated leg->leg edges
-    procedure.transitions().forEach(transition -> {
-      transition.legs().forEach(graph::addVertex);
-      Streams.pairwise(transition.legs()).forEach(pair -> graph.addEdge(pair.first(), pair.second()));
-    });
+    procedure.transitions().forEach(transition -> ProcedureFactory.legToGraph(transition, graph));
 
     // split the transitions by type and insert edges between initial/final legs of subsequent transitions as long
     // as they share a fix identifier (e.g. TF at end of ENROUTE transition -> IF at start of COMMON)
@@ -56,6 +53,11 @@ public final class ProcedureFactory {
     }
 
     return graph;
+  }
+
+  private static void legToGraph(Transition transition, ProcedureGraph graph) {
+    transition.legs().forEach(graph::addVertex);
+    Streams.pairwise(transition.legs()).forEach(pair -> graph.addEdge(pair.first(), pair.second()));
   }
 
   /**

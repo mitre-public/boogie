@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MockObjects;
@@ -37,7 +38,7 @@ class StandardRouteResolverTest {
   void testFullResolveRoute0() {
     RouteTokenResolver resolver = resolverForRoute0();
 
-    List<ResolvedTokens> sections = resolver.applyTo(RouteTokenizer.faaIfrFormat().tokenize(route0));
+    List<ResolvedTokens> sections = resolver.applyTo(RouteTokenizer.faaIfrFormat().tokenize(route0), CategoryAndType.NULL);
     assertEquals(7, sections.size());
 
     assertTrue(allMatch(sections, s -> s.resolvedTokens().size() == 1));

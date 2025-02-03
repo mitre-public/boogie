@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toList;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
@@ -91,26 +92,22 @@ public interface RouteExpander {
 
     @Override
     public List<ResolvedLeg> expand(String route, RouteContext context) {
-
       checkArgument(route != null && !route.isEmpty(), "Route cannot be null or empty.");
 
       List<RouteToken> routeTokens = logRouteTokens(routeTokenizer.tokenize(route));
 
-      HashedLinkedSequence<ResolvedTokens> resolvedTokens =
-          newHashedLinkedSequence(routeTokenResolver.applyTo(routeTokens));
+      HashedLinkedSequence<ResolvedTokens> resolvedTokens = newHashedLinkedSequence(routeTokenResolver.applyTo(routeTokens, context.categoryAndType()));
 
-      for (SectionInferrer inferrer : context.inferrers()) {
-        appendInferredSections(resolvedTokens, inferrer);
-      }
+      context.inferrers().forEach(inferrer -> appendInferredSections(resolvedTokens, inferrer));
 
       List<ResolvedTokens> sortedByIndex = resolvedTokens.stream()
           .sorted(comparingDouble(r -> r.routeToken().index()))
-          .collect(toList());
+          .toList();
 
       return routeChooser.chooseRoute(logResolvedTokens(sortedByIndex));
     }
 
-    private void appendInferredSections(HashedLinkedSequence<ResolvedTokens> sequence, SectionInferrer inferrer) {
+    private static void appendInferredSections(HashedLinkedSequence<ResolvedTokens> sequence, SectionInferrer inferrer) {
       inferrer.inferAcross(sequence).forEach((start, inferred) -> {
         ResolvedTokens previous = start;
 
@@ -121,7 +118,7 @@ public interface RouteExpander {
       });
     }
 
-    private List<RouteToken> logRouteTokens(List<RouteToken> routeTokens) {
+    private static List<RouteToken> logRouteTokens(List<RouteToken> routeTokens) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("- RouteTokens: {}", routeTokens.size());
         LOG.debug(String.format("  %10s %10s", "Identifier", "Index"));
@@ -137,7 +134,7 @@ public interface RouteExpander {
       return routeTokens;
     }
 
-    private List<ResolvedTokens> logResolvedTokens(List<ResolvedTokens> resolvedTokens) {
+    private static List<ResolvedTokens> logResolvedTokens(List<ResolvedTokens> resolvedTokens) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("- ResolvedTokens: {}", resolvedTokens.stream().mapToInt(tokens -> tokens.resolvedTokens().size()).sum());
         LOG.debug(String.format("  %10s %50s", "Identifier", "Types"));

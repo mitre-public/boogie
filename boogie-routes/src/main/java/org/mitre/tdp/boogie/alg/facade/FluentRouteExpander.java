@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
@@ -174,6 +175,12 @@ public final class FluentRouteExpander implements
     return expand(route, details);
   }
 
+  /**
+   * This method is the main entry point to the flight plan expander.
+   * @param route the string which includes the airports on the start/end for now.
+   * @param details the route details object which has e.g., runways ...etc.
+   * @return the expanded route if we can do it.
+   */
   public Optional<ExpandedRoute> expand(String route, RouteDetails details) {
 
     logInputs(route, details);
@@ -186,6 +193,7 @@ public final class FluentRouteExpander implements
         .equipagePreference(details.equipagePreference())
         .defaultSid(details.defaultSid().orElse(null))
         .defaultStar(details.defaultStar().orElse(null))
+        .categoryAndType(details.categoryAndType().orElse(CategoryAndType.NULL))
         .build();
 
     return of(routeExpander.expand(route, context))

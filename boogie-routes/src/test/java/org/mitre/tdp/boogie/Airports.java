@@ -30,4 +30,8 @@ public final class Airports {
   public static Airport KSEA(){
     return airport("KSEA", 47.449888888888886, -122.31177777777778);
   }
+
+  public static Airport GQNO() {
+    return airport("GQNO", 18.31, -15.969722);
+  }
 }

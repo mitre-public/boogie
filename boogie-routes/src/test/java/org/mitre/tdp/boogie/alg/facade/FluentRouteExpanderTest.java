@@ -26,10 +26,15 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Airways;
 import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.COSTR3;
+import org.mitre.tdp.boogie.COSTR3_DUP;
 import org.mitre.tdp.boogie.CUN;
 import org.mitre.tdp.boogie.CZM;
+import org.mitre.tdp.boogie.CategoryAndType;
+import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.GQNO_D34Y;
 import org.mitre.tdp.boogie.HOBTT2;
+import org.mitre.tdp.boogie.HOBTT2_DUP;
 import org.mitre.tdp.boogie.JIIMS3;
 import org.mitre.tdp.boogie.KATL_R27R;
 import org.mitre.tdp.boogie.KMCO_I17L;
@@ -58,6 +63,86 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  * <p>e.g. TestAPF would indicate a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class FluentRouteExpanderTest {
+
+  /**
+   * Now we added a costr3 modck that has a duplicate LBV transition in it
+   */
+  @Test
+  void testMultipleStarTrans() {
+    String route = "LBV.COSTR3.KMCO";
+
+    Fix lbv = fix("LBV", 26.828186111111112, -81.3914388888889);
+
+    FluentRouteExpander expander = newExpander(
+        singletonList(lbv),
+        emptyList(),
+        singletonList(Airports.KMCO()),
+        singletonList(COSTR3_DUP.INSTANCE));
+
+    ExpandedRoute expandedRoute = expander.apply(route).get();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+    assertAll(
+        () -> assertEquals(11, legs.size(), "this makes sure we can expand an easy route without caring about category or type")
+    );
+  }
+
+  @Test
+  void testDupWithRunways() {
+    String route = "DRSDN.HOBTT2.KATL";
+    FluentRouteExpander expander = newExpander(
+        singletonList(fix("DRSDN", 33.06475, -86.183083)),
+        emptyList(),
+        singletonList(KATL()),
+        singletonList(HOBTT2_DUP.INSTANCE));
+    ExpandedRoute expandedRouteNoSelection = expander.apply(route, null, "RW28").orElseThrow(IllegalStateException::new);
+
+    RouteDetails jetDetails = RouteDetails.builder()
+        .arrivalRunway("RW27L")
+        .categoryOrTypes(new CategoryAndType(null, CategoryOrType.JET))
+        .build();
+    ExpandedRoute expandedJet = expander.expand(route, jetDetails).orElseThrow(IllegalStateException::new);
+
+    RouteDetails propDetails = RouteDetails.builder()
+        .arrivalRunway("RW27L")
+        .categoryOrTypes(new CategoryAndType(null, CategoryOrType.PROP))
+        .build();
+    ExpandedRoute expandedProp = expander.expand(route, propDetails).orElseThrow(IllegalStateException::new);
+
+    RouteDetails cDetails = RouteDetails.builder()
+        .arrivalRunway("RW27L")
+        .categoryOrTypes(new CategoryAndType(CategoryOrType.CAT_C, null))
+        .build();
+    ExpandedRoute expandedC = expander.expand(route, cDetails).orElseThrow(IllegalStateException::new);
+
+    assertAll("This will show we can pick one based on type and category",
+        () -> assertEquals(11, expandedRouteNoSelection.legs().size(), "Basic no selection picks random RWY"),
+        () -> assertEquals(11, expandedJet.legs().size(), "Expanded the jet version"),
+        () -> assertEquals(8, expandedProp.legs().size(), "Expanded the prop version with less points"),
+        () -> assertEquals(8, expandedC.legs().size(), "Checking the other var")
+    );
+  }
+
+  //this is disabled until we get the weights on transitions working better
+  @Disabled
+  @Test
+  void testMultipleApproachTransition() {
+    Fix ot511 = fix("OT511", 18.1294, -15.8593);
+    String route = "OT511..GQNO";
+    FluentRouteExpander expander = newExpander(
+        singletonList(ot511),
+        emptyList(),
+        singletonList(Airports.GQNO()),
+        singletonList(GQNO_D34Y.INSTANCE)
+    );
+    RouteDetails routeDetails = RouteDetails.builder()
+        .arrivalRunway("RW34")
+        .equipagePreference(RequiredNavigationEquipage.CONV)
+        .build();
+    ExpandedRoute expandedRoute = expander.expand(route, routeDetails).orElseThrow();
+    assertAll(
+        () -> assertEquals("OT", expandedRoute.legs().get(0).associatedFix().get().fixIdentifier())
+    );
+  }
 
   @Test
   void testOddComboDoesNotHappen() {
@@ -400,7 +485,7 @@ class FluentRouteExpanderTest {
         emptyList());
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
-    assertEquals(LatLong.of(5.5, 139.76666666666668 ), expandedRoute.legs().get(1).associatedFix().get().latLong());
+    assertEquals(LatLong.of(5.5, 139.76666666666668), expandedRoute.legs().get(1).associatedFix().get().latLong());
   }
 
   @Test

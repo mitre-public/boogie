@@ -15,6 +15,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
@@ -38,14 +39,16 @@ final class ApproachInferrer implements SectionInferrer {
   private final String arrivalRunway;
   private final Function<Collection<Procedure>, Collection<Procedure>> equippedProcedures;
   private final LookupService<Procedure> proceduresByAirport;
+  private final KeepTransition keepTransition;
 
-  ApproachInferrer(String arrivalRunway, List<RequiredNavigationEquipage> requiredNavigationEquipages, LookupService<Procedure> proceduresByAirport) {
+  ApproachInferrer(String arrivalRunway, List<RequiredNavigationEquipage> requiredNavigationEquipages, LookupService<Procedure> proceduresByAirport, CategoryAndType categoryAndType) {
     this.arrivalRunway = requireNonNull(arrivalRunway);
     this.equippedProcedures = PreferredProcedures.equipagePreference(requiredNavigationEquipages);
     this.proceduresByAirport = requireNonNull(proceduresByAirport)
         .filtered(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
         // mask the missed-approach portions of the approach procedure
         .transformed(procedure -> procedure.stream().map(p -> Procedure.maskTransitions(p, MISSED)).collect(toList()));
+    this.keepTransition = KeepTransition.of(categoryAndType);
   }
 
   @Override
@@ -53,7 +56,8 @@ final class ApproachInferrer implements SectionInferrer {
     return RunwayIdExtractor.runwayNumber(arrivalRunway)
         .flatMap(extractedNumber -> resolve(right, extractedNumber))
         .map(approach -> makeResolvedSection(approach, left.routeToken(), right.routeToken()))
-        .map(List::of).orElseGet(List::of);
+        .map(List::of)
+        .orElseGet(List::of);
   }
 
   private ResolvedTokens makeResolvedSection(Procedure approach, RouteToken left, RouteToken right) {
@@ -70,7 +74,8 @@ final class ApproachInferrer implements SectionInferrer {
         .flatMap(Collection::stream)
         // deterministic ordering for the procedures - by identifier alphabetically, if you are getting
         // the right requested equipage then we shouldn't care past this
-        .min(comparing(Procedure::procedureIdentifier));
+        .min(comparing(Procedure::procedureIdentifier))
+        .map(approach -> Procedure.maskTransitions(approach, keepTransition.negate()));
   }
 
   static final class PreferredProcedures implements UnaryOperator<Collection<Procedure>> {

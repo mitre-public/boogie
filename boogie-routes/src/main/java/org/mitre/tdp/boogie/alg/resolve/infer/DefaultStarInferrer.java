@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -24,9 +25,12 @@ final class DefaultStarInferrer implements SectionInferrer {
 
   private final String star;
 
-  DefaultStarInferrer(LookupService<Procedure> proceduresByName, String star) {
+  private final KeepTransition keepTransition;
+
+  DefaultStarInferrer(LookupService<Procedure> proceduresByName, String star, CategoryAndType categoryAndType) {
     this.proceduresByName = requireNonNull(proceduresByName);
     this.star = requireNonNull(star);
+    this.keepTransition = KeepTransition.of(requireNonNull(categoryAndType));
   }
 
   @Override
@@ -51,6 +55,11 @@ final class DefaultStarInferrer implements SectionInferrer {
 
   private ResolvedTokens makeSection(Procedure star, ResolvedTokens left, ResolvedTokens right) {
     RouteToken token = RouteToken.between(star.procedureIdentifier(), left.routeToken(), right.routeToken());
-    return new ResolvedTokens(token, List.of(ResolvedToken.starEnrouteCommon(Procedure.maskTransitions(star, RUNWAY))));
+    ResolvedToken thinned = Optional.of(star)
+        .map(procedure -> Procedure.maskTransitions(procedure, RUNWAY))
+        .map(procedure -> Procedure.maskTransitions(procedure, keepTransition.negate()))
+        .map(ResolvedToken::starEnrouteCommon)
+        .orElseThrow(() -> new IllegalArgumentException("Missing required procedure for the procedure that is default"));
+    return new ResolvedTokens(token, List.of(thinned));
   }
 }

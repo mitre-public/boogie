@@ -70,7 +70,7 @@ public interface ResolvedToken {
   /**
    * Wraps a resolved (typically inferred) {@link Procedure} as a standard approach procedure.
    *
-   * <p>Approaches aren't filed as part of route strings, see {@link SectionInferrer#approach(LookupService, String, List)}, but
+   * <p>Approaches aren't filed as part of route strings, see {@link SectionInferrer}, but
    * they may be inferred. This serves as a default wrapper for them when the above occurs.
    */
   static StandardApproach standardApproach(Procedure procedure) {
@@ -167,7 +167,7 @@ public interface ResolvedToken {
    * <p>A typical route-string will not allow the inference of this from the content of the route itself, however with additional
    * context (i.e. departure runway) a runway transition can be inferred.
    *
-   * <p>See {@link SectionInferrer#sidRunwayTransition(LookupService, String)}.
+   * <p>See {@link SectionInferrer}.
    *
    * @param sid the unmodified procedure definition, consumers may decorate this as a
    *            {@link Procedure#maskTransitions(Procedure, Predicate)}.
@@ -204,7 +204,7 @@ public interface ResolvedToken {
    * <p>A typical route-string will not allow the inference of this from the content of the route itself, however with additional
    * context (i.e. arrival runway) a runway transition can be inferred.
    *
-   * <p>See {@link SectionInferrer#starRunwayTransition(LookupService, String)}.
+   * <p>See {@link SectionInferrer}.
    *
    * @param star the unmodified procedure definition, consumers may decorate this as a
    *             {@link Procedure#maskTransitions(Procedure, Predicate)}.

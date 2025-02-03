@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.caasd.commons.Pair;
+import org.mitre.tdp.boogie.CategoryAndType;
+import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
@@ -102,7 +104,6 @@ class TestCifpProcedureAssemblerIntegration {
 
     assertEquals(0, notGraphable.size(), "Expected 0 procedures to not be graphable.");
   }
-
   private boolean notGraphable(Procedure procedure) {
     try {
       ProcedureFactory.newProcedureGraph(procedure);

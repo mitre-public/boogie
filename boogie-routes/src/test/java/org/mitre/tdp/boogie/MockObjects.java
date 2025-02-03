@@ -74,6 +74,14 @@ public final class MockObjects {
     return leg(name, lat, lon, PathTerminator.HM, sequence, null);
   }
 
+  public static Leg FD(String name, double lat, double lon) {
+    return leg(name, lat, lon, PathTerminator.FD);
+  }
+
+  public static Leg FA(String name, double lat, double lon) {
+    return leg(name, lat, lon, PathTerminator.FA);
+  }
+
   public static Leg CA() {
     return nonConcreteLeg(PathTerminator.CA);
   }

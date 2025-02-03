@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -24,9 +25,12 @@ final class SidRunwayTransitionInferrer implements SectionInferrer {
 
   private final String departureRunway;
 
-  SidRunwayTransitionInferrer(LookupService<Procedure> proceduresByName, @Nullable String departureRunway) {
+  private final KeepTransition keepTransition;
+
+  SidRunwayTransitionInferrer(LookupService<Procedure> proceduresByName, @Nullable String departureRunway, CategoryAndType categoryAndType) {
     this.proceduresByName = requireNonNull(proceduresByName);
     this.departureRunway = departureRunway;
+    this.keepTransition = KeepTransition.of(requireNonNull(categoryAndType));
   }
 
   @Override
@@ -51,6 +55,7 @@ final class SidRunwayTransitionInferrer implements SectionInferrer {
 
     return procedures.stream()
         .map(procedure -> Procedure.maskTransitions(procedure, nonDepartureRunwayTransitionFilter().negate()))
+        .map(procedure -> Procedure.maskTransitions(procedure, keepTransition.negate()))
         .map(ResolvedToken::sidRunway)
         .collect(toList());
   }
