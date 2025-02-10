@@ -46,12 +46,13 @@ class TestArincTerminalAreaDatabase {
 
   @Test
   void ruwwaysNoLocs() {
-    Map<String, ArincLocalizerGlideSlope> theOne = arincTerminalAreaDatabase.allLocalizerGlideSlopeAt("KLYH", "K6");
+    Map<String, ArincLocalizerGlideSlope> theTwo = arincTerminalAreaDatabase.allLocalizerGlideSlopeAt("KLYH", "K6");
     assertAll("need to make sure that rec navs work out even if the runway did not tag it",
-        () -> assertEquals(1, theOne.entrySet().size(), "only one here"),
-        () -> assertEquals("RW04", theOne.values().stream().findFirst().orElseThrow().runwayIdentifier(), "it made it to the runway via the db"),
-        () -> assertEquals("ILYH", arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").orElseThrow().localizerIdentifier(), "search works"),
-        () -> assertTrue(arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").isEmpty(), "did not end up secondary also")
+        () -> assertEquals(2, theTwo.entrySet().size(), "both made it"),
+        () -> assertTrue(arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").isPresent(), "did both"),
+        () -> assertTrue(arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").isPresent(), "did both"),
+        () -> assertNotNull(theTwo.get("ILYH")),
+        () -> assertNotNull(theTwo.get("ILYZ"))
     );
   }
 

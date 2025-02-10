@@ -1,13 +1,13 @@
 package org.mitre.tdp.boogie.arinc.database;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -145,15 +145,12 @@ public final class ArincDatabaseFactory {
             .map(Map.Entry::getValue)
             .toList();
 
-        ArincLocalizerGlideSlope primary = Optional.ofNullable(lgm.get(Pair.of(runway.runwayIdentifier(), runway.ilsMlsGlsIdentifier().orElse(null))))
-            .or(() -> allRywLoc.stream()
-                .filter(c -> c.runwayIdentifier().equals(runway.runwayIdentifier()))
-                .filter(c -> runway.secondaryIlsMlsGlsIdentifier().filter(i -> i.equals(c.localizerIdentifier())).isEmpty())
-                .findFirst()
-            )
+        ArincLocalizerGlideSlope primary = runway.ilsMlsGlsIdentifier().map(i -> lgm.get(Pair.of(runway.runwayIdentifier(), i)))
+            .or(() -> allRywLoc.stream().findFirst())
             .orElse(null);
-        ArincLocalizerGlideSlope secondary = Optional.ofNullable(lgm.get(Pair.of(runway.runwayIdentifier(), runway.secondaryIlsMlsGlsIdentifier().orElse(null))))
-            .or(() -> allRywLoc.stream().skip(1).filter(i -> i.runwayIdentifier().equals(runway.runwayIdentifier())).findFirst())
+        ArincLocalizerGlideSlope secondary = runway.secondaryIlsMlsGlsIdentifier().map(i -> lgm.get(Pair.of(runway.runwayIdentifier(), i)))
+            .or(() -> allRywLoc.stream().skip(1).findFirst())
+            .filter(i -> nonNull(primary) && !primary.localizerIdentifier().equals(i.localizerIdentifier()))
             .orElse(null);
 
         RunwayPage runwayPage = new RunwayPage(

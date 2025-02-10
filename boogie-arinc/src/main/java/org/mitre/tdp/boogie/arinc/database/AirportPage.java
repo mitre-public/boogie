@@ -74,7 +74,7 @@ final class AirportPage {
         .flatMap(page -> Stream.of(page.primaryLocalizerGlideSlope(), page.secondaryLocalizerGlideSlope()))
         .filter(Optional::isPresent)
         .map(Optional::get)
-        .collect(Collectors.toMap(ArincLocalizerGlideSlope::localizerIdentifier, Function.identity()));
+        .collect(Collectors.toMap(ArincLocalizerGlideSlope::localizerIdentifier, Function.identity(), (f,s) -> f));
   }
 
   public Map<String, ArincLocalizerGlideSlope> helipadLocalizerGlideSlopes() {
@@ -82,7 +82,7 @@ final class AirportPage {
         .flatMap(page -> Stream.of(page.localizerGlideSlope(), page.secondaryLocalizerGlideSlope()))
         .filter(Optional::isPresent)
         .map(Optional::get)
-        .collect(Collectors.toMap(ArincLocalizerGlideSlope::localizerIdentifier, Function.identity()));
+        .collect(Collectors.toMap(ArincLocalizerGlideSlope::localizerIdentifier, Function.identity(), (f,s) -> f));
   }
 
   public Optional<ArincGnssLandingSystem> gnssLandingSystem(String identifier) {
@@ -94,14 +94,14 @@ final class AirportPage {
     return runwayPages.values().stream()
         .map(RunwayPage::gnssLandingSystem)
         .flatMap(Collection::stream)
-        .collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity()));
+        .collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity(), (f,s) -> f));
   }
 
   public Map<String, ArincGnssLandingSystem> helipadGnssLandingSystems() {
     return helipadPages.values().stream()
         .map(HelipadPage::gnssLandingSystem)
         .flatMap(Collection::stream)
-        .collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity()));
+        .collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity(), (f,s) -> f));
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeForRunway(String runwayId) {
