@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
@@ -77,20 +76,20 @@ public interface AirportAssembler<A> {
 
       if (!arincRunways.isEmpty()) {
         ReciprocalRunwayPairer.INSTANCE.apply(arincRunways).stream()
-            // add in the other direction for the reciprocal pairing (a,b) -> (a,b),(b,a)
-            .flatMap(pair -> pair.second() != null ? Stream.of(pair, Pair.of(pair.second(), pair.first())) : Stream.of(pair))
+            // add in the otherEnd direction for the reciprocal pairing (a,b) -> (a,b),(b,a)
+            .flatMap(pair -> pair.otherEnd() != null ? Stream.of(pair, new RunwayPair(pair.otherEnd(), pair.thisRunway())) : Stream.of(pair))
             .map(pair -> strategy.convertRunway(
                 arincAirport,
-                pair.first(),
-                pair.second(),
+                pair.thisRunway(),
+                pair.otherEnd(),
                 arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf(
                     arincAirport.airportIdentifier(),
                     arincAirport.airportIcaoRegion(),
-                    pair.first().runwayIdentifier()).orElse(null),
+                    pair.thisRunway().runwayIdentifier()).orElse(null),
                 arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf(
                     arincAirport.airportIdentifier(),
                     arincAirport.airportIcaoRegion(),
-                    pair.first().runwayIdentifier()).orElse(null)
+                    pair.thisRunway().runwayIdentifier()).orElse(null)
             ))
             .forEach(runways::add);
       }

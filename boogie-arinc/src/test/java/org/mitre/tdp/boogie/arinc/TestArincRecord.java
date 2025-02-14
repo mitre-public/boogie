@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.arinc.v18.field.AltitudeLimit;
@@ -19,7 +20,7 @@ class TestArincRecord {
   void testSpecRetrievalForField() {
     AltitudeLimit altitudeLimit = new AltitudeLimit();
 
-    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", Pair.of(altitudeLimit, "")));
+    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", new ArincField(altitudeLimit, "")));
 
     Optional<AltitudeLimit> limitSpec = record.specForField("altitudeLimit");
     AltitudeLimit actual = limitSpec.orElseThrow(AssertionError::new);
@@ -31,7 +32,7 @@ class TestArincRecord {
   void testRawFieldValueRetrieval() {
     AltitudeLimit altitudeLimit = new AltitudeLimit();
 
-    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", Pair.of(altitudeLimit, "ALTITUDELIMIT")));
+    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", new ArincField(altitudeLimit, "ALTITUDELIMIT")));
 
     String actual = record.rawField("altitudeLimit");
     assertEquals("ALTITUDELIMIT", actual, "Raw field should be the inserted value.");
@@ -40,8 +41,8 @@ class TestArincRecord {
   @Test
   void testOptionalFieldValueRetrieval() {
     ArincRecord record = new ArincRecord(ImmutableMap.of(
-        "altitudeLimit", Pair.of(new AltitudeLimit(), "180600"),
-        "speedLimit", Pair.of(new SpeedLimit(), ""))
+        "altitudeLimit", new ArincField(new AltitudeLimit(), "180600"),
+        "speedLimit", new ArincField(new SpeedLimit(), ""))
     );
 
     assertAll(
@@ -53,8 +54,8 @@ class TestArincRecord {
   @Test
   void testRequiredFieldValueRetrieval() {
     ArincRecord record = new ArincRecord(ImmutableMap.of(
-        "altitudeLimit", Pair.of(new AltitudeLimit(), "180600"),
-        "speedLimit", Pair.of(new SpeedLimit(), ""))
+        "altitudeLimit", new ArincField(new AltitudeLimit(), "180600"),
+        "speedLimit", new ArincField(new SpeedLimit(), ""))
     );
 
     assertAll(

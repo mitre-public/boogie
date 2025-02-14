@@ -37,7 +37,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    * the user-defined type.
    *
    * <p>The 424 spec provides fine-grained equipage characteristics for each leg of a procedure. This function provides alongside
-   * that information an up-leveled required equipage to the basic categories most clients expect. Deriving this from the base
+   * that information an up-leveled required equipage to the basic categories most clients expect. Deriving this from the
    * 424 specification for all the legs in a procedure is non-trivial and easy to get wrong.
    *
    * @param representative             a 424 procedure leg elected the "representative" of the transition, provided at the top-level

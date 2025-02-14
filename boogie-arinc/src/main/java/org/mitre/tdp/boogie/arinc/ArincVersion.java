@@ -2,7 +2,9 @@ package org.mitre.tdp.boogie.arinc;
 
 import static java.util.Optional.ofNullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionSpec;
@@ -18,8 +20,6 @@ import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
 import org.mitre.tdp.boogie.arinc.v21.HelipadSpec;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Pre-configured set of parsers for various well-known ARINC spec types and record formats.
@@ -225,19 +225,19 @@ public enum ArincVersion {
       new HelipadSpec()
   );
 
-  private static final ImmutableMap<String, ArincVersion> LOOKUP = ImmutableMap.<String, ArincVersion>builder()
-      .put(V18.name(), V18)
-      .put(V18_NAV.name(), V18_NAV)
-      .put(V18_AIRSPACE.name(), V18_AIRSPACE)
-      .put(V19.name(), V19)
-      .put(V19_NAV.name(), V19_NAV)
-      .put(V20.name(), V20)
-      .put(V20_NAV.name(), V20_NAV)
-      .put(V21.name(), V21)
-      .put(V21_NAV.name(), V21_NAV)
-      .put(V22.name(), V22)
-      .put(V22_NAV.name(), V22_NAV)
-      .build();
+  private static final Map<String, ArincVersion> LOOKUP = Map.ofEntries(
+      Map.entry(V18.name(), V18),
+      Map.entry(V18_NAV.name(), V18_NAV),
+      Map.entry(V18_AIRSPACE.name(), V18_AIRSPACE),
+      Map.entry(V19.name(), V19),
+      Map.entry(V19_NAV.name(), V19_NAV),
+      Map.entry(V20.name(), V20),
+      Map.entry(V20_NAV.name(), V20_NAV),
+      Map.entry(V21.name(), V21),
+      Map.entry(V21_NAV.name(), V21_NAV),
+      Map.entry(V22.name(), V22),
+      Map.entry(V22_NAV.name(), V22_NAV)
+  );
 
   private final List<RecordSpec> specs;
 

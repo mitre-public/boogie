@@ -22,7 +22,6 @@ import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v20.field.ProcedureDesignAircraftCategoryOrType;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
