@@ -34,4 +34,8 @@ public final class Airports {
   public static Airport GQNO() {
     return airport("GQNO", 18.31, -15.969722);
   }
+
+  public static Airport WSSS() {
+    return airport("WSSS", 1.35019, 103.994003);
+  }
 }

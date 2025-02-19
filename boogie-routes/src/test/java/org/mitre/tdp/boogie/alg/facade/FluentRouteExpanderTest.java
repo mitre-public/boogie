@@ -24,6 +24,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airports;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Airways;
+import org.mitre.tdp.boogie.CHA1C_WSSS_PARTIAL;
 import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.COSTR3;
 import org.mitre.tdp.boogie.COSTR3_DUP;
@@ -63,6 +64,26 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  * <p>e.g. TestAPF would indicate a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class FluentRouteExpanderTest {
+
+  @Test
+  void testNoWeight() {
+    String route = "WSSS.CHA1C.ANITO";
+    Fix anito = fix("ANITO", -0.2833, 104.8667);
+    FluentRouteExpander expander = newExpander(
+        List.of(anito),
+        emptyList(),
+        List.of(Airports.WSSS()),
+        List.of(CHA1C_WSSS_PARTIAL.INSTANCE)
+    );
+    ExpandedRoute expandedRoute = expander.apply(route, "RW02", null).orElseThrow();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+    ExpandedRoute two = expander.apply(route, "RW03", null).orElseThrow();
+    List<ExpandedRouteLeg> legs2 = two.legs();
+    assertAll(
+        () -> assertEquals(6, legs.size(), "Should be: WSSS -> VA -> VM -> WSSS -> FIX -> FIX"),
+        () -> assertEquals(6, legs2.size(), "Same thing but with an FM leg")
+    );
+  }
 
   /**
    * Now we added a costr3 modck that has a duplicate LBV transition in it

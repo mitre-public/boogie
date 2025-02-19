@@ -67,7 +67,7 @@ final class AnySid implements LinkableToken {
 
   @Override
   public Linker visit(AnySid sid) {
-    return multiLinker(sid);
+    return sidLinker(sid);
   }
 
   @Override
@@ -81,6 +81,13 @@ final class AnySid implements LinkableToken {
   }
 
   private Linker multiLinker(LinkableToken token) {
-    return Linker.pointsWithinRange(ofNauticalMiles(.25), token, this).orElseTry(Linker.closestPointBetween(token, this));
+    return Linker.pointsWithinRange(ofNauticalMiles(.25), token, this)
+        .orElseTry(Linker.closestPointBetween(token, this));
+  }
+
+  private Linker sidLinker(AnySid token) {
+    return Linker.pointsWithinRange(ofNauticalMiles(.25), token, this)
+        .orElseTry(Linker.closestPointBetween(token, this))
+        .orElseTry(Linker.sidXm(token, this));
   }
 }

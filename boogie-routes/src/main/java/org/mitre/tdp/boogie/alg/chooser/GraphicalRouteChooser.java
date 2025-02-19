@@ -83,7 +83,10 @@ final class GraphicalRouteChooser implements RouteChooser {
         .toList();
 
     Map<LinkableLeg, LinkableLeg> fixedUp = fixupInventedLegs(shortestPath);
-    return shortestPath.stream().map(l -> fixedUp.getOrDefault(l, l)).map(this::makeResolvedLeg).collect(toList());
+    return shortestPath.stream()
+        .map(l -> fixedUp.getOrDefault(l, l))
+        .map(this::makeResolvedLeg)
+        .toList();
   }
 
   List<LinkableTokens> toLinkableTokens(List<ResolvedTokens> resolvedTokens) {

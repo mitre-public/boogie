@@ -3,19 +3,20 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.distanceBetween;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.firstLegWithLocation;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.highlander;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.lastLegWithLocation;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -23,6 +24,7 @@ import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
@@ -120,6 +122,10 @@ public interface Linker {
     return new StarToApproach(star, approach);
   }
 
+  static Linker sidXm(AnySid left, AnySid right) {
+    return new SidXm(left, right);
+  }
+
   /**
    * Returns a collection of links between a pair of configured {@link LinkableToken}s.
    */
@@ -152,7 +158,7 @@ public interface Linker {
     public Collection<LinkedLegs> links() {
       return linker.links().stream()
           .map(linked -> new LinkedLegs(linked.source(), linked.target(), tweaker.applyAsDouble(linked.linkWeight())))
-          .collect(toList());
+          .toList();
     }
   }
 
@@ -180,7 +186,7 @@ public interface Linker {
           .sorted(comparing(this::distanceBetween))
           .map(this::createPair)
           .filter(pair -> pair.linkWeight() < range.inNauticalMiles())
-          .collect(toList());
+          .toList();
     }
 
     private double distanceBetween(Pair<Leg, Leg> pair) {
@@ -204,7 +210,7 @@ public interface Linker {
           .flatMap(linked -> Stream.of(linked.source(), linked.target()))
           .distinct()
           .filter(leg -> leg.associatedFix().isPresent())
-          .collect(toList());
+          .toList();
     }
   }
 
@@ -226,7 +232,7 @@ public interface Linker {
 
       return sid.sid().initialTransitions().stream()
           .map(transition -> new LinkedLegs(airportLegs.target(), transition.legs().get(0), matchWeightFor(airportLegs.target(), transition)))
-          .collect(toList());
+          .toList();
     }
 
     private double matchWeightFor(Leg airportLeg, Transition transition) {
@@ -264,7 +270,7 @@ public interface Linker {
 
       return star.star().finalTransitions().stream()
           .map(transition -> new LinkedLegs(transition.legs().get(transition.legs().size() - 1), airportLegs.source(), matchWeightFor(airportLegs.source(), transition)))
-          .collect(toList());
+          .toList();
     }
 
     private double matchWeightFor(Leg airportLeg, Transition transition) {
@@ -315,7 +321,7 @@ public interface Linker {
           .flatMap(linked -> Stream.of(linked.source(), linked.target()))
           .distinct()
           .filter(leg -> leg.associatedFix().isPresent())
-          .collect(toList());
+          .toList();
     }
   }
 
@@ -337,7 +343,7 @@ public interface Linker {
 
       return cartesianProduct(sid.sid().exitLegs(hasPosition), approach.approach().entryLegs(hasPosition)).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
-          .collect(toList());
+          .toList();
     }
   }
 
@@ -359,7 +365,31 @@ public interface Linker {
 
       return cartesianProduct(star.star().exitLegs(hasPosition), approach.approach().entryLegs(hasPosition)).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
-          .collect(toList());
+          .toList();
+    }
+  }
+
+  final class SidXm implements Linker {
+    private final AnySid left;
+    private final AnySid right;
+    private SidXm(AnySid left, AnySid right) {
+      this.left = requireNonNull(left);
+      this.right = requireNonNull(right);
+    }
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+      return cartesianProduct(left.sid().exitLegs(xm), right.sid().entryLegs(hasPosition)).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
+          .toList();
+    }
+    private static double distanceOrMin(Pair<Leg, Leg> pair) {
+      return Optional.of(pair)
+          .filter(l -> PathTerminator.FM.equals(l.first().pathTerminator()))
+          .filter(l -> !l.first().associatedFix().orElseThrow().equals(l.second().associatedFix().orElseThrow())) //we know they have fixes from the leg type
+          .map(i -> distanceBetween(pair))
+          .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
     }
   }
 }
