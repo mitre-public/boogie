@@ -26,7 +26,7 @@ tasks.test {
 }
 
 tasks.named<Test>("testIntegration") {
-    maxHeapSize = "12g"
+    maxHeapSize = "8g"
 }
 
 configure<JavaPluginExtension> {

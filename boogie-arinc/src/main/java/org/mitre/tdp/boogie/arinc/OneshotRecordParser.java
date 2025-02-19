@@ -4,10 +4,14 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory.consumerForVersion;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -113,9 +117,20 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     ClientRecords.Builder<APT, FIX, AWY, PRC, AIR> records = new ClientRecords.Builder<>();
 
+    ArincRecordParser parser = ArincRecordParser.standard(version.specs());
     ConvertingArincRecordConsumer consumer = consumerForVersion(version);
 
-    parseRecords(inputStream).stream().filter(dropRecord.negate()).forEach(consumer);
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+      reader.lines()
+          .map(parser::parse)
+          .flatMap(Optional::stream)
+          .filter(dropRecord.negate())
+          .forEach(consumer);
+    } catch (IOException e) {
+      LOG.error("Could not parse the arinc text into memory", e);
+      return records.build();
+    }
+
     LOG.debug("Finished parsing and converting supported record types.");
 
     ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(

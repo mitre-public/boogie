@@ -39,25 +39,4 @@ public class OneShotRecordParserLidoIntegrationTest {
         () -> assertEquals(357, records.firUirs().size(), "FIR-UIRs are not being parsed right now")
     );
   }
-
-  @Disabled
-  @Tag("INTEGRATION")
-  @Test
-  void parseAirspace() {
-    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace> records;
-
-    try (InputStream is = EmbeddedLidoFile.getInputStream()) {
-      records = OneshotRecordParser.standard(ArincVersion.V18_AIRSPACE).assembleFrom(is);
-    } catch (IOException e) {
-      throw DemotedException.demote("Exception parsing embedded LIDO file.", e);
-    }
-
-    assertAll(
-        () -> assertEquals(26960, records.airports().size(), "Airports"),
-        () -> assertEquals(269229, records.fixes().size(), "Fixes"),
-        () -> assertEquals(0, records.airways().size(), "Airways"),
-        () -> assertEquals(0, records.procedures().size(), "Procedures"),
-        () -> assertEquals(357, records.firUirs().size(), "FIR-UIRs")
-    );
-  }
 }
