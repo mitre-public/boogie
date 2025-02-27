@@ -18,9 +18,6 @@ import org.mitre.tdp.boogie.Procedure;
 
 @Tag("INTEGRATION")
 public class OneShotRecordParserLidoIntegrationTest {
-
-  //@Disabled
-  @Tag("INTEGRATION")
   @Test
   void testParseLido() {
     OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace> records;
@@ -36,7 +33,8 @@ public class OneShotRecordParserLidoIntegrationTest {
         () -> assertEquals(269229, records.fixes().size(), "Fixes"),
         () -> assertEquals(14588, records.airways().size(), "Airways"),
         () -> assertEquals(100716, records.procedures().size(), "Procedures"),
-        () -> assertEquals(357, records.firUirs().size(), "FIR-UIRs are not being parsed right now")
+        () -> assertEquals(357, records.firUirs().size(), "FIRs and UIRs"),
+        () -> assertEquals(11761, records.conrolledAirspaces().size(), "Controlled Airspaces")
     );
   }
 }

@@ -30,7 +30,7 @@ public class TestArincControlledAirspaceLeg {
 
   private static final Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> CONVERTER = new ControlledAirspaceLegConverter();
 
-  private String CONTROLLED_AIRSPACE = "SSPAUCAGCAGGG UFA  A00010H    H S04500000E159000000                              FL245MFL660MHONIARA CTA                   794722210";
+  private static final String CONTROLLED_AIRSPACE = "SSPAUCAGCAGGG UFA  A00010H    H S04500000E159000000                              FL245MFL660MHONIARA CTA                   794722210";
 
   @Test
   void testParseControlledAirspace() {
@@ -83,8 +83,8 @@ public class TestArincControlledAirspaceLeg {
         () -> assertEquals(AirspaceType.C, controlledAirspace.airspaceType()),
         () -> assertEquals("AGGG", controlledAirspace.airspaceCenter()),
         () -> assertEquals(SectionCode.U, controlledAirspace.supplierSectionCode().get()),
-        () -> assertEquals("F", controlledAirspace.supplierSubSectionCode()),
-        () -> assertEquals("A", controlledAirspace.airspaceClassification()),
+        () -> assertEquals("F", controlledAirspace.supplierSubSectionCode().get()),
+        () -> assertEquals("A", controlledAirspace.airspaceClassification().get()),
         () -> assertEquals("A", controlledAirspace.multipleCode().get()),
         () -> assertEquals(1, controlledAirspace.sequenceNumber()),
         () -> assertEquals("0", controlledAirspace.continuationRecordNumber().get()),
@@ -92,8 +92,8 @@ public class TestArincControlledAirspaceLeg {
         () -> assertTrue(controlledAirspace.timeCode().isEmpty()),
         () -> assertTrue(controlledAirspace.notam().isEmpty()),
         () -> assertEquals(BoundaryVia.H, controlledAirspace.boundaryVia()),
-        () -> assertEquals(-4.833333333333333, controlledAirspace.latitude()),
-        () -> assertEquals(159.0, controlledAirspace.longitude()),
+        () -> assertEquals(-4.833333333333333, controlledAirspace.latitude().get()),
+        () -> assertEquals(159.0, controlledAirspace.longitude().get()),
         () -> assertTrue(controlledAirspace.arcOriginLatitude().isEmpty()),
         () -> assertTrue(controlledAirspace.arcOriginLongitude().isEmpty()),
         () -> assertTrue(controlledAirspace.arcDistance().isEmpty()),

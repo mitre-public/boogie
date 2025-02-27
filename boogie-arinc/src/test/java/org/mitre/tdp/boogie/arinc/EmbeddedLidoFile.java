@@ -11,6 +11,7 @@ import java.util.zip.ZipInputStream;
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
@@ -103,6 +104,10 @@ public final class EmbeddedLidoFile {
 
   public Collection<ArincHelipad> arincHelipads() {
     return records.arincHelipads();
+  }
+
+  public Collection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs() {
+    return records.arincControlledAirspaceLegs();
   }
 
   public int totalRecords() {

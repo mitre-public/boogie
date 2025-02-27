@@ -63,7 +63,7 @@ public class ArincControlledAirspaceLeg implements ArincModel {
   /**
    * See {@link SectionCode}.
    */
-  private final SectionCode supplierSectionCode;
+  private final String supplierSectionCode;
   /**
    * See {@link SubSectionCode}.
    */
@@ -227,15 +227,15 @@ public class ArincControlledAirspaceLeg implements ArincModel {
   }
 
   public Optional<SectionCode> supplierSectionCode() {
-    return Optional.ofNullable(supplierSectionCode);
+    return Optional.ofNullable(supplierSectionCode).map(SectionCode::valueOf);
   }
 
-  public String supplierSubSectionCode() {
-    return supplierSubSectionCode;
+  public Optional<String> supplierSubSectionCode() {
+    return Optional.ofNullable(supplierSubSectionCode);
   }
 
-  public String airspaceClassification() {
-    return airspaceClassification;
+  public Optional<String> airspaceClassification() {
+    return Optional.ofNullable(airspaceClassification);
   }
 
   public Optional<String> multipleCode() {
@@ -262,12 +262,12 @@ public class ArincControlledAirspaceLeg implements ArincModel {
     return boundaryVia;
   }
 
-  public Double latitude() {
-    return latitude;
+  public Optional<Double> latitude() {
+    return Optional.ofNullable(latitude);
   }
 
-  public Double longitude() {
-    return longitude;
+  public Optional<Double> longitude() {
+    return Optional.ofNullable(longitude);
   }
 
   public Optional<Double> arcOriginLatitude() {
@@ -326,7 +326,7 @@ public class ArincControlledAirspaceLeg implements ArincModel {
     private String icaoCode;
     private AirspaceType airspaceType;
     private String airspaceCenter;
-    private SectionCode supplierSectionCode;
+    private String supplierSectionCode;
     private String supplierSubSectionCode;
     private String airspaceClassification;
     private String multipleCode;
@@ -386,7 +386,7 @@ public class ArincControlledAirspaceLeg implements ArincModel {
       return this;
     }
 
-    public Builder suppliedSectionCode(SectionCode suppliedSectionCode) {
+    public Builder suppliedSectionCode(String suppliedSectionCode) {
       this.supplierSectionCode = suppliedSectionCode;
       return this;
     }

@@ -31,6 +31,8 @@ import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
 import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
@@ -152,5 +154,7 @@ class TestCifpAirportAssembler {
       .firUirDelegator(new FirUirLegValidator())
       .helipadDelegator(new HelipadValidator())
       .helipadConverter(new HelipadConverter())
+      .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
+      .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .build();
 }

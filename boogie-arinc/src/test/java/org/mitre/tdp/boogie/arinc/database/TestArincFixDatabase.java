@@ -125,5 +125,7 @@ class TestArincFixDatabase {
       .firUirDelegator(new AirwayLegValidator())
       .helipadDelegator(new HelipadValidator())
       .helipadConverter(new HelipadConverter())
+      .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
+      .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .build();
 }

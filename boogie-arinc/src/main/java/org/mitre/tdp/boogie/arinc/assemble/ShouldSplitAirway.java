@@ -5,8 +5,8 @@ import java.util.function.BiPredicate;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
 
-public final class SplitList implements BiPredicate<ArincAirwayLeg, ArincAirwayLeg> {
-  public static final SplitList INSTANCE = new SplitList();
+public final class ShouldSplitAirway implements BiPredicate<ArincAirwayLeg, ArincAirwayLeg> {
+  public static final ShouldSplitAirway INSTANCE = new ShouldSplitAirway();
 
   /**
    * Splits subsequent singleton airway records when their initial sequence number jumps by at least 1.
@@ -20,7 +20,7 @@ public final class SplitList implements BiPredicate<ArincAirwayLeg, ArincAirwayL
   private static final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> DIFF_IDENT = (previous, next) -> !previous.routeIdentifier().equals(next.routeIdentifier());
 
 
-  private SplitList() {
+  private ShouldSplitAirway() {
   }
 
   @Override

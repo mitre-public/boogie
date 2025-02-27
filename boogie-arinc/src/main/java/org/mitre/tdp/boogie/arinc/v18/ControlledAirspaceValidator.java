@@ -29,15 +29,11 @@ public final class ControlledAirspaceValidator implements Predicate<ArincRecord>
   @Override
   public boolean test(ArincRecord arincRecord) {
     return isCorrectSectionSubSection(arincRecord)
-        && containsParsedField(arincRecord, "latitude", missingFieldConsumer)
-        && containsParsedField(arincRecord, "longitude", missingFieldConsumer)
         && containsParsedField(arincRecord, "icaoRegion", missingFieldConsumer)
         && containsParsedField(arincRecord, "airspaceType", missingFieldConsumer)
         && containsParsedField(arincRecord, "airspaceCenter", missingFieldConsumer)
-        && containsParsedField(arincRecord, "airspaceClassification", missingFieldConsumer)
         && containsParsedField(arincRecord, "fileRecordNumber", missingFieldConsumer)
         && containsParsedField(arincRecord, "cycle", missingFieldConsumer);
-
   }
 
   boolean isCorrectSectionSubSection(ArincRecord arincRecord) {
