@@ -28,7 +28,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 /**
  * Section/Subsection = UF
  */
-public class ArincFirUirLeg implements ArincModel {
+public final class ArincFirUirLeg implements ArincModel {
   /**
    * See {@link RecordType}.
    */

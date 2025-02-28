@@ -31,7 +31,7 @@ import java.util.Optional;
 /**
  * Section/Subsection = UC
  */
-public class ArincControlledAirspaceLeg implements ArincModel {
+public final class ArincControlledAirspaceLeg implements ArincModel {
   /**
    * See {@link RecordType}.
    */
