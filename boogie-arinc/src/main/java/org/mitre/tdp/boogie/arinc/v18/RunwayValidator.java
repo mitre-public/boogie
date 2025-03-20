@@ -35,6 +35,7 @@ public final class RunwayValidator implements Predicate<ArincRecord> {
         && containsParsedField(arincRecord, "runwayIdentifier", missingFieldConsumer)
         && containsParsedField(arincRecord, "latitude", missingFieldConsumer)
         && containsParsedField(arincRecord, "longitude", missingFieldConsumer)
+        && containsParsedField(arincRecord, "runwayMagneticBearing", missingFieldConsumer)
         && containsParsedField(arincRecord, "fileRecordNumber", missingFieldConsumer)
         && containsParsedField(arincRecord, "lastUpdateCycle", missingFieldConsumer);
   }
