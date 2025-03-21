@@ -32,6 +32,16 @@ public final class AiracCycle {
     return CYCLE_TO_DATE.computeIfAbsent(cycle, c -> Airac.fromIdentifier(cycle).getEffective());
   }
 
+  /**
+   * This method returns the expiration Instant for the input AIRAC cycle.
+   * @param cycle the YYCC cycle
+   * @return an instant that ends that cycle (and starts the next cycle)
+   */
+  public static Instant endDate(String cycle) {
+    Airac nextCycle = Airac.fromIdentifier(cycle).getNext();
+    return startDate(nextCycle.toString());
+  }
+
   public static boolean isValidCycle(String cycle) {
     return cycle.length() == 4
         && Character.isDigit(cycle.charAt(0))
