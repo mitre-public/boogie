@@ -14,7 +14,7 @@ public class TestEmbeddedLidoFile {
     assertEquals(file, EmbeddedLidoFile.instance(), "Singleton instance should be the same.");
     assertAll(
         () -> assertEquals(26960, EmbeddedLidoFile.instance().arincAirports().size(), "Airports"),
-        () -> assertEquals(34218, EmbeddedLidoFile.instance().arincRunways().size(), "Runways"),
+        () -> assertEquals(34124, EmbeddedLidoFile.instance().arincRunways().size(), "Runways"), //it went down now that we want headings
         () -> assertEquals(4426, EmbeddedLidoFile.instance().arincLocalizerGlideSlopes().size(), "LocalizerGlideSlopes"),
         () -> assertEquals(257014, EmbeddedLidoFile.instance().arincWaypoints().size(), "Waypoints"),
         () -> assertEquals(3854, EmbeddedLidoFile.instance().arincNdbNavaids().size(), "NDB Navaids"),
