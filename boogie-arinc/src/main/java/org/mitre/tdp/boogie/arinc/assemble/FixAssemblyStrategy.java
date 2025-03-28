@@ -224,6 +224,16 @@ public interface FixAssemblyStrategy<F> {
           .build();
     }
 
+    @Override
+    public Fix convertHelipad(ArincHelipad helipad) {
+      Instant cycleDate = AiracCycle.startDate(helipad.cycle());
+      return Fix.builder()
+          .fixIdentifier(helipad.helipadIdentifier())
+          .latLong(LatLong.of(helipad.latitude(), helipad.longitude()))
+          .magneticVariation(magneticVariation(helipad.latitude(), helipad.longitude(), cycleDate))
+          .build();
+    }
+
     private IllegalStateException missingField(String fieldName) {
       return new IllegalStateException("Missing required field: " + fieldName);
     }
