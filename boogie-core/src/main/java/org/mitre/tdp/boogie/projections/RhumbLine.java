@@ -17,7 +17,7 @@ public final class RhumbLine {
    * This will estimate a 10NM projection along a rhumb line.
    * @param start the starting point of the projection
    * @param end the ending point of the projection
-   * @return a list of lat longs including the starting point and projections until the end of the leg.
+   * @return a list of lgit at longs including the starting point and projections until the end of the leg.
    */
   public static List<LatLong> project10NM(LatLong start, LatLong end) {
     double rhumbDistance = Rhumb.rhumbDistance(start, end);
