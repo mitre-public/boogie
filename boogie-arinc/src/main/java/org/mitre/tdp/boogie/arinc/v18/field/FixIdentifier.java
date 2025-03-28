@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * The “Fix Identifier” field contains the five-character-name-code, or other series of characters, with which the fix is identified.
  * <br>

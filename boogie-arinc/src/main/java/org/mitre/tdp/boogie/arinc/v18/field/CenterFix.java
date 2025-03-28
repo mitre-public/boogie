@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * When used on Airport and Heliport MSA Records and specific terminal procedure records, the “Center Fix” field represents the MSA Center,
  * that point (Navaid or Waypoint) on which the MSA is predicated. When used on Terminal Procedure Records incorporating an “RF” Path and

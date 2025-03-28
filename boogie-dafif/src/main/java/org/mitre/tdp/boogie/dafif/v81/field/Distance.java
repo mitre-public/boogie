@@ -1,0 +1,43 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * MEASURED IN NAUTICAL MILE(S) AND TENTHS OF NAUTICAL MILES.
+ *
+ * EXAMPLE(S):
+ * 1.2
+ * 602.0
+ * 0.7
+ * NULL
+ *
+ * FIELD TYPE: N
+ *
+ * ALLOWED VALUES:
+ * 0.1 - 999.9  (LEADING ZEROS ARE SUPPRESSED UNLESS VALUE IS LESS THAN 1.0)
+ * OR
+ * NULL
+ *
+ * SOURCE: HOST NATION PUBLICATION OR NGA ORIGINATED
+ *
+ * INTENDED USE:
+ * HOLDING LEG LENGTHS WITH TRACK CODES HA, HF, AND HM ARE ALWAYS IN NAUTICAL MILES. IF  SOURCE PROVIDES HOLDING LENGTH IN TIME, NGA WILL CONVERT TIME INTO NAUTICAL MILES  USING THE FOLLOWING CONVERSIONS:
+ *  ONE MINUTE = 3.0 NM
+ *  ONE AND A HALF MINUTES = 5.0 NM
+ *
+ * THIS VALUE MAY BE DERIVED IN THE ABSENSE OF HOST PROVIDED VALUES USING IMAGERY OR MENSURATION TO PROVIDE PRECISE MEASUREMENT FOR THIS FIELD IN ACCORDANCE WITH DO-200B AND DO-201.
+ */
+public final class Distance extends DafifDouble {
+  @Override
+  public int maxFieldLength() {
+    return 5;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 98;
+  }
+
+  @Override
+  public String regex() {
+    return "((0\\.[1-9]|(([1-9]|[1-9][0-9]|[1-9][0-9]{2})\\.[0-9]))?)";
+  }
+}

@@ -1,0 +1,39 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * THE IDENTIFICATION (CALL SIGN) ASSIGNED TO A SPECIFIC NAVAID BY THE CONTROLLING AUTHORITY.
+ * THOSE MARKERS WITHOUT NAV_IDENTS, OR THOSE IDENTIFIED AS IM, MM, OR OM WILL BE GIVEN AN
+ * IDENT BASED ON THE FOLLOWING PROCEDURE: THE IDENT OF THE ASSOCIATED LOCALIZER FOR THE APPROACH
+ * IN WHICH THE MARKER IS ATTACHED,  MINUS THE LEADING "I", WILL BE USED, ADDING A 'I', 'M', OR
+ * 'O' TO THE END, DEPENDING ON THE MARKER  TYPE.
+ *
+ * EXAMPLES:
+ * LOCALIZER IDENT = IALW
+ * MIDDLE MARKER = ALWM
+ * OUTER MARKER = ALWOEXAMPLE(S):1CJAZWA
+ *
+ * FIELD TYPE: A/N
+ *
+ * ALLOWED VALUES:
+ * COMBINATIONS OF NUMBERS 0-9 AND LETTERS A-Z
+ * OR
+ * NULL
+ *
+ * SOURCE: HOST NATION PUBLICATION
+ */
+public final class IlsNavaidIdentifier extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 4;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 20;
+  }
+
+  @Override
+  public String regex() {
+    return "(([A-Z0-9]{1,4})?)";
+  }
+}

@@ -1,0 +1,744 @@
+SAFRP GQNOGQANKC     1     111YHN18183600W015581100W006000010         03100     CZ00NMWGE    NOUAKCHOTT/OUM TOUNSY INTL    984692210
+SAFRP GQNOGQANKC     2PGOOOGOOO                                                                                            984702210
+SAFRP GQNOGQB1       0          N18182517W015574756                                                                        984712210
+SAFRP GQNOGQB1A      0          N18182503W015574705                                                                        984722210
+SAFRP GQNOGQB2       0          N18182562W015574876                                                                        984732210
+SAFRP GQNOGQB3       0          N18182742W015574906                                                                        984742210
+SAFRP GQNOGQB4       0          N18182888W015574992                                                                        984752210
+SAFRP GQNOGQB5       0          N18183061W015575099                                                                        984762210
+SAFRP GQNOGQB5A      0          N18183057W015575058                                                                        984772210
+SAFRP GQNOGQB6       0          N18183099W015575202                                                                        984782210
+SAFRP GQNOGQB7       0          N18183167W015575383                                                                        984792210
+SAFRP GQNOGQB8       0          N18183184W015575308                                                                        984802210
+SAFRP GQNOGQB9       0          N18183354W015575190                                                                        984812210
+SAFRP GQNOGQBF1      0          N18175686W015572689                                                                        984822210
+SAFRP GQNOGQBF2      0          N18175792W015572796                                                                        984832210
+SAFRP GQNOGQBF3      0          N18175933W015572840                                                                        984842210
+SAFRP GQNOGQBI1      0          N18173835W015592142                                                                        984852210
+SAFRP GQNOGQBI2      0          N18173811W015592122                                                                        984862210
+SAFRP GQNOGQBI3      0          N18173678W015592285                                                                        984872210
+SAFRP GQNOGQBI4      0          N18173724W015592044                                                                        984882210
+SAFRP GQNOGQBI5      0          N18173651W015591979                                                                        984892210
+SAFRP GQNOGQBI6      0          N18173518W015592143                                                                        984902210
+SAFRP GQNOGQBI7      0          N18173609W015591942                                                                        984912210
+SAFRP GQNOGQBP1      0          N18173854W015571639                                                                        984922210
+SAFRP GQNOGQBP2      0          N18173713W015571949                                                                        984932210
+SAFRP GQNOGQCAGROB GQ1    WIF   N18132718W016135473                       W0049     WGE        P  AGROB                    984942401
+SAFRP GQNOGQCAGROB GQ2PGOOOGOOO                                                                                            984952210
+SAFRP GQNOGQCARDOS GQ1    WIF   N18104816W015460701                       W0047     WGE        P  ARDOS                    984962308
+SAFRP GQNOGQCARDOS GQ2PGOOOGOOO                                                                                            984972210
+SAFRP GQNOGQCBINAD GQ1    WIF   N18044963W016061456                       W0049     WGE        P  BINAD                    984982312
+SAFRP GQNOGQCBINAD GQ2PGOOOGOOO                                                                                            984992210
+SAFRP GQNOGQCDELOV GQ1    W     N18080911W016191455                       W0049     WGE        P  DELOV                    985002310
+SAFRP GQNOGQCDELOV GQ2PGOOOGOOO                                                                                            985012210
+SAFRP GQNOGQCGALOR GQ1    WIF   N18312320W015514747                       W0047     WGE        P  GALOR                    985022402
+SAFRP GQNOGQCGALOR GQ2PGOOOGOOO                                                                                            985032210
+SAFRP GQNOGQCGAMON GQ1    RDZ   N18044130W015494110                       W0048     WGE        P  GAMON                    985042311
+SAFRP GQNOGQCGAMON GQ2PGOOOGOOO                                                                                            985052210
+SAFRP GQNOGQCGANSI GQ1    WIF   N18253331W016094531                       W0048     WGE        P  GANSI                    985062309
+SAFRP GQNOGQCGANSI GQ2PGOOOGOOO                                                                                            985072210
+SAFRP GQNOGQCGASOT GQ1    WIF   N18032588W015485477                       W0048     WGE        P  GASOT                    985082311
+SAFRP GQNOGQCGASOT GQ2PGOOOGOOO                                                                                            985092210
+SAFRP GQNOGQCINEDI GQ1    WIF   N18334783W016072995                       W0048     WGE        P  INEDI                    985102401
+SAFRP GQNOGQCINEDI GQ2PGOOOGOOO                                                                                            985112210
+SAFRP GQNOGQCKOMIR GQ1    WIF   N18293776W015444719                       W0047     WGE        P  KOMIR                    985122311
+SAFRP GQNOGQCKOMIR GQ2PGOOOGOOO                                                                                            985132210
+SAFRP GQNOGQCKOSAP GQ1    WIF   N18313844W015585155                       W0047     WGE        P  KOSAP                    985142310
+SAFRP GQNOGQCKOSAP GQ2PGOOOGOOO                                                                                            985152210
+SAFRP GQNOGQCLILEP GQ1    WIF   N18063440W016131404                       W0049     WGE        P  LILEP                    985162402
+SAFRP GQNOGQCLILEP GQ2PGOOOGOOO                                                                                            985172210
+SAFRP GQNOGQCLINAR GQ1    W     N18211020W016102978                       W0048     WGE        P  LINAR                    985182311
+SAFRP GQNOGQCLINAR GQ2PGOOOGOOO                                                                                            985192210
+SAFRP GQNOGQCLOSNA GQ1    R Z   N18092970W016093870                       W0049     WGE        P  LOSNA                    985202313
+SAFRP GQNOGQCLOSNA GQ2PGOOOGOOO                                                                                            985212210
+SAFRP GQNOGQCMERAR GQ1    WIF   N18224490W015440747                       W0047     WGE        P  MERAR                    985222313
+SAFRP GQNOGQCMERAR GQ2PGOOOGOOO                                                                                            985232210
+SAFRP GQNOGQCNO501 GQ1    WDF   N18102849W016082602                       W0049     WGE        P  NO501                    985242312
+SAFRP GQNOGQCNO501 GQ2PGOOOGOOO                                                                                            985252210
+SAFRP GQNOGQCNO502 GQ1    WAF   N18134348W016042584                       W0048     WGE        P  NO502                    985262309
+SAFRP GQNOGQCNO502 GQ2PGOOOGOOO                                                                                            985272210
+SAFRP GQNOGQCNO503 GQ1    W F   N18205609W015553215                       W0047     WGE        P  NO503                    985282311
+SAFRP GQNOGQCNO503 GQ2PGOOOGOOO                                                                                            985292210
+SAFRP GQNOGQCNO504 GQ1    W F   N18213193W016102645                       W0048     WGE        P  NO504                    985302310
+SAFRP GQNOGQCNO504 GQ2PGOOOGOOO                                                                                            985312210
+SAFRP GQNOGQCNO506 GQ1    WDF   N18254419W015493620                       W0047     WGE        P  NO506                    985322402
+SAFRP GQNOGQCNO506 GQ2PGOOOGOOO                                                                                            985332210
+SAFRP GQNOGQCNO507 GQ1    WAF   N18222945W015533687                       W0047     WGE        P  NO507                    985342310
+SAFRP GQNOGQCNO507 GQ2PGOOOGOOO                                                                                            985352210
+SAFRP GQNOGQCNO508 GQ1    W F   N18151688W016023067                       W0048     WGE        P  NO508                    985362308
+SAFRP GQNOGQCNO508 GQ2PGOOOGOOO                                                                                            985372210
+SAFRP GQNOGQCNO509 GQ1    W F   N18274952W016015513                       W0048     WGE        P  NO509                    985382313
+SAFRP GQNOGQCNO509 GQ2PGOOOGOOO                                                                                            985392210
+SAFRP GQNOGQCNO511 GQ1    WDF   N18074600W015513354                       W0048     WGE        P  NO511                    985402312
+SAFRP GQNOGQCNO511 GQ2PGOOOGOOO                                                                                            985412210
+SAFRP GQNOGQCNO512 GQ1    WAF   N18120608W015541243                       W0048     WGE        P  NO512                    985422312
+SAFRP GQNOGQCNO512 GQ2PGOOOGOOO                                                                                            985432210
+SAFRP GQNOGQCNO513 GQ1    W F   N18214331W016000565                       W0048     WGE        P  NO513                    985442313
+SAFRP GQNOGQCNO513 GQ2PGOOOGOOO                                                                                            985452210
+SAFRP GQNOGQCNO514 GQ1    W F   N18114235W016051059                       W0048     WGE        P  NO514                    985462310
+SAFRP GQNOGQCNO514 GQ2PGOOOGOOO                                                                                            985472210
+SAFRP GQNOGQCNO516 GQ1    W F   N18055240W016042210                       W0048     WGE        P  NO516                    985482311
+SAFRP GQNOGQCNO516 GQ2PGOOOGOOO                                                                                            985492210
+SAFRP GQNOGQCNO517 GQ1    W F   N17592370W015595070                       W0048     WGE        P  NO517                    985502310
+SAFRP GQNOGQCNO517 GQ2PGOOOGOOO                                                                                            985512210
+SAFRP GQNOGQCNO518 GQ1    WDF   N18283595W016041852                       W0048     WGE        P  NO518                    985522401
+SAFRP GQNOGQCNO518 GQ2PGOOOGOOO                                                                                            985532210
+SAFRP GQNOGQCNO519 GQ1    WAF   N18241600W016013915                       W0048     WGE        P  NO519                    985542313
+SAFRP GQNOGQCNO519 GQ2PGOOOGOOO                                                                                            985552210
+SAFRP GQNOGQCNO520 GQ1    W F   N18143879W015554582                       W0048     WGE        P  NO520                    985562312
+SAFRP GQNOGQCNO520 GQ2PGOOOGOOO                                                                                            985572210
+SAFRP GQNOGQCNO521 GQ1    W F   N18165795W016064396                       W0048     WGE        P  NO521                    985582310
+SAFRP GQNOGQCNO521 GQ2PGOOOGOOO                                                                                            985592210
+SAFRP GQNOGQCOT07  GQ1    IAF   N18225473W016004702                       W0048     WGE        B  OT-336/D7                985602313
+SAFRP GQNOGQCOT07  GQ2PGOOOGOOO                                                                                            985612210
+SAFRP GQNOGQCOT25  GQ1    IAF   N18190001W015582504                       W0048     WGE        B  OT-336/D2.5              985622313
+SAFRP GQNOGQCOT25  GQ2PGOOOGOOO                                                                                            985632210
+SAFRP GQNOGQCOT39  GQ1    I F   N18132695W015550389                       W0048     WGE        B  OT-156/RW34-D4.53        985642312
+SAFRP GQNOGQCOT39  GQ2PGOOOGOOO                                                                                            985652210
+SAFRP GQNOGQCOT55  GQ1    IAF   N18120313W015541204                       W0048     WGE        B  OT-156/D5.5              985662312
+SAFRP GQNOGQCOT55  GQ2PGOOOGOOO                                                                                            985672210
+SAFRP GQNOGQCOT86  GQ1    IAF   N18241644W016014057                       W0048     WGE        B  OT-336/D8.6              985682313
+SAFRP GQNOGQCOT86  GQ2PGOOOGOOO                                                                                            985692210
+SAFRP GQNOGQCR022N GQ1    I E   N18301943W015525978                       W0047     WGE        B  OT-GUPEL/OT-D14          985702402
+SAFRP GQNOGQCR022N GQ2PGOOOGOOO                                                                                            985712210
+SAFRP GQNOGQCR042N GQ1    I E   N18281570W015483263                       W0047     WGE        B  OT-ZRT/OT-D14            985722401
+SAFRP GQNOGQCR042N GQ2PGOOOGOOO                                                                                            985732210
+SAFRP GQNOGQCR059N GQ1    I E   N18253444W015453494                       W0047     WGE        B  OT-MINBA/OT-D14          985742313
+SAFRP GQNOGQCR059N GQ2PGOOOGOOO                                                                                            985752210
+SAFRP GQNOGQCR126N GQ1    R E   N18095551W015441743                       W0047     WGE        B  OT-SEPEL/OT-D14          985762402
+SAFRP GQNOGQCR126N GQ2PGOOOGOOO                                                                                            985772210
+SAFRP GQNOGQCR126T GQ1    I E   N18065778W015384827                       W0047     WGE        B  OT-SEPEL/OT-D20          985782313
+SAFRP GQNOGQCR126T GQ2PGOOOGOOO                                                                                            985792210
+SAFRP GQNOGQCR139T GQ1    I E   N18031319W015413942                       W0047     WGE        B  OT-EPETI/OT-D20          985802402
+SAFRP GQNOGQCR139T GQ2PGOOOGOOO                                                                                            985812210
+SAFRP GQNOGQCR139Y GQ1    I E   N17594889W015374810                       W0047     WGE        B  OT-EPETI/OT-D25          985822401
+SAFRP GQNOGQCR139Y GQ2PGOOOGOOO                                                                                            985832210
+SAFRP GQNOGQCR144S GQ1    I Z   N18023860W015434563                       W0047     WGE        B  OT-144/D19               985842309
+SAFRP GQNOGQCR144S GQ2PGOOOGOOO                                                                                            985852210
+SAFRP GQNOGQCR156T GQ1    I E   N17592913W015463099                       W0047     WGE        B  OT-156/D20               985862311
+SAFRP GQNOGQCR156T GQ2PGOOOGOOO                                                                                            985872210
+SAFRP GQNOGQCR173T GQ1    I E   N17571551W015522377                       W0048     WGE        B  OT-ULNOT/OT-D20          985882401
+SAFRP GQNOGQCR173T GQ2PGOOOGOOO                                                                                            985892210
+SAFRP GQNOGQCR173Y GQ1    I E   N17522196W015511333                       W0048     WGE        B  OT-ULNOT/OT-D25          985902402
+SAFRP GQNOGQCR173Y GQ2PGOOOGOOO                                                                                            985912210
+SAFRP GQNOGQCR198T GQ1    I E   N17571130W016012875                       W0049     WGE        B  OT-ARBEN/OT-D20          985922311
+SAFRP GQNOGQCR198T GQ2PGOOOGOOO                                                                                            985932210
+SAFRP GQNOGQCR198V GQ1    I E   N17551346W016015495                       W0049     WGE        B  OT-ARBEN/OT-D22          985942312
+SAFRP GQNOGQCR198V GQ2PGOOOGOOO                                                                                            985952210
+SAFRP GQNOGQCR208N GQ1    I E   N18034617W016023272                       W0048     WGE        B  OT-BIKIS/OT-D14          985962310
+SAFRP GQNOGQCR208N GQ2PGOOOGOOO                                                                                            985972210
+SAFRP GQNOGQCR208T GQ1    I E   N17581035W016045241                       W0049     WGE        B  OT-BIKIS/OT-D20          985982313
+SAFRP GQNOGQCR208T GQ2PGOOOGOOO                                                                                            985992210
+SAFRP GQNOGQCR245T GQ1    I E   N18062108W016150154                       W0049     WGE        B  OT-245/D20               986002308
+SAFRP GQNOGQCR245T GQ2PGOOOGOOO                                                                                            986012210
+SAFRP GQNOGQCR257S GQ1    I F   N18103606W016155830                       W0049     WGE        B  OT-257/D19               986022308
+SAFRP GQNOGQCR257S GQ2PGOOOGOOO                                                                                            986032210
+SAFRP GQNOGQCR306N GQ1    I E   N18234443W016095503                       W0048     WGE        B  OT-306/D14               986042310
+SAFRP GQNOGQCR306N GQ2PGOOOGOOO                                                                                            986052210
+SAFRP GQNOGQCR319N GQ1    I E   N18262443W016075241                       W0048     WGE        B  OT-319/D14               986062308
+SAFRP GQNOGQCR319N GQ2PGOOOGOOO                                                                                            986072210
+SAFRP GQNOGQCR345N GQ1    I E   N18295317W016023272                       W0048     WGE        B  OT-ERENA/OT-D14          986082313
+SAFRP GQNOGQCR345N GQ2PGOOOGOOO                                                                                            986092210
+SAFRP GQNOGQCR345Y GQ1    I E   N18400871W016064985                       W0048     WGE        B  OT-ERENA/OT-D25          986102313
+SAFRP GQNOGQCR345Y GQ2PGOOOGOOO                                                                                            986112210
+SAFRP GQNOGQCR348S GQ1    I Z   N18345796W016031706                       W0048     WGE        B  OT-348/D19               986122312
+SAFRP GQNOGQCR348S GQ2PGOOOGOOO                                                                                            986132210
+SAFRP GQNOGQCSITMI GQ1    W     N18055325W016203094                       W0050     WGE        P  SITMI                    986142311
+SAFRP GQNOGQCSITMI GQ2PGOOOGOOO                                                                                            986152210
+SAFRP GQNOGQCSY07  GQ1    I F   N18172196W015595683                       W0048     WGE        B  RW06-236/SY-D0.7         986162401
+SAFRP GQNOGQCSY07  GQ2PGOOOGOOO                                                                                            986172210
+SAFRP GQNOGQCSY63  GQ1    I F   N18134271W016042516                       W0048     WGE        B  RW06-236/SY-D6.3         986182309
+SAFRP GQNOGQCSY63  GQ2PGOOOGOOO                                                                                            986192210
+SAFRP GQNOGQCTANEB GQ1    R Z   N18285750W016043170                       W0048     WGE        P  TANEB                    986202401
+SAFRP GQNOGQCTANEB GQ2PGOOOGOOO                                                                                            986212210
+SAFRP GQNOGQCTUVAT GQ1    WIF   N18025200W015533930                       W0048     WGE        P  TUVAT                    986222401
+SAFRP GQNOGQCTUVAT GQ2PGOOOGOOO                                                                                            986232210
+SAFRP GQNOGQCTY47  GQ1    IAF   N18132856W015550463                       W0048     WGE        B  RW34-156/TY-D4.7         986242312
+SAFRP GQNOGQCTY47  GQ2PGOOOGOOO                                                                                            986252210
+SAFRP GQNOGQCTY63  GQ1    IAF   N18120553W015541340                       W0048     WGE        B  RW34-156/TY-D6.3         986262312
+SAFRP GQNOGQCTY63  GQ2PGOOOGOOO                                                                                            986272210
+SAFRP GQNOGQCTY77  GQ1    IAF   N18105203W015533014                       W0048     WGE        B  RW34-156/TY-D7.7         986282312
+SAFRP GQNOGQCTY77  GQ2PGOOOGOOO                                                                                            986292210
+SAFRP GQNOGQEARBE1G2RW34 P010ARBENGOEA1E       IF                                                                      G   986302210
+SAFRP GQNOGQEARBE1G2RW34 P010ARBENGOEA2E                    W0060P                                                     G   986312210
+SAFRP GQNOGQEARBE1G2RW34 P020R198TGQPC0E       TF                                                                      G   986322210
+SAFRP GQNOGQEARBE1G2RW34 P025R156TGQPC0E   L   AF OT  GQ      156002001980    D                                        G   986332210
+SAFRP GQNOGQEARBE1G2RW34 P030GAMONGQPC0EE H    TF                                 + 02000                              G   986342210
+SAFRP GQNOGQEARBE1L2RW06 P010ARBENGOEA1E       IF                                                                      G   986352210
+SAFRP GQNOGQEARBE1L2RW06 P010ARBENGOEA2E                    W0060P                                                     G   986362210
+SAFRP GQNOGQEARBE1L2RW06 P020R198TGQPC0E       TF                                                                      G   986372210
+SAFRP GQNOGQEARBE1L2RW06 P025R245TGQPC0E   R   AF OT  GQ      245002001980    D                                        G   986382210
+SAFRP GQNOGQEARBE1L2RW06 P030LOSNAGQPC0EE H    TF                                 + 02000                              G   986392210
+SAFRP GQNOGQEARBE1T2RW16 P010ARBENGOEA1E       IF                                                                      G   986402210
+SAFRP GQNOGQEARBE1T2RW16 P010ARBENGOEA2E                    W0060P                                                     G   986412210
+SAFRP GQNOGQEARBE1T2RW16 P020R198VGQPC0E       TF                                                                      G   986422210
+SAFRP GQNOGQEARBE1T2RW16 P025         0        CI                     3550                                             G   986432210
+SAFRP GQNOGQEARBE1T2RW16 P030TANEBGQPC0EE HR   AF OT  GQ      336001402120    D   + 02000                              G   986442210
+SAFRP GQNOGQEBIKI1G2RW34 P010BIKISGOEA1E       IF                                                                      G   986452210
+SAFRP GQNOGQEBIKI1G2RW34 P010BIKISGOEA2E                    W0060P                                                     G   986462210
+SAFRP GQNOGQEBIKI1G2RW34 P020R208TGQPC0E       TF                                                                      G   986472210
+SAFRP GQNOGQEBIKI1G2RW34 P025R156TGQPC0E   L   AF OT  GQ      156002002080    D                                        G   986482210
+SAFRP GQNOGQEBIKI1G2RW34 P030GAMONGQPC0EE H    TF                                 + 02000                              G   986492210
+SAFRP GQNOGQEBIKI1L2RW06 P010BIKISGOEA1E       IF                                                                      G   986502210
+SAFRP GQNOGQEBIKI1L2RW06 P010BIKISGOEA2E                    W0060P                                                     G   986512210
+SAFRP GQNOGQEBIKI1L2RW06 P020R208NGQPC0E       TF                                                                      G   986522210
+SAFRP GQNOGQEBIKI1L2RW06 P030LOSNAGQPC0EE HR   AF OT  GQ      245001402080    D   + 02000                              G   986532210
+SAFRP GQNOGQEBIKI1T2RW16 P010BIKISGOEA1E       IF                                                                      G   986542210
+SAFRP GQNOGQEBIKI1T2RW16 P010BIKISGOEA2E                    W0060P                                                     G   986552210
+SAFRP GQNOGQEBIKI1T2RW16 P020R208NGQPC0E       TF                                                                      G   986562210
+SAFRP GQNOGQEBIKI1T2RW16 P030TANEBGQPC0EE HR   AF OT  GQ      336001402080    D   + 02000                              G   986572210
+SAFRP GQNOGQEBIKI1V3RW16 P010BIKISGOEA1E       IF                                                                      G   986582210
+SAFRP GQNOGQEBIKI1V3RW16 P010BIKISGOEA2E                    W0060P                                                     G   986592210
+SAFRP GQNOGQEBIKI1V3RW16 P020OT   GQD 0VE      TF                                                                      G   986602210
+SAFRP GQNOGQEBIKI1V3RW34 P010BIKISGOEA1E       IF                                                                      G   986612210
+SAFRP GQNOGQEBIKI1V3RW34 P010BIKISGOEA2E                    W0060P                                                     G   986622210
+SAFRP GQNOGQEBIKI1V3RW34 P020OT   GQD 0VE      TF                                                                      G   986632210
+SAFRP GQNOGQEEPET1G2RW34 P010EPETIGOEA1E       IF                                                                      G   986642210
+SAFRP GQNOGQEEPET1G2RW34 P010EPETIGOEA2E                    W0060P                                                     G   986652210
+SAFRP GQNOGQEEPET1G2RW34 P020R139YGQPC0E       TF                                                                      G   986662210
+SAFRP GQNOGQEEPET1G2RW34 P030         0        CI                     2750                                             G   986672210
+SAFRP GQNOGQEEPET1G2RW34 P040GAMONGQPC0EE      CF OT  GQ      1557014033600060D   + 02000                              G   986682210
+SAFRP GQNOGQEEPET1L2RW06 P010EPETIGOEA1E       IF                                                                      G   986692210
+SAFRP GQNOGQEEPET1L2RW06 P010EPETIGOEA2E                    W0060P                                                     G   986702210
+SAFRP GQNOGQEEPET1L2RW06 P020OT   GQD 0V       TF                                                                      G   986712210
+SAFRP GQNOGQEEPET1L2RW06 P025R319NGQPC0E       TF                                                                      G   986722210
+SAFRP GQNOGQEEPET1L2RW06 P030LOSNAGQPC0EE HL   AF OT  GQ      245001403190    D   + 02000                              G   986732210
+SAFRP GQNOGQEEPET1T2RW16 P010EPETIGOEA1E       IF                                                                      G   986742210
+SAFRP GQNOGQEEPET1T2RW16 P010EPETIGOEA2E                    W0060P                                                     G   986752210
+SAFRP GQNOGQEEPET1T2RW16 P020OT   GQD 0V       TF                                                                      G   986762210
+SAFRP GQNOGQEEPET1T2RW16 P025R348SGQPC0E       TF                                                                      G   986772210
+SAFRP GQNOGQEEPET1T2RW16 P030TANEBGQPC0EE HL   CFYOT  GQ      3357014015600060D   + 02000                              G   986782210
+SAFRP GQNOGQEEPET1V3RW16 P010EPETIGOEA1E       IF                                                                      G   986792210
+SAFRP GQNOGQEEPET1V3RW16 P010EPETIGOEA2E                    W0060P                                                     G   986802210
+SAFRP GQNOGQEEPET1V3RW16 P020OT   GQD 0VE      TF                                                                      G   986812210
+SAFRP GQNOGQEEPET1V3RW34 P010EPETIGOEA1E       IF                                                                      G   986822210
+SAFRP GQNOGQEEPET1V3RW34 P010EPETIGOEA2E                    W0060P                                                     G   986832210
+SAFRP GQNOGQEEPET1V3RW34 P020OT   GQD 0VE      TF                                                                      G   986842210
+SAFRP GQNOGQEEPET2L2RW06 P010EPETIGOEA1E       IF                                                                      G   986852210
+SAFRP GQNOGQEEPET2L2RW06 P010EPETIGOEA2E                    W0060P                                                     G   986862210
+SAFRP GQNOGQEEPET2L2RW06 P020R139TGQPC0E       TF                                                                      G   986872210
+SAFRP GQNOGQEEPET2L2RW06 P025R245TGQPC0E   R   AF OT  GQ      245002001390    D                                        G   986882210
+SAFRP GQNOGQEEPET2L2RW06 P030LOSNAGQPC0EE H    TF                                 + 02000                              G   986892210
+SAFRP GQNOGQEEREN1G2RW34 P010ERENAGOEA1E       IF                                                                      G   986902210
+SAFRP GQNOGQEEREN1G2RW34 P010ERENAGOEA2E                    W0060P                                                     G   986912210
+SAFRP GQNOGQEEREN1G2RW34 P020OT   GQD 0V       TF                                                                      G   986922210
+SAFRP GQNOGQEEREN1G2RW34 P030R144SGQPC0E       TF                                                                      G   986932210
+SAFRP GQNOGQEEREN1G2RW34 P040GAMONGQPC0EE  R   CFYOT  GQ      1557014033600050D   + 02000                              G   986942210
+SAFRP GQNOGQEEREN1L2RW06 P010ERENAGOEA1E       IF                                                                      G   986952210
+SAFRP GQNOGQEEREN1L2RW06 P010ERENAGOEA2E                    W0060P                                                     G   986962210
+SAFRP GQNOGQEEREN1L2RW06 P020R345NGQPC0E       TF                                                                      G   986972210
+SAFRP GQNOGQEEREN1L2RW06 P030LOSNAGQPC0EE HL   AF OT  GQ      245001403440    D   + 02000                              G   986982210
+SAFRP GQNOGQEEREN1T2RW16 P010ERENAGOEA1E       IF                                                                      G   986992210
+SAFRP GQNOGQEEREN1T2RW16 P010ERENAGOEA2E                    W0060P                                                     G   987002210
+SAFRP GQNOGQEEREN1T2RW16 P020R345YGQPC0E       TF                                                                      G   987012210
+SAFRP GQNOGQEEREN1T2RW16 P030         0        CI                     1880                                             G   987022210
+SAFRP GQNOGQEEREN1T2RW16 P040TANEBGQPC0EE H    CF OT  GQ      3357014015600060D   + 02000                              G   987032210
+SAFRP GQNOGQEEREN1V3RW16 P010ERENAGOEA1E       IF                                                                      G   987042210
+SAFRP GQNOGQEEREN1V3RW16 P010ERENAGOEA2E                    W0060P                                                     G   987052210
+SAFRP GQNOGQEEREN1V3RW16 P020OT   GQD 0VE      TF                                                                      G   987062210
+SAFRP GQNOGQEEREN1V3RW34 P010ERENAGOEA1E       IF                                                                      G   987072210
+SAFRP GQNOGQEEREN1V3RW34 P010ERENAGOEA2E                    W0060P                                                     G   987082210
+SAFRP GQNOGQEEREN1V3RW34 P020OT   GQD 0VE      TF                                                                      G   987092210
+SAFRP GQNOGQEGUPE1G2RW34 P010GUPELGQEA1E       IF                                                                      G   987102210
+SAFRP GQNOGQEGUPE1G2RW34 P010GUPELGQEA2E                    W0060P                                                     G   987112210
+SAFRP GQNOGQEGUPE1G2RW34 P020R022NGQPC0E       TF                                                                      G   987122210
+SAFRP GQNOGQEGUPE1G2RW34 P030GAMONGQPC0EE HR   AF OT  GQ      156001400220    D   + 02000                              G   987132210
+SAFRP GQNOGQEGUPE1L2RW06 P010GUPELGQEA1E       IF                                                                      G   987142210
+SAFRP GQNOGQEGUPE1L2RW06 P010GUPELGQEA2E                    W0060P                                                     G   987152210
+SAFRP GQNOGQEGUPE1L2RW06 P020R022NGQPC0E       TF                                                                      G   987162210
+SAFRP GQNOGQEGUPE1L2RW06 P030LOSNAGQPC0EE HL   AF OT  GQ      245001400220    D   + 02000                              G   987172210
+SAFRP GQNOGQEGUPE1T2RW16 P010GUPELGQEA1E       IF                                                                      G   987182210
+SAFRP GQNOGQEGUPE1T2RW16 P010GUPELGQEA2E                    W0060P                                                     G   987192210
+SAFRP GQNOGQEGUPE1T2RW16 P020R022NGQPC0E       TF                                                                      G   987202210
+SAFRP GQNOGQEGUPE1T2RW16 P030TANEBGQPC0EE HL   AF OT  GQ      336001400220    D   + 02000                              G   987212210
+SAFRP GQNOGQEGUPE1V3RW16 P010GUPELGQEA1E       IF                                                                      G   987222210
+SAFRP GQNOGQEGUPE1V3RW16 P010GUPELGQEA2E                    W0060P                                                     G   987232210
+SAFRP GQNOGQEGUPE1V3RW16 P020OT   GQD 0VE      TF                                                                      G   987242210
+SAFRP GQNOGQEGUPE1V3RW34 P010GUPELGQEA1E       IF                                                                      G   987252210
+SAFRP GQNOGQEGUPE1V3RW34 P010GUPELGQEA2E                    W0060P                                                     G   987262210
+SAFRP GQNOGQEGUPE1V3RW34 P020OT   GQD 0VE      TF                                                                      G   987272210
+SAFRP GQNOGQEMINB1G2RW34 P010MINBAGOEA1E       IF                                                                      G   987282210
+SAFRP GQNOGQEMINB1G2RW34 P010MINBAGOEA2E                    W0060P                                                     G   987292210
+SAFRP GQNOGQEMINB1G2RW34 P020R059NGQPC0E       TF                                                                      G   987302210
+SAFRP GQNOGQEMINB1G2RW34 P030GAMONGQPC0EE HR   AF OT  GQ      156001400580    D   + 02000                              G   987312210
+SAFRP GQNOGQEMINB1L2RW06 P010MINBAGOEA1E       IF                                                                      G   987322210
+SAFRP GQNOGQEMINB1L2RW06 P010MINBAGOEA2E                    W0060P                                                     G   987332210
+SAFRP GQNOGQEMINB1L2RW06 P020R059NGQPC0E       TF                                                                      G   987342210
+SAFRP GQNOGQEMINB1L2RW06 P030LOSNAGQPC0EE HL   AF OT  GQ      245001400580    D   + 02000                              G   987352210
+SAFRP GQNOGQEMINB1T2RW16 P010MINBAGOEA1E       IF                                                                      G   987362210
+SAFRP GQNOGQEMINB1T2RW16 P010MINBAGOEA2E                    W0060P                                                     G   987372210
+SAFRP GQNOGQEMINB1T2RW16 P020R059NGQPC0E       TF                                                                      G   987382210
+SAFRP GQNOGQEMINB1T2RW16 P030TANEBGQPC0EE HL   AF OT  GQ      336001400580    D   + 02000                              G   987392210
+SAFRP GQNOGQEMINB1V3RW16 P010MINBAGOEA1E       IF                                                                      G   987402210
+SAFRP GQNOGQEMINB1V3RW16 P010MINBAGOEA2E                    W0060P                                                     G   987412210
+SAFRP GQNOGQEMINB1V3RW16 P020OT   GQD 0VE      TF                                                                      G   987422210
+SAFRP GQNOGQEMINB1V3RW34 P010MINBAGOEA1E       IF                                                                      G   987432210
+SAFRP GQNOGQEMINB1V3RW34 P010MINBAGOEA2E                    W0060P                                                     G   987442210
+SAFRP GQNOGQEMINB1V3RW34 P020OT   GQD 0VE      TF                                                                      G   987452210
+SAFRP GQNOGQESEPE1G2RW34 P010SEPELGQEA1E       IF                                                                      G   987462210
+SAFRP GQNOGQESEPE1G2RW34 P010SEPELGQEA2E                    W0060P                                                     G   987472210
+SAFRP GQNOGQESEPE1G2RW34 P020R126NGQPC0E       TF                                                                      G   987482210
+SAFRP GQNOGQESEPE1G2RW34 P030GAMONGQPC0EE HR   AF OT  GQ      156001401260    D   + 02000                              G   987492210
+SAFRP GQNOGQESEPE1L2RW06 P010SEPELGQEA1E       IF                                                                      G   987502210
+SAFRP GQNOGQESEPE1L2RW06 P010SEPELGQEA2E                    W0060P                                                     G   987512210
+SAFRP GQNOGQESEPE1L2RW06 P020OT   GQD 0V       TF                                                                      G   987522210
+SAFRP GQNOGQESEPE1L2RW06 P025R306NGQPC0E       TF                                                                      G   987532210
+SAFRP GQNOGQESEPE1L2RW06 P030LOSNAGQPC0EE HL   AF OT  GQ      245001403060    D   + 02000                              G   987542210
+SAFRP GQNOGQESEPE1T2RW16 P010SEPELGQEA1E       IF                                                                      G   987552210
+SAFRP GQNOGQESEPE1T2RW16 P010SEPELGQEA2E                    W0060P                                                     G   987562210
+SAFRP GQNOGQESEPE1T2RW16 P020OT   GQD 0V       TF                                                                      G   987572210
+SAFRP GQNOGQESEPE1T2RW16 P025R348SGQPC0E       TF                                                                      G   987582210
+SAFRP GQNOGQESEPE1T2RW16 P030TANEBGQPC0EE HL   CFYOT  GQ      3357014015600060D   + 02000                              G   987592210
+SAFRP GQNOGQESEPE1V3RW16 P010SEPELGQEA1E       IF                                                                      G   987602210
+SAFRP GQNOGQESEPE1V3RW16 P010SEPELGQEA2E                    W0060P                                                     G   987612210
+SAFRP GQNOGQESEPE1V3RW16 P020OT   GQD 0VE      TF                                                                      G   987622210
+SAFRP GQNOGQESEPE1V3RW34 P010SEPELGQEA1E       IF                                                                      G   987632210
+SAFRP GQNOGQESEPE1V3RW34 P010SEPELGQEA2E                    W0060P                                                     G   987642210
+SAFRP GQNOGQESEPE1V3RW34 P020OT   GQD 0VE      TF                                                                      G   987652210
+SAFRP GQNOGQESEPE2L2RW06 P010SEPELGQEA1E       IF                                                                      G   987662210
+SAFRP GQNOGQESEPE2L2RW06 P010SEPELGQEA2E                    W0060P                                                     G   987672210
+SAFRP GQNOGQESEPE2L2RW06 P020R126TGQPC0E       TF                                                                      G   987682210
+SAFRP GQNOGQESEPE2L2RW06 P025R245TGQPC0E   R   AF OT  GQ      245002001260    D                                        G   987692210
+SAFRP GQNOGQESEPE2L2RW06 P030LOSNAGQPC0EE H    TF                                 + 02000                              G   987702210
+SAFRP GQNOGQEULNO1G2RW34 P010ULNOTGQEA1E       IF                                                                      G   987712210
+SAFRP GQNOGQEULNO1G2RW34 P010ULNOTGQEA2E                    W0060P                                                     G   987722210
+SAFRP GQNOGQEULNO1G2RW34 P020R173YGQPC0E       TF                                                                      G   987732210
+SAFRP GQNOGQEULNO1G2RW34 P025         0        CI                     0320                                             G   987742210
+SAFRP GQNOGQEULNO1G2RW34 P030GAMONGQPC0EE H    CF OT  GQ      1557014033600050D   + 02000                              G   987752210
+SAFRP GQNOGQEULNO1L2RW06 P010ULNOTGQEA1E       IF                                                                      G   987762210
+SAFRP GQNOGQEULNO1L2RW06 P010ULNOTGQEA2E                    W0060P                                                     G   987772210
+SAFRP GQNOGQEULNO1L2RW06 P020R173TGQPC0E       TF                                                                      G   987782210
+SAFRP GQNOGQEULNO1L2RW06 P025R245TGQPC0E   R   AF OT  GQ      245002001730    D                                        G   987792210
+SAFRP GQNOGQEULNO1L2RW06 P030LOSNAGQPC0EE H    TF                                 + 02000                              G   987802210
+SAFRP GQNOGQEULNO1T2RW16 P010ULNOTGQEA1E       IF                                                                      G   987812210
+SAFRP GQNOGQEULNO1T2RW16 P010ULNOTGQEA2E                    W0060P                                                     G   987822210
+SAFRP GQNOGQEULNO1T2RW16 P020R173YGQPC0E       TF                                                                      G   987832210
+SAFRP GQNOGQEULNO1T2RW16 P025         0        CI                     0320                                             G   987842210
+SAFRP GQNOGQEULNO1T2RW16 P030OT   GQD 0V       CF OT  GQ      1860000033600200D                                        G   987852210
+SAFRP GQNOGQEULNO1T2RW16 P040R348SGQPC0E       TF                                                                      G   987862210
+SAFRP GQNOGQEULNO1T2RW16 P050TANEBGQPC0EE HL   CFYOT  GQ      3357014015600060D   + 02000                              G   987872210
+SAFRP GQNOGQEULNO1V3RW16 P010ULNOTGQEA1E       IF                                                                      G   987882210
+SAFRP GQNOGQEULNO1V3RW16 P010ULNOTGQEA2E                    W0060P                                                     G   987892210
+SAFRP GQNOGQEULNO1V3RW16 P020R173YGQPC0E       TF                                                                      G   987902210
+SAFRP GQNOGQEULNO1V3RW16 P025         0        CI                     0320                                             G   987912210
+SAFRP GQNOGQEULNO1V3RW16 P030OT   GQD 0VE      CF OT  GQ      1860000033600200D                                        G   987922210
+SAFRP GQNOGQEULNO1V3RW34 P010ULNOTGQEA1E       IF                                                                      G   987932210
+SAFRP GQNOGQEULNO1V3RW34 P010ULNOTGQEA2E                    W0060P                                                     G   987942210
+SAFRP GQNOGQEULNO1V3RW34 P020R173YGQPC0E       TF                                                                      G   987952210
+SAFRP GQNOGQEULNO1V3RW34 P025         0        CI                     0320                                             G   987962210
+SAFRP GQNOGQEULNO1V3RW34 P030OT   GQD 0VE      CF OT  GQ      1860000033600200D                                        G   987972210
+SAFRP GQNOGQEULNO2T2RW16 P010ULNOTGQEA1E       IF                                                                      G   987982210
+SAFRP GQNOGQEULNO2T2RW16 P010ULNOTGQEA2E                    W0060P                                                     G   987992210
+SAFRP GQNOGQEULNO2T2RW16 P020R173TGQPC0E       TF                                                                      G   988002210
+SAFRP GQNOGQEULNO2T2RW16 P030R198TGQPC0E   R   AF OT  GQ      198002001730    D                                        G   988012210
+SAFRP GQNOGQEULNO2T2RW16 P040         0        CI                     3550                                             G   988022210
+SAFRP GQNOGQEULNO2T2RW16 P050TANEBGQPC0EE HR   AF OT  GQ      336001402120    D   + 02000                              G   988032210
+SAFRP GQNOGQEZRT1G 2RW34 P010ZRT  GQD 1V       IF                                                                      G   988042210
+SAFRP GQNOGQEZRT1G 2RW34 P010ZRT  GQD 2E                    W0060P                                                     G   988052210
+SAFRP GQNOGQEZRT1G 2RW34 P020R042NGQPC0E       TF                                                                      G   988062210
+SAFRP GQNOGQEZRT1G 2RW34 P030GAMONGQPC0EE HR   AF OT  GQ      156001400420    D   + 02000                              G   988072210
+SAFRP GQNOGQEZRT1L 2RW06 P010ZRT  GQD 1V       IF                                                                      G   988082210
+SAFRP GQNOGQEZRT1L 2RW06 P010ZRT  GQD 2E                    W0060P                                                     G   988092210
+SAFRP GQNOGQEZRT1L 2RW06 P020R042NGQPC0E       TF                                                                      G   988102210
+SAFRP GQNOGQEZRT1L 2RW06 P030LOSNAGQPC0EE HL   AF OT  GQ      245001400420    D   + 02000                              G   988112210
+SAFRP GQNOGQEZRT1T 2RW16 P010ZRT  GQD 1V       IF                                                                      G   988122210
+SAFRP GQNOGQEZRT1T 2RW16 P010ZRT  GQD 2E                    W0060P                                                     G   988132210
+SAFRP GQNOGQEZRT1T 2RW16 P020R042NGQPC0E       TF                                                                      G   988142210
+SAFRP GQNOGQEZRT1T 2RW16 P030TANEBGQPC0EE HL   AF OT  GQ      336001400420    D   + 02000                              G   988152210
+SAFRP GQNOGQEZRT1V 3RW16 P010ZRT  GQD 1V       IF                                                                      G   988162210
+SAFRP GQNOGQEZRT1V 3RW16 P010ZRT  GQD 2E                    W0060P                                                     G   988172210
+SAFRP GQNOGQEZRT1V 3RW16 P020OT   GQD 0VE      TF                                                                      G   988182210
+SAFRP GQNOGQEZRT1V 3RW34 P010ZRT  GQD 1V       IF                                                                      G   988192210
+SAFRP GQNOGQEZRT1V 3RW34 P010ZRT  GQD 2E                    W0060P                                                     G   988202210
+SAFRP GQNOGQEZRT1V 3RW34 P020OT   GQD 0VE      TF                                                                      G   988212210
+SAFRP GQNOGQFD16-Y AOT   J010OT   GQD 1V       IF                                 + 02000                           U  S   988222210
+SAFRP GQNOGQFD16-Y AOT   J010OT   GQD 2E                    W0060P                                                     S   988232210
+SAFRP GQNOGQFD16-Y AOT   J020OT07 GQPC0E       TF                                 + 01500                           U  S   988242210
+SAFRP GQNOGQFD16-Y AOT   J030OT07 GQPC0EY      FC OT  GQ      3360007029100040D                                     U  S   988252210
+SAFRP GQNOGQFD16-Y AOT   J040         0    R   CIY                    1110                                          U  S   988262210
+SAFRP GQNOGQFD16-Y AOT   J050OT07 GQPC0EE      CF OT  GQ      3360007015600040D   + 01500                           U  S   988272210
+SAFRP GQNOGQFD16-Y D     J010OT07 GQPC1E  F    IF OT  GQ      33600070        D   + 01500                 OT   AGQD U  S   988282210
+SAFRP GQNOGQFD16-Y D     J010OT07 GQPC2E                    W0060P                                                     S   988292210
+SAFRP GQNOGQFD16-Y D     J020OT25 GQPC1E  M    TF OT  GQ      33600025        D     00059             -300          U  S   988302210
+SAFRP GQNOGQFD16-Y D     J020OT25 GQPC2E050                                                                            S   988312210
+SAFRP GQNOGQFD16-Y Z     J030         0  M     CA                     1560        + 01000                           U  A   988322210
+SAFRP GQNOGQFD16-Y Z     J040OT   GQD 0V   L   DF                                   02000                           U  A   988332210
+SAFRP GQNOGQFD16-Y Z     J050OT   GQD 0VE  R   HM                     3360T010  I                  230              U- A   988342210
+SAFRP GQNOGQFD16-Z D     J005TANEBGQPC1E  I    IF OT  GQ      33570140        D   + 02000                 OT   AGQD U  S   988352210
+SAFRP GQNOGQFD16-Z D     J005TANEBGQPC2E                    W0060P                                                     S   988362210
+SAFRP GQNOGQFD16-Z D     J010OT86 GQPC0E  F    TF OT  GQ      33560086        D   + 02000                           U  S   988372210
+SAFRP GQNOGQFD16-Z D     J020OT25 GQPC1E  M    TF OT  GQ      33600025        D     00059             -300          U  S   988382210
+SAFRP GQNOGQFD16-Z D     J020OT25 GQPC2E050                                                                            S   988392210
+SAFRP GQNOGQFD16-Z Z     J030         0  M     CA                     1560        + 01000                           U  A   988402210
+SAFRP GQNOGQFD16-Z Z     J040         0    L   CIY                    3180                                          U  A   988412210
+SAFRP GQNOGQFD16-Z Z     J050OT   GQD 0V       IF                                                                   U  A   988422210
+SAFRP GQNOGQFD16-Z Z     J060R348SGQPC0EY      TF                                                                   U  A   988432210
+SAFRP GQNOGQFD16-Z Z     J070TANEBGQPC0E   L   CFYOT  GQ      3357014015600040D     02000                           U  A   988442210
+SAFRP GQNOGQFD16-Z Z     J080TANEBGQPC0EE  L   HM                     15600050  I                  230              U- A   988452210
+SAFRP GQNOGQFD34-Y AOT   F010OT   GQD 1V  H    IF                                 + 02000                           U  S   988462210
+SAFRP GQNOGQFD34-Y AOT   F010OT   GQD 2E                    W0060P                                                     S   988472210
+SAFRP GQNOGQFD34-Y AOT   F020OT   GQD 0VY      FD OT  GQ      1860000014400070D   + 01500                           U  S   988482210
+SAFRP GQNOGQFD34-Y AOT   F030OT39 GQPC0EE  R   CFYOT  GQ      1560003933600030D   + 01500                           U  S   988492210
+SAFRP GQNOGQFD34-Y AOT   G010OT   GQD 1V  H    IF                                 + 02000                           U  S   988502210
+SAFRP GQNOGQFD34-Y AOT   G010OT   GQD 2E                    W0060P                                                     S   988512210
+SAFRP GQNOGQFD34-Y AOT   G020OT   GQD 0VY      FD OT  GQ      1860000012900070D   + 01500                           U  S   988522210
+SAFRP GQNOGQFD34-Y AOT   G030OT39 GQPC0EE  R   CFYOT  GQ      1560003933600030D   + 01500                           U  S   988532210
+SAFRP GQNOGQFD34-Y D     J010OT39 GQPC1E  F    IF OT  GQ      15600039        D   + 01500                 OT   AGQD U  S   988542210
+SAFRP GQNOGQFD34-Y D     J010OT39 GQPC2E                    W0060P                                                     S   988552210
+SAFRP GQNOGQFD34-Y D     J020OT   GQD 1V  M    TF OT  GQ      18600000        D     00262             -300          U  S   988562210
+SAFRP GQNOGQFD34-Y D     J020OT   GQD 2E050                                                                            S   988572210
+SAFRP GQNOGQFD34-Y Z     J030OT   GQD 0V M     FA OT  GQ      186000003360    D   + 01000                           U  A   988582210
+SAFRP GQNOGQFD34-Y Z     J040OT   GQD 0V   R   DF                                   02000                           U  A   988592210
+SAFRP GQNOGQFD34-Y Z     J050OT   GQD 0VE  L   HM                     1290T010  I                  230              U- A   988602210
+SAFRP GQNOGQFD34-Z D     J010GAMONGQPC1E  I    IF OT  GQ      15570140        D   + 02000                 OT   AGQD U  S   988612210
+SAFRP GQNOGQFD34-Z D     J010GAMONGQPC2E                    W0060P                                                     S   988622210
+SAFRP GQNOGQFD34-Z D     J020OT55 GQPC0E  F    TF OT  GQ      15580055        D   + 02000                           U  S   988632210
+SAFRP GQNOGQFD34-Z D     J030OT   GQD 1V  M    TF OT  GQ      18600000        D     00262             -300          U  S   988642210
+SAFRP GQNOGQFD34-Z D     J030OT   GQD 2E050                                                                            S   988652210
+SAFRP GQNOGQFD34-Z Z     J040         0  M     CA                     3360        + 01000                           U  A   988662210
+SAFRP GQNOGQFD34-Z Z     J050         0    R   CIY                    1740                                          U  A   988672210
+SAFRP GQNOGQFD34-Z Z     J060OT   GQD 0V       IF                                                                   U  A   988682210
+SAFRP GQNOGQFD34-Z Z     J070R144SGQPC0EY      TF                                                                   U  A   988692210
+SAFRP GQNOGQFD34-Z Z     J080GAMONGQPC0E   R   CFYOT  GQ      1557014033600040D     02000                           U  A   988702210
+SAFRP GQNOGQFD34-Z Z     J090GAMONGQPC0EE  R   HM                     33600050  I                  230              U- A   988712210
+SAFRP GQNOGQFH06   AAGROBJ010AGROBGQPC1E  A    IF                                 + 02000          230              U-PSH  988722210
+SAFRP GQNOGQFH06   AAGROBJ010AGROBGQPC2E                    W0060P                                                    PSH  988732210
+SAFRP GQNOGQFH06   AAGROBJ020NO501GQPC0EE B 010TF                                 + 02000          230              U-PSH  988742210
+SAFRP GQNOGQFH06   ABINADJ010BINADGQPC1E  A    IF                                 + 02000          230              U-PSH  988752210
+SAFRP GQNOGQFH06   ABINADJ010BINADGQPC2E                    W0060P                                                    PSH  988762210
+SAFRP GQNOGQFH06   ABINADJ020NO501GQPC0EE B 010TF                                 + 02000          230              U-PSH  988772210
+SAFRP GQNOGQFH06   ALILEPJ010LILEPGQPC1E  C    IF                                 + 02000          230              U-PSH  988782210
+SAFRP GQNOGQFH06   ALILEPJ010LILEPGQPC2E                    W0060P                                                    PSH  988792210
+SAFRP GQNOGQFH06   ALILEPJ020NO501GQPC0EE B 010TF                                 + 02000          230              U-PSH  988802210
+SAFRP GQNOGQFH06   H     J010NO501GQPC1E  I    IF                                 + 02000          230              B-PSH  988812210
+SAFRP GQNOGQFH06   H     J010NO501GQPC2E                    W0060P                                                    PSH  988822210
+SAFRP GQNOGQFH06   H     J020NO502GQPC1E  F 010TF                                   02000                           B PSH  988832210
+SAFRP GQNOGQFH06   H     J020NO502GQPC2WN          N          ALNAV                                                   PSH  988842210
+SAFRP GQNOGQFH06   H     J030RW06 GQPG1GY M 031TF                                   00060             -300          B PSH  988852210
+SAFRP GQNOGQFH06   H     J030RW06 GQPG2E050                                                                           PSH  988862210
+SAFRP GQNOGQFH06   Z     J040NO503GQPC0EYM  010TF                                                                   B PAH  988872210
+SAFRP GQNOGQFH06   Z     J050NO504GQPC0E   L010DF                                 + 02000          230              B-PAH  988882210
+SAFRP GQNOGQFH06   Z     J060AGROBGQPC0EE   010TF                                 + 02000          230              B-PAH  988892210
+SAFRP GQNOGQFH16   AGANSIJ010GANSIGQPC1E  A    IF                                 + 02000          230              U-PSH  988902210
+SAFRP GQNOGQFH16   AGANSIJ010GANSIGQPC2E                    W0060P                                                    PSH  988912210
+SAFRP GQNOGQFH16   AGANSIJ020NO518GQPC0EE B 010TF                                 + 02000          230              U-PSH  988922210
+SAFRP GQNOGQFH16   AINEDIJ010INEDIGQPC1E  C    IF                                 + 02000          230              U-PSH  988932210
+SAFRP GQNOGQFH16   AINEDIJ010INEDIGQPC2E                    W0060P                                                    PSH  988942210
+SAFRP GQNOGQFH16   AINEDIJ020NO518GQPC0EE B 010TF                                 + 02000          230              U-PSH  988952210
+SAFRP GQNOGQFH16   AKOSAPJ010KOSAPGQPC1E  A    IF                                 + 02000          230              U-PSH  988962210
+SAFRP GQNOGQFH16   AKOSAPJ010KOSAPGQPC2E                    W0060P                                                    PSH  988972210
+SAFRP GQNOGQFH16   AKOSAPJ020NO518GQPC0EE B 010TF                                 + 02000          230              U-PSH  988982210
+SAFRP GQNOGQFH16   H     J010NO518GQPC1E  I    IF                                 + 02000          230              B-PSH  988992210
+SAFRP GQNOGQFH16   H     J010NO518GQPC2E                    W0060P                                                    PSH  989002210
+SAFRP GQNOGQFH16   H     J020NO519GQPC1E  F 010TF                                   02000                           B PSH  989012210
+SAFRP GQNOGQFH16   H     J020NO519GQPC2WN          N          ALNAV                                                   PSH  989022210
+SAFRP GQNOGQFH16   H     J030RW16 GQPG1GY M 031TF                                   00053             -300          B PSH  989032210
+SAFRP GQNOGQFH16   H     J030RW16 GQPG2E050                                                                           PSH  989042210
+SAFRP GQNOGQFH16   Z     J040NO520GQPC0EYM  010TF                                                                   B PAH  989052210
+SAFRP GQNOGQFH16   Z     J050NO521GQPC0E   R010DF                                 + 02000          230              B-PAH  989062210
+SAFRP GQNOGQFH16   Z     J060GANSIGQPC0EE   010TF                                 + 02000          230              B-PAH  989072210
+SAFRP GQNOGQFH24   AGALORJ010GALORGQPC1E  A    IF                                 + 02000          230              U-PSH  989082210
+SAFRP GQNOGQFH24   AGALORJ010GALORGQPC2E                    W0060P                                                    PSH  989092210
+SAFRP GQNOGQFH24   AGALORJ020NO506GQPC0EE B 010TF                                 + 02000          230              U-PSH  989102210
+SAFRP GQNOGQFH24   AKOMIRJ010KOMIRGQPC1E  C    IF                                 + 02000          230              U-PSH  989112210
+SAFRP GQNOGQFH24   AKOMIRJ010KOMIRGQPC2E                    W0060P                                                    PSH  989122210
+SAFRP GQNOGQFH24   AKOMIRJ020NO506GQPC0EE B 010TF                                 + 02000          230              U-PSH  989132210
+SAFRP GQNOGQFH24   AMERARJ010MERARGQPC1E  A    IF                                 + 02000          230              U-PSH  989142210
+SAFRP GQNOGQFH24   AMERARJ010MERARGQPC2E                    W0060P                                                    PSH  989152210
+SAFRP GQNOGQFH24   AMERARJ020NO506GQPC0EE B 010TF                                 + 02000          230              U-PSH  989162210
+SAFRP GQNOGQFH24   H     J010NO506GQPC1E  I    IF                                 + 02000                           B PSH  989172210
+SAFRP GQNOGQFH24   H     J010NO506GQPC2E                    W0060P                                                    PSH  989182210
+SAFRP GQNOGQFH24   H     J020NO507GQPC1E  F 010TF                                   02000                           B PSH  989192210
+SAFRP GQNOGQFH24   H     J020NO507GQPC2WN          N          ALNAV                                                   PSH  989202210
+SAFRP GQNOGQFH24   H     J030RW24 GQPG1GY M 031TF                                   00057             -300          B PSH  989212210
+SAFRP GQNOGQFH24   H     J030RW24 GQPG2E050                                                                           PSH  989222210
+SAFRP GQNOGQFH24   Z     J040NO508GQPC0EYM  010TF                                                                   B PAH  989232210
+SAFRP GQNOGQFH24   Z     J050NO509GQPC0E   R010DF                                 + 02000          230              B-PAH  989242210
+SAFRP GQNOGQFH24   Z     J060GALORGQPC0EE   010TF                                 + 02000          230              B-PAH  989252210
+SAFRP GQNOGQFH34   AARDOSJ010ARDOSGQPC1E  A    IF                                 + 02000          230              U-PSH  989262210
+SAFRP GQNOGQFH34   AARDOSJ010ARDOSGQPC2E                    W0060P                                                    PSH  989272210
+SAFRP GQNOGQFH34   AARDOSJ020NO511GQPC0EE B 010TF                                 + 02000          230              U-PSH  989282210
+SAFRP GQNOGQFH34   AGASOTJ010GASOTGQPC1E  C    IF                                 + 02000          230              U-PSH  989292210
+SAFRP GQNOGQFH34   AGASOTJ010GASOTGQPC2E                    W0060P                                                    PSH  989302210
+SAFRP GQNOGQFH34   AGASOTJ020NO511GQPC0EE B 010TF                                 + 02000          230              U-PSH  989312210
+SAFRP GQNOGQFH34   ATUVATJ010TUVATGQPC1E  A    IF                                 + 02000          230              U-PSH  989322210
+SAFRP GQNOGQFH34   ATUVATJ010TUVATGQPC2E                    W0060P                                                    PSH  989332210
+SAFRP GQNOGQFH34   ATUVATJ020NO511GQPC0EE B 010TF                                 + 02000          230              U-PSH  989342210
+SAFRP GQNOGQFH34   H     J010NO511GQPC1E  I    IF                                 + 02000          230    GQNO AGQPAB-PSH  989352210
+SAFRP GQNOGQFH34   H     J010NO511GQPC2E                    W0060P                                                    PSH  989362210
+SAFRP GQNOGQFH34   H     J020NO512GQPC1E  F 010TF                                   02000          230              B-PSH  989372210
+SAFRP GQNOGQFH34   H     J020NO512GQPC2WN          N          ALNAV                                                   PSH  989382210
+SAFRP GQNOGQFH34   H     J030RW34 GQPG1GY M 031TF                                   00057             -300          B PSH  989392210
+SAFRP GQNOGQFH34   H     J030RW34 GQPG2E050                                                                           PSH  989402210
+SAFRP GQNOGQFH34   Z     J040NO513GQPC0EYM  010TF                                                                   B PAH  989412210
+SAFRP GQNOGQFH34   Z     J050NO514GQPC0E   L010DF                                 + 02000          230              B-PAH  989422210
+SAFRP GQNOGQFH34   Z     J060NO516GQPC0E    010TF                                 + 02000          230              B-PAH  989432210
+SAFRP GQNOGQFH34   Z     J070NO517GQPC0E    010TF                                 + 02000          230              B-PAH  989442210
+SAFRP GQNOGQFH34   Z     J080TUVATGQPC0EE H 010TF                                 + 02000          230              B-PAH  989452210
+SAFRP GQNOGQFI06-Y AAGROBJ010AGROBGQPC1E  A    IF                                 + 02000          230              U-DS   989462210
+SAFRP GQNOGQFI06-Y AAGROBJ010AGROBGQPC2E                    W0060L                                                    DS   989472213
+SAFRP GQNOGQFI06-Y AAGROBJ020NO501GQPC1EE B 010TF SY  GQ      23600126        PI  + 02000          230              U-DS   989482213
+SAFRP GQNOGQFI06-Y AAGROBJ020NO501GQPC2E                    W0060L                                                    DS   989492213
+SAFRP GQNOGQFI06-Y ABINADJ010BINADGQPC1E  A    IF                                 + 02000          230              U-DS   989502210
+SAFRP GQNOGQFI06-Y ABINADJ010BINADGQPC2E                    W0060L                                                    DS   989512213
+SAFRP GQNOGQFI06-Y ABINADJ020NO501GQPC1EE B 010TF SY  GQ      23600126        PI  + 02000          230              U-DS   989522213
+SAFRP GQNOGQFI06-Y ABINADJ020NO501GQPC2E                    W0060L                                                    DS   989532213
+SAFRP GQNOGQFI06-Y ALILEPJ010LILEPGQPC1E  C    IF                                 + 02000          230              U-DS   989542210
+SAFRP GQNOGQFI06-Y ALILEPJ010LILEPGQPC2E                    W0060L                                                    DS   989552213
+SAFRP GQNOGQFI06-Y ALILEPJ020NO501GQPC1EE B 010TF SY  GQ      23600126        PI  + 02000          230              U-DS   989562213
+SAFRP GQNOGQFI06-Y ALILEPJ020NO501GQPC2E                    W0063L                                                    DS   989572213
+SAFRP GQNOGQFI06-Y I     J010NO501GQPC1E  I    IF SY  GQ      23600126        PI  + 02000          230    GQNO AGQPAU-DS   989582210
+SAFRP GQNOGQFI06-Y I     J010NO501GQPC2E                    W0063L                                                    DS   989592310
+SAFRP GQNOGQFI06-Y I     J020NO502GQPC1E  F    TF SY  GQ      23600076        PI  G 0200002000                      U DS   989602213
+SAFRP GQNOGQFI06-Y I     J020NO502GQPC2E                    W0063L                                                    DS   989612310
+SAFRP GQNOGQFI06-Y I     J030RW06 GQPG1GY M    TF SY  GQ      23600015        PI    00060             -300          U DS   989622213
+SAFRP GQNOGQFI06-Y I     J030RW06 GQPG2E050                 W0063L                                                    DS   989632310
+SAFRP GQNOGQFI06-Y Z     J040NO503GQPC1EYM  010TF                                                                   U DA   989642213
+SAFRP GQNOGQFI06-Y Z     J040NO503GQPC2E                    W0060L                                                    DA   989652213
+SAFRP GQNOGQFI06-Y Z     J050NO504GQPC1E   L010DF                                 + 02000                           U DA   989662213
+SAFRP GQNOGQFI06-Y Z     J050NO504GQPC2E                    W0060L                                                    DA   989672213
+SAFRP GQNOGQFI06-Y Z     J060AGROBGQPC1EE   010TF                                 + 02000          230              U-DA   989682213
+SAFRP GQNOGQFI06-Y Z     J060AGROBGQPC2E                    W0060L                                                    DA   989692213
+SAFRP GQNOGQFI06-Z I     J010LOSNAGQPC1E  I    IF SY  GQ      23600141        PI  + 02000                 OT   AGQD U DS   989702210
+SAFRP GQNOGQFI06-Z I     J010LOSNAGQPC2E                    W0063L                                                    DS   989712310
+SAFRP GQNOGQFI06-Z I     J020SY63 GQPC1E  F    TF SY  GQ      23590076        PI  G 0200002000                      U DS   989722310
+SAFRP GQNOGQFI06-Z I     J020SY63 GQPC2E                    W0063L                                                    DS   989732310
+SAFRP GQNOGQFI06-Z I     J030RW06 GQPG1G  M    TF SY  GQ      23600015        PI    00060             -300          U DS   989742213
+SAFRP GQNOGQFI06-Z I     J030RW06 GQPG2E050                 W0063L                                                    DS   989752310
+SAFRP GQNOGQFI06-Z Z     J040         1  M     CA                     0560        + 01000                           U DA   989762310
+SAFRP GQNOGQFI06-Z Z     J040         2E                    W0060L                                                    DA   989772310
+SAFRP GQNOGQFI06-Z Z     J050         1    L   CIY                    2270                                          U DA   989782310
+SAFRP GQNOGQFI06-Z Z     J050         2E                    W0060L                                                    DA   989792310
+SAFRP GQNOGQFI06-Z Z     J060OT   GQD 1V       IF                                                                   U DA   989802310
+SAFRP GQNOGQFI06-Z Z     J060OT   GQD 2E                    W0060L                                                    DA   989812310
+SAFRP GQNOGQFI06-Z Z     J070R257SGQPC1E       TF                                                                   U DA   989822310
+SAFRP GQNOGQFI06-Z Z     J070R257SGQPC2E                    W0060L                                                    DA   989832310
+SAFRP GQNOGQFI06-Z Z     J080LOSNAGQPC1E   L   CFYOT  GQ      2446014006500040D     02000                           U DA   989842310
+SAFRP GQNOGQFI06-Z Z     J080LOSNAGQPC2E                    W0060L                                                    DA   989852310
+SAFRP GQNOGQFI06-Z Z     J090LOSNAGQPC1EE  L   HM                     06500050  I                  230              U-DA   989862310
+SAFRP GQNOGQFI06-Z Z     J090LOSNAGQPC2E                    W0060L                                                    DA   989872310
+SAFRP GQNOGQFI34-X AARDOSJ010ARDOSGQPC1E  A    IF                                 + 02000          230              U-DS   989882210
+SAFRP GQNOGQFI34-X AARDOSJ010ARDOSGQPC2E                    W0060L                                                    DS   989892310
+SAFRP GQNOGQFI34-X AARDOSJ020NO511GQPC1EE B 010TF TY  GQ      15600131        PI  + 02000          230              U-DS   989902310
+SAFRP GQNOGQFI34-X AARDOSJ020NO511GQPC2E                    W0060L                                                    DS   989912310
+SAFRP GQNOGQFI34-X AGASOTJ010GASOTGQPC1E  C    IF                                 + 02000          230              U-DS   989922210
+SAFRP GQNOGQFI34-X AGASOTJ010GASOTGQPC2E                    W0060L                                                    DS   989932310
+SAFRP GQNOGQFI34-X AGASOTJ020NO511GQPC1EE B 010TF TY  GQ      15600131        PI  + 02000          230              U-DS   989942310
+SAFRP GQNOGQFI34-X AGASOTJ020NO511GQPC2E                    W0063L                                                    DS   989952310
+SAFRP GQNOGQFI34-X ATUVATJ010TUVATGQPC1E  A    IF                                 + 02000          230              U-DS   989962210
+SAFRP GQNOGQFI34-X ATUVATJ010TUVATGQPC2E                    W0060L                                                    DS   989972310
+SAFRP GQNOGQFI34-X ATUVATJ020NO511GQPC1EE B 010TF TY  GQ      15600131        PI  + 02000          230              U-DS   989982310
+SAFRP GQNOGQFI34-X ATUVATJ020NO511GQPC2E                    W0060L                                                    DS   989992310
+SAFRP GQNOGQFI34-X I     J010NO511GQPC1E  I    IF TY  GQ      15600131        PI  + 02000          230    GQNO AGQPAU-DS   990002210
+SAFRP GQNOGQFI34-X I     J010NO511GQPC2E                    W0063L                                                    DS   990012310
+SAFRP GQNOGQFI34-X I     J020NO512GQPC1E  F    TF TY  GQ      15600081        PI  G 0200002000     230              U-DS   990022310
+SAFRP GQNOGQFI34-X I     J020NO512GQPC2E                    W0063L                                                    DS   990032310
+SAFRP GQNOGQFI34-X I     J030RW34 GQPG1GY M    TF TY  GQ      15600020        PI    00057             -300          U DS   990042213
+SAFRP GQNOGQFI34-X I     J030RW34 GQPG2E050                 W0063L                                                    DS   990052310
+SAFRP GQNOGQFI34-X Z     J040NO513GQPC1EYM  010TF                                                                   U DA   990062310
+SAFRP GQNOGQFI34-X Z     J040NO513GQPC2E                    W0060L                                                    DA   990072310
+SAFRP GQNOGQFI34-X Z     J050NO514GQPC1E   L010DF                                 + 02000          230              U-DA   990082310
+SAFRP GQNOGQFI34-X Z     J050NO514GQPC2E                    W0060L                                                    DA   990092310
+SAFRP GQNOGQFI34-X Z     J060NO516GQPC1E    010TF                                 + 02000          230              U-DA   990102310
+SAFRP GQNOGQFI34-X Z     J060NO516GQPC2E                    W0060L                                                    DA   990112310
+SAFRP GQNOGQFI34-X Z     J070NO517GQPC1E    010TF                                 + 02000          230              U-DA   990122310
+SAFRP GQNOGQFI34-X Z     J070NO517GQPC2E                    W0060L                                                    DA   990132310
+SAFRP GQNOGQFI34-X Z     J080TUVATGQPC1EE   010TF                                 + 02000          230              U-DA   990142310
+SAFRP GQNOGQFI34-X Z     J080TUVATGQPC2E                    W0060L                                                    DA   990152310
+SAFRP GQNOGQFI34-Y AOT   F010OT   GQD 1V       IF                                 + 02000                           U DS   990162210
+SAFRP GQNOGQFI34-Y AOT   F010OT   GQD 2E                    W0060L                                                    DS   990172213
+SAFRP GQNOGQFI34-Y AOT   F020OT   GQD 1V       FD OT  GQ      1860000014400070D   + 01500                           U DS   990182213
+SAFRP GQNOGQFI34-Y AOT   F020OT   GQD 2E                    W0060L                                                    DS   990192213
+SAFRP GQNOGQFI34-Y AOT   F030TY77 GQPC1EE  R   CFYTY  GQ      1562009533600020PI  + 01500                           U DS   990202213
+SAFRP GQNOGQFI34-Y AOT   F030TY77 GQPC2E                    W0063L                                                    DS   990212213
+SAFRP GQNOGQFI34-Y AOT   G010OT   GQD 1V       IF                                 + 02000                           U DS   990222210
+SAFRP GQNOGQFI34-Y AOT   G010OT   GQD 2E                    W0060L                                                    DS   990232213
+SAFRP GQNOGQFI34-Y AOT   G020OT   GQD 1V       FD OT  GQ      1860000012900070D   + 01500                           U DS   990242213
+SAFRP GQNOGQFI34-Y AOT   G020OT   GQD 2E                    W0060L                                                    DS   990252213
+SAFRP GQNOGQFI34-Y AOT   G030TY77 GQPC1EE  R   CFYTY  GQ      1562009533600020PI  + 01500                           U DS   990262213
+SAFRP GQNOGQFI34-Y AOT   G030TY77 GQPC2E                    W0063L                                                    DS   990272213
+SAFRP GQNOGQFI34-Y I     J010TY77 GQPC1E  I    IF TY  GQ      15620095        PI  + 01500                 OT   AGQD U DS   990282210
+SAFRP GQNOGQFI34-Y I     J010TY77 GQPC2E                    W0063L                                                    DS   990292310
+SAFRP GQNOGQFI34-Y I     J020TY47 GQPC1E  F    TF TY  GQ      15620065        PI  G 0150001500                      U DS   990302213
+SAFRP GQNOGQFI34-Y I     J020TY47 GQPC2E                    W0063L                                                    DS   990312310
+SAFRP GQNOGQFI34-Y I     J030RW34 GQPG1G  M    TF TY  GQ      15600020        PI    00057             -300          U DS   990322213
+SAFRP GQNOGQFI34-Y I     J030RW34 GQPG2E050                 W0063L                                                    DS   990332310
+SAFRP GQNOGQFI34-Y Z     J040         1  M     CA                     3360        + 01000                           U DA   990342213
+SAFRP GQNOGQFI34-Y Z     J040         2E                    W0060L                                                    DA   990352213
+SAFRP GQNOGQFI34-Y Z     J050OT   GQD 1V   R   DF                                   02000                           U DA   990362213
+SAFRP GQNOGQFI34-Y Z     J050OT   GQD 2E                    W0060L                                                    DA   990372213
+SAFRP GQNOGQFI34-Y Z     J060OT   GQD 1VE  L   HM                     1290T010  I                  230              U-DA   990382213
+SAFRP GQNOGQFI34-Y Z     J060OT   GQD 2E                    W0060L                                                    DA   990392213
+SAFRP GQNOGQFI34-Z I     J010GAMONGQPC1E  I    IF TY  GQ      15600167        PI  + 02000                 OT   AGQD U DS   990402210
+SAFRP GQNOGQFI34-Z I     J010GAMONGQPC2E                    W0063L                                                    DS   990412310
+SAFRP GQNOGQFI34-Z I     J020TY63 GQPC1E  F    TF TY  GQ      15610081        PI  G 0200002000                      U DS   990422310
+SAFRP GQNOGQFI34-Z I     J020TY63 GQPC2E                    W0063L                                                    DS   990432310
+SAFRP GQNOGQFI34-Z I     J030RW34 GQPG1G  M    TF TY  GQ      15600020        PI    00057             -300          U DS   990442213
+SAFRP GQNOGQFI34-Z I     J030RW34 GQPG2E050                 W0063L                                                    DS   990452310
+SAFRP GQNOGQFI34-Z Z     J040         1  M     CA                     3360        + 01000                           U DA   990462310
+SAFRP GQNOGQFI34-Z Z     J040         2E                    W0060L                                                    DA   990472310
+SAFRP GQNOGQFI34-Z Z     J050         1    R   CIY                    1740                                          U DA   990482310
+SAFRP GQNOGQFI34-Z Z     J050         2E                    W0060L                                                    DA   990492310
+SAFRP GQNOGQFI34-Z Z     J060OT   GQD 1V       IF                                                                   U DA   990502310
+SAFRP GQNOGQFI34-Z Z     J060OT   GQD 2E                    W0060L                                                    DA   990512310
+SAFRP GQNOGQFI34-Z Z     J070R144SGQPC1E       TF                                                                   U DA   990522310
+SAFRP GQNOGQFI34-Z Z     J070R144SGQPC2E                    W0060L                                                    DA   990532310
+SAFRP GQNOGQFI34-Z Z     J080GAMONGQPC1E   R   CFYOT  GQ      1557014033600040D     02000                           U DA   990542310
+SAFRP GQNOGQFI34-Z Z     J080GAMONGQPC2E                    W0060L                                                    DA   990552310
+SAFRP GQNOGQFI34-Z Z     J090GAMONGQPC1EE  R   HM                     33600050  I                  230              U-DA   990562310
+SAFRP GQNOGQFI34-Z Z     J090GAMONGQPC2E                    W0060L                                                    DA   990572310
+SAFRP GQNOGQFL06-Y AAGROBJ010AGROBGQPC1E  A    IF                                 + 02000          230              U-DS   990582210
+SAFRP GQNOGQFL06-Y AAGROBJ010AGROBGQPC2E                    W0060L                                                    DS   990592213
+SAFRP GQNOGQFL06-Y AAGROBJ020NO501GQPC1EE B 010TF SY  GQ      23600126        PI  + 02000          230              U-DS   990602213
+SAFRP GQNOGQFL06-Y AAGROBJ020NO501GQPC2E                    W0060L                                                    DS   990612213
+SAFRP GQNOGQFL06-Y ABINADJ010BINADGQPC1E  A    IF                                 + 02000          230              U-DS   990622210
+SAFRP GQNOGQFL06-Y ABINADJ010BINADGQPC2E                    W0060L                                                    DS   990632213
+SAFRP GQNOGQFL06-Y ABINADJ020NO501GQPC1EE B 010TF SY  GQ      23600126        PI  + 02000          230              U-DS   990642213
+SAFRP GQNOGQFL06-Y ABINADJ020NO501GQPC2E                    W0060L                                                    DS   990652213
+SAFRP GQNOGQFL06-Y ALILEPJ010LILEPGQPC1E  C    IF                                 + 02000          230              U-DS   990662210
+SAFRP GQNOGQFL06-Y ALILEPJ010LILEPGQPC2E                    W0060L                                                    DS   990672213
+SAFRP GQNOGQFL06-Y ALILEPJ020NO501GQPC1EE B 010TF SY  GQ      23600126        PI  + 02000          230              U-DS   990682213
+SAFRP GQNOGQFL06-Y ALILEPJ020NO501GQPC2E                    W0063L                                                    DS   990692213
+SAFRP GQNOGQFL06-Y L     J010NO501GQPC1E  I    IF SY  GQ      23600126        PI  + 02000          230    OT   AGQD U-DS   990702210
+SAFRP GQNOGQFL06-Y L     J010NO501GQPC2E                    W0063L                                                    DS   990712310
+SAFRP GQNOGQFL06-Y L     J020NO502GQPC1E  F    TF SY  GQ      23600076        PI  + 02000                           U DS   990722213
+SAFRP GQNOGQFL06-Y L     J020NO502GQPC2E                    W0063L                                                    DS   990732310
+SAFRP GQNOGQFL06-Y L     J030SY07 GQPC1EY M    TF SY  GQ      23620020        PI    00219             -300          U DS   990742213
+SAFRP GQNOGQFL06-Y L     J030SY07 GQPC2E050                 W0063L                                                    DS   990752310
+SAFRP GQNOGQFL06-Y Z     J040NO503GQPC1EYM  010TF                                                  230              U-DA   990762213
+SAFRP GQNOGQFL06-Y Z     J040NO503GQPC2E                    W0060L                                                    DA   990772213
+SAFRP GQNOGQFL06-Y Z     J050NO504GQPC1E   L010DF                                 + 02000          230              U-DA   990782213
+SAFRP GQNOGQFL06-Y Z     J050NO504GQPC2E                    W0060L                                                    DA   990792213
+SAFRP GQNOGQFL06-Y Z     J060AGROBGQPC1EE   010TF                                 + 02000          230              U-DA   990802213
+SAFRP GQNOGQFL06-Y Z     J060AGROBGQPC2E                    W0060L                                                    DA   990812213
+SAFRP GQNOGQFL06-Z L     J010LOSNAGQPC1E  I    IF SY  GQ      23600141        PI  + 02000                 OT   AGQD U DS   990822210
+SAFRP GQNOGQFL06-Z L     J010LOSNAGQPC2E                    W0063L                                                    DS   990832310
+SAFRP GQNOGQFL06-Z L     J020SY63 GQPC1E  F    TF SY  GQ      23590076        PI  + 02000                           U DS   990842310
+SAFRP GQNOGQFL06-Z L     J020SY63 GQPC2E                    W0063L                                                    DS   990852310
+SAFRP GQNOGQFL06-Z L     J030SY07 GQPC1E  M    TF SY  GQ      23620020        PI    00218             -300          U DS   990862213
+SAFRP GQNOGQFL06-Z L     J030SY07 GQPC2E050                 W0063L                                                    DS   990872310
+SAFRP GQNOGQFL06-Z Z     J040         1  M     CA                     0560        + 01000                           U DA   990882310
+SAFRP GQNOGQFL06-Z Z     J040         2E                    W0060L                                                    DA   990892310
+SAFRP GQNOGQFL06-Z Z     J050         1    L   CIY                    2270                                          U DA   990902310
+SAFRP GQNOGQFL06-Z Z     J050         2E                    W0060L                                                    DA   990912310
+SAFRP GQNOGQFL06-Z Z     J060OT   GQD 1V       IF                                                                   U DA   990922310
+SAFRP GQNOGQFL06-Z Z     J060OT   GQD 2E                    W0060L                                                    DA   990932310
+SAFRP GQNOGQFL06-Z Z     J070R257SGQPC1E       TF                                                                   U DA   990942310
+SAFRP GQNOGQFL06-Z Z     J070R257SGQPC2E                    W0060L                                                    DA   990952310
+SAFRP GQNOGQFL06-Z Z     J080LOSNAGQPC1E   L   CFYOT  GQ      2446014006500040D     02000                           U DA   990962310
+SAFRP GQNOGQFL06-Z Z     J080LOSNAGQPC2E                    W0060L                                                    DA   990972310
+SAFRP GQNOGQFL06-Z Z     J090LOSNAGQPC1EE  L   HM                     06500050  I                  230              U-DA   990982310
+SAFRP GQNOGQFL06-Z Z     J090LOSNAGQPC2E                    W0060L                                                    DA   990992310
+SAFRP GQNOGQFL34-X AARDOSJ010ARDOSGQPC1E  A    IF                                 + 02000          230              U-DS   991002210
+SAFRP GQNOGQFL34-X AARDOSJ010ARDOSGQPC2E                    W0060L                                                    DS   991012213
+SAFRP GQNOGQFL34-X AARDOSJ020NO511GQPC1EE B 010TF TY  GQ      15600131        PI  + 02000          230              U-DS   991022213
+SAFRP GQNOGQFL34-X AARDOSJ020NO511GQPC2E                    W0060L                                                    DS   991032213
+SAFRP GQNOGQFL34-X AGASOTJ010GASOTGQPC1E  C    IF                                 + 02000          230              U-DS   991042210
+SAFRP GQNOGQFL34-X AGASOTJ010GASOTGQPC2E                    W0060L                                                    DS   991052213
+SAFRP GQNOGQFL34-X AGASOTJ020NO511GQPC1EE B 010TF TY  GQ      15600131        PI  + 02000          230              U-DS   991062213
+SAFRP GQNOGQFL34-X AGASOTJ020NO511GQPC2E                    W0063L                                                    DS   991072213
+SAFRP GQNOGQFL34-X ATUVATJ010TUVATGQPC1E  A    IF                                 + 02000          230              U-DS   991082210
+SAFRP GQNOGQFL34-X ATUVATJ010TUVATGQPC2E                    W0060L                                                    DS   991092213
+SAFRP GQNOGQFL34-X ATUVATJ020NO511GQPC1EE B 010TF TY  GQ      15600131        PI  + 02000          230              U-DS   991102213
+SAFRP GQNOGQFL34-X ATUVATJ020NO511GQPC2E                    W0060L                                                    DS   991112213
+SAFRP GQNOGQFL34-X L     J010NO511GQPC1E  I    IF TY  GQ      15600131        PI  + 02000          230    GQNO AGQPAU-DS   991122210
+SAFRP GQNOGQFL34-X L     J010NO511GQPC2E                    W0063L                                                    DS   991132310
+SAFRP GQNOGQFL34-X L     J020NO512GQPC1E  F    TF TY  GQ      15600081        PI    02000          230              U-DS   991142213
+SAFRP GQNOGQFL34-X L     J020NO512GQPC2E                    W0063L                                                    DS   991152310
+SAFRP GQNOGQFL34-X L     J030OT   GQD 1VY M    TF TY  GQ      15610026        PI    00262             -300          U DS   991162213
+SAFRP GQNOGQFL34-X L     J030OT   GQD 2E050                 W0063L                                                    DS   991172310
+SAFRP GQNOGQFL34-X Z     J040NO513GQPC1EYM  010TF                                                                   U DA   991182213
+SAFRP GQNOGQFL34-X Z     J040NO513GQPC2E                    W0060L                                                    DA   991192213
+SAFRP GQNOGQFL34-X Z     J050NO514GQPC1E   L010DF                                 + 02000          230              U-DA   991202213
+SAFRP GQNOGQFL34-X Z     J050NO514GQPC2E                    W0060L                                                    DA   991212213
+SAFRP GQNOGQFL34-X Z     J060NO516GQPC1E    010TF                                 + 02000          230              U-DA   991222213
+SAFRP GQNOGQFL34-X Z     J060NO516GQPC2E                    W0060L                                                    DA   991232213
+SAFRP GQNOGQFL34-X Z     J070NO517GQPC1E    010TF                                 + 02000          230              U-DA   991242213
+SAFRP GQNOGQFL34-X Z     J070NO517GQPC2E                    W0060L                                                    DA   991252213
+SAFRP GQNOGQFL34-X Z     J080TUVATGQPC1EE   010TF                                 + 02000          230              U-DA   991262213
+SAFRP GQNOGQFL34-X Z     J080TUVATGQPC2E                    W0060L                                                    DA   991272213
+SAFRP GQNOGQFL34-Y AOT   F010OT   GQD 1V       IF                                 + 02000                           U DS   991282210
+SAFRP GQNOGQFL34-Y AOT   F010OT   GQD 2E                    W0060L                                                    DS   991292213
+SAFRP GQNOGQFL34-Y AOT   F020OT   GQD 1V       FD OT  GQ      1860000014400070D   + 01500                           U DS   991302213
+SAFRP GQNOGQFL34-Y AOT   F020OT   GQD 2E                    W0060L                                                    DS   991312213
+SAFRP GQNOGQFL34-Y AOT   F030TY77 GQPC1EE  R   CFYTY  GQ      1562009533600020PI  + 01500                           U DS   991322213
+SAFRP GQNOGQFL34-Y AOT   F030TY77 GQPC2E                    W0063L                                                    DS   991332213
+SAFRP GQNOGQFL34-Y AOT   G010OT   GQD 1V       IF                                 + 02000                           U DS   991342210
+SAFRP GQNOGQFL34-Y AOT   G010OT   GQD 2E                    W0060L                                                    DS   991352213
+SAFRP GQNOGQFL34-Y AOT   G020OT   GQD 1V       FD OT  GQ      1860000012900070D   + 01500                           U DS   991362213
+SAFRP GQNOGQFL34-Y AOT   G020OT   GQD 2E                    W0060L                                                    DS   991372213
+SAFRP GQNOGQFL34-Y AOT   G030TY77 GQPC1EE  R   CFYTY  GQ      1562009533600020PI  + 01500                           U DS   991382213
+SAFRP GQNOGQFL34-Y AOT   G030TY77 GQPC2E                    W0063L                                                    DS   991392213
+SAFRP GQNOGQFL34-Y L     J010TY77 GQPC1E  I    IF TY  GQ      15620095        PI  + 01500                 OT   AGQD U DS   991402210
+SAFRP GQNOGQFL34-Y L     J010TY77 GQPC2E                    W0063L                                                    DS   991412310
+SAFRP GQNOGQFL34-Y L     J020TY47 GQPC1E  F    TF TY  GQ      15620065        PI  + 01500                           U DS   991422213
+SAFRP GQNOGQFL34-Y L     J020TY47 GQPC2E                    W0063L                                                    DS   991432310
+SAFRP GQNOGQFL34-Y L     J030OT   GQD 1V  M    TF TY  GQ      15610026        PI    00263             -302          U DS   991442213
+SAFRP GQNOGQFL34-Y L     J030OT   GQD 2E050                 W0063L                                                    DS   991452310
+SAFRP GQNOGQFL34-Y Z     J040         1  M     CA                     3360        + 01000                           U DA   991462213
+SAFRP GQNOGQFL34-Y Z     J040         2E                    W0060L                                                    DA   991472213
+SAFRP GQNOGQFL34-Y Z     J050OT   GQD 1V   R   DF                                   02000                           U DA   991482213
+SAFRP GQNOGQFL34-Y Z     J050OT   GQD 2E                    W0060L                                                    DA   991492213
+SAFRP GQNOGQFL34-Y Z     J060OT   GQD 1VE  L   HM                     1290T010  I                  230              U-DA   991502213
+SAFRP GQNOGQFL34-Y Z     J060OT   GQD 2E                    W0060L                                                    DA   991512213
+SAFRP GQNOGQFL34-Z L     J010GAMONGQPC1E  I    IF TY  GQ      15600167        PI  + 02000                 OT   AGQD U DS   991522210
+SAFRP GQNOGQFL34-Z L     J010GAMONGQPC2E                    W0063L                                                    DS   991532310
+SAFRP GQNOGQFL34-Z L     J020TY63 GQPC1E  F    TF TY  GQ      15610081        PI  + 02000                           U DS   991542310
+SAFRP GQNOGQFL34-Z L     J020TY63 GQPC2E                    W0063L                                                    DS   991552310
+SAFRP GQNOGQFL34-Z L     J030OT   GQD 1V  M    TF TY  GQ      15610026        PI    00263             -300          U DS   991562213
+SAFRP GQNOGQFL34-Z L     J030OT   GQD 2E050                 W0063L                                                    DS   991572310
+SAFRP GQNOGQFL34-Z Z     J040         1  M     CA                     3360        + 01000                           U DA   991582310
+SAFRP GQNOGQFL34-Z Z     J040         2E                    W0060L                                                    DA   991592310
+SAFRP GQNOGQFL34-Z Z     J050         1    R   CIY                    1740                                          U DA   991602310
+SAFRP GQNOGQFL34-Z Z     J050         2E                    W0060L                                                    DA   991612310
+SAFRP GQNOGQFL34-Z Z     J060OT   GQD 1V       IF                                                                   U DA   991622310
+SAFRP GQNOGQFL34-Z Z     J060OT   GQD 2E                    W0060L                                                    DA   991632310
+SAFRP GQNOGQFL34-Z Z     J070R144SGQPC1EY      TF                                                                   U DA   991642310
+SAFRP GQNOGQFL34-Z Z     J070R144SGQPC2E                    W0060L                                                    DA   991652310
+SAFRP GQNOGQFL34-Z Z     J080GAMONGQPC1E   R   CFYOT  GQ      1557014033600040D     02000                           U DA   991662310
+SAFRP GQNOGQFL34-Z Z     J080GAMONGQPC2E                    W0060L                                                    DA   991672310
+SAFRP GQNOGQFL34-Z Z     J090GAMONGQPC1EE  R   HM                     33600050  I                  230              U-DA   991682310
+SAFRP GQNOGQFL34-Z Z     J090GAMONGQPC2E                    W0060L                                                    DA   991692310
+SAFRP GQNOGQFS34-X AOT   F010OT   GQD 1V  H    IF                                 + 02000                           U  S   991702307
+SAFRP GQNOGQFS34-X AOT   F010OT   GQD 2E                    W0060P                                                     S   991712307
+SAFRP GQNOGQFS34-X AOT   F020OT   GQD 0VY      FD OT  GQ      1860000014400070D   + 01500                           U  S   991722307
+SAFRP GQNOGQFS34-X AOT   F030OT39 GQPC0EE  R   CFYOT  GQ      1560003933600030D   + 01500                           U  S   991732307
+SAFRP GQNOGQFS34-X AOT   G010OT   GQD 1V  H    IF                                 + 02000                           U  S   991742307
+SAFRP GQNOGQFS34-X AOT   G010OT   GQD 2E                    W0060P                                                     S   991752307
+SAFRP GQNOGQFS34-X AOT   G020OT   GQD 0VY      FD OT  GQ      1860000012900070D   + 01500                           U  S   991762307
+SAFRP GQNOGQFS34-X AOT   G030OT39 GQPC0EE  R   CFYOT  GQ      1560003933600030D   + 01500                           U  S   991772307
+SAFRP GQNOGQFS34-X S     J010OT39 GQPC1E  F    IF OT  GQ      15600039        D   + 01500                 OT   AGQD U  S   991782307
+SAFRP GQNOGQFS34-X S     J010OT39 GQPC2E                    W0060P                                                     S   991792307
+SAFRP GQNOGQFS34-X S     J020OT   GQD 1V  M    TF OT  GQ      18600000        D     00262             -300          U  S   991802307
+SAFRP GQNOGQFS34-X S     J020OT   GQD 2E050                                                                            S   991812307
+SAFRP GQNOGQFS34-X Z     J030OT   GQD 0V M     FA OT  GQ      186000003360    D   + 01000                           U  A   991822307
+SAFRP GQNOGQFS34-X Z     J040OT   GQD 0V   R   DF                                   02000                           U  A   991832307
+SAFRP GQNOGQFS34-X Z     J050OT   GQD 0VE  L   HM                     1290T010  I                  230              U- A   991842307
+SAFRP GQNOGQGRW06    1078740557 N18174125W015593262         +00360000100000  148I     0394     050                         991852210
+SAFRP GQNOGQGRW06    2E                                                                     CONCH000007874090220826807874B 991862210
+SAFRP GQNOGQGRW06    3S                            04968Y        T00010                                                    991872211
+SAFRP GQNOGQGRW16    1111551557 N18185881W015582489         +00339000030000  197R     0394     050                         991882210
+SAFRP GQNOGQGRW16    2E                                                                     CONCH000011155111551154911155B 991892210
+SAFRP GQNOGQGRW16    3S                            14974Y        L00003                                                    991902211
+SAFRP GQNOGQGRW24    1078742357 N18183176W015583029         +00351000070000  148R     0394     050                         991912210
+SAFRP GQNOGQGRW24    2E                                                                     CONCH000007874078740826807874B 991922210
+SAFRP GQNOGQGRW24    3S                            22969Y        L00007                                                    991932211
+SAFRP GQNOGQGRW34    1111553357 N18172332W015572646         +00351000070000  197I     0394     050                         991942210
+SAFRP GQNOGQGRW34    2E                                                                     CONCH000011155123031154911155B 991952210
+SAFRP GQNOGQGRW34    3S                            32974Y        T00007                                                    991962211
+SAFRP GQNOGQISY  1   110910RW06 N18183820W0155822200560N18175090W0155927101016 10260443300W0063  00026SY  GQD 050          991972412
+SAFRP GQNOGQISY  1   2S    S  U                    05120N                                                                  991982408
+SAFRP GQNOGQITY  2   111090RW34 N18190750W0155830203360N18173000W0155735501016 10120324300W0063  00026TY  GQD 050          991992409
+SAFRP GQNOGQITY  2   2S    S  U                    32970Y                                                                  992002211
+SAFRP GQNOGQSGQNO GQPAA               0   18018002025000000000000000000000000000000000000000000000000000000000000000000M   992012210
+SAFRP GQNOGQSOT   GQD A               0   18018002025000000000000000000000000000000000000000000000000000000000000000000M   992022210
+SAFRP GQNOGQV  AFAC010ATI0126600       KNUNOUAKCHOTT               N                        N18183600W015581100   A        992032210
+SAFRP GQNOGQV  AFAC020ATI0127700       KNUNOUAKCHOTT               N                        N18183600W015581100   A        992042210
+SAFRP GQNOGQV  ATCF010APP01184000118400KRYNOUAKCHOTT               N                        N18183600W015581100   A        992052210
+SAFRP GQNOGQV  ATCF020CTL01242000124200KRYNOUAKCHOTT               N                        N18183600W015581100F  A        992062210
+SAFRP GQNOGQV  ATCF030CTL05565000556500HUYNOUAKCHOTT               N                        N18183600W015581100F  A3       992072210
+SAFRP GQNOGQV  ATCF040CTL06535000653500HUYNOUAKCHOTT               N                        N18183600W015581100F  A3       992082210
+SAFRP GQNOGQV  ATCF050CTL08861000886100HUYNOUAKCHOTT               N                        N18183600W015581100F  A3       992092210
+SAFRP GQNOGQV  ATCF060CTL08894000889400HUYNOUAKCHOTT               N                        N18183600W015581100F  A3       992102210
+SAFRP GQNOGQV  ATCF070TWR01184000118400KUYNOUAKCHOTT               N                        N18183600W015581100  DA        992112210
+SAFRP GQNOGQV  GNDF010GND01217000121700KUUNOUAKCHOTT               N                        N18183600W015581100   A        992122210

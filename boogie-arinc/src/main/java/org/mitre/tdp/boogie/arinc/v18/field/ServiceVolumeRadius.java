@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-public class ServiceVolumeRadius extends ArincInteger {
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
+public final class ServiceVolumeRadius extends ArincInteger {
 
   @Override
   public int fieldLength() {

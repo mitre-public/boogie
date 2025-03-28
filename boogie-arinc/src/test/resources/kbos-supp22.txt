@@ -1,0 +1,1472 @@
+SUSAP KBOSK6ABOS     110000100YHN42214660W071002300W015000019250BOS K61800018000CR00YMNAR    BOSTON/GENERAL EDWARD L LOGAN*976242210
+SUSAP KBOSK6ABOS     2PKZBWKZBW                                   TKBOSK6                                                  976252210
+SUSAP KBOSK6B11      0          N42220635W071005817                                                                        976262210
+SUSAP KBOSK6B12      0          N42220035W071005217                                                                        976272210
+SUSAP KBOSK6B14      0          N42220035W071005217                                                                        976282210
+SUSAP KBOSK6B1B      0          N42220635W071010418                                                                        976292210
+SUSAP KBOSK6B26      0          N42220035W071005217                                                                        976302210
+SUSAP KBOSK6B28      0          N42220035W071005217                                                                        976312210
+SUSAP KBOSK6B29      0          N42215435W071005217                                                                        976322210
+SUSAP KBOSK6B2B      0          N42221235W071010418                                                                        976332210
+SUSAP KBOSK6B30      0          N42215435W071005217                                                                        976342210
+SUSAP KBOSK6B31      0          N42215435W071005217                                                                        976352210
+SUSAP KBOSK6B32      0          N42215435W071005217                                                                        976362210
+SUSAP KBOSK6B34      0          N42215435W071005217                                                                        976372210
+SUSAP KBOSK6B36      0          N42220035W071005217                                                                        976382210
+SUSAP KBOSK6B3B      0          N42221235W071010418                                                                        976392210
+SUSAP KBOSK6B4       0          N42221235W071010418                                                                        976402302
+SUSAP KBOSK6B5       0          N42221235W071010418                                                                        976412302
+SUSAP KBOSK6B6       0          N42221835W071011018                                                                        976422302
+SUSAP KBOSK6B7A      0          N42221835W071011018                                                                        976432302
+SUSAP KBOSK6B7B      0          N42221835W071011018                                                                        976442302
+SUSAP KBOSK6B8A      0          N42221835W071011018                                                                        976452302
+SUSAP KBOSK6B8B      0          N42221835W071011018                                                                        976462302
+SUSAP KBOSK6BA11     0          N42214800W071011200                                                                        976472210
+SUSAP KBOSK6BA12     0          N42214800W071011200                                                                        976482210
+SUSAP KBOSK6BPAX     0          N42220635W071010418                                                                        976492210
+SUSAP KBOSK6CAUTUM K61    W E   N42330117W071353236                       W0139     NAR        P  AUTUM                    976502212
+SUSAP KBOSK6CAUTUM K62PKZBWKZBW                                                                                            976512210
+SUSAP KBOSK6CBBOGG K61    WIZ   N42055698W070410906                       W0141     NAR        P  BBOGG                    976522307
+SUSAP KBOSK6CBBOGG K62PKZBWKZBW                                                                                            976532210
+SUSAP KBOSK6CBECHH K61    W E   N42201283W070501649                       W0141     NAR        P  BECHH                    976542306
+SUSAP KBOSK6CBECHH K62PKZBWKZBW                                                                                            976552210
+SUSAP KBOSK6CBEREI K61    W Z   N42003209W070482074                       W0141     NAR        P  BEREI                    976562401
+SUSAP KBOSK6CBEREI K62PKZBWKZBW                                                                                            976572210
+SUSAP KBOSK6CBGDIG K61    WAF   N42173844W070560120                       W0141     NAR        P  BGDIG                    976582211
+SUSAP KBOSK6CBGDIG K62PKZBWKZBW                                                                                            976592210
+SUSAP KBOSK6CBOATT K61    W D   N42203161W070451367                       W0142     NAR        P  BOATT                    976602312
+SUSAP KBOSK6CBOATT K62PKZBWKZBW                                                                                            976612210
+SUSAP KBOSK6CBOATZ K61    W F   N42090468W070333534                       W0142     NAR        P  BOATZ                    976622212
+SUSAP KBOSK6CBOATZ K62PKZBWKZBW                                                                                            976632210
+SUSAP KBOSK6CBOSD1 K61    I D   N42202669W070593785                       W0141     NAR        B  RW14-141/BOS-D1.02       976642401
+SUSAP KBOSK6CBOSD1 K62PKZBWKZBW                                                                                            976652210
+SUSAP KBOSK6CBRODI K61    W E   N42231297W070551828                       W0141     NAR        P  BRODI                    976662303
+SUSAP KBOSK6CBRODI K62PKZBWKZBW                                                                                            976672210
+SUSAP KBOSK6CBRRRO K61    W D   N42200078W070480548                       W0141     NAR        P  BRRRO                    976682308
+SUSAP KBOSK6CBRRRO K62PKZBWKZBW                                                                                            976692210
+SUSAP KBOSK6CBUCYK K61    W D   N42173611W070410152                       W0142     NAR        P  BUCYK                    976702401
+SUSAP KBOSK6CBUCYK K62PKZBWKZBW                                                                                            976712210
+SUSAP KBOSK6CCAMWI K61    W D   N42304197W071090958                       W0141     NAR        P  CAMWI                    976722310
+SUSAP KBOSK6CCAMWI K62PKZBWKZBW                                                                                            976732210
+SUSAP KBOSK6CCBEAR K61    W D   N42151994W071093629                       W0140     NAR        P  CBEAR                    976742213
+SUSAP KBOSK6CCBEAR K62PKZBWKZBW                                                                                            976752210
+SUSAP KBOSK6CCFFBW K61    A     N42211584W070561459                       W0141     NAR        P  CFFBW                    976762213
+SUSAP KBOSK6CCFFBW K62PKZBWKZBW                                                                                            976772210
+SUSAP KBOSK6CCFFCN K61    A     N42242570W070515063                       W0141     NAR        P  CFFCN                    976782307
+SUSAP KBOSK6CCFFCN K62PKZBWKZBW                                                                                            976792210
+SUSAP KBOSK6CCFFCS K61    A     N42222135W070513440                       W0141     NAR        P  CFFCS                    976802306
+SUSAP KBOSK6CCFFCS K62PKZBWKZBW                                                                                            976812210
+SUSAP KBOSK6CCFFFR K61    A     N42173202W070505103                       W0141     NAR        P  CFFFR                    976822304
+SUSAP KBOSK6CCFFFR K62PKZBWKZBW                                                                                            976832210
+SUSAP KBOSK6CCHELC K61    W F   N42252826W070583442                       W0141     NAR        P  CHELC                    976842312
+SUSAP KBOSK6CCHELC K62PKZBWKZBW                                                                                            976852312
+SUSAP KBOSK6CCHWDH K61    W D   N42181554W070434694                       W0142     NAR        P  CHWDH                    976862312
+SUSAP KBOSK6CCHWDH K62PKZBWKZBW                                                                                            976872210
+SUSAP KBOSK6CCLAWW K61    W D   N42232573W070484502                       W0142     NAR        P  CLAWW                    976882312
+SUSAP KBOSK6CCLAWW K62PKZBWKZBW                                                                                            976892210
+SUSAP KBOSK6CCLMPP K61    W D   N42284773W070433517                       W0142     NAR        P  CLMPP                    976902301
+SUSAP KBOSK6CCLMPP K62PKZBWKZBW                                                                                            976912210
+SUSAP KBOSK6CCNOLI K61    W F   N42265446W070515601                       W0141     NAR        P  CNOLI                    976922309
+SUSAP KBOSK6CCNOLI K62PKZBWKZBW                                                                                            976932210
+SUSAP KBOSK6CCOHAS K61    CSF   N42143507W070503300                       W0141     NAR        P  COHAS                    976942302
+SUSAP KBOSK6CCOHAS K62PKZBWKZBW                                                                                            976952210
+SUSAP KBOSK6CCOLYN K61    W D   N42090966W071022439                       W0140     NAR        P  COLYN                    976962304
+SUSAP KBOSK6CCOLYN K62PKZBWKZBW                                                                                            976972210
+SUSAP KBOSK6CCORRT K61    W D   N42264535W070453521                       W0142     NAR        P  CORRT                    976982402
+SUSAP KBOSK6CCORRT K62PKZBWKZBW                                                                                            976992210
+SUSAP KBOSK6CCOUSY K61    W D   N42211792W071123170                       W0140     NAR        P  COUSY                    977002213
+SUSAP KBOSK6CCOUSY K62PKZBWKZBW                                                                                            977012210
+SUSAP KBOSK6CCRLTN K61    WDF   N42195816W070511292                       W0141     NAR        P  CRLTN                    977022305
+SUSAP KBOSK6CCRLTN K62PKZBWKZBW                                                                                            977032210
+SUSAP KBOSK6CCYOTI K61    W D   N42092383W071152555                       W0139     NAR        P  CYOTI                    977042308
+SUSAP KBOSK6CCYOTI K62PKZBWKZBW                                                                                            977052210
+SUSAP KBOSK6CD1BOS K61    I D   N42203755W070583624                       W0141     NAR        B  RW15R-150/BOS-D1         977062402
+SUSAP KBOSK6CD1BOS K62PKZBWKZBW                                                                                            977072210
+SUSAP KBOSK6CDEDHM K61    W D   N42114430W070565703                       W0141     NAR        P  DEDHM                    977082312
+SUSAP KBOSK6CDEDHM K62PKZBWKZBW                                                                                            977092210
+SUSAP KBOSK6CDUBLE K61    W E   N42365017W072023158                       W0137     NAR        P  DUBLE                    977102306
+SUSAP KBOSK6CDUBLE K62PKZBWKZBW                                                                                            977112210
+SUSAP KBOSK6CDUBYU K61    W D   N42234455W071204454                       W0140     NAR        P  DUBYU                    977122311
+SUSAP KBOSK6CDUBYU K62PKZBWKZBW                                                                                            977132210
+SUSAP KBOSK6CEMMEL K61    WAF   N42255932W071054912                       W0141     NAR        P  EMMEL                    977142311
+SUSAP KBOSK6CEMMEL K62PKZBWKZBW                                                                                            977152210
+SUSAP KBOSK6CERNEI K61    W E   N41564129W071123068                       W0139     NAR        P  ERNEI                    977162303
+SUSAP KBOSK6CERNEI K62PKZBWKZBW                                                                                            977172210
+SUSAP KBOSK6CEXXXX K61    W D   N42203708W071210457                       W0140     NAR        P  EXXXX                    977182308
+SUSAP KBOSK6CEXXXX K62PKZBWKZBW                                                                                            977192210
+SUSAP KBOSK6CFEEST K61    W F   N42243435W070483016                       W0142     NAR        P  FEEST                    977202311
+SUSAP KBOSK6CFEEST K62PKZBWKZBW                                                                                            977212210
+SUSAP KBOSK6CFENWY K61    W D   N42221110W070430602                       W0142     NAR        P  FENWY                    977222402
+SUSAP KBOSK6CFENWY K62PKZBWKZBW                                                                                            977232210
+SUSAP KBOSK6CFERNZ K61    W E   N41503540W069465311                       W0144     NAR        P  FERNZ                    977242213
+SUSAP KBOSK6CFERNZ K62PKZBWKZBW                                                                                            977252210
+SUSAP KBOSK6CFLUTI K61    W E   N42244474W070531193                       W0141     NAR        P  FLUTI                    977262306
+SUSAP KBOSK6CFLUTI K62PKZBWKZBW                                                                                            977272210
+SUSAP KBOSK6CFSSKK K61    W F   N42190646W070481919                       W0141     NAR        P  FSSKK                    977282308
+SUSAP KBOSK6CFSSKK K62PKZBWKZBW                                                                                            977292210
+SUSAP KBOSK6CGGABE K61    W E   N42162928W070570328                       W0141     NAR        P  GGABE                    977302401
+SUSAP KBOSK6CGGABE K62PKZBWKZBW                                                                                            977312210
+SUSAP KBOSK6CGLLET K61    W D   N42162405W070432125                       W0142     NAR        P  GLLET                    977322311
+SUSAP KBOSK6CGLLET K62PKZBWKZBW                                                                                            977332210
+SUSAP KBOSK6CGLOWB K61    W D   N42172183W071130618                       W0140     NAR        P  GLOWB                    977342402
+SUSAP KBOSK6CGLOWB K62PKZBWKZBW                                                                                            977352210
+SUSAP KBOSK6CGOSHI K61    W Z   N42021109W071094714                       W0140     NAR        P  GOSHI                    977362309
+SUSAP KBOSK6CGOSHI K62PKZBWKZBW                                                                                            977372210
+SUSAP KBOSK6CGPOLE K61    C E   N40475936W073313737                       W0128     NAR        P  GPOLE                    977382305
+SUSAP KBOSK6CGPOLE K62PKZBWKZBW                                                                                            977392210
+SUSAP KBOSK6CGRIFI K61    W E   N42184217W070560573                       W0141     NAR        P  GRIFI                    977402212
+SUSAP KBOSK6CGRIFI K62PKZBWKZBW                                                                                            977412210
+SUSAP KBOSK6CHAVRD K61    W F   N42100685W070461057                       W0141     NAR        P  HAVRD                    977422304
+SUSAP KBOSK6CHAVRD K62PKZBWKZBW                                                                                            977432210
+SUSAP KBOSK6CHEARR K61    W D   N42264928W070423512                       W0142     NAR        P  HEARR                    977442301
+SUSAP KBOSK6CHEARR K62PKZBWKZBW                                                                                            977452210
+SUSAP KBOSK6CHEWMO K61    W D   N42111555W070440613                       W0141     NAR        P  HEWMO                    977462312
+SUSAP KBOSK6CHEWMO K62PKZBWKZBW                                                                                            977472210
+SUSAP KBOSK6CHEXUS K61    W F   N42202441W070454926                       W0142     NAR        P  HEXUS                    977482311
+SUSAP KBOSK6CHEXUS K62PKZBWKZBW                                                                                            977492210
+SUSAP KBOSK6CHRALD K61    W D   N42224826W071152872                       W0140     NAR        P  HRALD                    977502211
+SUSAP KBOSK6CHRALD K62PKZBWKZBW                                                                                            977512210
+SUSAP KBOSK6CHRRIS K61    W E   N42274077W071092169                       W0140     NAR        P  HRRIS                    977522308
+SUSAP KBOSK6CHRRIS K62PKZBWKZBW                                                                                            977532210
+SUSAP KBOSK6CHUBIR K61    W F   N42200497W070575359                       W0141     NAR        P  HUBIR                    977542211
+SUSAP KBOSK6CHUBIR K62PKZBWKZBW                                                                                            977552210
+SUSAP KBOSK6CHURBE K61    W D   N42273874W070510704                       W0142     NAR        P  HURBE                    977562310
+SUSAP KBOSK6CHURBE K62PKZBWKZBW                                                                                            977572210
+SUSAP KBOSK6CIRSEW K61    CSF   N42192156W071013191                       W0141     NAR        P  IRSEW                    977582311
+SUSAP KBOSK6CIRSEW K62PKZBWKZBW                                                                                            977592210
+SUSAP KBOSK6CISLAY K61    W E   N42294642W071033916                       W0141     NAR        P  ISLAY                    977602402
+SUSAP KBOSK6CISLAY K62PKZBWKZBW                                                                                            977612210
+SUSAP KBOSK6CJAITE K61    W D   N42174786W070423537                       W0142     NAR        P  JAITE                    977622313
+SUSAP KBOSK6CJAITE K62PKZBWKZBW                                                                                            977632210
+SUSAP KBOSK6CJFUND K61    W E   N42351134W071491593                       W0138     NAR        P  JFUND                    977642302
+SUSAP KBOSK6CJFUND K62PKZBWKZBW                                                                                            977652210
+SUSAP KBOSK6CJOBEE K61    W E   N42104196W070593215                       W0140     NAR        P  JOBEE                    977662308
+SUSAP KBOSK6CJOBEE K62PKZBWKZBW                                                                                            977672210
+SUSAP KBOSK6CJSTER K61    W D   N42082183W070364748                       W0142     NAR        P  JSTER                    977682313
+SUSAP KBOSK6CJSTER K62PKZBWKZBW                                                                                            977692210
+SUSAP KBOSK6CKELYS K61    W F   N42263864W070572896                       W0141     NAR        P  KELYS                    977702312
+SUSAP KBOSK6CKELYS K62PKZBWKZBW                                                                                            977712312
+SUSAP KBOSK6CKENWI K61    W D   N42093489W070562699                       W0141     NAR        P  KENWI                    977722311
+SUSAP KBOSK6CKENWI K62PKZBWKZBW                                                                                            977732210
+SUSAP KBOSK6CKIRAA K61    W D   N42163148W071074178                       W0140     NAR        P  KIRAA                    977742303
+SUSAP KBOSK6CKIRAA K62PKZBWKZBW                                                                                            977752210
+SUSAP KBOSK6CKWIET K61    WSF   N42193444W070555926                       W0141     NAR        P  KWIET                    977762213
+SUSAP KBOSK6CKWIET K62PKZBWKZBW                                                                                            977772210
+SUSAP KBOSK6CLEEZI K61    W E   N42410221W070443630                       W0142     NAR        P  LEEZI                    977782308
+SUSAP KBOSK6CLEEZI K62PKZBWKZBW                                                                                            977792210
+SUSAP KBOSK6CLONER K61    CDF   N42235887W070454780                       W0142     NAR        P  LONER                    977802313
+SUSAP KBOSK6CLONER K62PKZBWKZBW                                                                                            977812210
+SUSAP KBOSK6CLVRON K61    W F   N42115524W071055892                       W0140     NAR        P  LVRON                    977822302
+SUSAP KBOSK6CLVRON K62PKZBWKZBW                                                                                            977832211
+SUSAP KBOSK6CLWLND K61    W E   N42345656W071010627                       W0141     NAR        P  LWLND                    977842304
+SUSAP KBOSK6CLWLND K62PKZBWKZBW                                                                                            977852210
+SUSAP KBOSK6CMALDY K61    RAF   N42255189W071055536                       W0141     NAR        P  MALDY                    977862310
+SUSAP KBOSK6CMALDY K62PKZBWKZBW                                                                                            977872210
+SUSAP KBOSK6CMARBB K61    W D   N42320065W070455730                       W0142     NAR        P  MARBB                    977882301
+SUSAP KBOSK6CMARBB K62PKZBWKZBW                                                                                            977892210
+SUSAP KBOSK6CMILTT K61    CAF   N42162512W071025708                       W0140     NAR        P  MILTT                    977902308
+SUSAP KBOSK6CMILTT K62PKZBWKZBW                                                                                            977912210
+SUSAP KBOSK6CMNSTA K61    W E   N42410333W072374869                       W0135     NAR        P  MNSTA                    977922213
+SUSAP KBOSK6CMNSTA K62PKZBWKZBW                                                                                            977932210
+SUSAP KBOSK6CMTAPN K61    W F   N42165153W071032040                       W0140     NAR        P  MTAPN                    977942308
+SUSAP KBOSK6CMTAPN K62PKZBWKZBW                                                                                            977952211
+SUSAP KBOSK6CMURMR K61    WSF   N42200394W070575219                       W0141     NAR        P  MURMR                    977962211
+SUSAP KBOSK6CMURMR K62PKZBWKZBW                                                                                            977972210
+SUSAP KBOSK6CNABBO K61    CSF   N42114268W071051320                       W0140     NAR        P  NABBO                    977982302
+SUSAP KBOSK6CNABBO K62PKZBWKZBW                                                                                            977992210
+SUSAP KBOSK6CNHANT K61    W D   N42262324W070575997                       W0141     NAR        P  NHANT                    978002302
+SUSAP KBOSK6CNHANT K62PKZBWKZBW                                                                                            978012210
+SUSAP KBOSK6CNIMOY K61    CAF   N42180571W070551410                       W0141     NAR        P  NIMOY                    978022213
+SUSAP KBOSK6CNIMOY K62PKZBWKZBW                                                                                            978032210
+SUSAP KBOSK6CNOLEY K61    CDF   N42350769W070535274                       W0142     NAR        P  NOLEY                    978042311
+SUSAP KBOSK6CNOLEY K62PKZBWKZBW                                                                                            978052210
+SUSAP KBOSK6COMVOZ K61    W F   N42233578W070592890                       W0141     NAR        P  OMVOZ                    978062211
+SUSAP KBOSK6COMVOZ K62PKZBWKZBW                                                                                            978072210
+SUSAP KBOSK6CONDEC K61    W E   N42324783W072035671                       W0137     NAR        P  ONDEC                    978082301
+SUSAP KBOSK6CONDEC K62PKZBWKZBW                                                                                            978092210
+SUSAP KBOSK6COOSHN K61    W E   N42360544W070135237                       W0144     NAR        P  OOSHN                    978102411
+SUSAP KBOSK6COOSHN K62PKZBWKZBW                                                                                            978112411
+SUSAP KBOSK6COQDEK K61    RMF   N42215376W070573968                       W0141     NAR        P  OQDEK                    978122212
+SUSAP KBOSK6COQDEK K62PKZBWKZBW                                                                                            978132210
+SUSAP KBOSK6CORRRR K61    W D   N42252848W070451344                       W0142     NAR        P  ORRRR                    978142402
+SUSAP KBOSK6CORRRR K62PKZBWKZBW                                                                                            978152210
+SUSAP KBOSK6COUTTT K61    C E   N41360641W071504956                       W0136     NAR        P  OUTTT                    978162212
+SUSAP KBOSK6COUTTT K62PKZBWKZBW                                                                                            978172210
+SUSAP KBOSK6CPAARK K61    W F   N42203884W070595939                       W0141     NAR        P  PAARK                    978182401
+SUSAP KBOSK6CPAARK K62PKZBWKZBW                                                                                            978192210
+SUSAP KBOSK6CPCFUL K61    W F   N42204577W070413033                       W0142     NAR        P  PCFUL                    978202211
+SUSAP KBOSK6CPCFUL K62PKZBWKZBW                                                                                            978212210
+SUSAP KBOSK6CPEOPL K61    W F   N42155774W070444646                       W0142     NAR        P  PEOPL                    978222309
+SUSAP KBOSK6CPEOPL K62PKZBWKZBW                                                                                            978232210
+SUSAP KBOSK6CPLGRM K61    W E   N42231544W070511979                       W0141     NAR        P  PLGRM                    978242307
+SUSAP KBOSK6CPLGRM K62PKZBWKZBW                                                                                            978252210
+SUSAP KBOSK6CQUINC K61    W F   N42004333W070450957                       W0141     NAR        P  QUINC                    978262213
+SUSAP KBOSK6CQUINC K62PKZBWKZBW                                                                                            978272210
+SUSAP KBOSK6CRDUKE K61    CSF   N42195157W070573567                       W0141     NAR        P  RDUKE                    978282211
+SUSAP KBOSK6CRDUKE K62PKZBWKZBW                                                                                            978292210
+SUSAP KBOSK6CRIPIT K61    CAF   N42224780W070523321                       W0141     NAR        P  RIPIT                    978302305
+SUSAP KBOSK6CRIPIT K62PKZBWKZBW                                                                                            978312210
+SUSAP KBOSK6CRYLAN K61    W F   N42231955W070443076                       W0142     NAR        P  RYLAN                    978322401
+SUSAP KBOSK6CRYLAN K62PKZBWKZBW                                                                                            978332210
+SUSAP KBOSK6CSCITU K61    W E   N42164348W070453819                       W0142     NAR        P  SCITU                    978342309
+SUSAP KBOSK6CSCITU K62PKZBWKZBW                                                                                            978352210
+SUSAP KBOSK6CSCOAR K61    W D   N42184542W070381502                       W0142     NAR        P  SCOAR                    978362301
+SUSAP KBOSK6CSCOAR K62PKZBWKZBW                                                                                            978372210
+SUSAP KBOSK6CSEETS K61    W E   N42384619W072190571                       W0136     NAR        P  SEETS                    978382305
+SUSAP KBOSK6CSEETS K62PKZBWKZBW                                                                                            978392210
+SUSAP KBOSK6CSEHAG K61    W E   N42280494W070470619                       W0142     NAR        P  SEHAG                    978402401
+SUSAP KBOSK6CSEHAG K62PKZBWKZBW                                                                                            978412210
+SUSAP KBOSK6CSHAAN K61    W D   N42344762W070493940                       W0142     NAR        P  SHAAN                    978422212
+SUSAP KBOSK6CSHAAN K62PKZBWKZBW                                                                                            978432210
+SUSAP KBOSK6CSHUSH K61    WAF   N42194074W070544338                       W0141     NAR        P  SHUSH                    978442301
+SUSAP KBOSK6CSHUSH K62PKZBWKZBW                                                                                            978452210
+SUSAP KBOSK6CSNDBA K61    W F   N42271703W070533672                       W0141     NAR        P  SNDBA                    978462312
+SUSAP KBOSK6CSNDBA K62PKZBWKZBW                                                                                            978472312
+SUSAP KBOSK6CSOFEE K61    W E   N41503542W071153213                       W0139     NAR        P  SOFEE                    978482401
+SUSAP KBOSK6CSOFEE K62PKZBWKZBW                                                                                            978492210
+SUSAP KBOSK6CSPYSD K61    W E   N42265845W071013725                       W0141     NAR        P  SPYSD                    978502211
+SUSAP KBOSK6CSPYSD K62PKZBWKZBW                                                                                            978512210
+SUSAP KBOSK6CSRENE K61    W F   N42202680W070493659                       W0141     NAR        P  SRENE                    978522307
+SUSAP KBOSK6CSRENE K62PKZBWKZBW                                                                                            978532210
+SUSAP KBOSK6CSRINO K61    W F   N42275774W070495131                       W0142     NAR        P  SRINO                    978542312
+SUSAP KBOSK6CSRINO K62PKZBWKZBW                                                                                            978552312
+SUSAP KBOSK6CSTAYC K61    W D   N42304655W070475068                       W0142     NAR        P  STAYC                    978562402
+SUSAP KBOSK6CSTAYC K62PKZBWKZBW                                                                                            978572210
+SUSAP KBOSK6CSTEEM K61    W D   N42153000W070484100                       W0141     NAR        P  STEEM                    978582305
+SUSAP KBOSK6CSTEEM K62PKZBWKZBW                                                                                            978592210
+SUSAP KBOSK6CTEKKK K61    W D   N42244585W071055509                       W0141     NAR        P  TEKKK                    978602310
+SUSAP KBOSK6CTEKKK K62PKZBWKZBW                                                                                            978612210
+SUSAP KBOSK6CTELLE K61    W F   N42222354W071274833                       W0139     NAR        P  TELLE                    978622301
+SUSAP KBOSK6CTELLE K62PKZBWKZBW                                                                                            978632210
+SUSAP KBOSK6CTJAYY K61    W D   N42183722W070575721                       W0141     NAR        P  TJAYY                    978642402
+SUSAP KBOSK6CTJAYY K62PKZBWKZBW                                                                                            978652210
+SUSAP KBOSK6CTRCIE K61    W F   N42222971W070482043                       W0142     NAR        P  TRCIE                    978662310
+SUSAP KBOSK6CTRCIE K62PKZBWKZBW                                                                                            978672210
+SUSAP KBOSK6CVOCUS K61    CAF   N42271467W070574280                       W0141     NAR        P  VOCUS                    978682303
+SUSAP KBOSK6CVOCUS K62PKZBWKZBW                                                                                            978692210
+SUSAP KBOSK6CWAATR K61    W E   N42272816W070493196                       W0142     NAR        P  WAATR                    978702311
+SUSAP KBOSK6CWAATR K62PKZBWKZBW                                                                                            978712210
+SUSAP KBOSK6CWANTU K61    R F   N42205492W071031185                       W0141     NAR        P  WANTU                    978722310
+SUSAP KBOSK6CWANTU K62PKZBWKZBW                                                                                            978732210
+SUSAP KBOSK6CWIDUP K61    WSF   N42285199W071094158                       W0140     NAR        P  WIDUP                    978742308
+SUSAP KBOSK6CWIDUP K62PKZBWKZBW                                                                                            978752210
+SUSAP KBOSK6CWINDZ K61    W F   N42224332W071024344                       W0141     NAR        P  WINDZ                    978762312
+SUSAP KBOSK6CWINDZ K62PKZBWKZBW                                                                                            978772210
+SUSAP KBOSK6CWINNI K61    C F   N42070171W071072822                       W0140     NAR        P  WINNI                    978782402
+SUSAP KBOSK6CWINNI K62PKZBWKZBW                                                                                            978792210
+SUSAP KBOSK6CWOBUR K61    RSF   N42283989W071095367                       W0140     NAR        P  WOBUR                    978802308
+SUSAP KBOSK6CWOBUR K62PKZBWKZBW                                                                                            978812210
+SUSAP KBOSK6CWORRN K61    W     N42191122W070564167                       W0141     NAR        P  WORRN                    978822212
+SUSAP KBOSK6CWORRN K62PKZBWKZBW                                                                                            978832210
+SUSAP KBOSK6CWYANE K61    CSF   N42314940W070552931                       W0141     NAR        P  WYANE                    978842308
+SUSAP KBOSK6CWYANE K62PKZBWKZBW                                                                                            978852210
+SUSAP KBOSK6CWYLYY K61    R D   N42180296W071060240                       W0140     NAR        P  WYLYY                    978862305
+SUSAP KBOSK6CWYLYY K62PKZBWKZBW                                                                                            978872210
+SUSAP KBOSK6CWYMTH K61    W D   N42125323W070492052                       W0141     NAR        P  WYMTH                    978882303
+SUSAP KBOSK6CWYMTH K62PKZBWKZBW                                                                                            978892210
+SUSAP KBOSK6CYAARD K61    WDF   N42132050W070502380                       W0141     NAR        P  YAARD                    978902302
+SUSAP KBOSK6CYAARD K62PKZBWKZBW                                                                                            978912210
+SUSAP KBOSK6CYAAZZ K61    W F   N42113082W070394635                       W0142     NAR        P  YAAZZ                    978922312
+SUSAP KBOSK6CYAAZZ K62PKZBWKZBW                                                                                            978932210
+SUSAP KBOSK6CYAWKE K61    WD    N42195740W070512405                       W0141     NAR        B  YAWKE                    978942305
+SUSAP KBOSK6CYAWKE K62PKZBWKZBW                                                                                            978952210
+SUSAP KBOSK6CZASMU K61    RMF   N42223787W071011848                       W0141     NAR        P  ZASMU                    978962313
+SUSAP KBOSK6CZASMU K62PKZBWKZBW                                                                                            978972210
+SUSAP KBOSK6CZOMIB K61    WDF   N42320776W071140585                       W0140     NAR        P  ZOMIB                    978982305
+SUSAP KBOSK6CZOMIB K62PKZBWKZBW                                                                                            978992210
+SUSAP KBOSK6CZUDBY K61    R     N42214792W070581276                       W0141     NAR        P  ZUDBY                    979002212
+SUSAP KBOSK6CZUDBY K62PKZBWKZBW                                                                                            979012210
+SUSAP KBOSK6CZUMOL K61    CSF   N42241867W070590813                       W0141     NAR        P  ZUMOL                    979022212
+SUSAP KBOSK6CZUMOL K62PKZBWKZBW                                                                                            979032210
+SUSAP KBOSK6DBLZZR61RW04RW010         1     010VA                     0350        + 00520     18000                    DX  979042312
+SUSAP KBOSK6DBLZZR61RW04RW010         2E                    W0150P                                                     DX  979052312
+SUSAP KBOSK6DBLZZR61RW04RW020NHANTK6PC0E    010DF                                                                      DX  979062312
+SUSAP KBOSK6DBLZZR61RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  979072312
+SUSAP KBOSK6DBLZZR61RW04RW040ORRRRK6PC0E    010TF                                                                      DX  979082312
+SUSAP KBOSK6DBLZZR61RW04RW060CHWDHK6PC0E    010TF                                                                      DX  979092312
+SUSAP KBOSK6DBLZZR61RW04RW070STEEMK6PC0E    010TF                                                                      DX  979102312
+SUSAP KBOSK6DBLZZR61RW04RW075DEDHMK6PC0E    010TF                                                                      DX  979112312
+SUSAP KBOSK6DBLZZR61RW04RW090BLZZRK6EA0EE   010TF                                                                      DX  979122312
+SUSAP KBOSK6DBLZZR61RW09 W010         1     010VA                     0920        + 00520     18000                    DX  979132312
+SUSAP KBOSK6DBLZZR61RW09 W010         2E                    W0150P                                                     DX  979142312
+SUSAP KBOSK6DBLZZR61RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  979152312
+SUSAP KBOSK6DBLZZR61RW09 W040FENWYK6PC0E    010TF                                                                      DX  979162312
+SUSAP KBOSK6DBLZZR61RW09 W050GLLETK6PC0E    010TF                                                                      DX  979172312
+SUSAP KBOSK6DBLZZR61RW09 W060WYMTHK6PC0E    010TF                                                                      DX  979182312
+SUSAP KBOSK6DBLZZR61RW09 W070DEDHMK6PC0E    010TF                                                                      DX  979192312
+SUSAP KBOSK6DBLZZR61RW09 W090BLZZRK6EA0EE   010TF                                                                      DX  979202312
+SUSAP KBOSK6DBLZZR61RW15RW010         1        VI                     1500                    18000210               - DX  979212312
+SUSAP KBOSK6DBLZZR61RW15RW010         2E                    W0150P                                                     DX  979222312
+SUSAP KBOSK6DBLZZR61RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  979232409
+SUSAP KBOSK6DBLZZR61RW15RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  979242312
+SUSAP KBOSK6DBLZZR61RW15RW050JAITEK6PC0E    010TF                                                                      DX  979252312
+SUSAP KBOSK6DBLZZR61RW15RW060HEWMOK6PC0E    010TF                                 + 05000          260               - DX  979262312
+SUSAP KBOSK6DBLZZR61RW15RW070KENWIK6PC0E    010TF                                                                      DX  979272312
+SUSAP KBOSK6DBLZZR61RW15RW080BLZZRK6EA0EE   010TF                                                                      DX  979282312
+SUSAP KBOSK6DBLZZR61RW22LW010         1        VI                     2150                    18000                    DX  979292312
+SUSAP KBOSK6DBLZZR61RW22LW010         2E                    W0150P                                                     DX  979302312
+SUSAP KBOSK6DBLZZR61RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  979312409
+SUSAP KBOSK6DBLZZR61RW22LW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  979322312
+SUSAP KBOSK6DBLZZR61RW22LW050JAITEK6PC0E    010TF                                                                      DX  979332312
+SUSAP KBOSK6DBLZZR61RW22LW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  979342312
+SUSAP KBOSK6DBLZZR61RW22LW080KENWIK6PC0E    010TF                                                                      DX  979352312
+SUSAP KBOSK6DBLZZR61RW22LW100BLZZRK6EA0EE   010TF                                                                      DX  979362312
+SUSAP KBOSK6DBLZZR61RW22RW010         1        VI                     2150                    18000                    DX  979372312
+SUSAP KBOSK6DBLZZR61RW22RW010         2E                    W0150P                                                     DX  979382312
+SUSAP KBOSK6DBLZZR61RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  979392409
+SUSAP KBOSK6DBLZZR61RW22RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  979402312
+SUSAP KBOSK6DBLZZR61RW22RW050JAITEK6PC0E    010TF                                                                      DX  979412312
+SUSAP KBOSK6DBLZZR61RW22RW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  979422312
+SUSAP KBOSK6DBLZZR61RW22RW080KENWIK6PC0E    010TF                                                                      DX  979432312
+SUSAP KBOSK6DBLZZR61RW22RW100BLZZRK6EA0EE   010TF                                                                      DX  979442312
+SUSAP KBOSK6DBLZZR61RW27 W010         1        VI                     2720                    18000                    DX  979452312
+SUSAP KBOSK6DBLZZR61RW27 W010         2E                    W0150P                                                     DX  979462312
+SUSAP KBOSK6DBLZZR61RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  979472409
+SUSAP KBOSK6DBLZZR61RW27 W040BLZZRK6EA0EE   010TF                                                                      DX  979482312
+SUSAP KBOSK6DBLZZR61RW33LW010         1        VI                     3300                    18000                    DX  979492312
+SUSAP KBOSK6DBLZZR61RW33LW010         2E                    W0150P                                                     DX  979502312
+SUSAP KBOSK6DBLZZR61RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400040D                                        DX  979512409
+SUSAP KBOSK6DBLZZR61RW33LW040EXXXXK6PC0E    010TF                                                                      DX  979522312
+SUSAP KBOSK6DBLZZR61RW33LW050BLZZRK6EA0EE   010TF                                                                      DX  979532312
+SUSAP KBOSK6DBRUWN71RW04RW010         1     010VA                     0350        + 00520     18000                    DX  979542312
+SUSAP KBOSK6DBRUWN71RW04RW010         2E                    W0150P                                                     DX  979552312
+SUSAP KBOSK6DBRUWN71RW04RW020NHANTK6PC0E    010DF                                                                      DX  979562312
+SUSAP KBOSK6DBRUWN71RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  979572312
+SUSAP KBOSK6DBRUWN71RW04RW040ORRRRK6PC0E    010TF                                                                      DX  979582312
+SUSAP KBOSK6DBRUWN71RW04RW060BUCYKK6PC0E    010TF                                                                      DX  979592312
+SUSAP KBOSK6DBRUWN71RW04RW070BRUWNK6EA0EE   010TF                                                                      DX  979602312
+SUSAP KBOSK6DBRUWN71RW09 W010         1     010VA                     0920        + 00520     18000                    DX  979612312
+SUSAP KBOSK6DBRUWN71RW09 W010         2E                    W0150P                                                     DX  979622312
+SUSAP KBOSK6DBRUWN71RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  979632312
+SUSAP KBOSK6DBRUWN71RW09 W040FENWYK6PC0E    010TF                                                                      DX  979642312
+SUSAP KBOSK6DBRUWN71RW09 W045BUCYKK6PC0E    010TF                                                                      DX  979652312
+SUSAP KBOSK6DBRUWN71RW09 W050BRUWNK6EA0EE   010TF                                                                      DX  979662312
+SUSAP KBOSK6DBRUWN71RW15RW010         1        VI                     1500                    18000210               - DX  979672312
+SUSAP KBOSK6DBRUWN71RW15RW010         2E                    W0150P                                                     DX  979682312
+SUSAP KBOSK6DBRUWN71RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  979692409
+SUSAP KBOSK6DBRUWN71RW15RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  979702312
+SUSAP KBOSK6DBRUWN71RW15RW045BUCYKK6PC0E    010TF                                                                      DX  979712312
+SUSAP KBOSK6DBRUWN71RW15RW050BRUWNK6EA0EE   010TF                                                                      DX  979722312
+SUSAP KBOSK6DBRUWN71RW22LW010         1        VI                     2150                    18000                    DX  979732312
+SUSAP KBOSK6DBRUWN71RW22LW010         2E                    W0150P                                                     DX  979742312
+SUSAP KBOSK6DBRUWN71RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  979752409
+SUSAP KBOSK6DBRUWN71RW22LW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  979762312
+SUSAP KBOSK6DBRUWN71RW22LW045BUCYKK6PC0E    010TF                                                                      DX  979772312
+SUSAP KBOSK6DBRUWN71RW22LW050BRUWNK6EA0EE   010TF                                                                      DX  979782312
+SUSAP KBOSK6DBRUWN71RW22RW010         1        VI                     2150                    18000                    DX  979792312
+SUSAP KBOSK6DBRUWN71RW22RW010         2E                    W0150P                                                     DX  979802312
+SUSAP KBOSK6DBRUWN71RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  979812409
+SUSAP KBOSK6DBRUWN71RW22RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  979822312
+SUSAP KBOSK6DBRUWN71RW22RW045BUCYKK6PC0E    010TF                                                                      DX  979832312
+SUSAP KBOSK6DBRUWN71RW22RW050BRUWNK6EA0EE   010TF                                                                      DX  979842312
+SUSAP KBOSK6DBRUWN71RW27 W010         1        VI                     2720                    18000                    DX  979852312
+SUSAP KBOSK6DBRUWN71RW27 W010         2E                    W0150P                                                     DX  979862312
+SUSAP KBOSK6DBRUWN71RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  979872409
+SUSAP KBOSK6DBRUWN71RW27 W040COLYNK6PC0E    010TF                                                                      DX  979882312
+SUSAP KBOSK6DBRUWN71RW27 W045BEREIK6PC0E    010TF                                                                      DX  979892312
+SUSAP KBOSK6DBRUWN71RW27 W050BRUWNK6EA0EE   010TF                                                                      DX  979902312
+SUSAP KBOSK6DBRUWN71RW33LW010         1        VI                     3300                    18000                    DX  979912312
+SUSAP KBOSK6DBRUWN71RW33LW010         2E                    W0150P                                                     DX  979922312
+SUSAP KBOSK6DBRUWN71RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400040D                                        DX  979932409
+SUSAP KBOSK6DBRUWN71RW33LW035COUSYK6PC0E    010TF                                 + 05000                              DX  979942312
+SUSAP KBOSK6DBRUWN71RW33LW037CBEARK6PC0E    010TF                                                                      DX  979952312
+SUSAP KBOSK6DBRUWN71RW33LW040COLYNK6PC0E    010TF                                                                      DX  979962312
+SUSAP KBOSK6DBRUWN71RW33LW045BEREIK6PC0E    010TF                                                                      DX  979972312
+SUSAP KBOSK6DBRUWN71RW33LW050BRUWNK6EA0EE   010TF                                                                      DX  979982312
+SUSAP KBOSK6DCELTK71RW04RW010         1     010VA                     0350        + 00520     18000                    DX  979992312
+SUSAP KBOSK6DCELTK71RW04RW010         2E                    W0150P                                                     DX  980002312
+SUSAP KBOSK6DCELTK71RW04RW020NHANTK6PC0E    010DF                                                                      DX  980012312
+SUSAP KBOSK6DCELTK71RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  980022312
+SUSAP KBOSK6DCELTK71RW04RW040ORRRRK6PC0E    010TF                                                                      DX  980032312
+SUSAP KBOSK6DCELTK71RW04RW045TONNIK6EA0E    010TF                                                                      DX  980042312
+SUSAP KBOSK6DCELTK71RW04RW050CELTKK6EA0EE   010TF                                                                      DX  980052312
+SUSAP KBOSK6DCELTK71RW09 W010         1     010VA                     0920        + 00520     18000                    DX  980062312
+SUSAP KBOSK6DCELTK71RW09 W010         2E                    W0150P                                                     DX  980072312
+SUSAP KBOSK6DCELTK71RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  980082312
+SUSAP KBOSK6DCELTK71RW09 W040FENWYK6PC0E    010TF                                                                      DX  980092312
+SUSAP KBOSK6DCELTK71RW09 W045SCOARK6PC0E    010TF                                                                      DX  980102312
+SUSAP KBOSK6DCELTK71RW09 W050CELTKK6EA0EE   010TF                                                                      DX  980112312
+SUSAP KBOSK6DCELTK71RW15RW010         1        VI                     1500                    18000210               - DX  980122312
+SUSAP KBOSK6DCELTK71RW15RW010         2E                    W0150P                                                     DX  980132312
+SUSAP KBOSK6DCELTK71RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  980142409
+SUSAP KBOSK6DCELTK71RW15RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  980152312
+SUSAP KBOSK6DCELTK71RW15RW045SCOARK6PC0E    010TF                                                                      DX  980162312
+SUSAP KBOSK6DCELTK71RW15RW050CELTKK6EA0EE   010TF                                                                      DX  980172312
+SUSAP KBOSK6DCELTK71RW22LW010         1        VI                     2150                    18000                    DX  980182312
+SUSAP KBOSK6DCELTK71RW22LW010         2E                    W0150P                                                     DX  980192312
+SUSAP KBOSK6DCELTK71RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  980202409
+SUSAP KBOSK6DCELTK71RW22LW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  980212312
+SUSAP KBOSK6DCELTK71RW22LW045SCOARK6PC0E    010TF                                                                      DX  980222312
+SUSAP KBOSK6DCELTK71RW22LW050CELTKK6EA0EE   010TF                                                                      DX  980232312
+SUSAP KBOSK6DCELTK71RW22RW010         1        VI                     2150                    18000                    DX  980242312
+SUSAP KBOSK6DCELTK71RW22RW010         2E                    W0150P                                                     DX  980252312
+SUSAP KBOSK6DCELTK71RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  980262409
+SUSAP KBOSK6DCELTK71RW22RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  980272312
+SUSAP KBOSK6DCELTK71RW22RW045SCOARK6PC0E    010TF                                                                      DX  980282312
+SUSAP KBOSK6DCELTK71RW22RW050CELTKK6EA0EE   010TF                                                                      DX  980292312
+SUSAP KBOSK6DCELTK71RW27 W010         1        VI                     2720                    18000                    DX  980302312
+SUSAP KBOSK6DCELTK71RW27 W010         2E                    W0150P                                                     DX  980312312
+SUSAP KBOSK6DCELTK71RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  980322409
+SUSAP KBOSK6DCELTK71RW27 W040COLYNK6PC0E    010TF                                                                      DX  980332312
+SUSAP KBOSK6DCELTK71RW27 W045CELTKK6EA0EE   010TF                                                                      DX  980342312
+SUSAP KBOSK6DCELTK71RW33LW010         1        VI                     3300                    18000                    DX  980352312
+SUSAP KBOSK6DCELTK71RW33LW010         2E                    W0150P                                                     DX  980362312
+SUSAP KBOSK6DCELTK71RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400040D                                        DX  980372409
+SUSAP KBOSK6DCELTK71RW33LW040COUSYK6PC0E    010TF                                 + 05000                              DX  980382312
+SUSAP KBOSK6DCELTK71RW33LW045CBEARK6PC0E    010TF                                                                      DX  980392312
+SUSAP KBOSK6DCELTK71RW33LW047COLYNK6PC0E    010TF                                                                      DX  980402312
+SUSAP KBOSK6DCELTK71RW33LW050CELTKK6EA0EE   010TF                                                                      DX  980412312
+SUSAP KBOSK6DHYLND71RW04RW010         1     010VA                     0350        + 00520     18000                    DX  980422312
+SUSAP KBOSK6DHYLND71RW04RW010         2E                    W0150P                                                     DX  980432312
+SUSAP KBOSK6DHYLND71RW04RW020NHANTK6PC0E    010DF                                                                      DX  980442312
+SUSAP KBOSK6DHYLND71RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  980452312
+SUSAP KBOSK6DHYLND71RW04RW040STAYCK6PC0E    010TF                                                                      DX  980462312
+SUSAP KBOSK6DHYLND71RW04RW045SOFEAK6EA0E    010TF                                                                      DX  980472312
+SUSAP KBOSK6DHYLND71RW04RW050SHAANK6PC0E    010TF                                                                      DX  980482312
+SUSAP KBOSK6DHYLND71RW04RW070HYLNDK6EA0EE   010TF                                                                      DX  980492312
+SUSAP KBOSK6DHYLND71RW09 W010         1     010VA                     0920        + 00520     18000                    DX  980502312
+SUSAP KBOSK6DHYLND71RW09 W010         2E                    W0150P                                                     DX  980512312
+SUSAP KBOSK6DHYLND71RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  980522312
+SUSAP KBOSK6DHYLND71RW09 W050CORRTK6PC0E    010TF                                                                      DX  980532312
+SUSAP KBOSK6DHYLND71RW09 W060STAYCK6PC0E    010TF                                                                      DX  980542312
+SUSAP KBOSK6DHYLND71RW09 W065TRAFTK6EA0E    010TF                                                                      DX  980552312
+SUSAP KBOSK6DHYLND71RW09 W070HYLNDK6EA0EE   010TF                                                                      DX  980562312
+SUSAP KBOSK6DHYLND71RW15RW010         1        VI                     1500                    18000210               - DX  980572312
+SUSAP KBOSK6DHYLND71RW15RW010         2E                    W0150P                                                     DX  980582312
+SUSAP KBOSK6DHYLND71RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  980592409
+SUSAP KBOSK6DHYLND71RW15RW035BOATTK6PC0E    010TF                                 + 04000          250               - DX  980602312
+SUSAP KBOSK6DHYLND71RW15RW040HEARRK6PC0E    010TF                                                                      DX  980612312
+SUSAP KBOSK6DHYLND71RW15RW050MARBBK6PC0E    010TF                                                                      DX  980622312
+SUSAP KBOSK6DHYLND71RW15RW060HYLNDK6EA0EE   010TF                                                                      DX  980632312
+SUSAP KBOSK6DHYLND71RW22LW010         1        VI                     2150                    18000                    DX  980642312
+SUSAP KBOSK6DHYLND71RW22LW010         2E                    W0150P                                                     DX  980652312
+SUSAP KBOSK6DHYLND71RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  980662409
+SUSAP KBOSK6DHYLND71RW22LW040BOATTK6PC0E    010TF                                 + 04000          250               - DX  980672312
+SUSAP KBOSK6DHYLND71RW22LW060HEARRK6PC0E    010TF                                                                      DX  980682312
+SUSAP KBOSK6DHYLND71RW22LW070MARBBK6PC0E    010TF                                                                      DX  980692312
+SUSAP KBOSK6DHYLND71RW22LW090HYLNDK6EA0EE   010TF                                                                      DX  980702312
+SUSAP KBOSK6DHYLND71RW22RW010         1        VI                     2150                    18000                    DX  980712312
+SUSAP KBOSK6DHYLND71RW22RW010         2E                    W0150P                                                     DX  980722312
+SUSAP KBOSK6DHYLND71RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  980732409
+SUSAP KBOSK6DHYLND71RW22RW040BOATTK6PC0E    010TF                                 + 04000          250               - DX  980742312
+SUSAP KBOSK6DHYLND71RW22RW060HEARRK6PC0E    010TF                                                                      DX  980752312
+SUSAP KBOSK6DHYLND71RW22RW070MARBBK6PC0E    010TF                                                                      DX  980762312
+SUSAP KBOSK6DHYLND71RW22RW090HYLNDK6EA0EE   010TF                                                                      DX  980772312
+SUSAP KBOSK6DHYLND71RW27 W010         1        VI                     2720                    18000                    DX  980782312
+SUSAP KBOSK6DHYLND71RW27 W010         2E                    W0150P                                                     DX  980792312
+SUSAP KBOSK6DHYLND71RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  980802409
+SUSAP KBOSK6DHYLND71RW27 W040GLOWBK6PC0E    010TF                                 + 03000          250               - DX  980812312
+SUSAP KBOSK6DHYLND71RW27 W070HRALDK6PC0E    010TF                                                                      DX  980822312
+SUSAP KBOSK6DHYLND71RW27 W090HYLNDK6EA0EE   010TF                                                                      DX  980832312
+SUSAP KBOSK6DHYLND71RW33LW010         1        VI                     3300                    18000                    DX  980842312
+SUSAP KBOSK6DHYLND71RW33LW010         2E                    W0150P                                                     DX  980852312
+SUSAP KBOSK6DHYLND71RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400040D                                        DX  980862409
+SUSAP KBOSK6DHYLND71RW33LW035MYSTKK6EA0E    010TF                                 + 03000                              DX  980872312
+SUSAP KBOSK6DHYLND71RW33LW040CAMWIK6PC0E    010TF                                 + 04000                              DX  980882312
+SUSAP KBOSK6DHYLND71RW33LW090HYLNDK6EA0EE   010TF                                                                      DX  980892312
+SUSAP KBOSK6DLBSTA81RW04RW010         1     010VA                     0350        + 00520     18000                    DX  980902312
+SUSAP KBOSK6DLBSTA81RW04RW010         2E                    W0150P                                                     DX  980912312
+SUSAP KBOSK6DLBSTA81RW04RW020NHANTK6PC0E    010DF                                                                      DX  980922312
+SUSAP KBOSK6DLBSTA81RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  980932312
+SUSAP KBOSK6DLBSTA81RW04RW040JENAAK6EA0E    010TF                                                                      DX  980942312
+SUSAP KBOSK6DLBSTA81RW04RW050SHAUNK6EA0E    010TF                                                                      DX  980952312
+SUSAP KBOSK6DLBSTA81RW04RW060LBSTAK6EA0EE   010TF                                                                      DX  980962312
+SUSAP KBOSK6DLBSTA81RW09 W010         1     010VA                     0920        + 00520     18000                    DX  980972312
+SUSAP KBOSK6DLBSTA81RW09 W010         2E                    W0150P                                                     DX  980982312
+SUSAP KBOSK6DLBSTA81RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  980992312
+SUSAP KBOSK6DLBSTA81RW09 W050CLMPPK6PC0E    010TF                                                                      DX  981002312
+SUSAP KBOSK6DLBSTA81RW09 W060SHAUNK6EA0E    010TF                                                                      DX  981012312
+SUSAP KBOSK6DLBSTA81RW09 W070LBSTAK6EA0EE   010TF                                                                      DX  981022312
+SUSAP KBOSK6DLBSTA81RW15RW010         1        VI                     1500                    18000210               - DX  981032312
+SUSAP KBOSK6DLBSTA81RW15RW010         2E                    W0150P                                                     DX  981042312
+SUSAP KBOSK6DLBSTA81RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  981052409
+SUSAP KBOSK6DLBSTA81RW15RW040BOATTK6PC0E    010TF                                 + 04000          250               - DX  981062312
+SUSAP KBOSK6DLBSTA81RW15RW060HEARRK6PC0E    010TF                                                                      DX  981072312
+SUSAP KBOSK6DLBSTA81RW15RW070SHAUNK6EA0E    010TF                                                                      DX  981082312
+SUSAP KBOSK6DLBSTA81RW15RW080LBSTAK6EA0EE   010TF                                                                      DX  981092312
+SUSAP KBOSK6DLBSTA81RW22LW010         1        VI                     2150                    18000                    DX  981102312
+SUSAP KBOSK6DLBSTA81RW22LW010         2E                    W0150P                                                     DX  981112312
+SUSAP KBOSK6DLBSTA81RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  981122409
+SUSAP KBOSK6DLBSTA81RW22LW040BOATTK6PC0E    010TF                                 + 04000          250               - DX  981132312
+SUSAP KBOSK6DLBSTA81RW22LW060HEARRK6PC0E    010TF                                                                      DX  981142312
+SUSAP KBOSK6DLBSTA81RW22LW070SHAUNK6EA0E    010TF                                                                      DX  981152312
+SUSAP KBOSK6DLBSTA81RW22LW080LBSTAK6EA0EE   010TF                                                                      DX  981162312
+SUSAP KBOSK6DLBSTA81RW22RW010         1        VI                     2150                    18000                    DX  981172312
+SUSAP KBOSK6DLBSTA81RW22RW010         2E                    W0150P                                                     DX  981182312
+SUSAP KBOSK6DLBSTA81RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  981192409
+SUSAP KBOSK6DLBSTA81RW22RW040BOATTK6PC0E    010TF                                 + 04000          250               - DX  981202312
+SUSAP KBOSK6DLBSTA81RW22RW060HEARRK6PC0E    010TF                                                                      DX  981212312
+SUSAP KBOSK6DLBSTA81RW22RW070SHAUNK6EA0E    010TF                                                                      DX  981222312
+SUSAP KBOSK6DLBSTA81RW22RW080LBSTAK6EA0EE   010TF                                                                      DX  981232312
+SUSAP KBOSK6DLBSTA81RW27 W010         1        VI                     2720                    18000                    DX  981242312
+SUSAP KBOSK6DLBSTA81RW27 W010         2E                    W0150P                                                     DX  981252312
+SUSAP KBOSK6DLBSTA81RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  981262409
+SUSAP KBOSK6DLBSTA81RW27 W040GLOWBK6PC0E    010TF                                 + 03000          250               - DX  981272312
+SUSAP KBOSK6DLBSTA81RW27 W060HRALDK6PC0E    010TF                                                                      DX  981282312
+SUSAP KBOSK6DLBSTA81RW27 W070CAMWIK6PC0E    010TF                                 + 04000                              DX  981292312
+SUSAP KBOSK6DLBSTA81RW27 W080LBSTAK6EA0EE   010TF                                                                      DX  981302312
+SUSAP KBOSK6DLBSTA81RW33LW010         1        VI                     3300                    18000                    DX  981312312
+SUSAP KBOSK6DLBSTA81RW33LW010         2E                    W0150P                                                     DX  981322312
+SUSAP KBOSK6DLBSTA81RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400040D                                        DX  981332409
+SUSAP KBOSK6DLBSTA81RW33LW050MYSTKK6EA0E    010TF                                 + 03000                              DX  981342312
+SUSAP KBOSK6DLBSTA81RW33LW070CAMWIK6PC0E    010TF                                 + 04000                              DX  981352312
+SUSAP KBOSK6DLBSTA81RW33LW080LBSTAK6EA0EE   010TF                                                                      DX  981362312
+SUSAP KBOSK6DLOGAN41RW04LW010         1        VD BOS K6              03500040D               18000                   DG   981372308
+SUSAP KBOSK6DLOGAN41RW04LW010         2E                    W0160L                                                    DG   981382308
+SUSAP KBOSK6DLOGAN41RW04LW020         1 E      VM                     0900                                            DG   981392308
+SUSAP KBOSK6DLOGAN41RW04LW020         2E                    W0150L                                                    DG   981402308
+SUSAP KBOSK6DLOGAN41RW04RW010         1        VD BOS K6              03500040D               18000                   DG   981412308
+SUSAP KBOSK6DLOGAN41RW04RW010         2E                    W0160L                                                    DG   981422308
+SUSAP KBOSK6DLOGAN41RW04RW020         1 E      VM                     0900                                            DG   981432308
+SUSAP KBOSK6DLOGAN41RW04RW020         2E                    W0150L                                                    DG   981442308
+SUSAP KBOSK6DLOGAN41RW09 W010         1        VA                     0920        + 00419     18000                   DG   981452308
+SUSAP KBOSK6DLOGAN41RW09 W010         2E                    W0150L                                                    DG   981462308
+SUSAP KBOSK6DLOGAN41RW09 W020         1 E      VM                     0920                                            DG   981472308
+SUSAP KBOSK6DLOGAN41RW09 W020         2E                    W0150L                                                    DG   981482308
+SUSAP KBOSK6DLOGAN41RW14 W020BOSD1K6PC1E       CF BOS K6      2068001014100016D               18000                   DG   981492308
+SUSAP KBOSK6DLOGAN41RW14 W020BOSD1K6PC2E                    W0160L                                                    DG   981502308
+SUSAP KBOSK6DLOGAN41RW14 W030         1 E      VM                     1200                                            DG   981512308
+SUSAP KBOSK6DLOGAN41RW14 W030         2E                    W0150L                                                    DG   981522308
+SUSAP KBOSK6DLOGAN41RW15RW010D1BOSK6PC1E       CF BOS K6      1612001015000024D               18000                   DG   981532308
+SUSAP KBOSK6DLOGAN41RW15RW010D1BOSK6PC2E                    W0160L                                                    DG   981542308
+SUSAP KBOSK6DLOGAN41RW15RW020         1 E      VM                     1200                                            DG   981552308
+SUSAP KBOSK6DLOGAN41RW15RW020         2E                    W0150L                                                    DG   981562308
+SUSAP KBOSK6DLOGAN41RW22LW010         1        VA                     2150        + 00419     18000                   DG   981572308
+SUSAP KBOSK6DLOGAN41RW22LW010         2E                    W0150L                                                    DG   981582308
+SUSAP KBOSK6DLOGAN41RW22LW020         1 E      VM                     1400                                            DG   981592308
+SUSAP KBOSK6DLOGAN41RW22LW020         2E                    W0150L                                                    DG   981602308
+SUSAP KBOSK6DLOGAN41RW22RW010         1        VA                     2150        + 00419     18000                   DG   981612308
+SUSAP KBOSK6DLOGAN41RW22RW010         2E                    W0150L                                                    DG   981622308
+SUSAP KBOSK6DLOGAN41RW22RW020         1 E      VM                     1400                                            DG   981632308
+SUSAP KBOSK6DLOGAN41RW22RW020         2E                    W0150L                                                    DG   981642308
+SUSAP KBOSK6DLOGAN41RW27 W010         1        VD BOS K6              27200022D               18000                   DG   981652308
+SUSAP KBOSK6DLOGAN41RW27 W010         2E                    W0160L                                                    DG   981662308
+SUSAP KBOSK6DLOGAN41RW27 W020         1 E      VM                     2350                                            DG   981672308
+SUSAP KBOSK6DLOGAN41RW27 W020         2E                    W0150L                                                    DG   981682308
+SUSAP KBOSK6DLOGAN41RW33LW010         1        VD BOS K6              33000020D               18000                   DG   981692308
+SUSAP KBOSK6DLOGAN41RW33LW010         2E                    W0160L                                                    DG   981702308
+SUSAP KBOSK6DLOGAN41RW33LW020         1 E      VM                     3160                                            DG   981712308
+SUSAP KBOSK6DLOGAN41RW33LW020         2E                    W0150L                                                    DG   981722308
+SUSAP KBOSK6DLOGAN43BLZZRP010BOS  K6D 1V       IF                                             18000                   DG   981732210
+SUSAP KBOSK6DLOGAN43BLZZRP010BOS  K6D 2E                    W0150L                                                    DG   981742210
+SUSAP KBOSK6DLOGAN43BLZZRP020BLZZRK6EA1EE      TF                                                                     DG   981752210
+SUSAP KBOSK6DLOGAN43BLZZRP020BLZZRK6EA2E                    W0160L                                                    DG   981762210
+SUSAP KBOSK6DLOGAN43BRUWNP010BOS  K6D 1V       IF                                             18000                   DG   981772210
+SUSAP KBOSK6DLOGAN43BRUWNP010BOS  K6D 2E                    W0150L                                                    DG   981782210
+SUSAP KBOSK6DLOGAN43BRUWNP020BRUWNK6EA1EE      TF                                                                     DG   981792210
+SUSAP KBOSK6DLOGAN43BRUWNP020BRUWNK6EA2E                    W0160L                                                    DG   981802210
+SUSAP KBOSK6DLOGAN43CELTKP010BOS  K6D 1V       IF                                             18000                   DG   981812210
+SUSAP KBOSK6DLOGAN43CELTKP010BOS  K6D 2E                    W0150L                                                    DG   981822210
+SUSAP KBOSK6DLOGAN43CELTKP020CELTKK6EA1EE      TF                                                                     DG   981832210
+SUSAP KBOSK6DLOGAN43CELTKP020CELTKK6EA2E                    W0160L                                                    DG   981842210
+SUSAP KBOSK6DLOGAN43HYLNDP010BOS  K6D 1V       IF                                             18000                   DG   981852210
+SUSAP KBOSK6DLOGAN43HYLNDP010BOS  K6D 2E                    W0150L                                                    DG   981862210
+SUSAP KBOSK6DLOGAN43HYLNDP020HYLNDK6EA1EE      TF                                                                     DG   981872210
+SUSAP KBOSK6DLOGAN43HYLNDP020HYLNDK6EA2E                    W0160L                                                    DG   981882210
+SUSAP KBOSK6DLOGAN43PATSSP010BOS  K6D 1V       IF                                             18000                   DG   981892210
+SUSAP KBOSK6DLOGAN43PATSSP010BOS  K6D 2E                    W0150L                                                    DG   981902210
+SUSAP KBOSK6DLOGAN43PATSSP020PATSSK6EA1EE      TF                                                                     DG   981912210
+SUSAP KBOSK6DLOGAN43PATSSP020PATSSK6EA2E                    W0160L                                                    DG   981922210
+SUSAP KBOSK6DLOGAN43REVSSP010BOS  K6D 1V       IF                                             18000                   DG   981932210
+SUSAP KBOSK6DLOGAN43REVSSP010BOS  K6D 2E                    W0150L                                                    DG   981942210
+SUSAP KBOSK6DLOGAN43REVSSP020REVSSK6EA1EE      TF                                                                     DG   981952210
+SUSAP KBOSK6DLOGAN43REVSSP020REVSSK6EA2E                    W0160L                                                    DG   981962210
+SUSAP KBOSK6DLOGAN43SSOXSP010BOS  K6D 1V       IF                                             18000                   DG   981972210
+SUSAP KBOSK6DLOGAN43SSOXSP010BOS  K6D 2E                    W0150L                                                    DG   981982210
+SUSAP KBOSK6DLOGAN43SSOXSP020SSOXSK6EA1EE      TF                                                                     DG   981992210
+SUSAP KBOSK6DLOGAN43SSOXSP020SSOXSK6EA2E                    W0160L                                                    DG   982002210
+SUSAP KBOSK6DPATSS71RW04RW010         1     010VA                     0350        + 00520     18000                    DX  982012312
+SUSAP KBOSK6DPATSS71RW04RW010         2E                    W0150P                                                     DX  982022312
+SUSAP KBOSK6DPATSS71RW04RW020NHANTK6PC0E    010DF                                                                      DX  982032312
+SUSAP KBOSK6DPATSS71RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  982042312
+SUSAP KBOSK6DPATSS71RW04RW040ORRRRK6PC0E    010TF                                                                      DX  982052312
+SUSAP KBOSK6DPATSS71RW04RW060CHWDHK6PC0E    010TF                                                                      DX  982062312
+SUSAP KBOSK6DPATSS71RW04RW070STEEMK6PC0E    010TF                                                                      DX  982072312
+SUSAP KBOSK6DPATSS71RW04RW075DEDHMK6PC0E    010TF                                                                      DX  982082312
+SUSAP KBOSK6DPATSS71RW04RW080PATSSK6EA0EE   010TF                                                                      DX  982092312
+SUSAP KBOSK6DPATSS71RW09 W010         1     010VA                     0920        + 00520     18000                    DX  982102312
+SUSAP KBOSK6DPATSS71RW09 W010         2E                    W0150P                                                     DX  982112312
+SUSAP KBOSK6DPATSS71RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  982122312
+SUSAP KBOSK6DPATSS71RW09 W040FENWYK6PC0E    010TF                                                                      DX  982132312
+SUSAP KBOSK6DPATSS71RW09 W050GLLETK6PC0E    010TF                                                                      DX  982142312
+SUSAP KBOSK6DPATSS71RW09 W060WYMTHK6PC0E    010TF                                                                      DX  982152312
+SUSAP KBOSK6DPATSS71RW09 W065DEDHMK6PC0E    010TF                                                                      DX  982162312
+SUSAP KBOSK6DPATSS71RW09 W070PATSSK6EA0EE   010TF                                                                      DX  982172312
+SUSAP KBOSK6DPATSS71RW15RW010         1        VI                     1500                    18000210               - DX  982182312
+SUSAP KBOSK6DPATSS71RW15RW010         2E                    W0150P                                                     DX  982192312
+SUSAP KBOSK6DPATSS71RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  982202409
+SUSAP KBOSK6DPATSS71RW15RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  982212312
+SUSAP KBOSK6DPATSS71RW15RW060JAITEK6PC0E    010TF                                                                      DX  982222312
+SUSAP KBOSK6DPATSS71RW15RW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  982232312
+SUSAP KBOSK6DPATSS71RW15RW085KENWIK6PC0E    010TF                                                                      DX  982242312
+SUSAP KBOSK6DPATSS71RW15RW100PATSSK6EA0EE   010TF                                                                      DX  982252312
+SUSAP KBOSK6DPATSS71RW22LW010         1        VI                     2150                    18000                    DX  982262312
+SUSAP KBOSK6DPATSS71RW22LW010         2E                    W0150P                                                     DX  982272312
+SUSAP KBOSK6DPATSS71RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  982282409
+SUSAP KBOSK6DPATSS71RW22LW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  982292312
+SUSAP KBOSK6DPATSS71RW22LW050JAITEK6PC0E    010TF                                                                      DX  982302312
+SUSAP KBOSK6DPATSS71RW22LW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  982312312
+SUSAP KBOSK6DPATSS71RW22LW080KENWIK6PC0E    010TF                                                                      DX  982322312
+SUSAP KBOSK6DPATSS71RW22LW100PATSSK6EA0EE   010TF                                                                      DX  982332312
+SUSAP KBOSK6DPATSS71RW22RW010         1        VI                     2150                    18000                    DX  982342312
+SUSAP KBOSK6DPATSS71RW22RW010         2E                    W0150P                                                     DX  982352312
+SUSAP KBOSK6DPATSS71RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  982362409
+SUSAP KBOSK6DPATSS71RW22RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  982372312
+SUSAP KBOSK6DPATSS71RW22RW050JAITEK6PC0E    010TF                                                                      DX  982382312
+SUSAP KBOSK6DPATSS71RW22RW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  982392312
+SUSAP KBOSK6DPATSS71RW22RW080KENWIK6PC0E    010TF                                                                      DX  982402312
+SUSAP KBOSK6DPATSS71RW22RW100PATSSK6EA0EE   010TF                                                                      DX  982412312
+SUSAP KBOSK6DPATSS71RW27 W010         1        VI                     2720                    18000                    DX  982422312
+SUSAP KBOSK6DPATSS71RW27 W010         2E                    W0150P                                                     DX  982432312
+SUSAP KBOSK6DPATSS71RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  982442409
+SUSAP KBOSK6DPATSS71RW27 W040PATSSK6EA0EE   010TF                                                                      DX  982452312
+SUSAP KBOSK6DPATSS71RW33LW010         1        VI                     3300                    18000                    DX  982462312
+SUSAP KBOSK6DPATSS71RW33LW010         2E                    W0150P                                                     DX  982472312
+SUSAP KBOSK6DPATSS71RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400040D                                        DX  982482409
+SUSAP KBOSK6DPATSS71RW33LW035COUSYK6PC0E    010TF                                 + 05000                              DX  982492312
+SUSAP KBOSK6DPATSS71RW33LW040PATSSK6EA0EE   010TF                                                                      DX  982502312
+SUSAP KBOSK6DREVSS61RW04RW010         1     010VA                     0350        + 00520     18000                    DX  982512312
+SUSAP KBOSK6DREVSS61RW04RW010         2E                    W0150P                                                     DX  982522312
+SUSAP KBOSK6DREVSS61RW04RW020NHANTK6PC0E    010DF                                                                      DX  982532312
+SUSAP KBOSK6DREVSS61RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  982542312
+SUSAP KBOSK6DREVSS61RW04RW040ORRRRK6PC0E    010TF                                                                      DX  982552312
+SUSAP KBOSK6DREVSS61RW04RW060CHWDHK6PC0E    010TF                                                                      DX  982562312
+SUSAP KBOSK6DREVSS61RW04RW070STEEMK6PC0E    010TF                                                                      DX  982572312
+SUSAP KBOSK6DREVSS61RW04RW075DEDHMK6PC0E    010TF                                                                      DX  982582312
+SUSAP KBOSK6DREVSS61RW04RW090REVSSK6EA0EE   010TF                                                                      DX  982592312
+SUSAP KBOSK6DREVSS61RW09 W010         1     010VA                     0920        + 00520     18000                    DX  982602312
+SUSAP KBOSK6DREVSS61RW09 W010         2E                    W0150P                                                     DX  982612312
+SUSAP KBOSK6DREVSS61RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  982622312
+SUSAP KBOSK6DREVSS61RW09 W040FENWYK6PC0E    010TF                                                                      DX  982632312
+SUSAP KBOSK6DREVSS61RW09 W050GLLETK6PC0E    010TF                                                                      DX  982642312
+SUSAP KBOSK6DREVSS61RW09 W060WYMTHK6PC0E    010TF                                                                      DX  982652312
+SUSAP KBOSK6DREVSS61RW09 W070DEDHMK6PC0E    010TF                                                                      DX  982662312
+SUSAP KBOSK6DREVSS61RW09 W090REVSSK6EA0EE   010TF                                                                      DX  982672312
+SUSAP KBOSK6DREVSS61RW15RW010         1        VI                     1500                    18000210               - DX  982682312
+SUSAP KBOSK6DREVSS61RW15RW010         2E                    W0150P                                                     DX  982692312
+SUSAP KBOSK6DREVSS61RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  982702409
+SUSAP KBOSK6DREVSS61RW15RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  982712312
+SUSAP KBOSK6DREVSS61RW15RW050JAITEK6PC0E    010TF                                                                      DX  982722312
+SUSAP KBOSK6DREVSS61RW15RW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  982732312
+SUSAP KBOSK6DREVSS61RW15RW080KENWIK6PC0E    010TF                                                                      DX  982742312
+SUSAP KBOSK6DREVSS61RW15RW100REVSSK6EA0EE   010TF                                                                      DX  982752312
+SUSAP KBOSK6DREVSS61RW22LW010         1        VI                     2150                    18000                    DX  982762312
+SUSAP KBOSK6DREVSS61RW22LW010         2E                    W0150P                                                     DX  982772312
+SUSAP KBOSK6DREVSS61RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  982782409
+SUSAP KBOSK6DREVSS61RW22LW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  982792312
+SUSAP KBOSK6DREVSS61RW22LW050JAITEK6PC0E    010TF                                                                      DX  982802312
+SUSAP KBOSK6DREVSS61RW22LW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  982812312
+SUSAP KBOSK6DREVSS61RW22LW080KENWIK6PC0E    010TF                                                                      DX  982822312
+SUSAP KBOSK6DREVSS61RW22LW100REVSSK6EA0EE   010TF                                                                      DX  982832312
+SUSAP KBOSK6DREVSS61RW22RW010         1        VI                     2150                    18000                    DX  982842312
+SUSAP KBOSK6DREVSS61RW22RW010         2E                    W0150P                                                     DX  982852312
+SUSAP KBOSK6DREVSS61RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  982862409
+SUSAP KBOSK6DREVSS61RW22RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  982872312
+SUSAP KBOSK6DREVSS61RW22RW050JAITEK6PC0E    010TF                                                                      DX  982882312
+SUSAP KBOSK6DREVSS61RW22RW070HEWMOK6PC0E    010TF                                 + 05000          260               - DX  982892312
+SUSAP KBOSK6DREVSS61RW22RW080KENWIK6PC0E    010TF                                                                      DX  982902312
+SUSAP KBOSK6DREVSS61RW22RW100REVSSK6EA0EE   010TF                                                                      DX  982912312
+SUSAP KBOSK6DREVSS61RW27 W010         1        VI                     2720                    18000                    DX  982922312
+SUSAP KBOSK6DREVSS61RW27 W010         2E                    W0150P                                                     DX  982932312
+SUSAP KBOSK6DREVSS61RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  982942409
+SUSAP KBOSK6DREVSS61RW27 W040GLOWBK6PC0E    010TF                                 + 03000          250               - DX  982952312
+SUSAP KBOSK6DREVSS61RW27 W050REVSSK6EA0EE   010TF                                                                      DX  982962312
+SUSAP KBOSK6DREVSS61RW33LW010         1        VI                     3300                    18000                    DX  982972312
+SUSAP KBOSK6DREVSS61RW33LW010         2E                    W0150P                                                     DX  982982312
+SUSAP KBOSK6DREVSS61RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400040D                                        DX  982992409
+SUSAP KBOSK6DREVSS61RW33LW040DUBYUK6PC0E    010TF                                                                      DX  983002312
+SUSAP KBOSK6DREVSS61RW33LW050REVSSK6EA0EE   010TF                                                                      DX  983012312
+SUSAP KBOSK6DSSOXS71RW04RW010         1     010VA                     0350        + 00520     18000                    DX  983022312
+SUSAP KBOSK6DSSOXS71RW04RW010         2E                    W0150P                                                     DX  983032312
+SUSAP KBOSK6DSSOXS71RW04RW020NHANTK6PC0E    010DF                                                                      DX  983042312
+SUSAP KBOSK6DSSOXS71RW04RW030HURBEK6PC0E    010TF                                 + 04000                              DX  983052312
+SUSAP KBOSK6DSSOXS71RW04RW040ORRRRK6PC0E    010TF                                                                      DX  983062312
+SUSAP KBOSK6DSSOXS71RW04RW055BUCYKK6PC0E    010TF                                                                      DX  983072312
+SUSAP KBOSK6DSSOXS71RW04RW060JSTERK6PC0E    010TF                                                                      DX  983082312
+SUSAP KBOSK6DSSOXS71RW04RW070SSOXSK6EA0EE   010TF                                                                      DX  983092312
+SUSAP KBOSK6DSSOXS71RW09 W010         1     010VA                     0920        + 00520     18000                    DX  983102312
+SUSAP KBOSK6DSSOXS71RW09 W010         2E                    W0150P                                                     DX  983112312
+SUSAP KBOSK6DSSOXS71RW09 W030CLAWWK6PC0E    010DF                                 + 04000          250               - DX  983122312
+SUSAP KBOSK6DSSOXS71RW09 W040FENWYK6PC0E    010TF                                                                      DX  983132312
+SUSAP KBOSK6DSSOXS71RW09 W050BUCYKK6PC0E    010TF                                                                      DX  983142312
+SUSAP KBOSK6DSSOXS71RW09 W060JSTERK6PC0E    010TF                                                                      DX  983152312
+SUSAP KBOSK6DSSOXS71RW09 W070SSOXSK6EA0EE   010TF                                                                      DX  983162312
+SUSAP KBOSK6DSSOXS71RW15RW010         1        VI                     1500                    18000210               - DX  983172312
+SUSAP KBOSK6DSSOXS71RW15RW010         2E                    W0150P                                                     DX  983182312
+SUSAP KBOSK6DSSOXS71RW15RW030TASKTK6EA0E    010CF CON K6      1647062312000050D                                        DX  983192409
+SUSAP KBOSK6DSSOXS71RW15RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  983202312
+SUSAP KBOSK6DSSOXS71RW15RW050BUCYKK6PC0E    010TF                                                                      DX  983212312
+SUSAP KBOSK6DSSOXS71RW15RW060JSTERK6PC0E    010TF                                                                      DX  983222312
+SUSAP KBOSK6DSSOXS71RW15RW070SSOXSK6EA0EE   010TF                                                                      DX  983232312
+SUSAP KBOSK6DSSOXS71RW22LW010         1        VI                     2150                    18000                    DX  983242312
+SUSAP KBOSK6DSSOXS71RW22LW010         2E                    W0150P                                                     DX  983252312
+SUSAP KBOSK6DSSOXS71RW22LW030TJAYYK6PC0E    010CF CON K6      1685060813700040D   + 01200          210               - DX  983262409
+SUSAP KBOSK6DSSOXS71RW22LW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  983272312
+SUSAP KBOSK6DSSOXS71RW22LW050BUCYKK6PC0E    010TF                                                                      DX  983282312
+SUSAP KBOSK6DSSOXS71RW22LW060JSTERK6PC0E    010TF                                                                      DX  983292312
+SUSAP KBOSK6DSSOXS71RW22LW070SSOXSK6EA0EE   010TF                                                                      DX  983302312
+SUSAP KBOSK6DSSOXS71RW22RW010         1        VI                     2150                    18000                    DX  983312312
+SUSAP KBOSK6DSSOXS71RW22RW010         2E                    W0150P                                                     DX  983322312
+SUSAP KBOSK6DSSOXS71RW22RW030TJAYYK6PC0E    010CF CON K6      1685060814200040D   + 01200          210               - DX  983332409
+SUSAP KBOSK6DSSOXS71RW22RW040BRRROK6PC0E    010TF                                 + 03000          250               - DX  983342312
+SUSAP KBOSK6DSSOXS71RW22RW050BUCYKK6PC0E    010TF                                                                      DX  983352312
+SUSAP KBOSK6DSSOXS71RW22RW060JSTERK6PC0E    010TF                                                                      DX  983362312
+SUSAP KBOSK6DSSOXS71RW22RW070SSOXSK6EA0EE   010TF                                                                      DX  983372312
+SUSAP KBOSK6DSSOXS71RW27 W010         1        VI                     2720                    18000                    DX  983382312
+SUSAP KBOSK6DSSOXS71RW27 W010         2E                    W0150P                                                     DX  983392312
+SUSAP KBOSK6DSSOXS71RW27 W030KIRAAK6PC0E    010CF CON K6      1756060023700070D                                        DX  983402409
+SUSAP KBOSK6DSSOXS71RW27 W040COLYNK6PC0E    010TF                                                                      DX  983412312
+SUSAP KBOSK6DSSOXS71RW27 W050SSOXSK6EA0EE   010TF                                                                      DX  983422312
+SUSAP KBOSK6DSSOXS71RW33LW010         1        VI                     3300                    18000                    DX  983432312
+SUSAP KBOSK6DSSOXS71RW33LW010         2E                    W0150P                                                     DX  983442312
+SUSAP KBOSK6DSSOXS71RW33LW030TEKKKK6PC0E    010CF CON K6      1713052831400032D                                        DX  983452409
+SUSAP KBOSK6DSSOXS71RW33LW040COUSYK6PC0E    010TF                                 + 05000                              DX  983462312
+SUSAP KBOSK6DSSOXS71RW33LW050CBEARK6PC0E    010TF                                                                      DX  983472312
+SUSAP KBOSK6DSSOXS71RW33LW060COLYNK6PC0E    010TF                                                                      DX  983482312
+SUSAP KBOSK6DSSOXS71RW33LW070SSOXSK6EA0EE   010TF                                                                      DX  983492312
+SUSAP KBOSK6DWYLYY51RW27 W020         1        VI                     2720                    18000                    DX  983502210
+SUSAP KBOSK6DWYLYY51RW27 W020         2E                    W0150P                                                     DX  983512210
+SUSAP KBOSK6DWYLYY51RW27 W030WYLYYK6PC0E    010CF CON K6      1740059023400040D   + 02300                              DX  983522409
+SUSAP KBOSK6DWYLYY51RW27 W040CYOTIK6PC0EE   010TF                                                                      DX  983532210
+SUSAP KBOSK6EJFUND21ONDECW010ONDECK6PC1E  H    IF                                 + 11000     18000                    DX  983542210
+SUSAP KBOSK6EJFUND21ONDECW010ONDECK6PC2E                    W0150P                                                     DX  983552210
+SUSAP KBOSK6EJFUND21ONDECW020JFUNDK6PC0EE H 010TF                                                                      DX  983562210
+SUSAP KBOSK6EJFUND21PONCTW010PONCTK6EA1E       IF                                             18000                    DX  983572210
+SUSAP KBOSK6EJFUND21PONCTW010PONCTK6EA2E                    W0150P                                                     DX  983582210
+SUSAP KBOSK6EJFUND21PONCTW020STOLIK6EA0E    010TF                                                                      DX  983592210
+SUSAP KBOSK6EJFUND21PONCTW030MNSTAK6PC0E    010TF                                 + FL240                              DX  983602210
+SUSAP KBOSK6EJFUND21PONCTW040SEETSK6PC0E  H 010TF                                 + FL210                              DX  983612210
+SUSAP KBOSK6EJFUND21PONCTW050DUBLEK6PC0E    010TF                                 + 17000                              DX  983622210
+SUSAP KBOSK6EJFUND21PONCTW060BASEZK6EA0E    010TF                                 + 14000                              DX  983632210
+SUSAP KBOSK6EJFUND21PONCTW070JFUNDK6PC0EE H 010TF                                                                      DX  983642210
+SUSAP KBOSK6EJFUND21WHATEW005WHATEK6EA1E       IF                                             18000                    DX  983652210
+SUSAP KBOSK6EJFUND21WHATEW005WHATEK6EA2E                    W0150P                                                     DX  983662210
+SUSAP KBOSK6EJFUND21WHATEW010ONDECK6PC0E  H 010TF                                 + 11000                              DX  983672210
+SUSAP KBOSK6EJFUND21WHATEW020JFUNDK6PC0EE H 010TF                                                                      DX  983682410
+SUSAP KBOSK6EJFUND23RW04BW010JFUNDK6PC1E  H    IF                                             18000                    DX  983692210
+SUSAP KBOSK6EJFUND23RW04BW010JFUNDK6PC2E                    W0150P                                                     DX  983702210
+SUSAP KBOSK6EJFUND23RW04BW020AUTUMK6PC0E    010TF                                 B 1200011000                         DX  983712210
+SUSAP KBOSK6EJFUND23RW04BW030WINTAK6EA0E    010TF                                 B 1000008000                         DX  983722210
+SUSAP KBOSK6EJFUND23RW04BW040HRRISK6PC0E    010TF                                                                      DX  983732210
+SUSAP KBOSK6EJFUND23RW04BW050SPYSDK6PC0E    010TF                                   07000                              DX  983742210
+SUSAP KBOSK6EJFUND23RW04BW060GRIFIK6PC0E    010TF                                                                      DX  983752210
+SUSAP KBOSK6EJFUND23RW04BW070GGABEK6PC0E    010TF                                   06000                              DX  983762210
+SUSAP KBOSK6EJFUND23RW04BW080JOBEEK6PC0EY   010TF                                   06000                              DX  983772210
+SUSAP KBOSK6EJFUND23RW04BW090JOBEEK6PC0EE   010FM CON K6      172406762130    D                                        DX  983782210
+SUSAP KBOSK6EJFUND23RW15RW010JFUNDK6PC1E  H    IF                                             18000                    DX  983792210
+SUSAP KBOSK6EJFUND23RW15RW010JFUNDK6PC2E                    W0150P                                                     DX  983802210
+SUSAP KBOSK6EJFUND23RW15RW020BADCAK6EA0E    010TF                                 + 09000                              DX  983812210
+SUSAP KBOSK6EJFUND23RW15RW030WACHUK6EA0E    010TF                                   07000                              DX  983822210
+SUSAP KBOSK6EJFUND23RW15RW040SSAAMK6EA0E    010TF                                                                      DX  983832210
+SUSAP KBOSK6EJFUND23RW15RW050AADMSK6EA0EY   010TF                                                                      DX  983842210
+SUSAP KBOSK6EJFUND23RW15RW060AADMSK6EA0EE   010FM CON K6      178403971480    D                                        DX  983852210
+SUSAP KBOSK6EJFUND23RW22BW010JFUNDK6PC1E  H    IF                                             18000                    DX  983862210
+SUSAP KBOSK6EJFUND23RW22BW010JFUNDK6PC2E                    W0150P                                                     DX  983872210
+SUSAP KBOSK6EJFUND23RW22BW020AUTUMK6PC0E    010TF                                 B 1200011000                         DX  983882210
+SUSAP KBOSK6EJFUND23RW22BW030WINTAK6EA0E    010TF                                 B 1000008000                         DX  983892210
+SUSAP KBOSK6EJFUND23RW22BW040HRRISK6PC0E    010TF                                                                      DX  983902210
+SUSAP KBOSK6EJFUND23RW22BW050ISLAYK6PC0E    010TF                                   06000                              DX  983912210
+SUSAP KBOSK6EJFUND23RW22BW060LWLNDK6PC0EY   010TF                                   06000                              DX  983922210
+SUSAP KBOSK6EJFUND23RW22BW070LWLNDK6PC0EE   010FM CON K6      162104540350    D                                        DX  983932210
+SUSAP KBOSK6EJFUND23RW27 W010JFUNDK6PC1E  H    IF                                             18000                    DX  983942210
+SUSAP KBOSK6EJFUND23RW27 W010JFUNDK6PC2E                    W0150P                                                     DX  983952210
+SUSAP KBOSK6EJFUND23RW27 W020AUTUMK6PC0E    010TF                                 B 1200011000                         DX  983962210
+SUSAP KBOSK6EJFUND23RW27 W030WINTAK6EA0E    010TF                                 B 1000008000                         DX  983972210
+SUSAP KBOSK6EJFUND23RW27 W040HRRISK6PC0E    010TF                                                                      DX  983982210
+SUSAP KBOSK6EJFUND23RW27 W050SPYSDK6PC0E    010TF                                   07000                              DX  983992210
+SUSAP KBOSK6EJFUND23RW27 W060REVERK6EA0E    010TF                                                                      DX  984002210
+SUSAP KBOSK6EJFUND23RW27 W070SEHAGK6PC0EY   010TF                                   06000                              DX  984012210
+SUSAP KBOSK6EJFUND23RW27 W080SEHAGK6PC0EE   010FM CON K6      157005700930    D                                        DX  984022210
+SUSAP KBOSK6EJFUND23RW32 W010JFUNDK6PC1E  H    IF                                             18000                    DX  984032210
+SUSAP KBOSK6EJFUND23RW32 W010JFUNDK6PC2E                    W0150P                                                     DX  984042210
+SUSAP KBOSK6EJFUND23RW32 W020AUTUMK6PC0E    010TF                                 B 1200011000                         DX  984052210
+SUSAP KBOSK6EJFUND23RW32 W030WINTAK6EA0E    010TF                                 B 1000008000                         DX  984062210
+SUSAP KBOSK6EJFUND23RW32 W040HRRISK6PC0E    010TF                                                                      DX  984072210
+SUSAP KBOSK6EJFUND23RW32 W050SPYSDK6PC0E    010TF                                   07000                              DX  984082210
+SUSAP KBOSK6EJFUND23RW32 W060BRODIK6PC0E    010TF                                 - 06000                              DX  984092210
+SUSAP KBOSK6EJFUND23RW32 W070BECHHK6PC0E    010TF                                   05000                              DX  984102210
+SUSAP KBOSK6EJFUND23RW32 W080SCITUK6PC0EY   010TF                                   05000                              DX  984112210
+SUSAP KBOSK6EJFUND23RW32 W090SCITUK6PC0EE   010FM CON K6      162206701500    D                                        DX  984122210
+SUSAP KBOSK6EJFUND23RW33LW010JFUNDK6PC1E  H    IF                                             18000                    DX  984132210
+SUSAP KBOSK6EJFUND23RW33LW010JFUNDK6PC2E                    W0150P                                                     DX  984142210
+SUSAP KBOSK6EJFUND23RW33LW020AUTUMK6PC0E    010TF                                 B 1200011000                         DX  984152210
+SUSAP KBOSK6EJFUND23RW33LW030WINTAK6EA0E    010TF                                 B 1000008000                         DX  984162210
+SUSAP KBOSK6EJFUND23RW33LW040HRRISK6PC0E    010TF                                                                      DX  984172210
+SUSAP KBOSK6EJFUND23RW33LW050SPYSDK6PC0E    010TF                                   07000                              DX  984182210
+SUSAP KBOSK6EJFUND23RW33LW060BRODIK6PC0E    010TF                                 - 06000                              DX  984192210
+SUSAP KBOSK6EJFUND23RW33LW070BECHHK6PC0E    010TF                                   05000                              DX  984202210
+SUSAP KBOSK6EJFUND23RW33LW080SCITUK6PC0EY   010TF                                   05000                              DX  984212210
+SUSAP KBOSK6EJFUND23RW33LW090SCITUK6PC0EE   010FM CON K6      162206701500    D                                        DX  984222210
+SUSAP KBOSK6EOOSHN51AJJAYW010AJJAYK6EA1E  H    IF                                 + FL290     18000                    DX  984232210
+SUSAP KBOSK6EOOSHN51AJJAYW010AJJAYK6EA2E                    W0150P                                                     DX  984242210
+SUSAP KBOSK6EOOSHN51AJJAYW020SUFFIKZEA0E    010TF                                                                      DX  984252210
+SUSAP KBOSK6EOOSHN51AJJAYW030NIKKOKZEA0E    010TF                                 + 11000                              DX  984262210
+SUSAP KBOSK6EOOSHN51AJJAYW040EURROK6EA0EE   010TF                                 + 10000                              DX  984272210
+SUSAP KBOSK6EOOSHN51ENE  W005ENE  K6D 1V  H    IF                                 + FL240     18000                    DX  984282210
+SUSAP KBOSK6EOOSHN51ENE  W005ENE  K6D 2E                    W0150P                                                     DX  984292210
+SUSAP KBOSK6EOOSHN51ENE  W010NIKKOKZEA0E    010TF                                 + 11000                              DX  984302210
+SUSAP KBOSK6EOOSHN51ENE  W020EURROK6EA0EE   010TF                                 + 10000                              DX  984312210
+SUSAP KBOSK6EOOSHN51FERNZW005FERNZK6PC1E  H    IF                                             18000                    DX  984322210
+SUSAP KBOSK6EOOSHN51FERNZW005FERNZK6PC2E                    W0150P                                                     DX  984332210
+SUSAP KBOSK6EOOSHN51FERNZW010LONEYKZEA0E  H 010TF                                 + 11000                              DX  984342210
+SUSAP KBOSK6EOOSHN51FERNZW020RODEEKZEA0E    010TF                                                                      DX  984352210
+SUSAP KBOSK6EOOSHN51FERNZW030EURROK6EA0EE   010TF                                 + 10000                              DX  984362210
+SUSAP KBOSK6EOOSHN51FEXXXW001FEXXXK6EA1E       IF                                             18000                    DX  984372210
+SUSAP KBOSK6EOOSHN51FEXXXW001FEXXXK6EA2E                    W0150P                                                     DX  984382210
+SUSAP KBOSK6EOOSHN51FEXXXW003FOSTYK6EA0E    010TF                                                                      DX  984392210
+SUSAP KBOSK6EOOSHN51FEXXXW005IYANAK6EA0E    010TF                                                                      DX  984402210
+SUSAP KBOSK6EOOSHN51FEXXXW007KLEBBK6EA0E    010TF                                                                      DX  984412210
+SUSAP KBOSK6EOOSHN51FEXXXW010SOBAHK6EA0E    010TF                                 + 15000                              DX  984422210
+SUSAP KBOSK6EOOSHN51FEXXXW020LONEYKZEA0E  H 010TF                                 + 11000                              DX  984432210
+SUSAP KBOSK6EOOSHN51FEXXXW030RODEEKZEA0E    010TF                                                                      DX  984442210
+SUSAP KBOSK6EOOSHN51FEXXXW040EURROK6EA0EE   010TF                                 + 10000                              DX  984452210
+SUSAP KBOSK6EOOSHN51MERITW001MERITK6EA1E       IF                                             18000                    DX  984462210
+SUSAP KBOSK6EOOSHN51MERITW001MERITK6EA2E                    W0150P                                                     DX  984472210
+SUSAP KBOSK6EOOSHN51MERITW003FOSTYK6EA0E    010TF                                                                      DX  984482210
+SUSAP KBOSK6EOOSHN51MERITW005IYANAK6EA0E    010TF                                                                      DX  984492210
+SUSAP KBOSK6EOOSHN51MERITW007KLEBBK6EA0E    010TF                                                                      DX  984502210
+SUSAP KBOSK6EOOSHN51MERITW010SOBAHK6EA0E    010TF                                 + 15000                              DX  984512210
+SUSAP KBOSK6EOOSHN51MERITW020LONEYKZEA0E  H 010TF                                 + 11000                              DX  984522210
+SUSAP KBOSK6EOOSHN51MERITW030RODEEKZEA0E    010TF                                                                      DX  984532210
+SUSAP KBOSK6EOOSHN51MERITW040EURROK6EA0EE   010TF                                 + 10000                              DX  984542210
+SUSAP KBOSK6EOOSHN51PROVIW003PROVIK6EA1E       IF                                             18000                    DX  984552210
+SUSAP KBOSK6EOOSHN51PROVIW003PROVIK6EA2E                    W0150P                                                     DX  984562210
+SUSAP KBOSK6EOOSHN51PROVIW005IYANAK6EA0E    010TF                                                                      DX  984572210
+SUSAP KBOSK6EOOSHN51PROVIW007KLEBBK6EA0E    010TF                                                                      DX  984582210
+SUSAP KBOSK6EOOSHN51PROVIW010SOBAHK6EA0E    010TF                                 + 15000                              DX  984592210
+SUSAP KBOSK6EOOSHN51PROVIW020LONEYKZEA0E  H 010TF                                 + 11000                              DX  984602210
+SUSAP KBOSK6EOOSHN51PROVIW030RODEEKZEA0E    010TF                                                                      DX  984612210
+SUSAP KBOSK6EOOSHN51PROVIW040EURROK6EA0EE   010TF                                 + 10000                              DX  984622210
+SUSAP KBOSK6EOOSHN51RIFLEW010RIFLEK6EA1E       IF                                             18000                    DX  984632210
+SUSAP KBOSK6EOOSHN51RIFLEW010RIFLEK6EA2E                    W0150P                                                     DX  984642210
+SUSAP KBOSK6EOOSHN51RIFLEW020KYSKYK6EA0E    010TF                                                                      DX  984652210
+SUSAP KBOSK6EOOSHN51RIFLEW030CUTOXK6EA0E    010TF                                                                      DX  984662210
+SUSAP KBOSK6EOOSHN51RIFLEW040CUJKEK6EA0E    010TF                                                                      DX  984672210
+SUSAP KBOSK6EOOSHN51RIFLEW050FERNZK6PC0E  H 010TF                                                                      DX  984682210
+SUSAP KBOSK6EOOSHN51RIFLEW060LONEYKZEA0E  H 010TF                                 + 11000                              DX  984692210
+SUSAP KBOSK6EOOSHN51RIFLEW070RODEEKZEA0E    010TF                                                                      DX  984702210
+SUSAP KBOSK6EOOSHN51RIFLEW080EURROK6EA0EE   010TF                                 + 10000                              DX  984712210
+SUSAP KBOSK6EOOSHN52     W010EURROK6EA1E       IF                                 + 10000     18000                    DX  984722210
+SUSAP KBOSK6EOOSHN52     W010EURROK6EA2E                    W0150P                                                     DX  984732210
+SUSAP KBOSK6EOOSHN52     W020OOSHNK6PC0EE H 010TF                                 B 1400009000                         DX  984742411
+SUSAP KBOSK6EOOSHN53RW04BW010OOSHNK6PC1E  H    IF                                 B 140000900018000                    DX  984752411
+SUSAP KBOSK6EOOSHN53RW04BW010OOSHNK6PC2E                    W0150P                                                     DX  984762411
+SUSAP KBOSK6EOOSHN53RW04BW020TTERIK6EA0E    010TF                                 + 09000                              DX  984772409
+SUSAP KBOSK6EOOSHN53RW04BW030WAATRK6PC0E    010TF                                                                      DX  984782210
+SUSAP KBOSK6EOOSHN53RW04BW040FLUTIK6PC0E    010TF                                 + 09000                              DX  984792210
+SUSAP KBOSK6EOOSHN53RW04BW050GRIFIK6PC0E    010TF                                                                      DX  984802210
+SUSAP KBOSK6EOOSHN53RW04BW060GGABEK6PC0E    010TF                                   06000                              DX  984812210
+SUSAP KBOSK6EOOSHN53RW04BW070JOBEEK6PC0EY   010TF                                   06000                              DX  984822210
+SUSAP KBOSK6EOOSHN53RW04BW080JOBEEK6PC0EE   010FM CON K6      172406762130    D                                        DX  984832210
+SUSAP KBOSK6EOOSHN53RW15RW010OOSHNK6PC1E  H    IF                                 B 140000900018000                    DX  984842411
+SUSAP KBOSK6EOOSHN53RW15RW010OOSHNK6PC2E                    W0150P                                                     DX  984852411
+SUSAP KBOSK6EOOSHN53RW15RW020GRGIOK6EA0E    010TF                                 - 09000                              DX  984862210
+SUSAP KBOSK6EOOSHN53RW15RW030BRGITK6EA0E    010TF                                   07000                              DX  984872210
+SUSAP KBOSK6EOOSHN53RW15RW032HNOVRK6EA0E    010TF                                   05000                              DX  984882210
+SUSAP KBOSK6EOOSHN53RW15RW035RDHOKK6EA0E    010TF                                   05000                              DX  984892210
+SUSAP KBOSK6EOOSHN53RW15RW040TKMANK6EA0EY   010TF                                   05000                              DX  984902210
+SUSAP KBOSK6EOOSHN53RW15RW050TKMANK6EA0EE   010FM CON K6      170404203290    D                                        DX  984912210
+SUSAP KBOSK6EOOSHN53RW22BW010OOSHNK6PC1E  H    IF                                 B 140000900018000                    DX  984922411
+SUSAP KBOSK6EOOSHN53RW22BW010OOSHNK6PC2E                    W0150P                                                     DX  984932411
+SUSAP KBOSK6EOOSHN53RW22BW020GRGIOK6EA0E    010TF                                 - 09000                              DX  984942210
+SUSAP KBOSK6EOOSHN53RW22BW030BRGITK6EA0E    010TF                                   07000                              DX  984952210
+SUSAP KBOSK6EOOSHN53RW22BW040ADDDAK6EA0E    010TF                                   06000                              DX  984962210
+SUSAP KBOSK6EOOSHN53RW22BW050LEEZIK6PC0EY   010TF                                   06000                              DX  984972210
+SUSAP KBOSK6EOOSHN53RW22BW060LEEZIK6PC0EE   010FM CON K6      146004880350    D                                        DX  984982210
+SUSAP KBOSK6EOOSHN53RW27 W010OOSHNK6PC1E  H    IF                                 B 140000900018000                    DX  984992411
+SUSAP KBOSK6EOOSHN53RW27 W010OOSHNK6PC2E                    W0150P                                                     DX  985002411
+SUSAP KBOSK6EOOSHN53RW27 W020PUDJJK6EA0E    010TF                                                                      DX  985012210
+SUSAP KBOSK6EOOSHN53RW27 W030AYBEEK6EA0EY   010TF                                   06000                              DX  985022210
+SUSAP KBOSK6EOOSHN53RW27 W040AYBEEK6EA0EE   010FM CON K6      149906582720    D                                        DX  985032210
+SUSAP KBOSK6EOOSHN53RW32 W010OOSHNK6PC1E  H    IF                                 B 140000900018000                    DX  985042411
+SUSAP KBOSK6EOOSHN53RW32 W010OOSHNK6PC2E                    W0150P                                                     DX  985052411
+SUSAP KBOSK6EOOSHN53RW32 W020TTERIK6EA0E    010TF                                 + 09000                              DX  985062409
+SUSAP KBOSK6EOOSHN53RW32 W030WAATRK6PC0E    010TF                                                                      DX  985072210
+SUSAP KBOSK6EOOSHN53RW32 W040PLGRMK6PC0E    010TF                                                                      DX  985082210
+SUSAP KBOSK6EOOSHN53RW32 W050BECHHK6PC0E    010TF                                   05000                              DX  985092210
+SUSAP KBOSK6EOOSHN53RW32 W060SCITUK6PC0EY   010TF                                   05000                              DX  985102210
+SUSAP KBOSK6EOOSHN53RW32 W070SCITUK6PC0EE   010FM CON K6      162206701500    D                                        DX  985112210
+SUSAP KBOSK6EOOSHN53RW33LW010OOSHNK6PC1E  H    IF                                 B 140000900018000                    DX  985122411
+SUSAP KBOSK6EOOSHN53RW33LW010OOSHNK6PC2E                    W0150P                                                     DX  985132411
+SUSAP KBOSK6EOOSHN53RW33LW020TTERIK6EA0E    010TF                                 + 09000                              DX  985142409
+SUSAP KBOSK6EOOSHN53RW33LW030WAATRK6PC0E    010TF                                                                      DX  985152210
+SUSAP KBOSK6EOOSHN53RW33LW040PLGRMK6PC0E    010TF                                                                      DX  985162210
+SUSAP KBOSK6EOOSHN53RW33LW050BECHHK6PC0E    010TF                                   05000                              DX  985172210
+SUSAP KBOSK6EOOSHN53RW33LW060SCITUK6PC0EY   010TF                                   05000                              DX  985182210
+SUSAP KBOSK6EOOSHN53RW33LW070SCITUK6PC0EE   010FM CON K6      162206701500    D                                        DX  985192210
+SUSAP KBOSK6EORW7  1CCC  W030CCC  K6D 1V       IF                                             18000                   DG   985202210
+SUSAP KBOSK6EORW7  1CCC  W030CCC  K6D 2E                    W0150L                                                    DG   985212210
+SUSAP KBOSK6EORW7  1CCC  W040ORW  K6D 1V       TF                                                                     DG   985222210
+SUSAP KBOSK6EORW7  1CCC  W040ORW  K6D 2E                    W0130L                                                    DG   985232210
+SUSAP KBOSK6EORW7  1CCC  W045OUTTTK6PC1E       TF                                                                     DG   985242210
+SUSAP KBOSK6EORW7  1CCC  W045OUTTTK6PC2E                    W0140L                                                    DG   985252210
+SUSAP KBOSK6EORW7  1CCC  W050PVD  K6D 1VE H    TF                                                                     DG   985262210
+SUSAP KBOSK6EORW7  1CCC  W050PVD  K6D 2E                    W0140L                                                    DG   985272210
+SUSAP KBOSK6EORW7  1HTO  W040HTO  K6D 1V       IF                                             18000                   DG   985282210
+SUSAP KBOSK6EORW7  1HTO  W040HTO  K6D 2E                    W0150L                                                    DG   985292210
+SUSAP KBOSK6EORW7  1HTO  W050PVD  K6D 1VE H    TF                                                                     DG   985302210
+SUSAP KBOSK6EORW7  1HTO  W050PVD  K6D 2E                    W0130L                                                    DG   985312210
+SUSAP KBOSK6EORW7  1JFK  W010JFK  K6D 1V       IF                                             18000                   DG   985322210
+SUSAP KBOSK6EORW7  1JFK  W010JFK  K6D 2E                    W0150L                                                    DG   985332210
+SUSAP KBOSK6EORW7  1JFK  W015GPOLEK6PC1E       TF                                 - FL270                             DG   985342210
+SUSAP KBOSK6EORW7  1JFK  W015GPOLEK6PC2E                    W0120L                                                    DG   985352210
+SUSAP KBOSK6EORW7  1JFK  W020NEWESK6EA1E       TF                                                                     DG   985362210
+SUSAP KBOSK6EORW7  1JFK  W020NEWESK6EA2E                    W0120L                                                    DG   985372210
+SUSAP KBOSK6EORW7  1JFK  W025BAWLLK6EA1E       TF                                   FL230                             DG   985382210
+SUSAP KBOSK6EORW7  1JFK  W025BAWLLK6EA2E                    W0120L                                                    DG   985392210
+SUSAP KBOSK6EORW7  1JFK  W030RAALFK6EA1E       TF                                                                     DG   985402210
+SUSAP KBOSK6EORW7  1JFK  W030RAALFK6EA2E                    W0120L                                                    DG   985412210
+SUSAP KBOSK6EORW7  1JFK  W040ORW  K6D 1V       TF                                                                     DG   985422210
+SUSAP KBOSK6EORW7  1JFK  W040ORW  K6D 2E                    W0140L                                                    DG   985432210
+SUSAP KBOSK6EORW7  1JFK  W045OUTTTK6PC1E       TF                                                                     DG   985442210
+SUSAP KBOSK6EORW7  1JFK  W045OUTTTK6PC2E                    W0140L                                                    DG   985452210
+SUSAP KBOSK6EORW7  1JFK  W050PVD  K6D 1VE      TF                                                                     DG   985462210
+SUSAP KBOSK6EORW7  1JFK  W050PVD  K6D 2E                    W0140L                                                    DG   985472210
+SUSAP KBOSK6EORW7  3RW04BW020PVD  K6D 1V  H    IF                                   11000     18000                   DG   985482210
+SUSAP KBOSK6EORW7  3RW04BW020PVD  K6D 2E                    W0150L                                                    DG   985492210
+SUSAP KBOSK6EORW7  3RW04BW030KRANNK6EA1EE      TF                                 + 05000                             DG   985502409
+SUSAP KBOSK6EORW7  3RW04BW030KRANNK6EA2E                    W0140L                                                    DG   985512210
+SUSAP KBOSK6EORW7  3RW09 W020PVD  K6D 1V  H    IF                                             18000                   DG   985522210
+SUSAP KBOSK6EORW7  3RW09 W020PVD  K6D 2E                    W0150L                                                    DG   985532210
+SUSAP KBOSK6EORW7  3RW09 W030KRANNK6EA1EE      TF                                   11000                             DG   985542210
+SUSAP KBOSK6EORW7  3RW09 W030KRANNK6EA2E                    W0140L                                                    DG   985552210
+SUSAP KBOSK6EORW7  3RW14 W020PVD  K6D 1V  H    IF                                             18000                   DG   985562210
+SUSAP KBOSK6EORW7  3RW14 W020PVD  K6D 2E                    W0150L                                                    DG   985572210
+SUSAP KBOSK6EORW7  3RW14 W030KRANNK6EA1EE      TF                                   11000                             DG   985582210
+SUSAP KBOSK6EORW7  3RW14 W030KRANNK6EA2E                    W0140L                                                    DG   985592210
+SUSAP KBOSK6EORW7  3RW15BW020PVD  K6D 1V  H    IF                                             18000                   DG   985602210
+SUSAP KBOSK6EORW7  3RW15BW020PVD  K6D 2E                    W0150L                                                    DG   985612210
+SUSAP KBOSK6EORW7  3RW15BW030KRANNK6EA1EE      TF                                   11000                             DG   985622210
+SUSAP KBOSK6EORW7  3RW15BW030KRANNK6EA2E                    W0140L                                                    DG   985632210
+SUSAP KBOSK6EORW7  3RW22BW020PVD  K6D 1V  H    IF                                             18000                   DG   985642210
+SUSAP KBOSK6EORW7  3RW22BW020PVD  K6D 2E                    W0150L                                                    DG   985652210
+SUSAP KBOSK6EORW7  3RW22BW030KRANNK6EA1EE      TF                                   11000                             DG   985662210
+SUSAP KBOSK6EORW7  3RW22BW030KRANNK6EA2E                    W0140L                                                    DG   985672210
+SUSAP KBOSK6EORW7  3RW27 W020PVD  K6D 1V  H    IF                                             18000                   DG   985682210
+SUSAP KBOSK6EORW7  3RW27 W020PVD  K6D 2E                    W0150L                                                    DG   985692210
+SUSAP KBOSK6EORW7  3RW27 W030KRANNK6EA1EE      TF                                   11000                             DG   985702210
+SUSAP KBOSK6EORW7  3RW27 W030KRANNK6EA2E                    W0140L                                                    DG   985712210
+SUSAP KBOSK6EORW7  3RW32 W020PVD  K6D 1V  H    IF                                             18000                   DG   985722210
+SUSAP KBOSK6EORW7  3RW32 W020PVD  K6D 2E                    W0150L                                                    DG   985732210
+SUSAP KBOSK6EORW7  3RW32 W030KRANNK6EA1EE      TF                                   11000                             DG   985742210
+SUSAP KBOSK6EORW7  3RW32 W030KRANNK6EA2E                    W0140L                                                    DG   985752210
+SUSAP KBOSK6EORW7  3RW33BW020PVD  K6D 1V  H    IF                                             18000                   DG   985762210
+SUSAP KBOSK6EORW7  3RW33BW020PVD  K6D 2E                    W0150L                                                    DG   985772210
+SUSAP KBOSK6EORW7  3RW33BW030KRANNK6EA1EE      TF                                   11000                             DG   985782210
+SUSAP KBOSK6EORW7  3RW33BW030KRANNK6EA2E                    W0140L                                                    DG   985792210
+SUSAP KBOSK6EROBUC31JFK  W003JFK  K6D 1V       IF                                             18000                    DX  985802210
+SUSAP KBOSK6EROBUC31JFK  W003JFK  K6D 2E                    W0150P                                                     DX  985812210
+SUSAP KBOSK6EROBUC31JFK  W005NEWESK6EA0E    010TF                                                                      DX  985822210
+SUSAP KBOSK6EROBUC31JFK  W007FEXXXK6EA0E    010TF                                   FL230                              DX  985832210
+SUSAP KBOSK6EROBUC31JFK  W010RUIZEK6EA0E    010TF                                 B FL230FL210                         DX  985842210
+SUSAP KBOSK6EROBUC31JFK  W020AWLINK6EA0E    010TF                                 + 17000                              DX  985852210
+SUSAP KBOSK6EROBUC31JFK  W030BANKIK6EA0E  H 010TF                                 + 16000                              DX  985862210
+SUSAP KBOSK6EROBUC31JFK  W040ROBUCK6EA0EE   010TF                                 B FL19012000                         DX  985872210
+SUSAP KBOSK6EROBUC31MERITW007MERITK6EA1E       IF                                             18000                    DX  985882210
+SUSAP KBOSK6EROBUC31MERITW007MERITK6EA2E                    W0150P                                                     DX  985892210
+SUSAP KBOSK6EROBUC31MERITW010RUIZEK6EA0E    010TF                                 B FL230FL210                         DX  985902210
+SUSAP KBOSK6EROBUC31MERITW020AWLINK6EA0E    010TF                                 + 17000                              DX  985912210
+SUSAP KBOSK6EROBUC31MERITW030BANKIK6EA0E  H 010TF                                 + 16000                              DX  985922210
+SUSAP KBOSK6EROBUC31MERITW040ROBUCK6EA0EE   010TF                                 B FL19012000                         DX  985932210
+SUSAP KBOSK6EROBUC31RUIZEW010RUIZEK6EA1E       IF                                 B FL230FL21018000                    DX  985942210
+SUSAP KBOSK6EROBUC31RUIZEW010RUIZEK6EA2E                    W0150P                                                     DX  985952210
+SUSAP KBOSK6EROBUC31RUIZEW020AWLINK6EA0E    010TF                                 + 17000                              DX  985962210
+SUSAP KBOSK6EROBUC31RUIZEW030BANKIK6EA0E  H 010TF                                 + 16000                              DX  985972210
+SUSAP KBOSK6EROBUC31RUIZEW040ROBUCK6EA0EE   010TF                                 B FL19012000                         DX  985982210
+SUSAP KBOSK6EROBUC32     W010ROBUCK6EA1E       IF                                 B FL1901200018000                    DX  985992210
+SUSAP KBOSK6EROBUC32     W010ROBUCK6EA2E                    W0150P                                                     DX  986002210
+SUSAP KBOSK6EROBUC32     W020PROVIK6EA0E  H 010TF                                 + 11000                              DX  986012210
+SUSAP KBOSK6EROBUC32     W030JOODYK6EA0EE H 010TF                                 + 09000                              DX  986022409
+SUSAP KBOSK6EROBUC33RW04LW030JOODYK6EA1E  H    IF                                             18000                    DX  986032210
+SUSAP KBOSK6EROBUC33RW04LW030JOODYK6EA2E                    W0150P                                                     DX  986042210
+SUSAP KBOSK6EROBUC33RW04LW040SOFEEK6PC0E    010TF                                 B 1000009000                         DX  986052210
+SUSAP KBOSK6EROBUC33RW04LW050ERNEIK6PC0E    010TF                                 B 0800007000                         DX  986062210
+SUSAP KBOSK6EROBUC33RW04LW060NUNZOK6EA0EY   010TF                                   06000                              DX  986072210
+SUSAP KBOSK6EROBUC33RW04LW070NUNZOK6EA0EE   010FM CON K6      181907320170    D                                        DX  986082210
+SUSAP KBOSK6EROBUC33RW04RW030JOODYK6EA1E  H    IF                                             18000                    DX  986092210
+SUSAP KBOSK6EROBUC33RW04RW030JOODYK6EA2E                    W0150P                                                     DX  986102210
+SUSAP KBOSK6EROBUC33RW04RW040SOFEEK6PC0E    010TF                                 B 1000009000                         DX  986112210
+SUSAP KBOSK6EROBUC33RW04RW050ERNEIK6PC0E    010TF                                 B 0800007000                         DX  986122210
+SUSAP KBOSK6EROBUC33RW04RW060GOSHIK6PC0EY   010TF                                   06000                              DX  986132210
+SUSAP KBOSK6EROBUC33RW04RW070GOSHIK6PC0EE   010FM CON K6      180407330350    D                                        DX  986142210
+SUSAP KBOSK6EROBUC33RW15RW030JOODYK6EA1E  H    IF                                             18000                    DX  986152210
+SUSAP KBOSK6EROBUC33RW15RW030JOODYK6EA2E                    W0150P                                                     DX  986162210
+SUSAP KBOSK6EROBUC33RW15RW035JAYNAK6EA0E    010TF                                   11000                              DX  986172210
+SUSAP KBOSK6EROBUC33RW15RW040BOXRSK6EA0E    010TF                                   08000                              DX  986182210
+SUSAP KBOSK6EROBUC33RW15RW045CHERSK6EA0E    010TF                                   06000                              DX  986192210
+SUSAP KBOSK6EROBUC33RW15RW050RDHOKK6EA0E    010TF                                   06000                              DX  986202210
+SUSAP KBOSK6EROBUC33RW15RW060TKMANK6EA0EY   010TF                                   06000                              DX  986212210
+SUSAP KBOSK6EROBUC33RW15RW070TKMANK6EA0EE   010FM CON K6      170404203290    D                                        DX  986222210
+SUSAP KBOSK6EROBUC33RW22BW010JOODYK6EA1E  H    IF                                             18000                    DX  986232210
+SUSAP KBOSK6EROBUC33RW22BW010JOODYK6EA2E                    W0150P                                                     DX  986242210
+SUSAP KBOSK6EROBUC33RW22BW020KRANNK6EA0E    010TF                                 B 1200011000                         DX  986252210
+SUSAP KBOSK6EROBUC33RW22BW040CRADLK6EA0E    010TF                                 B 1000008000                         DX  986262210
+SUSAP KBOSK6EROBUC33RW22BW050KLEBBK6EA0E    010TF                                   08000                              DX  986272210
+SUSAP KBOSK6EROBUC33RW22BW060ETHYNK6EA0E    010TF                                   05000                              DX  986282210
+SUSAP KBOSK6EROBUC33RW22BW070PTRIKK6EA0E    010TF                                   05000                              DX  986292210
+SUSAP KBOSK6EROBUC33RW22BW080TAALEK6EA0EY   010TF                                   05000                              DX  986302210
+SUSAP KBOSK6EROBUC33RW22BW090TAALEK6EA0EE   010FM CON K6      149905020350    D                                        DX  986312210
+SUSAP KBOSK6EROBUC33RW27 W010JOODYK6EA1E  H    IF                                             18000                    DX  986322210
+SUSAP KBOSK6EROBUC33RW27 W010JOODYK6EA2E                    W0150P                                                     DX  986332210
+SUSAP KBOSK6EROBUC33RW27 W020KRANNK6EA0E    010TF                                 B 1200011000                         DX  986342210
+SUSAP KBOSK6EROBUC33RW27 W040CRADLK6EA0E    010TF                                 B 1000008000                         DX  986352210
+SUSAP KBOSK6EROBUC33RW27 W050KLEBBK6EA0E    010TF                                   08000                              DX  986362210
+SUSAP KBOSK6EROBUC33RW27 W060HOKDUK6EA0EY   010TF                                   05000                              DX  986372210
+SUSAP KBOSK6EROBUC33RW27 W070HOKDUK6EA0EE   010FM CON K6      154306890240    D                                        DX  986382210
+SUSAP KBOSK6EROBUC33RW32 W010JOODYK6EA1E  H    IF                                             18000                    DX  986392210
+SUSAP KBOSK6EROBUC33RW32 W010JOODYK6EA2E                    W0150P                                                     DX  986402210
+SUSAP KBOSK6EROBUC33RW32 W020JAYNAK6EA0E    010TF                                   11000                              DX  986412210
+SUSAP KBOSK6EROBUC33RW32 W030ANSLYK6EA0E    010TF                                   08000                              DX  986422210
+SUSAP KBOSK6EROBUC33RW32 W040BEREIK6PC0E    010TF                                 B 0700006000                         DX  986432210
+SUSAP KBOSK6EROBUC33RW32 W050BBOGGK6PC0EY   010TF                                   06000                              DX  986442210
+SUSAP KBOSK6EROBUC33RW32 W060BBOGGK6PC0EE   010FM CON K6      164307790600    D                                        DX  986452210
+SUSAP KBOSK6EROBUC33RW33LW010JOODYK6EA1E  H    IF                                             18000                    DX  986462210
+SUSAP KBOSK6EROBUC33RW33LW010JOODYK6EA2E                    W0150P                                                     DX  986472210
+SUSAP KBOSK6EROBUC33RW33LW020JAYNAK6EA0E    010TF                                   11000                              DX  986482210
+SUSAP KBOSK6EROBUC33RW33LW030ANSLYK6EA0E    010TF                                   08000                              DX  986492210
+SUSAP KBOSK6EROBUC33RW33LW040BEREIK6PC0E    010TF                                 B 0700006000                         DX  986502210
+SUSAP KBOSK6EROBUC33RW33LW050BBOGGK6PC0EY   010TF                                   06000                              DX  986512210
+SUSAP KBOSK6EROBUC33RW33LW060BBOGGK6PC0EE   010FM CON K6      164307790600    D                                        DX  986522210
+SUSAP KBOSK6EWOONS22ALL  T010ORW  K6D 1V  H    IF                                             18000                    G   986532210
+SUSAP KBOSK6EWOONS22ALL  T010ORW  K6D 2E                    W0150L                                                     G   986542210
+SUSAP KBOSK6EWOONS22ALL  T020JEWITK6EA1E       TF                                   11000          250               - G   986552210
+SUSAP KBOSK6EWOONS22ALL  T020JEWITK6EA2E                    W0140L                                                     G   986562210
+SUSAP KBOSK6EWOONS22ALL  T030FOSTYK6EA1E       TF                                                                      G   986572210
+SUSAP KBOSK6EWOONS22ALL  T030FOSTYK6EA2E                    W0140L                                                     G   986582210
+SUSAP KBOSK6EWOONS22ALL  T040HEFTYK6EA1E       TF                                                                      G   986592210
+SUSAP KBOSK6EWOONS22ALL  T040HEFTYK6EA2E                    W0140L                                                     G   986602210
+SUSAP KBOSK6EWOONS22ALL  T050WOONSK6EA1EE H    TF                                   07000                              G   986612210
+SUSAP KBOSK6EWOONS22ALL  T050WOONSK6EA2E                    W0140L                                                     G   986622210
+SUSAP KBOSK6FI04R  AGOSHIJ010GOSHIK6PC1E  A    IF                                   06000     18000210              U DS   986632405
+SUSAP KBOSK6FI04R  AGOSHIJ010GOSHIK6PC2E                    W0150L                                                    DS   986642405
+SUSAP KBOSK6FI04R  AGOSHIJ020WINNIK6PC1EE B 010TF IBOSK6      21470169        PI  + 04000                           U DS   986652405
+SUSAP KBOSK6FI04R  AGOSHIJ020WINNIK6PC2E                    W0150L                                                    DS   986662405
+SUSAP KBOSK6FI04R  I     J005WINNIK6PC1E  I    IF IBOSK6      21470169        PI  + 04000     18000       BOS  AK6D U DS   986672405
+SUSAP KBOSK6FI04R  I     J005WINNIK6PC2E                    W0150L                                                    DS   986682405
+SUSAP KBOSK6FI04R  I     J010NABBOK6PC1E       TF IBOSK6      21470119        PI  + 03000                           U DS   986692405
+SUSAP KBOSK6FI04R  I     J010NABBOK6PC2E                    W0150L                                                    DS   986702405
+SUSAP KBOSK6FI04R  I     J020MILTTK6PC1E  F    TF IBOSK6      21470069        PI  G 0170001700                      U DS   986712405
+SUSAP KBOSK6FI04R  I     J020MILTTK6PC2E                    W0150L                                                    DS   986722405
+SUSAP KBOSK6FI04R  I     J030RW04RK6PG1G  M    TF IBOSK6      21470018        PI    00069             -300          U DS   986732405
+SUSAP KBOSK6FI04R  I     J030RW04RK6PG2E051                 W0150L                                                    DS   986742405
+SUSAP KBOSK6FI04R  Z     J040         1  M     VI                     0350                                          U DA   986752405
+SUSAP KBOSK6FI04R  Z     J040         2E                    W0150L                                                    DA   986762405
+SUSAP KBOSK6FI04R  Z     J060WAXENK6EA1E       CF BOS K6      0300014003000140D     03000                           U DA   986772405
+SUSAP KBOSK6FI04R  Z     J060WAXENK6EA2E                    W0160L                                                    DA   986782405
+SUSAP KBOSK6FI04R  Z     J070WAXENK6EA1EE  L   HM                     2100T010  I                                   U DA   986792405
+SUSAP KBOSK6FI04R  Z     J070WAXENK6EA2E                    W0160L                                                    DA   986802405
+SUSAP KBOSK6FI15R  AAADMSJ010AADMSK6EA1E  A    IF                                             18000                 U DS   986812210
+SUSAP KBOSK6FI15R  AAADMSJ010AADMSK6EA2E                    W0150L                                                    DS   986822210
+SUSAP KBOSK6FI15R  AAADMSJ020SWIGGK6EA1EE B 010TF IMDCK6      32860153        PI  + 04000                           U DS   986832213
+SUSAP KBOSK6FI15R  AAADMSJ020SWIGGK6EA2E                    W0150L                                                    DS   986842210
+SUSAP KBOSK6FI15R  AGDM  J010GDM  K6D 1V  A    IF                                             18000                 U DS   986852210
+SUSAP KBOSK6FI15R  AGDM  J010GDM  K6D 2E                    W0150L                                                    DS   986862210
+SUSAP KBOSK6FI15R  AGDM  J020SWIGGK6EA1EE B    TF IMDCK6      32860153        PI  + 04000                           U DS   986872213
+SUSAP KBOSK6FI15R  AGDM  J020SWIGGK6EA2E                    W0140L                                                    DS   986882210
+SUSAP KBOSK6FI15R  I     J005SWIGGK6EA1E  I    IF IMDCK6      32860153        PI  + 04000     18000       BOS  AK6D U DS   986892210
+SUSAP KBOSK6FI15R  I     J005SWIGGK6EA2E                    W0150L                                                    DS   986902210
+SUSAP KBOSK6FI15R  I     J010WOBURK6PC1E       TF IMDCK6      32860105        PI  + 03000                           U DS   986912213
+SUSAP KBOSK6FI15R  I     J010WOBURK6PC2E                    W0150L                                                    DS   986922210
+SUSAP KBOSK6FI15R  I     J020MALDYK6PC1E  F    TF IMDCK6      32850064        PI  G 0170001700                      U DS   986932213
+SUSAP KBOSK6FI15R  I     J020MALDYK6PC2E                    W0150L                                                    DS   986942210
+SUSAP KBOSK6FI15R  I     J030RW15RK6PG1G  M    TF IMDCK6      32810013        PI    00077             -300          U DS   986952213
+SUSAP KBOSK6FI15R  I     J030RW15RK6PG2E060                 W0150L                                                    DS   986962210
+SUSAP KBOSK6FI15R  Z     J040         1  M     VI                     1490                                          U DA   986972210
+SUSAP KBOSK6FI15R  Z     J040         2E                    W0150L                                                    DA   986982210
+SUSAP KBOSK6FI15R  Z     J050CELTSK6EA1E       CF BOS K6      1540011615400110D     03000                           U DA   986992210
+SUSAP KBOSK6FI15R  Z     J050CELTSK6EA2E                    W0160L                                                    DA   987002210
+SUSAP KBOSK6FI15R  Z     J060CELTSK6EA1EE  R   HM                     3340T010  I                                   U DA   987012210
+SUSAP KBOSK6FI15R  Z     J060CELTSK6EA2E                    W0160L                                                    DA   987022210
+SUSAP KBOSK6FI22L  I     J005NOLEYK6PC1E  I    IF ILQNK6      03470150        PI  + 04000     18000       BOS  AK6D U DS   987032210
+SUSAP KBOSK6FI22L  I     J005NOLEYK6PC2E                    W0150L                                                    DS   987042210
+SUSAP KBOSK6FI22L  I     J010WYANEK6PC1E       TF ILQNK6      03470115        PI  + 03000                           U DS   987052213
+SUSAP KBOSK6FI22L  I     J010WYANEK6PC2E                    W0150L                                                    DS   987062210
+SUSAP KBOSK6FI22L  I     J020VOCUSK6PC1E  F    TF ILQNK6      03470066        PI  G 0170001700                      U DS   987072213
+SUSAP KBOSK6FI22L  I     J020VOCUSK6PC2E                    W0150L                                                    DS   987082210
+SUSAP KBOSK6FI22L  I     J030RW22LK6PG1G  M    TF ILQNK6      03470015        PI    00071             -300          U DS   987092213
+SUSAP KBOSK6FI22L  I     J030RW22LK6PG2E055                 W0150L                                                    DS   987102210
+SUSAP KBOSK6FI22L  Z     J035         1  M     VA                     2150        + 00419                           U DA   987112210
+SUSAP KBOSK6FI22L  Z     J035         2E                    W0150L                                                    DA   987122210
+SUSAP KBOSK6FI22L  Z     J040WINNIK6PC1E       CF BOS K6      2187015621900150D     03000                           U DA   987132210
+SUSAP KBOSK6FI22L  Z     J040WINNIK6PC2E                    W0160L                                                    DA   987142210
+SUSAP KBOSK6FI22L  Z     J050WINNIK6PC1EE  R   HM                     0390T010  I                                   U DA   987152210
+SUSAP KBOSK6FI22L  Z     J050WINNIK6PC2E                    W0160L                                                    DA   987162210
+SUSAP KBOSK6FI27   AAYBEEJ005AYBEEK6EA1E  A    IF                                   06000     18000210              U DS   987172406
+SUSAP KBOSK6FI27   AAYBEEJ005AYBEEK6EA2E                    W0150L                                                    DS   987182406
+SUSAP KBOSK6FI27   AAYBEEJ010KLANEK6EA1E    010TF                                 + 04000                           U DS   987192409
+SUSAP KBOSK6FI27   AAYBEEJ010KLANEK6EA2E                    W0150L                                                    DS   987202409
+SUSAP KBOSK6FI27   AAYBEEJ020LONERK6PC1EE B    TF IDGUK6      09160116        PI  + 03000                           U DS   987212406
+SUSAP KBOSK6FI27   AAYBEEJ020LONERK6PC2E                    W0150L                                                    DS   987222406
+SUSAP KBOSK6FI27   I     J010LONERK6PC1E  I    IF IDGUK6      09160116        PI  + 03000     18000       BOS  AK6D U DS   987232406
+SUSAP KBOSK6FI27   I     J010LONERK6PC2E                    W0150L                                                    DS   987242406
+SUSAP KBOSK6FI27   I     J020RIPITK6PC1E  F    TF IDGUK6      09160064        PI  G 0170001700                      U DS   987252406
+SUSAP KBOSK6FI27   I     J020RIPITK6PC2E                    W0150L                                                    DS   987262406
+SUSAP KBOSK6FI27   I     J030RW27 K6PG1G  M    TF IDGUK6      09160013        PI    00072             -300          U DS   987272406
+SUSAP KBOSK6FI27   I     J030RW27 K6PG2E057                 W0150L                                                    DS   987282406
+SUSAP KBOSK6FI27   Z     J040         1  M     VA                     2720        + 00419                           U DA   987292406
+SUSAP KBOSK6FI27   Z     J040         2E                    W0150L                                                    DA   987302406
+SUSAP KBOSK6FI27   Z     J060BOSOXK6EA1E       CF BOS K6      2680029926800290D     03000                           U DA   987312406
+SUSAP KBOSK6FI27   Z     J060BOSOXK6EA2E                    W0160L                                                    DA   987322406
+SUSAP KBOSK6FI27   Z     J070BOSOXK6EA1EE  R   HM                     0880T010  I                                   U DA   987332406
+SUSAP KBOSK6FI27   Z     J070BOSOXK6EA2E                    W0160L                                                    DA   987342406
+SUSAP KBOSK6FI33L  I     J005BENNNK6EA1E  I    IF ILIPK6      15020167        PI  + 04000     18000       BOS  AK6D U DS   987352210
+SUSAP KBOSK6FI33L  I     J005BENNNK6EA2E                    W0150L                                                    DS   987362210
+SUSAP KBOSK6FI33L  I     J010COHASK6PC1E       TF ILIPK6      15020113        PI  + 03000                           U DS   987372213
+SUSAP KBOSK6FI33L  I     J010COHASK6PC2E                    W0150L                                                    DS   987382210
+SUSAP KBOSK6FI33L  I     J020NIMOYK6PC1E  F    TF ILIPK6      15020064        PI  G 0150001500                      U DS   987392213
+SUSAP KBOSK6FI33L  I     J020NIMOYK6PC2E                    W0150L                                                    DS   987402210
+SUSAP KBOSK6FI33L  I     J030RW33LK6PG1G  M    TF ILIPK6      15010019        PI    00073             -300          U DS   987412213
+SUSAP KBOSK6FI33L  I     J030RW33LK6PG2E057                 W0150L                                                    DS   987422210
+SUSAP KBOSK6FI33L  Z     J040         1  M     VA                     3300        + 01500                           U DA   987432210
+SUSAP KBOSK6FI33L  Z     J040         2E                    W0150L                                                    DA   987442210
+SUSAP KBOSK6FI33L  Z     J060WAXENK6EA1E       CF BOS K6      0300014003000120D     03000                           U DA   987452210
+SUSAP KBOSK6FI33L  Z     J060WAXENK6EA2E                    W0160L                                                    DA   987462210
+SUSAP KBOSK6FI33L  Z     J070WAXENK6EA1EE  L   HM                     2100T010  I                                   U DA   987472210
+SUSAP KBOSK6FI33L  Z     J070WAXENK6EA2E                    W0160L                                                    DA   987482210
+SUSAP KBOSK6FL04R  AGOSHIJ010GOSHIK6PC1E  A    IF                                   06000     18000210              U DS   987492405
+SUSAP KBOSK6FL04R  AGOSHIJ010GOSHIK6PC2E                    W0150L                                                    DS   987502405
+SUSAP KBOSK6FL04R  AGOSHIJ020WINNIK6PC1EE B 010TF IBOSK6      21470169        PI  + 04000                           U DS   987512405
+SUSAP KBOSK6FL04R  AGOSHIJ020WINNIK6PC2E                    W0150L                                                    DS   987522405
+SUSAP KBOSK6FL04R  L     J005WINNIK6PC1E  I    IF IBOSK6      21470169        PI  + 04000     18000       BOS  AK6D U DS   987532405
+SUSAP KBOSK6FL04R  L     J005WINNIK6PC2E                    W0150L                                                    DS   987542405
+SUSAP KBOSK6FL04R  L     J010NABBOK6PC1E       TF IBOSK6      21470119        PI  + 03000             -300          U DS   987552405
+SUSAP KBOSK6FL04R  L     J010NABBOK6PC2E                    W0150L                                                    DS   987562405
+SUSAP KBOSK6FL04R  L     J020MILTTK6PC1E  F    TF IBOSK6      21470069        PI  + 01700             -300          U DS   987572405
+SUSAP KBOSK6FL04R  L     J020MILTTK6PC2E                    W0150L                                                    DS   987582405
+SUSAP KBOSK6FL04R  L     J025IRSEWK6PC1E S     TF IBOSK6      21470038        PI  + 00700             -300          U DS   987592405
+SUSAP KBOSK6FL04R  L     J025IRSEWK6PC2E                    W0150L                                                    DS   987602405
+SUSAP KBOSK6FL04R  L     J030RW04RK6PG1G  M    TF IBOSK6      21470018        PI    00068             -300          U DS   987612405
+SUSAP KBOSK6FL04R  L     J030RW04RK6PG2E050                 W0150L                                                    DS   987622405
+SUSAP KBOSK6FL04R  Z     J040         1  M     VI                     0350                                          U DA   987632405
+SUSAP KBOSK6FL04R  Z     J040         2E                    W0150L                                                    DA   987642405
+SUSAP KBOSK6FL04R  Z     J060WAXENK6EA1E       CF BOS K6      0300014003000140D     03000                           U DA   987652405
+SUSAP KBOSK6FL04R  Z     J060WAXENK6EA2E                    W0160L                                                    DA   987662405
+SUSAP KBOSK6FL04R  Z     J070WAXENK6EA1EE  L   HM                     2100T010  I                                   U DA   987672405
+SUSAP KBOSK6FL04R  Z     J070WAXENK6EA2E                    W0160L                                                    DA   987682405
+SUSAP KBOSK6FL15R  AAADMSJ010AADMSK6EA1E  A    IF                                             18000                 U DS   987692210
+SUSAP KBOSK6FL15R  AAADMSJ010AADMSK6EA2E                    W0150L                                                    DS   987702210
+SUSAP KBOSK6FL15R  AAADMSJ020SWIGGK6EA1EE B 010TF IMDCK6      32860153        PI  + 04000                           U DS   987712213
+SUSAP KBOSK6FL15R  AAADMSJ020SWIGGK6EA2E                    W0150L                                                    DS   987722210
+SUSAP KBOSK6FL15R  AGDM  J010GDM  K6D 1V  A    IF                                             18000                 U DS   987732210
+SUSAP KBOSK6FL15R  AGDM  J010GDM  K6D 2E                    W0150L                                                    DS   987742210
+SUSAP KBOSK6FL15R  AGDM  J020SWIGGK6EA1EE B    TF IMDCK6      32860153        PI  + 04000                           U DS   987752213
+SUSAP KBOSK6FL15R  AGDM  J020SWIGGK6EA2E                    W0140L                                                    DS   987762210
+SUSAP KBOSK6FL15R  L     J005SWIGGK6EA1E  I    IF IMDCK6      32860153        PI  + 04000     18000       BOS  AK6D U DS   987772210
+SUSAP KBOSK6FL15R  L     J005SWIGGK6EA2E                    W0150L                                                    DS   987782210
+SUSAP KBOSK6FL15R  L     J010WOBURK6PC1E       TF IMDCK6      32860105        PI  + 03000             -300          U DS   987792406
+SUSAP KBOSK6FL15R  L     J010WOBURK6PC2E                    W0150L                                                    DS   987802210
+SUSAP KBOSK6FL15R  L     J020MALDYK6PC1E  F    TF IMDCK6      32850064        PI  + 01700             -300          U DS   987812406
+SUSAP KBOSK6FL15R  L     J020MALDYK6PC2E                    W0150L                                                    DS   987822210
+SUSAP KBOSK6FL15R  L     J030ZASMUK6PC1E  M    TF IMDCK6      32860017        PI    00192             -300          U DS   987832406
+SUSAP KBOSK6FL15R  L     J030ZASMUK6PC2E050                 W0150L                                                    DS   987842210
+SUSAP KBOSK6FL15R  Z     J040         1  M     VI                     1490                                          U DA   987852210
+SUSAP KBOSK6FL15R  Z     J040         2E                    W0150L                                                    DA   987862210
+SUSAP KBOSK6FL15R  Z     J050CELTSK6EA1E       CF BOS K6      1540011615400110D     03000                           U DA   987872210
+SUSAP KBOSK6FL15R  Z     J050CELTSK6EA2E                    W0160L                                                    DA   987882210
+SUSAP KBOSK6FL15R  Z     J060CELTSK6EA1EE  R   HM                     3340T010  I                                   U DA   987892210
+SUSAP KBOSK6FL15R  Z     J060CELTSK6EA2E                    W0160L                                                    DA   987902210
+SUSAP KBOSK6FL22L  L     J005NOLEYK6PC1E  I    IF ILQNK6      03470150        PI  + 04000     18000       BOS  AK6D U DS   987912210
+SUSAP KBOSK6FL22L  L     J005NOLEYK6PC2E                    W0150L                                                    DS   987922210
+SUSAP KBOSK6FL22L  L     J010WYANEK6PC1E       TF ILQNK6      03470115        PI  + 03000             -300          U DS   987932406
+SUSAP KBOSK6FL22L  L     J010WYANEK6PC2E                    W0150L                                                    DS   987942210
+SUSAP KBOSK6FL22L  L     J020VOCUSK6PC1E  F    TF ILQNK6      03470066        PI  + 01700             -300          U DS   987952406
+SUSAP KBOSK6FL22L  L     J020VOCUSK6PC2E                    W0150L                                                    DS   987962210
+SUSAP KBOSK6FL22L  L     J025ZUMOLK6PC1E S     TF ILQNK6      03470035        PI  + 00700             -300          U DS   987972406
+SUSAP KBOSK6FL22L  L     J025ZUMOLK6PC2E                    W0150L                                                    DS   987982210
+SUSAP KBOSK6FL22L  L     J030RW22LK6PG1G  M    TF ILQNK6      03470015        PI    00066             -300          U DS   987992406
+SUSAP KBOSK6FL22L  L     J030RW22LK6PG2E050                 W0150L                                                    DS   988002210
+SUSAP KBOSK6FL22L  Z     J035         1  M     VA                     2150        + 00419                           U DA   988012210
+SUSAP KBOSK6FL22L  Z     J035         2E                    W0150L                                                    DA   988022210
+SUSAP KBOSK6FL22L  Z     J040WINNIK6PC1E       CF BOS K6      2187015621900150D     03000                           U DA   988032210
+SUSAP KBOSK6FL22L  Z     J040WINNIK6PC2E                    W0160L                                                    DA   988042210
+SUSAP KBOSK6FL22L  Z     J050WINNIK6PC1EE  R   HM                     0390T010  I                                   U DA   988052210
+SUSAP KBOSK6FL22L  Z     J050WINNIK6PC2E                    W0160L                                                    DA   988062210
+SUSAP KBOSK6FL27   AAYBEEJ005AYBEEK6EA1E  A    IF                                   06000     18000210              U DS   988072406
+SUSAP KBOSK6FL27   AAYBEEJ005AYBEEK6EA2E                    W0150L                                                    DS   988082406
+SUSAP KBOSK6FL27   AAYBEEJ010KLANEK6EA1E    010TF                                 + 04000                           U DS   988092409
+SUSAP KBOSK6FL27   AAYBEEJ010KLANEK6EA2E                    W0150L                                                    DS   988102409
+SUSAP KBOSK6FL27   AAYBEEJ020LONERK6PC1EE B    TF IDGUK6      09160116        PI  + 03000                           U DS   988112406
+SUSAP KBOSK6FL27   AAYBEEJ020LONERK6PC2E                    W0150L                                                    DS   988122406
+SUSAP KBOSK6FL27   L     J010LONERK6PC1E  I    IF IDGUK6      09160116        PI  + 03000     18000       BOS  AK6D U DS   988132406
+SUSAP KBOSK6FL27   L     J010LONERK6PC2E                    W0150L                                                    DS   988142406
+SUSAP KBOSK6FL27   L     J020RIPITK6PC1E  F    TF IDGUK6      09160064        PI  + 01700             -300          U DS   988152406
+SUSAP KBOSK6FL27   L     J020RIPITK6PC2E                    W0150L                                                    DS   988162406
+SUSAP KBOSK6FL27   L     J030OQDEKK6PC1E  M    TF IDGUK6      09160025        PI    00454             -300          U DS   988172406
+SUSAP KBOSK6FL27   L     J030OQDEKK6PC2E050                 W0150L                                                    DS   988182406
+SUSAP KBOSK6FL27   Z     J040         1  M     VA                     2720        + 00419                           U DA   988192406
+SUSAP KBOSK6FL27   Z     J040         2E                    W0150L                                                    DA   988202406
+SUSAP KBOSK6FL27   Z     J060BOSOXK6EA1E       CF BOS K6      2680029926800290D     03000                           U DA   988212406
+SUSAP KBOSK6FL27   Z     J060BOSOXK6EA2E                    W0160L                                                    DA   988222406
+SUSAP KBOSK6FL27   Z     J070BOSOXK6EA1EE  R   HM                     0880T010  I                                   U DA   988232406
+SUSAP KBOSK6FL27   Z     J070BOSOXK6EA2E                    W0160L                                                    DA   988242406
+SUSAP KBOSK6FL33L  L     J005BENNNK6EA1E  I    IF ILIPK6      15020167        PI  + 04000     18000       BOS  AK6D U DS   988252210
+SUSAP KBOSK6FL33L  L     J005BENNNK6EA2E                    W0150L                                                    DS   988262210
+SUSAP KBOSK6FL33L  L     J010COHASK6PC1E       TF ILIPK6      15020113        PI  + 03000             -300          U DS   988272406
+SUSAP KBOSK6FL33L  L     J010COHASK6PC2E                    W0150L                                                    DS   988282210
+SUSAP KBOSK6FL33L  L     J020NIMOYK6PC1E  F    TF ILIPK6      15020064        PI  + 01500             -300          U DS   988292406
+SUSAP KBOSK6FL33L  L     J020NIMOYK6PC2E                    W0150L                                                    DS   988302210
+SUSAP KBOSK6FL33L  L     J025RDUKEK6PC1E S     TF ILIPK6      15020039        PI  + 00700             -300          U DS   988312406
+SUSAP KBOSK6FL33L  L     J025RDUKEK6PC2E                    W0150L                                                    DS   988322210
+SUSAP KBOSK6FL33L  L     J030RW33LK6PG1G  M    TF ILIPK6      15010019        PI    00066             -300          U DS   988332406
+SUSAP KBOSK6FL33L  L     J030RW33LK6PG2E050                 W0150L                                                    DS   988342210
+SUSAP KBOSK6FL33L  Z     J040         1  M     VA                     3300        + 01500                           U DA   988352210
+SUSAP KBOSK6FL33L  Z     J040         2E                    W0150L                                                    DA   988362210
+SUSAP KBOSK6FL33L  Z     J060WAXENK6EA1E       CF BOS K6      0300014003000120D     03000                           U DA   988372210
+SUSAP KBOSK6FL33L  Z     J060WAXENK6EA2E                    W0160L                                                    DA   988382210
+SUSAP KBOSK6FL33L  Z     J070WAXENK6EA1EE  L   HM                     2100T010  I                                   U DA   988392210
+SUSAP KBOSK6FL33L  Z     J070WAXENK6EA2E                    W0160L                                                    DA   988402210
+SUSAP KBOSK6FR04L  ANUNZOJ010NUNZOK6EA1E       IF                                   06000     18000210              C-PSH  988412211
+SUSAP KBOSK6FR04L  ANUNZOJ010NUNZOK6EA2E                    W0150P                                                    PSH  988422211
+SUSAP KBOSK6FR04L  ANUNZOJ020AAALLK6EA0E  A 010TF                                 + 04000                           C PSH  988432211
+SUSAP KBOSK6FR04L  ANUNZOJ030LVRONK6PC0EE B 010TF                                 + 03000                           C PSH  988442211
+SUSAP KBOSK6FR04L  AWOONSJ010WOONSK6EA1E       IF                                 + 05000     18000                 C PSH  988452211
+SUSAP KBOSK6FR04L  AWOONSJ010WOONSK6EA2E                    W0150P                                                    PSH  988462211
+SUSAP KBOSK6FR04L  AWOONSJ020AAALLK6EA0E  A 010TF                                 + 04000                           C PSH  988472211
+SUSAP KBOSK6FR04L  AWOONSJ030LVRONK6PC0EE B 010TF                                 + 03000                           C PSH  988482211
+SUSAP KBOSK6FR04L  R     J010LVRONK6PC1E  I    IF                                 + 03000     18000       RW04LAK6PGA PSH  988492211
+SUSAP KBOSK6FR04L  R     J010LVRONK6PC2E                    W0150P                                                    PSH  988502211
+SUSAP KBOSK6FR04L  R     J020MTAPNK6PC1E  F 010TF                                 + 01700             -310          A PSH  988512211
+SUSAP KBOSK6FR04L  R     J020MTAPNK6PC2WALPV       ALNAV/VNAV ALNAV                                                   PSH  988522211
+SUSAP KBOSK6FR04L  R     J030RW04LK6PG1GY M 031TF                                   00064             -310          A PSH  988532211
+SUSAP KBOSK6FR04L  R     J030RW04LK6PG2E050                                                                           PSH  988542211
+SUSAP KBOSK6FR04L  Z     J040         0  M  010CA                     0370        + 00700                           A PAH  988552211
+SUSAP KBOSK6FR04L  Z     J050UJEGEK6EA0EY   010DF                                   03000                           A PAH  988562211
+SUSAP KBOSK6FR04L  Z     J060UJEGEK6EA0EE  R   HM                     17600040  I   03000                           A PAH  988572211
+SUSAP KBOSK6FR04R  AGOSHIJ010GOSHIK6PC1E  A    IF                                   06000     18000210              C-PSH  988582210
+SUSAP KBOSK6FR04R  AGOSHIJ010GOSHIK6PC2E                    W0150P                                                    PSH  988592210
+SUSAP KBOSK6FR04R  AGOSHIJ020WINNIK6PC0EE B 010TF                                 + 04000                           C PSH  988602210
+SUSAP KBOSK6FR04R  R     J005WINNIK6PC1E  I    IF                                 + 04000     18000       RW04RAK6PGA PSH  988612210
+SUSAP KBOSK6FR04R  R     J005WINNIK6PC2E                    W0150P                                                    PSH  988622210
+SUSAP KBOSK6FR04R  R     J010NABBOK6PC0E    010TF                                 + 03000             -300          A PSH  988632210
+SUSAP KBOSK6FR04R  R     J020MILTTK6PC1E  F 010TF                                 + 01700             -300          A PSH  988642210
+SUSAP KBOSK6FR04R  R     J020MILTTK6PC2WALPV200    ALNAV/VNAV ALNAV                                                   PSH  988652210
+SUSAP KBOSK6FR04R  R     J025IRSEWK6PC0E S  031TF                                 + 00700             -300          A PSH  988662301
+SUSAP KBOSK6FR04R  R     J030RW04RK6PG1GY M 031TF                                   00069             -300          A PSH  988672210
+SUSAP KBOSK6FR04R  R     J030RW04RK6PG2E051                                                                           PSH  988682210
+SUSAP KBOSK6FR04R  Z     J040OMVOZK6PC0E M  010DF                                                                   A PAH  988692210
+SUSAP KBOSK6FR04R  Z     J041WAXENK6EA0EY   010TF                                   03000                           A PAH  988702210
+SUSAP KBOSK6FR04R  Z     J050WAXENK6EA0EE  L   HM                     20900040  I                                   A PAH  988712210
+SUSAP KBOSK6FR15R  AAADMSJ010AADMSK6EA1E  A    IF                                 + 05000     18000                 C PSH  988722210
+SUSAP KBOSK6FR15R  AAADMSJ010AADMSK6EA2E                    W0150P                                                    PSH  988732210
+SUSAP KBOSK6FR15R  AAADMSJ020ZOMIBK6PC0EE B 010TF                                 + 04000                           C PSH  988742210
+SUSAP KBOSK6FR15R  AGDM  J010GDM  K6D 1V  A    IF                                             18000                 C PSH  988752210
+SUSAP KBOSK6FR15R  AGDM  J010GDM  K6D 2E                    W0150P                                                    PSH  988762210
+SUSAP KBOSK6FR15R  AGDM  J020ZOMIBK6PC0EE B 010TF                                 + 04000                           C PSH  988772210
+SUSAP KBOSK6FR15R  R     J005ZOMIBK6PC1E  I    IF                                 + 04000     18000       RW15RAK6PGA PSH  988782210
+SUSAP KBOSK6FR15R  R     J005ZOMIBK6PC2E                    W0150P                                                    PSH  988792210
+SUSAP KBOSK6FR15R  R     J010WIDUPK6PC0E    010TF                                 + 03000             -300          A PSH  988802210
+SUSAP KBOSK6FR15R  R     J020EMMELK6PC1E  F 010TF                                 + 01700             -300          A PSH  988812210
+SUSAP KBOSK6FR15R  R     J020EMMELK6PC2WALPV200    ALNAV/VNAV ALNAV                                                   PSH  988822210
+SUSAP KBOSK6FR15R  R     J030RW15RK6PG1GY M 031TF                                   00077             -300          A PSH  988832210
+SUSAP KBOSK6FR15R  R     J030RW15RK6PG2E060                                                                           PSH  988842210
+SUSAP KBOSK6FR15R  Z     J050HUBIRK6PC0E M  010DF                                                                   A PAH  988852210
+SUSAP KBOSK6FR15R  Z     J060CELTSK6EA0EY   010TF                                   03000                           A PAH  988862210
+SUSAP KBOSK6FR15R  Z     J070CELTSK6EA0EE  R   HM                     33300040  I                                   A PAH  988872210
+SUSAP KBOSK6FR22LX R     J005NOLEYK6PC1E  I    IF                                 + 04000     18000       RW22LAK6PGA PSH  988882312
+SUSAP KBOSK6FR22LX R     J005NOLEYK6PC2E                    W0150P                                                    PSH  988892312
+SUSAP KBOSK6FR22LX R     J010WYANEK6PC0E    010TF                                 + 03000             -300          A PSH  988902312
+SUSAP KBOSK6FR22LX R     J020VOCUSK6PC1E  F 010TF                                 + 01700             -300          A PSH  988912312
+SUSAP KBOSK6FR22LX R     J020VOCUSK6PC2WALPV200    ALNAV/VNAV ALNAV                                                   PSH  988922312
+SUSAP KBOSK6FR22LX R     J025ZUMOLK6PC0E S  031TF                                 + 00700             -300          A PSH  988932312
+SUSAP KBOSK6FR22LX R     J030RW22LK6PG1GY M 031TF                                   00071             -300          A PSH  988942312
+SUSAP KBOSK6FR22LX R     J030RW22LK6PG2E055                                                                           PSH  988952312
+SUSAP KBOSK6FR22LX Z     J060WINNIK6PC0EYM  010DF                                   03000                           A PAH  988962312
+SUSAP KBOSK6FR22LX Z     J070WINNIK6PC0EE  R   HM                     03800040  I                                   A PAH  988972312
+SUSAP KBOSK6FR22LY AEGGRLJ010EGGRLK6EA1E       IF                                             18000210              C-PSH  988982312
+SUSAP KBOSK6FR22LY AEGGRLJ010EGGRLK6EA2E                    W0150P                                                    PSH  988992312
+SUSAP KBOSK6FR22LY AEGGRLJ020SRINOK6PC0E  A 010TF                                 + 03000                           C PSH  989002402
+SUSAP KBOSK6FR22LY AEGGRLJ030SNDBAK6PC0EE B 010TF                                 + 02000          180              C-PSH  989012402
+SUSAP KBOSK6FR22LY R     J010SNDBAK6PC1E  I    IF                                 + 02000     18000180    RW22LAK6PGA-PSH  989022402
+SUSAP KBOSK6FR22LY R     J010SNDBAK6PC2E                    W0150P                                                    PSH  989032312
+SUSAP KBOSK6FR22LY R     J020KELYSK6PC0E    010TF                                 + 01300             -300          A PSH  989042312
+SUSAP KBOSK6FR22LY R     J030CHELCK6PC1E  F 010TF                                 + 01100             -300          A PSH  989052312
+SUSAP KBOSK6FR22LY R     J030CHELCK6PC2WALPV200    ALNAV/VNAV ALNAV                                                   PSH  989062312
+SUSAP KBOSK6FR22LY R     J040RW22LK6PG1GY M 031TF                                   00071             -300          A PSH  989072312
+SUSAP KBOSK6FR22LY R     J040RW22LK6PG2E055                                                                           PSH  989082312
+SUSAP KBOSK6FR22LY Z     J050WINNIK6PC0EYM  010DF                                   03000                           A PAH  989092312
+SUSAP KBOSK6FR22LY Z     J060WINNIK6PC0EE  R   HM                     03800040  I                                   A PAH  989102312
+SUSAP KBOSK6FR27   AAYBEEJ005AYBEEK6EA1E  A    IF                                   06000     18000210              C-PSH  989112210
+SUSAP KBOSK6FR27   AAYBEEJ005AYBEEK6EA2E                    W0150P                                                    PSH  989122210
+SUSAP KBOSK6FR27   AAYBEEJ010KLANEK6EA0E    010TF                                 + 04000                           C PSH  989132409
+SUSAP KBOSK6FR27   AAYBEEJ020LONERK6PC0EE B 010TF                                 + 03000                           C PSH  989142210
+SUSAP KBOSK6FR27   R     J010LONERK6PC1E  I    IF                                 + 03000     18000       RW27 AK6PGA PSH  989152210
+SUSAP KBOSK6FR27   R     J010LONERK6PC2E                    W0150P                                                    PSH  989162210
+SUSAP KBOSK6FR27   R     J020RIPITK6PC1E  F 010TF                                 + 01700             -300          A PSH  989172210
+SUSAP KBOSK6FR27   R     J020RIPITK6PC2WN          ALNAV/VNAV ALNAV                                                   PSH  989182210
+SUSAP KBOSK6FR27   R     J030RW27 K6PG1GY M 031TF                                   00072             -300          A PSH  989192210
+SUSAP KBOSK6FR27   R     J030RW27 K6PG2E057                                                                           PSH  989202210
+SUSAP KBOSK6FR27   Z     J060WANTUK6PC0E M  010DF                                                                   A PAH  989212210
+SUSAP KBOSK6FR27   Z     J070BOSOXK6EA0EY   010TF                                   03000                           A PAH  989222210
+SUSAP KBOSK6FR27   Z     J080BOSOXK6EA0EE  R   HM                     08700050  I                                   A PAH  989232210
+SUSAP KBOSK6FR32   AFREDOJ010FREDOK6EA1E       IF                                             18000                 C PSH  989242406
+SUSAP KBOSK6FR32   AFREDOJ010FREDOK6EA2E                    W0150P                                                    PSH  989252406
+SUSAP KBOSK6FR32   AFREDOJ030DUNKKK6EA0E    010TF                                 + 04000                           C PSH  989262406
+SUSAP KBOSK6FR32   AFREDOJ040HAVRDK6PC0E  A 010TF                                 + 04000                           C PSH  989272406
+SUSAP KBOSK6FR32   AFREDOJ050YAARDK6PC0EE B 010TF                                 + 03000                           C PSH  989282406
+SUSAP KBOSK6FR32   AHAVRDJ040HAVRDK6PC1E  A    IF                                 + 04000     18000                 C PSH  989292406
+SUSAP KBOSK6FR32   AHAVRDJ040HAVRDK6PC2E                    W0150P                                                    PSH  989302406
+SUSAP KBOSK6FR32   AHAVRDJ050YAARDK6PC0EE B 010TF                                 + 03000                           C PSH  989312406
+SUSAP KBOSK6FR32   AINNDYJ010INNDYK6EA1E       IF                                             18000                 C PSH  989322406
+SUSAP KBOSK6FR32   AINNDYJ010INNDYK6EA2E                    W0150P                                                    PSH  989332406
+SUSAP KBOSK6FR32   AINNDYJ020QUINCK6PC0E    010TF                                                                   C PSH  989342406
+SUSAP KBOSK6FR32   AINNDYJ030DUNKKK6EA0E    010TF                                 + 04000                           C PSH  989352406
+SUSAP KBOSK6FR32   AINNDYJ040HAVRDK6PC0E  A 010TF                                 + 04000                           C PSH  989362406
+SUSAP KBOSK6FR32   AINNDYJ050YAARDK6PC0EE B 010TF                                 + 03000                           C PSH  989372406
+SUSAP KBOSK6FR32   ASCUPPJ010SCUPPKZEA1E       IF                                             18000                 C PSH  989382406
+SUSAP KBOSK6FR32   ASCUPPJ010SCUPPKZEA2E                    W0150P                                                    PSH  989392406
+SUSAP KBOSK6FR32   ASCUPPJ020BOATZK6PC0E    010TF                                                                   C PSH  989402406
+SUSAP KBOSK6FR32   ASCUPPJ030DUNKKK6EA0E    010TF                                 + 04000                           C PSH  989412406
+SUSAP KBOSK6FR32   ASCUPPJ040HAVRDK6PC0E  A 010TF                                 + 04000                           C PSH  989422406
+SUSAP KBOSK6FR32   ASCUPPJ050YAARDK6PC0EE B 010TF                                 + 03000                           C PSH  989432406
+SUSAP KBOSK6FR32   AWOONSJ010WOONSK6EA1E       IF                                             18000                 C PSH  989442406
+SUSAP KBOSK6FR32   AWOONSJ010WOONSK6EA2E                    W0150P                                                    PSH  989452406
+SUSAP KBOSK6FR32   AWOONSJ020QUINCK6PC0E    010TF                                                                   C PSH  989462406
+SUSAP KBOSK6FR32   AWOONSJ030DUNKKK6EA0E    010TF                                 + 04000                           C PSH  989472406
+SUSAP KBOSK6FR32   AWOONSJ040HAVRDK6PC0E  A 010TF                                 + 04000                           C PSH  989482406
+SUSAP KBOSK6FR32   AWOONSJ050YAARDK6PC0EE B 010TF                                 + 03000                           C PSH  989492406
+SUSAP KBOSK6FR32   R     J010YAARDK6PC1E  I    IF                                 + 03000     18000       PAARKAK6PCA PSH  989502406
+SUSAP KBOSK6FR32   R     J010YAARDK6PC2E                    W0150P                                                    PSH  989512406
+SUSAP KBOSK6FR32   R     J020BGDIGK6PC1E  F 010TF                                 + 01500             -291          A PSH  989522406
+SUSAP KBOSK6FR32   R     J020BGDIGK6PC2WN          N          ALNAV                                                   PSH  989532406
+SUSAP KBOSK6FR32   R     J030PAARKK6PC1EY M 031TF                                   00206             -291          A PSH  989542406
+SUSAP KBOSK6FR32   R     J030PAARKK6PC2E045                                                                           PSH  989552406
+SUSAP KBOSK6FR32   Z     J040WINDZK6PC0E M  010DF                                                                   A PAH  989562406
+SUSAP KBOSK6FR32   Z     J050TELLEK6PC0EY   010TF                                   03000                           A PAH  989572406
+SUSAP KBOSK6FR32   Z     J060TELLEK6PC0EE  R   HM                     28400050  I                                   A PAH  989582406
+SUSAP KBOSK6FR33LX ABBOGGJ010BBOGGK6PC1E  A    IF                                   06000     18000210              C-PSF  989592210
+SUSAP KBOSK6FR33LX ABBOGGJ010BBOGGK6PC2E                    W0150P                                                    PSF  989602210
+SUSAP KBOSK6FR33LX ABBOGGJ020YAAZZK6PC0E    010TF                                 + 05000                           C PSF  989612210
+SUSAP KBOSK6FR33LX ABBOGGJ030PEOPLK6PC0E    010TF                                 + 04000                           C PSF  989622210
+SUSAP KBOSK6FR33LX ABBOGGJ040FSSKKK6PC0E    010TF                                 + 02800                           C PSF  989632210
+SUSAP KBOSK6FR33LX ABBOGGJ050CRLTNK6PC0EE BL010RF       0024503350    27900024    + 02000          210    CFFFR K6PCC-PSF  989642210
+SUSAP KBOSK6FR33LX ABRUNLJ010BRUNLK6EA1E  A    IF                                   06000     18000210              C-PSF  989652210
+SUSAP KBOSK6FR33LX ABRUNLJ010BRUNLK6EA2E                    W0150P                                                    PSF  989662210
+SUSAP KBOSK6FR33LX ABRUNLJ020RYLANK6PC0E    010TF                                 + 04000                           C PSF  989672210
+SUSAP KBOSK6FR33LX ABRUNLJ030SRENEK6PC0E    010TF                                 + 02600                           C PSF  989682210
+SUSAP KBOSK6FR33LX ABRUNLJ040CRLTNK6PC0EE BR010RF       0024002480    27900013    + 02000          210    CFFCS K6PCC-PSF  989692210
+SUSAP KBOSK6FR33LX ACALMMJ010CALMMK6EA1E  A    IF                                   06000     18000                 C PSF  989702210
+SUSAP KBOSK6FR33LX ACALMMJ010CALMMK6EA2E                    W0150P                                                    PSF  989712210
+SUSAP KBOSK6FR33LX ACALMMJ020PCFULK6PC0E    010TF                                 + 04000                           C PSF  989722210
+SUSAP KBOSK6FR33LX ACALMMJ030HEXUSK6PC0E    010TF                                 + 03000          210              C-PSF  989732210
+SUSAP KBOSK6FR33LX ACALMMJ040CRLTNK6PC0EE B 010TF                                 + 02000          210              C-PSF  989742210
+SUSAP KBOSK6FR33LX AYOUUKJ010YOUUKK6EA1E  A    IF                                   07000     18000230              C-PSF  989752210
+SUSAP KBOSK6FR33LX AYOUUKJ010YOUUKK6EA2E                    W0150P                                                    PSF  989762210
+SUSAP KBOSK6FR33LX AYOUUKJ020CNOLIK6PC0E    010TF                                 + 05000          210              C-PSF  989772210
+SUSAP KBOSK6FR33LX AYOUUKJ030FEESTK6PC0E   R010RF       0024791030    19200038    + 03900                 CFFCN K6PCC PSF  989782210
+SUSAP KBOSK6FR33LX AYOUUKJ040TRCIEK6PC0E    010TF                                 + 03300                           C PSF  989792210
+SUSAP KBOSK6FR33LX AYOUUKJ050SRENEK6PC0E   R010RF       0024001920    24800024    + 02600                 CFFCS K6PCC PSF  989802210
+SUSAP KBOSK6FR33LX AYOUUKJ060CRLTNK6PC0EE BR010RF       0024002480    27900013    + 02000          210    CFFCS K6PCC-PSF  989812210
+SUSAP KBOSK6FR33LX R     J010CRLTNK6PC1E  I    IF                                 + 02000     18000210    RW33LAK6PGC-PSF  989822210
+SUSAP KBOSK6FR33LX R     J010CRLTNK6PC2E                    W0150P                                                    PSF  989832210
+SUSAP KBOSK6FR33LX R     J020SHUSHK6PC1E  F 010TF                                 + 01400             -300          C PSF  989842210
+SUSAP KBOSK6FR33LX R     J020SHUSHK6PC2W                                                A031                          PSF  989852210
+SUSAP KBOSK6FR33LX R     J030KWIETK6PC0E    031TF                                 + 01099             -300          C PSF  989862210
+SUSAP KBOSK6FR33LX R     J040MURMRK6PC0E   R031RF       0017002790    33000015    + 00612             -300CFFBW K6PCC PSF  989872210
+SUSAP KBOSK6FR33LX R     J050RW33LK6PG0GY M 031TF                                   00068             -300          C PSF  989882210
+SUSAP KBOSK6FR33LX Z     J060         0  M  010CA                     3300        + 00600                           C PAF  989892210
+SUSAP KBOSK6FR33LX Z     J070WAXENK6EA0EY   010DF                                   03000                           C PAF  989902210
+SUSAP KBOSK6FR33LX Z     J080WAXENK6EA0EE  L   HM                     20900040  I                                   C PAF  989912210
+SUSAP KBOSK6FR33LZ R     J005BENNNK6EA1E  I    IF                                 + 04000     18000       RW33LAK6PGA PSH  989922211
+SUSAP KBOSK6FR33LZ R     J005BENNNK6EA2E                    W0150P                                                    PSH  989932211
+SUSAP KBOSK6FR33LZ R     J010COHASK6PC0E    010TF                                 + 03000             -300          A PSH  989942211
+SUSAP KBOSK6FR33LZ R     J020NIMOYK6PC1E  F 010TF                                 + 01500             -300          A PSH  989952211
+SUSAP KBOSK6FR33LZ R     J020NIMOYK6PC2WALPV200    ALNAV/VNAV ALNAV                                                   PSH  989962211
+SUSAP KBOSK6FR33LZ R     J025RDUKEK6PC0E S  031TF                                 + 00700             -300          A PSH  989972301
+SUSAP KBOSK6FR33LZ R     J030RW33LK6PG1GY M 031TF                                   00073             -300          A PSH  989982211
+SUSAP KBOSK6FR33LZ R     J030RW33LK6PG2E057                                                                           PSH  989992211
+SUSAP KBOSK6FR33LZ Z     J040         0  M  010CA                     3300        + 00600                           A PAH  990002211
+SUSAP KBOSK6FR33LZ Z     J070WAXENK6EA0EY   010DF                                   03000                           A PAH  990012211
+SUSAP KBOSK6FR33LZ Z     J080WAXENK6EA0EE  L   HM                     20900040  I                                   A PAH  990022211
+SUSAP KBOSK6GRW04L   1078640350 N42212876W071005162               000140000  150R     0000     050YY                       990032211
+SUSAP KBOSK6GRW04L   2E                                                                     ASPHH000007864078640786407864B 990042210
+SUSAP KBOSK6GRW04L   3S                            02000Y        T00014                                                    990052211
+SUSAP KBOSK6GRW04R   1100060350 N42211455W071003727               000181155  150I     0000     051YY                       990062411
+SUSAP KBOSK6GRW04R   2E                                                                     ASPHH000010006100061000608851B 990072210
+SUSAP KBOSK6GRW04R   3S                            02000Y        T00018                                                    990082211
+SUSAP KBOSK6GRW09    1070010920 N42212072W071004642               000170000  150D     0000     050YY                       990092210
+SUSAP KBOSK6GRW09    2E                                                                     ASPHH000007001070010700107001B 990102210
+SUSAP KBOSK6GRW09    3S                            07700Y        T00017                                                    990112211
+SUSAP KBOSK6GRW14    1050001400 N42212375W071012379               000160000  100D     0000     050N                        990122402
+SUSAP KBOSK6GRW14    2E                                                                     ASPHH000005000050000500005000B 990132210
+SUSAP KBOSK6GRW14    3S                            12500Y        T00019                                                    990142211
+SUSAP KBOSK6GRW15L   1025571500 N42222350W071003100               000150000  100D     0000     050YY                       990152210
+SUSAP KBOSK6GRW15L   2E                                                                     ASPHH000002557025570255702557B 990162210
+SUSAP KBOSK6GRW15L   3S                            13500Y        T00016                                                    990172211
+SUSAP KBOSK6GRW15R   1100831500 N42222120W071005613               000170882  150I     0000     060YY                       990182210
+SUSAP KBOSK6GRW15R   2E                                                                     ASPHH000010083100831008309202B 990192210
+SUSAP KBOSK6GRW15R   3S                            13500Y        T00017                                                    990202211
+SUSAP KBOSK6GRW22L   1100062150 N42222569W071000285               000161199  150I     0000     055YY                       990212210
+SUSAP KBOSK6GRW22L   2E                                                                     ASPHH000010006100061000608806B 990222210
+SUSAP KBOSK6GRW22L   3S                            20000Y        T00016                                                    990232211
+SUSAP KBOSK6GRW22R   1078642150 N42223426W071001993               000150819  150D     0000     050YY                       990242210
+SUSAP KBOSK6GRW22R   2E                                                                     ASPHH000007864078640786407046B 990252210
+SUSAP KBOSK6GRW22R   3S                            20000Y        T00015                                                    990262211
+SUSAP KBOSK6GRW27    1070012720 N42213678W070591573               000150000  150I     0000     057YY                       990272210
+SUSAP KBOSK6GRW27    2E                                                                     ASPHH000007001070010700107001B 990282210
+SUSAP KBOSK6GRW27    3S                            25700Y        T00017                                                    990292211
+SUSAP KBOSK6GRW32    1050003200 N42205496W071002968               000190000  100R     0000     045N                        990302402
+SUSAP KBOSK6GRW32    2E                                                                     ASPHH000005000050000500005000B 990312210
+SUSAP KBOSK6GRW32    3S                            30500Y        T00019                                                    990322211
+SUSAP KBOSK6GRW33L   1100833300 N42211674W070592971               000160000  150I     0000     057YY                       990332210
+SUSAP KBOSK6GRW33L   2E                                                                     ASPHH000010083100831008310083B 990342210
+SUSAP KBOSK6GRW33L   3S                            31500Y        T00016                                                    990352211
+SUSAP KBOSK6GRW33R   1025573300 N42220558W071000700               000140000  100D     0000     050YY                       990362210
+SUSAP KBOSK6GRW33R   2E                                                                     ASPHH000002557025570255702557B 990372210
+SUSAP KBOSK6GRW33R   3S                            31500Y        T00016                                                    990382211
+SUSAP KBOSK6IIBOS3   111030RW04RN42225597W0705948190350N42212182W0710024552058 10160327300W0150  00010IBOSK6D 051          990392211
+SUSAP KBOSK6IIBOS3   2S    S  N                    02090N                                                                  990402402
+SUSAP KBOSK6IIDGU1   111130RW27 N42211848W0710059052720N42213129W0705928350975 10510494300W0150  00012IDGUK6D 057          990412211
+SUSAP KBOSK6IIDGU1   2S    S  U                    25789N                                                                  990422402
+SUSAP KBOSK6IILIP3   111070RW33LN42223756W0710118093300N42212664W0705934711455 09760342300W0150  00011ILIPK6D 057          990432211
+SUSAP KBOSK6IILIP3   2S    S  R                    31589N                                                                  990442402
+SUSAP KBOSK6IILQN1   111030RW22LN42210004W0710044282150N42221700W0710011990405 10600379300W0150  00011ILQNK6D 055          990452211
+SUSAP KBOSK6IILQN1   2S    S  N                    20090N                                                                  990462402
+SUSAP KBOSK6IIMDC1   111070RW15RN42212636W0705937051490N42221469W0710042420984-11920500300W0150  00011IMDCK6D 060          990472211
+SUSAP KBOSK6IIMDC1   2S    S  Y                    13490N                                                                  990482402
+SUSAP KBOSK6PR04L  RW04L001 0000W04B0N4221287575W07100516185-002340310N4222515525W07100071085106750000000500F400500B3CD4AA5990492211
+SUSAP KBOSK6PR04L  RW04L002E      +00042+00042LPV       777380370                                                          990502211
+SUSAP KBOSK6PR04R  RW04R001 0000W04A0N4221145450W07100372690-002230300N4222384380W07059566725106750056000512F400350365ED6E5990512210
+SUSAP KBOSK6PR04R  RW04R002E      +00054+00054LPV200    501240350                                                          990522210
+SUSAP KBOSK6PR15R  RW15R001 0000W15A0N4222211990W07100561285-002250300N4221167425W07059297095106750000000600F400350E44F13C9990532210
+SUSAP KBOSK6PR15R  RW15R002E      +00052+00052LPV200    429251500                                                          990542210
+SUSAP KBOSK6PR22LX RW22L001X0000W22A0N4222256945W07100028455-002290300N4221017900W07100434300106750064000554F4003502DC3FCEB990552312
+SUSAP KBOSK6PR22LX RW22L002E      +00048+00048LPV200    459252150                                                          990562312
+SUSAP KBOSK6PR22LY RW22L001Y0000W22B0N4222256945W07100028455-002290300N4221017985W07100434300106750064000553F40035057769606990572312
+SUSAP KBOSK6PR22LY RW22L002E      +00048+00048LPV200    776452150                                                          990582312
+SUSAP KBOSK6PR33LZ RW33L001Z0000W33A0N4221167425W07059297095-002290300N4222273730W07101044090106750000000570F400350FCF27897990592211
+SUSAP KBOSK6PR33LZ RW33L002E      +00048+00048LPV200    695253300                                                          990602211
+SUSAP KBOSK6SBOS  K6D A               0   03512502525125035020250000000000000000000000000000000000000000000000000000000M   990612210
+SUSAP KBOSK6SKBOS K6PAA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990622312
+SUSAP KBOSK6SPAARKK6PCA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990632210
+SUSAP KBOSK6SRW04LK6PGA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990642210
+SUSAP KBOSK6SRW04RK6PGA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990652210
+SUSAP KBOSK6SRW15RK6PGA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990662210
+SUSAP KBOSK6SRW22LK6PGA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990672210
+SUSAP KBOSK6SRW27 K6PGA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990682210
+SUSAP KBOSK6SRW33LK6PGA               0   18018002525000000000000000000000000000000000000000000000000000000000000000000M   990692210
+SUSAP KBOSK6V  AFAC010ATI              DNYBOSTON                   N                        N42214660W071002300   A        990702210
+SUSAP KBOSK6V  AFAC020ATI0135000       KNYBOSTON                   N                        N42214660W071002300   A        990712210
+SUSAP KBOSK6V  AOTF010RDO       0122100KNYBRIDGEPORT/SIKORSKY      N                        N41094853W073073423   A        990722307
+SUSAP KBOSK6V  AOTF020RDO0112700       VNYBRIDGEPORT               N                        N42212682W070592237   A        990732210
+SUSAP KBOSK6V  AOTF030RDO01224000122400KNYBRIDGEPORT/SIKORSKY      N                        N41094853W073073423   A        990742307
+SUSAP KBOSK6V  AOTF040UNI01229500122950FNYBOSTON                   N                        N42214660W071002300   A        990752313
+SUSAP KBOSK6V  ATCF010APP01182500118250FRYBOSTON                   N316045KBOSK6PA          N42214660W071002300   A        990762210
+SUSAP KBOSK6V  ATCF020APP01206000120600KRYBOSTON                   N226315KBOSK6PA          N42214660W071002300   A        990772210
+SUSAP KBOSK6V  ATCF030APP01272000127200KRYBOSTON                   N136225KBOSK6PA          N42214660W071002300   A        990782210
+SUSAP KBOSK6V  ATCF040APP00263100026310URYBOSTON                   N                        N42214660W071002300   A        990792210
+SUSAP KBOSK6V  ATCF050ACC01248400124840CRYBOSTON                   N                        N42214660W071002300   A        990802313
+SUSAP KBOSK6V  ATCF060DEP01330000133000KRYBOSTON                   N                        N42214660W071002300   A        990812210
+SUSAP KBOSK6V  ATCF070DEP00343600034360URNBOSTON                   N                        N42214660W071002300   A        990822210
+SUSAP KBOSK6V  ATCF080HEL01247250124725TRYBOSTON                   N                        N42214660W071002300   A        990832210
+SUSAP KBOSK6V  ATCF090TWR01288000128800KRYBOSTON                   N181360KBOSK6PA          N42214660W071002300   A        990842210
+SUSAP KBOSK6V  ATCF100TWR01322250132225TRYBOSTON                   N001180KBOSK6PA          N42214660W071002300   A        990852210
+SUSAP KBOSK6V  ATCF110TWR00257800025780URYBOSTON                   N                        N42214660W071002300   A        990862210
+SUSAP KBOSK6V  GNDF010CLD              DUYBOSTON                   N                        N42214660W071002300D  A        990872210
+SUSAP KBOSK6V  GNDF020CLD01216500121650FNYBOSTON                   N                        N42214660W071002300   A        990882210
+SUSAP KBOSK6V  GNDF030CLD00257800025780UNYBOSTON                   N                        N42214660W071002300   A        990892210
+SUSAP KBOSK6V  GNDF040CPT01216500121650FNYBOSTON                   N                        N42214660W071002300   A        990902210
+SUSAP KBOSK6V  GNDF050GND01217500121750FUYBOSTON                   N                        N42214660W071002300   A        990912210
+SUSAP KBOSK6V  GNDF060GND01219000121900KUYBOSTON                   N                        N42214660W071002300   A        990922210
+SUSAP KBOSK6V  GNDF070GTE01311000131100KUYMASSPORT                 N                        N42214660W071002300   A        990932210
+SUSAP KBOSK6V  GNDF080RMP01318500131850FUNDELTA                    N                        N42214660W071002300   A        990942210
+SUSAP KBOSK6V  GNDF090RMP01340500134050FUYBOSTON                   N                        N42214660W071002300   A        990952210

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * This field will be used to further define the record by name.
  */

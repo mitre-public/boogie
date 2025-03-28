@@ -3,7 +3,9 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import java.time.Duration;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
 import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.utils.LegTimeFromString;
 
 /**
  * In Enroute Airways, “Route Distance From” is the distance in nautical miles from the waypoint identified in the records “Fix Ident”

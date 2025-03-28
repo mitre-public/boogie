@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 
@@ -29,17 +31,19 @@ public interface FirUirAssembler<AIRSPACE> {
 
     @Override
     public Stream<AIRSPACE> assemble(Collection<ArincFirUirLeg> legs) {
-      Map<String, List<ArincFirUirLeg>> groupedUp = legs.stream()
-          .sorted(Comparator.comparing(ArincFirUirLeg::sequenceNumber))
-          .collect(Collectors.groupingBy(this::firUirKey));
-      return groupedUp
-          .values().stream()
+      return legs.stream()
+          .collect(Collectors.groupingBy(this::firUirKey))
+          .values()
+          .stream()
           .flatMap(this::toAirspace);
     }
 
     private Stream<AIRSPACE> toAirspace(List<ArincFirUirLeg> legs) {
       ArincFirUirLeg representative = legs.get(0);
-      List<SEQUENCE> sequences = legs.stream().map(assemblyStrategy::convertFirUirLeg).collect(Collectors.toList());
+      List<SEQUENCE> sequences = legs.stream()
+          .sorted(Comparator.comparing(ArincFirUirLeg::sequenceNumber))
+          .map(assemblyStrategy::convertFirUirLeg)
+          .toList();
       return assemblyStrategy.convertFirUir(representative, sequences);
     }
 

@@ -4,15 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.zip.GZIPInputStream;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -97,7 +98,15 @@ public final class EmbeddedCifpFile {
   }
 
   public Collection<ArincFirUirLeg> arincFirUirLegs() {
-    return records.arincfirUirLegs();
+    return records.arincFirUirLegs();
+  }
+
+  public Collection<ArincHelipad> arincHelipads() {
+    return records.arincHelipads();
+  }
+
+  public Collection<ArincControlledAirspaceLeg> controlledAirspaces() {
+    return records.arincControlledAirspaceLegs();
   }
 
   public int totalRecords() {

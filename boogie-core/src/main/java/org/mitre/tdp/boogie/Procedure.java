@@ -290,7 +290,7 @@ public interface Procedure {
         return this;
       }
 
-      public Standard build() {
+      public Procedure.Standard build() {
         return new Standard(this);
       }
     }

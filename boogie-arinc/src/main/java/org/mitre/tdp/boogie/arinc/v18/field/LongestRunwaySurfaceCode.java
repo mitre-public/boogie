@@ -30,7 +30,7 @@ public enum LongestRunwaySurfaceCode implements FieldSpec<LongestRunwaySurfaceCo
    */
   U;
 
-  static final Set<String> enumValues = Arrays.stream(LongestRunwaySurfaceCode.values()).filter(e -> !SPEC.equals(e)).map(Enum::name).collect(Collectors.toSet());
+  public static final Set<String> VALID = Arrays.stream(LongestRunwaySurfaceCode.values()).filter(e -> !SPEC.equals(e)).map(Enum::name).collect(Collectors.toSet());
 
   @Override
   public int fieldLength() {
@@ -44,6 +44,6 @@ public enum LongestRunwaySurfaceCode implements FieldSpec<LongestRunwaySurfaceCo
 
   @Override
   public Optional<LongestRunwaySurfaceCode> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(enumValues::contains).map(LongestRunwaySurfaceCode::valueOf);
+    return Optional.of(fieldValue).map(String::trim).filter(VALID::contains).map(LongestRunwaySurfaceCode::valueOf);
   }
 }

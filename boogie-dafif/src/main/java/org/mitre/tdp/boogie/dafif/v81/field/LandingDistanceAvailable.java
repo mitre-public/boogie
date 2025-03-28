@@ -1,0 +1,36 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * "THE LENGTH OF THE RUNWAY IN FEET WHICH IS DERIVED OR DECLARED AVAILABLE AND SUITABLE FOR THE GROUND  RUN OF A LANDING AIRCRAFT.
+ * VALUES OCCUR IN THIS ORDER OF PRECEDENCE:
+ * 1.	DECLARED LDA (LAND DISTANCE AVAILABLE) VALUE IF PROVIDED BY SOURCE.
+ * 2.	RUNWAY LENGTH IF NO DISPLACED THRSHOLD IS PRESENT.
+ * 3.	RUNWAY LENGTH MINUS DISPLACED THRESHOLD DISTANCE WHEN A DISPLACED THRESHOLD IS PRESENT
+ *
+ * EXAMPLE(S): 00451 16405
+ *
+ * FIELD TYPE: N
+ *
+ * ALLOWED VALUES:
+ * 00001-40000 (VALUES ARE PADDED WITH LEADING ZEROS)
+ *
+ * SOURCE:
+ * ANALYST DERIVED FROM HOST NATION PUBLICATION
+ *
+ */
+public class LandingDistanceAvailable extends DafifInteger {
+  @Override
+  public int maxFieldLength() {
+    return 5;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 157;
+  }
+
+  @Override
+  public String regex() {
+    return "((0([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]|[0-9][1-9][0-9]{2}|[1-9][0-9]{3})|[1-3][0-9]{4}|40000)?)";
+  }
+}

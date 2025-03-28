@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-public final class PreferredRouteIdentifier extends TrimmableString{
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
+public final class PreferredRouteIdentifier extends TrimmableString {
 
   @Override
   public int fieldLength() {

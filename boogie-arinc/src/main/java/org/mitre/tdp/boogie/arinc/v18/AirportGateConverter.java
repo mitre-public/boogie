@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-public class AirportGateConverter implements Function<ArincRecord, Optional<ArincAirportGate>> {
+public final class AirportGateConverter implements Function<ArincRecord, Optional<ArincAirportGate>> {
   private static final Predicate<ArincRecord> isInvalidRecord = new AirportGateValidator().negate();
 
   @Override

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
 /**
  * The “Runway Length” field defines the total length of the runway surface declared suitable and available for ground
  * operations of aircraft for the runway identified in the records’ Runway Identifier field.

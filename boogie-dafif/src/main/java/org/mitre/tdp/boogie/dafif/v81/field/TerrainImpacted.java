@@ -1,0 +1,37 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * A ONE CHARACTER FIELD TO INDICATE IF AN AIRFIELD IS TERRAIN IMPACTED.  THIS OCCURS WHEN  TERRAIN RISES AT LEAST
+ * 2,000 FEET ABOVE THE AIRPORT ELEVATION WITHIN A 6 NAUTICAL MILE RADIUS
+ *  OF THE AIRFIELD REFERENCE POINT (ARP), OR WHEN TERRAIN RISES AT LEAST 4,000 FEET WITHIN THE “TO  SCALE” AREA
+ *  DEPICTED ON THE TERMINAL INSTRUMENT PROCEDURE.  (DOD SPECIFICATIONS PS/1FA/004,
+ *  PS/1FA/091, SECTION 3.3.4)
+ *
+ * FIELD TYPE: A
+ *
+ * ALLOWED VALUES:
+ *  Y
+ *  OR
+ *  NULL
+ *
+ * SOURCE: TRANSLATE/FORMAT FROM HOST NATION PUBLICATION
+ *
+ * INTENDED USE:
+ * THIS FIELD IS NO LONGER MAINTAINED AND WILL BE NULL.
+ */
+public final class TerrainImpacted extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 1;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 314;
+  }
+
+  @Override
+  public String regex() {
+    return "(^$)";
+  }
+}

@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
@@ -23,6 +25,14 @@ class TestArincRunway {
   private static final RunwayConverter converter = new RunwayConverter();
 
   private static final String runway1 = "SUSAP KJFKK6GRW04L   1120790440 N40372318W073470505+0000          00012046057200 IHIQ10000           CONC     090RBWT      155192003";
+
+  public static final String noLat = "SAFRP FC04FCGRW11    1029531100                                   011610000  075D     0000     050                         559832403";
+
+
+  @Test
+  void testRobust() {
+    assertTrue(PARSER.parse(noLat).flatMap(converter).isEmpty());
+  }
 
   @Test
   void testEqualsHashCode() {

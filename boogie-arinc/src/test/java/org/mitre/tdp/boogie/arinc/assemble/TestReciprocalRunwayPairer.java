@@ -27,7 +27,7 @@ class TestReciprocalRunwayPairer {
     ArincRunway r4 = mock(ArincRunway.class);
     ArincRunway r5 = mock(ArincRunway.class);
 
-    Set<Pair<ArincRunway, ArincRunway>> pairs = newHashSet(Pair.of(r1, r2), Pair.of(r3, r4), Pair.of(r1, r5));
+    Set<RunwayPair> pairs = newHashSet(new RunwayPair(r1, r2), new RunwayPair(r3, r4), new RunwayPair(r1, r5));
     assertThrows(IllegalArgumentException.class, () -> allPairer.checkNoSharedReciprocals(pairs));
   }
 
@@ -40,7 +40,7 @@ class TestReciprocalRunwayPairer {
     ArincRunway r5 = mock(ArincRunway.class);
 
     Set<ArincRunway> allRunways = newHashSet(r1, r2, r3, r4, r5);
-    Set<Pair<ArincRunway, ArincRunway>> pairs = newHashSet(Pair.of(r1, r2), Pair.of(r3, r4));
+    Set<RunwayPair> pairs = newHashSet(new RunwayPair(r1, r2), new RunwayPair(r3, r4));
 
     Set<ArincRunway> unpaired = allPairer.allUnpairedRunways(pairs, allRunways);
 
@@ -68,12 +68,12 @@ class TestReciprocalRunwayPairer {
 
     ReciprocalRunwayPairer pairer = new ReciprocalRunwayPairer((ar1, ar2) -> (ar1.equals(r1) && ar2.equals(r2)) || (ar1.equals(r2) && ar2.equals(r1)));
 
-    Collection<Pair<ArincRunway, ArincRunway>> allPairs = pairer.apply(newHashSet(r1, r2, r3, r4, r5));
+    Collection<RunwayPair> allPairs = pairer.apply(newHashSet(r1, r2, r3, r4, r5));
 
     assertAll(
         () -> assertEquals(4, allPairs.size()),
-        () -> assertTrue(allPairs.contains(Pair.of(r1, r2)) || allPairs.contains(Pair.of(r2, r1))),
-        () -> assertTrue(allPairs.contains(Pair.of(r3, null)))
+        () -> assertTrue(allPairs.contains(new RunwayPair(r1, r2)) || allPairs.contains(new RunwayPair(r2, r1))),
+        () -> assertTrue(allPairs.contains(new RunwayPair(r3, null)))
     );
   }
 

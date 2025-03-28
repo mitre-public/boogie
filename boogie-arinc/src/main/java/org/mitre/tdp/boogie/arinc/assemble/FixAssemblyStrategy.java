@@ -12,6 +12,7 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -100,6 +101,13 @@ public interface FixAssemblyStrategy<F> {
    * @param gnss the input GNSS landing system record
    */
   F convertGnssLandingSystem(ArincGnssLandingSystem gnss);
+
+  /**
+   * Converts the incoming 424 Helipad record to the user defined type.
+   * @param helipad the arinc 424 helipad
+   * @return the user defined type
+   */
+  F convertHelipad(ArincHelipad helipad);
 
   final class Standard implements FixAssemblyStrategy<Fix> {
 
@@ -207,6 +215,16 @@ public interface FixAssemblyStrategy<F> {
           .build();
     }
 
+    @Override
+    public Fix convertHelipad(ArincHelipad helipad) {
+      Instant cycleDate = AiracCycle.startDate(helipad.cycle());
+      return Fix.builder()
+          .fixIdentifier(helipad.helipadIdentifier())
+          .latLong(LatLong.of(helipad.latitude(), helipad.longitude()))
+          .magneticVariation(magneticVariation(helipad.latitude(), helipad.longitude(), cycleDate))
+          .build();
+    }
+
     private IllegalStateException missingField(String fieldName) {
       return new IllegalStateException("Missing required field: " + fieldName);
     }
@@ -256,6 +274,11 @@ public interface FixAssemblyStrategy<F> {
     @Override
     public F convertGnssLandingSystem(ArincGnssLandingSystem gnss) {
       return cache.computeIfAbsent(gnss, g -> delegate.convertGnssLandingSystem((ArincGnssLandingSystem) g));
+    }
+
+    @Override
+    public F convertHelipad(ArincHelipad helipad) {
+      return cache.computeIfAbsent(helipad, h -> delegate.convertHelipad((ArincHelipad) h));
     }
   }
 }

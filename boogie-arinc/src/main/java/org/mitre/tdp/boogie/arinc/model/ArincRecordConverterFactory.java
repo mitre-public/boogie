@@ -8,8 +8,10 @@ import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
@@ -25,7 +27,8 @@ import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
 import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
 import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
 import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
-import org.mitre.tdp.boogie.arinc.v19.HoldingPatternConverter;
+import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
+import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
 /**
  * Factory class for common instantiations of {@link ConvertingArincRecordConsumer}s.
@@ -62,8 +65,12 @@ public final class ArincRecordConverterFactory {
         .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
         .gnssLandingSystemConverter(new GnssLandingSystemConverter())
         .holdingPatternDelegator(new HoldingPatternValidator())
-        .firUirDelegator(new ArincFirUirLegValidator())
-        .firUirConverter(new ArincFirUirLegConverter());
+        .firUirDelegator(new FirUirLegValidator())
+        .firUirConverter(new FirUirLegConverter())
+        .helipadDelegator(new HelipadValidator())
+        .helipadConverter(new HelipadConverter())
+        .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
+        .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter());
   }
 
   private static ConvertingArincRecordMapper.Builder standardMapper() {
@@ -89,8 +96,12 @@ public final class ArincRecordConverterFactory {
         .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
         .gnssLandingSystemConverter(new GnssLandingSystemConverter())
         .holdingPatternDelegator(new GnssLandingSystemValidator())
-        .firUirDelegator(new ArincFirUirLegValidator())
-        .firUirConverter(new ArincFirUirLegConverter());
+        .firUirDelegator(new FirUirLegValidator())
+        .firUirConverter(new FirUirLegConverter())
+        .helipadDelegator(new HelipadValidator())
+        .helipadConverter(new HelipadConverter())
+        .controlledAirspaceDelegator(new ControlledAirspaceValidator())
+        .controlledAirspaceConverter(new ControlledAirspaceLegConverter());
   }
 
   /**
@@ -101,20 +112,40 @@ public final class ArincRecordConverterFactory {
    * fieldsets and overall structure - albeit with slightly different contents and holding patterns). However, because
    * the newer holding pattern has new fields, a new consumer bust me bade for 18 vs 19. However, the same validator works
    * for both 19/18 holds as only optional fields were added.
+   * <br>
+   * The V20 runway converters are ok, because the arinc record just moved the field to a place it fits at full res.
+   * The procedure leg needs more processing for new data.
+   * <br>
+   * The V21 needed new fields processed for holding, gnss, and procedureLegs.
    */
   public static ConvertingArincRecordConsumer consumerForVersion(ArincVersion version) {
-    switch (version) {
-      case V18:
-        return standardConsumer()
-            .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter())
-            .build();
-      case V19:
-        return standardConsumer()
-            .holdingPatternConverter(new HoldingPatternConverter())
-            .build();
-      default:
-        throw new UnsupportedOperationException("No factory method support for provided pre-canned version spec: ".concat(version.name()));
-    }
+    return switch (version) {
+      case V18, V18_NAV, V18_AIRSPACE -> standardConsumer()
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter())
+          .build();
+      case V19, V19_NAV -> standardConsumer()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v19.HoldingPatternConverter())
+          .build();
+      case V20, V20_NAV -> standardConsumer()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
+          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v20.ProcedureLegConverter())
+          .build();
+      case V21, V21_NAV -> standardConsumer()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
+          .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
+          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
+          .build();
+      case V22, V22_NAV -> standardConsumer()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v22.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
+          .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
+          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v22.ProcedureLegConverter())
+          .runwayConverter(new org.mitre.tdp.boogie.arinc.v22.RunwayConverter())
+          .build();
+    };
   }
 
   /**
@@ -125,19 +156,39 @@ public final class ArincRecordConverterFactory {
    * fieldsets and overall structure - albeit with slightly different contents and holding patterns). However, because
    * the newer holding pattern has new fields, a new consumer bust me bade for 18 vs 19. However, the same validator works
    * for both 19/18 holds as only optional fields were added.
+   * <br>
+   * The V20 runway converters are ok, because the arinc record just moved the field to a place it fits at full res.
+   * The procedure leg needs more processing for new data.
+   * <br>
+   * The V21 needed new fields processed for holding, gnss, and procedureLegs.
    */
   public static ConvertingArincRecordMapper mapperForVersion(ArincVersion version) {
-    switch (version) {
-      case V18:
-        return standardMapper()
-            .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter())
-            .build();
-      case V19:
-        return standardMapper()
-            .holdingPatternConverter(new HoldingPatternConverter())
-            .build();
-      default:
-        throw new UnsupportedOperationException("No factory method support for provided pre-canned version spec: ".concat(version.name()));
-    }
+    return switch (version) {
+      case V18, V18_NAV, V18_AIRSPACE -> standardMapper()
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter())
+          .build();
+      case V19, V19_NAV -> standardMapper()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v19.HoldingPatternConverter())
+          .build();
+      case V20, V20_NAV -> standardMapper()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
+          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v20.ProcedureLegConverter())
+          .build();
+      case V21, V21_NAV -> standardMapper()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
+          .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
+          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
+          .build();
+      case V22, V22_NAV -> standardMapper()
+          .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v22.AirwayLegConverter())
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
+          .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
+          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
+          .runwayConverter(new org.mitre.tdp.boogie.arinc.v22.RunwayConverter())
+          .build();
+    };
   }
 }

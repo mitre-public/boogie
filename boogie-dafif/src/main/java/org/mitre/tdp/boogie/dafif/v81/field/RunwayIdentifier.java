@@ -1,0 +1,36 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * DESIGNATED IN ACCORDANCE WITH APPROPRIATE HOST NATION DOCUMENTS, RUNWAY NUMBERS (01-18 )  (LOW END) AND (19-36) (HIGH END) AND LETTERS (L, R, C, S, T).  THE RUNWAY NUMBER IS THE WHOLE NUMBER TO THE NEAREST ONE- TENTH OF THE MAGNETIC AZIMUTH OF THE RUNWAY CENTERLINE, MEASURED CLOCKWISE FROM  MAGNETIC NORTH. FOR PARALLEL RUNWAYS, THE THIRD CHARACTER SHALL  DIFFERENTIATE BETWEEN LEFT (L), RIGHT (R), CENTER (C), STOL (S), OR TRUE (T).
+ *
+ *  NOTE:  RUNWAYS WITH TRUE (T) IDENTS ARE COMPARABLE TO THE TRUE HEADING, NOT MAGNETIC  HEADING.
+ *
+ * EXAMPLE(S):
+ * 36R
+ * 05
+ *
+ * FIELD TYPE: A/N
+ *
+ * ALLOWED VALUES:
+ * 01-36
+ * OR
+ * 01-36 FOLLOWED BY ONE OF THE FOLLOWING: L, R, C, S, T
+ *
+ * SOURCE: HOST NATION PUBLICATION
+ */
+public final class RunwayIdentifier extends TrimmableString {
+  @Override
+  public int maxFieldLength() {
+    return 3;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 304;
+  }
+
+  @Override
+  public String regex() {
+    return "((0[1-9]|[1-2][0-9]|3[0-6])[L|R|C|S|T]{0,1})";
+  }
+}

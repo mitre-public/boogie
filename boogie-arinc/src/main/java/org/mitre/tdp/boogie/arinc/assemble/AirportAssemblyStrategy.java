@@ -10,9 +10,11 @@ import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
@@ -21,13 +23,13 @@ import org.mitre.tdp.boogie.util.Declinations;
 /**
  * Strategy class for generating user-defined records from 424 airport information. Used with {@link AirportAssembler}.
  */
-public interface AirportAssemblyStrategy<A, R> {
+public interface AirportAssemblyStrategy<A, R, P> {
 
   /**
    * Airport assembly strategy for building {@link Airport.Standard} and {@link Runway.Standard} definitions from airport records
    * defined in a 424 file.
    */
-  static AirportAssemblyStrategy<Airport, Runway> standard() {
+  static AirportAssemblyStrategy<Airport, Runway, Helipad> standard() {
     return new Standard();
   }
 
@@ -38,7 +40,7 @@ public interface AirportAssemblyStrategy<A, R> {
    * @param convertedRunways the collection of runways associated with the airport converted with the {@code .convertRunway(...)}
    *                         method
    */
-  A convertAirport(ArincAirport airport, List<R> convertedRunways);
+  A convertAirport(ArincAirport airport, List<R> convertedRunways, List<P> convertedHelipads);
 
   /**
    * Convert a collection of runway-associated 424 records into a single user-defined runway types.
@@ -52,13 +54,15 @@ public interface AirportAssemblyStrategy<A, R> {
    */
   R convertRunway(ArincAirport airport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2);
 
-  final class Standard implements AirportAssemblyStrategy<Airport, Runway> {
+  P convertHelipad(ArincHelipad pad);
+
+  final class Standard implements AirportAssemblyStrategy<Airport, Runway, Helipad> {
 
     private Standard() {
     }
 
     @Override
-    public Airport.Standard convertAirport(ArincAirport airport, List<Runway> convertedRunways) {
+    public Airport.Standard convertAirport(ArincAirport airport, List<Runway> convertedRunways, List<Helipad> convertedHelipads) {
       return Airport.builder()
           .airportIdentifier(airport.airportIdentifier())
           .latLong(LatLong.of(airport.latitude(), airport.longitude()))
@@ -82,6 +86,14 @@ public interface AirportAssemblyStrategy<A, R> {
           .origin(LatLong.of(origin.latitude(), origin.longitude()))
           .length(origin.runwayLength().map(Integer::doubleValue).map(Distance::ofFeet).orElse(null))
           .course(trueCourse.orElse(null))
+          .build();
+    }
+
+    @Override
+    public Helipad convertHelipad(ArincHelipad pad) {
+      return Helipad.builder()
+          .padIdentifier(pad.helipadIdentifier())
+          .origin(LatLong.of(pad.latitude(), pad.longitude()))
           .build();
     }
 

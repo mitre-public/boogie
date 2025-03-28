@@ -1,0 +1,40 @@
+package org.mitre.tdp.boogie.dafif.v81.field;
+
+/**
+ * THE WIDTH OF THE LOCALIZER BEARING/COURSE PRODUCED BY THE SPECIFIED FACILITY.
+ * THIS WIDTH  TYPICALLY VARIES BETWEEN 3-6 DEGREES.WIDTH IS ENTERED TO THE HUNDRETH OF A DEGREE.
+ * IF NO LOCALIZER WIDTH IS PROVIDED BY HOST SOURCE, A MEDIUM VALUE OF 4.50 DEGREES IS ENTERED TO
+ * SUPPORT A STANDARD COURSE OF 700 FEET AT THE THRESHOLD.  THIS DEFAULT POPULATION OF 4.5 DEGREES
+ * ONLY APPLIES TO LOCALIZER COMPONENT 'Z' AND NOT TO  MLS LOCALIZER COMPONENT 'S'.
+ *
+ * EXAMPLE(S):
+ * 2.77
+ * 4.50
+ * 5.00
+ * 0.80
+ *
+ * FIELD TYPE: N
+ *
+ * ALLOWED VALUES:
+ * 0.10 - 99.99 (PADDED WITH TRAILING ZEROS, LEADING ZEROS ARE SUPPRESSED UNLESS VALUE IS LESS THAN 1.0)
+ * OR
+ * NULL
+ *
+ * SOURCE: HOST NATION PUBLICATION
+ */
+public final class LocalizerWidth extends DafifDouble {
+  @Override
+  public int maxFieldLength() {
+    return 5;
+  }
+
+  @Override
+  public int fieldCode() {
+    return 168;
+  }
+
+  @Override
+  public String regex() {
+    return "(((([1-9]|[1-9][0-9])\\.[0-9]{2})|0\\.[1-9][0-9])?)";
+  }
+}

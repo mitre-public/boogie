@@ -31,12 +31,11 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
   private final DelegatingMapper<ArincWaypoint> arincWaypoints;
   private final DelegatingMapper<ArincAirwayLeg> arincAirwayLegs;
   private final DelegatingMapper<ArincProcedureLeg> arincProcedureLegs;
-
   private final DelegatingMapper<ArincGnssLandingSystem> arincGnssLandingSystems;
-
   private final DelegatingMapper<ArincHoldingPattern> arincHoldingPatterns;
-
   private final DelegatingMapper<ArincFirUirLeg> arincFirUirLegs;
+  private final DelegatingMapper<ArincHelipad> arincHelipads;
+  private final DelegatingMapper<ArincControlledAirspaceLeg> arincControlledAirspaceLegs;
 
   private ConvertingArincRecordMapper(Builder builder) {
     this.arincAirports = new DelegatingMapper<>(builder.airportDelegator, builder.airportConverter);
@@ -51,6 +50,8 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     this.arincGnssLandingSystems = new DelegatingMapper<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
     this.arincHoldingPatterns = new DelegatingMapper<>(builder.holdingPatternDelegator, builder.holdingPatternConverter);
     this.arincFirUirLegs = new DelegatingMapper<>(builder.firUirDelegator, builder.firUirConverter);
+    this.arincHelipads = new DelegatingMapper<>(builder.helipadDelegator, builder.helipadConverter);
+    this.arincControlledAirspaceLegs = new DelegatingMapper<>(builder.controlledAirspaceDelegator, builder.controlledAirspaceConverter);
   }
 
   @Override
@@ -91,6 +92,12 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     if (arincFirUirLegs.test(arincRecord)) {
       return arincFirUirLegs.apply(arincRecord);
     }
+    if (arincHelipads.test(arincRecord)) {
+      return arincHelipads.apply(arincRecord);
+    }
+    if (arincControlledAirspaceLegs.test(arincRecord)) {
+      return arincControlledAirspaceLegs.apply(arincRecord);
+    }
     return Optional.empty();
   }
 
@@ -116,10 +123,8 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
   }
 
   public static class Builder {
-
     private Predicate<ArincRecord> airportDelegator;
     private Function<ArincRecord, Optional<ArincAirport>> airportConverter;
-
     private Predicate<ArincRecord> airportContinuationDelegator;
     private Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> airportContinuationConverter;
     private Predicate<ArincRecord> airwayDelegator;
@@ -136,18 +141,16 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     private Function<ArincRecord, Optional<ArincVhfNavaid>> vhfNavaidConverter;
     private Predicate<ArincRecord> waypointDelegator;
     private Function<ArincRecord, Optional<ArincWaypoint>> waypointConverter;
-
     private Predicate<ArincRecord> gnssLandingSystemDelegator;
-
     private Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter;
-
     private Predicate<ArincRecord> holdingPatternDelegator;
-
     private Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter;
-
     private Predicate<ArincRecord> firUirDelegator;
-
     private Function<ArincRecord, Optional<ArincFirUirLeg>> firUirConverter;
+    private Predicate<ArincRecord> helipadDelegator;
+    private Function<ArincRecord, Optional<ArincHelipad>> helipadConverter;
+    private Predicate<ArincRecord> controlledAirspaceDelegator;
+    private Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> controlledAirspaceConverter;
 
     public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
       this.airportContinuationDelegator = airportContinuationDelegator;
@@ -266,6 +269,26 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
     public Builder firUirConverter(Function<ArincRecord, Optional<ArincFirUirLeg>> firUirConverter) {
       this.firUirConverter = firUirConverter;
+      return this;
+    }
+
+    public Builder helipadDelegator(Predicate<ArincRecord> helipadDelegator) {
+      this.helipadDelegator = helipadDelegator;
+      return this;
+    }
+
+    public Builder helipadConverter(Function<ArincRecord, Optional<ArincHelipad>> helipadConverter) {
+      this.helipadConverter = helipadConverter;
+      return this;
+    }
+
+    public Builder controlledAirspaceDelegator(Predicate<ArincRecord> controlledAirspaceDelegator) {
+      this.controlledAirspaceDelegator = controlledAirspaceDelegator;
+      return this;
+    }
+
+    public Builder controlledAirspaceConverter(Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> controlledAirspaceConverter) {
+      this.controlledAirspaceConverter = controlledAirspaceConverter;
       return this;
     }
 
