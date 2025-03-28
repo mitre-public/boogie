@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
  * <br>
  * {@code List[A, B, C, D] --> Pair[A, B], Pair[C, null], Pair[D, null]}
  */
-public final class ReciprocalRunwayPairer implements Function<Collection<ArincRunway>, Collection<Pair<ArincRunway, ArincRunway>>> {
+public final class ReciprocalRunwayPairer implements Function<Collection<ArincRunway>, Collection<RunwayPair>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ReciprocalRunwayPairer.class);
 
@@ -54,14 +54,14 @@ public final class ReciprocalRunwayPairer implements Function<Collection<ArincRu
   }
 
   @Override
-  public Collection<Pair<ArincRunway, ArincRunway>> apply(Collection<ArincRunway> arincRunways) {
+  public Collection<RunwayPair> apply(Collection<ArincRunway> arincRunways) {
     checkArgument(allMatch(arincRunways, ArincRunway::airportIdentifier) || arincRunways.isEmpty(), "All runways should be from the same airport.");
 
-    LinkedHashSet<Pair<ArincRunway, ArincRunway>> reciprocalPairs = new LinkedHashSet<>();
+    LinkedHashSet<RunwayPair> reciprocalPairs = new LinkedHashSet<>();
 
     Combinatorics.pairwiseCombos(arincRunways).forEachRemaining(pair -> {
       if (isReciprocalPair.test(pair.first(), pair.second())) {
-        reciprocalPairs.add(pair);
+        reciprocalPairs.add(new RunwayPair(pair.first(), pair.second()));
       }
     });
 
@@ -72,11 +72,11 @@ public final class ReciprocalRunwayPairer implements Function<Collection<ArincRu
     String runwayIds = allUnpaired.stream().map(ArincRunway::runwayIdentifier).collect(Collectors.joining(","));
     logIf(!allUnpaired.isEmpty(), LOG::debug, "Unable to find reciprocals for runways {}.", runwayIds);
 
-    return concat(reciprocalPairs.stream(), allUnpaired.stream().map(runway -> Pair.of(runway, (ArincRunway) null))).collect(toList());
+    return concat(reciprocalPairs.stream(), allUnpaired.stream().map(runway -> new RunwayPair(runway, null))).collect(toList());
   }
 
-  Set<ArincRunway> allUnpairedRunways(Set<Pair<ArincRunway, ArincRunway>> reciprocalPairs, Collection<ArincRunway> allRunways) {
-    Set<ArincRunway> reciprocalRunways = reciprocalPairs.stream().flatMap(pair -> Stream.of(pair.first(), pair.second())).collect(toSet());
+  Set<ArincRunway> allUnpairedRunways(Set<RunwayPair> reciprocalPairs, Collection<ArincRunway> allRunways) {
+    Set<ArincRunway> reciprocalRunways = reciprocalPairs.stream().flatMap(pair -> Stream.of(pair.thisRunway(), pair.otherEnd())).collect(toSet());
     return Sets.difference(new LinkedHashSet<>(allRunways), reciprocalRunways);
   }
 
@@ -84,8 +84,8 @@ public final class ReciprocalRunwayPairer implements Function<Collection<ArincRu
    * Checks there are no instances where (RwyA, RwyB) and (RwyB, RwyC) are paired as reciprocals - any runway can have at most one
    * reciprocal counterpart.
    */
-  void checkNoSharedReciprocals(Set<Pair<ArincRunway, ArincRunway>> reciprocalPairs) {
-    Set<ArincRunway> allRunways = reciprocalPairs.stream().flatMap(pair -> Stream.of(pair.first(), pair.second())).collect(toSet());
+  void checkNoSharedReciprocals(Set<RunwayPair> reciprocalPairs) {
+    Set<ArincRunway> allRunways = reciprocalPairs.stream().flatMap(pair -> Stream.of(pair.thisRunway(), pair.otherEnd())).collect(toSet());
     checkArgument(allRunways.size() == 2 * reciprocalPairs.size(), "Non-Unique reciprocal runway pairs.");
   }
 

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincDouble;
+
 /**
  * The “Frequency Protection Distance” field provides an indication of the distance to the next nearest NAVAID on the same frequency.
  * <br>

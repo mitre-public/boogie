@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
 /**
  * The width of the runway identified in the “Runway Identifier” field is specified in the “Runway Width” field.
  * <br>

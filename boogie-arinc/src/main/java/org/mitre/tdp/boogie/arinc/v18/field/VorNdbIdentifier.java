@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * The “VOR/NDB Identifier” field identifies the VHF/MF/LF facility defined in the record.
  */

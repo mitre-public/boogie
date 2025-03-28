@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincDouble;
+
 /**
  * The “Component Elevation” field defines the elevation of a given component in the Localizer, GLS and MLS records.
  * <br>

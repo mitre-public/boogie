@@ -31,8 +31,10 @@ import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegValidator;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
@@ -55,12 +57,14 @@ import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
 import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
 import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
+import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
+import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 class TestAirwayAssembler {
-  private static SplitList shouldSplit = SplitList.INSTANCE;
+  private static ShouldSplitAirway shouldSplit = ShouldSplitAirway.INSTANCE;
 
   /**
    * This file contains all the airway legs for J121 + T222 plus any record which mentions any of the associated fixes or recommended
@@ -174,7 +178,11 @@ class TestAirwayAssembler {
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
       .holdingPatternConverter(new HoldingPatternConverter())
       .holdingPatternDelegator(new HoldingPatternValidator())
-      .firUirConverter(new ArincFirUirLegConverter())
-      .firUirDelegator(new ArincFirUirLegValidator())
+      .firUirConverter(new FirUirLegConverter())
+      .firUirDelegator(new FirUirLegValidator())
+      .helipadDelegator(new HelipadValidator())
+      .helipadConverter(new HelipadConverter())
+      .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
+      .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .build();
 }

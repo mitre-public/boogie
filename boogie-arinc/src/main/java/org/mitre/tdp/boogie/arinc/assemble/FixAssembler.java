@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -49,38 +50,31 @@ public interface FixAssembler<F> {
     public F assemble(ArincModel arincModel) {
       String sectionSubSection = arincModel.sectionCode().name().concat(arincModel.subSectionCode().orElse(""));
 
-      // airports
-      switch (sectionSubSection) {
-        case "PA":
-          return strategy.convertAirport((ArincAirport) arincModel);
+      // TODO: replace with pattern matching expression to kill off type casts
+      return switch (sectionSubSection) {
+        // airports
+        case "PA" -> strategy.convertAirport((ArincAirport) arincModel);
         // Enroute NDB Navaids
-        case "DB":
-          return strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
+        case "DB" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
         // Terminal NDB Navaids
-        case "PN":
-          return strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
+        case "PN" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
         // VHF Navaids
-        case "D":
-          return strategy.convertVhfNavaid((ArincVhfNavaid) arincModel);
+        case "D" -> strategy.convertVhfNavaid((ArincVhfNavaid) arincModel);
         // Enroute waypoints
-        case "EA":
-          return strategy.convertWaypoint((ArincWaypoint) arincModel);
+        case "EA" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
         // Terminal waypoints
-        case "PC":
-          return strategy.convertWaypoint((ArincWaypoint) arincModel);
+        case "PC" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
         // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
-        case "PG":
-          return strategy.convertRunway((ArincRunway) arincModel);
+        case "PG" -> strategy.convertRunway((ArincRunway) arincModel);
         // localizerGlideSlopes - generally used as a recommended navaid on some approaches
-        case "PI":
-          return strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
+        case "PI" -> strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
         //gnss landing systems - usually used on gls approach or as rec navs rarely
-        case "PT":
-          return strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
+        case "PT" -> strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
+        case "PH" -> //helipads at airports
+            strategy.convertHelipad((ArincHelipad) arincModel);
         // anything else is not explicitly supported as a reference object in a leg
-        default:
-          throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
-      }
+        default -> throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
+      };
     }
   }
 }

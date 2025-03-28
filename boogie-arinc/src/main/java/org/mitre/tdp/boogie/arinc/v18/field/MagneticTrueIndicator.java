@@ -10,8 +10,8 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 /**
  * The “Magnetic/True Indicator” field is used to indicate if the “Course From” and “Course To” fields of the Cruise Table record and the “Sector Bearing”
  * fields of the MSA and TAA record are in magnetic or true degrees. It is also used in the Airport Record to indicate that all detail and procedures for
- * that airport are included in the data base with a reference to either Magnetic North or True North. The field is blank in Airport Record when the data
- * base contains a mix of magnetic and true information for the airport.
+ * that airport are included in the data with a reference to either Magnetic North or True North. The field is blank in Airport Record when the data
+ * contains a mix of magnetic and true information for the airport.
  */
 public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator> {
   SPEC,

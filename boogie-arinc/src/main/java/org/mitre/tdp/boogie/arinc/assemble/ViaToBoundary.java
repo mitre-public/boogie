@@ -11,19 +11,14 @@ public final class ViaToBoundary implements Function<BoundaryVia, Optional<Geome
   private ViaToBoundary() {}
   @Override
   public Optional<Geometry> apply(BoundaryVia boundaryVia) {
-    switch (boundaryVia) {
-      case CE:
-      case C : return Optional.of(Geometry.CIRCLE);
-      case GE:
-      case G : return Optional.of(Geometry.GREAT_CIRCLE);
-      case HE:
-      case H : return Optional.of(Geometry.RHUMB_LINE);
-      case LE:
-      case L : return Optional.of(Geometry.COUNTER_CLOCKWISE_ARC);
-      case RE:
-      case R : return Optional.of(Geometry.CLOCKWISE_ARC);
-      case E: return Optional.empty();
-      default: throw new IllegalArgumentException("Unknown boundary: " + boundaryVia);
-    }
+    return switch (boundaryVia) {
+      case CE, C -> Optional.of(Geometry.CIRCLE);
+      case GE, G -> Optional.of(Geometry.GREAT_CIRCLE);
+      case HE, H -> Optional.of(Geometry.RHUMB_LINE);
+      case LE, L -> Optional.of(Geometry.COUNTER_CLOCKWISE_ARC);
+      case RE, R -> Optional.of(Geometry.CLOCKWISE_ARC);
+      case E -> Optional.empty();
+      default -> throw new IllegalArgumentException("Unknown boundary: " + boundaryVia);
+    };
   }
 }

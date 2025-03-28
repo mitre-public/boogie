@@ -20,9 +20,23 @@ class AirspaceTest {
   }
 
   @Test
+  void verifyStandardLeg() {
+    EqualsVerifier.forClass(AirspaceSequence.Standard.class)
+        .withCachedHashCode("hashCode", "computeHashCode", createSequence())
+        .verify();
+  }
+
+  @Test
   void verifyRecord() {
     EqualsVerifier.forClass(Airspace.Record.class)
         .withCachedHashCode("hashCode", "computeHashCode", Airspace.record("WHATEVER", createStandard()))
+        .verify();
+  }
+
+  @Test
+  void verifySequenceRecord() {
+    EqualsVerifier.forClass(AirspaceSequence.Record.class)
+        .withCachedHashCode("hashCode", "computeHashCode", AirspaceSequence.record("WHATEVER", createSequence()))
         .verify();
   }
 
@@ -37,6 +51,13 @@ class AirspaceTest {
     );
   }
 
+  @Test
+  void testSequenceModel() {
+    AirspaceSequence sequence = createSequence();
+    assertEquals(10, sequence.sequenceNumber());
+    assertEquals(Geometry.CIRCLE, sequence.geometry());
+  }
+
   private Airspace.Standard createStandard() {
     return Airspace.builder()
         .identifier("name")
@@ -44,6 +65,12 @@ class AirspaceTest {
         .airspaceType(AirspaceType.CONTROLLED)
         .sequences(List.of())
         .altitudeLimit(Range.all())
+        .build();
+  }
+
+  private AirspaceSequence.Standard createSequence() {
+    return AirspaceSequence.builder(Geometry.CIRCLE, 10)
+        .centerFix(LatLong.of(45.0, 45.0))
         .build();
   }
 }

@@ -23,7 +23,7 @@ class TestHoldingPatternSpec {
 
   @Test
   void matchesRecord19() {
-    assertTrue(new HoldingPatternSpec().matchesRecord(HOLD));
+    assertTrue(new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec().matchesRecord(HOLD));
   }
 
   @Test

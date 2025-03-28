@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * The “Datum Code” field defines the Local Horizontal Reference Datum to which a geographical position, expressed in latitude and longitude, is associated.
  */

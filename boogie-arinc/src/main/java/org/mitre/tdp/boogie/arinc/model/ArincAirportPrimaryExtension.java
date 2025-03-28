@@ -75,7 +75,7 @@ public final class ArincAirportPrimaryExtension implements ArincModel {
   }
 
   public static Builder builder() {
-    return new Builder();
+    return new ArincAirportPrimaryExtension.Builder();
   }
 
   public RecordType recordType() {

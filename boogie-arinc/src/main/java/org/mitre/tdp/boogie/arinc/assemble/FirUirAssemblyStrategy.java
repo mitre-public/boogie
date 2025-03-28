@@ -15,15 +15,37 @@ import org.mitre.tdp.boogie.arinc.v18.field.FirUirIndicator;
 
 import com.google.common.collect.Range;
 
+/**
+ * Strategy class for generating used-defined records from 424 information. Used with {@link FirUirAssembler}.
+ */
 public interface FirUirAssemblyStrategy<A, S> {
 
+  /**
+   * Assembly strategy for building {@link Airspace.Standard } and {@link AirspaceSequence.Standard} from records defined in ARINC 424.
+   * @return the strategy
+   */
   static FirUirAssemblyStrategy<Airspace, AirspaceSequence> standard() {
     return new Standard();
   }
 
+  /**
+   * This generates the airspace from arinc 424
+   * @param representative the first leg that has special data on it
+   * @param allLegs all the converted egs
+   * @return the record made from ARINC 424
+   */
   Stream<A> convertFirUir(ArincFirUirLeg representative, List<S> allLegs);
+
+  /**
+   * This generates the sequences from ARINC 424
+   * @param leg the leg to convert
+   * @return the sequence made from that leg
+   */
   S convertFirUirLeg(ArincFirUirLeg leg);
 
+  /**
+   * This is the standard strategy that produces the simplified objects.
+   */
   final class Standard implements FirUirAssemblyStrategy<Airspace, AirspaceSequence> {
     private Standard() {}
 
@@ -65,11 +87,15 @@ public interface FirUirAssemblyStrategy<A, S> {
       Geometry geometry = ViaToBoundary.INSTANCE.apply(leg.boundaryVia()).orElseThrow(() -> new IllegalArgumentException("No valid via code"));
       LatLong centerFix = leg.arcOriginLatitude()
           .filter(lat -> leg.arcOriginLongitude().isPresent())
-          .map(lat -> LatLong.of(lat, leg.arcOriginLongitude().get()))
+          .map(lat -> LatLong.of(lat, leg.arcOriginLongitude().orElseThrow()))
+          .orElse(null);
+      LatLong associatedFix = leg.firUirLatitude()
+          .filter(lat -> leg.firUirLongitude().isPresent())
+          .map(lat -> LatLong.of(lat, leg.firUirLongitude().orElseThrow()))
           .orElse(null);
       return AirspaceSequence.builder(geometry, leg.sequenceNumber())
           .centerFix(centerFix)
-          .associatedFix(LatLong.of(leg.firUirLatitude(), leg.firUirLongitude()))
+          .associatedFix(associatedFix)
           .build();
     }
   }

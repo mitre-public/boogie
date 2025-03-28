@@ -2,24 +2,24 @@ package org.mitre.tdp.boogie.arinc;
 
 import static java.util.Optional.ofNullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.ArincFirUirLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemSpec;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
 import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
 import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
-
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
-
-import com.google.common.collect.ImmutableMap;
+import org.mitre.tdp.boogie.arinc.v21.HelipadSpec;
 
 /**
  * Pre-configured set of parsers for various well-known ARINC spec types and record formats.
@@ -46,8 +46,38 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
-      new ArincFirUirLegSpec()
+      new FirUirLegSpec()
   ),
+
+  /**
+   * Returns a static implementation of a parser for V18 ARINC 424 data for only nav records
+   */
+  V18_NAV(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec(),
+      new GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec()
+  ),
+
+  /**
+   * This will only parse the airspace content
+   */
+  V18_AIRSPACE(
+      new AirportSpec(),
+      new RunwaySpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new ControlledAirspaceLegSpec(),
+      new FirUirLegSpec()
+  ),
+
   /**
    * Returns a static implementation of a parser for V19 ARINC 424 data.
    *
@@ -58,7 +88,7 @@ public enum ArincVersion {
       new AirportPrimaryExtensionSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
-      new AirwayLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.AirwayLegSpec(),
       new NdbNavaidSpec(),
       new VhfNavaidSpec(),
       new WaypointSpec(),
@@ -66,13 +96,148 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
-      new ArincFirUirLegSpec()
+      new FirUirLegSpec()
+  ),
+
+  /**
+   * This is a version 19 for only navigation records
+   */
+  V19_NAV(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec(),
+      new GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
+      new ControlledAirspaceLegSpec(),
+      new FirUirLegSpec()
+  ),
+
+  /**
+   * Returns a static implementation of a parser for V20 ARINC 424 data.
+   */
+  V20(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.ProcedureLegSpec(),
+      new GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
+      new ControlledAirspaceLegSpec(),
+      new FirUirLegSpec()
+  ),
+
+  /**
+   * Returns a static implementation of a parser for V20 ARINC 424 data.
+   */
+  V20_NAV(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.ProcedureLegSpec(),
+      new GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec()
+  ),
+
+  /**
+   * Returns a static implementation of a parser for V21 ARINC 424 data.
+   */
+  V21(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.ProcedureLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
+      new ControlledAirspaceLegSpec(),
+      new FirUirLegSpec(),
+      new HelipadSpec()
+  ),
+
+  /**
+   * Returns a static implementation of a parser for V21 ARINC 424 data for only navigation relevant fields.
+   */
+  V21_NAV(new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.ProcedureLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
+      new HelipadSpec()
+  ),
+
+  /**
+   * Returns a static implementation of a parser for V22 Arinc 424 data.
+   */
+  V22(
+      new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new org.mitre.tdp.boogie.arinc.v22.RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new org.mitre.tdp.boogie.arinc.v22.AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v22.ProcedureLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
+      new ControlledAirspaceLegSpec(),
+      new FirUirLegSpec(),
+      new HelipadSpec()
+  ),
+
+  /**
+   * This is a parser that does not parse the airspace's into memory.
+   */
+  V22_NAV(
+      new AirportSpec(),
+      new AirportPrimaryExtensionSpec(),
+      new org.mitre.tdp.boogie.arinc.v22.RunwaySpec(),
+      new LocalizerGlideSlopeSpec(),
+      new org.mitre.tdp.boogie.arinc.v22.AirwayLegSpec(),
+      new NdbNavaidSpec(),
+      new VhfNavaidSpec(),
+      new WaypointSpec(),
+      new org.mitre.tdp.boogie.arinc.v22.ProcedureLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
+      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
+      new HelipadSpec()
   );
 
-  private static final ImmutableMap<String, ArincVersion> LOOKUP = ImmutableMap.<String, ArincVersion>builder()
-      .put(V18.name(), V18)
-      .put(V19.name(), V19)
-      .build();
+  private static final Map<String, ArincVersion> LOOKUP = Map.ofEntries(
+      Map.entry(V18.name(), V18),
+      Map.entry(V18_NAV.name(), V18_NAV),
+      Map.entry(V18_AIRSPACE.name(), V18_AIRSPACE),
+      Map.entry(V19.name(), V19),
+      Map.entry(V19_NAV.name(), V19_NAV),
+      Map.entry(V20.name(), V20),
+      Map.entry(V20_NAV.name(), V20_NAV),
+      Map.entry(V21.name(), V21),
+      Map.entry(V21_NAV.name(), V21_NAV),
+      Map.entry(V22.name(), V22),
+      Map.entry(V22_NAV.name(), V22_NAV)
+  );
 
   private final List<RecordSpec> specs;
 

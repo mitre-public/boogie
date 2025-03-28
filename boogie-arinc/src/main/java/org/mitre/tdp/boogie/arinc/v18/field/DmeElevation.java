@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincDouble;
+
 /**
  * The “DME Elevation” field defines the elevation of the DME component of the NAVAID described in the record.
  */

@@ -118,7 +118,7 @@ public final class ArincAirportGate implements ArincModel {
     if (!super.equals(object))
       return false;
     ArincAirportGate that = (ArincAirportGate) object;
-    return Objects.equals(recordType, that.recordType) && Objects.equals(customerAreaCode, that.customerAreaCode) && Objects.equals(sectionCode, that.sectionCode) && Objects.equals(airportIdentifier, that.airportIdentifier) && Objects.equals(airportIcaoRegion, that.airportIcaoRegion) && Objects.equals(subSectionCode, that.subSectionCode) && Objects.equals(gateIdentifier, that.gateIdentifier) && Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && Objects.equals(latitude, that.latitude) && Objects.equals(longitude, that.longitude) && Objects.equals(name, that.name) && Objects.equals(fileRecordNumber, that.fileRecordNumber) && Objects.equals(lastUpdatedCycle, that.lastUpdatedCycle);
+    return java.util.Objects.equals(recordType, that.recordType) && java.util.Objects.equals(customerAreaCode, that.customerAreaCode) && java.util.Objects.equals(sectionCode, that.sectionCode) && java.util.Objects.equals(airportIdentifier, that.airportIdentifier) && java.util.Objects.equals(airportIcaoRegion, that.airportIcaoRegion) && java.util.Objects.equals(subSectionCode, that.subSectionCode) && java.util.Objects.equals(gateIdentifier, that.gateIdentifier) && java.util.Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && java.util.Objects.equals(latitude, that.latitude) && java.util.Objects.equals(longitude, that.longitude) && java.util.Objects.equals(name, that.name) && java.util.Objects.equals(fileRecordNumber, that.fileRecordNumber) && java.util.Objects.equals(lastUpdatedCycle, that.lastUpdatedCycle);
   }
 
   public int hashCode () {

@@ -14,6 +14,8 @@ import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
+import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
+import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
 class TestArincFixDatabase {
 
@@ -119,7 +121,11 @@ class TestArincFixDatabase {
       .holdingPatternDelegator(new HoldingPatternValidator())
       .gnssLandingSystemConverter(new GnssLandingSystemConverter())
       .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
-      .firUirConverter(new ArincFirUirLegConverter())
+      .firUirConverter(new FirUirLegConverter())
       .firUirDelegator(new AirwayLegValidator())
+      .helipadDelegator(new HelipadValidator())
+      .helipadConverter(new HelipadConverter())
+      .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
+      .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .build();
 }

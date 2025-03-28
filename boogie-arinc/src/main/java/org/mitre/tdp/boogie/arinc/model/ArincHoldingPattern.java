@@ -28,6 +28,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMaximumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMinimumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.VerticalScaleFactor;
+import org.mitre.tdp.boogie.arinc.v20.field.LegInboundOutboundIndicator;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
@@ -131,6 +132,10 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
    */
   private final Integer rvsmMax;
   /**
+   * {@link LegInboundOutboundIndicator}
+   */
+  private final String inboundOutboundIndicator;
+  /**
    * {@link NameField}
    */
   private final String holdingName;
@@ -168,6 +173,7 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
     this.verticalScaleFactor = builder.verticalScaleFactor;
     this.rvsmMin = builder.rvsmMin;
     this.rvsmMax = builder.rvsmMax;
+    this.inboundOutboundIndicator = builder.inboundOutboundIndicator;
     this.holdingName = builder.holdingName;
     this.fileRecordNumber = builder.fileRecordNumber;
     this.lastUpdatedCycle = builder.lastUpdatedCycle;
@@ -273,6 +279,10 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
     return Optional.ofNullable(rvsmMax);
   }
 
+  public Optional<String> inboundOutboundIndicator() {
+    return Optional.ofNullable(inboundOutboundIndicator);
+  }
+
   public Optional<String> holdingName() {
     return Optional.ofNullable(holdingName);
   }
@@ -320,6 +330,7 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
         && Objects.equals(verticalScaleFactor, that.verticalScaleFactor)
         && Objects.equals(rvsmMin, that.rvsmMin)
         && Objects.equals(rvsmMax, that.rvsmMax)
+        && Objects.equals(inboundOutboundIndicator, that.inboundOutboundIndicator)
         && Objects.equals(holdingName, that.holdingName)
         && Objects.equals(fileRecordNumber, that.fileRecordNumber)
         && Objects.equals(lastUpdatedCycle, that.lastUpdatedCycle);
@@ -327,7 +338,7 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, regionCode, icaoRegion, duplicateIdentifier, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubsectionCode, continuationRecordNumber, inboundHoldingCourse, turnDirection, legLength, legTime, minimumAltitude, maxAltitude, holdingSpeed, rnp, arcRadius, verticalScaleFactor, rvsmMin, rvsmMax, holdingName, fileRecordNumber, lastUpdatedCycle);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, regionCode, icaoRegion, duplicateIdentifier, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubsectionCode, continuationRecordNumber, inboundHoldingCourse, turnDirection, legLength, legTime, minimumAltitude, maxAltitude, holdingSpeed, rnp, arcRadius, verticalScaleFactor, rvsmMin, rvsmMax, inboundOutboundIndicator, holdingName, fileRecordNumber, lastUpdatedCycle);
   }
 
   @Override
@@ -357,6 +368,7 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
         ", verticalScaleFactor='" + verticalScaleFactor + '\'' +
         ", rvsmMin='" + rvsmMin + '\'' +
         ", rvsmMax='" + rvsmMax + '\'' +
+        ", inboundOutboundIndicator='" + inboundOutboundIndicator + '\'' +
         ", name='" + holdingName + '\'' +
         ", fileRecordNumber=" + fileRecordNumber +
         ", lastUpdatedCycle='" + lastUpdatedCycle + '\'' +
@@ -410,6 +422,7 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
     private Integer verticalScaleFactor;
     private Integer rvsmMin;
     private Integer rvsmMax;
+    private String inboundOutboundIndicator;
     private String holdingName;
     private Integer fileRecordNumber;
     private String lastUpdatedCycle;
@@ -531,6 +544,11 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
 
     public Builder rvsmMax(Integer rvsmMax) {
       this.rvsmMax = rvsmMax;
+      return this;
+    }
+
+    public Builder inboundOutboundIndicator(String inboundOutboundIndicator) {
+      this.inboundOutboundIndicator = inboundOutboundIndicator;
       return this;
     }
 

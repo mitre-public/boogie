@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
 /**
  * The “Sequence Number” field defines the location of the record in the sequence defining the route of flight
  * identified in the route identifier field.

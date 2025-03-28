@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-public class LegTime extends ArincInteger {
+import org.mitre.tdp.boogie.arinc.ArincInteger;
+
+public final class LegTime extends ArincInteger {
 
   @Override
   public int fieldLength() {

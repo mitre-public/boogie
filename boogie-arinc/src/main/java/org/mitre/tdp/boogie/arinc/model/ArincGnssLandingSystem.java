@@ -35,6 +35,7 @@ public final class ArincGnssLandingSystem implements ArincModel {
   private final String datumCode;
   private final String stationType;
   private final Double stationElevationWgs84;
+  private final Integer glidePathTCH;
   private final int fileRecordNumber;
   private final String lastUpdatedCycle;
 
@@ -62,6 +63,7 @@ public final class ArincGnssLandingSystem implements ArincModel {
     this.datumCode = builder.datumCode;
     this.stationType = builder.stationType;
     this.stationElevationWgs84 = builder.stationElevationWgs84;
+    this.glidePathTCH = builder.glidePathTCH;
     this.fileRecordNumber = builder.fileRecordNumber;
     this.lastUpdatedCycle = builder.lastUpdatedCycle;
   }
@@ -150,6 +152,10 @@ public final class ArincGnssLandingSystem implements ArincModel {
     return Optional.ofNullable(stationElevationWgs84);
   }
 
+  public Optional<Integer> glidePathTCH() {
+    return Optional.ofNullable(glidePathTCH);
+  }
+
   public int fileRecordNumber() {
     return fileRecordNumber;
   }
@@ -177,7 +183,32 @@ public final class ArincGnssLandingSystem implements ArincModel {
       return false;
     }
     ArincGnssLandingSystem that = (ArincGnssLandingSystem) o;
-    return glsChannel == that.glsChannel && Double.compare(that.latitude, latitude) == 0 && Double.compare(that.longitude, longitude) == 0 && fileRecordNumber == that.fileRecordNumber && Objects.equals(recordType, that.recordType) && customerAreaCode == that.customerAreaCode && sectionCode == that.sectionCode && Objects.equals(airportIdentifier, that.airportIdentifier) && Objects.equals(airportIcaoRegion, that.airportIcaoRegion) && Objects.equals(subSectionCode, that.subSectionCode) && Objects.equals(glsRefPathIdentifier, that.glsRefPathIdentifier) && Objects.equals(glsCategory, that.glsCategory) && Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && Objects.equals(runwayIdentifier, that.runwayIdentifier) && Objects.equals(glsApproachBearing, that.glsApproachBearing) && Objects.equals(glsStationIdent, that.glsStationIdent) && Objects.equals(serviceVolumeRadius, that.serviceVolumeRadius) && Objects.equals(tdmaSlots, that.tdmaSlots) && Objects.equals(glsApproachSlope, that.glsApproachSlope) && Objects.equals(magneticVariation, that.magneticVariation) && Objects.equals(stationElevation, that.stationElevation) && Objects.equals(datumCode, that.datumCode) && Objects.equals(stationType, that.stationType) && Objects.equals(stationElevationWgs84, that.stationElevationWgs84) && Objects.equals(lastUpdatedCycle, that.lastUpdatedCycle);
+    return glsChannel == that.glsChannel
+        && Double.compare(latitude, that.latitude) == 0
+        && Double.compare(longitude, that.longitude) == 0
+        && fileRecordNumber == that.fileRecordNumber
+        && recordType == that.recordType
+        && customerAreaCode == that.customerAreaCode
+        && sectionCode == that.sectionCode
+        && Objects.equals(airportIdentifier, that.airportIdentifier)
+        && Objects.equals(airportIcaoRegion, that.airportIcaoRegion)
+        && Objects.equals(subSectionCode, that.subSectionCode)
+        && Objects.equals(glsRefPathIdentifier, that.glsRefPathIdentifier)
+        && Objects.equals(glsCategory, that.glsCategory)
+        && Objects.equals(continuationRecordNumber, that.continuationRecordNumber)
+        && Objects.equals(runwayIdentifier, that.runwayIdentifier)
+        && Objects.equals(glsApproachBearing, that.glsApproachBearing)
+        && Objects.equals(glsStationIdent, that.glsStationIdent)
+        && Objects.equals(serviceVolumeRadius, that.serviceVolumeRadius)
+        && Objects.equals(tdmaSlots, that.tdmaSlots)
+        && Objects.equals(glsApproachSlope, that.glsApproachSlope)
+        && Objects.equals(magneticVariation, that.magneticVariation)
+        && Objects.equals(stationElevation, that.stationElevation)
+        && Objects.equals(datumCode, that.datumCode)
+        && Objects.equals(stationType, that.stationType)
+        && Objects.equals(stationElevationWgs84, that.stationElevationWgs84)
+        && Objects.equals(glidePathTCH, that.glidePathTCH)
+        && Objects.equals(lastUpdatedCycle, that.lastUpdatedCycle);
   }
 
   public Builder toBuilder() {
@@ -205,13 +236,14 @@ public final class ArincGnssLandingSystem implements ArincModel {
         .datumCode(datumCode().orElse(null))
         .stationType(stationType().orElse(null))
         .stationElevationWgs84(stationElevationWgs84().orElse(null))
+        .glidePathTCH(glidePathTCH().orElse(null))
         .fileRecordNumber(fileRecordNumber())
         .lastUpdatedCycle(lastUpdatedCycle());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, glsRefPathIdentifier, glsCategory, continuationRecordNumber, glsChannel, runwayIdentifier, glsApproachBearing, latitude, longitude, glsStationIdent, serviceVolumeRadius, tdmaSlots, glsApproachSlope, magneticVariation, stationElevation, datumCode, stationType, stationElevationWgs84, fileRecordNumber, lastUpdatedCycle);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, glsRefPathIdentifier, glsCategory, continuationRecordNumber, glsChannel, runwayIdentifier, glsApproachBearing, latitude, longitude, glsStationIdent, serviceVolumeRadius, tdmaSlots, glsApproachSlope, magneticVariation, stationElevation, datumCode, stationType, stationElevationWgs84, glidePathTCH, fileRecordNumber, lastUpdatedCycle);
   }
 
   public static final class Builder {
@@ -238,6 +270,7 @@ public final class ArincGnssLandingSystem implements ArincModel {
     private String datumCode;
     private String stationType;
     private Double stationElevationWgs84;
+    private Integer glidePathTCH;
     private int fileRecordNumber;
     private String lastUpdatedCycle;
 
@@ -353,6 +386,11 @@ public final class ArincGnssLandingSystem implements ArincModel {
 
     public Builder stationElevationWgs84(Double stationElevationWgs84) {
       this.stationElevationWgs84 = stationElevationWgs84;
+      return this;
+    }
+
+    public Builder glidePathTCH(Integer glidePathTCH) {
+      this.glidePathTCH = glidePathTCH;
       return this;
     }
 

@@ -1,8 +1,10 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
+import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -14,6 +16,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 
 /**
@@ -34,7 +37,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    * the user-defined type.
    *
    * <p>The 424 spec provides fine-grained equipage characteristics for each leg of a procedure. This function provides alongside
-   * that information an up-leveled required equipage to the basic categories most clients expect. Deriving this from the base
+   * that information an up-leveled required equipage to the basic categories most clients expect. Deriving this from the
    * 424 specification for all the legs in a procedure is non-trivial and easy to get wrong.
    *
    * @param representative             a 424 procedure leg elected the "representative" of the transition, provided at the top-level
@@ -107,6 +110,8 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .build();
     }
 
+    private static final Set<CategoryOrType> DEFAULT = ImmutableSet.of(CategoryOrType.NOT_SPECIFIED);
+
     @Override
     public Transition convertTransition(ArincProcedureLeg representative, TransitionType transitionType, List<Leg> legs) {
 
@@ -114,10 +119,13 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           ? "MISSED"
           : StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null));
 
+      Set<CategoryOrType> categoryOrType = representative.categoryOrType().map(CategoryOrTypeClassifier.INSTANCE).orElse(DEFAULT);
+
       return Transition.builder()
           .transitionIdentifier(identifier)
           .transitionType(transitionType)
           .legs(legs)
+          .categoryOrTypes(categoryOrType)
           .build();
     }
 
@@ -133,14 +141,11 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
     }
 
     private TurnDirection toTurnDirection(org.mitre.tdp.boogie.arinc.v18.field.TurnDirection turnDirection) {
-      switch (turnDirection) {
-        case L:
-          return TurnDirection.left();
-        case R:
-          return TurnDirection.right();
-        default:
-          return TurnDirection.either();
-      }
+      return switch (turnDirection) {
+        case L -> TurnDirection.left();
+        case R -> TurnDirection.right();
+        default -> TurnDirection.either();
+      };
     }
 
     private ProcedureType toProcedureType(String subSectionCode) {

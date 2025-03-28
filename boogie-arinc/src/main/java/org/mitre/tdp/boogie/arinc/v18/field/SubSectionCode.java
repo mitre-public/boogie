@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.TrimmableString;
+
 /**
  * Definition/Description: The “Subsection Code” field defines the specific part of the database major section in which the
  * record resides.
