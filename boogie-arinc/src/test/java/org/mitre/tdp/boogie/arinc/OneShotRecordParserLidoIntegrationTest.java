@@ -16,6 +16,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 
+@Tag("LIDO")
 @Tag("INTEGRATION")
 public class OneShotRecordParserLidoIntegrationTest {
   @Test

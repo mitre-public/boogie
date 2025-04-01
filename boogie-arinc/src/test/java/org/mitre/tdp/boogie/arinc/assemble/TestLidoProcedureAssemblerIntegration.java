@@ -31,6 +31,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+@Tag("LIDO")
 @Tag("INTEGRATION")
 public class TestLidoProcedureAssemblerIntegration {
   private static final Logger LOG = LoggerFactory.getLogger(TestLidoProcedureAssemblerIntegration.class);
