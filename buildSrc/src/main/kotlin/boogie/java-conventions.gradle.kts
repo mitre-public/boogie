@@ -18,5 +18,46 @@ configure<JavaPluginExtension> {
     withJavadocJar()
 }
 
+tasks.named<Test>("test") {
+    useJUnitPlatform {
+        excludeTags("INTEGRATION")
+        excludeTags("LIDO")
+        excludeTags("DAFIF")
+    }
+
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
+
+tasks.register<Test>("integration") {
+    group = "verification"
+    useJUnitPlatform {
+        includeTags("INTEGRATION")
+        excludeTags("LIDO")
+        excludeTags("DAFIF")
+    }
+
+    maxHeapSize = "2G"
+
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
+
+tasks.register<Test>("supplier-integration") {
+    group = "verification"
+    useJUnitPlatform {
+        includeTags("LIDO")
+        includeTags("DAFIF")
+    }
+
+    maxHeapSize = "4G"
+
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
+
 
 

@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.dafif.model;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifFileParser;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("DAFIF")
 public class TestConvertingDafifRecordConsumer {
 
   private static final File dafifTestAirportFile = new File(System.getProperty("user.dir").concat("/src/test/resources/ARPT.TXT"));

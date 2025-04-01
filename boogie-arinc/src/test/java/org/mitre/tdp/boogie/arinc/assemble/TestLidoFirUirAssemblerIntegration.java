@@ -13,6 +13,7 @@ import org.mitre.tdp.boogie.arinc.EmbeddedLidoFile;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+@Tag("LIDO")
 @Tag("INTEGRATION")
 public class TestLidoFirUirAssemblerIntegration {
   private static Multimap<String, Airspace> firUirByName;

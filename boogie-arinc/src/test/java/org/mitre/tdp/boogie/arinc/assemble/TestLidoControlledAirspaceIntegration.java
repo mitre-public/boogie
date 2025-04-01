@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.arinc.EmbeddedLidoFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 
+@Tag("LIDO")
 @Tag("INTEGRATION")
 public class TestLidoControlledAirspaceIntegration {
   static Map<String, Airspace> map;
