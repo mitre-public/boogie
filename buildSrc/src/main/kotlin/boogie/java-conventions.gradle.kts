@@ -23,6 +23,18 @@ publishing {
                     name.set("The MITRE Corporation TDP")
                     url.set("https://github.com/mitre-tdp")
                 }
+                developers {
+                    developer {
+                        id.set("dbaker")
+                        name.set("David Baker")
+                        email.set("dbaker@mitre.org")
+                    }
+                    developer {
+                        id.set("mpollock")
+                        name.set("Matthew Pollock")
+                        email.set("mpollock@mitre.org")
+                    }
+                }
                 scm {
                     connection.set("scm:git:ssh://git@github.com:mitre-public/boogie.git")
                     developerConnection.set("scm:git:ssh://git@github.com:mitre-public/boogie.git")
