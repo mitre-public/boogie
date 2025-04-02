@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.mitre.boogie"
-version = "4.6.0"
+version = "4.5.1"
 
 repositories {
     mavenCentral()
@@ -45,12 +45,20 @@ publishing {
         }
     }
 
-    //repositories {
-    //    maven {
-    //        name = "myRepo"
-    //        url = uri(layout.buildDirectory.dir("repo"))
-    //    }
-    //}
+    val ghprToken: String? by project
+    repositories {
+        maven {
+            name = "boogie-public"
+            url = uri("https://maven.pkg.github.com/mitre-public/boogie")
+            credentials(HttpHeaderCredentials::class) {
+                name = "Authorization"
+                value = "Bearer ${ghprToken}"
+            }
+            authentication {
+                create<HttpHeaderAuthentication>("header")
+            }
+        }
+    }
 }
 
 configure<JavaPluginExtension> {
