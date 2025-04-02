@@ -1,0 +1,52 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.nextStrict }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - id: version
+        uses: ietf-tools/semver-action@v1.9.0
+        with:
+          token: ${{ github.token }}
+          branch: main
+          majorList: feat!
+          minorList: feat, feature
+          patchList: fix, bugfix
+          noVersionBumpBehavior: patch
+          noNewCommitBehavior: silent
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Publish Jars
+        run: ./gradlew publish -PghprToken=${{ secrets.GH_TOKEN_PACKAGES_WRITE }} -Pversion=${{steps.version.outputs.nextStrict}}
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.nextStrict }}" --target "${{ github.sha }}"
+
+      - name: Tag Release
+        env:
+          TAG: ${{ steps.version.outputs.nextStrict }}
+        run: |
+          git tag ${TAG} ${GITHUB_SHA}
+          git push origin ${TAG}
