@@ -19,7 +19,7 @@ jobs:
       - id: version
         uses: ietf-tools/semver-action@v1.9.0
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
           majorList: feat!
           minorList: feat, feature
@@ -36,7 +36,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Publish Jars
-        run: ./gradlew publish -PghprToken=${{ secrets.GH_TOKEN_PACKAGES_WRITE }} -Pversion=${{steps.version.outputs.nextStrict}}
+        run: ./gradlew publish -PghprToken=${{ secrets.GITHUB_TOKEN }} -Pversion=${{steps.version.outputs.nextStrict}}
 
       - name: Create GitHub Release
         env:
