@@ -3,8 +3,6 @@ plugins {
     id("maven-publish")
 }
 
-group = "org.mitre.boogie"
-version = "4.5.1"
 
 repositories {
     mavenCentral()
@@ -13,6 +11,7 @@ repositories {
 publishing {
     publications {
         create<MavenPublication>(project.name) {
+            group = "org.mitre.boogie"
             artifactId = project.name
 
             from(components["java"])
