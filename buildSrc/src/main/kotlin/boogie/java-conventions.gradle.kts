@@ -64,6 +64,20 @@ configure<JavaPluginExtension> {
 
 tasks.named<Test>("test") {
     useJUnitPlatform {
+        excludeTags("LIDO")
+        excludeTags("DAFIF")
+    }
+
+    maxHeapSize = "2G"
+
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
+
+tasks.register<Test>("unit") {
+    group = "verification"
+    useJUnitPlatform {
         excludeTags("INTEGRATION")
         excludeTags("LIDO")
         excludeTags("DAFIF")
