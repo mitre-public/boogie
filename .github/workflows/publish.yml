@@ -13,7 +13,7 @@ jobs:
           fetch-depth: 0
           lfs: true
       - name: unit
-        run: unit
+        run: ./gradlew unit
 
   cifp:
     needs: unit
