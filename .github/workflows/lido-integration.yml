@@ -1,4 +1,4 @@
-name: cifp-integration
+name: lido-integration
 
 on:
   push:
