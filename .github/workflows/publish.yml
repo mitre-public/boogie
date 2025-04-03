@@ -1,9 +1,10 @@
 name: publish
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["unit-test", "cifp-integration", "dafif-integration", "lido-integration"]
+    types:
+      - completed
 
 jobs:
   release:
@@ -34,12 +35,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Unit Test
-        run: ./gradlew unit
-
-      - name: Integration
-        run: ./gradlew cifp-integration
 
       - name: Publish Jars
         run: ./gradlew publish -PghprToken=${{ secrets.GITHUB_TOKEN }} -Pversion=${{steps.version.outputs.nextStrict}}
