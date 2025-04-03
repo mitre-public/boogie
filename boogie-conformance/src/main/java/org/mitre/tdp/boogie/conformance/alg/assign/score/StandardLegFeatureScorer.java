@@ -35,6 +35,8 @@ public final class StandardLegFeatureScorer implements BiFunction<ConformablePoi
         .addFeatureScorer(new VaDelegator(), new VaFeatureScorer())
         .addFeatureScorer(new ViDelegator(), new ViFeatureScorer())
         .addFeatureScorer(new VmDelegator(), new VmFeatureScorer())
+        .addFeatureScorer(new FmDelegator(), new FmFeatureScorer())
+        .addFeatureScorer((conformablePoint, flyableLeg) -> true, viterbiFeatureVector -> 1e-10)
         .build();
   }
 
