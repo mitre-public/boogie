@@ -20,7 +20,7 @@ jobs:
           repository: 'mitre-tdp/boogie-test'
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: main
-          path: ${{GITHUB_WORKSPACE}}/src/test/resources
+          path: ./src/test/resources
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
