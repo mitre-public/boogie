@@ -73,6 +73,7 @@ tasks.named<Test>("test") {
     useJUnitPlatform {
         excludeTags("LIDO")
         excludeTags("DAFIF")
+        includeTags("INTEGRATION")
     }
 
     maxHeapSize = "2G"
@@ -88,6 +89,7 @@ tasks.register<Test>("unit") {
         excludeTags("INTEGRATION")
         excludeTags("LIDO")
         excludeTags("DAFIF")
+        excludeTags("CIFP")
     }
 
     testLogging {
@@ -95,10 +97,11 @@ tasks.register<Test>("unit") {
     }
 }
 
-tasks.register<Test>("integration") {
+tasks.register<Test>("cifp-integration") {
     group = "verification"
     useJUnitPlatform {
         includeTags("INTEGRATION")
+        includeTags("CIFP")
         excludeTags("LIDO")
         excludeTags("DAFIF")
     }
@@ -110,11 +113,13 @@ tasks.register<Test>("integration") {
     }
 }
 
-tasks.register<Test>("supplier-integration") {
+tasks.register<Test>("lido-integration") {
     group = "verification"
     useJUnitPlatform {
         includeTags("LIDO")
-        includeTags("DAFIF")
+        includeTags("INTEGRATION")
+        excludeTags("DAFIF")
+        excludeTags("CIFP")
     }
 
     maxHeapSize = "4G"
@@ -124,5 +129,19 @@ tasks.register<Test>("supplier-integration") {
     }
 }
 
+tasks.register<Test>("dafif-integration") {
+    group = "verification"
+    useJUnitPlatform {
+        includeTags("DAFIF")
+        includeTags("INTEGRATION")
+        excludeTags("LIDO")
+        excludeTags("CIFP")
+    }
 
+    maxHeapSize = "4G"
+
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
 

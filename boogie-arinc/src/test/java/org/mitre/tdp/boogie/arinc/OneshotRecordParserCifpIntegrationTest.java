@@ -16,10 +16,10 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 
+@Tag("CIFP")
 @Tag("INTEGRATION")
 class OneshotRecordParserCifpIntegrationTest {
 
-  @Tag("INTEGRATION")
   @Test
   void testParse() {
 
