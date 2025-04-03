@@ -14,12 +14,18 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Integration Test Data
+        uses: actions/checkout@v4
         with:
           lfs: true
           repository: 'mitre-tdp/boogie-test'
           ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
           ref: main
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
