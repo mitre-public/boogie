@@ -21,7 +21,7 @@ jobs:
           repository: 'mitre-tdp/boogie-test'
           ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
           ref: main
-          path: ./boogie/boogie-arinc/src/test/resources
+          path: ./boogie-arinc/src/test/resources
 
       - name: Checkout Code
         uses: actions/checkout@v4
