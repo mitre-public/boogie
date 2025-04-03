@@ -39,7 +39,7 @@ jobs:
         run: ./gradlew unit
 
       - name: Integration
-        run: ./gradlew integration
+        run: ./gradlew cifp-integration
 
       - name: Publish Jars
         run: ./gradlew publish -PghprToken=${{ secrets.GITHUB_TOKEN }} -Pversion=${{steps.version.outputs.nextStrict}}
