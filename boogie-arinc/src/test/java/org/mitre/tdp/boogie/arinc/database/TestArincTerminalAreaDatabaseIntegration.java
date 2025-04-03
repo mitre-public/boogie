@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
+@Tag("CIFP")
 @Tag("INTEGRATION")
 class TestArincTerminalAreaDatabaseIntegration {
 
