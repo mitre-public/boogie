@@ -35,6 +35,8 @@ public final class StandardLegFeatureExtractor implements BiFunction<Conformable
         .addFeatureExtractor(new VaDelegator(), VaFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new ViDelegator(), ViFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new VmDelegator(), VmFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new FmDelegator(), FmFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor((point, flyableLeg) -> true, ViterbiFeatureVectorExtractor.<ConformablePoint, FlyableLeg>newBuilder().build())
         .build();
   }
 
