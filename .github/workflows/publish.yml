@@ -31,6 +31,12 @@ jobs:
           ref: main
           path: ./boogie-dafif/src/test/resources
 
+      - name: check arinc dir
+        run: ls ./boogie-arinc/src/test/resources
+
+      - name: check dafif dir
+        run: ls ./boogie-dafif/src/test/resources
+
       - name: unit test
         run: ./gradlew unit
 
