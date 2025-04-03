@@ -76,7 +76,23 @@ tasks.named<Test>("test") {
         includeTags("INTEGRATION")
     }
 
-    maxHeapSize = "2G"
+    maxHeapSize = "8G"
+
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
+
+tasks.register<Test>("all-local-data-is-there") {
+    group = "verification"
+    useJUnitPlatform {
+        includeTags("LIDO")
+        includeTags("INTEGRATION")
+        includeTags("DAFIF")
+        includeTags("CIFP")
+    }
+
+    maxHeapSize = "8G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
@@ -122,7 +138,7 @@ tasks.register<Test>("lido-integration") {
         excludeTags("CIFP")
     }
 
-    maxHeapSize = "4G"
+    maxHeapSize = "8G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
