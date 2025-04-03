@@ -44,6 +44,7 @@ jobs:
         run: ./gradlew dafif-integration
 
   release:
+    needs: test
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.nextStrict }}
