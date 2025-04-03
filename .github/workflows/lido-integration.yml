@@ -18,7 +18,7 @@ jobs:
         with:
           lfs: true
           repository: 'mitre-tdp/boogie-test'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
           ref: main
           path: ./src/test/resources
 
