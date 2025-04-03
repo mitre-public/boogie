@@ -25,7 +25,7 @@ jobs:
           majorList: feat!
           minorList: feat, feature
           patchList: fix, bugfix
-          noVersionBumpBehavior: silent
+          noVersionBumpBehavior: patch
           noNewCommitBehavior: silent
 
       - uses: actions/setup-java@v4
