@@ -5,10 +5,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  release:
+  test:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.nextStrict }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,17 +31,27 @@ jobs:
           ref: main
           path: ./boogie-dafif/src/test/resources
 
-      - id: unit test
+      - name: unit test
         run: ./gradlew unit
 
-      - id: cifp
+      - name: cifp
         run: ./gradlew cifp-integration
 
-      - id: lido
+      - name: lido
         run: ./gradlew lido-integration
 
-      - id: dafif
+      - name: dafif
         run: ./gradlew dafif-integration
+
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.nextStrict }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
 
       - id: version
         uses: ietf-tools/semver-action@v1.9.0
