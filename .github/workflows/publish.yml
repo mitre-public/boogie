@@ -1,10 +1,8 @@
 name: publish
 
 on:
-  workflow_run:
-    workflows: ["unit-test", "cifp-integration", "dafif-integration", "lido-integration"]
-    types:
-      - completed
+  push:
+    branches: [ "main" ]
 
 jobs:
   release:
@@ -16,6 +14,36 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+
+      - name: Lido Test Data
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          repository: 'mitre-tdp/boogie-test'
+          ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
+          ref: main
+          path: ./boogie-arinc/src/test/resources
+
+      - name: Dafif Test Data
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          repository: 'mitre-tdp/boogie-test'
+          ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
+          ref: main
+          path: ./boogie-dafif/src/test/resources
+
+      - id: unit test
+        run: ./gradlew unit
+
+      - id: cifp
+        run: ./gradlew cifp-integration
+
+      - id: lido
+        run: ./gradlew lido-integration
+
+      - id: dafif
+        run: ./gradlew dafif-integration
 
       - id: version
         uses: ietf-tools/semver-action@v1.9.0
