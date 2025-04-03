@@ -5,7 +5,30 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+      - name: unit
+        run: unit
+
+  cifp:
+    needs: unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: cifp
+        run: ./gradlew cifp-integration
+
+  lido:
+    needs: unit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +45,17 @@ jobs:
           ref: main
           path: ./boogie-arinc/src/test/resources
 
+      - name: dafif
+        run: ./gradlew lido-integration
+
+  dafif:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
       - name: Dafif Test Data
         uses: actions/checkout@v4
         with:
@@ -31,26 +65,11 @@ jobs:
           ref: main
           path: ./boogie-dafif/src/test/resources
 
-      - name: check arinc dir
-        run: ls ./boogie-arinc/src/test/resources
-
-      - name: check dafif dir
-        run: ls ./boogie-dafif/src/test/resources
-
-      - name: unit test
-        run: ./gradlew unit
-
-      - name: cifp
-        run: ./gradlew cifp-integration
-
-      - name: lido
-        run: ./gradlew lido-integration
-
       - name: dafif
         run: ./gradlew dafif-integration
 
   release:
-    needs: test
+    needs: [unit, cifp, lido, dafif]
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.nextStrict }}
