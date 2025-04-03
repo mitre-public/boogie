@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("DAFIF")
+@Tag("INTEGRATION")
 public class TestConvertingDafifRecordConsumer {
 
   private static final File dafifTestAirportFile = new File(System.getProperty("user.dir").concat("/src/test/resources/ARPT.TXT"));

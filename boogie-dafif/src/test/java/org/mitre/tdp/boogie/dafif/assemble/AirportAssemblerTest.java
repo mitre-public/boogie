@@ -27,6 +27,7 @@ import org.mitre.tdp.boogie.dafif.model.DafifRecordConverterFactory;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 
 @Tag("DAFIF")
+@Tag("INTEGRATION")
 class AirportAssemblerTest {
   private static final File testDafifAirportFile = new File(System.getProperty("user.dir").concat("/src/test/resources/ARPT.TXT"));
   private static final File testDafifRunwayFile = new File(System.getProperty("user.dir").concat("/src/test/resources/RWY.TXT"));
