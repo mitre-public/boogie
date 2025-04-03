@@ -21,7 +21,7 @@ jobs:
           repository: 'mitre-tdp/boogie-test'
           ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
           ref: main
-          path: ./boogie-arinc/src/test/resources
+          path: ./boogie/boogie-arinc/src/test/resources
 
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
           lfs: true
 
       - name: Show Working directory
-        run: ls
+        run: ls ./boogie-arinc/src/test/resources
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
