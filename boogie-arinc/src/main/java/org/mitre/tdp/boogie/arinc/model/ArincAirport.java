@@ -4,26 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.DatumCode;
-import org.mitre.tdp.boogie.arinc.v18.field.DaylightTimeIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.IfrCapability;
-import org.mitre.tdp.boogie.arinc.v18.field.LongestRunway;
-import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
-import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.MagneticVariation;
-import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitAltitude;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.TransitionAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 /**
  * Data class for representing structured/parsed content from within an ARINC format airport record.
@@ -112,8 +93,12 @@ public final class ArincAirport implements ArincModel {
   private final Integer speedLimit;
   /**
    * The string identifier of the recommended navaid associated with the airport.
+   * This is a VHF navaid.
    */
   private final String recommendedNavaid;
+  /**
+   * The icao region to support this vhf navaid.
+   */
   private final String recommendedNavaidIcaoRegion;
   /**
    * See {@link TransitionAltitude}.
@@ -128,7 +113,7 @@ public final class ArincAirport implements ArincModel {
    */
   private final PublicMilitaryIndicator publicMilitaryIndicator;
   /**
-   * See {@link DaylightTimeIndicator}.
+   * See {@link PublicMilitaryIndicator}.
    */
   private final Boolean daylightTimeIndicator;
   /**

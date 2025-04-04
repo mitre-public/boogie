@@ -5,27 +5,10 @@ import java.util.Set;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ComponentElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.LandingThresholdElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v21.field.HelicopterPerformanceRequirement;
-import org.mitre.tdp.boogie.arinc.v21.field.MaximumAllowableHelicopterWeight;
-import org.mitre.tdp.boogie.arinc.v21.field.PadShape;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v21.field.PadDimensions;
-import org.mitre.tdp.boogie.arinc.v21.field.PadIdentifier;
-import org.mitre.tdp.boogie.arinc.v21.field.SurfaceType;
+import org.mitre.tdp.boogie.arinc.v21.field.*;
 
 import com.google.common.collect.ImmutableList;
 
@@ -74,8 +57,8 @@ public final class HelipadSpec implements RecordSpec {
   @Override
   public boolean matchesRecord(String arincRecord) {
     String sectionSubsection = arincRecord.substring(4, 5).concat(arincRecord.substring(12, 13));
-    return sectionSubSections.contains(sectionSubsection);
+    return sectionSubSections.contains(sectionSubsection) && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
   }
 
-  private static final Set<String> sectionSubSections = Set.of("PH"); //leaving it like this so easier to add heliports
+  private static final Set<String> sectionSubSections = Set.of("PH", "HH");
 }

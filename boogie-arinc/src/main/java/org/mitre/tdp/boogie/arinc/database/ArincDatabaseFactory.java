@@ -3,25 +3,13 @@ package org.mitre.tdp.boogie.arinc.database;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
-import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
-import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,14 +92,14 @@ public final class ArincDatabaseFactory {
 
     LinkedHashMultimap<Pair<String, String>, AirportPage> lookup = LinkedHashMultimap.create();
 
-    Map<Pair<String, String>, List<ArincRunway>> runwayMap = runways.stream().collect(Collectors.groupingBy(runwayToAirportIndex));
-    Map<Pair<String, String>, List<ArincLocalizerGlideSlope>> localizerMap = localizerGlideSlopes.stream().collect(Collectors.groupingBy(localizerGlideSlopeToAirportIndex));
-    Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap = ndbNavaids.stream().collect(Collectors.groupingBy(ndbNavaidToAirportIndex));
+    Map<Pair<String, String>, List<ArincRunway>> runwayMap = runways.stream().filter(i -> SectionCode.P.equals(i.sectionCode())).collect(Collectors.groupingBy(runwayToAirportIndex));
+    Map<Pair<String, String>, List<ArincLocalizerGlideSlope>> localizerMap = localizerGlideSlopes.stream().filter(i -> SectionCode.P.equals(i.sectionCode())).collect(Collectors.groupingBy(localizerGlideSlopeToAirportIndex));
+    Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap = ndbNavaids.stream().filter(i -> SectionCode.P.equals(i.sectionCode())).collect(Collectors.groupingBy(ndbNavaidToAirportIndex));
     Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap = vhfNavaids.stream().collect(Collectors.groupingBy(vhfNavaidToAirportIndex));
-    Map<Pair<String, String>, List<ArincWaypoint>> waypointMap = waypoints.stream().collect(Collectors.groupingBy(waypointToAirportIndex));
-    Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap = procedureLegs.stream().collect(Collectors.groupingBy(procedureLegToAirportIndex));
-    Map<Pair<String, String>, List<ArincGnssLandingSystem>> gnssLandingSystemMap = gnssLandingSystems.stream().collect(Collectors.groupingBy(gnssLandingSystemToAirportIndex));
-    Map<Pair<String, String>, List<ArincHelipad>> helipadMap = helipads.stream().collect(Collectors.groupingBy(helipadToAirportIndex));
+    Map<Pair<String, String>, List<ArincWaypoint>> waypointMap = waypoints.stream().filter(i -> SectionCode.P.equals(i.sectionCode())).collect(Collectors.groupingBy(waypointToAirportIndex));
+    Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap = procedureLegs.stream().filter(i -> SectionCode.P.equals(i.sectionCode())).collect(Collectors.groupingBy(procedureLegToAirportIndex));
+    Map<Pair<String, String>, List<ArincGnssLandingSystem>> gnssLandingSystemMap = gnssLandingSystems.stream().filter(i -> SectionCode.P.equals(i.sectionCode())).collect(Collectors.groupingBy(gnssLandingSystemToAirportIndex));
+    Map<Pair<String, String>, List<ArincHelipad>> helipadMap = helipads.stream().filter(i -> SectionCode.P.equals(i.sectionCode())).collect(Collectors.groupingBy(helipadToAirportIndex));
     //airport and region for gls
     airports.forEach(airport -> {
       Pair<String, String> index = airportToAirportIndex.apply(airport); //name and region

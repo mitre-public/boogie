@@ -8,21 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.zip.GZIPInputStream;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
-import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
-import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+import org.mitre.tdp.boogie.arinc.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +95,10 @@ public final class EmbeddedCifpFile {
     return records.arincControlledAirspaceLegs();
   }
 
+  public Collection<ArincHeliport> heliports() {
+    return records.arincHeliports();
+  }
+
   public int totalRecords() {
     return arincAirports().size()
         + arincRunways().size()
@@ -120,7 +110,10 @@ public final class EmbeddedCifpFile {
         + arincProcedureLegs().size()
         + arincGnssLandingSystems().size()
         + arincHoldingPatterns().size()
-        + arincFirUirLegs().size();
+        + arincFirUirLegs().size()
+        + arincHelipads().size()
+        + controlledAirspaces().size()
+        + heliports().size();
   }
 
   /**

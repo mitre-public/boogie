@@ -2,22 +2,11 @@ package org.mitre.tdp.boogie.arinc;
 
 import static java.util.Optional.ofNullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.FirUirLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemSpec;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
+import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
 import org.mitre.tdp.boogie.arinc.v21.HelipadSpec;
 
@@ -46,7 +35,8 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
-      new FirUirLegSpec()
+      new FirUirLegSpec(),
+      new HeliportSpec()
   ),
 
   /**
@@ -62,7 +52,8 @@ public enum ArincVersion {
       new WaypointSpec(),
       new org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec(),
       new GnssLandingSystemSpec(),
-      new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec()
+      new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec(),
+      new HeliportSpec()
   ),
 
   /**
@@ -75,7 +66,8 @@ public enum ArincVersion {
       new VhfNavaidSpec(),
       new WaypointSpec(),
       new ControlledAirspaceLegSpec(),
-      new FirUirLegSpec()
+      new FirUirLegSpec(),
+      new HeliportSpec()
   ),
 
   /**
@@ -96,7 +88,8 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
-      new FirUirLegSpec()
+      new FirUirLegSpec(),
+      new HeliportSpec()
   ),
 
   /**
@@ -114,7 +107,8 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
-      new FirUirLegSpec()
+      new FirUirLegSpec(),
+      new HeliportSpec()
   ),
 
   /**
@@ -132,7 +126,8 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
-      new FirUirLegSpec()
+      new FirUirLegSpec(),
+      new HeliportSpec()
   ),
 
   /**
@@ -148,7 +143,8 @@ public enum ArincVersion {
       new WaypointSpec(),
       new org.mitre.tdp.boogie.arinc.v20.ProcedureLegSpec(),
       new GnssLandingSystemSpec(),
-      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec()
+      new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
+      new HeliportSpec()
   ),
 
   /**
@@ -167,7 +163,8 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
       new FirUirLegSpec(),
-      new HelipadSpec()
+      new HelipadSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.HeliportSpec()
   ),
 
   /**
@@ -184,7 +181,8 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v21.ProcedureLegSpec(),
       new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
-      new HelipadSpec()
+      new HelipadSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.HeliportSpec()
   ),
 
   /**
@@ -204,7 +202,8 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
       new FirUirLegSpec(),
-      new HelipadSpec()
+      new HelipadSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.HeliportSpec()
   ),
 
   /**
@@ -222,7 +221,8 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v22.ProcedureLegSpec(),
       new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
-      new HelipadSpec()
+      new HelipadSpec(),
+      new org.mitre.tdp.boogie.arinc.v21.HeliportSpec()
   );
 
   private static final Map<String, ArincVersion> LOOKUP = Map.ofEntries(

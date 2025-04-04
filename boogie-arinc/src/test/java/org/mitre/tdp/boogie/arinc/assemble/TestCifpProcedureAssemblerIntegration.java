@@ -17,8 +17,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.CategoryAndType;
-import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
@@ -39,7 +37,6 @@ import com.google.common.collect.Multimap;
 /**
  * Integration test for the {@link ProcedureAssembler} but based on the entirety of a CIFP cycle.
  */
-@Tag("CIFP")
 @Tag("INTEGRATION")
 class TestCifpProcedureAssemblerIntegration {
 
