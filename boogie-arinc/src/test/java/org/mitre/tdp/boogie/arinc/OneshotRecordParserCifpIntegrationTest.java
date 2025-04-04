@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.arinc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,16 +9,12 @@ import java.io.InputStream;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.util.DemotedException;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airspace;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.*;
 
-@Tag("CIFP")
 @Tag("INTEGRATION")
 class OneshotRecordParserCifpIntegrationTest {
 
+  @Tag("INTEGRATION")
   @Test
   void testParse() {
 

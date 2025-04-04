@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.arinc.database;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
-@Tag("CIFP")
 @Tag("INTEGRATION")
 class TestArincTerminalAreaDatabaseIntegration {
 

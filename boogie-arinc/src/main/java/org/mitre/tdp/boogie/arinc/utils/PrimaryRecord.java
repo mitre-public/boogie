@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
-import static java.util.Objects.isNull;
-
 import java.util.function.Predicate;
 
 /**
@@ -10,7 +8,7 @@ import java.util.function.Predicate;
  * primary record.
  * Primary records have either a "0" or a "1" for this value.
  */
-public class PrimaryRecord implements Predicate<String> {
+public final class PrimaryRecord implements Predicate<String> {
   public static final PrimaryRecord INSTANCE = new PrimaryRecord();
 
   private PrimaryRecord() {

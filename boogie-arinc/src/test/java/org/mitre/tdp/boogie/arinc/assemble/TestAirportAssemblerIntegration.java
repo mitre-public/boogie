@@ -4,11 +4,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,7 +22,6 @@ import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Tag("CIFP")
 @Tag("INTEGRATION")
 class TestAirportAssemblerIntegration {
 

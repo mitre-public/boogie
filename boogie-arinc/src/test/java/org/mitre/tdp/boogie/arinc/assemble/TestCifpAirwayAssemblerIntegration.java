@@ -22,7 +22,6 @@ import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-@Tag("CIFP")
 @Tag("INTEGRATION")
 class TestCifpAirwayAssemblerIntegration {
 
