@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.util.DemotedException;
 import org.mitre.tdp.boogie.*;
 
+@Tag("CIFP")
 @Tag("INTEGRATION")
 class OneshotRecordParserCifpIntegrationTest {
 

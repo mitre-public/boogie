@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.util.DemotedException;
 import org.mitre.tdp.boogie.*;
 
+@Tag("LIDO")
 @Tag("INTEGRATION")
 public class OneShotRecordParserLidoIntegrationTest {
   @Test
