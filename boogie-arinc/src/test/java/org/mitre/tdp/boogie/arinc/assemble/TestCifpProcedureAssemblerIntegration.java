@@ -37,6 +37,7 @@ import com.google.common.collect.Multimap;
 /**
  * Integration test for the {@link ProcedureAssembler} but based on the entirety of a CIFP cycle.
  */
+@Tag("CIFP")
 @Tag("INTEGRATION")
 class TestCifpProcedureAssemblerIntegration {
 
