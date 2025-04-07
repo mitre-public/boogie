@@ -3,15 +3,7 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static java.util.Objects.requireNonNull;
 
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
-import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincModel;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.model.*;
 
 /**
  * Assembler class for converting multiple flavors of fix-like 424 record types into client-defined fix data models.
@@ -50,9 +42,8 @@ public interface FixAssembler<F> {
     public F assemble(ArincModel arincModel) {
       String sectionSubSection = arincModel.sectionCode().name().concat(arincModel.subSectionCode().orElse(""));
 
-      // TODO: replace with pattern matching expression to kill off type casts
+      // airports
       return switch (sectionSubSection) {
-        // airports
         case "PA" -> strategy.convertAirport((ArincAirport) arincModel);
         // Enroute NDB Navaids
         case "DB" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
@@ -70,10 +61,11 @@ public interface FixAssembler<F> {
         case "PI" -> strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
         //gnss landing systems - usually used on gls approach or as rec navs rarely
         case "PT" -> strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
-        case "PH" -> //helipads at airports
-            strategy.convertHelipad((ArincHelipad) arincModel);
+        //helipads at airports
+        case "PH" -> strategy.convertHelipad((ArincHelipad) arincModel);
         // anything else is not explicitly supported as a reference object in a leg
-        default -> throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
+        default ->
+            throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
       };
     }
   }

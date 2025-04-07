@@ -30,7 +30,7 @@ public final class PadDimensions implements FieldSpec<String> {
 
   @Override
   public String fieldCode() {
-    return "5.17";
+    return "5.176";
   }
 
   @Override

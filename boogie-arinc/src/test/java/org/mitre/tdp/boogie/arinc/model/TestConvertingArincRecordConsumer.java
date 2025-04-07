@@ -84,5 +84,7 @@ class TestConvertingArincRecordConsumer {
       .helipadConverter(new HelipadConverter())
       .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
+      .heliportConverter(new HeliportConverter())
+      .heliportDelegator(new HeliportValidator())
       .build();
 }

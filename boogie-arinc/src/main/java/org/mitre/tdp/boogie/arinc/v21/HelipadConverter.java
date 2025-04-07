@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
+import org.mitre.tdp.boogie.arinc.utils.Dimensions;
 import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
 import org.mitre.tdp.boogie.arinc.v21.field.HelicopterPerformanceRequirement;
 import org.mitre.tdp.boogie.arinc.v21.field.PadShape;

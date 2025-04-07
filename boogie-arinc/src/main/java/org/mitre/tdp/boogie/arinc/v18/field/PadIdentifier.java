@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.arinc.v21.field;
+package org.mitre.tdp.boogie.arinc.v18.field;
 
 import org.mitre.tdp.boogie.arinc.TrimmableString;
 

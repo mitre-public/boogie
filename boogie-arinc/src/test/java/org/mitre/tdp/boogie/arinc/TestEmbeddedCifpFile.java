@@ -27,7 +27,8 @@ class TestEmbeddedCifpFile {
         () -> assertEquals(0, EmbeddedCifpFile.instance().arincHoldingPatterns().size(), "Holding Patterns"),
         () -> assertEquals(0, EmbeddedCifpFile.instance().arincGnssLandingSystems().size(), "GNSS Landing Systems"),
         () -> assertEquals(0, EmbeddedCifpFile.instance().arincFirUirLegs().size(), "FIR/UIR"),
-        () -> assertEquals(11490, EmbeddedCifpFile.instance().controlledAirspaces().size(), "Controlled Airspace")
+        () -> assertEquals(11490, EmbeddedCifpFile.instance().controlledAirspaces().size(), "Controlled Airspace"),
+        () -> assertEquals(6466, EmbeddedCifpFile.instance().heliports().size(), "Heliports")
     );
   }
 }

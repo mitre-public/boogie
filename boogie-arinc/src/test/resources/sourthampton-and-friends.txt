@@ -1,0 +1,18 @@
+SUSAH 87N K6A87NH1   0     NARY N40504652W072275900W014000005         1800018000C    044044M SOUTHAMPTON                   718531810
+SUSAH 87N K6CCRANN K60    W     N40514240W072275511                       W0135     NAR           CRANN                    718542008
+SUSAH 87N K6CSTAYS K60    W     N40544214W072281168                       W0135     NAR           STAYS                    718552008
+SUSAH 87N K6CTIDUE K60    W     N40574181W072282827                       W0135     NAR           TIDUE                    718562008
+SUSAH 87N K6FR190  ACCC   010CCC  K6D 0V       IF                                             18000                 B PS   718572010
+SUSAH 87N K6FR190  ACCC   020TIDUEK6HC0EY   010TF                                 + 01700                           B PS   718582010
+SUSAH 87N K6FR190  ACCC   030TIDUEK6HC0EE AL   HF                     19000040    + 01700                           B PS   718592010
+SUSAH 87N K6FR190  AHTO   010HTO  K6D 0V       IF                                             18000                 B PS   718602010
+SUSAH 87N K6FR190  AHTO   020TIDUEK6HC0EY   010TF                                 + 01800                           B PS   718612010
+SUSAH 87N K6FR190  AHTO   030TIDUEK6HC0EE AL   HF                     19000040    + 01700                           B PS   718622010
+SUSAH 87N K6FR190  R      010TIDUEK6HC0E  I    IF                                 + 01700     18000070              B-PS   718632010
+SUSAH 87N K6FR190  R      020STAYSK6HC1E  F 010TF                                 + 01700                 CRANN K6HCB PS   718642010
+SUSAH 87N K6FR190  R      020STAYSK6HC2WN          N          ALNAV                                                   PS   718652010
+SUSAH 87N K6FR190  R      030CRANNK6HC0EY M 031TF                                   00560          070 000          B-PS   718662010
+SUSAH 87N K6FR190  R      040         0  M     CA                     1900        + 00439                           B PS   718672010
+SUSAH 87N K6FR190  R      050BEADSK6EA0EY  R010DF                                 + 02000          070              B-PS   718682010
+SUSAH 87N K6FR190  R      060BEADSK6EA0EE  R   HM                     23600040    + 02000          090              B-PS   718692010
+SUSAH 87N K6SCRANNK6HC                0   18018001925                                                                  M   718701505
