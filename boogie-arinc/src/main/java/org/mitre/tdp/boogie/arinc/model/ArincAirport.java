@@ -113,7 +113,7 @@ public final class ArincAirport implements ArincModel {
    */
   private final PublicMilitaryIndicator publicMilitaryIndicator;
   /**
-   * See {@link PublicMilitaryIndicator}.
+   * See {@link DaylightTimeIndicator}.
    */
   private final Boolean daylightTimeIndicator;
   /**
