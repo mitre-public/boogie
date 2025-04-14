@@ -10,13 +10,3 @@ dependencies {
     testImplementation(platform(rootProject.libs.junit.bom))
     testImplementation(rootProject.libs.bundles.test.tools)
 }
-
-tasks.jar {
-    val version = if (project.hasProperty("version")) {
-        project.property("version") as String
-    } else {
-        "unspecified"
-    }
-//    archiveBaseName.set("boogie-core")
-    archiveVersion.set(version)
-}

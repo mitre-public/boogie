@@ -12,7 +12,7 @@ Ask the person you copied to reply-all to vouch for you.
 Something like
 
 ```shell
-I vouch for Matt and give permission for him to be added to the `org.mitre` namespace.
+I vouch for <name> and give permission for him to be added to the `org.mitre` namespace.
 ```
 
 - Create, test, and distribute a GPG key.
@@ -39,11 +39,15 @@ These docs are based on [the steps outlined in caasd-commons](https://github.com
    ```
    You may be prompted to enter your GPG passphrase.
 
-3. Log into `oss.sonatype.org`
+3. Log into https://oss.sonatype.org/
    - Select `Staging Upload` and provide your `bundle.jar` for each artifact
       - **ALERT:** Sometimes this upload produces an "upload failed" dialog even when the upload was successful
    - Select `Staging Repositories` and find the bundle you just uploaded. The artifact repo should list all the checks
      the bundle went through.
+
+::: warning
+When the `org.mitre` namespace is migrated from https://oss.sonatype.org/ to https://central.sonatype.com step 3 will need to change.
+:::
    
 
 
