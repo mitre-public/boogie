@@ -18,9 +18,17 @@ publishing {
 
             pom {
                 name.set(project.name)
+                description.set("Boogie - A dependency-light software project for navigation data parsing, route expansion, and conformance.")
+                url.set("https://github.com/mitre-public/boogie")
                 organization {
                     name.set("The MITRE Corporation TDP")
-                    url.set("https://github.com/mitre-tdp")
+                    url.set("https://github.com/mitre-public")
+                }
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                    }
                 }
                 developers {
                     developer {
@@ -45,6 +53,8 @@ publishing {
     }
 
     val ghprToken: String? by project
+    val ossrhUsername: String? by project
+    val ossrhPassword: String? by project
     repositories {
         maven {
             name = "boogie-public"
@@ -55,6 +65,14 @@ publishing {
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
+            }
+        }
+        maven {
+            name = "MavenCentral"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }
