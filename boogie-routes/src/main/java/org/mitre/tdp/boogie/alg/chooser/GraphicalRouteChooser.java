@@ -28,15 +28,9 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.TurnDirection;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
-import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
-import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
-import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
-import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
+import org.mitre.tdp.boogie.alg.chooser.graph.*;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -59,13 +53,14 @@ final class GraphicalRouteChooser implements RouteChooser {
   public List<ResolvedLeg> chooseRoute(List<ResolvedTokens> resolvedTokens) {
 
     List<LinkableTokens> linkableTokens = toLinkableTokens(resolvedTokens);
-
-    SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(linkableTokens);
-    ifTraceEnabled(l -> l.trace("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph)));
-
     Set<Leg> resolvedEntryPoints = logResolvedPoints("entry", resolveEntryPoints(linkableTokens));
     Set<Leg> resolvedExitPoints = logResolvedPoints("exit", resolveExitPoints(linkableTokens));
 
+    List<ResolvedTokens> filteredResolvedTokens = filterLinkableTokens(resolvedTokens, resolvedEntryPoints, resolvedExitPoints);
+    List<LinkableTokens> filteredLinkableTokens = toLinkableTokens(filteredResolvedTokens);
+
+    SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> routeGraph = constructRouteGraph(filteredLinkableTokens);
+    ifTraceEnabled(l -> l.trace("Constructed the following graph:\n {}.", GraphExporter.INSTANCE.apply(routeGraph)));
     DijkstraShortestPath<Leg, DefaultWeightedEdge> shortestPathAlgorithm = new DijkstraShortestPath<>(routeGraph);
 
     ifDebugEnabled(l -> l.debug("- Identifying shortest path: {}", resolvedEntryPoints.size() * resolvedExitPoints.size()));
@@ -87,6 +82,66 @@ final class GraphicalRouteChooser implements RouteChooser {
         .map(l -> fixedUp.getOrDefault(l, l))
         .map(this::makeResolvedLeg)
         .toList();
+  }
+
+  private List<ResolvedTokens> filterLinkableTokens(List<ResolvedTokens> resolvedTokens, Set<Leg> resolvedEntryPoints, Set<Leg> resolvedExitPoints) {
+
+    List<String> entryNames = resolvedEntryPoints.stream()
+        .map(Leg::associatedFix)
+        .flatMap(Optional::stream)
+        .map(Fix::fixIdentifier)
+        .toList();
+
+    List<String> exitNames = resolvedEntryPoints.stream()
+        .map(Leg::associatedFix)
+        .flatMap(Optional::stream)
+        .map(Fix::fixIdentifier)
+        .toList();
+
+    return resolvedTokens.stream()
+        .map(tokens -> removeUnlinkableSids(tokens, entryNames))
+        .flatMap(Optional::stream)
+        .map(tokens -> removeUnlinkableStars(tokens, exitNames))
+        .flatMap(Optional::stream)
+        .filter(tokens -> !tokens.resolvedTokens().isEmpty())
+        .toList();
+  }
+
+  private Optional<ResolvedTokens> removeUnlinkableStars(ResolvedTokens tokens, List<String> entryNames) {
+    List<ResolvedToken> filteredTokens = tokens.resolvedTokens().stream()
+        .filter(token -> !unlinkableStar(token, entryNames))
+        .toList();
+    return filteredTokens.isEmpty()
+        ? Optional.empty()
+        : Optional.of(new ResolvedTokens(tokens.routeToken(), filteredTokens));
+  }
+
+  private boolean unlinkableStar(ResolvedToken token, List<String> entryNames) {
+    if (!(token instanceof ResolvedToken.StarEnrouteCommon || token instanceof ResolvedToken.StarRunway)) {
+      return false;
+    }
+    String airportId = ((Procedure) token.infrastructure()).airportIdentifier();
+    return null == airportId
+        || entryNames.stream().noneMatch(name -> name.contains(airportId));
+  }
+
+
+  private Optional<ResolvedTokens> removeUnlinkableSids(ResolvedTokens tokens, List<String> exitNames) {
+    List<ResolvedToken> filteredTokens = tokens.resolvedTokens().stream()
+        .filter(token -> !unlinkableSid(token, exitNames))
+        .toList();
+    return filteredTokens.isEmpty()
+        ? Optional.empty()
+        : Optional.of(new ResolvedTokens(tokens.routeToken(), filteredTokens));
+  }
+
+  private boolean unlinkableSid(ResolvedToken token, List<String> exitNames) {
+    if (!(token instanceof ResolvedToken.SidEnrouteCommon || token instanceof ResolvedToken.SidRunway)) {
+      return false;
+    }
+    String airportId = ((Procedure) token.infrastructure()).airportIdentifier();
+    return null == airportId
+        || exitNames.stream().noneMatch(name -> name.contains(airportId));
   }
 
   List<LinkableTokens> toLinkableTokens(List<ResolvedTokens> resolvedTokens) {

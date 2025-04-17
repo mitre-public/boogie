@@ -66,6 +66,25 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
 class FluentRouteExpanderTest {
 
   @Test
+  void ffice() {
+    String route = "VDPP..PNH.M755.KISAN.M755.TUNPO.M755.BITOD.M753.IPRIX.M753.ENREP.N891.UGPEK.N891.URIGO.N891.MANIM.N891.OBDAB..PIBAP..PASPU.LEBA2A.WSSS";
+    FluentRouteExpander expander = newExpander(
+            List.of(anito),
+            emptyList(),
+            List.of(Airports.WSSS()),
+            List.of(CHA1C_WSSS_PARTIAL.INSTANCE)
+    );
+    ExpandedRoute expandedRoute = expander.apply(route, "RW02", null).orElseThrow();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+    ExpandedRoute two = expander.apply(route, "RW03", null).orElseThrow();
+    List<ExpandedRouteLeg> legs2 = two.legs();
+    assertAll(
+            () -> assertEquals(6, legs.size(), "Should be: WSSS -> VA -> VM -> WSSS -> FIX -> FIX"),
+            () -> assertEquals(6, legs2.size(), "Same thing but with an FM leg")
+    );
+  }
+
+  @Test
   void testNoWeight() {
     String route = "WSSS.CHA1C.ANITO";
     Fix anito = fix("ANITO", -0.2833, 104.8667);
