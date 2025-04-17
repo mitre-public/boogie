@@ -108,7 +108,7 @@ class GraphicalRouteChooserTest {
     Leg l3 = TF("GRRDR", 0.0, 2.0);
     Leg l4 = TF("VNY", 0.0, 3.0);
 
-    Transition t = transition("BLSTR1", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
+    Transition t = transition("BLSTR1", "KIND", TransitionType.COMMON, ProcedureType.SID, Arrays.asList(l1, l2, l3, l4));
 
     return RouteTokenResolver.standard(
         LookupService.inMemory(singletonList(kind), a -> Stream.of(a.airportIdentifier())),
