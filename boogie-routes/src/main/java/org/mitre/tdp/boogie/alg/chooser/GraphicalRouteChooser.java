@@ -92,7 +92,7 @@ final class GraphicalRouteChooser implements RouteChooser {
         .map(Fix::fixIdentifier)
         .toList();
 
-    List<String> exitNames = resolvedEntryPoints.stream()
+    List<String> exitNames = resolvedExitPoints.stream()
         .map(Leg::associatedFix)
         .flatMap(Optional::stream)
         .map(Fix::fixIdentifier)

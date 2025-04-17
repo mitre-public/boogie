@@ -11,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.Airports.KATL;
 import static org.mitre.tdp.boogie.Airports.KDEN;
 import static org.mitre.tdp.boogie.MockObjects.fix;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,31 +22,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airports;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Airways;
-import org.mitre.tdp.boogie.CHA1C_WSSS_PARTIAL;
-import org.mitre.tdp.boogie.CONNR5;
-import org.mitre.tdp.boogie.COSTR3;
-import org.mitre.tdp.boogie.COSTR3_DUP;
-import org.mitre.tdp.boogie.CUN;
-import org.mitre.tdp.boogie.CZM;
-import org.mitre.tdp.boogie.CategoryAndType;
-import org.mitre.tdp.boogie.CategoryOrType;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.GQNO_D34Y;
-import org.mitre.tdp.boogie.HOBTT2;
-import org.mitre.tdp.boogie.HOBTT2_DUP;
-import org.mitre.tdp.boogie.JIIMS3;
-import org.mitre.tdp.boogie.KATL_R27R;
-import org.mitre.tdp.boogie.KMCO_I17L;
-import org.mitre.tdp.boogie.KMCO_I17R;
-import org.mitre.tdp.boogie.PLMMR2;
-import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.SUMMA2;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
@@ -64,25 +42,6 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  * <p>e.g. TestAPF would indicate a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class FluentRouteExpanderTest {
-
-  @Test
-  void ffice() {
-    String route = "VDPP..PNH.M755.KISAN.M755.TUNPO.M755.BITOD.M753.IPRIX.M753.ENREP.N891.UGPEK.N891.URIGO.N891.MANIM.N891.OBDAB..PIBAP..PASPU.LEBA2A.WSSS";
-    FluentRouteExpander expander = newExpander(
-            List.of(anito),
-            emptyList(),
-            List.of(Airports.WSSS()),
-            List.of(CHA1C_WSSS_PARTIAL.INSTANCE)
-    );
-    ExpandedRoute expandedRoute = expander.apply(route, "RW02", null).orElseThrow();
-    List<ExpandedRouteLeg> legs = expandedRoute.legs();
-    ExpandedRoute two = expander.apply(route, "RW03", null).orElseThrow();
-    List<ExpandedRouteLeg> legs2 = two.legs();
-    assertAll(
-            () -> assertEquals(6, legs.size(), "Should be: WSSS -> VA -> VM -> WSSS -> FIX -> FIX"),
-            () -> assertEquals(6, legs2.size(), "Same thing but with an FM leg")
-    );
-  }
 
   @Test
   void testNoWeight() {
@@ -105,7 +64,7 @@ class FluentRouteExpanderTest {
   }
 
   /**
-   * Now we added a costr3 modck that has a duplicate LBV transition in it
+   * Now we added a costr3 mock that has a duplicate LBV transition in it
    */
   @Test
   void testMultipleStarTrans() {
@@ -118,6 +77,32 @@ class FluentRouteExpanderTest {
         emptyList(),
         singletonList(Airports.KMCO()),
         singletonList(COSTR3_DUP.INSTANCE));
+
+    ExpandedRoute expandedRoute = expander.apply(route).get();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+    assertAll(
+        () -> assertEquals(11, legs.size(), "this makes sure we can expand an easy route without caring about category or type")
+    );
+  }
+
+  /**
+   * Now we added a costr3 mock that has an ATL airport identifier
+   */
+  @Test
+  void testErrantStar() {
+    String route = "LBV.COSTR3.KMCO";
+
+    Fix lbv = fix("LBV", 26.828186111111112, -81.3914388888889);
+
+    COSTR3_DUP atlConstr3 = spy(COSTR3_DUP.INSTANCE);
+    doReturn("KATL").when(atlConstr3).airportIdentifier();
+    doReturn(ProcedureType.SID).when(atlConstr3).procedureType();
+
+    FluentRouteExpander expander = newExpander(
+        singletonList(lbv),
+        emptyList(),
+        singletonList(Airports.KMCO()),
+        List.of(COSTR3.INSTANCE, atlConstr3));
 
     ExpandedRoute expandedRoute = expander.apply(route).get();
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
