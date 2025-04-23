@@ -45,12 +45,12 @@ final class SidResolver implements RouteTokenResolver {
 
     Collection<Procedure> sids = lookupService.apply(current.infrastructureName());
 
-    Collection<Procedure> fromArrivalAirport = sids.stream()
-        .filter(p -> isFromArrivalAirport(p, previous))
+    Collection<Procedure> fromDepartureAirport = sids.stream()
+        .filter(p -> isFromDepartureAirport(p, previous))
         .collect(toList());
 
-    if (!fromArrivalAirport.isEmpty()) {
-      return fromArrivalAirport;
+    if (!fromDepartureAirport.isEmpty()) {
+      return fromDepartureAirport;
     }
 
     Collection<Procedure> containingExitFix = sids.stream()
@@ -65,7 +65,7 @@ final class SidResolver implements RouteTokenResolver {
   }
 
   /**
-   * Returns true if the provided procedure is for an airport matching the candidate "arrival airport" token.
+   * Returns true if the provided procedure is for an airport matching the candidate "departure airport" token.
    *
    * <p>Often navigation databases will contain copies of the same procedure serving different satellite airports around a major
    * one, this helps ensure we select the correct one.
@@ -73,7 +73,7 @@ final class SidResolver implements RouteTokenResolver {
    * <p>e.g. HOBBT2 serves KATL, SATELLITE1, SATELLITE2... we get a copy of HOBBT2 in the raw data for each of those airports, this
    * is mean't to prefer the implementation who's {@link Procedure#airportIdentifier()} matches the filed arrival/departure airport.
    */
-  private boolean isFromArrivalAirport(Procedure procedure, @Nullable RouteToken previous) {
+  private boolean isFromDepartureAirport(Procedure procedure, @Nullable RouteToken previous) {
     return ofNullable(previous)
         .filter(p -> p.infrastructureName().equalsIgnoreCase(procedure.airportIdentifier()))
         .isPresent();

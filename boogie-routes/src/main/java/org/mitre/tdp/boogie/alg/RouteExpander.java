@@ -7,22 +7,30 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
+import org.mitre.tdp.boogie.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Core interface for the functional definition of a route expander in Boogie.
@@ -104,8 +112,43 @@ public interface RouteExpander {
           .sorted(comparingDouble(r -> r.routeToken().index()))
           .toList();
 
-      return routeChooser.chooseRoute(logResolvedTokens(sortedByIndex));
+      logResolvedTokens(sortedByIndex);
+
+      List<ResolvedTokens> noEmpty = reduceEmptyProcedureTokens(sortedByIndex);
+
+      return routeChooser.chooseRoute(noEmpty);
     }
+
+    /**
+     * In rare cases when procedure names overlap and the transition types of those collisions are such that they could
+     * be combined into a route (even though probably on the other side of the planet) ... we don't want to have an
+     * e.g., inferred star runway transition and then get that linked somehow to some other procedures common
+     * @param routeTokens all the tokens
+     * @return with the ResolvedTokens item dropped if its a resolved + inferred pair but the resolved has no maked transitions left.
+     */
+    private static List<ResolvedTokens> reduceEmptyProcedureTokens(List<ResolvedTokens> routeTokens) {
+      List<ResolvedTokens> mutable = new ArrayList<>();
+      Streams.pairwise(routeTokens, STAR_COLLAPSE).filter(Objects::nonNull).forEach(mutable::add);
+      mutable.add(routeTokens.get(routeTokens.size() - 1));
+      return List.copyOf(mutable);
+    }
+
+    private static final BiFunction<ResolvedTokens, ResolvedTokens, ResolvedTokens> STAR_COLLAPSE = (f,s) -> {
+      Set<Procedure> emptyStars = f.resolvedTokens().stream()
+          .map(ResolvedTokenVisitor::star)
+          .flatMap(Optional::stream)
+          .filter(star -> star.transitions().isEmpty())
+          .collect(Collectors.toSet());
+
+
+
+
+      if (starsA.stream().anyMatch(i -> i.transitions().isEmpty() && matchingAirports.contains(i.airportIdentifier()))) {
+        return null;
+      }
+
+      return f;
+    };
 
     private static void appendInferredSections(HashedLinkedSequence<ResolvedTokens> sequence, SectionInferrer inferrer) {
       inferrer.inferAcross(sequence).forEach((start, inferred) -> {
@@ -134,7 +177,7 @@ public interface RouteExpander {
       return routeTokens;
     }
 
-    private static List<ResolvedTokens> logResolvedTokens(List<ResolvedTokens> resolvedTokens) {
+    private void logResolvedTokens(List<ResolvedTokens> resolvedTokens) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("- ResolvedTokens: {}", resolvedTokens.stream().mapToInt(tokens -> tokens.resolvedTokens().size()).sum());
         LOG.debug(String.format("  %10s %50s", "Identifier", "Types"));
@@ -147,7 +190,6 @@ public interface RouteExpander {
             )
         );
       }
-      return resolvedTokens;
     }
 
     public static final class Builder {
