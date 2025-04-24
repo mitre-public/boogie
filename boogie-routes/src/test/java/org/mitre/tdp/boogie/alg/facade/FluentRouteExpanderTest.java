@@ -66,13 +66,6 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
 class FluentRouteExpanderTest {
 
   @Test
-  void testSameName() {
-    String route = "PIBAP..PASPU.LEBA2A.WSSS";
-    Fix pibap = fix("PIBAP", 9.0, 9.0);
-
-  }
-
-  @Test
   void testNoWeight() {
     String route = "WSSS.CHA1C.ANITO";
     Fix anito = fix("ANITO", -0.2833, 104.8667);
