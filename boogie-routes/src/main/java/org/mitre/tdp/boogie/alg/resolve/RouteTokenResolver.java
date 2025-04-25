@@ -10,16 +10,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.CategoryAndType;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.resolve.infer.KeepTransition;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -201,7 +195,6 @@ public interface RouteTokenResolver {
     Optional<ResolvedToken> sid = ResolvedTokenVisitor.sid(token).map(i -> Procedure.maskTransitions(i,keepTransition.negate())).map(ResolvedToken::sidEnrouteCommon);
     Supplier<Optional<ResolvedToken>> star = () -> ResolvedTokenVisitor.star(token).map(i -> Procedure.maskTransitions(i,keepTransition.negate())).map(i -> (ResolvedToken) ResolvedToken.starEnrouteCommon(i));
     return sid.or(star).orElse(token);
-
   }
 
   /**

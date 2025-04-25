@@ -1,10 +1,12 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -62,7 +64,11 @@ final class StarResolver implements RouteTokenResolver {
       return containingEntryFix;
     }
 
-    return stars;
+    if (isNull(next)) {
+      return stars;
+    }
+
+    return Collections.emptyList();
   }
 
   /**

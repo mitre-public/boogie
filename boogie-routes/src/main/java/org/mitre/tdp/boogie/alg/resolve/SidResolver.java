@@ -1,10 +1,12 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
+import java.util.Collections;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
@@ -61,7 +63,11 @@ final class SidResolver implements RouteTokenResolver {
       return containingExitFix;
     }
 
-    return sids;
+    if (isNull(previous)) {
+      return sids;
+    }
+
+    return Collections.emptyList();
   }
 
   /**

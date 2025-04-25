@@ -4,21 +4,20 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mitre.tdp.boogie.Airports.KDEN;
-import static org.mitre.tdp.boogie.MockObjects.*;
+import static org.mitre.tdp.boogie.MockObjects.fix;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.chooser.graph.Expanders;
 import org.mitre.tdp.boogie.alg.facade.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.facade.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
+import org.mitre.tdp.boogie.alg.resolve.ElementType;
 
 import com.google.common.collect.Lists;
 
@@ -29,8 +28,20 @@ import com.google.common.collect.Lists;
 class TestGraphicalRouteExpander {
 
   @Test
+  void sameIdentDeparture() {
+    FluentRouteExpander expander = Expanders.OTHER_DEPARTURE;
+    String route = "OTHER.LEBA2A.LEBAT";
+    ExpandedRoute expandedRoute = expander.apply(route, "RW88", null).orElseThrow();
+
+    assertAll("There should only be a sid here",
+        () -> assertTrue(expandedRoute.legs().stream().noneMatch(i -> ElementType.STAR.equals(i.elementType()))),
+        () -> assertEquals(4, expandedRoute.legs().size())
+    );
+  }
+
+  @Test
   void sameIdentNoTransitions() {
-    FluentRouteExpander expander = Expanders.wsssExpander();
+    FluentRouteExpander expander = Expanders.WSSS_ARRIVAL;
 
     String route = "PASPU.LEBA2A.WSSS";
     ExpandedRoute expandedRoute = expander.apply(route, null, "RW02C").orElseThrow();
@@ -39,20 +50,11 @@ class TestGraphicalRouteExpander {
         .filter(leg -> leg.associatedFix().isPresent())
         .collect(Collectors.toMap(leg -> leg.associatedFix().orElseThrow(IllegalStateException::new).fixIdentifier(), Function.identity()));
 
-    String route1 = "OTHER.LEBA2A.LEBAT";
-    ExpandedRoute expandedRoute1 = expander.apply(route1, "RW22", null).orElseThrow();
-
-    Map<String, Leg> legsByFix1 = expandedRoute1.legs().stream()
-        .filter(leg -> leg.associatedFix().isPresent())
-        .collect(Collectors.toMap(leg -> leg.associatedFix().orElseThrow(IllegalStateException::new).fixIdentifier(), Function.identity()));
-
     assertAll("This used to resolve LEBA2A as a SID common into the STAR runway in case one ... oops",
         () -> assertEquals(5, expandedRoute.legs().size(), "Would be 3 legs if the routes were built up wrong"),
-        () -> assertEquals(4, expandedRoute1.legs().size(), "Same 3 leg issue here if the route was wrong"),
         () -> assertNotNull(legsByFix.get("PU"), "gets skipped if went to the star from the sid by mistake"),
         () -> assertNotNull(legsByFix.get("SJ"), "gets skipped if went to the tar from teh sid by mistake"),
-        () -> assertNotNull(legsByFix1.get("LEBAT")),
-        () -> assertNotNull(legsByFix1.get("BV414"), "would get skipped if it tried to jump to the star")
+        () -> assertTrue(expandedRoute.legs().stream().noneMatch(l -> l.elementType().equals(ElementType.SID)))
     );
   }
 

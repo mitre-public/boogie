@@ -6,7 +6,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
@@ -16,7 +15,9 @@ import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
-import org.mitre.tdp.boogie.alg.resolve.*;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
+import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
@@ -106,23 +107,7 @@ public interface RouteExpander {
 
       logResolvedTokens(sortedByIndex);
 
-      List<ResolvedTokens> noEmpty = reduceEmptyProcedureTokens(sortedByIndex);
-
-      return routeChooser.chooseRoute(noEmpty);
-    }
-
-    /**
-     * In rare cases when procedure names overlap and the transition types of those collisions are such that they could
-     * be combined into a route (even though probably on the other side of the planet) ... we don't want to have an
-     * e.g., inferred star runway transition and then get that linked somehow to some other procedures common before it.
-     *
-     * @param routeTokens all the tokens
-     * @return with the ResolvedTokens item dropped if its a resolved + inferred pair but the resolved has no maked transitions left.
-     */
-    private static List<ResolvedTokens> reduceEmptyProcedureTokens(List<ResolvedTokens> routeTokens) {
-      return Stream.concat(Streams.pairwise(routeTokens, ResolvedTokenReducer.INSTANCE), Stream.of(routeTokens.get(routeTokens.size() - 1)))
-          .filter(Objects::nonNull)
-          .toList();
+      return routeChooser.chooseRoute(sortedByIndex);
     }
 
     private static void appendInferredSections(HashedLinkedSequence<ResolvedTokens> sequence, SectionInferrer inferrer) {
