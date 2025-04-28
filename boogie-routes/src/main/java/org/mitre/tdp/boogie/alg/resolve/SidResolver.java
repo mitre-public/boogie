@@ -1,10 +1,12 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
@@ -45,27 +47,31 @@ final class SidResolver implements RouteTokenResolver {
 
     Collection<Procedure> sids = lookupService.apply(current.infrastructureName());
 
-    Collection<Procedure> fromArrivalAirport = sids.stream()
-        .filter(p -> isFromArrivalAirport(p, previous))
-        .collect(toList());
+    Collection<Procedure> fromDepartureAirport = sids.stream()
+        .filter(p -> isFromDepartureAirport(p, previous))
+        .toList();
 
-    if (!fromArrivalAirport.isEmpty()) {
-      return fromArrivalAirport;
+    if (!fromDepartureAirport.isEmpty()) {
+      return fromDepartureAirport;
     }
 
     Collection<Procedure> containingExitFix = sids.stream()
         .filter(p -> containsWaypoint(p, next))
-        .collect(toList());
+        .toList();
 
     if (!containingExitFix.isEmpty()) {
       return containingExitFix;
     }
 
-    return sids;
+    if (isNull(previous)) {
+      return sids;
+    }
+
+    return List.of();
   }
 
   /**
-   * Returns true if the provided procedure is for an airport matching the candidate "arrival airport" token.
+   * Returns true if the provided procedure is for an airport matching the candidate "departure airport" token.
    *
    * <p>Often navigation databases will contain copies of the same procedure serving different satellite airports around a major
    * one, this helps ensure we select the correct one.
@@ -73,7 +79,7 @@ final class SidResolver implements RouteTokenResolver {
    * <p>e.g. HOBBT2 serves KATL, SATELLITE1, SATELLITE2... we get a copy of HOBBT2 in the raw data for each of those airports, this
    * is mean't to prefer the implementation who's {@link Procedure#airportIdentifier()} matches the filed arrival/departure airport.
    */
-  private boolean isFromArrivalAirport(Procedure procedure, @Nullable RouteToken previous) {
+  private boolean isFromDepartureAirport(Procedure procedure, @Nullable RouteToken previous) {
     return ofNullable(previous)
         .filter(p -> p.infrastructureName().equalsIgnoreCase(procedure.airportIdentifier()))
         .isPresent();
