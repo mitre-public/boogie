@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.alg.resolve;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -48,7 +49,7 @@ final class StarResolver implements RouteTokenResolver {
 
     Collection<Procedure> fromArrivalAirport = stars.stream()
         .filter(p -> isFromArrivalAirport(p, next))
-        .collect(toList());
+        .toList();
 
     if (!fromArrivalAirport.isEmpty()) {
       return fromArrivalAirport;
@@ -56,13 +57,17 @@ final class StarResolver implements RouteTokenResolver {
 
     Collection<Procedure> containingEntryFix = stars.stream()
         .filter(p -> containsWaypoint(p, previous))
-        .collect(toList());
+        .toList();
 
     if (!containingEntryFix.isEmpty()) {
       return containingEntryFix;
     }
 
-    return stars;
+    if (isNull(next)) {
+      return stars;
+    }
+
+    return List.of();
   }
 
   /**

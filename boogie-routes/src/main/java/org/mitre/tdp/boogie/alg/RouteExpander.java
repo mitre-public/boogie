@@ -4,12 +4,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparingDouble;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
@@ -21,6 +21,7 @@ import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
+import org.mitre.tdp.boogie.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +105,9 @@ public interface RouteExpander {
           .sorted(comparingDouble(r -> r.routeToken().index()))
           .toList();
 
-      return routeChooser.chooseRoute(logResolvedTokens(sortedByIndex));
+      logResolvedTokens(sortedByIndex);
+
+      return routeChooser.chooseRoute(sortedByIndex);
     }
 
     private static void appendInferredSections(HashedLinkedSequence<ResolvedTokens> sequence, SectionInferrer inferrer) {
@@ -134,7 +137,7 @@ public interface RouteExpander {
       return routeTokens;
     }
 
-    private static List<ResolvedTokens> logResolvedTokens(List<ResolvedTokens> resolvedTokens) {
+    private void logResolvedTokens(List<ResolvedTokens> resolvedTokens) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("- ResolvedTokens: {}", resolvedTokens.stream().mapToInt(tokens -> tokens.resolvedTokens().size()).sum());
         LOG.debug(String.format("  %10s %50s", "Identifier", "Types"));
@@ -147,7 +150,6 @@ public interface RouteExpander {
             )
         );
       }
-      return resolvedTokens;
     }
 
     public static final class Builder {

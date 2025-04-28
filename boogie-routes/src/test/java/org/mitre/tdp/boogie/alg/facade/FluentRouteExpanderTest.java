@@ -65,6 +65,8 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  */
 class FluentRouteExpanderTest {
 
+
+
   @Test
   void testNoWeight() {
     String route = "WSSS.CHA1C.ANITO";
