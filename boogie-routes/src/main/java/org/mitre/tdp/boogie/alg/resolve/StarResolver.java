@@ -6,7 +6,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -50,7 +49,7 @@ final class StarResolver implements RouteTokenResolver {
 
     Collection<Procedure> fromArrivalAirport = stars.stream()
         .filter(p -> isFromArrivalAirport(p, next))
-        .collect(toList());
+        .toList();
 
     if (!fromArrivalAirport.isEmpty()) {
       return fromArrivalAirport;
@@ -58,7 +57,7 @@ final class StarResolver implements RouteTokenResolver {
 
     Collection<Procedure> containingEntryFix = stars.stream()
         .filter(p -> containsWaypoint(p, previous))
-        .collect(toList());
+        .toList();
 
     if (!containingEntryFix.isEmpty()) {
       return containingEntryFix;
@@ -68,7 +67,7 @@ final class StarResolver implements RouteTokenResolver {
       return stars;
     }
 
-    return Collections.emptyList();
+    return List.of();
   }
 
   /**

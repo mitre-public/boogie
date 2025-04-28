@@ -6,7 +6,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
@@ -49,7 +49,7 @@ final class SidResolver implements RouteTokenResolver {
 
     Collection<Procedure> fromDepartureAirport = sids.stream()
         .filter(p -> isFromDepartureAirport(p, previous))
-        .collect(toList());
+        .toList();
 
     if (!fromDepartureAirport.isEmpty()) {
       return fromDepartureAirport;
@@ -57,7 +57,7 @@ final class SidResolver implements RouteTokenResolver {
 
     Collection<Procedure> containingExitFix = sids.stream()
         .filter(p -> containsWaypoint(p, next))
-        .collect(toList());
+        .toList();
 
     if (!containingExitFix.isEmpty()) {
       return containingExitFix;
@@ -67,7 +67,7 @@ final class SidResolver implements RouteTokenResolver {
       return sids;
     }
 
-    return Collections.emptyList();
+    return List.of();
   }
 
   /**
