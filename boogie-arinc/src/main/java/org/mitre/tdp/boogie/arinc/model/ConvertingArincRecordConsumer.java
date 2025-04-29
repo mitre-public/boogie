@@ -3,11 +3,7 @@ package org.mitre.tdp.boogie.arinc.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -45,6 +41,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   private final DelegatableCollection<ArincHoldingPattern> arincHoldingPatterns;
   private final DelegatableCollection<ArincFirUirLeg> arincFirUirLeg;
   private final DelegatableCollection<ArincHelipad> arincHelipads;
+  private final DelegatableCollection<ArincHeliport> arincHeliports;
   private final DelegatableCollection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs;
 
   private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;
@@ -64,6 +61,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincFirUirLeg = new DelegatableCollection<>(builder.firUirDelegator, builder.firUirConverter);
     this.arincHelipads = new DelegatableCollection<>(builder.helipadDelegator, builder.helipadConverter);
     this.arincControlledAirspaceLegs = new DelegatableCollection<>(builder.arincControlledAirspaceLegDelegator, builder.arincControlledAirspaceConverter);
+    this.arincHeliports = new DelegatableCollection<>(builder.heliportDelegator, builder.heliportConverter);
 
     this.consumer = new MRUDequeConsumer<>(
         this.arincAirports,
@@ -79,7 +77,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         this.arincHoldingPatterns,
         this.arincFirUirLeg,
         this.arincHelipads,
-        this.arincControlledAirspaceLegs
+        this.arincControlledAirspaceLegs,
+        this.arincHeliports
     );
   }
 
@@ -137,6 +136,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
   public Collection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs() {
     return arincControlledAirspaceLegs.records();
+  }
+
+  public Collection<ArincHeliport> arincHeliports() {
+    return arincHeliports.records();
   }
 
   @Override
@@ -238,6 +241,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     private Function<ArincRecord, Optional<ArincHelipad>> helipadConverter;
     private Predicate<ArincRecord> arincControlledAirspaceLegDelegator;
     private Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> arincControlledAirspaceConverter;
+    private Predicate<ArincRecord> heliportDelegator;
+    private Function<ArincRecord, Optional<ArincHeliport>> heliportConverter;
 
     public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
       this.airportContinuationDelegator = airportContinuationDelegator;
@@ -376,6 +381,16 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     public Builder arincControlledAirspaceLegDelegator(Predicate<ArincRecord> arincControlledAirspaceLegDelegator) {
       this.arincControlledAirspaceLegDelegator = arincControlledAirspaceLegDelegator;
+      return this;
+    }
+
+    public Builder heliportDelegator(Predicate<ArincRecord> heliportDelegator) {
+      this.heliportDelegator = heliportDelegator;
+      return this;
+    }
+
+    public Builder heliportConverter(Function<ArincRecord, Optional<ArincHeliport>> heliportConverter) {
+      this.heliportConverter = heliportConverter;
       return this;
     }
 

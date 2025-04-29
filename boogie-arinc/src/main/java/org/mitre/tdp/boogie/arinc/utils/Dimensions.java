@@ -1,8 +1,8 @@
-package org.mitre.tdp.boogie.arinc.v21;
+package org.mitre.tdp.boogie.arinc.utils;
 
 import java.util.Optional;
 
-record Dimensions(Double x, Double y, Double diameter) {
+public record Dimensions(Double x, Double y, Double diameter) {
   public Optional<Double> xPossible() {
     return Optional.ofNullable(x);
   }

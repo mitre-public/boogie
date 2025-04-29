@@ -7,7 +7,7 @@ import java.util.function.Function;
 /**
  * This class ensures that ARINC data to Duration transformations happen the same.
  */
-public class LegTimeFromString implements Function<String, Duration> {
+public final class LegTimeFromString implements Function<String, Duration> {
 
   public static  final LegTimeFromString INSTANCE = new LegTimeFromString();
 
