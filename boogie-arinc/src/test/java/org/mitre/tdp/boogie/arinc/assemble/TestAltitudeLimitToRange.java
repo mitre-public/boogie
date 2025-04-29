@@ -37,4 +37,19 @@ class TestAltitudeLimitToRange {
   void testValueForUnsupportedType() {
     assertEquals(Range.all(), AltitudeLimitToRange.INSTANCE.apply("HI", null, null));
   }
+
+  @Test
+  void testD() {
+    assertEquals(Range.atMost(10.), AltitudeLimitToRange.INSTANCE.apply("D", null, 10.));
+  }
+
+  @Test
+  void testG() {
+    assertEquals(Range.closed(10., 10.), AltitudeLimitToRange.INSTANCE.apply("G", 10., null));
+  }
+
+  @Test
+  void testO() {
+    assertEquals(Range.atLeast(10.), AltitudeLimitToRange.INSTANCE.apply("O", null, 10.));
+  }
 }
