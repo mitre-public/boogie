@@ -41,9 +41,9 @@ public final class AltitudeLimitToRange implements TriFunction<String, Double, D
     } else if ("B".equals(altitudeDescription) && altitude1 != null && altitude2 != null) {
       // as per the spec the higher value appears FIRST and the lower SECOND
       return Range.closed(altitude2, altitude1);
-    } else if ("C".equals(altitudeDescription) && altitude2 != null) {
+    } else if ("C".equals(altitudeDescription) && altitude2 != null) { //conditional
       return Range.atLeast(altitude2);
-    } else if ("D".equals(altitudeDescription) && altitude2 != null) {
+    } else if ("D".equals(altitudeDescription) && altitude2 != null) { //conditional
       return Range.atMost(altitude2);
     } else if ("G".equals(altitudeDescription) && altitude1 != null) {
       return Range.closed(altitude1, altitude1);
