@@ -9,16 +9,11 @@ import java.util.Optional;
 import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Helipad;
-import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.Runway;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
-import org.mitre.tdp.boogie.util.Declinations;
 
 /**
  * Strategy class for generating user-defined records from 424 airport information. Used with {@link AirportAssembler}.

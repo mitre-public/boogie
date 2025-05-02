@@ -11,7 +11,6 @@ import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.util.Declinations;
 
 /**
  * In Boogie's simplified worldview a fix is any named reference point in space (this could be a VOR, NDB, waypoint, etc.) and is

@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
-import org.mitre.tdp.boogie.util.Declinations;
 
 /**
  * The “Magnetic Variation” field specifies the angular difference between True North and Magnetic North at the location defined in the record.
@@ -18,7 +17,7 @@ import org.mitre.tdp.boogie.util.Declinations;
  * <br>
  * e.g. E0140, E0000, T0000
  * <br>
- * As in {@link InboundMagneticCourse} this class filters out variations listed as true north. Use {@link Declinations} instead for your work.
+ * As in {@link InboundMagneticCourse} this class filters out variations listed as true north. Use {@link org.mitre.tdp.boogie.Declinations} instead for your work.
  */
 public final class MagneticVariation implements FieldSpec<Double> {
 
