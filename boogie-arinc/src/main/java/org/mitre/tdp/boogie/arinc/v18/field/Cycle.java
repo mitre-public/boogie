@@ -2,8 +2,8 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.AiracCycle;
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
 
 /**
  * The “Cycle Date” field identifies the calendar period in which the record was added to the file or last revised. A change in

@@ -2,12 +2,14 @@ package org.mitre.tdp.boogie;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
+import static org.mitre.tdp.boogie.Declinations.declination;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.Course;
-import org.mitre.tdp.boogie.util.Declinations;
 
 /**
  * Value object representing the magnetic variation at some location with a few convenience methods for working with it.
@@ -54,6 +56,13 @@ public final class MagneticVariation implements Serializable {
     return new MagneticVariation(Course.ofRadians(angle));
   }
 
+  public static MagneticVariation from(double lat, double lon, Instant tau) {
+    return MagneticVariation.ofDegrees(declination(lat, lon, tau));
+  }
+
+  public static MagneticVariation from(double lat, double lon, @Nullable Double elev, Instant tau) {
+    return MagneticVariation.ofDegrees(declination(lat, lon, elev, tau));
+  }
   /**
    * Return the angle of this magnetic variation (wrt true north) as a course (note this may be negative).
    */

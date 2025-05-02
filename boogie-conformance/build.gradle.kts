@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation(project(":boogie-core"))
     implementation(project(":boogie-routes"))
+    implementation(project(":boogie-util"))
     implementation(libs.bundles.commons)
     implementation(libs.bundles.jgrapht)
 
