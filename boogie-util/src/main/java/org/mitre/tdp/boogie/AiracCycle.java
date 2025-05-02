@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.arinc.utils;
+package org.mitre.tdp.boogie;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
 
 /**
  * Facade class for internal only dependency on the {@link Airac} project.
@@ -172,7 +171,7 @@ public final class AiracCycle {
      * @throws IllegalArgumentException if the identifier {@code yyoo} is null, malformed or implied cycle does not
      *                                  exist.
      */
-    public static Airac fromIdentifier(@Nullable String yyoo) {
+    public static Airac fromIdentifier(String yyoo) {
       Objects.requireNonNull(yyoo);
 
       Matcher m = identifierPattern.matcher(yyoo);

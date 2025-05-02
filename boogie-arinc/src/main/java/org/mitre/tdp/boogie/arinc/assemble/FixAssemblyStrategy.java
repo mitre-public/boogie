@@ -1,12 +1,12 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.util.Declinations.magneticVariation;
 
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.AiracCycle;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -19,7 +19,6 @@ import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
-import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
 
 /**
  * Strategy class for generated fix-like records from various 424 record types. The input types are all the record types which
@@ -121,7 +120,7 @@ public interface FixAssemblyStrategy<F> {
 
       MagneticVariation magneticVariation = waypoint.magneticVariation()
           .map(MagneticVariation::ofDegrees)
-          .orElseGet(() -> magneticVariation(waypoint.latitude(), waypoint.longitude(), cycleDate));
+          .orElseGet(() -> MagneticVariation.from(waypoint.latitude(), waypoint.longitude(), cycleDate));
 
       return Fix.builder()
           .fixIdentifier(waypoint.waypointIdentifier())
@@ -137,7 +136,7 @@ public interface FixAssemblyStrategy<F> {
 
       MagneticVariation magneticVariation = navaid.magneticVariation()
           .map(MagneticVariation::ofDegrees)
-          .orElseGet(() -> magneticVariation(navaid.latitude(), navaid.longitude(), cycleDate));
+          .orElseGet(() -> MagneticVariation.from(navaid.latitude(), navaid.longitude(), cycleDate));
 
       return Fix.builder()
           .fixIdentifier(navaid.ndbIdentifier())
@@ -154,7 +153,7 @@ public interface FixAssemblyStrategy<F> {
       return Fix.builder()
           .fixIdentifier(navaid.vhfIdentifier())
           .latLong(LatLong.of(navaid.latitude(), navaid.longitude()))
-          .magneticVariation(magneticVariation(navaid.latitude(), navaid.longitude(), cycleDate))
+          .magneticVariation(MagneticVariation.from(navaid.latitude(), navaid.longitude(), cycleDate))
           .build();
     }
 
@@ -165,7 +164,7 @@ public interface FixAssemblyStrategy<F> {
 
       MagneticVariation magneticVariation = airport.magneticVariation()
           .map(MagneticVariation::ofDegrees)
-          .orElseGet(() -> magneticVariation(airport.latitude(), airport.longitude(), cycleDate));
+          .orElseGet(() -> MagneticVariation.from(airport.latitude(), airport.longitude(), cycleDate));
 
       return Fix.builder()
           .fixIdentifier(airport.airportIdentifier())
@@ -182,7 +181,7 @@ public interface FixAssemblyStrategy<F> {
       return Fix.builder()
           .fixIdentifier(runway.runwayIdentifier())
           .latLong(LatLong.of(runway.latitude(), runway.longitude()))
-          .magneticVariation(magneticVariation(runway.latitude(), runway.longitude(), cycleDate))
+          .magneticVariation(MagneticVariation.from(runway.latitude(), runway.longitude(), cycleDate))
           .build();
     }
 
@@ -199,7 +198,7 @@ public interface FixAssemblyStrategy<F> {
       return Fix.builder()
           .fixIdentifier(ilsGls.localizerIdentifier())
           .latLong(location)
-          .magneticVariation(magneticVariation(location.latitude(), location.longitude(), cycleDate))
+          .magneticVariation(MagneticVariation.from(location.latitude(), location.longitude(), cycleDate))
           .build();
     }
 
@@ -211,7 +210,7 @@ public interface FixAssemblyStrategy<F> {
       return Fix.builder()
           .fixIdentifier(gnss.glsRefPathIdentifier())
           .latLong(LatLong.of(gnss.stationLatitude(), gnss.stationLongitude()))
-          .magneticVariation(magneticVariation(gnss.stationLatitude(), gnss.stationLongitude(), cycleDate))
+          .magneticVariation(MagneticVariation.from(gnss.stationLatitude(), gnss.stationLongitude(), cycleDate))
           .build();
     }
 
@@ -221,7 +220,7 @@ public interface FixAssemblyStrategy<F> {
       return Fix.builder()
           .fixIdentifier(helipad.helipadIdentifier())
           .latLong(LatLong.of(helipad.latitude(), helipad.longitude()))
-          .magneticVariation(magneticVariation(helipad.latitude(), helipad.longitude(), cycleDate))
+          .magneticVariation(MagneticVariation.from(helipad.latitude(), helipad.longitude(), cycleDate))
           .build();
     }
 

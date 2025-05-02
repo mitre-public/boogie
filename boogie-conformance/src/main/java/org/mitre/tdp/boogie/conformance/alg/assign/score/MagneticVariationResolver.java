@@ -2,12 +2,8 @@ package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
-import org.mitre.tdp.boogie.util.Declinations;
 
 /**
  * Local class for hierarchical lookup of the local magnetic variation given a point and a leg.

@@ -1,10 +1,7 @@
-package org.mitre.tdp.boogie.util;
+package org.mitre.tdp.boogie;
 
 import java.time.Instant;
-import java.util.Map;
-import java.util.Optional;
-
-import com.google.common.collect.ImmutableSortedMap;
+import java.util.*;
 
 /**
  * The input string array which contains each line of input for the
@@ -379,12 +376,15 @@ public enum GeomagneticCoefficients {
       " 12 11      -1.3       0.1       -0.0        0.0",
       " 12 12      -0.7       0.2       -0.1       -0.1"});
 
-  private static final ImmutableSortedMap<Instant, GeomagneticCoefficients> timeToCoefficients = ImmutableSortedMap.of(
-      Instant.parse("2010-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2010,
-      Instant.parse("2015-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2015,
-      Instant.parse("2020-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2020,
-      Instant.parse("2025-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2025
-  );
+  private static final NavigableMap<Instant, GeomagneticCoefficients> timeToCoefficients;
+  static {
+    NavigableMap<Instant, GeomagneticCoefficients> mutable = new TreeMap<>();
+    mutable.put(Instant.parse("2010-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2010);
+    mutable.put(Instant.parse("2015-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2015);
+    mutable.put(Instant.parse("2020-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2020);
+    mutable.put(Instant.parse("2025-01-01T00:00:00Z"), GeomagneticCoefficients.WMM2025);
+    timeToCoefficients = Collections.unmodifiableNavigableMap(mutable);
+  }
 
   private final String[] rawCoeffs;
 
@@ -394,7 +394,8 @@ public enum GeomagneticCoefficients {
 
   public static GeomagneticCoefficients coefficientsAtTime(Instant tau) {
     return Optional.ofNullable(timeToCoefficients.lowerEntry(tau)).map(Map.Entry::getValue)
-        .orElseGet(() -> Optional.ofNullable(timeToCoefficients.ceilingEntry(tau)).map(Map.Entry::getValue).orElseThrow(IllegalStateException::new));
+        .or(() -> Optional.ofNullable(timeToCoefficients.higherEntry(tau)).map(Map.Entry::getValue))
+        .orElseThrow(IllegalStateException::new);
   }
 
   public String[] rawCoefficients() {

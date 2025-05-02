@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.util;
+package org.mitre.tdp.boogie;
 
 /*                PUBLIC DOMAIN NOTICE
 This program was prepared by Los Alamos National Security, LLC

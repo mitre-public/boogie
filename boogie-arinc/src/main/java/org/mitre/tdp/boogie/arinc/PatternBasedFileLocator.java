@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.function.Function;
 
-import org.mitre.tdp.boogie.arinc.utils.AiracCycle;
+import org.mitre.tdp.boogie.AiracCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

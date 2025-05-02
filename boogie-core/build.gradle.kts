@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":boogie-util"))
     implementation(libs.guava)
     implementation(libs.bundles.commons)
     implementation(libs.bundles.jgrapht)
