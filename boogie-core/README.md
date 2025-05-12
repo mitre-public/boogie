@@ -20,16 +20,16 @@ The core Boogie module defines the common set of interfaces used to describe com
 philosophy behind these interfaces has been to keep then *as thin as possible* allowing for extension as needed when new use cases 
 arise. For now these interfaces include but won't be limited to those in the following table:
 
-| Interface | Simple Immutable/Buildable Implementation | Description |
-|:----------|:------------------------------------------|:------------|
-| [Airport](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Airport.java) | [Boogie Airport](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/BoogieAirport.java) | The baseline airport definition is usable as a fix but provides its own name/region overrides and access to a collection of available runways. |
-| [Runway](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Runway.java) | [Boogie Runway](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/BoogieRunway.java) | The runway implementation provides access to the arrival/departure end locations, a width + length (for bounding box computations) and a course + name. |
-| [Fix](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Fix.java) | [Boogie Fix](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/BoogieFix.java) | A fix represents a named location within a region, a magnetic variation (potentially published) but always a [modeled value](#magnetic-modeling), and potentially an elevation. Generally fixes *should* represent airports, waypoints, or navaids. |
-| [Leg](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Leg.java) | [Boogie Leg](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/BoogieLeg.java) | The leg definition contains just the information required to fly the leg as an aircraft would and is reminiscent of the fields required by its 424 coding. The leg additionally contains a few boolean values for indicating the type of leg (e.g. flyover, holding, initial fix, intermediate approach fix, or final approach course fix. |
-| [Transition](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Transition.java) | [Boogie Transition](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/BoogieTransition.java) | Transitions represent a linear sequence of legs within a larger procedure and are associated with both a [transition type](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/TransitionType.java) and [procedure type](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/ProcedureType.java) as well as an optional identifier. |
-| [Procedure](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Procedure.java) | [Boogie Procedure](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/BoogieProcedure.java) | Procedures represent collections of transitions and on top of providing naming information also provide high level [required navigation equipage](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/RequiredNavigationEquipage.java). |
+| Interface | Simple Immutable/Buildable Implementation                                                                                                    | Description |
+|:----------|:---------------------------------------------------------------------------------------------------------------------------------------------|:------------|
+| [Airport](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Airport.java) | [Airport.Standard](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/Airport.java)       | The baseline airport definition is usable as a fix but provides its own name/region overrides and access to a collection of available runways. |
+| [Runway](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Runway.java) | [Runway.Standard](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/Runway.java)         | The runway implementation provides access to the arrival/departure end locations, a width + length (for bounding box computations) and a course + name. |
+| [Fix](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Fix.java) | [Fix.Standard](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/Fix.java)               | A fix represents a named location within a region, a magnetic variation (potentially published) but always a [modeled value](#magnetic-modeling), and potentially an elevation. Generally fixes *should* represent airports, waypoints, or navaids. |
+| [Leg](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Leg.java) | [Leg.Standard](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/Leg.java)               | The leg definition contains just the information required to fly the leg as an aircraft would and is reminiscent of the fields required by its 424 coding. The leg additionally contains a few boolean values for indicating the type of leg (e.g. flyover, holding, initial fix, intermediate approach fix, or final approach course fix. |
+| [Transition](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Transition.java) | [Transition.Standard](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/Transition.java) | Transitions represent a linear sequence of legs within a larger procedure and are associated with both a [transition type](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/TransitionType.java) and [procedure type](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/ProcedureType.java) as well as an optional identifier. |
+| [Procedure](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/Procedure.java) | [Procedure.Standard](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/Procedure.java)   | Procedures represent collections of transitions and on top of providing naming information also provide high level [required navigation equipage](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/RequiredNavigationEquipage.java). |
 
-Generally speaking all current and future implementations of (or additions to) these should live in the [org.mitre.tdp.boogie.model]((https://github.com/mitre-tdp/boogie/tree/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model)) 
+Generally speaking all current and future implementations of (or additions to) these should live in the [org.mitre.tdp.boogie]((https://github.com/mitre-public/boogie/tree/main/boogie-core/src/main/java/org/mitre/tdp/boogie)) 
 package and all implementations should be <b>*immutable, buildable, and serializable*</b>.
 
 ### General Utilities
@@ -37,25 +37,14 @@ package and all implementations should be <b>*immutable, buildable, and serializ
 At a high-level Boogie provides a small collection of generally-useful utilities for working with navigation (particularly 
 procedure and leg data) which can be re-used in a relatively straightforward fashion.
 
-#### Magnetic modeling
-
-Boogie provides a future looking (as well as historical) collection of declination information at any point on the globe via the 
-[Declinations](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/util/Declinations.java) 
-class. This is generally useful for modeling magvars on the fly off waypoints when they are used as fix-radial-distances (FRDs) 
-within real-world flightplans.
-
-```java
-double declination = Declinations.declination(myLat, myLon, myOptionalAltitudeInFeet, currentTime);
-```
-
 #### Pairwise and triples collection iteration
 
 Due to the fact that most legs in procedures are considered sequentially as pairs (e.g. RF/TF - need to know the terminating fix 
 of the previous leg to understand the path) and occasionally for certain leg combinations triples, boogie provides pre-canned 
 iterator classes for enumerating collections in that way. See:
 
-1. [Iterators](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/util/Iterators.java)
-1. [Streams](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/util/Streams.java)
+1. [Iterators](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/util/Iterators.java)
+1. [Streams](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/util/Streams.java)
 
 ```java
 List<Leg> legs = ...;
@@ -85,8 +74,8 @@ methods for iterating through collections of navigation elements, particularly l
 
 ### Viterbi algorithm
 
-All source code lives within the [org.mitre.tdp.boogie.viterbi](https://github.com/mitre-tdp/boogie/tree/main/boogie-core/src/main/java/org/mitre/tdp/boogie/viterbi) 
-package with the main entrypoint being via the [ViterbiTagger](https://github.com/mitre-tdp/boogie/tree/main/boogie-core/src/main/java/org/mitre/tdp/boogie/viterbi/ViterbiTagger.java).
+All source code lives within the [org.mitre.tdp.boogie.viterbi](https://github.com/mitre-public/boogie/tree/main/boogie-core/src/main/java/org/mitre/tdp/boogie/viterbi) 
+package with the main entrypoint being via the [ViterbiTagger](https://github.com/mitre-public/boogie/tree/main/boogie-core/src/main/java/org/mitre/tdp/boogie/viterbi/ViterbiTagger.java).
 
 **Note**: more holistic documentation for the tagger and how it works is a WIP.
 
@@ -94,8 +83,8 @@ package with the main entrypoint being via the [ViterbiTagger](https://github.co
  
 Boogie (core) provides a pair of patterns for accessing and working with procedures more sensibly - these are:
 
-1. [QueryableProcedure](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/QueryableProcedure.java)
-1. [ProcedureGraph](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/model/ProcedureGraph.java)
+1. [QueryableProcedure](https://github.com/mitre-tdp/boogie/blob/main/boogie-public/src/main/java/org/mitre/tdp/boogie/model/QueryableProcedure.java)
+1. [ProcedureGraph](https://github.com/mitre-tdp/boogie/blob/main/boogie-public/src/main/java/org/mitre/tdp/boogie/model/ProcedureGraph.java)
 
 Both are simple decorators for `Procedure` implementing classes which implement `Procedure` themselves. There are others decorators 
 introduced in downstream modules but the general programmatic way to use these is something like (taking for example with the 
@@ -126,7 +115,7 @@ assertEquals("ENNTT:IF->GONDR:TF->SMAWG:TF->SMAWG:IF->HOBTT:TF->ENSLL:TF->ENSLL:
 
 ### Validation utilities
 
-On top of the model interfaces Boogie provides access to a few relatively simple validation functions for [Leg implementations](https://github.com/mitre-tdp/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/validate/PathTerminatorBasedLegValidator.java)   
+On top of the model interfaces Boogie provides access to a few relatively simple validation functions for [Leg implementations](https://github.com/mitre-public/boogie/blob/main/boogie-core/src/main/java/org/mitre/tdp/boogie/validate/PathTerminatorBasedLegValidator.java)   
 or sequences of legs.
 
 ```java
