@@ -1,5 +1,5 @@
 # Boogie
-![Build Status](https://github.com/mitre-public/boogie/actions/workflows/publish.yaml/badge.svg)
+[![publish](https://github.com/mitre-public/boogie/actions/workflows/publish.yml/badge.svg)](https://github.com/mitre-public/boogie/actions/workflows/publish.yml)
 
 ### Project overview
 
