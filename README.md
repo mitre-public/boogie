@@ -18,3 +18,4 @@ A general outline of what's provided within this repo is here:
 1. [boogie-routes](https://github.com/mitre-public/boogie/tree/main/boogie-routes) - route expansion logic - takes route strings in a variety of formats and converts them into 2D paths using relevant navigational data.
 1. [boogie-conformance](https://github.com/mitre-public/boogie/tree/main/boogie-conformance) - tools for evaluating how well trajectory data conformed with a physical path (generally as outlined by a procedure/airway).
 1. [boogie-util](https://github.com/mitre-public/boogie/tree/main/boogie-util) - tools for AIRAC and Magnetic Variation.
+2. [boogie-dafif](https://github.com/mitre-public/boogie/tree/main/boogie-dafif) - WIP parser implementation for DAFIF.
