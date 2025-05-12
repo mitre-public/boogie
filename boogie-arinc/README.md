@@ -11,8 +11,8 @@ For users who don't really care to know that much about what goes into the 424 s
 ```java
 ArincFileParser parser = new ArincFileParser(ArincVersion.V19.parser());
 
-ConvertingArincRecordConsumer consumer = ConvertingArincRecordConsumerFactory.forArincVersion(ArincVersion.V19);
-parser.apply(new File(myArinc424File.dat)).forEach(consumer);
+ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
+    parser.apply(new File("myArinc424File.dat")).forEach(consumer);
 
 // the consumer then contains the collections of various parsed 424 records - the consumer isn't the safest of classes
 // but it gets the job done from a convenience perspective and its limitations are well-documented
@@ -60,7 +60,7 @@ to either NDB/VHF Navaids, Enroute/Terminal Waypoints, Airports, or even Runways
 provides a collection of easy-to-instantiate and pre-configured (and relatively simple) databases with the appropriate indexing for these records set-up.
 
 ```java
-FixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(ndbNavaids, vhfNavaids, waypoints, airports);
+ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(ndbNavaids, vhfNavaids, waypoints, airports);
 
 // unique lookups (via) including the ICAO region in the query
 Optional<ArincWaypoint> jmack = arincFixDatabase.waypoint("JMACK", "K6");
@@ -68,16 +68,16 @@ Optional<ArincNdbNavaid> dtw = arincFixDatabase.ndbNavaid("DTW", "K2");
 
 // queries purely by ID (return value only when there is a single match)
 Optional<ArincWaypoint> jmack = arincFixDatabase.waypoint("JMACK");  // etc. for other fix types
- 
+
 // queries for all matches
 Collection<ArincWaypoint> l254 = arincFixDatabase.waypoints("JMACK", "DKUN1"); // etc. for other fix types
 
 // the other common database instantiation is:
-TerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(airports, runways, localizerGlideSlopes, ndbNavaids, vhfNavaids, waypoints, procedureLegs);
+ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(airports, runways, localizerGlideSlopes, ndbNavaids, vhfNavaids, waypoints, procedureLegs);
 
 // the above is an airport-indexed view of all of the listed argument data and is useful for common queries 
 // about records which can be directly related to an airport
-Optional<ArincLocalizerGlideSlope> rw13RLocalizerGlideSlope = arincTerminalAreaDatabase.primaryLocalizerGlideSlopeAt("KJFK", "RW13R");
+Optional<ArincLocalizerGlideSlope> rw13RLocalizerGlideSlope = arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf("KJFK", "RW13R");
 
 Collection<ArincProcedureLeg> rober2Legs = arincTerminalAreaDatabase.legsForProcedure("KJFK", "ROBER2"); // etc.
 ```
@@ -93,8 +93,8 @@ which can be used to construct concrete implementations of these models.
 
 ```java
 // database implementations are used to dereference fixes, etc. as referenced in procedures and airways as part of the assembly process
-FixDatabase arincFixDatabase;
-TermialAreaDatabase terminalDatabase;
+ArincFixDatabase arincFixDatabase;
+ArincTerminalAreaDatabase terminalDatabase;
 
 // procedure legs are sequenced by transition and then composed into overall procedure records adding transition type (COMMON, ENROUTE, etc.) indicators
 // as well as inferring high-level equipage categories (RNP, RNAV, CONV) - in approach procedures the Missed Approach portion of the final is split off 
@@ -102,21 +102,21 @@ TermialAreaDatabase terminalDatabase;
 List<ArincProcedureLeg> allProcedureLegs;
 
 // because the conversion to a procedure involves an aggregation step internally - the assembler must be applied to all the available legs at once
-List<Procedure> procedures = new ProcedureAssembler(terminalDatabase, arincFixDatabase).apply(allProcedureLegs);
+List<Procedure> procedures = ProcedureAssembler.standard(terminalDatabase, arincFixDatabase).apply(allProcedureLegs);
 
 // airway legs are sequenced by identifier and sequence number and split in accordance with the 424 airways sequencing logic
 List<ArincAirwayLeg> allAirwayLegs;
 
 // similar to the procedure assembler there is an internal aggregation and sequencing step - so the assembler must be applied to all available legs at once
-List<Airway> airways = new AirwayAssembler(arincFixDatabase).apply(allAirwayLegs);
+List<Airway> airways = AirwayAssembler.standard(arincFixDatabase).apply(allAirwayLegs);
 
 // airports are zipped together with their runways and potentially runway localizer information as composite records
 List<ArincAirport> allAirports;
 
-AirportAssembler airportAssembler = new AirportAssembler(terminalDatabase);
+AirportAssembler airportAssembler = AirportAssembler.standard(terminalDatabase);
 
 // airport assembly is an automated lookup of related record types (e.g. runways) and so can be applied to one airport at a time
-List<Airport> airports = allAirports.stream().map(airportAssembler).collect(Collectors.toList());
+List<Airport> airports = allAirports.stream().map(airportAssembler).toList();
 
 // all of VHF/NDB navaids and waypoint records can be converted to implementations of Fix records in Boogie, primarily this is adding modeled magnetic variations as a fallback for converting magnetic 
 // headings to true courses downstream
@@ -125,7 +125,7 @@ List<ArincNdbNavaid> allVhfNavaids;
 List<ArincWaypoint> allWaypoints;
 
 // fix assembly is a straightforward transform of the input data models - and so can be applied to one fix-like type at a time
-List<Fix> fixes = Stream.concat(allNdbNavaids.stream(), allVhfNavaids.stream(), allWaypoints.stream()).map(FixAssembler.INSTANCE).collect(Collectors.toList());
+List<Fix> fixes = Stream.concat(allNdbNavaids.stream(), allVhfNavaids.stream(), allWaypoints.stream()).map(i -> FixAssembler.standard().assemble(i)).toList();
 ```
 
 ### Assembling 424 into your own models
@@ -136,32 +136,25 @@ the hood constructs the concrete `Boogie{Airway, Fix, Procedure, Runway, Leg, et
 clients to inject their own construction logic.
 
 ```java
-// database implementations are still needed as above to dereference the appropriate objects from the 424
-FixDatabase arincFixDatabase;
-TermialAreaDatabase terminalDatabase;
+/    // database implementations are still needed as above to dereference the appropriate objects from the 424
+ArincFixDatabase arincFixDatabase;
+ArincTerminalAreaDatabase terminalDatabase;
 
 // all parsed procedure legs
 List<ArincProcedureLeg> procedureLegs = ...;
 
 // my custom Arinc{Waypoint, Navaid, Runway, etc.} -> "implements Fix" conversions
-FixAssembler myCustomFixAssembler = new FixAssembler(
-    myCustomWaypointConverter,
-    myCustomNavaidConverter
-    // ... etc...
-);
+FixAssemblyStrategy<MyCusstomFix> customStrategy = new MyCustomFixStrategy<>();
+FixAssembler<MyCustomFix> myCustomFixAssembler = FixAssembler.withStrategy(customStrategy);
 
 // my composite procedure assembler with custom assembly logic
 // to see how the Boogie ones work see ArincToBoogieConverterFactory, these are the default injected ones used in the previous section
-ProcedureAssembler myCustomProcedureAssembler = new ProcedureAssembler(
-   arincFixDatabase,
-   terminalDatabase,
-   myCustomFixAssembler,
-   // the generic Fixes provided to this are the concrete ones built by myCustomFixAssembler
-   myCustomLegAssembler,
-   // the generic Legs provided to this are the concrete ones built by myCustomLegAssembler
-   myCustomTransitionAssembler,
-   // the generic Transitions provided to this are the concrete ones build by myCustomTransitionAssembler
-   myCustomProcedureAssembler
+ProcedureAssemblyStrategy<MyProcedure, MyTransition, MyCustomFix> customProcedureStrategy = new MyCustomProcedureStrategy();
+ProcedureAssembler<MyCustomThing> myCustomProcedureAssembler = ProcedureAssembler.withStrategy(
+    terminalDatabase,
+    arincFixDatabase,
+    myCustomFixAssembler,
+    ""
 );
 
 List<Procedure> procedures = myCustomProcedureAssembler.apply(procedureLegs);
