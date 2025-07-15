@@ -37,4 +37,4 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew :jreleaserDeploy --no-configuration-cache -DaltDeploymentRepository=local::file:./build/staging-deploy -Djreleaser.version=${{ env.VERSION }}
+        run: ./gradlew jreleaserDeploy --no-configuration-cache -DaltDeploymentRepository=local::file:./build/staging-deploy -Djreleaser.version=${{ env.VERSION }}
