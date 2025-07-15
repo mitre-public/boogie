@@ -8,5 +8,5 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jreleaser:jreleaser-gradle-plugin:1.5.1")
+    implementation("org.jreleaser:jreleaser-gradle-plugin:1.19.0")
 }
