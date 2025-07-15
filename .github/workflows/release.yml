@@ -28,13 +28,7 @@ jobs:
         run: chmod +x ./gradlew
       - name: Publish packages to local staging directory
         run: |
-          ./gradlew publish -Pversion=${{ env.VERSION }}
-          ./gradlew :boogie-arinc:publish -Pversion=${{ env.VERSION }}
-          ./gradlew :boogie-conformance:publish -Pversion=${{ env.VERSION }}
-          ./gradlew :boogie-core:publish -Pversion=${{ env.VERSION }}
-          ./gradlew :boogie-dafif:publish -Pversion=${{ env.VERSION }}
-          ./gradlew :boogie-routes:publish -Pversion=${{ env.VERSION }}
-          ./gradlew :boogie-util:publish -Pversion=${{ env.VERSION }}
+          ./gradlew -Dmaven.repo.local=${{ github.workspace }}/build/staging-deploy/ publishToMavenLocal -Pversion=${{ env.VERSION }}
       - name: Publish package to Maven Central
         env:
           JRELEASER_NEXUS2_USERNAME: ${{ secrets.MAVEN_CENTRAL_USER }}
