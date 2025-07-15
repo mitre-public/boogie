@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
+import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v19.field.AltitudeDescription;
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
@@ -86,7 +87,8 @@ public final class ProcedureLegSpec implements RecordSpec {
   @Override
   public boolean matchesRecord(String arincRecord) {
     String sectionSubsection = arincRecord.substring(4, 5).concat(arincRecord.substring(12, 13));
-    return sectionSubSections.contains(sectionSubsection);
+    return sectionSubSections.contains(sectionSubsection)
+        && PrimaryRecord.INSTANCE.test(arincRecord.substring(38, 39));
   }
 
   private static final HashSet<String> sectionSubSections = newHashSet("PD", "PE", "PF");
