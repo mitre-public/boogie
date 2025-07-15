@@ -67,12 +67,29 @@ publishing {
                 create<HttpHeaderAuthentication>("header")
             }
         }
+    }
+}
+
+// Configure JReleaser to only use Maven Central for deployment
+jreleaser {
+    project {
+        copyright.set("The MITRE Corporation")
+    }
+    signing {
+        active.set(org.jreleaser.model.Active.ALWAYS)
+        armored.set(true)
+    }
+    deploy {
         maven {
-            name = "mavenCentral"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = project.findProperty("mavenCentralUsername") as String? ?: System.getenv("MAVEN_CENTRAL_USERNAME")
-                password = project.findProperty("mavenCentralPassword") as String? ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
+            nexus2 {
+                create("maven-central") {
+                    active.set(org.jreleaser.model.Active.ALWAYS)
+                    url.set("https://s01.oss.sonatype.org/service/local")
+                    closeRepository.set(true)
+                    releaseRepository.set(true)
+                    username.set(System.getenv("MAVEN_CENTRAL_USERNAME"))
+                    password.set(System.getenv("MAVEN_CENTRAL_PASSWORD"))
+                }
             }
         }
     }
@@ -178,28 +195,3 @@ tasks.register<Test>("dafif-integration") {
         events("passed", "skipped", "failed") // Log these events
     }
 }
-
-jreleaser {
-    project {
-        copyright.set("The MITRE Corporation")
-    }
-    signing {
-        active.set(org.jreleaser.model.Active.ALWAYS)
-        armored.set(true)
-    }
-    deploy {
-        maven {
-            nexus2 {
-                create("maven-central") {
-                    active.set(org.jreleaser.model.Active.ALWAYS)
-                    url.set("https://s01.oss.sonatype.org/service/local")
-                    closeRepository.set(true)
-                    releaseRepository.set(true)
-                    stagingRepositories.add("build/staging-deploy")
-                }
-            }
-        }
-    }
-}
-
-
