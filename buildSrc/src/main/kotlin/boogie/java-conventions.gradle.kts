@@ -65,6 +65,14 @@ publishing {
                 create<HttpHeaderAuthentication>("header")
             }
         }
+        maven {
+            name = "mavenCentral"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = project.findProperty("mavenCentralUsername") as String? ?: System.getenv("MAVEN_CENTRAL_USERNAME")
+                password = project.findProperty("mavenCentralPassword") as String? ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
+            }
+        }
     }
 }
 

@@ -30,16 +30,11 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
-          server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
-          cache: maven
+          cache: gradle
 
-      # Post JARs to Maven Central
+      # Publish to Maven Central
 
-      - name: Release to Maven Central
+      - name: Publish to Maven Central
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USER }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
@@ -48,7 +43,7 @@ jobs:
           export GPG_TTY=$(tty)
           git config user.name "${{ github.event.head_commit.committer.name }}"
           git config user.email "${{ github.event.head_commit.committer.email }}"
-          mvn -B --file pom.xml release:prepare release:perform -DreleaseVersion=${{ env.VERSION }} -DdevelopmentVersion=${{ env.VERSION }}-SNAPSHOT -Dtag=${{ env.VERSION }}
+          ./gradlew publish -Pversion=${{ env.VERSION }} -PghprToken=${{ secrets.GITHUB_TOKEN }} -PmavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USER }} -PmavenCentralPassword=${{ secrets.MAVEN_CENTRAL_TOKEN }} -Psigning.keyId=${{ secrets.GPG_KEY_ID }} -Psigning.password=${{ secrets.GPG_PASSPHRASE }} -Psigning.secretKeyRingFile=${{ secrets.GPG_SECRET_KEY }}
 
       # Create a release
 
