@@ -1,6 +1,8 @@
 plugins {
     id("java-library")
     id("maven-publish")
+    id("org.jreleaser") version "1.5.1"
+    id("signing")
 }
 
 
@@ -176,4 +178,28 @@ tasks.register<Test>("dafif-integration") {
         events("passed", "skipped", "failed") // Log these events
     }
 }
+
+jreleaser {
+    project {
+        copyright.set("The MITRE Corporation")
+    }
+    signing {
+        active.set(Active.ALWAYS)
+        armored.set(true)
+    }
+    deploy {
+        maven {
+            nexus2 {
+                create("maven-central") {
+                    active.set(Active.ALWAYS)
+                    url.set("https://s01.oss.sonatype.org/service/local")
+                    closeRepository.set(true)
+                    releaseRepository.set(true)
+                    stagingRepositories.add("build/staging-deploy")
+                }
+            }
+        }
+    }
+}
+
 
