@@ -109,7 +109,8 @@ jreleaser {
                         logger.info("Using staging repository at: $stagingDir")
                         logger.info("Alternate staging repository at: $stagingDirAlt")
                     }
-                    stagingRepository("build/staging-deploy")
+                    // clearly this is a hack, just for testing
+                    stagingRepository("/home/runner/work/boogie/boogie/build/staging-deploy")
                 }
             }
         }
