@@ -76,7 +76,7 @@ jreleaser {
     project {
         val releaseVersion = System.getenv("BOOGIE_RELEASE_VERSION")
         version = if (releaseVersion.isNullOrBlank()) project.version.toString() else releaseVersion
-        
+
         copyright.set("The MITRE Corporation")
         description.set("Boogie - A dependency-light software project for navigation data parsing, route expansion, and conformance.")
         license.set("Apache-2.0")
@@ -108,8 +108,8 @@ jreleaser {
                         val stagingDirAlt = "${project.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath}"
                         logger.info("Using staging repository at: $stagingDir")
                         logger.info("Alternate staging repository at: $stagingDirAlt")
-//                        stagingRepository(stagingDir)
-                    stagingRepository(project.rootProject.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath)
+                    }
+                    stagingRepository("build/staging-deploy")
                 }
             }
         }
