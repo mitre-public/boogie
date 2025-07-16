@@ -99,7 +99,7 @@ jreleaser {
                     active = Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
                     subprojects.forEach { project ->
-                        stagingRepository(project.layout.buildDirectory.dir("staging-deploy").get().asFile.path)
+                        stagingRepository(project.layout.projectDirectory.dir("build/staging-deploy").asFile.path)
                     }
                     username.set(System.getenv("MAVEN_CENTRAL_USER"))
                     password.set(System.getenv("MAVEN_CENTRAL_TOKEN"))
