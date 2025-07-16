@@ -103,8 +103,12 @@ jreleaser {
                     active = Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
                     subprojects.forEach { project ->
-                        stagingRepository(project.layout.projectDirectory.dir("build/staging-deploy").asFile.path)
-                    }
+                        // Use the root project's build directory for staging
+                        val stagingDir = "${project.rootProject.layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath}"
+                        val stagingDirAlt = "${project.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath}"
+                        logger.lifecycle("Using staging repository at: $stagingDir")
+                        logger.lifecycle("Alternate staging repository at: $stagingDirAlt")
+                        stagingRepository(stagingDir) }
                 }
             }
         }
