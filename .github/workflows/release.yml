@@ -29,6 +29,10 @@ jobs:
       - name: Publish packages to local staging directory
         run: |
           ./gradlew -Dmaven.repo.local=${{ github.workspace }}/build/staging-deploy/ publishToMavenLocal -Pversion=${{ env.VERSION }}
+      - name: List staging directory contents
+        run: |
+          ls -la ${{ github.workspace }}
+          ls -la ${{ github.workspace }}/build/staging-deploy/
       - name: Publish package to Maven Central
         env:
           JRELEASER_NEXUS2_USERNAME: ${{ secrets.MAVEN_CENTRAL_USER }}
