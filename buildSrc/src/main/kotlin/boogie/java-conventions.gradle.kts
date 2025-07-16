@@ -108,7 +108,8 @@ jreleaser {
                         val stagingDirAlt = "${project.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath}"
                         logger.info("Using staging repository at: $stagingDir")
                         logger.info("Alternate staging repository at: $stagingDirAlt")
-                        stagingRepository(stagingDir) }
+//                        stagingRepository(stagingDir)
+                    stagingRepository(project.rootProject.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath)
                 }
             }
         }
