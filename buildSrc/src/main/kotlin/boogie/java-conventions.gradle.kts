@@ -105,8 +105,6 @@ jreleaser {
                     subprojects.forEach { project ->
                         stagingRepository(project.layout.projectDirectory.dir("build/staging-deploy").asFile.path)
                     }
-                    username.set(System.getenv("MAVEN_CENTRAL_USER"))
-                    password.set(System.getenv("MAVEN_CENTRAL_TOKEN"))
                 }
             }
         }
