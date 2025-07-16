@@ -1,3 +1,5 @@
+import org.jreleaser.model.Active
+
 plugins {
     id("java-library")
     id("maven-publish")
@@ -70,25 +72,37 @@ publishing {
     }
 }
 
-// Configure JReleaser to only use Maven Central for deployment
 jreleaser {
     project {
         copyright.set("The MITRE Corporation")
+        description.set("Boogie - A dependency-light software project for navigation data parsing, route expansion, and conformance.")
+        license.set("Apache-2.0")
+        links {
+            homepage.set("https://github.com/mitre-public/boogie")
+            documentation.set("https://github.com/mitre-public/boogie")
+            bugTracker.set("https://github.com/mitre-public/boogie/issues")
+        }
+        inceptionYear.set("2025")
     }
+
+    gitRootSearch.set(true)
+
     signing {
-        active.set(org.jreleaser.model.Active.ALWAYS)
+        active.set(Active.ALWAYS)
         armored.set(true)
     }
+
     deploy {
         maven {
-            nexus2 {
-                create("maven-central") {
-                    active.set(org.jreleaser.model.Active.ALWAYS)
-                    url.set("https://s01.oss.sonatype.org/service/local")
-                    closeRepository.set(true)
-                    releaseRepository.set(true)
-                    username.set(System.getenv("MAVEN_CENTRAL_USERNAME"))
-                    password.set(System.getenv("MAVEN_CENTRAL_PASSWORD"))
+            mavenCentral {
+                register("sonatype") {
+                    active = Active.ALWAYS
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    subprojects.forEach { project ->
+                        stagingRepository(project.layout.buildDirectory.dir("staging-deploy").get().asFile.path)
+                    }
+                    username.set(System.getenv("MAVEN_CENTRAL_USER"))
+                    password.set(System.getenv("MAVEN_CENTRAL_TOKEN"))
                 }
             }
         }
