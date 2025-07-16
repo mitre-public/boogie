@@ -33,6 +33,9 @@ jobs:
         run: |
           ls -la ${{ github.workspace }}
           ls -la ${{ github.workspace }}/build/staging-deploy/org/mitre/boogie/*/*
+      - name: Debug version
+        run: |
+          echo "Version: ${{ env.VERSION }}"
       - name: Publish package to Maven Central
         env:
           JRELEASER_NEXUS2_USERNAME: ${{ secrets.MAVEN_CENTRAL_USER }}
@@ -41,9 +44,9 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BOOGIE_RELEASE_VERSION: ${{ env.VERSION }}
         run: |
           ./gradlew jreleaserDeploy \
             --no-configuration-cache \
             -DaltDeploymentRepository=local::file:${{ github.workspace }}/build/staging-deploy/ \
-            -Djreleaser.stage.release.enabled=true \
-            -Djreleaser.version=${{ env.VERSION }}
+            -Djreleaser.stage.release.enabled=true
