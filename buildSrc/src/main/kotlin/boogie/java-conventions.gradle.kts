@@ -83,6 +83,7 @@ jreleaser {
             bugTracker.set("https://github.com/mitre-public/boogie/issues")
         }
         inceptionYear.set("2025")
+        version.set(System.getenv("BOOGIE_RELEASE_VERSION"))
     }
 
     gitRootSearch.set(true)
