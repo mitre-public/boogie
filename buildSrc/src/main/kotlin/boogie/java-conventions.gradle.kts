@@ -76,7 +76,7 @@ jreleaser {
     project {
         val releaseVersion = System.getenv("BOOGIE_RELEASE_VERSION")
         version = if (releaseVersion.isNullOrBlank()) project.version.toString() else releaseVersion
-        
+
         copyright.set("The MITRE Corporation")
         description.set("Boogie - A dependency-light software project for navigation data parsing, route expansion, and conformance.")
         license.set("Apache-2.0")
@@ -108,8 +108,8 @@ jreleaser {
                         val stagingDirAlt = "${project.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath}"
                         logger.info("Using staging repository at: $stagingDir")
                         logger.info("Alternate staging repository at: $stagingDirAlt")
-//                        stagingRepository(stagingDir)
-                    stagingRepository(project.rootProject.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath)
+                    }
+                    stagingRepository("build/staging-deploy")
                 }
             }
         }
@@ -117,102 +117,102 @@ jreleaser {
 }
 
 configure<JavaPluginExtension> {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
+toolchain {
+languageVersion.set(JavaLanguageVersion.of(17))
+}
 
-    withSourcesJar()
-    withJavadocJar()
+withSourcesJar()
+withJavadocJar()
 }
 
 tasks.named<Test>("test") {
-    useJUnitPlatform {
-        excludeTags("LIDO")
-        excludeTags("DAFIF")
-        includeTags("INTEGRATION")
-    }
+useJUnitPlatform {
+excludeTags("LIDO")
+excludeTags("DAFIF")
+includeTags("INTEGRATION")
+}
 
-    maxHeapSize = "8G"
+maxHeapSize = "8G"
 
-    testLogging {
-        events("passed", "skipped", "failed") // Log these events
-    }
+testLogging {
+events("passed", "skipped", "failed") // Log these events
+}
 }
 
 tasks.register<Test>("all-local-data-is-there") {
-    group = "verification"
-    useJUnitPlatform {
-        includeTags("LIDO")
-        includeTags("INTEGRATION")
-        includeTags("DAFIF")
-        includeTags("CIFP")
-    }
+group = "verification"
+useJUnitPlatform {
+includeTags("LIDO")
+includeTags("INTEGRATION")
+includeTags("DAFIF")
+includeTags("CIFP")
+}
 
-    maxHeapSize = "8G"
+maxHeapSize = "8G"
 
-    testLogging {
-        events("passed", "skipped", "failed") // Log these events
-    }
+testLogging {
+events("passed", "skipped", "failed") // Log these events
+}
 }
 
 tasks.register<Test>("unit") {
-    group = "verification"
-    useJUnitPlatform {
-        excludeTags("INTEGRATION")
-        excludeTags("LIDO")
-        excludeTags("DAFIF")
-        excludeTags("CIFP")
-    }
+group = "verification"
+useJUnitPlatform {
+excludeTags("INTEGRATION")
+excludeTags("LIDO")
+excludeTags("DAFIF")
+excludeTags("CIFP")
+}
 
-    testLogging {
-        events("passed", "skipped", "failed") // Log these events
-    }
+testLogging {
+events("passed", "skipped", "failed") // Log these events
+}
 }
 
 tasks.register<Test>("cifp-integration") {
-    group = "verification"
-    useJUnitPlatform {
-        includeTags("INTEGRATION")
-        includeTags("CIFP")
-        excludeTags("LIDO")
-        excludeTags("DAFIF")
-    }
+group = "verification"
+useJUnitPlatform {
+includeTags("INTEGRATION")
+includeTags("CIFP")
+excludeTags("LIDO")
+excludeTags("DAFIF")
+}
 
-    maxHeapSize = "2G"
+maxHeapSize = "2G"
 
-    testLogging {
-        events("passed", "skipped", "failed") // Log these events
-    }
+testLogging {
+events("passed", "skipped", "failed") // Log these events
+}
 }
 
 tasks.register<Test>("lido-integration") {
-    group = "verification"
-    useJUnitPlatform {
-        includeTags("LIDO")
-        includeTags("INTEGRATION")
-        excludeTags("DAFIF")
-        excludeTags("CIFP")
-    }
+group = "verification"
+useJUnitPlatform {
+includeTags("LIDO")
+includeTags("INTEGRATION")
+excludeTags("DAFIF")
+excludeTags("CIFP")
+}
 
-    maxHeapSize = "8G"
+maxHeapSize = "8G"
 
-    testLogging {
-        events("passed", "skipped", "failed") // Log these events
-    }
+testLogging {
+events("passed", "skipped", "failed") // Log these events
+}
 }
 
 tasks.register<Test>("dafif-integration") {
-    group = "verification"
-    useJUnitPlatform {
-        includeTags("DAFIF")
-        includeTags("INTEGRATION")
-        excludeTags("LIDO")
-        excludeTags("CIFP")
-    }
+group = "verification"
+useJUnitPlatform {
+includeTags("DAFIF")
+includeTags("INTEGRATION")
+excludeTags("LIDO")
+excludeTags("CIFP")
+}
 
-    maxHeapSize = "4G"
+maxHeapSize = "4G"
 
-    testLogging {
-        events("passed", "skipped", "failed") // Log these events
-    }
+testLogging {
+events("passed", "skipped", "failed") // Log these events
+}
 }
