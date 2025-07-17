@@ -102,7 +102,7 @@ jreleaser {
                 register("sonatype") {
                     active = Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository(System.getenv("jreleaser.local.staging.director"))
+                    stagingRepository(properties["local.staging.directory"].toString())
                 }
             }
         }
