@@ -102,15 +102,7 @@ jreleaser {
                 register("sonatype") {
                     active = Active.ALWAYS
                     url = "https://central.sonatype.com/api/v1/publisher"
-                    subprojects.forEach { project ->
-                        // Use the root project's build directory for staging
-                        val stagingDir = "${project.rootProject.layout.buildDirectory.dir("staging-deploy").get().asFile.absolutePath}"
-                        val stagingDirAlt = "${project.layout.projectDirectory.dir("build/staging-deploy").asFile.absolutePath}"
-                        logger.info("Using staging repository at: $stagingDir")
-                        logger.info("Alternate staging repository at: $stagingDirAlt")
-                    }
-                    // clearly this is a hack, just for testing
-//                    stagingRepository("/home/runner/work/boogie/boogie/build/staging-deploy")
+                    stagingRepository(properties.get("local.staging.director").toString())
                 }
             }
         }
