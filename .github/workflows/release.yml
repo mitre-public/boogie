@@ -50,4 +50,4 @@ jobs:
           ./gradlew :boogie-core:jreleaserDeploy \
             --no-configuration-cache \
             -Djreleaser.stage.release.enabled=true \
-            -Djreleaser.project.version=${{ env.VERSION }}
+            -Plocal.staging.directory=${{ github.workspace }}/boogie-core/target/staging-deploy
