@@ -27,14 +27,12 @@ jobs:
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
       - name: Publish packages to local staging directory
-        run: |
-          ./gradlew -Dmaven.repo.local=${{ github.workspace }}/build/staging-deploy/ publishToMavenLocal -Pversion=${{ env.VERSION }}
-          
-          ./gradlew -Dmaven.repo.local=${{ github.workspace }}/build/staging-deploy/ :boogie-arinc:publishToMavenLocal -Pversion=${{ env.VERSION }}
+        run: |          
+          ./gradlew -Dmaven.repo.local=${{ github.workspace }}/boogie-core/target/staging-deploy/ :boogie-core:publishToMavenLocal -Pversion=${{ env.VERSION }}
       - name: List staging directory contents
         run: |
           ls -la ${{ github.workspace }}
-          ls -la ${{ github.workspace }}/build/staging-deploy/org/mitre/boogie/*/*
+          ls -la ${{ github.workspace }}/boogie-core/target/staging-deploy/org/mitre/boogie/*/*
       - name: Debug version
         run: |
           echo "Version: ${{ env.VERSION }}"
@@ -49,8 +47,7 @@ jobs:
           BOOGIE_RELEASE_VERSION: ${{ env.VERSION }}
         run: |
           echo "Using version: ${{ env.VERSION }}"
-          ./gradlew jreleaserDeploy \
+          ./gradlew :boogie-core:jreleaserDeploy \
             --no-configuration-cache \
-            -DaltDeploymentRepository=local::file:${{ github.workspace }}/build/staging-deploy/ \
             -Djreleaser.stage.release.enabled=true \
             -Djreleaser.project.version=${{ env.VERSION }}
