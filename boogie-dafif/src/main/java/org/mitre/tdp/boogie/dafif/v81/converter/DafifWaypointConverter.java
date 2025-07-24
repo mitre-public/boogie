@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.dafif.v81.converter;
 
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
+import org.mitre.tdp.boogie.dafif.utils.DafifMagVars;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -31,7 +32,7 @@ public class DafifWaypointConverter implements Function<DafifRecord, Optional<Da
     Optional<Double> degreesLatitude = dafifRecord.optionalField("degreesLatitude");
     Optional<String> geodeticLongitude = dafifRecord.optionalField("geodeticLongitude");
     Optional<Double> degreesLongitude = dafifRecord.optionalField("degreesLongitude");
-    String magneticVariation = dafifRecord.requiredField("magneticVariation");
+    Double magneticVariation = DafifMagVars.fromDynamic(dafifRecord.requiredField("magneticVariation")).angle().inDegrees();
     Optional<String> navaidIdentifier = dafifRecord.optionalField("navaidIdentifier");
     Optional<Integer> navaidType = dafifRecord.optionalField("navaidType");
     Optional<String> navaidCountryCode = dafifRecord.optionalField("navaidCountryCode");
