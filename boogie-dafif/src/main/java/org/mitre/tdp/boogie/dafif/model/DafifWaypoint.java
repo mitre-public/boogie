@@ -101,7 +101,7 @@ public final class DafifWaypoint {
   /**
    * {@link MagneticVariation}
    */
-  private final String magneticVariation;
+  private final Double magneticVariation;
   /**
    * {@link NavaidIdentifier}
    */
@@ -207,7 +207,7 @@ public final class DafifWaypoint {
     return Optional.ofNullable(geodeticDatum);
   }
 
-  public String magneticVariation() {
+  public Double magneticVariation() {
     return magneticVariation;
   }
 
@@ -301,7 +301,7 @@ public final class DafifWaypoint {
     private Double degreesLatitude;
     private String geodeticLongitude;
     private Double degreesLongitude;
-    private String magneticVariation;
+    private Double magneticVariation;
     private String navaidIdentifier;
     private Integer navaidType;
     private String navaidCountryCode;
@@ -396,7 +396,7 @@ public final class DafifWaypoint {
       return this;
     }
 
-    public Builder magneticVariation(String magneticVariation) {
+    public Builder magneticVariation(Double magneticVariation) {
       this.magneticVariation = magneticVariation;
       return this;
     }
