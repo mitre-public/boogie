@@ -76,7 +76,7 @@ public class TestDafifWaypointSpec {
         () -> assertEquals(36.388500, waypoint.degreesLatitude().orElseThrow()),
         () -> assertEquals("E028013490", waypoint.geodeticLongitude().orElseThrow()),
         () -> assertEquals(28.026361, waypoint.degreesLongitude().orElseThrow()),
-        () -> assertEquals("E005209 0124", waypoint.magneticVariation()),
+        () -> assertEquals(5+(20.9/60), waypoint.magneticVariation()),
         () -> assertEquals(202313, waypoint.cycleDate()),
         () -> assertEquals(0, waypoint.coordinatePrecision().orElseThrow()),
         () -> assertFalse(waypoint.waypointPointNavaidFlag())
