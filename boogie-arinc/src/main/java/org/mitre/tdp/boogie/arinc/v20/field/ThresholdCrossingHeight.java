@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.v20.field;
 import org.mitre.tdp.boogie.arinc.ArincInteger;
 
 /**
- * The “Threshold Crossing Height” specifies the height above the landing threshold on a normal glide path.
+ * The “Threshold Crossing Height” specifies the height in feet above the landing threshold on a normal glide path.
  */
 public final class ThresholdCrossingHeight extends ArincInteger {
 
