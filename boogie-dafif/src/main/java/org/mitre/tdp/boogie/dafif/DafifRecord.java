@@ -34,7 +34,7 @@ public class DafifRecord implements Serializable {
   }
 
   public String rawRecord() {
-    return namedData.values().stream().map(Pair::second).collect(Collectors.joining(""));
+    return namedData.values().stream().map(Pair::second).collect(Collectors.joining("\t"));
   }
 
   /**
