@@ -12,9 +12,19 @@ import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 public interface RouteTokenizer {
 
   /**
+   * This deals with FAA or ICAO formats. Each string must be consistent, but each string can switch.
+   * @return The combined tokenizer
+   */
+  static RouteTokenizer combinedFormat() {
+    return new CombinedRouteTokenizer();
+  }
+
+  /**
    * Route tokenizer for FAA IFR format route strings.
    *
    * <p>e.g. {@code KATL.BOOVE4.DRSDN..AMF.J121.RPA..WYNDE.WYNDE8.KORD/0211}
+   *
+   * @return The faa tokenizer
    */
   static RouteTokenizer faaIfrFormat() {
     return new FaaIfrFormatTokenizer();
@@ -24,6 +34,8 @@ public interface RouteTokenizer {
    * Route tokenizer for International ICAO format route strings.
    *
    * <p>e.g. {@code DCT GREKI IFR DCT BGO/N0485F410 M626 VKB M751 VPK B469 BIKTA PIBAP PAS3 MABA2A}
+   *
+   * @return The icao tokenizer
    */
   static RouteTokenizer icaoFormat() {
     return new IcaoFormatTokenizer();
@@ -34,6 +46,8 @@ public interface RouteTokenizer {
    * against infrastructure using various {@link RouteTokenResolver} implementations.
    *
    * @param route the stringified route-of-flight for an aircraft
+   *
+   * @return the list of route tokens split by the concrete class
    */
   List<RouteToken> tokenize(String route);
 }

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.alg.split;
 
+import java.util.Optional;
+
 /**
  * Visitor implementation which can be used to generic collect information needed by other collaborator classes about the token
  * without requiring additional methods be added to the {@link RouteToken} interface that may not be needed for many format types.
@@ -44,6 +46,12 @@ public interface RouteTokenVisitor {
     IsTailoredBefore visitor = new IsTailoredBefore();
     token.accept(visitor);
     return visitor.isTailoredBefore();
+  }
+
+  static Optional<String> extractEtaEet(RouteToken routeToken) {
+    EtaEetVisitor visitor = new EtaEetVisitor();
+    routeToken.accept(visitor);
+    return Optional.ofNullable(visitor.etaEet);
   }
 
   void visit(RouteToken.Standard standard);
@@ -130,4 +138,28 @@ public interface RouteTokenVisitor {
       this.wildcards = icao.wildcards().orElse("");
     }
   }
+
+  final class EtaEetVisitor implements RouteTokenVisitor {
+    private String etaEet;
+    private EtaEetVisitor() {}
+
+    @Override
+    public void visit(RouteToken.Standard standard) {
+      etaEet = null;
+    }
+
+    @Override
+    public void visit(RouteToken.FaaIfr faaIfr) {
+      etaEet = faaIfr.etaEet().orElse(null);
+
+    }
+
+    @Override
+    public void visit(RouteToken.Icao icao) {
+      etaEet = icao.etaEet().orElse(null);
+    }
+  }
+
+
+
 }
