@@ -15,7 +15,7 @@ repositories {
 publishing {
     publications {
         create<MavenPublication>(project.name) {
-            group = "org.mitre.boogie"
+            group = "org.mitre.tdp"
             artifactId = project.name
 
             from(components["java"])
