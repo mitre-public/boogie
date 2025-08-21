@@ -133,7 +133,11 @@ public interface Linker {
    * @return link the sid
    */
   static Linker sidXm(AnySid left, LinkableToken right) {
-    return new SidXm(left, right);
+   * @param target anything with a point
+   * @return link the sid
+   */
+  static Linker sidXm(AnySid left, LinkableToken target) {
+    return new SidXm(left, target);
   }
 
   /**
