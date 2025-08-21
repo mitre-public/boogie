@@ -88,6 +88,6 @@ final class AnySid implements LinkableToken {
   private Linker sidLinker(AnySid token) {
     return Linker.pointsWithinRange(ofNauticalMiles(.25), token, this)
         .orElseTry(Linker.closestPointBetween(token, this))
-        .orElseTry(Linker.sidXm(token, this));
+        .orElseTry(Linker.intraSidLinker(token, this));
   }
 }

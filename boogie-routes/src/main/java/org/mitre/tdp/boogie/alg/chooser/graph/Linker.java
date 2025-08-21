@@ -137,6 +137,16 @@ public interface Linker {
   }
 
   /**
+   * This one is to make sure we only link to entry legs in the next transition
+   * @param left the sid with xm
+   * @param right the next transition to link to
+   * @return the linker
+   */
+  static Linker intraSidLinker(AnySid left, AnySid right) {
+    return new IntraSidXm(left, right);
+  }
+
+  /**
    * Returns a collection of links between a pair of configured {@link LinkableToken}s.
    */
   Collection<LinkedLegs> links();
@@ -402,6 +412,30 @@ public interface Linker {
           .flatMap(linked -> Stream.of(linked.source(), linked.target()))
           .distinct()
           .filter(leg -> leg.associatedFix().isPresent())
+          .toList();
+    }
+    private static double distanceOrMin(Pair<Leg, Leg> pair) {
+      return Optional.of(pair)
+          .filter(l -> PathTerminator.FM.equals(l.first().pathTerminator()))
+          .filter(l -> !l.first().associatedFix().orElseThrow().equals(l.second().associatedFix().orElseThrow())) //we know they have fixes from the leg type
+          .map(i -> distanceBetween(pair))
+          .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
+    }
+  }
+
+  final class IntraSidXm implements Linker {
+    private final AnySid left;
+    private final AnySid right;
+    private IntraSidXm(AnySid left, AnySid right) {
+      this.left = requireNonNull(left);
+      this.right = requireNonNull(right);
+    }
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+      return cartesianProduct(left.sid().exitLegs(xm), right.sid().entryLegs(hasPosition)).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
           .toList();
     }
     private static double distanceOrMin(Pair<Leg, Leg> pair) {
