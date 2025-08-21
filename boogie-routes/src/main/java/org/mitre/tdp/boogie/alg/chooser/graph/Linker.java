@@ -129,15 +129,11 @@ public interface Linker {
   /**
    * A linker that will link a sid token with fm/vm to anything with a point.
    * @param left the sid
-   * @param right anything with apoint
+   * @param right anything with a point
    * @return link the sid
    */
   static Linker sidXm(AnySid left, LinkableToken right) {
-   * @param target anything with a point
-   * @return link the sid
-   */
-  static Linker sidXm(AnySid left, LinkableToken target) {
-    return new SidXm(left, target);
+    return new SidXm(left, right);
   }
 
   /**
