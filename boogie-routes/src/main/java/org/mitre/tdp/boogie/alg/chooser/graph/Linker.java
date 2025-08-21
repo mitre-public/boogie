@@ -409,8 +409,7 @@ public interface Linker {
     }
     private List<Leg> withLocation(Collection<LinkedLegs> linkedLegs) {
       return linkedLegs.stream()
-          .flatMap(linked -> Stream.of(linked.source(), linked.target()))
-          .distinct()
+          .map(LinkedLegs::source)
           .filter(leg -> leg.associatedFix().isPresent())
           .toList();
     }
