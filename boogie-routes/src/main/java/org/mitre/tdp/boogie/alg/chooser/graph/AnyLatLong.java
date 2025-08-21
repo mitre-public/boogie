@@ -63,7 +63,8 @@ final class AnyLatLong implements LinkableToken {
 
   @Override
   public Linker visit(AnySid sid) {
-    return Linker.closestPointBetween(sid, this);
+    return Linker.closestPointBetween(sid, this)
+        .orElseTry(Linker.sidXm(sid, this));
   }
 
   @Override
