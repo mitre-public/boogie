@@ -20,31 +20,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airports;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Airways;
-import org.mitre.tdp.boogie.CHA1C_WSSS_PARTIAL;
-import org.mitre.tdp.boogie.CONNR5;
-import org.mitre.tdp.boogie.COSTR3;
-import org.mitre.tdp.boogie.COSTR3_DUP;
-import org.mitre.tdp.boogie.CUN;
-import org.mitre.tdp.boogie.CZM;
-import org.mitre.tdp.boogie.CategoryAndType;
-import org.mitre.tdp.boogie.CategoryOrType;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.GQNO_D34Y;
-import org.mitre.tdp.boogie.HOBTT2;
-import org.mitre.tdp.boogie.HOBTT2_DUP;
-import org.mitre.tdp.boogie.JIIMS3;
-import org.mitre.tdp.boogie.KATL_R27R;
-import org.mitre.tdp.boogie.KMCO_I17L;
-import org.mitre.tdp.boogie.KMCO_I17R;
-import org.mitre.tdp.boogie.PLMMR2;
-import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.SUMMA2;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.Wildcard;
@@ -65,6 +41,25 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  */
 class FluentRouteExpanderTest {
 
+  @Test
+  void noCommonOrNext() {
+    String route = "WSSS.CHA1C.ANITO";
+    Fix anito = fix("ANITO", -0.2833, 104.8667);
+    FluentRouteExpander expander = newExpander(
+        List.of(anito),
+        emptyList(),
+        List.of(Airports.WSSS()),
+        List.of(CHA1C_NO_COMMON.INSTANCE)
+    );
+    ExpandedRoute expandedRoute = expander.apply(route, "RW02", null).orElseThrow();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+    ExpandedRoute two = expander.apply(route, "RW03", null).orElseThrow();
+    List<ExpandedRouteLeg> legs2 = two.legs();
+    assertAll(
+        () -> assertEquals(4, legs.size(), "Should be: WSSS -> VA -> VM -> WSSS -> FIX -> FIX"),
+        () -> assertEquals(4, legs2.size(), "Same thing but with an FM leg")
+    );
+  }
 
 
   @Test

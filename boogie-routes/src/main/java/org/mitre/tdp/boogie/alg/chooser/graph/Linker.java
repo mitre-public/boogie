@@ -9,14 +9,12 @@ import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.highlander;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.lastLegWithLocation;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -118,11 +116,23 @@ public interface Linker {
     return new SidToApproach(sid, approach);
   }
 
+  /**
+   * Might need to just link the star to the approach.
+   * @param star our star
+   * @param approach our approach
+   * @return the links
+   */
   static Linker starToApproach(AnyStar star, AnyApproach approach) {
     return new StarToApproach(star, approach);
   }
 
-  static Linker sidXm(AnySid left, AnySid right) {
+  /**
+   * A linker that will link a sid token with fm/vm to anything with a point.
+   * @param left the sid
+   * @param right anything with apoint
+   * @return link the sid
+   */
+  static Linker sidXm(AnySid left, LinkableToken right) {
     return new SidXm(left, right);
   }
 
@@ -371,17 +381,27 @@ public interface Linker {
 
   final class SidXm implements Linker {
     private final AnySid left;
-    private final AnySid right;
-    private SidXm(AnySid left, AnySid right) {
-      this.left = requireNonNull(left);
-      this.right = requireNonNull(right);
+    private final LinkableToken right;
+
+    private SidXm(AnySid left, LinkableToken right) {
+      this.left = left;
+      this.right = right;
     }
+
     @Override
     public Collection<LinkedLegs> links() {
       Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
-      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
-      return cartesianProduct(left.sid().exitLegs(xm), right.sid().entryLegs(hasPosition)).stream()
+      Collection<Leg> fmVm = left.sid().exitLegs(xm);
+      Collection<Leg> rightLegs = withLocation(right.graphRepresentation());
+      return cartesianProduct(fmVm, rightLegs).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
+          .toList();
+    }
+    private List<Leg> withLocation(Collection<LinkedLegs> linkedLegs) {
+      return linkedLegs.stream()
+          .flatMap(linked -> Stream.of(linked.source(), linked.target()))
+          .distinct()
+          .filter(leg -> leg.associatedFix().isPresent())
           .toList();
     }
     private static double distanceOrMin(Pair<Leg, Leg> pair) {

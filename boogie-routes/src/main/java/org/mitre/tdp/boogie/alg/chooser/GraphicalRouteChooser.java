@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,18 +29,17 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.TurnDirection;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenGrapher;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
+import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,10 @@ final class GraphicalRouteChooser implements RouteChooser {
   }
 
   List<LinkableTokens> toLinkableTokens(List<ResolvedTokens> resolvedTokens) {
-    return resolvedTokens.stream().map(this::make).collect(toList());
+    return resolvedTokens.stream()
+        .map(this::make)
+        .filter(i -> !i.linkableLegs.isEmpty())
+        .toList();
   }
 
   SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> constructRouteGraph(List<LinkableTokens> linkableTokens) {
@@ -205,6 +208,13 @@ final class GraphicalRouteChooser implements RouteChooser {
   private LinkableTokens make(ResolvedTokens resolvedTokens) {
 
     LinkedHashMap<LinkableToken, ResolvedToken> tokenMap = resolvedTokens.resolvedTokens().stream()
+        .filter(t -> {
+          Optional<Procedure> sidStar = ResolvedTokenVisitor.sidStar(t);
+          if (sidStar.isPresent()) {
+            return sidStar.filter(PROC_WITH_TRANSITIONS).isPresent();
+          }
+          return true;
+        })
         .collect(toMap(mapper::map, Function.identity()));
 
     LinkedHashMap<Leg, LinkableLeg> legMap = tokenMap.keySet().stream()
@@ -223,6 +233,8 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     return new LinkableTokens(legMap, tokenMap.keySet());
   }
+
+  private static final Predicate<Procedure> PROC_WITH_TRANSITIONS = s -> !s.transitions().isEmpty();
 
   /**
    * We are going to want deterministic ordering between runs here - enforce the use of a {@link LinkedHashMap}.

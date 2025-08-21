@@ -49,6 +49,10 @@ public interface ResolvedTokenVisitor {
     return ofNullable(visitor.star);
   }
 
+  static Optional<Procedure> sidStar(ResolvedToken token) {
+    return star(token).or(() -> sid(token));
+  }
+
   /**
    * Used to access an internal Approach {@link Procedure} instance of a {@link ResolvedToken} (if it has one). Typically used
    * when inferring an approach when equipage context has been provided.
