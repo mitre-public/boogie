@@ -9,14 +9,12 @@ import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.highlander;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.lastLegWithLocation;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -118,12 +116,44 @@ public interface Linker {
     return new SidToApproach(sid, approach);
   }
 
+  /**
+   * Might need to just link the star to the approach.
+   * @param star our star
+   * @param approach our approach
+   * @return the links
+   */
   static Linker starToApproach(AnyStar star, AnyApproach approach) {
     return new StarToApproach(star, approach);
   }
 
-  static Linker sidXm(AnySid left, AnySid right) {
+  /**
+   * A linker that will link a sid token with fm/vm to anything with a point.
+   * @param left the sid
+   * @param right anything with a point
+   * @return link the sid
+   */
+  static Linker sidXm(AnySid left, LinkableToken right) {
     return new SidXm(left, right);
+  }
+
+  /**
+   * This one is to make sure we only link to entry legs in the next transition
+   * @param left the sid with xm
+   * @param right the next transition to link to
+   * @return the linker
+   */
+  static Linker intraSidLinker(AnySid left, AnySid right) {
+    return new IntraSidXm(left, right);
+  }
+
+  /**
+   * These need to
+   * @param left the sid with the xm
+   * @param right the star
+   * @return a linker for between the two.
+   */
+  static Linker sidXmToStar(AnySid left, AnyStar right) {
+    return new SidXmToStar(left, right);
   }
 
   /**
@@ -371,8 +401,41 @@ public interface Linker {
 
   final class SidXm implements Linker {
     private final AnySid left;
+    private final LinkableToken right;
+
+    private SidXm(AnySid left, LinkableToken right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
+      Collection<Leg> fmVm = left.sid().exitLegs(xm);
+      Collection<Leg> rightLegs = withLocation(right.graphRepresentation());
+      return cartesianProduct(fmVm, rightLegs).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
+          .toList();
+    }
+    private List<Leg> withLocation(Collection<LinkedLegs> linkedLegs) {
+      return linkedLegs.stream()
+          .map(LinkedLegs::source)
+          .filter(leg -> leg.associatedFix().isPresent())
+          .toList();
+    }
+    private static double distanceOrMin(Pair<Leg, Leg> pair) {
+      return Optional.of(pair)
+          .filter(l -> PathTerminator.FM.equals(l.first().pathTerminator()))
+          .filter(l -> !l.first().associatedFix().orElseThrow().equals(l.second().associatedFix().orElseThrow())) //we know they have fixes from the leg type
+          .map(i -> distanceBetween(pair))
+          .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
+    }
+  }
+
+  final class IntraSidXm implements Linker {
+    private final AnySid left;
     private final AnySid right;
-    private SidXm(AnySid left, AnySid right) {
+    private IntraSidXm(AnySid left, AnySid right) {
       this.left = requireNonNull(left);
       this.right = requireNonNull(right);
     }
@@ -381,6 +444,32 @@ public interface Linker {
       Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
       Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
       return cartesianProduct(left.sid().exitLegs(xm), right.sid().entryLegs(hasPosition)).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
+          .toList();
+    }
+    private static double distanceOrMin(Pair<Leg, Leg> pair) {
+      return Optional.of(pair)
+          .filter(l -> PathTerminator.FM.equals(l.first().pathTerminator()))
+          .filter(l -> !l.first().associatedFix().orElseThrow().equals(l.second().associatedFix().orElseThrow())) //we know they have fixes from the leg type
+          .map(i -> distanceBetween(pair))
+          .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
+    }
+  }
+
+  final class SidXmToStar implements Linker {
+    private final AnySid left;
+    private final AnyStar right;
+
+    private SidXmToStar(AnySid left, AnyStar right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+      return cartesianProduct(left.sid().exitLegs(xm), right.star().entryLegs(hasPosition)).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
           .toList();
     }
