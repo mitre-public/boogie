@@ -66,7 +66,7 @@ final class AnyStar implements LinkableToken {
   public Linker visit(AnySid sid) {
     return Linker.pointsWithinRange(ofNauticalMiles(.25), sid, this)
         .orElseTry(Linker.closestPointBetween(sid, this))
-        .orElseTry(Linker.sidXm(sid, this));
+        .orElseTry(Linker.sidXmToStar(sid, this));
   }
 
   @Override

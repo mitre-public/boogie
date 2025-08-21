@@ -147,6 +147,16 @@ public interface Linker {
   }
 
   /**
+   * These need to
+   * @param left the sid with the xm
+   * @param right the star
+   * @return a linker for between the two.
+   */
+  static Linker sidXmToStar(AnySid left, AnyStar right) {
+    return new SidXmToStar(left, right);
+  }
+
+  /**
    * Returns a collection of links between a pair of configured {@link LinkableToken}s.
    */
   Collection<LinkedLegs> links();
@@ -434,6 +444,32 @@ public interface Linker {
       Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
       Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
       return cartesianProduct(left.sid().exitLegs(xm), right.sid().entryLegs(hasPosition)).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
+          .toList();
+    }
+    private static double distanceOrMin(Pair<Leg, Leg> pair) {
+      return Optional.of(pair)
+          .filter(l -> PathTerminator.FM.equals(l.first().pathTerminator()))
+          .filter(l -> !l.first().associatedFix().orElseThrow().equals(l.second().associatedFix().orElseThrow())) //we know they have fixes from the leg type
+          .map(i -> distanceBetween(pair))
+          .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
+    }
+  }
+
+  final class SidXmToStar implements Linker {
+    private final AnySid left;
+    private final AnyStar right;
+
+    private SidXmToStar(AnySid left, AnyStar right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> xm = leg -> PathTerminator.VM.equals(leg.pathTerminator()) || PathTerminator.FM.equals(leg.pathTerminator());
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+      return cartesianProduct(left.sid().exitLegs(xm), right.star().entryLegs(hasPosition)).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
           .toList();
     }
