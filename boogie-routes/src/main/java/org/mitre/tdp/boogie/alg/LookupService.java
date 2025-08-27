@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,7 +21,7 @@ import com.google.common.collect.Multimap;
  * maps structures to a remote database backend (though if using a remote service you may want to cache lookups locally).
  */
 @FunctionalInterface
-public interface LookupService<I> extends Function<String, Collection<I>> {
+public interface LookupService<I> extends Function<String, Collection<I>>, Serializable {
 
   /**
    * Returns a new {@link LookupService} which returns an immutable empty collection on any query.
