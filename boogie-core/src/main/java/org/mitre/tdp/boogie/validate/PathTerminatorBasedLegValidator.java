@@ -23,74 +23,52 @@ public final class PathTerminatorBasedLegValidator implements Predicate<Leg> {
   @Override
   public boolean test(Leg leg) {
     requireNonNull(leg.pathTerminator(), "PathTerminator must be present to validate required leg fields.");
-    switch (leg.pathTerminator()) {
-      case IF:
-      case TF:
-      case DF:
-        return leg.associatedFix().isPresent();
-      case CF:
-        return leg.associatedFix().isPresent()
-            && leg.recommendedNavaid().isPresent()
-            && leg.theta().isPresent()
-            && leg.rho().isPresent()
-            && leg.outboundMagneticCourse().isPresent()
-            && leg.routeDistance().isPresent();
-      case FA:
-      case FC:
-      case FD:
-      case FM:
-        return leg.associatedFix().isPresent()
-            && leg.recommendedNavaid().isPresent()
-            && leg.theta().isPresent()
-            && leg.rho().isPresent()
-            && leg.outboundMagneticCourse().isPresent();
-      case CA:
-      case VA:
-        return leg.outboundMagneticCourse().isPresent()
-            && leg.altitudeConstraint().hasLowerBound();
-      case CR:
-      case VR:
-        return leg.recommendedNavaid().isPresent()
-            && leg.theta().isPresent()
-            && leg.outboundMagneticCourse().isPresent();
-      case CD:
-      case VD:
-        return leg.recommendedNavaid().isPresent()
-            && leg.outboundMagneticCourse().isPresent()
-            && leg.routeDistance().isPresent();
-      case CI:
-      case VI:
-      case VM:
-        return leg.outboundMagneticCourse().isPresent();
-      case RF:
-        return leg.associatedFix().isPresent()
-            && leg.turnDirection().isPresent()
-            && leg.routeDistance().isPresent()
-            && leg.centerFix().isPresent();
-      case AF:
-        return leg.associatedFix().isPresent()
-            && leg.turnDirection().isPresent()
-            && leg.recommendedNavaid().isPresent()
-            && leg.theta().isPresent()
-            && leg.rho().isPresent();
-      case PI:
-        return leg.associatedFix().isPresent()
-            && leg.turnDirection().isPresent()
-            && leg.recommendedNavaid().isPresent()
-            && leg.theta().isPresent()
-            && leg.rho().isPresent()
-            && leg.outboundMagneticCourse().isPresent()
-            && leg.routeDistance().isPresent();
-      case HA:
-      case HF:
-      case HM:
-        return leg.associatedFix().isPresent()
-            && leg.turnDirection().isPresent()
-            && leg.outboundMagneticCourse().isPresent()
-            // only one or the other must be present on the record
-            && (leg.holdTime().isPresent() || leg.routeDistance().isPresent());
-      default:
-        throw new IllegalArgumentException("Unsupported leg type supplied to LegContentValidator: ".concat(leg.pathTerminator().name()));
-    }
+    return switch (leg.pathTerminator()) {
+      case IF, TF, DF -> leg.associatedFix().isPresent();
+      case CF -> leg.associatedFix().isPresent()
+          && leg.recommendedNavaid().isPresent()
+          && leg.theta().isPresent()
+          && leg.rho().isPresent()
+          && leg.outboundMagneticCourse().isPresent()
+          && leg.routeDistance().isPresent();
+      case FA, FC, FD, FM -> leg.associatedFix().isPresent()
+          && leg.recommendedNavaid().isPresent()
+          && leg.theta().isPresent()
+          && leg.rho().isPresent()
+          && leg.outboundMagneticCourse().isPresent();
+      case CA, VA -> leg.outboundMagneticCourse().isPresent()
+          && leg.altitudeConstraint().hasLowerBound();
+      case CR, VR -> leg.recommendedNavaid().isPresent()
+          && leg.theta().isPresent()
+          && leg.outboundMagneticCourse().isPresent();
+      case CD, VD -> leg.recommendedNavaid().isPresent()
+          && leg.outboundMagneticCourse().isPresent()
+          && leg.routeDistance().isPresent();
+      case CI, VI, VM -> leg.outboundMagneticCourse().isPresent();
+      case RF -> leg.associatedFix().isPresent()
+          && leg.turnDirection().isPresent()
+          && leg.routeDistance().isPresent()
+          && leg.centerFix().isPresent();
+      case AF -> leg.associatedFix().isPresent()
+          && leg.turnDirection().isPresent()
+          && leg.recommendedNavaid().isPresent()
+          && leg.theta().isPresent()
+          && leg.rho().isPresent()
+          && leg.outboundMagneticCourse().isPresent();
+      case PI -> leg.associatedFix().isPresent()
+          && leg.turnDirection().isPresent()
+          && leg.recommendedNavaid().isPresent()
+          && leg.theta().isPresent()
+          && leg.rho().isPresent()
+          && leg.outboundMagneticCourse().isPresent()
+          && leg.routeDistance().isPresent();
+      case HA, HF, HM -> leg.associatedFix().isPresent()
+          && leg.turnDirection().isPresent()
+          && leg.outboundMagneticCourse().isPresent()
+          // only one or the other must be present on the record
+          && (leg.holdTime().isPresent() || leg.routeDistance().isPresent());
+      default ->
+          throw new IllegalArgumentException("Unsupported leg type supplied to LegContentValidator: ".concat(leg.pathTerminator().name()));
+    };
   }
 }
