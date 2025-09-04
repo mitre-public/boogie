@@ -9,16 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.CategoryAndType;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.RouteContext;
@@ -42,13 +36,12 @@ import org.slf4j.LoggerFactory;
 public final class FluentRouteExpander implements
     QuadFunction<String, String, String, RequiredNavigationEquipage[], Optional<ExpandedRoute>>,
     TriFunction<String, String, String, Optional<ExpandedRoute>>,
-    Function<String, Optional<ExpandedRoute>> {
-
-  private static final Logger LOG = LoggerFactory.getLogger(FluentRouteExpander.class);
+    Function<String, Optional<ExpandedRoute>>,
+    ExpanderFacade {
 
   private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = toExpandedLegs();
 
-  private static final RouteSummarizer routeSummarizer = new RouteSummarizer();
+  private static final  Function<List<ResolvedLeg>, Optional<RouteSummary>> routeSummarizer = new RouteSummarizer();
 
   private final LookupService<Procedure> procedureService;
 
@@ -181,20 +174,12 @@ public final class FluentRouteExpander implements
    * @param details the route details object which has e.g., runways ...etc.
    * @return the expanded route if we can do it.
    */
+  @Override
   public Optional<ExpandedRoute> expand(String route, RouteDetails details) {
 
     logInputs(route, details);
 
-    RouteContext context = RouteContext.standard()
-        .proceduresByName(procedureService)
-        .departureRunway(details.departureRunway().orElse(null))
-        .arrivalRunway(details.arrivalRunway().orElse(null))
-        .proceduresByAirport(proceduresAtAirport)
-        .equipagePreference(details.equipagePreference())
-        .defaultSid(details.defaultSid().orElse(null))
-        .defaultStar(details.defaultStar().orElse(null))
-        .categoryAndType(details.categoryAndType().orElse(CategoryAndType.NULL))
-        .build();
+    RouteContext context = ContextExtractor.INSTANCE.apply(details, procedureService, proceduresAtAirport);
 
     return of(routeExpander.expand(route, context))
         .filter(l -> !l.isEmpty())
@@ -208,20 +193,6 @@ public final class FluentRouteExpander implements
             ));
   }
 
-  private void logInputs(String route, RouteDetails details) {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("- Beginning expansion of route: {}", route);
-      LOG.debug(String.format("  %20s %20s %30s", "Departure Runway", "Arrival Runway", "Equipage Preferences"));
-      LOG.debug(
-          String.format("  %20s %20s %30s",
-              details.departureRunway().orElse("None"),
-              details.arrivalRunway().orElse("None"),
-              details.equipagePreference().stream().map(Enum::name).collect(Collectors.joining(">"))
-          )
-      );
-    }
-  }
-
   private ExpandedRoute createExpandedRoute(List<ResolvedLeg> legs) {
     return new ExpandedRoute(routeSummarizer.apply(legs).orElse(null), toExpandedLegs.apply(legs));
   }
@@ -232,7 +203,7 @@ public final class FluentRouteExpander implements
 
     private LookupService<Procedure> proceduresByAirport = LookupService.noop();
 
-    private RouteExpander.Standard.Builder routeExpander = RouteExpander.standard();
+    private final RouteExpander.Standard.Builder routeExpander = RouteExpander.standard();
 
     private Builder() {
     }

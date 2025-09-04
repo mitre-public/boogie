@@ -83,6 +83,10 @@ final class SectionGluer implements BiFunction<Collection<LinkedLegs>, LinkableT
    * Removes the manual terminating leg of a SID/STAR and replaces it with the closest previous leg in the star with a fix. If the distance between
    * the approach and procedure was not zero, insert a cloned DF leg of the first approach leg. Otherwise, just link the closest previous with the
    * initial approach leg
+   * @param leg the linked leg from the last section.
+   * @param procedure the procedure we want to connect to.
+   * @param distanceBetween if there is any distance between the two tokens.
+   * @return the new legs that link the previous token to a invented leg and a the invented leg to the approach.
    */
   private List<LinkedLegs> manualTerminatingProcedureAdjustment(LinkedLegs leg, Procedure procedure, boolean distanceBetween) {
     Leg manualTerminatingLeg = leg.source();
