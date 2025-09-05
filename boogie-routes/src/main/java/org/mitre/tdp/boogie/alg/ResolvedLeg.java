@@ -26,8 +26,6 @@ public final class ResolvedLeg {
    * The actual resolved leg of the route.
    */
   private final Leg leg;
-  // Leg.Record<T>, T = Akela Leg
-  // DirectTo = Akela Fix
 
   private ResolvedLeg(RouteToken routeToken, ResolvedToken resolvedToken, Leg leg) {
     this.routeToken = requireNonNull(routeToken);

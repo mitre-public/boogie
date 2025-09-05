@@ -23,12 +23,6 @@ import com.google.common.base.Preconditions;
 
 final class SectionGluer implements BiFunction<Collection<LinkedLegs>, LinkableToken, List<LinkedLegs>> {
 
-  private static final Predicate<String> fixTerminatingLegs = Pattern.compile("AF|CF|DF|RF|TF|IF|HF").asPredicate();
-
-  private static final Predicate<String> manualTerminatingLegs = Pattern.compile("HM|FM|VM").asPredicate();
-
-  private static final Predicate<String> fixOriginatingLegs = Pattern.compile("FC|FD|HF|IF|PI|FA").asPredicate();
-
   @Override
   public List<LinkedLegs> apply(Collection<LinkedLegs> linkedLegs, LinkableToken resolvedToken) {
     return linkedLegs.stream()
@@ -47,15 +41,15 @@ final class SectionGluer implements BiFunction<Collection<LinkedLegs>, LinkableT
    * needs to be dropped because it is overlapping with the fic originating leg and the closest leg in the procedure is used in the linking.
    */
   private List<LinkedLegs> glueLegBetweenStarAndApproach(LinkedLegs leg, LinkableToken resolvedToken) {
-    Preconditions.checkArgument(fixOriginatingLegs.test(leg.target().pathTerminator().toString()), "Approaches can't start with non-fix-originating legs:" + leg.target().pathTerminator() + "/" + leg.target().associatedFix().map(Fix::fixIdentifier));
+    Preconditions.checkArgument((leg.target().pathTerminator().isFixOriginating()), "Approaches can't start with non-fix-originating legs:" + leg.target().pathTerminator() + "/" + leg.target().associatedFix().map(Fix::fixIdentifier));
 
     List<LinkedLegs> newLegs = new ArrayList<>();
 
     Optional<Procedure> procedure = ProcedureVisitor.get(resolvedToken);
 
-    if (fixTerminatingLegs.test(leg.source().pathTerminator().toString()) && leg.linkWeight() > 1.0E-5) {
+    if (leg.source().pathTerminator().isFixTerminating() && leg.linkWeight() > 1.0E-5) {
       newLegs.addAll(fixTerminatingStarWithNonZeroDistanceAdjustment(leg));
-    } else if (procedure.isPresent() && manualTerminatingLegs.test(leg.source().pathTerminator().toString())) {
+    } else if (procedure.isPresent() && leg.source().pathTerminator().isManualTerminating()) {
       newLegs.addAll(manualTerminatingProcedureAdjustment(leg, procedure.get(), leg.linkWeight() > 1.0E-5));
     }
 
@@ -83,6 +77,10 @@ final class SectionGluer implements BiFunction<Collection<LinkedLegs>, LinkableT
    * Removes the manual terminating leg of a SID/STAR and replaces it with the closest previous leg in the star with a fix. If the distance between
    * the approach and procedure was not zero, insert a cloned DF leg of the first approach leg. Otherwise, just link the closest previous with the
    * initial approach leg
+   * @param leg the linked leg from the last section.
+   * @param procedure the procedure we want to connect to.
+   * @param distanceBetween if there is any distance between the two tokens.
+   * @return the new legs that link the previous token to a invented leg and a the invented leg to the approach.
    */
   private List<LinkedLegs> manualTerminatingProcedureAdjustment(LinkedLegs leg, Procedure procedure, boolean distanceBetween) {
     Leg manualTerminatingLeg = leg.source();

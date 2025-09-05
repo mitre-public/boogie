@@ -38,46 +38,42 @@ final class AnyApproach implements LinkableToken {
 
   @Override
   public Linker visit(AnyAirport airport) {
-    return glueIfNecessary(Linker.anyToApproach(airport, this), airport);
+    return Linker.anyToApproach(airport, this);
   }
 
   @Override
   public Linker visit(AnyAirway airway) {
-    return glueIfNecessary(Linker.anyToApproach(airway, this), airway);
+    return Linker.anyToApproach(airway, this);
   }
 
   @Override
   public Linker visit(AnyApproach approach) {
-    return glueIfNecessary(Linker.anyToApproach(approach, this), approach);
+    //vi/ci legs ending approach transitions are a thing
+    return Linker.ApproachNoFixToApproach(approach, this).orElseTry(Linker.approachToApproach(approach, this));
   }
 
   @Override
   public Linker visit(AnyFix fix) {
-    return glueIfNecessary(Linker.anyToApproach(fix, this), fix);
+    return Linker.anyToApproach(fix, this);
   }
 
   @Override
   public Linker visit(AnyLatLong latLong) {
-    return glueIfNecessary(Linker.anyToApproach(latLong, this), latLong);
+    return Linker.anyToApproach(latLong, this);
   }
 
   @Override
   public Linker visit(AnySid sid) {
-    return glueIfNecessary(Linker.sidToApproach(sid, this), sid);
+    return Linker.sidNoFixToApproach(sid, this).orElseTry(Linker.sidToApproach(sid, this));
   }
 
   @Override
   public Linker visit(AnyStar star) {
-    return glueIfNecessary(Linker.starToApproach(star, this), star);
+    return Linker.starNoFixToApproach(star, this).orElseTry(Linker.starToApproach(star, this));
   }
 
   @Override
   public Linker visit(AnyFrd frd) {
-    return glueIfNecessary(Linker.anyToApproach(frd, this), frd);
-  }
-
-  private Linker glueIfNecessary(Linker linker, LinkableToken token) {
-    SectionGluer gluer = new SectionGluer();
-    return () -> gluer.apply(linker.links(), token);
+    return Linker.anyToApproach(frd, this);
   }
 }

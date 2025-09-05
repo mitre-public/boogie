@@ -41,6 +41,32 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  */
 class FluentRouteExpanderTest {
 
+  //this makes sure that the route stays fluent with the VM skipped into a DF
+  //we drop the VM and create a DF and then drop the IF on the next procedure.
+  @Test
+  void vmToApproach() {
+    String route = "LBV.COSTR3.KMCO";
+
+    Fix lbv = fix("LBV", 26.828186111111112, -81.3914388888889);
+
+    FluentRouteExpander expander = newExpander(
+        singletonList(lbv),
+        emptyList(),
+        singletonList(Airports.KMCO()),
+        List.of(COSTR3_VM.INSTANCE, KMCO_I17L.I17L, KMCO_I17R.I17R));
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals(18, legs.size(), "counting to make sure more/less legs don't happen"),
+        () -> assertEquals("KNUKL", legs.get(8).associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.TF, legs.get(8).pathTerminator(), "We dropped the VM that was here"),
+        () -> assertEquals("RATOY", legs.get(9).associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.DF, legs.get(9).pathTerminator(), "We made this leg")
+    );
+  }
+
   @Test
   void noCommonOrNext() {
     String route = "WSSS.CHA1C.ANITO";
