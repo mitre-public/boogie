@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.alg.facade;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,8 +22,6 @@ import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.fn.QuadFunction;
 import org.mitre.tdp.boogie.fn.TriFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class provides a more domain-data-driven (DDD?) facade/wrapper around a {@link RouteExpander} which more closely matches
@@ -39,7 +36,16 @@ public final class FluentRouteExpander implements
     Function<String, Optional<ExpandedRoute>>,
     ExpanderFacade {
 
-  private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = toExpandedLegs();
+  private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = list -> {
+    DirectToConverter directToConverter = new DirectToConverter();
+    ResolvedLegConverter resolvedLegConverter = new ResolvedLegConverter();
+    RedundantLegCombiner redundantLegCombiner = new RedundantLegCombiner();
+
+    List<ResolvedLeg> directConverted = directToConverter.apply(list);
+    List<ExpandedRouteLeg> expandedLegs = resolvedLegConverter.apply(directConverted);
+
+    return redundantLegCombiner.apply(expandedLegs);
+  };
 
   private static final  Function<List<ResolvedLeg>, Optional<RouteSummary>> routeSummarizer = new RouteSummarizer();
 
@@ -100,16 +106,6 @@ public final class FluentRouteExpander implements
                 LookupService.inMemory(fixes, f -> Stream.of(f.fixIdentifier()))
             )
         );
-  }
-
-  // for now this is fine to keep the effective contract...
-  private static Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs() {
-
-    DirectToConverter directToConverter = new DirectToConverter();
-    ResolvedLegConverter resolvedLegConverter = new ResolvedLegConverter();
-    RedundantLegCombiner redundantLegCombiner = new RedundantLegCombiner();
-
-    return list -> redundantLegCombiner.apply(directToConverter.apply(list).stream().map(resolvedLegConverter).collect(toList()));
   }
 
   /**
@@ -184,13 +180,7 @@ public final class FluentRouteExpander implements
     return of(routeExpander.expand(route, context))
         .filter(l -> !l.isEmpty())
         .map(this::createExpandedRoute)
-        .map(expandedRoute -> expandedRoute
-            .updateSummary(routeSummary -> routeSummary.toBuilder()
-                .route(route)
-                .departureRunway(details.departureRunway().orElse(null))
-                .arrivalRunway(details.arrivalRunway().orElse(null))
-                .build()
-            ));
+        .map(expandedRoute -> updateSummary(expandedRoute, route, details));
   }
 
   private ExpandedRoute createExpandedRoute(List<ResolvedLeg> legs) {

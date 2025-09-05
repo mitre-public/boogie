@@ -23,12 +23,6 @@ import com.google.common.base.Preconditions;
 
 final class SectionGluer implements BiFunction<Collection<LinkedLegs>, LinkableToken, List<LinkedLegs>> {
 
-  private static final Predicate<String> fixTerminatingLegs = Pattern.compile("AF|CF|DF|RF|TF|IF|HF").asPredicate();
-
-  private static final Predicate<String> manualTerminatingLegs = Pattern.compile("HM|FM|VM").asPredicate();
-
-  private static final Predicate<String> fixOriginatingLegs = Pattern.compile("FC|FD|HF|IF|PI|FA").asPredicate();
-
   @Override
   public List<LinkedLegs> apply(Collection<LinkedLegs> linkedLegs, LinkableToken resolvedToken) {
     return linkedLegs.stream()
@@ -47,15 +41,15 @@ final class SectionGluer implements BiFunction<Collection<LinkedLegs>, LinkableT
    * needs to be dropped because it is overlapping with the fic originating leg and the closest leg in the procedure is used in the linking.
    */
   private List<LinkedLegs> glueLegBetweenStarAndApproach(LinkedLegs leg, LinkableToken resolvedToken) {
-    Preconditions.checkArgument(fixOriginatingLegs.test(leg.target().pathTerminator().toString()), "Approaches can't start with non-fix-originating legs:" + leg.target().pathTerminator() + "/" + leg.target().associatedFix().map(Fix::fixIdentifier));
+    Preconditions.checkArgument((leg.target().pathTerminator().isFixOriginating()), "Approaches can't start with non-fix-originating legs:" + leg.target().pathTerminator() + "/" + leg.target().associatedFix().map(Fix::fixIdentifier));
 
     List<LinkedLegs> newLegs = new ArrayList<>();
 
     Optional<Procedure> procedure = ProcedureVisitor.get(resolvedToken);
 
-    if (fixTerminatingLegs.test(leg.source().pathTerminator().toString()) && leg.linkWeight() > 1.0E-5) {
+    if (leg.source().pathTerminator().isFixTerminating() && leg.linkWeight() > 1.0E-5) {
       newLegs.addAll(fixTerminatingStarWithNonZeroDistanceAdjustment(leg));
-    } else if (procedure.isPresent() && manualTerminatingLegs.test(leg.source().pathTerminator().toString())) {
+    } else if (procedure.isPresent() && leg.source().pathTerminator().isManualTerminating()) {
       newLegs.addAll(manualTerminatingProcedureAdjustment(leg, procedure.get(), leg.linkWeight() > 1.0E-5));
     }
 

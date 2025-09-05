@@ -29,4 +29,12 @@ public interface ExpanderFacade {
       );
     }
   }
+
+  default ExpandedRoute updateSummary(ExpandedRoute expandedRoute, String route, RouteDetails details) {
+    return expandedRoute.updateSummary(summary -> summary.toBuilder()
+        .route(route)
+        .departureRunway(details.departureRunway().orElse(null))
+        .arrivalRunway(details.arrivalRunway().orElse(null))
+        .build());
+  }
 }

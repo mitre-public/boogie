@@ -1,18 +1,14 @@
 package org.mitre.tdp.boogie.alg.facade;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.*;
@@ -25,8 +21,6 @@ import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.fn.QuadFunction;
 import org.mitre.tdp.boogie.fn.TriFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class expands flight plans but wont change the leg types or combine legs or things like that.
@@ -37,8 +31,6 @@ public final class InarticulateRouteExpander implements QuadFunction<String, Str
     TriFunction<String, String, String, Optional<ExpandedRoute>>,
     Function<String, Optional<ExpandedRoute>>,
     ExpanderFacade {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InarticulateRouteExpander.class);
 
     private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = toExpandedLegs();
 
@@ -165,23 +157,11 @@ public final class InarticulateRouteExpander implements QuadFunction<String, Str
     @Override
     public Optional<ExpandedRoute> expand(String route, RouteDetails details) {
         logInputs(route, details);
-
-        details.equipagePreference().stream()
-            .findAny()
-            .ifPresent(e -> LOG.warn("Approach procedures are still glued in this expander."));
-
         RouteContext context = ContextExtractor.INSTANCE.apply(details, procedureService, proceduresAtAirport);
-
         return of(routeExpander.expand(route, context))
             .filter(l -> !l.isEmpty())
             .map(this::createExpandedRoute)
-            .map(expandedRoute -> expandedRoute
-                .updateSummary(routeSummary -> routeSummary.toBuilder()
-                    .route(route)
-                    .departureRunway(details.departureRunway().orElse(null))
-                    .arrivalRunway(details.arrivalRunway().orElse(null))
-                    .build()
-                ));
+            .map(expandedRoute -> updateSummary(expandedRoute, route, details));
     }
 
     private ExpandedRoute createExpandedRoute(List<ResolvedLeg> legs) {
@@ -189,8 +169,7 @@ public final class InarticulateRouteExpander implements QuadFunction<String, Str
     }
 
     private static Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs() {
-        ResolvedLegConverter resolvedLegConverter = new ResolvedLegConverter();
-        return list -> list.stream().map(resolvedLegConverter).collect(toList());
+      return new ResolvedLegConverter();
     }
 
     public static class Builder {

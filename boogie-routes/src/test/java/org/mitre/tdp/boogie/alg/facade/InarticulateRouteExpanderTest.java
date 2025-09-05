@@ -3,11 +3,7 @@ package org.mitre.tdp.boogie.alg.facade;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mitre.tdp.boogie.Airports.KATL;
 import static org.mitre.tdp.boogie.Airports.KDEN;
 import static org.mitre.tdp.boogie.MockObjects.fix;
@@ -39,6 +35,30 @@ import org.mitre.tdp.boogie.alg.split.Wildcard;
  * <p>e.g. TestAPF would indicate a test for Airport.Procedure.Fix one of the more common composite route elements.
  */
 class InarticulateRouteExpanderTest {
+  //Here we should see the VM -> IF -> Stuff combo
+  @Test
+  void vmToApproach() {
+    String route = "LBV.COSTR3.KMCO";
+
+    Fix lbv = fix("LBV", 26.828186111111112, -81.3914388888889);
+
+    InarticulateRouteExpander expander = newExpander(
+        singletonList(lbv),
+        emptyList(),
+        singletonList(Airports.KMCO()),
+        List.of(COSTR3_VM.INSTANCE, KMCO_I17L.I17L, KMCO_I17R.I17R));
+
+    ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();
+    List<ExpandedRouteLeg> legs = expandedRoute.legs();
+
+    assertAll(
+        () -> assertEquals(22, legs.size(), "More legs than the fluent"),
+        () -> assertTrue(legs.get(11).associatedFix().isEmpty()),
+        () -> assertEquals(PathTerminator.VM, legs.get(11).pathTerminator(), "VM is there"),
+        () -> assertEquals("RATOY", legs.get(12).associatedFix().get().fixIdentifier()),
+        () -> assertEquals(PathTerminator.IF, legs.get(12).pathTerminator(), "Still and IF because we did not screw with it")
+    );
+  }
 
   @Test
   void noCommonOrNext() {
@@ -397,11 +417,11 @@ class InarticulateRouteExpanderTest {
 
         () -> assertEquals("COSTR3", legs.get(10).section()),
         () -> assertEquals("KNUKL", legs.get(10).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.TF, legs.get(10).pathTerminator(), "For now because we get rid of the FM in the gluer until that is changed."),
+        () -> assertEquals(PathTerminator.TF, legs.get(10).pathTerminator()),
 
-        () -> assertEquals("I17R", legs.get(11).section()),
-        () -> assertEquals("RATOY", legs.get(11).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.DF, legs.get(11).pathTerminator()),
+        () -> assertEquals("COSTR3", legs.get(11).section()),
+        () -> assertEquals("KNUKL", legs.get(11).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.FM, legs.get(11).pathTerminator(), "We want the FM now."),
 
         () -> assertEquals("I17R", legs.get(12).section()),
         () -> assertEquals("RATOY", legs.get(12).associatedFix().map(Fix::fixIdentifier).orElse(null)),
@@ -499,11 +519,11 @@ class InarticulateRouteExpanderTest {
 
         () -> assertEquals("COSTR3", legs.get(10).section()),
         () -> assertEquals("KNUKL", legs.get(10).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.TF, legs.get(10).pathTerminator(), "For now because we get rid of the FM in the gluer until that is changed."),
+        () -> assertEquals(PathTerminator.TF, legs.get(10).pathTerminator()),
 
-        () -> assertEquals("I17R", legs.get(11).section()),
-        () -> assertEquals("RATOY", legs.get(11).associatedFix().map(Fix::fixIdentifier).orElse(null)),
-        () -> assertEquals(PathTerminator.DF, legs.get(11).pathTerminator()),
+        () -> assertEquals("COSTR3", legs.get(11).section()),
+        () -> assertEquals("KNUKL", legs.get(11).associatedFix().map(Fix::fixIdentifier).orElse(null)),
+        () -> assertEquals(PathTerminator.FM, legs.get(11).pathTerminator(), "FM is back baby."),
 
         () -> assertEquals("I17R", legs.get(12).section()),
         () -> assertEquals("RATOY", legs.get(12).associatedFix().map(Fix::fixIdentifier).orElse(null)),

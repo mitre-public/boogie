@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie;
 
+import java.util.Set;
+
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 
 /**
@@ -163,6 +165,36 @@ public enum PathTerminator {
   HM;
 
   public boolean isFixTerminating() {
-    return name().endsWith("F");
+    return FIX_TERMINATING.contains(this);
   }
+
+  public boolean isManualTerminating() {
+    return MANUALLY_TERMINATING.contains(this);
+  }
+
+  public boolean isFixOriginating() {
+    return FIX_ORIGINATING.contains(this);
+  }
+
+  public boolean isHolding() {
+    return HOLDING.contains(this);
+  }
+
+  public boolean isArc() {
+    return ARC.contains(this);
+  }
+
+  public boolean containsFix() {
+    return FIX_TERMINATING.contains(this) || FIX_ORIGINATING.contains(this);
+  }
+
+  public boolean noFix() {
+    return !containsFix();
+  }
+
+  public static final Set<PathTerminator> FIX_TERMINATING = Set.of(AF, CF, DF, RF, TF, IF, HF);
+  public static final Set<PathTerminator> MANUALLY_TERMINATING = Set.of(HM, FM, VM);
+  public static final Set<PathTerminator> FIX_ORIGINATING = Set.of(FC, FD, HF, IF, PI, FA);
+  public static final Set<PathTerminator> HOLDING = Set.of(HF, HA, HM);
+  public static final Set<PathTerminator> ARC = Set.of(AF, RF);
 }
