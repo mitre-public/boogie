@@ -1,17 +1,17 @@
 package org.mitre.tdp.boogie.alg.chooser.graph;
 
 import static java.util.Objects.requireNonNull;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mitre.tdp.boogie.MockObjects.newProcedure;
-import static org.mitre.tdp.boogie.MockObjects.transition;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mitre.tdp.boogie.MockObjects.*;
+import static org.mitre.tdp.boogie.PathTerminator.VI;
+import static org.mitre.tdp.boogie.PathTerminator.VM;
 import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airways;
@@ -29,11 +29,11 @@ class AnyApproachTest {
   private static final LinkingStrategy STRATEGY = new LinkingStrategy(TokenMapper.standard());
 
   /**
-   * Test case to ensure that when an approach element starts with a non fix originating leg, an exception is thrown.
+   * No long cares if the leg is actually correct and will link it anyway. ALso helps if this gets used on missed approach in the future.
    */
   @Test
   void testNonFixOriginatingApproach() {
-    assertThrows(IllegalArgumentException.class, () -> STRATEGY.links(fixTerminatingStar(0.5), nonFixOriginatingApproach(0.5)));
+    assertDoesNotThrow(() -> STRATEGY.links(fixTerminatingStar(0.5), nonFixOriginatingApproach(0.5)));
   }
 
   /**
@@ -55,11 +55,58 @@ class AnyApproachTest {
     );
   }
 
+  @Test
+  void testManuallyTerminatingStar() {
+    List<LinkedLegs> starApproachLinkedLegs = new ArrayList<>(STRATEGY.links(manualTerminatingStar(0.5), fixOriginatingApproach(0.5)));
+    System.out.println(starApproachLinkedLegs);
+    assertAll(
+        () -> assertEquals("manual terminating star leg", starApproachLinkedLegs.get(0).source().associatedFix().get().fixIdentifier()),
+        () -> assertEquals("fix originating approach leg", starApproachLinkedLegs.get(0).target().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(0.0, starApproachLinkedLegs.get(0).linkWeight(), "same spot")
+    );
+  }
+
+  @Test
+  void testManuallyTerminatingNoFixSid() {
+    List<LinkedLegs> starApproachLinkedLegs = new ArrayList<>(STRATEGY.links(manualTerminatingSidWithOnlyOneFix(), fixOriginatingApproach(0.5)));
+    System.out.println(starApproachLinkedLegs);
+    assertAll(
+        () -> assertEquals(VM, starApproachLinkedLegs.get(0).source().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", starApproachLinkedLegs.get(0).target().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(1e-5, starApproachLinkedLegs.get(0).linkWeight(), "same spot")
+    );
+  }
+
+  @Test
+  void testManuallyTerminatingNoFixStar() {
+    List<LinkedLegs> starApproachLinkedLegs = new ArrayList<>(STRATEGY.links(manualTerminatingStarWithOnlyOneFix(), fixOriginatingApproach(0.5)));
+    System.out.println(starApproachLinkedLegs);
+    assertAll(
+        () -> assertEquals(VM, starApproachLinkedLegs.get(0).source().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", starApproachLinkedLegs.get(0).target().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(1e-5, starApproachLinkedLegs.get(0).linkWeight(), "same spot")
+    );
+  }
+
+  @Test
+  void viIntoApproach() {
+    List<LinkedLegs> starApproachLinkedLegs = new ArrayList<>(STRATEGY.links(viApproachTransition(), fixOriginatingApproach(0.5)));
+    System.out.println(starApproachLinkedLegs);
+    assertAll(
+        () -> assertEquals(VI, starApproachLinkedLegs.get(0).source().pathTerminator()),
+        () -> assertEquals("fix originating approach leg", starApproachLinkedLegs.get(0).target().associatedFix().get().fixIdentifier()),
+        () -> assertEquals(1e-5, starApproachLinkedLegs.get(0).linkWeight(), "same spot")
+    );
+  }
+
+
+
   /**
    * Tests case where distance between fix terminating leg in the star and fix originating leg in the approach is non zero.
    * The intended adjustment to the LinkedLegs in this instance is to clone the fix originating leg in the approach, convert it to a DF leg
    * and insert it in between the final star leg and initial approach leg.
    */
+  @Disabled("No longer screwing with adding things here")
   @Test
   void testFixTerminatingStarAndNonZeroDistanceInBetween() {
 
@@ -90,10 +137,11 @@ class AnyApproachTest {
    * the closest leg prior to the manual terminating star leg to the cloned df leg.
    */
   @Test
+  @Disabled("No longer adding in things here or changing them")
   void testManualTerminatingStarAndNonZeroDistanceInBetween() {
 
     List<LinkedLegs> starApproachLinkedLegs = new ArrayList<>(STRATEGY.links(
-        manualTerminatingStar(0.5),
+        manualTerminatingStarWithOnlyOneFix(),
         fixOriginatingApproach(0.75))
     );
 
@@ -119,6 +167,7 @@ class AnyApproachTest {
    * closest previous leg of the star with a fix and the initial approach leg.
    */
   @Test
+  @Disabled("The FM if should link but should not change legs now")
   void testManualTerminatingStarAndZeroDistanceInBetween() {
 
     List<LinkedLegs> starApproachLinkedLegs = new ArrayList<>(STRATEGY.links(
@@ -144,10 +193,11 @@ class AnyApproachTest {
    * To VA(no fix) -> DF(fix1) -> FD(fix1)
    */
   @Test
+  @Disabled("Keep the DM leg now")
   void testManualTerminatingSidWithOnlyOneFixAndZeroDistanceInBetween() {
 
     List<LinkedLegs> legs = new ArrayList<>(STRATEGY.links(
-        manualTerminatingSidWithOnlyOneFix(0.5),
+        manualTerminatingSidWithOnlyOneFix(),
         fixOriginatingApproach(0.5))
     );
 
@@ -169,17 +219,18 @@ class AnyApproachTest {
    * To VA(no fix) -> VM(fix1) -> DF(fix2) -> FD(fix2)
    */
   @Test
+  @Disabled("Not removing the VM leg and the VM leg should link to the FD no issue")
   void testManualTerminatingSidWithOnlyOneFixAndNonZeroDistanceInBetween() {
 
     List<LinkedLegs> legs = new ArrayList<>(STRATEGY.links(
-        manualTerminatingSidWithOnlyOneFix(0.5),
+        manualTerminatingSidWithOnlyOneFix(),
         fixOriginatingApproach(0.75))
     );
 
     assertAll(
         () -> assertEquals(2, legs.size()),
 
-        () -> assertEquals(PathTerminator.VM, legs.get(0).source().pathTerminator()),
+        () -> assertEquals(VM, legs.get(0).source().pathTerminator()),
         () -> assertEquals("manual terminating sid leg", legs.get(0).source().associatedFix().get().fixIdentifier()),
         () -> assertEquals(PathTerminator.DF, legs.get(0).target().pathTerminator()),
         () -> assertEquals("fix originating approach leg", legs.get(0).target().associatedFix().get().fixIdentifier()),
@@ -216,6 +267,7 @@ class AnyApproachTest {
    * make a DF clone the approach leg, and insert in between
    */
   @Test
+  @Disabled("not dong this in the linker now, it just links")
   void testFixToApproachWithNonZeroDistance() {
 
     List<LinkedLegs> legs = new ArrayList<>(STRATEGY.links(
@@ -243,6 +295,7 @@ class AnyApproachTest {
    * of first approach leg.
    */
   @Test
+  @Disabled("doe snot really matter if its an airway either, not doign this now here")
   void testAirwayToApproachWithNonZeroDistance() {
 
     List<LinkedLegs> legs = new ArrayList<>(STRATEGY.links(
@@ -283,12 +336,30 @@ class AnyApproachTest {
     return ResolvedToken.starEnrouteCommon(newProcedureGraph(newProcedure(List.of(ab))));
   }
 
-  private ResolvedToken.SidEnrouteCommon manualTerminatingSidWithOnlyOneFix(double endingLongitude) {
+  private ResolvedToken.SidEnrouteCommon manualTerminatingSidWithOnlyOneFix() {
 
     Leg l1_1 = Leg.builder(PathTerminator.VA, 0).build();
-    Leg l1_2 = createLeg("manual terminating sid leg", 0.0, endingLongitude, PathTerminator.VM);
+    Leg l1_2 = VM();
 
     Transition ab = transition("manualTerminatingSid", "ALPHA1", "APT", TransitionType.ENROUTE, ProcedureType.SID, Arrays.asList(l1_1, l1_2));
+    return ResolvedToken.sidEnrouteCommon(newProcedureGraph(newProcedure(List.of(ab))));
+  }
+
+  private ResolvedToken.SidEnrouteCommon manualTerminatingStarWithOnlyOneFix() {
+
+    Leg l1_1 = Leg.builder(PathTerminator.VA, 0).build();
+    Leg l1_2 = VM();
+
+    Transition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.COMMON, ProcedureType.STAR, Arrays.asList(l1_1, l1_2));
+    return ResolvedToken.sidEnrouteCommon(newProcedureGraph(newProcedure(List.of(ab))));
+  }
+
+  private ResolvedToken.SidEnrouteCommon viApproachTransition() {
+
+    Leg l1_1 = Leg.builder(PathTerminator.IF, 0).build();
+    Leg l1_2 = VI();
+
+    Transition ab = transition("manualTerminatingStar", "ALPHA1", "APT", TransitionType.APPROACH, ProcedureType.APPROACH, Arrays.asList(l1_1, l1_2));
     return ResolvedToken.sidEnrouteCommon(newProcedureGraph(newProcedure(List.of(ab))));
   }
 
