@@ -45,6 +45,10 @@ final class RouteSummarizer implements Function<List<ResolvedLeg>, Optional<Rout
   RouteSummarizer() {
   }
 
+  static RouteSummarizer newInstance() {
+    return new RouteSummarizer();
+  }
+
   @Override
   public Optional<RouteSummary> apply(List<ResolvedLeg> resolvedLegs) {
     checkArgument(!resolvedLegs.isEmpty(), "Input sequence of resolved legs cannot be empty");

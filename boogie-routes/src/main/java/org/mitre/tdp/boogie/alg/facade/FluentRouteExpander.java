@@ -36,18 +36,9 @@ public final class FluentRouteExpander implements
     Function<String, Optional<ExpandedRoute>>,
     ExpanderFacade {
 
-  private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = list -> {
-    DirectToConverter directToConverter = new DirectToConverter();
-    ResolvedLegConverter resolvedLegConverter = new ResolvedLegConverter();
-    RedundantLegCombiner redundantLegCombiner = new RedundantLegCombiner();
+  private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = FluentLegConverter.newInstance();
 
-    List<ResolvedLeg> directConverted = directToConverter.apply(list);
-    List<ExpandedRouteLeg> expandedLegs = resolvedLegConverter.apply(directConverted);
-
-    return redundantLegCombiner.apply(expandedLegs);
-  };
-
-  private static final  Function<List<ResolvedLeg>, Optional<RouteSummary>> routeSummarizer = new RouteSummarizer();
+  private static final  Function<List<ResolvedLeg>, Optional<RouteSummary>> routeSummarizer = RouteSummarizer.newInstance();
 
   private final LookupService<Procedure> procedureService;
 

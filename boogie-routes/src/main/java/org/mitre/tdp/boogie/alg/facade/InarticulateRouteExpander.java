@@ -32,9 +32,9 @@ public final class InarticulateRouteExpander implements QuadFunction<String, Str
     Function<String, Optional<ExpandedRoute>>,
     ExpanderFacade {
 
-    private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = toExpandedLegs();
+    private static final Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs = InarticulateLegConverter.newInstance();
 
-    private static final  Function<List<ResolvedLeg>, Optional<RouteSummary>> routeSummarizer = new RouteSummarizer();
+    private static final  Function<List<ResolvedLeg>, Optional<RouteSummary>> routeSummarizer = RouteSummarizer.newInstance();
 
     private final LookupService<Procedure> procedureService;
 
@@ -166,10 +166,6 @@ public final class InarticulateRouteExpander implements QuadFunction<String, Str
 
     private ExpandedRoute createExpandedRoute(List<ResolvedLeg> legs) {
         return new ExpandedRoute(routeSummarizer.apply(legs).orElse(null), toExpandedLegs.apply(legs));
-    }
-
-    private static Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> toExpandedLegs() {
-      return new ResolvedLegConverter();
     }
 
     public static class Builder {

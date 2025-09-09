@@ -192,9 +192,14 @@ public enum PathTerminator {
     return !containsFix();
   }
 
+  public boolean isIntercept() {
+    return INTERCEPT.contains(this);
+  }
+
   public static final Set<PathTerminator> FIX_TERMINATING = Set.of(AF, CF, DF, RF, TF, IF, HF);
   public static final Set<PathTerminator> MANUALLY_TERMINATING = Set.of(HM, FM, VM);
   public static final Set<PathTerminator> FIX_ORIGINATING = Set.of(FC, FD, HF, IF, PI, FA);
   public static final Set<PathTerminator> HOLDING = Set.of(HF, HA, HM);
   public static final Set<PathTerminator> ARC = Set.of(AF, RF);
+  public static final Set<PathTerminator> INTERCEPT = Set.of(CI, VI);
 }
