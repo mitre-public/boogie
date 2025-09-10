@@ -165,19 +165,13 @@ public interface TokenGrapher {
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 
-      private Fix createFix(String original, LatLong latLong) {
-        return Fix.builder()
-            .fixIdentifier(original)
-            .latLong(latLong)
-            .build();
-      }
-
       private Fix createFix(Airport airport) {
-        return Fix.builder()
+        Fix standard = Fix.builder()
             .fixIdentifier(airport.airportIdentifier())
             .latLong(airport.latLong())
             .magneticVariation(airport.magneticVariation().orElse(null))
             .build();
+        return Fix.record(airport, standard);
       }
     }
 

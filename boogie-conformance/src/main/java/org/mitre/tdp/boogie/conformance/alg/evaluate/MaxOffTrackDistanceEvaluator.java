@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.conformance.alg.evaluate;
 
-import static org.mitre.tdp.boogie.util.PathTerminatorClassifiers.isArc;
-
 import java.util.Optional;
 import java.util.function.BiPredicate;
 
@@ -60,7 +58,7 @@ public final class MaxOffTrackDistanceEvaluator implements ConformanceEvaluator,
     Fix previousTerminator = legPair.previous().associatedFix().orElseThrow(IllegalStateException::new);
     Fix currentTerminator = legPair.current().associatedFix().orElseThrow(IllegalStateException::new);
 
-    if (isArc(legPair.current().pathTerminator())) {
+    if (legPair.current().pathTerminator().isArc()) {
       return arcLegOffTrackDistance(point, legPair);
     }
     double crossTrackDistance = Spherical.crossTrackDistanceNM(previousTerminator, currentTerminator, point);

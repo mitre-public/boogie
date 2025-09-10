@@ -137,7 +137,7 @@ public interface Procedure {
   }
 
   /**
-   * Returns the entry legs of all {@link #finalTransitions()} which match the provided predicate. This is intended to support
+   * Returns the exit legs of all {@link #finalTransitions()} which match the provided predicate. This is intended to support
    * clients looking to find the standard "exit points" for a procedure.
    *
    * @param filter an optional filter for the legs, e.g. {@code leg -> leg.associatedFix().isPresent()}.

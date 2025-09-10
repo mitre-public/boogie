@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.alg.facade;
 
 import static java.util.Optional.ofNullable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -15,13 +16,17 @@ import org.mitre.tdp.boogie.alg.split.RouteTokenVisitor;
  * Functional class which is responsible for converting a {@link ResolvedLeg} to an {@link ExpandedRouteLeg} and adding the
  * appropriate categorical features to it's definition.
  */
-final class ResolvedLegConverter implements Function<ResolvedLeg, ExpandedRouteLeg> {
+final class ResolvedLegConverter implements Function<List<ResolvedLeg>, List<ExpandedRouteLeg>> {
 
   ResolvedLegConverter() {
   }
 
   @Override
-  public ExpandedRouteLeg apply(ResolvedLeg resolvedLeg) {
+  public List<ExpandedRouteLeg> apply(List<ResolvedLeg> resolvedLegs) {
+    return resolvedLegs.stream().map(ResolvedLegConverter::from).toList();
+  }
+
+  private static ExpandedRouteLeg from(ResolvedLeg resolvedLeg) {
     return new ExpandedRouteLeg(
         resolvedLeg.routeToken().infrastructureName(),
         fromResolvedElement(resolvedLeg.resolvedToken()),
