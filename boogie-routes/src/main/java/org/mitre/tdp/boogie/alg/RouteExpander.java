@@ -154,7 +154,7 @@ public interface RouteExpander {
 
     public static final class Builder {
 
-      private RouteTokenizer routeTokenizer = RouteTokenizer.faaIfrFormat();
+      private RouteTokenizer routeTokenizer = RouteTokenizer.combinedFormat();
 
       private RouteTokenResolver routeTokenResolver = RouteTokenResolver.noop();
 

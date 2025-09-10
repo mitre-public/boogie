@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.alg.RouteExpander;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
+import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 import org.mitre.tdp.boogie.fn.QuadFunction;
 import org.mitre.tdp.boogie.fn.TriFunction;
 
@@ -182,6 +183,18 @@ public final class InarticulateRouteExpander implements QuadFunction<String, Str
 
         public Builder proceduresAtAirport(LookupService<Procedure> proceduresAtAirport) {
             this.proceduresAtAirport = proceduresAtAirport;
+            return this;
+        }
+
+        /**
+         * Methodology for tokenizing the input route string such that each token can be resolved with a section resolver.
+         *
+         * <p>The pre-defined set of implementations live in the {@link RouteTokenizer} interface.
+         *
+         * <p>Default: {@link RouteTokenizer#faaIfrFormat()}
+         */
+        public InarticulateRouteExpander.Builder routeTokenizer(RouteTokenizer routeTokenizer) {
+            this.routeExpander.routeTokenizer(routeTokenizer);
             return this;
         }
 
