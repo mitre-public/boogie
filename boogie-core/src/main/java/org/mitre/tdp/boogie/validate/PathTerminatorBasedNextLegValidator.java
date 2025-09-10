@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.PathTerminator;
  * This class implements ARINC 424 Supplement 22's next leg table. Legs can only be put together in reasonable ways based
  * on the actual paths and instructions they represent. The tables in Attachment 5 represent this reality.
  * In this instance, we don't care about the actual arinc version.
- * This is about combinations that actually work from the perspective of having a single continuous route of flight.
+ * This is about combinations that actually work from the perspective of having a single continuous route of flight per our use of the ARINC 424 data in MITRE code.
  */
 public final class PathTerminatorBasedNextLegValidator implements BiPredicate<Leg, Leg> {
   public static final Set<PathTerminator> AF_NEXT_LEG = Set.of(AF, CA, CD, CF, CI, CR, FA, FC, FD, FM, HA, HF, HM, RF, TF, VA, VD, VI, VM, VR);
