@@ -55,7 +55,6 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
   /**
    * Holdover from earlier version of the route expander, this will be removed in a future release.
    */
-  @Deprecated
   public String wildcards() {
     return wildcards;
   }

@@ -3,10 +3,7 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.distanceBetween;
-import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.firstLegWithLocation;
-import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.highlander;
-import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.lastLegWithLocation;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.*;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
 import java.util.Collection;
@@ -110,6 +107,17 @@ public interface Linker {
   }
 
   /**
+   * <p>A linker which builds connections between any generic piece of infrastructure and an approach procedure. This linker is a
+   * special case prioritizing linking to the start of the "initial" transitions in the approach procedure.</p>
+   *
+   * <p>Similar to the {@link #airportToSid(AnyAirport, AnySid)} and {@link #starToAirport(AnyStar, AnyAirport)} linkers may be
+   * vulnerable to certain geometries of approaches and linking infrastructure without this specialization.
+   */
+  static Linker approachToApproach(AnyApproach left, AnyApproach right) {
+    return new ApproachToApproach(left, right);
+  }
+
+  /**
    * A linker which builds connections between the terminal legs of a SID and the initial legs of an approach procedure.
    */
   static Linker sidToApproach(AnySid sid, AnyApproach approach) {
@@ -154,6 +162,36 @@ public interface Linker {
    */
   static Linker sidXmToStar(AnySid left, AnyStar right) {
     return new SidXmToStar(left, right);
+  }
+
+  /**
+   * Legs with no fixes and the FM leg need to be linked first.
+   * @param left the sid with the xm
+   * @param right the the approach
+   * @return a linker for between the two.
+   */
+  static Linker sidNoFixToApproach(AnySid left, AnyApproach right) {
+    return new SidNoFixToApproach(left, right);
+  }
+
+  /**
+   * These need to
+   * @param left the sid with the xm
+   * @param right the star
+   * @return a linker for between the two.
+   */
+  static Linker ApproachNoFixToApproach(AnyApproach left, AnyApproach right) {
+    return new ApproachNoFixToApproach(left, right);
+  }
+
+  /**
+   * These legs with no fixes need to be linked first and then try for FM to avoid the distance trap next.
+   * @param left the sid with the xm
+   * @param right the star
+   * @return a linker for between the two.
+   */
+  static Linker starNoFixToApproach(AnyStar left, AnyApproach right) {
+    return new StarNoFixToApproach(left, right);
   }
 
   /**
@@ -320,6 +358,26 @@ public interface Linker {
     }
   }
 
+  final class ApproachToApproach implements Linker {
+    private final AnyApproach left;
+    private final AnyApproach right;
+    private ApproachToApproach(AnyApproach left, AnyApproach right) {
+      this.left = requireNonNull(left);
+      this.right = requireNonNull(right);
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> hasPos = l -> l.associatedFix().isPresent();
+      return cartesianProduct(left.approach().exitLegs(hasPos), right.approach().entryLegs(hasPos)).stream()
+          .min(Comparator.comparing(LinkingSupport::distanceBetween))
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
+          .filter(pair -> pair.linkWeight() < Double.MAX_VALUE)
+          .map(List::of)
+          .orElse(List.of());
+    }
+  }
+
   final class AnyToApproach implements Linker {
 
     private final LinkableToken any;
@@ -339,11 +397,11 @@ public interface Linker {
       List<Leg> approachEntryLegs = approach.approach().entryLegs(leg -> leg.associatedFix().isPresent());
 
       return cartesianProduct(anyLegs, approachEntryLegs).stream()
-          .min(Comparator.comparing(LinkingSupport::distanceBetween))
+          .min(Comparator.comparing(LinkingSupport::distanceBetween).thenComparing(p -> p.first().pathTerminator().compareTo(p.second().pathTerminator())))
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
           .filter(pair -> pair.linkWeight() < Double.MAX_VALUE)
           .map(List::of)
-          .orElse(Collections.emptyList());
+          .orElse(List.of());
     }
 
     private static List<Leg> withLocation(Collection<LinkedLegs> linkedLegs) {
@@ -358,7 +416,6 @@ public interface Linker {
   final class SidToApproach implements Linker {
 
     private final AnySid sid;
-
     private final AnyApproach approach;
 
     private SidToApproach(AnySid sid, AnyApproach approach) {
@@ -368,9 +425,7 @@ public interface Linker {
 
     @Override
     public Collection<LinkedLegs> links() {
-
       Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
-
       return cartesianProduct(sid.sid().exitLegs(hasPosition), approach.approach().entryLegs(hasPosition)).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
           .toList();
@@ -380,7 +435,6 @@ public interface Linker {
   final class StarToApproach implements Linker {
 
     private final AnyStar star;
-
     private final AnyApproach approach;
 
     private StarToApproach(AnyStar star, AnyApproach approach) {
@@ -414,7 +468,8 @@ public interface Linker {
       Collection<Leg> fmVm = left.sid().exitLegs(xm);
       Collection<Leg> rightLegs = withLocation(right.graphRepresentation());
       return cartesianProduct(fmVm, rightLegs).stream()
-          .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceOrMin(pair)))
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), LinkingSupport.distanceBetweenOrElseMin(pair)))
+          .filter(pair -> pair.linkWeight() < Double.MAX_VALUE)
           .toList();
     }
     private List<Leg> withLocation(Collection<LinkedLegs> linkedLegs) {
@@ -422,13 +477,6 @@ public interface Linker {
           .map(LinkedLegs::source)
           .filter(leg -> leg.associatedFix().isPresent())
           .toList();
-    }
-    private static double distanceOrMin(Pair<Leg, Leg> pair) {
-      return Optional.of(pair)
-          .filter(l -> PathTerminator.FM.equals(l.first().pathTerminator()))
-          .filter(l -> !l.first().associatedFix().orElseThrow().equals(l.second().associatedFix().orElseThrow())) //we know they have fixes from the leg type
-          .map(i -> distanceBetween(pair))
-          .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
     }
   }
 
@@ -479,6 +527,73 @@ public interface Linker {
           .filter(l -> !l.first().associatedFix().orElseThrow().equals(l.second().associatedFix().orElseThrow())) //we know they have fixes from the leg type
           .map(i -> distanceBetween(pair))
           .orElse(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT);
+    }
+  }
+
+  final class SidNoFixToApproach implements Linker {
+    private final AnySid left;
+    private final AnyApproach right;
+
+    private SidNoFixToApproach(AnySid left, AnyApproach right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> nfFm = l -> l.pathTerminator().noFix() || l.pathTerminator().equals(PathTerminator.FM);
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+      List<Leg> sidExits = left.sid().exitLegs((l) -> true).stream()
+          .filter(nfFm)
+          .toList();
+      return cartesianProduct(sidExits, right.approach().entryLegs(hasPosition)).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), LinkingSupport.distanceBetweenOrElseMin(pair)))
+          .toList();
+    }
+  }
+
+  final class ApproachNoFixToApproach implements Linker {
+    private final AnyApproach left;
+    private final AnyApproach right;
+
+    private ApproachNoFixToApproach(AnyApproach left, AnyApproach right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> nf = leg -> leg.pathTerminator().noFix();
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+      List<Leg> approachExits = left.approach().exitLegs(l -> true).stream()
+          .filter(nf)
+          .toList();
+      return cartesianProduct(approachExits, right.approach().entryLegs(hasPosition)).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), LinkingSupport.distanceBetweenOrElseMin(pair)))
+          .toList();
+    }
+  }
+
+  final class StarNoFixToApproach implements Linker {
+    private final AnyStar left;
+    private final AnyApproach right;
+
+    private StarNoFixToApproach(AnyStar left, AnyApproach right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      Predicate<Leg> nf = leg -> leg.pathTerminator().noFix() || leg.pathTerminator().equals(PathTerminator.FM);
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+
+      List<Leg> starExit = left.star().exitLegs((l) -> true).stream()
+          .filter(nf)
+          .toList();
+      return cartesianProduct(starExit, right.approach().entryLegs(hasPosition)).stream()
+          .map(pair -> new LinkedLegs(pair.first(), pair.second(), LinkingSupport.distanceBetweenOrElseMin(pair)))
+          .toList();
     }
   }
 }
