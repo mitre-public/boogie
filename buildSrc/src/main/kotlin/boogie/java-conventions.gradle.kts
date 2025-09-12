@@ -1,9 +1,6 @@
-import org.jreleaser.model.Active
-
 plugins {
     id("java-library")
     id("maven-publish")
-    id("org.jreleaser")
     id("signing")
 }
 
@@ -67,43 +64,6 @@ publishing {
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
-            }
-        }
-    }
-}
-
-jreleaser {
-    project {
-        val releaseVersion = System.getenv("BOOGIE_RELEASE_VERSION")
-        version = if (releaseVersion.isNullOrBlank()) project.version.toString() else releaseVersion
-
-        copyright.set("The MITRE Corporation")
-        description.set("Boogie - A dependency-light software project for navigation data parsing, route expansion, and conformance.")
-        license.set("Apache-2.0")
-        links {
-            homepage.set("https://github.com/mitre-public/boogie")
-            documentation.set("https://github.com/mitre-public/boogie")
-            bugTracker.set("https://github.com/mitre-public/boogie/issues")
-        }
-        inceptionYear.set("2025")
-//        version.set(System.getenv("BOOGIE_RELEASE_VERSION"))
-    }
-
-    gitRootSearch.set(true)
-
-    signing {
-        active.set(Active.ALWAYS)
-        armored.set(true)
-    }
-
-    deploy {
-        maven {
-            mavenCentral {
-                register("sonatype") {
-                    active = Active.ALWAYS
-                    url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository(properties["local.staging.directory"].toString())
-                }
             }
         }
     }
