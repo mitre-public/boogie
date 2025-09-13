@@ -114,3 +114,19 @@ jobs:
         run: |
           git tag ${TAG} ${GITHUB_SHA}
           git push origin ${TAG}
+
+      - name: Publish package to Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USER }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.GPG_PUBLIC_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
+          BOOGIE_RELEASE_VERSION: ${{ steps.version.outputs.nextStrict }}
+        run: |
+          ./gradlew :boogie-util:publishToMavenCentral
+          ./gradlew :boogie-core:publishToMavenCentral
+          ./gradlew :boogie-arinc:publishToMavenCentral
+          ./gradlew :boogie-conformance:publishToMavenCentral
+          ./gradlew :boogie-routes:publishToMavenCentral
+          ./gradlew :boogie-dafif:publishToMavenCentral
