@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.assign
-
 plugins {
     id("java-conventions")
     id("com.vanniktech.maven.publish.base") version "0.34.0"
@@ -12,7 +10,7 @@ dependencies {
 }
 
 mavenPublishing {
-    publishToMavenCentral()
+    publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
     val releaseVersion = System.getenv("BOOGIE_RELEASE_VERSION")
@@ -22,9 +20,9 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set("Boogie - A dependency-light software project for navigation data parsing, route expansion, and conformance.")
-        inceptionYear.set("2024")
-        url.set("https://github.com/mitre-public/boogie")
+        description.set(rootProject.property("description").toString())
+        inceptionYear.set(rootProject.property("inceptionYear").toString())
+        url.set(rootProject.property("url").toString())
         licenses {
             license {
                 name.set("The Apache License, Version 2.0")
@@ -45,9 +43,9 @@ mavenPublishing {
             }
         }
         scm {
-            url.set("https://github.com/mitre-public/boogie")
-            connection.set("scm:git:git://github.com/mitre-public/boogie.git")
-            developerConnection.set("scm:git:ssh://git@github.com/mitre-public/boogie.git")
+            url.set(rootProject.property("url").toString())
+            connection.set(rootProject.property("connection").toString())
+            developerConnection.set(rootProject.property("developerConnection").toString())
         }
     }
 }
