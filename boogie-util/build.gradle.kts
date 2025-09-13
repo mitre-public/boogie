@@ -21,8 +21,8 @@ mavenPublishing {
     coordinates("org.mitre.boogie", project.name, version.toString())
 
     pom {
-        name.set(rootProject.name)
-        description.set(rootProject.description)
+        name.set(project.name)
+        description.set("Boogie - A dependency-light software project for navigation data parsing, route expansion, and conformance.")
         inceptionYear.set("2024")
         url.set("https://github.com/mitre-public/boogie")
         licenses {
