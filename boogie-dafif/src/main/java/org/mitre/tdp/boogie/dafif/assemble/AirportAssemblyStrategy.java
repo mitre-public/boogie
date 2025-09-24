@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.dafif.assemble;
 import java.util.Collection;
 import java.util.List;
 
+import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airport;
@@ -51,6 +52,7 @@ public interface AirportAssemblyStrategy<A, R> {
           .course(landingThresholds.first().courseTo(landingThresholds.second()))
           .length(landingThresholds.first().distanceTo(landingThresholds.second()))
           .origin(landingThresholds.first())
+          .elevation(runway.lowEndElevation().map(Double::parseDouble).map(Distance::ofFeet).orElse(null))
           .build();
 
       Runway he = Runway.builder()
@@ -58,6 +60,7 @@ public interface AirportAssemblyStrategy<A, R> {
           .course(landingThresholds.second().courseTo(landingThresholds.first()))
           .length(landingThresholds.second().distanceTo(landingThresholds.first()))
           .origin(landingThresholds.second())
+          .elevation(runway.highEndElevation().map(Double::parseDouble).map(Distance::ofFeet).orElse(null))
           .build();
 
       return List.of(le, he);

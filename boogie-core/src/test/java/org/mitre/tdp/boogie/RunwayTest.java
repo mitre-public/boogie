@@ -29,6 +29,7 @@ class RunwayTest {
         .origin(LatLong.of(0., 0.))
         .length(Distance.ofFeet(10))
         .course(Course.ofDegrees(10))
+        .elevation(Distance.ofFeet(10))
         .build();
   }
 }

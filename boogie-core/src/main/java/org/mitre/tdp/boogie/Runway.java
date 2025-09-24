@@ -30,6 +30,8 @@ public interface Runway {
    *
    * <p>Generally runway names are based on the magnetic heading of the runway (in tens of degrees). I.e. RW27R is aligned with
    * heading {@code 270deg}.
+   *
+   * @return the name of the runway
    */
   String runwayIdentifier();
 
@@ -44,6 +46,8 @@ public interface Runway {
    *
    * <p>This when combined with the {@link #length()} should represent the "effective" extents of the runway available for usage
    * by aircraft taking off/touching down (and therefore may reflect any displaced thresholds).
+   *
+   * @return where the runway starts (aka land here)
    */
   LatLong origin();
 
@@ -56,6 +60,8 @@ public interface Runway {
    * <p>This field is left optional to support varied types of things which show up as "runways" in various data sources (lakes
    * for seaplane bases in CIFP...). Clients are free to default this behind the interface but the framework can defer decisions
    * about what to do if we don't know the length till later.
+   *
+   * @return  the length.
    */
   Optional<Distance> length();
 
@@ -65,8 +71,15 @@ public interface Runway {
    * <p>This field is left optional to support varied types of things which show up as "runways" in various data sources (lakes
    * for seaplane bases in CIFP...). Clients are free to default this behind the interface but the framework can defer decisions
    * about what to do if we don't know the length till later.
+   * @return the course.
    */
   Optional<Course> course();
+
+  /**
+   * <p>This field is optional to support varied types that show up.
+   * @return the elevation that goes with the origin point.
+   */
+  Optional<Distance> elevation();
 
   void accept(Visitor visitor);
 
@@ -91,6 +104,8 @@ public interface Runway {
 
     private final Course course;
 
+    private final Distance elevation;
+
     private int hashCode;
 
     private Standard(Builder builder) {
@@ -98,6 +113,7 @@ public interface Runway {
       this.origin = requireNonNull(builder.origin);
       this.length = builder.length;
       this.course = builder.course;
+      this.elevation = builder.elevation;
     }
 
     @Override
@@ -120,12 +136,18 @@ public interface Runway {
       return ofNullable(course);
     }
 
+    @Override
+    public Optional<Distance> elevation() {
+      return ofNullable(elevation);
+    }
+
     public Builder toBuilder() {
       return builder()
           .runwayIdentifier(runwayIdentifier())
           .origin(origin())
           .length(length().orElse(null))
-          .course(course().orElse(null));
+          .course(course().orElse(null))
+          .elevation(elevation().orElse(null));
     }
 
     @Override
@@ -145,7 +167,8 @@ public interface Runway {
       return Objects.equals(runwayIdentifier, standard.runwayIdentifier)
           && Objects.equals(origin, standard.origin)
           && Objects.equals(length, standard.length)
-          && Objects.equals(course, standard.course);
+          && Objects.equals(course, standard.course)
+          && Objects.equals(elevation, standard.elevation);
     }
 
     @Override
@@ -157,7 +180,7 @@ public interface Runway {
     }
 
     private int computeHashCode() {
-      return Objects.hash(runwayIdentifier, origin, length, course);
+      return Objects.hash(runwayIdentifier, origin, length, course, elevation);
     }
 
     @Override
@@ -167,6 +190,7 @@ public interface Runway {
           ", origin=" + origin +
           ", length=" + length +
           ", course=" + course +
+          ", elevation=" + elevation +
           '}';
     }
 
@@ -178,6 +202,8 @@ public interface Runway {
       private Distance length;
 
       private Course course;
+
+      private Distance elevation;
 
       private Builder() {
       }
@@ -203,6 +229,11 @@ public interface Runway {
 
       public Builder course(Course course) {
         this.course = course;
+        return this;
+      }
+
+      public Builder elevation(Distance elevation) {
+        this.elevation = elevation;
         return this;
       }
     }
@@ -243,6 +274,11 @@ public interface Runway {
     @Override
     public Optional<Course> course() {
       return delegate.course();
+    }
+
+    @Override
+    public Optional<Distance> elevation() {
+      return delegate.elevation();
     }
 
     @Override

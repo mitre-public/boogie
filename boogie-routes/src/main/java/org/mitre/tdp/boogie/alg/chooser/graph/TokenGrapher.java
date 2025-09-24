@@ -5,20 +5,20 @@ import static org.mitre.tdp.boogie.model.ProcedureFactory.newProcedureGraph;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokenVisitor;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.util.Streams;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Range;
 
 @FunctionalInterface
 public interface TokenGrapher {
@@ -71,7 +71,16 @@ public interface TokenGrapher {
 
       @Override
       public void visit(ResolvedToken.StandardAirport airport) {
-        Leg leg = Leg.ifBuilder(createFix(airport.infrastructure()), 0).build();
+        Range<Double> highestAlt = airport.infrastructure().runways().stream()
+            .map(Runway::elevation)
+            .flatMap(Optional::stream)
+            .map(Distance::inFeet)
+            .max(Double::compare)
+            .map(Range::atLeast)
+            .orElse(Range.all());
+        Leg leg = Leg.ifBuilder(createFix(airport.infrastructure()), 0)
+            .altitudeConstraint(highestAlt)
+            .build();
         linkedLegs.add(new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
       }
 

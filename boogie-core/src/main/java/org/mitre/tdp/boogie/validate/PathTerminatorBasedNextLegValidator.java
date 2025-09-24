@@ -55,6 +55,10 @@ public final class PathTerminatorBasedNextLegValidator implements BiPredicate<Le
        Map.entry(RF, RF_NEXT_LEG)
       );
 
+  public PathTerminatorBasedNextLegValidator newInstance() {
+    return new PathTerminatorBasedNextLegValidator();
+  }
+
   public PathTerminatorBasedNextLegValidator() {
     checkArgument(NEXT_LEGS.size() == 23, "Wrong number of path terminators in the map");
   }

@@ -5,10 +5,9 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.UnaryOperator;
 
-import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.fn.LeftMerger;
-import org.mitre.tdp.boogie.util.Equirectangular;
+import org.mitre.tdp.boogie.util.FlatEarthMath;
 
 /**
  * This class acts as the older section gluer into approach elements.
@@ -17,7 +16,7 @@ import org.mitre.tdp.boogie.util.Equirectangular;
  */
 final class XfIntoDifferentFixGluer implements UnaryOperator<List<ExpandedRouteLeg>> {
   private final BiPredicate<ExpandedRouteLeg, ExpandedRouteLeg> differentLocation = (c, n) -> c.associatedFix()
-      .filter(cf -> n.associatedFix().filter(nf -> Equirectangular.distanceInNm(nf, cf) > 1e-5).isPresent()) //checks the float value
+      .filter(cf -> n.associatedFix().filter(nf -> FlatEarthMath.distanceInNm(nf, cf) > 1e-5).isPresent()) //checks the float value
       .isPresent();
   private final BiPredicate<ExpandedRouteLeg, ExpandedRouteLeg> fixNamedDifferent = (c, n) -> c.associatedFix().filter(cf -> n.associatedFix().filter(nf -> nf.fixIdentifier().equals(cf.fixIdentifier())).isEmpty()).isEmpty();
   private final BiPredicate<ExpandedRouteLeg, ExpandedRouteLeg> nextIsApproach = (c, n) -> n.elementType().equals(ElementType.APPROACH);

@@ -20,6 +20,12 @@ import org.mitre.tdp.boogie.PathTerminator;
  */
 public final class PathTerminatorBasedLegValidator implements Predicate<Leg> {
 
+  public PathTerminatorBasedLegValidator newInstance() {
+    return new PathTerminatorBasedLegValidator();
+  }
+
+  public PathTerminatorBasedLegValidator() {}
+
   @Override
   public boolean test(Leg leg) {
     requireNonNull(leg.pathTerminator(), "PathTerminator must be present to validate required leg fields.");
