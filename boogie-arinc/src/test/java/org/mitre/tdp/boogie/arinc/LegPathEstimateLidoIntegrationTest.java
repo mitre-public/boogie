@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -42,7 +43,7 @@ public class LegPathEstimateLidoIntegrationTest {
     assertAll(
         () -> assertEquals(100716, records.procedures().size()),
         () -> assertDoesNotThrow(this::measureThem),
-        () -> assertEquals(37854, count)
+        () -> assertEquals(174526, count)
     );
   }
 
@@ -63,6 +64,7 @@ public class LegPathEstimateLidoIntegrationTest {
         .map(t -> t.legs().get(t.legs().size() - 1))
         .map(l -> (Leg) l)
         .toList();
+    //the graph does not link the final to the missed
     List<Leg> exits = graph.procedureType().equals(ProcedureType.APPROACH) ? approach.get() : graph.exitLegs((l) -> true);
     return Combinatorics.cartesianProduct(legs, exits).stream()
         .map(p -> graph.pathsBetween(p.first(), p.second()))

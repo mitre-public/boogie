@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.util.ArcAngle;
 import org.mitre.tdp.boogie.util.FlatEarthMath;
 import org.mitre.tdp.boogie.util.Heading;
+import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 
 import com.google.common.collect.Range;
 
@@ -41,6 +42,7 @@ public interface LegPathEstimate {
   }
 
   final class Standard implements LegPathEstimate {
+    private final PathTerminatorBasedLegValidator requiredData =  new PathTerminatorBasedLegValidator();
     private Standard() {
     }
 
@@ -48,6 +50,9 @@ public interface LegPathEstimate {
     public Map<Leg, PathAndTermination> estimateAll(List<Leg> legs) {
       Map<Leg, PathAndTermination> map = new HashMap<>();
       if (legs.stream().noneMatch(l -> l.associatedFix().isPresent())) {
+        return map;
+      }
+      if (legs.stream().anyMatch(l -> requiredData.negate().test(l))) {
         return map;
       }
       IntStream.range(0, legs.size()).forEach(i -> map.put(legs.get(i), estimateCurrent(legs, i, map)));
