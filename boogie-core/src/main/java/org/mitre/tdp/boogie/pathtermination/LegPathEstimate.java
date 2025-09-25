@@ -1,17 +1,16 @@
 package org.mitre.tdp.boogie.pathtermination;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
+import org.apache.commons.math3.util.FastMath;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Spherical;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.util.ArcAngle;
 import org.mitre.tdp.boogie.util.FlatEarthMath;
 import org.mitre.tdp.boogie.util.Heading;
@@ -24,6 +23,9 @@ import com.google.common.collect.Range;
  * hold somewhere we don't know where it is. ARINC 424 is filled with stuff like this that makes this just an estimate.
  * <p>The list of legs must start with a leg with an altitude constraint of some kind if xA legs are to be estimated.
  * Otherwise, the altitude terminated legs will just return zero if there is nothing to go on.
+ * <p>
+ * The other issue is that in theory each leg's start/end in the path and termination object may not perfectly
+ * link when we start considering intercepts just being an estimate.
  */
 @FunctionalInterface
 public interface LegPathEstimate {
@@ -34,10 +36,20 @@ public interface LegPathEstimate {
 
   Map<Leg, PathAndTermination> estimateAll(List<Leg> legs);
 
+  static LegPathEstimate standard() {
+    return new Standard();
+  }
+
   final class Standard implements LegPathEstimate {
+    private Standard() {
+    }
+
     @Override
     public Map<Leg, PathAndTermination> estimateAll(List<Leg> legs) {
       Map<Leg, PathAndTermination> map = new HashMap<>();
+      if (legs.stream().noneMatch(l -> l.associatedFix().isPresent())) {
+        return map;
+      }
       IntStream.range(0, legs.size()).forEach(i -> map.put(legs.get(i), estimateCurrent(legs, i, map)));
       return map;
     }
@@ -56,7 +68,7 @@ public interface LegPathEstimate {
         case CI, VI -> ciViLeg(legs, index, map);
         case CR, VR -> crVrLeg(legs, index, map);
         case AF -> afLeg(legs, index, map);
-        case HF -> null;
+        case HF -> hfLeg(legs, index, map);
       };
     }
 
@@ -86,7 +98,7 @@ public interface LegPathEstimate {
 
       //sure wish we were in J21
       if (upper.isPresent() && lower.isPresent()) {
-        return Range.closed(lower.get(), upper.get());
+        return Range.closed(lower.get(), FastMath.max(upper.get(), lower.get()));
       }
       return upper.map(Range::atMost)
           .or(() -> lower.map(Range::atLeast))
@@ -112,9 +124,11 @@ public interface LegPathEstimate {
         return ifLeg(legs, index, map);
       }
       PathAndTermination previous = map.get(legs.get(index - 1));
-      Leg leg = legs.get(0);
+      Leg leg = legs.get(index);
       Range<Double> currentConstraints = currentConstraints(leg, previous.endAltitudeFt());
-      LatLong end = legs.get(0).associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
+      LatLong end = leg.associatedFix()
+          .map(Fix::latLong)
+          .orElseThrow(IllegalStateException::new);
       LatLong start = previous.endOfLeg();
       return PathAndTermination.builder()
           .startOfLeg(start)
@@ -195,9 +209,22 @@ public interface LegPathEstimate {
       }
       PathAndTermination previousPathAndTermination = map.get(legs.get(index - 1));
       LatLong start = leg.associatedFix().map(Fix::latLong).orElse(previousPathAndTermination.endOfLeg());
-      MagneticVariation magneticVariation = leg.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
-      double pathTrueCourse = leg.outboundMagneticCourse().map(magneticVariation::magneticToTrue).orElseThrow(IllegalStateException::new);
-      double deltaHFt = leg.altitudeConstraint().lowerEndpoint() - previousPathAndTermination.endAltitudeFt().lowerEndpoint();
+      MagneticVariation magneticVariation = leg.recommendedNavaid().flatMap(Fix::magneticVariation)
+          .or(() -> leg.associatedFix().flatMap(Fix::magneticVariation))
+          .or(() -> legs.subList(index, legs.size()).stream()
+              .filter(l -> l.recommendedNavaid().isPresent())
+              .findFirst()
+              .flatMap(Leg::recommendedNavaid)
+              .flatMap(Fix::magneticVariation))
+          .or(() -> Optional.of(Declinations.approx(start.latitude(), start.longitude())).map(MagneticVariation::ofDegrees))
+          .orElseThrow(IllegalStateException::new);
+      double pathTrueCourse = leg.outboundMagneticCourse()
+          .map(magneticVariation::magneticToTrue)
+          .orElseThrow(IllegalStateException::new);
+      double deltaHFt = Optional.of(previousPathAndTermination.endAltitudeFt())
+          .filter(Range::hasLowerBound)
+          .map(p -> leg.altitudeConstraint().lowerEndpoint() - p.lowerEndpoint())
+          .orElse(500.0); //no bounds just assume 500 climb
       double lengthOfLeg = deltaHFt / LegPathEstimate.FT_PER_NM;
       LatLong end = start.projectOut(pathTrueCourse, lengthOfLeg);
       Range<Double> alts = currentConstraints(leg, previousPathAndTermination.endAltitudeFt());
@@ -230,15 +257,25 @@ public interface LegPathEstimate {
       }
       PathAndTermination previousPathAndTermination = map.get(legs.get(index - 1));
       LatLong startAndEnd = leg.associatedFix().map(Fix::latLong)
-          .or(() -> Optional.of(previousPathAndTermination.endOfLeg()))
-          .orElseThrow(IllegalStateException::new);
+          .or(() -> Optional.ofNullable(previousPathAndTermination.endOfLeg()))
+          .or(() -> legs.subList(index, legs.size()).stream()
+              .filter(l -> l.associatedFix().isPresent())
+              .findFirst()
+              .flatMap(Leg::associatedFix)
+              .map(Fix::latLong))
+          .or(() -> legs.stream()
+              .filter(l -> l.associatedFix().isPresent())
+              .findFirst()
+              .flatMap(Leg::associatedFix)
+              .map(Fix::latLong))
+          .orElseThrow(() -> new IllegalStateException("no points at all"));
       Range<Double> alts = currentConstraints(leg, previousPathAndTermination.endAltitudeFt());
       return PathAndTermination.builder()
           .startOfLeg(startAndEnd)
           .endOfLeg(startAndEnd)
           .startAltitudeFt(previousPathAndTermination.endAltitudeFt())
           .endAltitudeFt(alts)
-          .lengthNm(startAndEnd.distanceInNM(startAndEnd))
+          .lengthNm(0.0)
           .build();
     }
 
@@ -290,16 +327,12 @@ public interface LegPathEstimate {
           .map(c -> FlatEarthMath.courseInterceptDme(start, c, navaid, dme))
           .flatMap(Optional::stream)
           .findFirst();
-
-      double rho = leg.rho().orElseThrow(IllegalStateException::new);
-      //this fallback is not great but at least it will be in the correct direction.
-      Supplier<Optional<LatLong>> fallback = () -> Optional.of(start).map(i -> i.projectOut(course, rho));
       return PathAndTermination.builder()
           .startOfLeg(start)
-          .endOfLeg(end.or(fallback).orElse(null))
+          .endOfLeg(end.orElse(start))
           .startAltitudeFt(previousPathAndTermination.endAltitudeFt())
           .endAltitudeFt(alts)
-          .lengthNm(end.map(e -> e.distanceInNM(start)).orElse(rho))
+          .lengthNm(end.map(e -> e.distanceInNM(start)).orElse(0.0))
           .build();
     }
 
@@ -321,15 +354,12 @@ public interface LegPathEstimate {
       }
 
       return switch (nextLeg.pathTerminator()) {
-        case AF ->
-            afIntercept(leg, nextLeg, previousPathAndTermination)
-                .orElseGet(() -> giveUpForwards(leg, legs, index, map));
-        case CF ->
-            cfIntercept(leg, nextLeg, previousPathAndTermination)
-                .orElseGet(() -> giveUpForwards(leg, legs, index, map));
-        case FA, FC, FD, FM ->
-            fxIntercept(leg, nextLeg, previousPathAndTermination)
-                .orElseGet(() -> giveUpForwards(leg, legs, index, map));
+        case AF -> afIntercept(leg, nextLeg, previousPathAndTermination)
+            .orElseGet(() -> giveUpForwards(leg, legs, index, map));
+        case CF -> cfIntercept(leg, nextLeg, previousPathAndTermination)
+            .orElseGet(() -> giveUpForwards(leg, legs, index, map));
+        case FA, FC, FD, FM -> fxIntercept(leg, nextLeg, previousPathAndTermination)
+            .orElseGet(() -> giveUpForwards(leg, legs, index, map));
         case IF -> ifTfIntercept(leg, nextLeg, legs.get(index + 2), previousPathAndTermination)
             .orElseGet(() -> giveUpForwards(leg, legs, index, map));
         default -> giveUp(leg, legs); //not suppose to happen anyway per next leg rules
@@ -338,11 +368,13 @@ public interface LegPathEstimate {
 
     private Optional<PathAndTermination> cfIntercept(Leg current, Leg next, PathAndTermination previousPathAndTermination) {
       LatLong start = previousPathAndTermination.endOfLeg();
-      MagneticVariation currentMagvar = current.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
+      MagneticVariation nextMagvar = next.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
+      MagneticVariation currentMagvar = current.recommendedNavaid().flatMap(Fix::magneticVariation).orElse(nextMagvar);
+
       double currentTrue = current.outboundMagneticCourse().map(currentMagvar::magneticToTrue).orElseThrow(IllegalStateException::new);
 
       LatLong nextFix = next.associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
-      MagneticVariation nextMagvar = next.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
+
       double nextRecip = next.outboundMagneticCourse().map(nextMagvar::magneticToTrue).map(Heading::reciprocalHeading).orElseThrow(IllegalStateException::new);
 
       //we can't take these intercepts too literally, and we need to go hunting for a place.
@@ -364,11 +396,17 @@ public interface LegPathEstimate {
 
     private Optional<PathAndTermination> fxIntercept(Leg current, Leg next, PathAndTermination previousPathAndTermination) {
       LatLong start = previousPathAndTermination.endOfLeg();
-      MagneticVariation currentMagvar = current.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
+      MagneticVariation nextMagvar = next.recommendedNavaid()
+          .flatMap(Fix::magneticVariation)
+          .orElseThrow(IllegalStateException::new);
+      MagneticVariation currentMagvar = current.recommendedNavaid()
+          .flatMap(Fix::magneticVariation)
+          .orElse(nextMagvar);
+
       double currentTrue = current.outboundMagneticCourse().map(currentMagvar::magneticToTrue).orElseThrow(IllegalStateException::new);
 
       LatLong nextStart = next.associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
-      MagneticVariation nextMagvar = next.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
+
       double nextTrue = next.outboundMagneticCourse().map(nextMagvar::magneticToTrue).orElseThrow(IllegalStateException::new);
       LatLong nextEnd = nextStart.projectOut(nextTrue, 175.0);
       double nextRecip = Heading.reciprocalHeading(nextTrue);
@@ -395,23 +433,25 @@ public interface LegPathEstimate {
 
     /**
      * This just finds where that course intercepts the circle, because the courses often do not intercept the arc.
-     * @param current the current leg
-     * @param af the AF leg we are intercepting
+     *
+     * @param current                    the current leg
+     * @param af                         the AF leg we are intercepting
      * @param previousPathAndTermination the previous legs data
      * @return the path and termination for this intercept leg.
      */
     private Optional<PathAndTermination> afIntercept(Leg current, Leg af, PathAndTermination previousPathAndTermination) {
-      LatLong start = current.associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
-      MagneticVariation magneticVariation = current.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
+      LatLong start = previousPathAndTermination.endOfLeg();
+      MagneticVariation magneticVariation = af.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
       double trueCourse = current.outboundMagneticCourse().map(magneticVariation::magneticToTrue).orElseThrow(IllegalStateException::new);
-
-      double dme = af.routeDistance().orElseThrow(IllegalStateException::new);
+      double dme = af.rho().orElseThrow(IllegalStateException::new);
       LatLong center = af.recommendedNavaid().map(Fix::latLong).orElseThrow(IllegalStateException::new);
 
       Range<Double> alts = currentConstraints(current, previousPathAndTermination.endAltitudeFt());
 
-      Optional<LatLong> intercept = FlatEarthMath.courseInterceptDme(start, trueCourse, center, dme).stream()
-          .min(Comparator.comparing(start::distanceInNM));
+      Optional<LatLong> intercept = tryNearThisHeading(trueCourse)
+          .map(c -> FlatEarthMath.courseInterceptDme(start, c, center, dme).stream().min(Comparator.comparing(start::distanceInNM)))
+          .flatMap(Optional::stream)
+          .findFirst();
 
       return intercept.map(i -> PathAndTermination.builder()
           .startOfLeg(start)
@@ -424,12 +464,18 @@ public interface LegPathEstimate {
 
     private Optional<PathAndTermination> ifTfIntercept(Leg current, Leg ifLeg, Leg tfLeg, PathAndTermination previousPathAndTermination) {
       LatLong start = previousPathAndTermination.endOfLeg();
-      MagneticVariation currentMagvar = current.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
-      double currentTrue = current.outboundMagneticCourse().map(currentMagvar::magneticToTrue).orElseThrow(IllegalStateException::new);
 
       LatLong tfFix = tfLeg.associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
       LatLong ifFix = ifLeg.associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
       double nextPairReverseCourse = tfFix.courseInDegrees(ifFix);
+
+      MagneticVariation currentMagvar = current.recommendedNavaid().flatMap(Fix::magneticVariation)
+          .or(() -> ifLeg.associatedFix().flatMap(Fix::magneticVariation))
+          .or(() -> Optional.of(ifFix).map(f -> Declinations.approx(f.latitude(), f.longitude())).map(MagneticVariation::ofDegrees))
+          .orElseThrow(IllegalStateException::new);
+      double currentTrue = current.outboundMagneticCourse()
+          .map(currentMagvar::magneticToTrue)
+          .orElseThrow(IllegalStateException::new);
 
       Optional<LatLong> currentProjection = tryNearThisHeading(currentTrue)
           .map(c -> FlatEarthMath.courseInterceptRadial(start, c, tfFix, nextPairReverseCourse).stream().min(Comparator.comparing(start::distanceInNM)))
@@ -490,7 +536,7 @@ public interface LegPathEstimate {
     private PathAndTermination crVrLeg(List<Leg> legs, Integer index, Map<Leg, PathAndTermination> map) {
       Leg leg = legs.get(index);
       if (index == 0) {
-        return  giveUp(leg, legs);
+        return giveUp(leg, legs);
       }
 
       PathAndTermination previous = map.get(legs.get(index - 1));
@@ -498,7 +544,7 @@ public interface LegPathEstimate {
       MagneticVariation magvar = leg.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
       double courseTrue = leg.outboundMagneticCourse().map(magvar::magneticToTrue).orElseThrow(IllegalStateException::new);
 
-      LatLong navaid = leg.associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
+      LatLong navaid = leg.recommendedNavaid().map(Fix::latLong).orElseThrow(IllegalStateException::new);
       double thetaTrue = leg.theta().map(magvar::magneticToTrue).orElseThrow(IllegalStateException::new);
 
       LatLong intercept = tryNearThisHeading(courseTrue)
@@ -525,7 +571,7 @@ public interface LegPathEstimate {
       MagneticVariation afMagVar = af.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
       double outboundTrue = af.outboundMagneticCourse().map(afMagVar::magneticToTrue).orElseThrow(IllegalStateException::new);
       double thetaTrue = af.theta().map(afMagVar::magneticToTrue).orElseThrow(IllegalStateException::new);
-      double rho = af.routeDistance().orElseThrow(IllegalStateException::new);
+      double rho = af.rho().orElseThrow(IllegalStateException::new);
       Supplier<Optional<LatLong>> selfDefinedStart = () -> af.recommendedNavaid()
           .map(Fix::latLong)
           .map(i -> i.projectOut(outboundTrue, rho));
@@ -548,6 +594,24 @@ public interface LegPathEstimate {
           .startAltitudeFt(previous.map(PathAndTermination::startAltitudeFt).orElse(Range.all()))
           .endAltitudeFt(alts)
           .lengthNm(distance)
+          .build();
+    }
+
+    private PathAndTermination hfLeg(List<Leg> legs, Integer index, Map<Leg, PathAndTermination> map) {
+      Leg hf = legs.get(index);
+      Optional<PathAndTermination> previous = Optional.of(index).filter(i -> i > 0).map(i -> map.get(legs.get(i - 1)));
+      Range<Double> previousAlts = previous.map(PathAndTermination::endAltitudeFt).orElse(Range.all());
+      Range<Double> currentAlts = currentConstraints(hf, previousAlts);
+      LatLong fix = hf.associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
+      Double holdDistance = hf.routeDistance().orElse(4.0); //use a rough number else
+
+
+      return PathAndTermination.builder()
+          .startOfLeg(fix)
+          .endOfLeg(fix)
+          .startAltitudeFt(previousAlts)
+          .endAltitudeFt(currentAlts)
+          .lengthNm(holdDistance * 2) //just rough it in and forget the turns .... better than nothing.
           .build();
     }
   }

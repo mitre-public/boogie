@@ -57,7 +57,11 @@ public final class ProcedureFactory {
 
   private static void legToGraph(Transition transition, ProcedureGraph graph) {
     transition.legs().forEach(graph::addVertex);
-    Streams.pairwise(transition.legs()).forEach(pair -> graph.addEdge(pair.first(), pair.second()));
+    try {
+      Streams.pairwise(transition.legs()).forEach(pair -> graph.addEdge(pair.first(), pair.second()));
+    } catch (Exception e) {
+      System.err.println("Error adding legs to graph: " + e.getMessage());
+    }
   }
 
   /**
