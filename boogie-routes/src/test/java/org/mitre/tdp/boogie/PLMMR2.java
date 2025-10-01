@@ -15,7 +15,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.mitre.caasd.commons.Distance;
+import org.mitre.caasd.commons.LatLong;
+
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Range;
 
 public final class PLMMR2 implements Procedure {
 
@@ -78,8 +82,19 @@ public final class PLMMR2 implements Procedure {
   }
 
   private static Transition RW10() {
-    Leg VI = VI();
-    Leg GRITZ = CF("GRITZ", 33.60214444444445, -84.2763361111111);
+    Leg VI = Leg.builder(PathTerminator.VI, 10)
+        .outboundMagneticCourse(95.0)
+        .build();
+    Fix atl = Fix.builder().fixIdentifier("ATL").latLong(LatLong.of(33.6291, -84.4351)).magneticVariation(MagneticVariation.ofDegrees(-5)).build();
+    Fix gritz = Fix.builder().fixIdentifier("GRITZ").latLong(LatLong.of(33.60214444444445, -84.2763361111111)).magneticVariation(MagneticVariation.ofDegrees(-5)).build();
+    Leg GRITZ = Leg.cfBuilder(gritz, 20, 105.0)
+        .altitudeConstraint(Range.all())
+        .speedConstraint(Range.all())
+        .recommendedNavaid(atl)
+        .rho(8.1)
+        .theta(106.7)
+        .routeDistance(6.2)
+        .build();
     Leg DDUBB = TF("DDUBB", 33.567025, -84.08201388888888);
     Leg PLMMR = TF("PLMMR", 33.952822222222224, -83.72700555555556);
     return transition("RW10", "PLMMR2", "KATL", TransitionType.RUNWAY, ProcedureType.SID,

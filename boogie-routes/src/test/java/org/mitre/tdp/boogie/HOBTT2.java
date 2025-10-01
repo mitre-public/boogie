@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie;
 
-import static org.mitre.tdp.boogie.MockObjects.FM;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.TF;
-import static org.mitre.tdp.boogie.MockObjects.transition;
+import static org.mitre.tdp.boogie.MockObjects.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +8,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.mitre.caasd.commons.LatLong;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -24,9 +23,9 @@ public final class HOBTT2 implements Procedure {
   private final Map<String, Transition> transitions;
 
   private HOBTT2() {
-    Map<String, Transition> map  =Stream.of(
-        DRSDN(), KHMYA(), COOUP(), BEORN(), FRDDO(), ENNTT(), ORRKK(),
-        GOLLM(), STRDR(), SHYRE(), COMMON(), RW26B(), RW27B(), RW28())
+    Map<String, Transition> map = Stream.of(
+            DRSDN(), KHMYA(), COOUP(), BEORN(), FRDDO(), ENNTT(), ORRKK(),
+            GOLLM(), STRDR(), SHYRE(), COMMON(), RW26B(), RW27B(), RW28())
         .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse(null), Function.identity()));
     this.transitions = ImmutableMap.copyOf(map);
   }
@@ -196,7 +195,15 @@ public final class HOBTT2 implements Procedure {
     Leg FOGER = TF("FOGER", 33.53689166666666, -84.30732777777777);
     Leg HITTT = TF("HITTT", 33.537025, -84.13477777777778);
     Leg YURII = TF("YURII", 33.53713055555556, -84.03544166666667);
-    Leg YURII2 = FM("YURII", 33.53713055555556, -84.03544166666667);
+    Fix fix = Fix.builder().fixIdentifier("YURII").latLong(LatLong.of(33.53713055555556, -84.03544166666667)).build();
+    Fix navaid = Fix.builder().fixIdentifier("ATL").latLong(LatLong.of(33.657886, -84.425761)).build();
+    Leg YURII2 = Leg.builder(PathTerminator.FM, 70)
+        .outboundMagneticCourse(95.0)
+        .associatedFix(fix)
+        .theta(110.0)
+        .rho(20.0)
+        .recommendedNavaid(navaid)
+        .build();
     return transition("RW27B", "HOBTT2", "KATL", TransitionType.RUNWAY, ProcedureType.STAR,
         Arrays.asList(ENSLL, EAGYL, SHURT, FOGER, HITTT, YURII, YURII2));
   }

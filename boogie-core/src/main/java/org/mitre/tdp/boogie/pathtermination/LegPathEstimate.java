@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.pathtermination;
 
-import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -354,7 +353,7 @@ public interface LegPathEstimate {
       Leg nextLeg = legs.get(index + 1);
       PathAndTermination previousPathAndTermination = map.get(legs.get(index - 1));
 
-      if (nextLeg.pathTerminator().equals(PathTerminator.IF) && index == legs.size() - 1) {
+      if (nextLeg.pathTerminator().equals(PathTerminator.IF) && legs.indexOf(nextLeg) == legs.size() - 1) {
         return giveUp(leg, legs);
       }
 

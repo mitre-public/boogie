@@ -119,11 +119,11 @@ public final class FlatEarthMath {
    */
   public static Optional<LatLong> courseInterceptRadial(LatLong start, double pathTrueCourse, LatLong navaid, double radialTrueCourse) {
     Vector3D l1 = toCartesian(start.latitude(), start.longitude());
-    LatLong projection = start.projectOut(pathTrueCourse, 200.0);
+    LatLong projection = start.projectOut(pathTrueCourse, 10.0);
     Vector3D l1a = toCartesian(projection.latitude(), projection.longitude());
 
     Vector3D radialStart = toCartesian(navaid.latitude(), navaid.longitude());
-    LatLong radialProjection = navaid.projectOut(radialTrueCourse, 200.0);
+    LatLong radialProjection = navaid.projectOut(radialTrueCourse, 10.0);
     Vector3D radialEnd = toCartesian(radialProjection.latitude(), radialProjection.longitude());
 
     Line3D line1 = Lines3D.fromPoints(l1, l1a, PRECISION);

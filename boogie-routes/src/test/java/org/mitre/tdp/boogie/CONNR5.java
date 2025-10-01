@@ -1,13 +1,6 @@
 package org.mitre.tdp.boogie;
 
-import static org.mitre.tdp.boogie.MockObjects.CF;
-import static org.mitre.tdp.boogie.MockObjects.DF;
-import static org.mitre.tdp.boogie.MockObjects.IF;
-import static org.mitre.tdp.boogie.MockObjects.TF;
-import static org.mitre.tdp.boogie.MockObjects.VA;
-import static org.mitre.tdp.boogie.MockObjects.VI;
-import static org.mitre.tdp.boogie.MockObjects.VM;
-import static org.mitre.tdp.boogie.MockObjects.transition;
+import static org.mitre.tdp.boogie.MockObjects.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Range;
 
 /**
  * RNAV Departure SID out of Denver from cycle 1910 for use in testing.
@@ -87,8 +81,13 @@ public final class CONNR5 implements Procedure {
   }
 
   private static Transition RW08() {
-    Leg VA = VA();
-    Leg VM = VM();
+    Leg VA = Leg.builder(PathTerminator.VA, 10)
+        .outboundMagneticCourse(83.0)
+        .altitudeConstraint(Range.atLeast(5934.0))
+        .build();
+    Leg VM = Leg.builder(PathTerminator.VM, 20)
+        .outboundMagneticCourse(83.0)
+        .build();
     Leg CONNR = DF("CONNR", 39.69906388888889, -105.66577777777778);
     return transition("RW08", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
         Arrays.asList(VA, VM, CONNR));
