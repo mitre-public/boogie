@@ -150,7 +150,8 @@ public class LegPathEstimateTests {
         singletonList(lbv),
         emptyList(),
         singletonList(Airports.KMCO()),
-        List.of(COSTR3_VM.INSTANCE, KMCO_I17L.I17L, KMCO_I17R.I17R));
+        List.of(COSTR3_VM.INSTANCE, KMCO_I17L.I17L, KMCO_I17R.I17R)
+    );
 
     ExpandedRoute expandedRoute = expander.apply(route, null, "RW17R", RequiredNavigationEquipage.CONV).get();
     List<ExpandedRouteLeg> legs = expandedRoute.legs();
