@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Leg;
@@ -26,16 +27,24 @@ public final class StandardLegFeatureExtractor implements BiFunction<Conformable
   public StandardLegFeatureExtractor() {
     this.extractor = DelegatingFeatureVectorExtractor.<ConformablePoint, FlyableLeg>newBuilder()
         .addFeatureExtractor(new AfDelegator(), AfFeatureExtractor.INSTANCE.get())
-        .addFeatureExtractor(new CaDelegator(), CaFeatureExtractor.INSTANCE.get())
-        .addFeatureExtractor(new CfDelegator(), CfFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new RfDelegator(), RfFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new DfDelegator(), DfFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new IfDelegator(), IfFeatureExtractor.INSTANCE.get())
-        .addFeatureExtractor(new RfDelegator(), RfFeatureExtractor.INSTANCE.get())
-        .addFeatureExtractor(new TfDelegator(), TfFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new VaDelegator(), VaFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new CaDelegator(), CaFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new ViDelegator(), ViFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new VmDelegator(), VmFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new CfDelegator(), CfFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new TfDelegator(), TfFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new CiDelegator(), CiFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new FmDelegator(), FmFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new CdDelegator(), CdFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new VdDelegator(), VdFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new FaDelegator(), FaFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new FcDelegator(), FcFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new FdDelegator(), FdFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new VrDelegator(), VrFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new CrDelegator(), CrFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor((point, flyableLeg) -> true, ViterbiFeatureVectorExtractor.<ConformablePoint, FlyableLeg>newBuilder().build())
         .build();
   }
