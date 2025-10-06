@@ -23,6 +23,7 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
+import org.mitre.tdp.boogie.util.Combinatorics;
 
 /**
  * Represents a decorated {@link Procedure} record as a {@link SimpleDirectedGraph} allowing for the use of a variety of graph
@@ -73,13 +74,32 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
     return procedure.transitions();
   }
 
+  /**
+   * Returns all paths through the procedure.
+   * @param start from this starting leg.
+   * @param end to this ending leg.
+   * @return the possible ways through.
+   */
   public List<List<Leg>> pathsBetween(Leg start, Leg end) {
-    return allDirectedPaths.getAllPaths(start, end, false, 100)
-        .stream().map(GraphPath::getVertexList).collect(Collectors.toList());
+    return allDirectedPaths.getAllPaths(start, end, false, 100).stream()
+        .map(GraphPath::getVertexList)
+        .toList();
+  }
+
+  /**
+   * Returns a list of lists with all the ways through this procedure. Sid-Runway -> Sid-Enroute, Star-Enroute -> Star-Runway, and Approach -> Final
+   * @return the lists of all the paths
+   */
+  public List<List<Leg>> allPaths() {
+    return Combinatorics.cartesianProduct(this.entryLegs((l)->true), this.exitLegs((l) -> true)).stream()
+        .map(i -> this.pathsBetween(i.first(), i.second()))
+        .flatMap(Collection::stream)
+        .toList();
   }
 
   /**
    * Returns the structure of the graph in DOT notation. This can be rendered in a variety of viewers (e.g. webgraphviz).
+   * @return the dot graph for making graphics of the procedure.
    */
   public String asDotGraph() {
     try (StringWriter writer = new StringWriter()) {
