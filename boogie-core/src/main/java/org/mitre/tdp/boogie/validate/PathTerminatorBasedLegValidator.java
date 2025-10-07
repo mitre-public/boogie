@@ -67,8 +67,6 @@ public final class PathTerminatorBasedLegValidator implements Predicate<Leg> {
           && leg.outboundMagneticCourse().isPresent()
           // only one or the other must be present on the record
           && (leg.holdTime().isPresent() || leg.routeDistance().isPresent());
-      default ->
-          throw new IllegalArgumentException("Unsupported leg type supplied to LegContentValidator: ".concat(leg.pathTerminator().name()));
     };
   }
 }
