@@ -19,7 +19,7 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.CombinationStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.CompositeLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
-import org.mitre.tdp.boogie.conformance.alg.assign.link.SuppliedLinkStrategy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +34,9 @@ import com.google.common.base.Preconditions;
  *
  * At a high level this class takes a collection of {@link Route} records representing naturally linked legs (e.g. member legs of
  * the same transition, legs filed consecutively in a flight plan) and a separate "linking strategy" which can be used to supply
- * additional edges (e.g. {@link SuppliedLinkStrategy}) and generates a graph representing all of the legs how flights transition
+ * additional edges and generates a graph representing all of the legs how flights transition
  * to/from them.
- *
+ * <br>
  * Note - this assembler automatically adds self-edges/loops under the assumption that the aircraft can always stay on its current
  * leg (though the weight of these edges are still configurable via the provided {@link #transitionScorer}).
  */
