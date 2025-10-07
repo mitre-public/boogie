@@ -52,6 +52,7 @@ public interface LinkingStrategy {
    * @param links the precomputed links
    * @return the links that were already computed.
    */
+  @SafeVarargs
   static LinkingStrategy supplied(Pair<FlyableLeg, FlyableLeg>... links) {
     return new SuppliedLinkStrategy(links);
   }

@@ -26,7 +26,6 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.NoopCombinationStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
-import org.mitre.tdp.boogie.conformance.alg.assign.link.SuppliedLinkStrategy;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.mitre.tdp.boogie.viterbi.RuleBasedViterbiScoringStrategy;
 
@@ -63,7 +62,7 @@ class TestRouteAssigner {
 
     List<Route> routes = Arrays.asList(route0, route1, route2);
 
-    LinkingStrategy linkingStrategy = new SuppliedLinkStrategy(
+    LinkingStrategy linkingStrategy = LinkingStrategy.supplied(
         Pair.of(new FlyableLeg(source, a, null, route0), new FlyableLeg(null, b, c, route1)),
         Pair.of(new FlyableLeg(b, c, d, route1), new FlyableLeg(f, g, h, route2))
     );
