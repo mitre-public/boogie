@@ -51,6 +51,9 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
      * 1e-3 translates to ~111 meters at equator, so only fixes at most that far away will have the same hash.
      */
     private static final double HASH_RESOLUTION = 1e-3;
+    /**
+     * Arc centers can be pretty close together so we want to have more resolution on those.
+     */
     private static final double PRECISE_RESOLUTION = 1e-5;
 
     public Hasher append(Object that) {
