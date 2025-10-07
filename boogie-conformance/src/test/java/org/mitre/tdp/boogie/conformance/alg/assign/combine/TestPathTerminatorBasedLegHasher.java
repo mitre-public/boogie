@@ -27,8 +27,8 @@ class TestPathTerminatorBasedLegHasher {
     Integer hash1 = hasher.apply(flyableLeg1);
 
     // from 4oPjcWRT84AAchP, RW21R at KPSC
-    LatLong jeppLatLong = LatLong.of(46.268417341819735, -119.11506482388177);
-    FlyableLeg flyableLeg2 = mockFlyableLeg(PathTerminator.TF, jeppLatLong);
+    LatLong latLongJ = LatLong.of(46.268417341819735, -119.11506482388177);
+    FlyableLeg flyableLeg2 = mockFlyableLeg(PathTerminator.TF, latLongJ);
     Integer hash2 = hasher.apply(flyableLeg2);
 
     assertEquals(hash1, hash2, "Legs with similar path terminating fixes should hash together");
