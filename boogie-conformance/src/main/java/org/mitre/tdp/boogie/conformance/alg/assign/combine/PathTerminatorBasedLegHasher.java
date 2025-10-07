@@ -53,6 +53,8 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
     private static final double HASH_RESOLUTION = 1e-3;
     /**
      * Arc centers can be pretty close together so we want to have more resolution on those.
+     * <p>
+     * 1e-5 translates to about 1 inch at the equator, so good enough.
      */
     private static final double PRECISE_RESOLUTION = 1e-5;
 
