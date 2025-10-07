@@ -51,6 +51,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
      * 1e-3 translates to ~111 meters at equator, so only fixes at most that far away will have the same hash.
      */
     private static final double HASH_RESOLUTION = 1e-3;
+    private static final double PRECISE_RESOLUTION = 1e-5;
 
     public Hasher append(Object that) {
       builder.append(that);
@@ -77,8 +78,8 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
     public Hasher withArcCenter(Leg leg) {
       leg.centerFix().ifPresent(c -> {
         builder.append(c.fixIdentifier());
-        builder.append(c.latitude()); //can be quite close so lets not round it
-        builder.append(c.longitude());
+        builder.append(FastMath.round(c.latitude() / PRECISE_RESOLUTION));
+        builder.append(FastMath.round(c.longitude() / PRECISE_RESOLUTION));
       });
       return this;
     }
