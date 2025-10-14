@@ -24,7 +24,7 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set(rootProject.property("description").toString())
+        description.set("parser implementations for various versions and record types within ARINC-424")
         inceptionYear.set(rootProject.property("inceptionYear").toString())
         url.set(rootProject.property("url").toString())
         licenses {

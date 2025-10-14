@@ -24,7 +24,7 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set(rootProject.property("description").toString())
+        description.set("route expansion logic - takes route strings in a variety of formats and converts them into 2D paths using relevant navigational data.")
         inceptionYear.set(rootProject.property("inceptionYear").toString())
         url.set(rootProject.property("url").toString())
         licenses {

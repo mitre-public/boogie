@@ -56,7 +56,6 @@ public interface LinkingStrategy {
   static LinkingStrategy supplied(Pair<FlyableLeg, FlyableLeg>... links) {
     return new SuppliedLinkStrategy(links);
   }
-}
 
   final class NoOpLinkingStrategy implements LinkingStrategy {
     NoOpLinkingStrategy() {}
@@ -88,4 +87,5 @@ public interface LinkingStrategy {
     public Collection<Pair<FlyableLeg, FlyableLeg>> links(Collection<FlyableLeg> flyableLegs) {
       return get();
     }
+  }
 }

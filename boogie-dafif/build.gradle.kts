@@ -22,8 +22,7 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set(rootProject.property("description").toString())
-        inceptionYear.set(rootProject.property("inceptionYear").toString())
+        description.set("WIP parser implementation for DAFIF.")
         url.set(rootProject.property("url").toString())
         licenses {
             license {
