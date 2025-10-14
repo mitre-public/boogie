@@ -1,7 +1,10 @@
-package org.mitre.boogie.xml.v23_4;
+package org.mitre.boogie.xml.v23_4.convert;
+
+import static java.util.Objects.nonNull;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -28,7 +31,6 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
   private static final FraConverter FRA_CONVERTER = FraConverter.INSTANCE;
 
   private  ArincWaypointConverter() {
-
   }
 
   @Override
@@ -39,11 +41,16 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
   }
 
   private ArincWaypoint convert(Waypoint waypoint) {
+    SupplementalData supplements = Optional.ofNullable(waypoint.getSupplementalData())
+        .map(SupplementalData::record)
+        .orElse(null);
+
     ArincRecordInfo recordInfo = ArincRecordInfo.builder()
         .recordType(Optional.of(waypoint.getRecordType()).map(Enum::name).map(ArincRecordType::valueOf).orElseThrow(() -> new IllegalStateException("Record Type was required: " + waypoint)))
         .areaCode(Optional.ofNullable(waypoint.getAreaCode()).map(Enum::name).orElse(null))
         .customerCode(waypoint.getCustomerCode())
         .notes(waypoint.getNotes())
+        .supplementalData(supplements)
         .build();
 
     Double latitude = Optional.of(waypoint.getLocation().getLatitude())
@@ -95,6 +102,8 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
         .map(FRA_CONVERTER)
         .orElse(null);
 
+    Boolean vfrCheckpoint = Optional.ofNullable(waypoint.isIsVFRCheckpoint()).orElse(false);
+
     return ArincWaypoint.builder()
         .recordInfo(recordInfo)
         .pointInfo(pointInfo)
@@ -102,7 +111,7 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
         .waypointType(type)
         .waypointUsage(use)
         .fraInfo(fra)
-        .vfrCheckPoint(Optional.ofNullable(waypoint.isIsVFRCheckpoint()).orElse(false))
+        .vfrCheckPoint(vfrCheckpoint)
         .build();
   }
 }

@@ -1,13 +1,15 @@
 package org.mitre.boogie.xml.v23_4;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.XMLEvent;
 
-import org.mitre.boogie.xml.model.ArincRecords;
+import org.mitre.boogie.xml.model.*;
+import org.mitre.boogie.xml.v23_4.convert.ArincWaypointConverter;
 import org.mitre.boogie.xml.v23_4.generated.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,54 +22,69 @@ import jakarta.xml.bind.Unmarshaller;
  * without reading the whole thing into memory.
  */
 public final class AeroPublicationStreamer implements Function<InputStream, Optional<ArincRecords>> {
-
   private static final Logger LOG = LoggerFactory.getLogger(AeroPublicationStreamer.class);
-  private final ArincRecords records = new ArincRecords();
+
   private static final ArincWaypointConverter WAYPOINT_CONVERTER = ArincWaypointConverter.INSTANCE;
+
+  private final List<Class<?>> supportArincXmlClasses;
+
+  public AeroPublicationStreamer(List<Class<?>> supportArincXmlClasses) {
+    this.supportArincXmlClasses = supportArincXmlClasses;
+  }
 
   @Override
   public Optional<ArincRecords> apply(InputStream inputStream) {
+    ArincRecords records = ArincRecords.standard();
     try {
       XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
       XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
 
-      JAXBContext context = JAXBContext.newInstance(AeroPublication.class);
+      JAXBContext context = JAXBContext.newInstance(supportArincXmlClasses.toArray(new Class[0]));
       Unmarshaller unmarshaller = context.createUnmarshaller();
 
-      XMLEvent event;
-      while ((event = xmlEventReader.peek()) != null) {
+      try {
+        XMLEvent event;
+        while ((event = xmlEventReader.peek()) != null) {
 
-        if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("waypoint")) {
-          Waypoint waypoint = unmarshaller.unmarshal(xmlEventReader, Waypoint.class).getValue();
-          WAYPOINT_CONVERTER.apply(waypoint).ifPresent(records::addWaypoint);
+          if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("waypoint")) {
+            Waypoint waypoint = unmarshaller.unmarshal(xmlEventReader, Waypoint.class).getValue();
+            WAYPOINT_CONVERTER.apply(waypoint).ifPresent(records::addWaypoint);
+          }
+
+          if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airport")) {
+            Airport airport = unmarshaller.unmarshal(xmlEventReader, Airport.class).getValue();
+            records.addAirport(new ArincAirport());
+            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+          }
+
+          if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("ndb")) {
+            Ndb ndb = unmarshaller.unmarshal(xmlEventReader, Ndb.class).getValue();
+            records.addNdbNavaid(new ArincNdbNavaid());
+            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+          }
+
+          if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("vhfNavaid")) {
+            Navaid vhf = unmarshaller.unmarshal(xmlEventReader, Navaid.class).getValue();
+            records.addVhfNavaid(new ArincVhfNavaid());
+            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+          }
+
+          if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airway")) {
+            Airway airway = unmarshaller.unmarshal(xmlEventReader, Airway.class).getValue();
+            records.addAirway(new ArincAirway());
+            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+          }
+
+          if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("holdingPattern")) {
+            HoldingPattern holdingPattern = unmarshaller.unmarshal(xmlEventReader, HoldingPattern.class).getValue();
+            records.addHoldingPattern(new ArincHoldingPattern());
+            LOG.info("COULD HAVE DONE MORE"); //fixme do thigns
+          }
+
+          xmlEventReader.nextEvent();
         }
-
-        if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airport")) {
-          Airport airport = unmarshaller.unmarshal(xmlEventReader, Airport.class).getValue();
-          LOG.info("COULD HAVE DONE MORE"); //fixme do things
-        }
-
-        if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("vhfNavaid")) {
-          Navaid vhf = unmarshaller.unmarshal(xmlEventReader, Navaid.class).getValue();
-          LOG.info("COULD HAVE DONE MORE"); //fixme do things
-        }
-
-        if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("ndb")) {
-          Ndb ndb = unmarshaller.unmarshal(xmlEventReader, Ndb.class).getValue();
-          LOG.info("COULD HAVE DONE MORE"); //fixme do things
-        }
-
-        if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airway")) {
-          Airway airway = unmarshaller.unmarshal(xmlEventReader, Airway.class).getValue();
-          LOG.info("COULD HAVE DONE MORE"); //fixme do things
-        }
-
-        if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("holdingPattern")) {
-          HoldingPattern holdingPattern = unmarshaller.unmarshal(xmlEventReader, HoldingPattern.class).getValue();
-          LOG.info("COULD HAVE DONE MORE"); //fixme do thigns
-        }
-
-        xmlEventReader.nextEvent();
+      } catch (Exception e) {
+        LOG.info("could not parse an xml element: ", e);
       }
       return Optional.of(records);
     } catch (Exception e) {

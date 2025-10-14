@@ -1,4 +1,4 @@
-package org.mitre.boogie.xml.v23_4;
+package org.mitre.boogie.xml.v23_4.convert;
 
 import static java.util.Objects.nonNull;
 
