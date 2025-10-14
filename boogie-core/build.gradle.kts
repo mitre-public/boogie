@@ -24,7 +24,7 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set(rootProject.property("description").toString())
+        description.set("core set of navigational interfaces and general purpose algorithms")
         inceptionYear.set(rootProject.property("inceptionYear").toString())
         url.set(rootProject.property("url").toString())
         licenses {

@@ -20,7 +20,7 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set(rootProject.property("description").toString())
+        description.set("General purpose tools for AIRAC and Magnetic Variation without dependencies.")
         inceptionYear.set(rootProject.property("inceptionYear").toString())
         url.set(rootProject.property("url").toString())
         licenses {

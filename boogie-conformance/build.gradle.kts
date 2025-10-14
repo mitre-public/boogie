@@ -25,7 +25,7 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set(rootProject.property("description").toString())
+        description.set("tools for evaluating how well trajectory data conformed with a physical path (generally as outlined by a procedure/airway")
         inceptionYear.set(rootProject.property("inceptionYear").toString())
         url.set(rootProject.property("url").toString())
         licenses {
