@@ -14,17 +14,16 @@ import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 
 /**
  * This class uses JAXB to unmarshall an XML instance document to an AeroPublication generated object.
  */
-public final class ArincUnmarshaller implements Function<InputStream, Optional<ArincRecords>> {
+public final class Unmarshaller implements Function<InputStream, Optional<ArincRecords>> {
   private static final ArincWaypointConverter WAYPOINT_CONVERTER = ArincWaypointConverter.INSTANCE;
 
   private final List<Class<?>> supportArincXmlClasses;
 
-  public ArincUnmarshaller(List<Class<?>> supportArincXmlClasses) {
+  public Unmarshaller(List<Class<?>> supportArincXmlClasses) {
     this.supportArincXmlClasses = supportArincXmlClasses;
   }
 
@@ -32,7 +31,7 @@ public final class ArincUnmarshaller implements Function<InputStream, Optional<A
   public Optional<ArincRecords> apply(InputStream inputStream) {
     try {
       JAXBContext context = JAXBContext.newInstance(supportArincXmlClasses.toArray(new Class[0]));
-      Unmarshaller unmarshaller = context.createUnmarshaller();
+      jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
       AeroPublication pubs = (AeroPublication) unmarshaller.unmarshal(inputStream);
       Set<ArincWaypoint> enrts = pubs.getEnrouteWaypoints().getWaypoint().stream()
           .map(WAYPOINT_CONVERTER)

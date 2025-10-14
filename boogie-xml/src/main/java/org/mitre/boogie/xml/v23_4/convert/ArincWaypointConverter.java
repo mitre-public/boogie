@@ -1,10 +1,7 @@
 package org.mitre.boogie.xml.v23_4.convert;
 
-import static java.util.Objects.nonNull;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 

@@ -21,14 +21,14 @@ import jakarta.xml.bind.Unmarshaller;
  * This class does a series of partial unmarshalling events to build up the records from the xml doc
  * without reading the whole thing into memory.
  */
-public final class AeroPublicationStreamer implements Function<InputStream, Optional<ArincRecords>> {
-  private static final Logger LOG = LoggerFactory.getLogger(AeroPublicationStreamer.class);
+public final class StreamingUnmarshaller implements Function<InputStream, Optional<ArincRecords>> {
+  private static final Logger LOG = LoggerFactory.getLogger(StreamingUnmarshaller.class);
 
   private static final ArincWaypointConverter WAYPOINT_CONVERTER = ArincWaypointConverter.INSTANCE;
 
   private final List<Class<?>> supportArincXmlClasses;
 
-  public AeroPublicationStreamer(List<Class<?>> supportArincXmlClasses) {
+  public StreamingUnmarshaller(List<Class<?>> supportArincXmlClasses) {
     this.supportArincXmlClasses = supportArincXmlClasses;
   }
 
