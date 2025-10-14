@@ -54,7 +54,7 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
 
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airport")) {
             Airport airport = unmarshaller.unmarshal(xmlEventReader, Airport.class).getValue();
-            records.addAirport(new ArincAirport());
+            //records.addAirport(new ArincAirport());
             LOG.info("COULD HAVE DONE MORE"); //fixme do things
           }
 

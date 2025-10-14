@@ -7,10 +7,12 @@ import org.mitre.boogie.xml.model.fields.ArincFraInfo;
 import org.mitre.boogie.xml.model.fields.ArincNameFormatIndicator;
 import org.mitre.boogie.xml.model.fields.ArincWaypointType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
-import org.mitre.boogie.xml.model.infos.ArincPointInfo;
-import org.mitre.boogie.xml.model.infos.ArincRecordInfo;
+import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
+import org.mitre.boogie.xml.model.fields.ArincPointInfo;
+import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 
 public final class ArincWaypoint implements Serializable {
+  private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;
   private final ArincNameFormatIndicator nameFormatIndicator;
@@ -20,6 +22,7 @@ public final class ArincWaypoint implements Serializable {
   private final boolean isVfrCheckPoint;
 
   private ArincWaypoint(Builder builder) {
+    this.baseInfo = builder.baseInfo;
     this.recordInfo = builder.recordInfo;
     this.pointInfo = builder.pointInfo;
     this.nameFormatIndicator = builder.nameFormatIndicator;
@@ -35,6 +38,7 @@ public final class ArincWaypoint implements Serializable {
 
   public Builder toBuilder() {
     return new Builder()
+        .baseInfo(baseInfo)
         .recordInfo(recordInfo)
         .pointInfo(pointInfo)
         .nameFormatIndicator(nameFormatIndicator)
@@ -42,6 +46,10 @@ public final class ArincWaypoint implements Serializable {
         .waypointUsage(waypointUsage)
         .fraInfo(fraInfo)
         .vfrCheckPoint(isVfrCheckPoint);
+  }
+
+  public ArincBaseInfo baseInfo() {
+    return baseInfo;
   }
 
   public ArincRecordInfo recordInfo() {
@@ -73,6 +81,7 @@ public final class ArincWaypoint implements Serializable {
   }
 
   public static class Builder {
+    private ArincBaseInfo baseInfo;
     private ArincRecordInfo recordInfo;
     private ArincPointInfo pointInfo;
     private ArincNameFormatIndicator nameFormatIndicator;
@@ -81,6 +90,11 @@ public final class ArincWaypoint implements Serializable {
     private ArincFraInfo fraInfo;
     private boolean isVfrCheckPoint = false;
     private Builder() {}
+
+    public Builder baseInfo(ArincBaseInfo baseInfo) {
+      this.baseInfo = baseInfo;
+      return this;
+    }
 
     public Builder recordInfo(ArincRecordInfo recordInfo) {
       this.recordInfo = recordInfo;

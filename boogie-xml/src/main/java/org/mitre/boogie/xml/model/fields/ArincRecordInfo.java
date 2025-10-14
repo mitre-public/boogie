@@ -1,4 +1,4 @@
-package org.mitre.boogie.xml.model.infos;
+package org.mitre.boogie.xml.model.fields;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -6,12 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.boogie.xml.model.fields.ArincAreaCode;
-import org.mitre.boogie.xml.model.fields.ArincRecordType;
-import org.mitre.boogie.xml.model.fields.SupplementalData;
-
 public final class ArincRecordInfo implements Serializable {
-  private final SupplementalData supplementalData;
   private final String areaCode;
   private final String customerCode;
   private final String cycleDate;
@@ -19,7 +14,6 @@ public final class ArincRecordInfo implements Serializable {
   private final ArincRecordType recordType;
 
   private ArincRecordInfo(Builder builder) {
-    this.supplementalData = builder.supplementalData;
     this.areaCode = builder.areaCode;
     this.customerCode = builder.customerCode;
     this.cycleDate = builder.cycleDate;
@@ -33,16 +27,11 @@ public final class ArincRecordInfo implements Serializable {
 
   public Builder toBuilder() {
     return new Builder()
-        .supplementalData(supplementalData)
         .areaCode(areaCode)
         .customerCode(customerCode)
         .cycleDate(cycleDate)
         .notes(notes)
         .recordType(recordType);
-  }
-
-  public Optional<SupplementalData> supplementalData() {
-    return Optional.ofNullable(supplementalData);
   }
 
   public Optional<ArincAreaCode> areaCode() {
@@ -70,18 +59,17 @@ public final class ArincRecordInfo implements Serializable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     ArincRecordInfo that = (ArincRecordInfo) o;
-    return Objects.equals(supplementalData, that.supplementalData) && Objects.equals(areaCode, that.areaCode) && Objects.equals(customerCode, that.customerCode) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(notes, that.notes) && recordType == that.recordType;
+    return Objects.equals(areaCode, that.areaCode) && Objects.equals(customerCode, that.customerCode) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(notes, that.notes) && recordType == that.recordType;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(supplementalData, areaCode, customerCode, cycleDate, notes, recordType);
+    return Objects.hash(areaCode, customerCode, cycleDate, notes, recordType);
   }
 
   @Override
   public String toString() {
     return "ArincRecordInfo{" +
-        "supplementalData=" + supplementalData +
         ", areaCode='" + areaCode + '\'' +
         ", customerCode='" + customerCode + '\'' +
         ", cycleDate='" + cycleDate + '\'' +
@@ -91,7 +79,6 @@ public final class ArincRecordInfo implements Serializable {
   }
 
   public static class Builder {
-    private SupplementalData supplementalData;
     private String areaCode;
     private String customerCode;
     private String cycleDate;
@@ -99,11 +86,6 @@ public final class ArincRecordInfo implements Serializable {
     private ArincRecordType recordType;
 
     private Builder() {}
-
-    public Builder supplementalData(SupplementalData supplementalData) {
-      this.supplementalData = supplementalData;
-      return this;
-    }
 
     public Builder areaCode(String areaCode) {
       this.areaCode = areaCode;

@@ -1,4 +1,4 @@
-package org.mitre.boogie.xml.model.infos;
+package org.mitre.boogie.xml.model.fields;
 
 import java.io.Serializable;
 import java.util.Optional;

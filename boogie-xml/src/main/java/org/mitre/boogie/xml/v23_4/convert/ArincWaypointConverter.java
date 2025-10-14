@@ -7,8 +7,8 @@ import java.util.function.Function;
 
 import org.mitre.boogie.xml.model.ArincWaypoint;
 import org.mitre.boogie.xml.model.fields.*;
-import org.mitre.boogie.xml.model.infos.ArincPointInfo;
-import org.mitre.boogie.xml.model.infos.ArincRecordInfo;
+import org.mitre.boogie.xml.model.fields.ArincPointInfo;
+import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.util.Coordinate;
 import org.mitre.boogie.xml.util.DecimalDegrees;
 import org.mitre.boogie.xml.util.MagVar;
@@ -38,8 +38,9 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
   }
 
   private ArincWaypoint convert(Waypoint waypoint) {
-    SupplementalData supplements = Optional.ofNullable(waypoint.getSupplementalData())
+    ArincBaseInfo baseInfo = Optional.ofNullable(waypoint.getSupplementalData())
         .map(SupplementalData::record)
+        .map(ArincBaseInfo::from)
         .orElse(null);
 
     ArincRecordInfo recordInfo = ArincRecordInfo.builder()
@@ -47,7 +48,6 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
         .areaCode(Optional.ofNullable(waypoint.getAreaCode()).map(Enum::name).orElse(null))
         .customerCode(waypoint.getCustomerCode())
         .notes(waypoint.getNotes())
-        .supplementalData(supplements)
         .build();
 
     Double latitude = Optional.of(waypoint.getLocation().getLatitude())
@@ -102,6 +102,7 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
     Boolean vfrCheckpoint = Optional.ofNullable(waypoint.isIsVFRCheckpoint()).orElse(false);
 
     return ArincWaypoint.builder()
+        .baseInfo(baseInfo)
         .recordInfo(recordInfo)
         .pointInfo(pointInfo)
         .nameFormatIndicator(nameFormatIndicator)

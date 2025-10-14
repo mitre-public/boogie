@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.model.infos.ArincPointInfo;
-import org.mitre.boogie.xml.model.infos.ArincRecordInfo;
+import org.mitre.boogie.xml.model.fields.ArincPointInfo;
+import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
