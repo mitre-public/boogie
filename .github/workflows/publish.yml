@@ -130,3 +130,4 @@ jobs:
           ./gradlew :boogie-conformance:publishToMavenCentral
           ./gradlew :boogie-routes:publishToMavenCentral
           ./gradlew :boogie-dafif:publishToMavenCentral
+          ./gradlew :boogie-xml:publishToMavenCentral
