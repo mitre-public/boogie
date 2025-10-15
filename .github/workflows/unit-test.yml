@@ -24,8 +24,12 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew unit
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: my-logs
-        path: /home/runner/work/boogie/boogie/build/reports/problems/
+  clean:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 'logs'
+        uses: actions/upload-artifact@v4
+        with:
+          path: /home/runner/work/boogie/boogie/build/reports/problems/*
