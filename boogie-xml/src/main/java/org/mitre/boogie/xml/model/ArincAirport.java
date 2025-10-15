@@ -9,7 +9,7 @@ import org.mitre.boogie.xml.model.fields.RunwaySurfaceCode;
 
 public final class ArincAirport {
   private final ArincPortInfo portInfo;
-  private final Integer longestRunway;
+  private final Long longestRunway;
   private final String longestRunwaySurfaceCode;
   private final List<ArincRunway> runways;
   private final List<ArincAirportGate> airportGates;
@@ -39,7 +39,7 @@ public final class ArincAirport {
     return portInfo;
   }
 
-  public Optional<Integer> longestRunway() {
+  public Optional<Long> longestRunway() {
     return Optional.ofNullable(longestRunway);
   }
 
@@ -82,7 +82,7 @@ public final class ArincAirport {
 
   public static class Builder {
     private ArincPortInfo portInfo;
-    private Integer longestRunway;
+    private Long longestRunway;
     private String longestRunwaySurfaceCode;
     private List<ArincRunway> runways;
     private List<ArincAirportGate> airportGates;
@@ -95,7 +95,7 @@ public final class ArincAirport {
       return this;
     }
 
-    public Builder longestRunway(Integer longestRunway) {
+    public Builder longestRunway(Long longestRunway) {
       this.longestRunway = longestRunway;
       return this;
     }

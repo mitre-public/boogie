@@ -12,17 +12,17 @@ public final class ArincPortInfo {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;
-  private final Double elevation;
+  private final Integer elevation;
   private final String ataIataDesignator;
   private final Boolean daylightIndicator;
   private final Boolean isIfrCapable;
   private final String magneticTrueIndicator;
   private final String publicMilitaryIndicator;
-  private final String recommendedNavaidId;
-  private final Range<Double> speedLimit;
-  private final Double speedLimitAltitude;
+  private final ArincPointInfo recommendedNavaidId;
+  private final Range<Long> speedLimit;
+  private final Integer speedLimitAltitude;
   private final UtcOffset utcOffset;
-  private final Double transitionAltitude;
+  private final Integer transitionAltitude;
   private final List<ArincNdbNavaid> ndbNavaid;
   private final List<ArincProcedure> procedures;
   private final List<ArincWaypoint> terminalWaypoints;
@@ -36,7 +36,7 @@ public final class ArincPortInfo {
   private final List<ArincMsa> msas;
   //skipping flight plan arr/dep record
   private final Boolean isVfrCheckpoint;
-  private final String controlledAirspaceId;
+  private final ArincPointInfo controlledAirspace;
   private final String controlledAirspaceIndicator;
 
   private ArincPortInfo(Builder builder) {
@@ -65,7 +65,7 @@ public final class ArincPortInfo {
     this.gnssLandingSystems = builder.gnssLandingSystems;
     this.msas = builder.msas;
     this.isVfrCheckpoint = builder.isVfrCheckpoint;
-    this.controlledAirspaceId = builder.controlledAirspaceId;
+    this.controlledAirspace = builder.controlledAirspaceId;
     this.controlledAirspaceIndicator = builder.controlledAirspaceIndicator;
   }
 
@@ -100,7 +100,7 @@ public final class ArincPortInfo {
         .gnssLandingSystems(gnssLandingSystems)
         .msas(msas)
         .vfrCheckpoint(isVfrCheckpoint)
-        .controlledAirspaceId(controlledAirspaceId)
+        .controlledAirspaceId(controlledAirspace)
         .controlledAirspaceIndicator(controlledAirspaceIndicator);
   }
 
@@ -116,7 +116,7 @@ public final class ArincPortInfo {
     return pointInfo;
   }
 
-  public Optional<Double> elevation() {
+  public Optional<Integer> elevation() {
     return Optional.ofNullable(elevation);
   }
 
@@ -144,15 +144,15 @@ public final class ArincPortInfo {
         .map(PublicMilitaryIndicator::valueOf);
   }
 
-  public Optional<String> recommendedNavaidId() {
+  public Optional<ArincPointInfo> recommendedNavaidId() {
     return Optional.ofNullable(recommendedNavaidId);
   }
 
-  public Optional<Range<Double>> speedLimit() {
-    return Optional.ofNullable(speedLimit);
+  public Range<Long> speedLimit() {
+    return speedLimit;
   }
 
-  public Optional<Double> speedLimitAltitude() {
+  public Optional<Integer> speedLimitAltitude() {
     return Optional.ofNullable(speedLimitAltitude);
   }
 
@@ -160,7 +160,7 @@ public final class ArincPortInfo {
     return Optional.ofNullable(utcOffset);
   }
 
-  public Optional<Double> transitionAltitude() {
+  public Optional<Integer> transitionAltitude() {
     return Optional.ofNullable(transitionAltitude);
   }
 
@@ -208,8 +208,8 @@ public final class ArincPortInfo {
     return Optional.ofNullable(isVfrCheckpoint);
   }
 
-  public Optional<String> controlledAirspaceId() {
-    return Optional.ofNullable(controlledAirspaceId);
+  public Optional<ArincPointInfo> controlledAirspaceId() {
+    return Optional.ofNullable(controlledAirspace);
   }
 
   public Optional<ControlledAirspaceIndicator> controlledAirspaceIndicator() {
@@ -222,12 +222,12 @@ public final class ArincPortInfo {
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     ArincPortInfo that = (ArincPortInfo) o;
-    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(ataIataDesignator, that.ataIataDesignator) && Objects.equals(daylightIndicator, that.daylightIndicator) && Objects.equals(isIfrCapable, that.isIfrCapable) && Objects.equals(magneticTrueIndicator, that.magneticTrueIndicator) && Objects.equals(publicMilitaryIndicator, that.publicMilitaryIndicator) && Objects.equals(recommendedNavaidId, that.recommendedNavaidId) && Objects.equals(speedLimit, that.speedLimit) && Objects.equals(speedLimitAltitude, that.speedLimitAltitude) && Objects.equals(utcOffset, that.utcOffset) && Objects.equals(transitionAltitude, that.transitionAltitude) && Objects.equals(ndbNavaid, that.ndbNavaid) && Objects.equals(procedures, that.procedures) && Objects.equals(terminalWaypoints, that.terminalWaypoints) && Objects.equals(taas, that.taas) && Objects.equals(communications, that.communications) && Objects.equals(helipads, that.helipads) && Objects.equals(markers, that.markers) && Objects.equals(localizerGlideSlopes, that.localizerGlideSlopes) && Objects.equals(gnssLandingSystems, that.gnssLandingSystems) && Objects.equals(msas, that.msas) && Objects.equals(isVfrCheckpoint, that.isVfrCheckpoint) && Objects.equals(controlledAirspaceId, that.controlledAirspaceId) && Objects.equals(controlledAirspaceIndicator, that.controlledAirspaceIndicator);
+    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(ataIataDesignator, that.ataIataDesignator) && Objects.equals(daylightIndicator, that.daylightIndicator) && Objects.equals(isIfrCapable, that.isIfrCapable) && Objects.equals(magneticTrueIndicator, that.magneticTrueIndicator) && Objects.equals(publicMilitaryIndicator, that.publicMilitaryIndicator) && Objects.equals(recommendedNavaidId, that.recommendedNavaidId) && Objects.equals(speedLimit, that.speedLimit) && Objects.equals(speedLimitAltitude, that.speedLimitAltitude) && Objects.equals(utcOffset, that.utcOffset) && Objects.equals(transitionAltitude, that.transitionAltitude) && Objects.equals(ndbNavaid, that.ndbNavaid) && Objects.equals(procedures, that.procedures) && Objects.equals(terminalWaypoints, that.terminalWaypoints) && Objects.equals(taas, that.taas) && Objects.equals(communications, that.communications) && Objects.equals(helipads, that.helipads) && Objects.equals(markers, that.markers) && Objects.equals(localizerGlideSlopes, that.localizerGlideSlopes) && Objects.equals(gnssLandingSystems, that.gnssLandingSystems) && Objects.equals(msas, that.msas) && Objects.equals(isVfrCheckpoint, that.isVfrCheckpoint) && Objects.equals(controlledAirspace, that.controlledAirspace) && Objects.equals(controlledAirspaceIndicator, that.controlledAirspaceIndicator);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, ataIataDesignator, daylightIndicator, isIfrCapable, magneticTrueIndicator, publicMilitaryIndicator, recommendedNavaidId, speedLimit, speedLimitAltitude, utcOffset, transitionAltitude, ndbNavaid, procedures, terminalWaypoints, taas, communications, helipads, markers, localizerGlideSlopes, gnssLandingSystems, msas, isVfrCheckpoint, controlledAirspaceId, controlledAirspaceIndicator);
+    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, ataIataDesignator, daylightIndicator, isIfrCapable, magneticTrueIndicator, publicMilitaryIndicator, recommendedNavaidId, speedLimit, speedLimitAltitude, utcOffset, transitionAltitude, ndbNavaid, procedures, terminalWaypoints, taas, communications, helipads, markers, localizerGlideSlopes, gnssLandingSystems, msas, isVfrCheckpoint, controlledAirspace, controlledAirspaceIndicator);
   }
 
   @Override
@@ -258,7 +258,7 @@ public final class ArincPortInfo {
         ", gnssLandingSystems=" + gnssLandingSystems +
         ", msas=" + msas +
         ", isVfrCheckpoint=" + isVfrCheckpoint +
-        ", controlledAirspaceId='" + controlledAirspaceId + '\'' +
+        ", controlledAirspaceId='" + controlledAirspace + '\'' +
         ", controlledAirspaceIndicator='" + controlledAirspaceIndicator + '\'' +
         '}';
   }
@@ -267,17 +267,17 @@ public final class ArincPortInfo {
     private ArincBaseInfo baseInfo;
     private ArincRecordInfo recordInfo;
     private ArincPointInfo pointInfo;
-    private Double elevation;
+    private Integer elevation;
     private String ataIataDesignator;
     private Boolean daylightIndicator;
     private Boolean isIfrCapable;
     private String magneticTrueIndicator;
     private String publicMilitaryIndicator;
-    private String recommendedNavaidId;
-    private Range<Double> speedLimit;
-    private Double speedLimitAltitude;
+    private ArincPointInfo recommendedNavaidId;
+    private Range<Long> speedLimit;
+    private Integer speedLimitAltitude;
     private UtcOffset utcOffset;
-    private Double transitionAltitude;
+    private Integer transitionAltitude;
     private List<ArincNdbNavaid> ndbNavaid;
     private List<ArincProcedure> procedures;
     private List<ArincWaypoint> terminalWaypoints;
@@ -291,7 +291,7 @@ public final class ArincPortInfo {
     private List<ArincMsa> msas;
     //skipping flight plan arr/dep record
     private Boolean isVfrCheckpoint;
-    private String controlledAirspaceId;
+    private ArincPointInfo controlledAirspaceId;
     private String controlledAirspaceIndicator;
 
     private Builder() {}
@@ -311,7 +311,7 @@ public final class ArincPortInfo {
       return this;
     }
 
-    public Builder elevation(Double elevation) {
+    public Builder elevation(Integer elevation) {
       this.elevation = elevation;
       return this;
     }
@@ -341,17 +341,17 @@ public final class ArincPortInfo {
       return this;
     }
 
-    public Builder recommendedNavaidId(String recommendedNavaidId) {
+    public Builder recommendedNavaidId(ArincPointInfo recommendedNavaidId) {
       this.recommendedNavaidId = recommendedNavaidId;
       return this;
     }
 
-    public Builder speedLimit(Range<Double> speedLimit) {
+    public Builder speedLimit(Range<Long> speedLimit) {
       this.speedLimit = speedLimit;
       return this;
     }
 
-    public Builder speedLimitAltitude(Double speedLimitAltitude) {
+    public Builder speedLimitAltitude(Integer speedLimitAltitude) {
       this.speedLimitAltitude = speedLimitAltitude;
       return this;
     }
@@ -361,7 +361,7 @@ public final class ArincPortInfo {
       return this;
     }
 
-    public Builder transitionAltitude(Double transitionAltitude) {
+    public Builder transitionAltitude(Integer transitionAltitude) {
       this.transitionAltitude = transitionAltitude;
       return this;
     }
@@ -421,7 +421,7 @@ public final class ArincPortInfo {
       return this;
     }
 
-    public Builder controlledAirspaceId(String controlledAirspaceId) {
+    public Builder controlledAirspaceId(ArincPointInfo controlledAirspaceId) {
       this.controlledAirspaceId = controlledAirspaceId;
       return this;
     }

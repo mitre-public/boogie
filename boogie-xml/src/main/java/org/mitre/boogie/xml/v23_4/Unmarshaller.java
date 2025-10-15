@@ -7,8 +7,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincRecords;
 import org.mitre.boogie.xml.model.ArincWaypoint;
+import org.mitre.boogie.xml.v23_4.convert.ArincAirportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincWaypointConverter;
 import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 
@@ -20,6 +22,7 @@ import jakarta.xml.bind.JAXBException;
  */
 public final class Unmarshaller implements Function<InputStream, Optional<ArincRecords>> {
   private static final ArincWaypointConverter WAYPOINT_CONVERTER = ArincWaypointConverter.INSTANCE;
+  private static final ArincAirportConverter AIRPORT_CONVERTER = ArincAirportConverter.INSTANCE;
 
   private final List<Class<?>> supportArincXmlClasses;
 
@@ -37,8 +40,13 @@ public final class Unmarshaller implements Function<InputStream, Optional<ArincR
           .map(WAYPOINT_CONVERTER)
           .flatMap(Optional::stream)
           .collect(Collectors.toSet());
+      Set<ArincAirport> arpts = pubs.getAirports().getAirport().stream()
+          .map(AIRPORT_CONVERTER)
+          .flatMap(Optional::stream)
+          .collect(Collectors.toSet());
       ArincRecords records = ArincRecords.standard()
-          .waypoints(enrts);
+          .waypoints(enrts)
+          .airports(arpts);
       return Optional.of(records);
     } catch (JAXBException e) {
       throw new RuntimeException("Could not unmarshall the xml file");

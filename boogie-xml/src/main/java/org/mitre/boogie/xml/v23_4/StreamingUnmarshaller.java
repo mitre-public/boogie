@@ -3,13 +3,13 @@ package org.mitre.boogie.xml.v23_4;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.XMLEvent;
 
 import org.mitre.boogie.xml.model.*;
+import org.mitre.boogie.xml.v23_4.convert.ArincAirportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincWaypointConverter;
 import org.mitre.boogie.xml.v23_4.generated.*;
 import org.slf4j.Logger;
@@ -26,6 +26,7 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
   private static final Logger LOG = LoggerFactory.getLogger(StreamingUnmarshaller.class);
 
   private static final ArincWaypointConverter WAYPOINT_CONVERTER = ArincWaypointConverter.INSTANCE;
+  private static final ArincAirportConverter AIRPORT_CONVERTER = ArincAirportConverter.INSTANCE;
 
   private final List<Class<?>> supportArincXmlClasses;
 
@@ -54,8 +55,8 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
 
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airport")) {
             Airport airport = unmarshaller.unmarshal(xmlEventReader, Airport.class).getValue();
-            //records.addAirport(new ArincAirport());
-            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+            AIRPORT_CONVERTER.apply(airport).ifPresent(records::addAirport);
+            LOG.info("COULD HAVE DONE MORE"); //fixme do rest of the things
           }
 
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("ndb")) {
