@@ -117,6 +117,8 @@ tasks.register<Test>("unit") {
         excludeTags("CIFP")
     }
 
+    maxHeapSize = "1G"
+
     testLogging {
         events("passed", "skipped", "failed") // Log these events
     }
