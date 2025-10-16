@@ -80,7 +80,7 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("holdingPattern")) {
             HoldingPattern holdingPattern = unmarshaller.unmarshal(xmlEventReader, HoldingPattern.class).getValue();
             records.addHoldingPattern(new ArincHoldingPattern());
-            LOG.info("COULD HAVE DONE MORE"); //fixme do thigns
+            LOG.info("COULD HAVE DONE MORE"); //fixme do things
           }
 
           xmlEventReader.nextEvent();
@@ -90,7 +90,7 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
       }
       return Optional.of(records);
     } catch (Exception e) {
-      LOG.error("Could not parse XML");
+      LOG.error("Could not parse XML file: ", e);
       return Optional.empty();
     }
   }
