@@ -16,9 +16,9 @@ import com.google.common.collect.Range;
  * AT_OR_ABOVE
  * AT_OR_BELOW
  * AT_OR_ABOVE_TO_AT_OR_BELOW
- * <br>
+ * <p>
  * For the full set of possibilities and interpretations see {@link AltitudeDescription}.
- * <br>
+ * <p>
  * For unsupported description codes this class returns {@link Range#all()}.
  */
 public final class AltitudeLimitToRange implements TriFunction<String, Double, Double, Range<Double>> {

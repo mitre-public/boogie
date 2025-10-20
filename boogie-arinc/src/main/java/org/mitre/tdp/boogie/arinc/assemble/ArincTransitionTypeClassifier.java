@@ -44,11 +44,11 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 /**
  * Classifier function for mapping a collection of {@link ArincProcedureLeg}s known to be part of the same transition to a high
  * level {@link TransitionType}.
- * <br>
+ * <p>
  * Note that despite our best efforts upstream of handling ARINC schema versions differently this is a bit of a hodge-podge of
  * rules based on both the V18/19a ARINC versions. Thankfully V19a is primarily <i>extending</i> the V18 classifiers with a bit
  * more specificity so this should remain adequate.
- * <br>
+ * <p>
  * Note since by default the missed approach portion of the approach procedure <i>isn't</i> split off from the final (i.e. it's
  * generally coded as ...->F1(CF/TF)->F2(CF/TF)->Runway(CF/TF)->CA->VM->DF->HM - where the CA leg after the runway is the start of
  * the MA) this class relies on the upstream partitioning of {@link ArincProcedureLeg}s by transition to be sensitive to the start
