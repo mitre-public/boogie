@@ -1,3 +1,5 @@
+import kotlin.text.set
+
 plugins {
     id("java-library")
     id("maven-publish")
@@ -41,6 +43,11 @@ publishing {
                         id.set("mpollock")
                         name.set("Matthew Pollock")
                         email.set("mpollock@mitre.org")
+                    }
+                    developer {
+                        id.set("stellarsunset")
+                        name.set("Alex Cramer")
+                        url.set("https://github.com/stellarsunset")
                     }
                 }
                 scm {
