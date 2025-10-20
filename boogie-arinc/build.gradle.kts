@@ -45,6 +45,11 @@ mavenPublishing {
                 name.set("Matt Pollock")
                 url.set("https://github.com/mattpollock")
             }
+            developer {
+                id.set("stellarsunset")
+                name.set("Alex Cramer")
+                url.set("https://github.com/stellarsunset")
+            }
         }
         scm {
             url.set(rootProject.property("url").toString())
