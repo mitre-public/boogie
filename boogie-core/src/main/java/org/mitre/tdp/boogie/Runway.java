@@ -11,7 +11,7 @@ import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
 
-public interface Runway {
+public sealed interface Runway {
 
   static Standard.Builder builder() {
     return new Standard.Builder();

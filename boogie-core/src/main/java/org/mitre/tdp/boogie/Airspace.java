@@ -13,7 +13,7 @@ import com.google.common.collect.Range;
  * This is a generic way to hold aviation airspace concepts. They should form a shape over the earth or
  * just have one sequence and be a circle.
  */
-public interface Airspace {
+public sealed interface Airspace {
 
   static Standard.Builder builder() {
     return new Standard.Builder();

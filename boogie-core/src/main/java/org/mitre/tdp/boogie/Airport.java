@@ -17,7 +17,7 @@ import org.mitre.caasd.commons.LatLong;
  * Boogie's simplified view of an {@link Airport} is  This specialization
  * allows various algorithms to use and categorize the two independently where necessary.
  */
-public interface Airport extends HasPosition {
+public sealed interface Airport extends HasPosition {
 
   static Standard.Builder builder() {
     return new Airport.Standard.Builder();

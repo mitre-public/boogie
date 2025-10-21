@@ -23,7 +23,7 @@ import org.mitre.caasd.commons.LatLong;
  * reference to these objects for both conformance computations (e.g. to VA, VA, etc. legs) and to approximate projected locations
  * of referenced FRDs.
  */
-public interface Fix extends HasPosition {
+public sealed interface Fix extends HasPosition {
 
   static Standard.Builder builder() {
     return new Standard.Builder();

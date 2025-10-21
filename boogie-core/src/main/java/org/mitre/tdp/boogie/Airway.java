@@ -11,7 +11,7 @@ import java.util.function.Function;
  * In Boogie's simplified worldview it is sufficient to represent an airway as a hierarchical piece of navigation infrastructure
  * containing a linear, but bi-directionally flyable, sequence of {@link Leg}s.
  */
-public interface Airway {
+public sealed interface Airway {
 
   static Standard.Builder builder() {
     return new Standard.Builder();

@@ -17,7 +17,7 @@ import org.mitre.caasd.commons.LatLong;
  * <p>This class provides a collection of factory/builder methods for instantiating sequences of different  {@link Geometry} types
  * with only setters for fields that make sense on them as per the ARINC424 leg specification.
  */
-public interface AirspaceSequence {
+public sealed interface AirspaceSequence {
 
   static <T> Record<T> record(T datum, AirspaceSequence delegate) {
     return new Record<>(datum, delegate);

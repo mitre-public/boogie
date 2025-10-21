@@ -10,7 +10,7 @@ import org.mitre.caasd.commons.LatLong;
 /**
  * Boogies simplified view of an {@link Helipad}. This is to support route expansion.
  */
-public interface Helipad {
+public sealed interface Helipad {
 
   static Standard.Builder builder() {
     return new Standard.Builder();
