@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.utils.Dimensions;
+import org.mitre.tdp.boogie.arinc.utils.DimensionsParser;
 import org.mitre.tdp.boogie.arinc.v21.field.PadShape;
 
 class DimensionsParserTest {

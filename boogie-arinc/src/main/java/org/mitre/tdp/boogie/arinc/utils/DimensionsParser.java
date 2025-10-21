@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.arinc.v21;
+package org.mitre.tdp.boogie.arinc.utils;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.mitre.tdp.boogie.arinc.v21.field.PadShape;
 
-final class DimensionsParser implements BiFunction<String, PadShape, Optional<Dimensions>> {
+public final class DimensionsParser implements BiFunction<String, PadShape, Optional<Dimensions>> {
   public static final DimensionsParser INSTANCE = new DimensionsParser();
 
   private static final Function<String, Optional<Dimensions>> CIRCULAR = s -> Optional.ofNullable(s)
