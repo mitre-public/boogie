@@ -34,7 +34,7 @@ import org.mitre.tdp.boogie.arinc.v22.field.RunwayAccuracyComplianceFlag;
 
 import com.google.common.collect.ImmutableList;
 
-public class RunwaySpec implements RecordSpec {
+public final class RunwaySpec implements RecordSpec {
 
   private final List<RecordField<?>> recordFields;
 
