@@ -60,7 +60,6 @@ public final class ArincRunway implements ArincModel {
   private final String runwayDescription;
   private final int fileRecordNumber;
   private final String lastUpdateCycle;
-  private final
 
   private ArincRunway(Builder builder) {
     this.recordType = builder.recordType;
