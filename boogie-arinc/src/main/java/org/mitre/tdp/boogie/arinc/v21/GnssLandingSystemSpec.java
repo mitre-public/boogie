@@ -35,7 +35,7 @@ import org.mitre.tdp.boogie.arinc.v20.field.ThresholdCrossingHeight;
 
 import com.google.common.collect.ImmutableList;
 
-public class GnssLandingSystemSpec implements RecordSpec {
+public final class GnssLandingSystemSpec implements RecordSpec {
 
   private final List<RecordField<?>> recordFields;
 

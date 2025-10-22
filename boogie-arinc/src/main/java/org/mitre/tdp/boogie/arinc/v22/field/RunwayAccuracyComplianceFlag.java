@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
  * • Difference between coded Runway Threshold Displacement Distance (PG 5.69) and runway threshold displacement distance measured with an independent means (e.g., satellite imagery) is 5 meters or less.
  * • Difference between runway true bearing computed using coded Runway Magnetic Bearing (PG 5.58) and coded Airport Magnetic Variation (PA 5.39) and runway true bearing measured with anindependent means (e.g., satellite imagery) is less than 0.5°.
  */
-public class RunwayAccuracyComplianceFlag extends TrimmableString {
+public final class RunwayAccuracyComplianceFlag extends TrimmableString {
 
   @Override
   public int fieldLength() {

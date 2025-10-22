@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.arinc.v21.field.*;
 
 import com.google.common.collect.ImmutableList;
 
-public class ProcedureLegSpec implements RecordSpec {
+public final class ProcedureLegSpec implements RecordSpec {
 
   private final List<RecordField<?>> recordFields;
 

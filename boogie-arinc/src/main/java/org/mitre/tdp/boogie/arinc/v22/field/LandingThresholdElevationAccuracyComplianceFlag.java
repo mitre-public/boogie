@@ -7,7 +7,7 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
  * Difference between Runway Landing Threshold Elevation (A424 PG 5.68)
  * and runway landing threshold elevation measured with an independent means is 5 meters or less.
  */
-public class LandingThresholdElevationAccuracyComplianceFlag extends TrimmableString {
+public final class LandingThresholdElevationAccuracyComplianceFlag extends TrimmableString {
   @Override
   public int fieldLength() {
     return 1;

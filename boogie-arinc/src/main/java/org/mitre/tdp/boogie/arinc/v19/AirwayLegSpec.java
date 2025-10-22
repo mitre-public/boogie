@@ -41,7 +41,7 @@ import org.mitre.tdp.boogie.arinc.v19.field.VerticalScaleFactor;
 
 import com.google.common.collect.ImmutableList;
 
-public class AirwayLegSpec implements RecordSpec {
+public final class AirwayLegSpec implements RecordSpec {
 
   private final List<RecordField<?>> recordFields;
 
