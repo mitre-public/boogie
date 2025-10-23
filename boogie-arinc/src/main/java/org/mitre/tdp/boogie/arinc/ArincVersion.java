@@ -13,6 +13,7 @@ import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.FirUirLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemSpec;
+import org.mitre.tdp.boogie.arinc.v18.Header01Spec;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
 import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
@@ -34,7 +35,8 @@ public enum ArincVersion {
   /**
    * Returns a static implementation of a parser for V18 ARINC 424 data.
    */
-  V18(new AirportSpec(),
+  V18(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -52,7 +54,8 @@ public enum ArincVersion {
   /**
    * Returns a static implementation of a parser for V18 ARINC 424 data for only nav records
    */
-  V18_NAV(new AirportSpec(),
+  V18_NAV(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -68,7 +71,7 @@ public enum ArincVersion {
   /**
    * This will only parse the airspace content
    */
-  V18_AIRSPACE(
+  V18_AIRSPACE(new Header01Spec(),
       new AirportSpec(),
       new RunwaySpec(),
       new NdbNavaidSpec(),
@@ -84,7 +87,8 @@ public enum ArincVersion {
    * <p>From the perspective of the Boogie front-end parsers there is no difference in any of the parsing logic for the V19 record
    * contents other than for procedures where a few more categorical {@link RouteTypeQualifier}s were added.
    */
-  V19(new AirportSpec(),
+  V19(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -102,7 +106,8 @@ public enum ArincVersion {
   /**
    * This is a version 19 for only navigation records
    */
-  V19_NAV(new AirportSpec(),
+  V19_NAV(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -120,7 +125,8 @@ public enum ArincVersion {
   /**
    * Returns a static implementation of a parser for V20 ARINC 424 data.
    */
-  V20(new AirportSpec(),
+  V20(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -138,7 +144,8 @@ public enum ArincVersion {
   /**
    * Returns a static implementation of a parser for V20 ARINC 424 data.
    */
-  V20_NAV(new AirportSpec(),
+  V20_NAV(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -154,7 +161,8 @@ public enum ArincVersion {
   /**
    * Returns a static implementation of a parser for V21 ARINC 424 data.
    */
-  V21(new AirportSpec(),
+  V21(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -173,7 +181,8 @@ public enum ArincVersion {
   /**
    * Returns a static implementation of a parser for V21 ARINC 424 data for only navigation relevant fields.
    */
-  V21_NAV(new AirportSpec(),
+  V21_NAV(new Header01Spec(),
+      new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(),
       new LocalizerGlideSlopeSpec(),
@@ -190,7 +199,7 @@ public enum ArincVersion {
   /**
    * Returns a static implementation of a parser for V22 Arinc 424 data.
    */
-  V22(
+  V22(new Header01Spec(),
       new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new org.mitre.tdp.boogie.arinc.v22.RunwaySpec(),
@@ -210,7 +219,7 @@ public enum ArincVersion {
   /**
    * This is a parser that does not parse the airspace's into memory.
    */
-  V22_NAV(
+  V22_NAV(new Header01Spec(),
       new AirportSpec(),
       new AirportPrimaryExtensionSpec(),
       new org.mitre.tdp.boogie.arinc.v22.RunwaySpec(),

@@ -181,5 +181,7 @@ class TestArincTerminalAreaDatabase {
       .helipadConverter(new HelipadConverter()) //they need a consumer
       .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
+      .headerDelegator(new Header01Validator())
+      .headerConverter(new Header01Converter())
       .build();
 }

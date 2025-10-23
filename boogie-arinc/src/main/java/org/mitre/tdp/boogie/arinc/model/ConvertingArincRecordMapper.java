@@ -36,6 +36,7 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
   private final DelegatingMapper<ArincFirUirLeg> arincFirUirLegs;
   private final DelegatingMapper<ArincHelipad> arincHelipads;
   private final DelegatingMapper<ArincControlledAirspaceLeg> arincControlledAirspaceLegs;
+  private final DelegatingMapper<ArincHeaderOne> arincHeaderOnes;
 
   private ConvertingArincRecordMapper(Builder builder) {
     this.arincAirports = new DelegatingMapper<>(builder.airportDelegator, builder.airportConverter);
@@ -52,6 +53,7 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     this.arincFirUirLegs = new DelegatingMapper<>(builder.firUirDelegator, builder.firUirConverter);
     this.arincHelipads = new DelegatingMapper<>(builder.helipadDelegator, builder.helipadConverter);
     this.arincControlledAirspaceLegs = new DelegatingMapper<>(builder.controlledAirspaceDelegator, builder.controlledAirspaceConverter);
+    this.arincHeaderOnes = new DelegatingMapper<>(builder.headerOneDelegator, builder.headerOneConverter);
   }
 
   @Override
@@ -97,6 +99,9 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     }
     if (arincControlledAirspaceLegs.test(arincRecord)) {
       return arincControlledAirspaceLegs.apply(arincRecord);
+    }
+    if (arincHeaderOnes.test(arincRecord)) {
+      return arincHeaderOnes.apply(arincRecord);
     }
     return Optional.empty();
   }
@@ -151,6 +156,8 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
     private Function<ArincRecord, Optional<ArincHelipad>> helipadConverter;
     private Predicate<ArincRecord> controlledAirspaceDelegator;
     private Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> controlledAirspaceConverter;
+    private Predicate<ArincRecord> headerOneDelegator;
+    private Function<ArincRecord, Optional<ArincHeaderOne>> headerOneConverter;
 
     public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
       this.airportContinuationDelegator = airportContinuationDelegator;
@@ -289,6 +296,16 @@ public final class ConvertingArincRecordMapper implements Function<ArincRecord, 
 
     public Builder controlledAirspaceConverter(Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> controlledAirspaceConverter) {
       this.controlledAirspaceConverter = controlledAirspaceConverter;
+      return this;
+    }
+
+    public Builder headerOneDelegator(Predicate<ArincRecord> headerOneDelegator) {
+      this.headerOneDelegator = headerOneDelegator;
+      return this;
+    }
+
+    public Builder headerOneConverter(Function<ArincRecord, Optional<ArincHeaderOne>> headerOneConverter) {
+      this.headerOneConverter = headerOneConverter;
       return this;
     }
 

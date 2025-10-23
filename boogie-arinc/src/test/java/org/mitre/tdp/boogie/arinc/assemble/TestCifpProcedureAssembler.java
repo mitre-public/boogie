@@ -24,7 +24,7 @@ import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.ContinuationRecordFilter;
+import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
@@ -45,6 +45,8 @@ import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
+import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
+import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
@@ -79,8 +81,8 @@ class TestCifpProcedureAssembler {
 
   @BeforeAll
   static void setup() {
-    ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
-    fileParser.apply(arincTestFile).stream().filter(continuationRecordFilter).forEach(testV18Consumer);
+    IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
+    fileParser.apply(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
 
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         testV18Consumer.arincAirports(),
@@ -294,5 +296,7 @@ class TestCifpProcedureAssembler {
       .helipadConverter(new HelipadConverter())
       .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
+      .headerDelegator(new Header01Validator())
+      .headerConverter(new Header01Converter())
       .build();
 }
