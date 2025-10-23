@@ -14,6 +14,8 @@ import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
+import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
+import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
@@ -70,7 +72,9 @@ public final class ArincRecordConverterFactory {
         .helipadDelegator(new HelipadValidator())
         .helipadConverter(new HelipadConverter())
         .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
-        .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter());
+        .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
+        .headerConverter(new Header01Converter())
+        .headerDelegator(new Header01Validator());
   }
 
   private static ConvertingArincRecordMapper.Builder standardMapper() {
@@ -101,7 +105,9 @@ public final class ArincRecordConverterFactory {
         .helipadDelegator(new HelipadValidator())
         .helipadConverter(new HelipadConverter())
         .controlledAirspaceDelegator(new ControlledAirspaceValidator())
-        .controlledAirspaceConverter(new ControlledAirspaceLegConverter());
+        .controlledAirspaceConverter(new ControlledAirspaceLegConverter())
+        .headerOneConverter(new Header01Converter())
+        .headerOneDelegator(new Header01Validator());
   }
 
   /**

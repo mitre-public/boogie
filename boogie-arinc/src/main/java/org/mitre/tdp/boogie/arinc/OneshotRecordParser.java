@@ -43,6 +43,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincHeaderOne;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
@@ -64,7 +65,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
   private final ArincVersion version;
 
-  private final Predicate<ArincRecord> dropRecord;
+  private final Predicate<ArincRecord> keepRecord;
 
   private final AirportAssemblyStrategy<APT, RWY, HLPD> airportStrategy;
 
@@ -80,7 +81,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
   private OneshotRecordParser(Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD> builder) {
     this.version = requireNonNull(builder.version);
-    this.dropRecord = requireNonNull(builder.dropRecord);
+    this.keepRecord = requireNonNull(builder.keepRecord);
     this.airportStrategy = requireNonNull(builder.airportStrategy);
     this.fixStrategy = FixAssemblyStrategy.caching(builder.fixStrategy);
     this.airwayStrategy = requireNonNull(builder.airwayStrategy);
@@ -130,8 +131,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       reader.lines()
           .map(parser::parse)
           .flatMap(Optional::stream)
-          .filter(dropRecord.negate())
-          .forEach(consumer);
+          .filter(i -> keepRecord.test(i))
+          .forEach(i -> consumer.accept(i));
     } catch (IOException e) {
       LOG.error("Could not parse the arinc text into memory", e);
       return records.build();
@@ -168,6 +169,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
         .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, consumer.arincProcedureLegs()))
         .addFirUirs(assembleFirUirs(consumer.arincFirUirLegs()))
         .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, consumer.arincControlledAirspaceLegs()))
+        .headerOne(consumer.arincHeaderOne().orElse(null))
         .build();
   }
 
@@ -219,7 +221,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final ArincVersion version;
 
-    private Predicate<ArincRecord> dropRecord = new ContinuationRecordFilter().negate();
+    private Predicate<ArincRecord> keepRecord = new IsThisAPrimaryRecord().or(new IsThisAHeader());
 
     private AirportAssemblyStrategy<APT, RWY, HLPD> airportStrategy;
 
@@ -245,7 +247,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
      *                   records which aren't otherwise being handled
      */
     public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD> dropRecord(Predicate<ArincRecord> dropRecord) {
-      this.dropRecord = requireNonNull(dropRecord);
+      this.keepRecord = requireNonNull(dropRecord);
       return this;
     }
 
@@ -323,6 +325,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final Collection<AIR> conrolledAirspaces;
 
+    private final ArincHeaderOne headerOne;
+
     private ClientRecords(Builder<APT, FIX, AWY, PRC, AIR> builder) {
       this.airports = builder.airports;
       this.fixes = builder.fixes;
@@ -330,6 +334,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       this.procedures = builder.procedures;
       this.firUirs = builder.firUirs;
       this.conrolledAirspaces = builder.conrolledAirspaces;
+      this.headerOne = builder.headerOne;
     }
 
     public Collection<APT> airports() {
@@ -356,6 +361,10 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       return conrolledAirspaces;
     }
 
+    public Optional<ArincHeaderOne> headerOne() {
+      return Optional.ofNullable(headerOne);
+    }
+
     public static final class Builder<APT, FIX, AWY, PRC, AIR> {
 
       private final Collection<APT> airports = new ArrayList<>();
@@ -369,6 +378,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       private final Collection<AIR> firUirs = new ArrayList<>();
 
       private final Collection<AIR> conrolledAirspaces = new ArrayList<>();
+
+      private ArincHeaderOne headerOne;
 
       private Builder() {
       }
@@ -400,6 +411,11 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
       public Builder<APT, FIX, AWY, PRC, AIR> addControlledAirspaces(Collection<AIR> conrolledAirspaces) {
         this.conrolledAirspaces.addAll(conrolledAirspaces);
+        return this;
+      }
+
+      public Builder<APT, FIX, AWY, PRC, AIR> headerOne(ArincHeaderOne headerOne) {
+        this.headerOne = headerOne;
         return this;
       }
 
