@@ -135,9 +135,13 @@ public final class EmbeddedCifpFile {
 
       LinkedHashSet<ArincRecord> parsedRecords = new LinkedHashSet<>();
 
+      IsThisAHeader isThisAHeader = new IsThisAHeader();
       IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
       while (iterator.hasNext()) {
-        parser.parse(iterator.next()).filter(isThisAPrimaryRecord).ifPresent(parsedRecords::add);
+        parser.parse(iterator.next())
+            .filter(isThisAHeader.negate())
+            .filter(isThisAPrimaryRecord)
+            .ifPresent(parsedRecords::add);
       }
 
       LOG.info("Finished loading {} records from embedded file.", parsedRecords.size());

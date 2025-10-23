@@ -221,7 +221,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final ArincVersion version;
 
-    private Predicate<ArincRecord> keepRecord = new IsThisAPrimaryRecord().or(new IsThisAHeader());
+    private Predicate<ArincRecord> keepRecord = new IsThisAHeader().or(new IsThisAPrimaryRecord());
 
     private AirportAssemblyStrategy<APT, RWY, HLPD> airportStrategy;
 
