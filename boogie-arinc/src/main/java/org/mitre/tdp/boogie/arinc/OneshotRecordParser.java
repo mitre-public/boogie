@@ -131,8 +131,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       reader.lines()
           .map(parser::parse)
           .flatMap(Optional::stream)
-          .filter(i -> keepRecord.test(i))
-          .forEach(i -> consumer.accept(i));
+          .filter(keepRecord)
+          .forEach(consumer);
     } catch (IOException e) {
       LOG.error("Could not parse the arinc text into memory", e);
       return records.build();
