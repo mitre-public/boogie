@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipInputStream;
 
 import org.mitre.caasd.commons.fileutil.FileLineIterator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
@@ -136,9 +135,13 @@ public final class EmbeddedLidoFile {
 
       LinkedHashSet<ArincRecord> parsedRecords = new LinkedHashSet<>();
 
-      ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
+      IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
+      IsThisAHeader isThisAHeader = new IsThisAHeader();
       while (iterator.hasNext()) {
-        parser.parse(iterator.next()).filter(continuationRecordFilter).ifPresent(parsedRecords::add);
+        parser.parse(iterator.next())
+            .filter(isThisAHeader.negate())
+            .filter(isThisAPrimaryRecord)
+            .ifPresent(parsedRecords::add);
       }
 
       LOG.info("Finished loading {} records from embedded file.", parsedRecords.size());

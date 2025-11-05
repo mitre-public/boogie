@@ -13,9 +13,9 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 
-class TestContinuationRecordFilter {
+class TestIsThisAPrimaryRecord {
 
-  private final ContinuationRecordFilter continuationRecordFilter = new ContinuationRecordFilter();
+  private final IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
   private final PrimaryRecord isPrimary = PrimaryRecord.INSTANCE;
 
   @Test
@@ -50,7 +50,7 @@ class TestContinuationRecordFilter {
     ArincRecord record5 = mock(ArincRecord.class);
     when(record4.optionalField(matches("continuationRecordNumber"))).thenReturn(Optional.of("0"));
 
-    long total = Stream.of(record1, record2, record3, record4, record5).filter(continuationRecordFilter).count();
+    long total = Stream.of(record1, record2, record3, record4, record5).filter(isThisAPrimaryRecord).count();
     assertEquals(2, total, "zero, and 1 are primary records");
   }
 }
