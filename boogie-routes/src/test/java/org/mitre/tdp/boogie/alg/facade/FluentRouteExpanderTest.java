@@ -138,19 +138,20 @@ class FluentRouteExpanderTest {
         emptyList(),
         singletonList(KATL()),
         singletonList(HOBTT2_DUP.INSTANCE));
-    ExpandedRoute expandedRouteNoSelection = expander.apply(route, null, "RW28").orElseThrow(IllegalStateException::new);
+    ExpandedRoute expandedRouteNoSelection = expander.apply(route, null, "RW28")
+        .orElseThrow(AssertionError::new);
 
     RouteDetails jetDetails = RouteDetails.builder()
         .arrivalRunway("RW27L")
         .categoryOrTypes(new CategoryAndType(null, CategoryOrType.JET))
         .build();
-    ExpandedRoute expandedJet = expander.expand(route, jetDetails).orElseThrow(IllegalStateException::new);
+    ExpandedRoute expandedJet = expander.expand(route, jetDetails).orElseThrow(AssertionError::new);
 
     RouteDetails propDetails = RouteDetails.builder()
         .arrivalRunway("RW27L")
         .categoryOrTypes(new CategoryAndType(null, CategoryOrType.PROP))
         .build();
-    ExpandedRoute expandedProp = expander.expand(route, propDetails).orElseThrow(IllegalStateException::new);
+    ExpandedRoute expandedProp = expander.expand(route, propDetails).orElseThrow(AssertionError::new);
 
     RouteDetails cDetails = RouteDetails.builder()
         .arrivalRunway("RW27L")

@@ -2,21 +2,35 @@ package org.mitre.tdp.boogie.alg.chooser;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.Airports.KDEN;
 import static org.mitre.tdp.boogie.MockObjects.fix;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.CONNR5;
+import org.mitre.tdp.boogie.CategoryAndType;
+import org.mitre.tdp.boogie.CategoryOrType;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.chooser.graph.Expanders;
 import org.mitre.tdp.boogie.alg.facade.ExpandedRoute;
 import org.mitre.tdp.boogie.alg.facade.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
+import org.mitre.tdp.boogie.alg.facade.RouteDetails;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 
 import com.google.common.collect.Lists;
@@ -59,24 +73,45 @@ class TestGraphicalRouteExpander {
   }
 
   @Test
-  void testSubsequentDFToTFConverterIsAppliedWithinExpansion() {
+  void testSubsequentDFToTFConverterIsAppliedWithinExpansion2() {
     String route = "KDEN.CONNR5.DBL..OTHER";
 
     FluentRouteExpander expander = newExpander(
-        Lists.newArrayList(fix("DBL", 39.439344444444444, -106.89468055555557), fix("OTHER", 39.439344444444444, -106.89478055555557)),
+        List.of(fix("DBL", 39.439344444444444, -106.89468055555557), fix("OTHER", 39.439344444444444, -106.89478055555557)),
         emptyList(),
         singletonList(KDEN()),
         singletonList(CONNR5.INSTANCE));
 
-    ExpandedRoute expandedRoute = expander.apply(route, "RW25R", null).orElseThrow(IllegalStateException::new);
+    RouteDetails jetDetails = RouteDetails.builder()
+        .categoryOrTypes(new CategoryAndType(CategoryOrType.JET, CategoryOrType.CAT_C))
+        .departureRunway("RW25R")
+        .build();
+
+    ExpandedRoute expandedRoute = expander.expand(route, jetDetails).orElseThrow(AssertionError::new);
 
     Map<String, ExpandedRouteLeg> legsByFix = expandedRoute.legs().stream()
         .filter(leg -> leg.associatedFix().isPresent())
         .collect(Collectors.toMap(leg -> leg.associatedFix().orElseThrow(IllegalStateException::new).fixIdentifier(), Function.identity()));
 
+    RouteDetails copterDetails = RouteDetails.builder()
+        .categoryOrTypes(new CategoryAndType(CategoryOrType.CAT_H, CategoryOrType.CAT_H))
+        .departureRunway("RW17L")
+        .build();
+
+    ExpandedRoute copterRoute = expander.expand(route, copterDetails).orElseThrow(AssertionError::new);
+
+    RouteDetails brokeDetails = RouteDetails.builder()
+        .categoryOrTypes(new CategoryAndType(CategoryOrType.CAT_H, CategoryOrType.CAT_H))
+        .departureRunway("RW25R")
+        .build(); //aka the procedure only has a common for us ... but we do our best
+    Optional<ExpandedRoute> broke = expander.expand(route, brokeDetails);
+
     assertAll("Before and After the processor",
         () -> assertEquals(PathTerminator.TF, legsByFix.get("OTHER").pathTerminator(), "Filed direct leg should be TF."),
-        () -> assertEquals(PathTerminator.DF, legsByFix.get("WRIPS").pathTerminator(), "DF filed after VA as part of SID should be unchanged."));
+        () -> assertEquals(PathTerminator.DF, legsByFix.get("WRIPS").pathTerminator(), "DF filed after VA as part of SID should be unchanged."),
+        () -> assertEquals(50.0, copterRoute.legs().get(copterRoute.legs().size() - 2).leg().speedConstraint().upperEndpoint(), "Just to prove we kept the copter leg"),
+        () -> assertTrue(broke.isPresent(), "It is going to grab what it can from the common no enroute here to get at least something")
+    );
   }
 
   private static FluentRouteExpander newExpander(
