@@ -107,12 +107,12 @@ public class TestLidoProcedureAssemblerIntegration {
       ProcedureGraph graphed = ProcedureFactory.newProcedureGraph(procedure);
 
       if (procedure.transitions().size() != graphed.transitions().size()) {
-        throw new AssertionError("Should never loose transitions in the process");
+        throw new IllegalStateException("Should never loose transitions in the process");
       }
 
 
       if (graphed.allPaths().isEmpty()) {
-        throw new AssertionError("Should never have no paths in a procedure");
+        throw new IllegalStateException("Should never have no paths in a procedure");
       }
 
       return false;
