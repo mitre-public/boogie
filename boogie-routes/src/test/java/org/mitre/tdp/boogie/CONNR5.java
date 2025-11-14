@@ -7,16 +7,16 @@ import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mitre.tdp.boogie.MockObjects.VA;
 import static org.mitre.tdp.boogie.MockObjects.VI;
 import static org.mitre.tdp.boogie.MockObjects.VM;
-import static org.mitre.tdp.boogie.MockObjects.transition;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
+import org.mitre.caasd.commons.LatLong;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 
 /**
  * RNAV Departure SID out of Denver from cycle 1910 for use in testing.
@@ -25,12 +25,10 @@ public final class CONNR5 implements Procedure {
 
   public static final CONNR5 INSTANCE = new CONNR5();
 
-  private final Map<String, Transition> transitions;
+  List<Transition> transitions;
 
   private CONNR5() {
-    Map<String, Transition> map = Stream.of(RW08(), RW16L(), RW16R(), RW17L(), RW17R(), RW25(), RW34B(), RW35B(), common())
-        .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse(null), Function.identity()));
-    this.transitions = ImmutableMap.copyOf(map);
+    this.transitions = List.of(RW08(), RW16L(), RW16R(), RW17L(), RW17R(), RW25(), RW34B(), RW35B(), common(), commonCopter());
   }
 
   @Override
@@ -55,7 +53,7 @@ public final class CONNR5 implements Procedure {
 
   @Override
   public Collection<Transition> transitions() {
-    return transitions.values();
+    return transitions;
   }
 
   public Leg get(String fname, String tname) {
@@ -64,7 +62,7 @@ public final class CONNR5 implements Procedure {
   }
 
   public Transition get(String tname) {
-    return this.transitions.get(tname);
+    return this.transitions.stream().filter(i -> i.transitionIdentifier().get().equals(tname)).findFirst().orElse(null);
   }
 
   @Override
@@ -82,16 +80,24 @@ public final class CONNR5 implements Procedure {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW17L", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VI, GOROC, YORVT, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+    return Transition.builder()
+        .legs(List.of(VI, GOROC, YORVT, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.CAT_H))
+        .transitionType(TransitionType.RUNWAY)
+        .transitionIdentifier("RW17L")
+        .build();
   }
 
   private static Transition RW08() {
     Leg VA = VA();
     Leg VM = VM();
     Leg CONNR = DF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW08", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VA, VM, CONNR));
+    return Transition.builder()
+        .legs(Arrays.asList(VA, VM, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.CAT_H))
+        .transitionType(TransitionType.RUNWAY)
+        .transitionIdentifier("RW08")
+        .build();
   }
 
   private static Transition RW16R() {
@@ -104,16 +110,39 @@ public final class CONNR5 implements Procedure {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW16R", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+    return Transition.builder()
+        .legs(Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.CAT_H))
+        .transitionType(TransitionType.RUNWAY)
+        .transitionIdentifier("RW16R")
+        .build();
+  }
+
+  private static Transition commonCopter() {
+    Leg CONNR = IF("CONNR", 39.69906388888889, -105.66577777777778);
+    Leg BULDG = TF("BULDG", 39.626305555555554, -106.31375);
+    Fix fix = Fix.builder().fixIdentifier("DBL").latLong(LatLong.of(39.439344444444444, -106.89468055555557)).build();
+    Leg DBL = Leg.tfBuilder(fix, 30).speedConstraint(Range.atMost(50.0)).build();
+    List<Leg> legs = Lists.newArrayList(CONNR, BULDG, DBL);
+    return Transition.builder()
+        .legs(legs)
+        .categoryOrTypes(Set.of(CategoryOrType.CAT_H))
+        .transitionIdentifier("")
+        .transitionType(TransitionType.COMMON)
+        .build();
   }
 
   private static Transition common() {
     Leg CONNR = IF("CONNR", 39.69906388888889, -105.66577777777778);
     Leg BULDG = TF("BULDG", 39.626305555555554, -106.31375);
     Leg DBL = TF("DBL", 39.439344444444444, -106.89468055555557);
-    return transition("", "CONNR5", "KDEN", TransitionType.COMMON, ProcedureType.SID,
-        Arrays.asList(CONNR, BULDG, DBL));
+    List<Leg> legs = Lists.newArrayList(CONNR, BULDG, DBL);
+    return Transition.builder()
+        .legs(legs)
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.TURBOJET))
+        .transitionIdentifier("")
+        .transitionType(TransitionType.COMMON)
+        .build();
   }
 
   private static Transition RW25() {
@@ -125,8 +154,12 @@ public final class CONNR5 implements Procedure {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW25", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VA, WRIPS, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+    return Transition.builder()
+        .legs(Arrays.asList(VA, WRIPS, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.TURBOJET))
+        .transitionIdentifier("RW25")
+        .transitionType(TransitionType.RUNWAY)
+        .build();
   }
 
   private static Transition RW17R() {
@@ -140,8 +173,12 @@ public final class CONNR5 implements Procedure {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW17R", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VI, GOROC, YORVT, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+    return Transition.builder()
+        .legs(Arrays.asList(VI, GOROC, YORVT, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.TURBOJET))
+        .transitionIdentifier("RW17R")
+        .transitionType(TransitionType.RUNWAY)
+        .build();
   }
 
   private static Transition RW34B() {
@@ -153,8 +190,12 @@ public final class CONNR5 implements Procedure {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW34B", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VA, YOBUB, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+    return Transition.builder()
+        .legs(Arrays.asList(VA, YOBUB, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.TURBOJET))
+        .transitionIdentifier("RW34B")
+        .transitionType(TransitionType.RUNWAY)
+        .build();
   }
 
   private static Transition RW35B() {
@@ -166,8 +207,12 @@ public final class CONNR5 implements Procedure {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW35B", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VA, YOBUB, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+    return Transition.builder()
+        .legs(Arrays.asList(VA, YOBUB, MYALE, TUNNN, TAVRN, VONNN, TEEBO, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.TURBOJET))
+        .transitionIdentifier("RW35B")
+        .transitionType(TransitionType.RUNWAY)
+        .build();
   }
 
   private static Transition RW16L() {
@@ -180,7 +225,11 @@ public final class CONNR5 implements Procedure {
     Leg VONNN = TF("VONNN", 39.747572222222225, -105.43400277777778);
     Leg TEEBO = TF("TEEBO", 39.72018055555556, -105.56080555555555);
     Leg CONNR = TF("CONNR", 39.69906388888889, -105.66577777777778);
-    return transition("RW16L", "CONNR5", "KDEN", TransitionType.RUNWAY, ProcedureType.SID,
-        Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR));
+    return Transition.builder()
+        .legs(Arrays.asList(VI, GOROC, HURDL, HAWPE, TUNNN, TAVRN, VONNN, TEEBO, CONNR))
+        .categoryOrTypes(Set.of(CategoryOrType.JET, CategoryOrType.TURBOJET))
+        .transitionIdentifier("RW16L")
+        .transitionType(TransitionType.RUNWAY)
+        .build();
   }
 }

@@ -63,6 +63,7 @@ public interface AirportAssemblyStrategy<A, R, P> {
           .latLong(LatLong.of(airport.latitude(), airport.longitude()))
           .magneticVariation(magneticVariation(airport))
           .runways(convertedRunways)
+          .helipads(convertedHelipads)
           .build();
     }
 

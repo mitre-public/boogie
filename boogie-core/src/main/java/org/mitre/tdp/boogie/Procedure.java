@@ -123,7 +123,10 @@ public interface Procedure {
    * <p>This method is intended to help identify candidate exit points where aircraft are likely to leave the procedure.
    */
   default List<Transition> finalTransitions() {
-    return TraversalOrderSorter.forProcedureType(procedureType()).sort(transitions()).stream().filter(col -> !col.isEmpty()).reduce((t1, t2) -> t2).orElseGet(List::of);
+    return TraversalOrderSorter.forProcedureType(procedureType()).sort(transitions()).stream()
+        .filter(col -> !col.isEmpty())
+        .reduce((t1, t2) -> t2)
+        .orElseGet(List::of);
   }
 
   /**

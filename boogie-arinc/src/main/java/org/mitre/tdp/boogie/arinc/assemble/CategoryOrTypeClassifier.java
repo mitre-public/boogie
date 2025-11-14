@@ -25,7 +25,7 @@ public final class CategoryOrTypeClassifier implements Function<String, Set<Cate
         .map(ProcedureDesignAircraftCategoryOrType::valueOf)
         .filter(i -> !ProcedureDesignAircraftCategoryOrType.SPEC.equals(i))
         .map(CategoryOrTypeClassifier::from)
-        .orElse(null);
+        .orElse(Set.of(NOT_SPECIFIED));
   }
 
   private static Set<CategoryOrType> from(ProcedureDesignAircraftCategoryOrType val) {
@@ -49,13 +49,13 @@ public final class CategoryOrTypeClassifier implements Function<String, Set<Cate
       case W -> Set.of(JET);
       case X -> Set.of(PISTON, TURBOPROP, PROP);
       case Y -> Set.of(PISTON);
-      case P -> Set.of(JET, PISTON, TURBOJET, TURBOPROP, PROP);
+      case P -> Set.of(JET, PISTON, TURBOJET, TURBOPROP, PROP, CAT_H);
       case Q -> Set.of(TURBOJET, TURBOPROP);
       case R -> Set.of(TURBOJET);
       case S -> Set.of(TURBOPROP);
       case T -> Set.of(PROP);
       case U -> Set.of(TURBOPROP, PROP);
-      case V -> Set.of(JET, PISTON, TURBOPROP, PROP);
+      case V -> Set.of(JET, PISTON, TURBOPROP, PROP, CAT_H);
     };
   }
 }

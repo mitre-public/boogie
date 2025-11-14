@@ -17,7 +17,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.util.Combinatorics;
 import org.slf4j.Logger;
