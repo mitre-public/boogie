@@ -143,19 +143,19 @@ class FluentRouteExpanderTest {
 
     RouteDetails jetDetails = RouteDetails.builder()
         .arrivalRunway("RW27L")
-        .categoryOrTypes(new CategoryAndType(null, CategoryOrType.JET))
+        .categoryOrTypes(List.of(CategoryOrType.JET))
         .build();
     ExpandedRoute expandedJet = expander.expand(route, jetDetails).orElseThrow(AssertionError::new);
 
     RouteDetails propDetails = RouteDetails.builder()
         .arrivalRunway("RW27L")
-        .categoryOrTypes(new CategoryAndType(null, CategoryOrType.PROP))
+        .categoryOrTypes(List.of(CategoryOrType.PROP))
         .build();
     ExpandedRoute expandedProp = expander.expand(route, propDetails).orElseThrow(AssertionError::new);
 
     RouteDetails cDetails = RouteDetails.builder()
         .arrivalRunway("RW27L")
-        .categoryOrTypes(new CategoryAndType(CategoryOrType.CAT_C, null))
+        .categoryOrTypes(List.of(CategoryOrType.CAT_C))
         .build();
     ExpandedRoute expandedC = expander.expand(route, cDetails).orElseThrow(IllegalStateException::new);
 

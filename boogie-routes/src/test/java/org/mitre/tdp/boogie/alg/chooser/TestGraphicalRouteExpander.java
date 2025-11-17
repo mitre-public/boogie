@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.CONNR5;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -32,8 +31,6 @@ import org.mitre.tdp.boogie.alg.facade.ExpandedRouteLeg;
 import org.mitre.tdp.boogie.alg.facade.FluentRouteExpander;
 import org.mitre.tdp.boogie.alg.facade.RouteDetails;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
-
-import com.google.common.collect.Lists;
 
 /**
  * Explicit integration-y test for the {@link GraphicalRouteChooser} when applied through the {@link FluentRouteExpander} top
@@ -83,7 +80,7 @@ class TestGraphicalRouteExpander {
         singletonList(CONNR5.INSTANCE));
 
     RouteDetails jetDetails = RouteDetails.builder()
-        .categoryOrTypes(new CategoryAndType(CategoryOrType.JET, CategoryOrType.CAT_C))
+        .categoryOrTypes(List.of(CategoryOrType.JET, CategoryOrType.CAT_C))
         .departureRunway("RW25R")
         .build();
 
@@ -94,14 +91,14 @@ class TestGraphicalRouteExpander {
         .collect(Collectors.toMap(leg -> leg.associatedFix().orElseThrow(IllegalStateException::new).fixIdentifier(), Function.identity()));
 
     RouteDetails copterDetails = RouteDetails.builder()
-        .categoryOrTypes(new CategoryAndType(CategoryOrType.CAT_H, CategoryOrType.CAT_H))
+        .categoryOrTypes(List.of(CategoryOrType.CAT_H, CategoryOrType.CAT_H))
         .departureRunway("RW17L")
         .build();
 
     ExpandedRoute copterRoute = expander.expand(route, copterDetails).orElseThrow(AssertionError::new);
 
     RouteDetails brokeDetails = RouteDetails.builder()
-        .categoryOrTypes(new CategoryAndType(CategoryOrType.CAT_H, CategoryOrType.CAT_H))
+        .categoryOrTypes(List.of(CategoryOrType.CAT_H, CategoryOrType.CAT_H))
         .departureRunway("RW25R")
         .build(); //aka the procedure only has a common for us ... but we do our best
     Optional<ExpandedRoute> broke = expander.expand(route, brokeDetails);

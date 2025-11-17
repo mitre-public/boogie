@@ -94,7 +94,7 @@ public interface RouteExpander {
 
       List<RouteToken> routeTokens = logRouteTokens(routeTokenizer.tokenize(route));
 
-      HashedLinkedSequence<ResolvedTokens> resolvedTokens = newHashedLinkedSequence(routeTokenResolver.applyTo(routeTokens, context.categoryAndType()));
+      HashedLinkedSequence<ResolvedTokens> resolvedTokens = newHashedLinkedSequence(routeTokenResolver.applyTo(routeTokens, context.keepTransition()));
 
       context.inferrers().forEach(inferrer -> appendInferredSections(resolvedTokens, inferrer));
 
