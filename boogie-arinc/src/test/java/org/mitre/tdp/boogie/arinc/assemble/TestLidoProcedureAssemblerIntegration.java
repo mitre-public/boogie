@@ -23,6 +23,7 @@ import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
+import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,8 +104,17 @@ public class TestLidoProcedureAssemblerIntegration {
 
   private boolean notGraphable(Procedure procedure) {
     try {
-      Procedure graphed = ProcedureFactory.newProcedureGraph(procedure);
-      assertEquals(procedure.transitions().size(), graphed.transitions().size());
+      ProcedureGraph graphed = ProcedureFactory.newProcedureGraph(procedure);
+
+      if (procedure.transitions().size() != graphed.transitions().size()) {
+        throw new IllegalStateException("Should never loose transitions in the process");
+      }
+
+
+      if (graphed.allPaths().isEmpty()) {
+        throw new IllegalStateException("Should never have no paths in a procedure");
+      }
+
       return false;
     } catch (Exception e) {
       return true;

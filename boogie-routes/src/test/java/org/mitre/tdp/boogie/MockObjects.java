@@ -1,8 +1,20 @@
 package org.mitre.tdp.boogie;
 
+import static org.mitre.tdp.boogie.CategoryOrType.CAT_A;
+import static org.mitre.tdp.boogie.CategoryOrType.CAT_B;
+import static org.mitre.tdp.boogie.CategoryOrType.CAT_C;
+import static org.mitre.tdp.boogie.CategoryOrType.CAT_D;
+import static org.mitre.tdp.boogie.CategoryOrType.CAT_E;
+import static org.mitre.tdp.boogie.CategoryOrType.CAT_H;
+import static org.mitre.tdp.boogie.CategoryOrType.JET;
+import static org.mitre.tdp.boogie.CategoryOrType.PISTON;
+import static org.mitre.tdp.boogie.CategoryOrType.PROP;
+import static org.mitre.tdp.boogie.CategoryOrType.TURBOJET;
+import static org.mitre.tdp.boogie.CategoryOrType.TURBOPROP;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -217,7 +229,7 @@ public final class MockObjects {
 
     @Override
     public Set<CategoryOrType> categoryOrTypes() {
-      return delegate.categoryOrTypes();
+      return Arrays.stream(CategoryOrType.values()).collect(Collectors.toSet());
     }
 
     @Override

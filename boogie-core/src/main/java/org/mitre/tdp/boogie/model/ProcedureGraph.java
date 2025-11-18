@@ -7,6 +7,10 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
@@ -14,8 +18,14 @@ import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.nio.ExportException;
 import org.jgrapht.nio.dot.DOTExporter;
-import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
 /**
@@ -39,7 +49,7 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
   ProcedureGraph(Procedure procedure) {
     super(DefaultEdge.class);
     this.procedure = requireNonNull(procedure);
-    this.exporter = new DOTExporter<>(this::legSignature);
+    this.exporter = new DOTExporter<>(this::enhancedSignature);
   }
 
   @Override
@@ -80,7 +90,7 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
   }
 
   /**
-   * Returns a list of lists with all the ways through this procedure. Sid-Runway -> Sid-Enroute, Star-Enroute -> Star-Runway, and Approach -> Final
+   * Returns a list of lists with all the ways through this procedure. Sid-Runway -> Sid-Enroute, Star-Enroute -> Star-Runway, and Approach -> Final -
    * @return the lists of all the paths
    */
   public List<List<Leg>> allPaths() {
@@ -98,7 +108,7 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
     try (StringWriter writer = new StringWriter()) {
       exporter.exportGraph(this, writer);
       return writer.toString();
-    } catch (IOException e) {
+    } catch (ExportException | IOException e) {
       throw new IllegalStateException("Error encountered exporting graph as DOT string.", e);
     }
   }
@@ -126,7 +136,21 @@ public final class ProcedureGraph extends SimpleDirectedGraph<Leg, DefaultEdge> 
   }
 
   private String legSignature(Leg leg) {
-    return leg.pathTerminator().name().concat(leg.associatedFix().map(Fix::fixIdentifier).orElse(""));
+    return String.join("_", leg.pathTerminator().name(), leg.associatedFix().map(Fix::fixIdentifier).orElse(""));
+  }
+
+  private String enhancedSignature(Leg leg) {
+    Optional<? extends Transition> transition = procedure.transitions().stream()
+        .filter(i -> i.legs().contains(leg))
+        .findFirst();
+    String cat = transition
+        .map(Transition::categoryOrTypes)
+        .map(s -> s.stream().map(Enum::name).collect(Collectors.joining("")))
+        .orElse("");
+    String transitionIdent = transition
+        .flatMap(Transition::transitionIdentifier)
+        .orElse("");
+    return String.join("_", legSignature(leg), cat, transitionIdent);
   }
 
   @Override

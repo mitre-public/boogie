@@ -2,12 +2,11 @@ package org.mitre.tdp.boogie.alg.facade;
 
 import static java.util.Optional.ofNullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.CategoryAndType;
+import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 
 /**
@@ -47,7 +46,7 @@ public final class RouteDetails {
   /**
    * The list of categories or types we want to support.
    */
-  private final CategoryAndType categoryAndType;
+  private final List<CategoryOrType> categoryAndTypes;
 
   private RouteDetails(Builder builder) {
     this.departureRunway = builder.departureRunway;
@@ -55,7 +54,7 @@ public final class RouteDetails {
     this.equipagePreference = builder.equipagePreference;
     this.defaultSid = builder.defaultSid;
     this.defaultStar = builder.defaultStar;
-    this.categoryAndType = builder.categoryAndType;
+    this.categoryAndTypes = builder.categoryAndTypes;
   }
 
   public static Builder builder() {
@@ -71,7 +70,7 @@ public final class RouteDetails {
   }
 
   public List<RequiredNavigationEquipage> equipagePreference() {
-    return Optional.ofNullable(equipagePreference).orElse(Collections.emptyList());
+    return Optional.ofNullable(equipagePreference).orElse(List.of());
   }
 
   public Optional<String> defaultSid() {
@@ -82,8 +81,8 @@ public final class RouteDetails {
     return ofNullable(defaultStar);
   }
 
-  public Optional<CategoryAndType> categoryAndType() {
-    return ofNullable(categoryAndType);
+  public List<CategoryOrType> categoryAndTypes() {
+    return Optional.ofNullable(categoryAndTypes).orElse(List.of());
   }
 
   @Override
@@ -96,12 +95,12 @@ public final class RouteDetails {
     return Objects.equals(departureRunway, that.departureRunway) && Objects.equals(arrivalRunway, that.arrivalRunway)
         && Objects.equals(defaultSid, that.defaultSid) && Objects.equals(defaultStar, that.defaultStar)
         && Objects.equals(equipagePreference, that.equipagePreference)
-        && Objects.equals(categoryAndType, that.categoryAndType);
+        && Objects.equals(categoryAndTypes, that.categoryAndTypes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(departureRunway, arrivalRunway, defaultSid, defaultStar, equipagePreference, categoryAndType);
+    return Objects.hash(departureRunway, arrivalRunway, defaultSid, defaultStar, equipagePreference, categoryAndTypes);
   }
 
   @Override
@@ -113,7 +112,7 @@ public final class RouteDetails {
         ", defaultSid='" + defaultSid + '\'' +
         ", defaultStar='" + defaultStar + '\'' +
         ", equipagePreference=" + equipagePreference +
-        ", categoryOrTypes=" + categoryAndType +
+        ", categoryOrTypes=" + categoryAndTypes +
         '}';
   }
 
@@ -129,7 +128,7 @@ public final class RouteDetails {
 
     private List<RequiredNavigationEquipage> equipagePreference;
 
-    private CategoryAndType categoryAndType;
+    private List<CategoryOrType> categoryAndTypes;
 
     private Builder() {
     }
@@ -180,11 +179,11 @@ public final class RouteDetails {
 
     /**
      * Sets the category or type preferences for the flight plan expansion.
-     * @param categoryAndType the set of types that we want to capture
+     * @param categoryAndTypes the set of types that we want to capture
      * @return this builder
      */
-    public Builder categoryOrTypes(CategoryAndType categoryAndType) {
-      this.categoryAndType = categoryAndType;
+    public Builder categoryOrTypes(List<CategoryOrType> categoryAndTypes) {
+      this.categoryAndTypes = categoryAndTypes;
       return this;
     }
 

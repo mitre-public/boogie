@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -25,12 +24,12 @@ final class DefaultSidInferrer implements SectionInferrer {
 
   private final String sid;
 
-  private final KeepTransition keepTransition;
+  private final Predicate<Transition> keepTransition;
 
-  DefaultSidInferrer(LookupService<Procedure> proceduresByName, String sid, CategoryAndType categoryAndType) {
+  DefaultSidInferrer(LookupService<Procedure> proceduresByName, String sid, Predicate<Transition> keepTransition) {
     this.proceduresByName = requireNonNull(proceduresByName);
     this.sid = requireNonNull(sid);
-    this.keepTransition = KeepTransition.of(requireNonNull(categoryAndType));
+    this.keepTransition = keepTransition;
   }
 
   @Override

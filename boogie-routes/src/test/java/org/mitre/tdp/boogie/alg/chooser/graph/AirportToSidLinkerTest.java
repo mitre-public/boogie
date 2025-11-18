@@ -26,7 +26,7 @@ class AirportToSidLinkerTest {
     Linker linker = Linker.airportToSid(anyAirport(Airports.KDEN()), anySid(CONNR5.INSTANCE, ResolvedToken::sidEnrouteCommon));
 
     Collection<LinkedLegs> links = linker.links();
-    assertEquals(1, links.size(), "Should be one link from KDEN->CONNR (the start of the common portion)");
+    assertEquals(2, links.size(), "Should be two links now from KDEN->CONNR (the start of the common portion on both cat/type's transitions)");
 
     Set<String> expected = Set.of(
         "CONNR:IF"

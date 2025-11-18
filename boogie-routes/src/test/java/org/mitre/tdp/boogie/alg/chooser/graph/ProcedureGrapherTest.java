@@ -33,6 +33,6 @@ class ProcedureGrapherTest {
   @Test
   void test_Standard() {
     Collection<LinkedLegs> linked = GRAPHER.graphRepresentationOf(ResolvedToken.sidEnrouteCommon(CONNR5.INSTANCE));
-    assertEquals(2, linked.size(), "Should return only two as all non-common portions are filtered.");
+    assertEquals(3, linked.size(), "Now returns three as the common ends with two ways out because of the two commons and non-common portions are filtered.");
   }
 }

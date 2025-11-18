@@ -23,16 +23,11 @@ public final class TraversalOrderSorter {
   }
 
   public static TraversalOrderSorter forProcedureType(ProcedureType procedureType) {
-    switch (procedureType) {
-      case SID:
-        return sid();
-      case STAR:
-        return star();
-      case APPROACH:
-        return approach();
-      default:
-        throw new IllegalArgumentException("Unsupported procedure type for sorting: " + procedureType);
-    }
+    return switch (procedureType) {
+      case SID -> sid();
+      case STAR -> star();
+      case APPROACH -> approach();
+    };
   }
 
   public static TraversalOrderSorter approach() {
@@ -40,7 +35,6 @@ public final class TraversalOrderSorter {
     Stream<TransitionType> sort = Stream.of(
         TransitionType.APPROACH,
         TransitionType.COMMON,
-        TransitionType.RUNWAY,
         TransitionType.MISSED
     );
 

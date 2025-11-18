@@ -11,7 +11,6 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airports;
 import org.mitre.tdp.boogie.CONNR5;
 import org.mitre.tdp.boogie.COSTR3;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.alg.LookupService;
@@ -67,6 +66,6 @@ class DefaultSidInferrerTest {
         p -> Stream.of(p.procedureIdentifier())
     );
 
-    return new DefaultSidInferrer(lookup, "CONNR5", CategoryAndType.NULL).inferBetween(left, right);
+    return new DefaultSidInferrer(lookup, "CONNR5", (t) -> true).inferBetween(left, right);
   }
 }

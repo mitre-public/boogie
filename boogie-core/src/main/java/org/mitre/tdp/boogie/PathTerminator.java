@@ -201,5 +201,5 @@ public enum PathTerminator {
   public static final Set<PathTerminator> FIX_ORIGINATING = Set.of(FC, FD, HF, IF, PI, FA);
   public static final Set<PathTerminator> HOLDING = Set.of(HF, HA, HM);
   public static final Set<PathTerminator> ARC = Set.of(AF, RF);
-  public static final Set<PathTerminator> INTERCEPT = Set.of(CI, VI);
+  public static final Set<PathTerminator> INTERCEPT = Set.of(CI, VI, PI);
 }

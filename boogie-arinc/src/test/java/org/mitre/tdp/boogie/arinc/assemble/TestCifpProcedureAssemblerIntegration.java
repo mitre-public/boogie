@@ -17,8 +17,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.CategoryAndType;
-import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
@@ -28,6 +26,7 @@ import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
+import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,13 +100,22 @@ class TestCifpProcedureAssemblerIntegration {
     List<Procedure> notGraphable = proceduresByAirport.values().stream()
         .flatMap(Collection::stream)
         .filter(this::notGraphable)
-        .collect(toList());
+        .toList();
 
     assertEquals(0, notGraphable.size(), "Expected 0 procedures to not be graphable.");
   }
+
   private boolean notGraphable(Procedure procedure) {
+    ProcedureGraph graphed = ProcedureFactory.newProcedureGraph(procedure);
     try {
-      ProcedureFactory.newProcedureGraph(procedure);
+      if (procedure.transitions().size() != graphed.transitions().size()) {
+        throw new IllegalStateException("Should never loose transitions in the process");
+      }
+
+      if (graphed.allPaths().isEmpty()) {
+        throw new IllegalStateException("Should never have no paths in a procedure");
+      }
+
       return false;
     } catch (Exception e) {
       return true;

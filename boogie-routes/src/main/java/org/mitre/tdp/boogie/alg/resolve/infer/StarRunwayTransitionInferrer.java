@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -24,12 +23,12 @@ final class StarRunwayTransitionInferrer implements SectionInferrer {
 
   private final String arrivalRunway;
 
-  private final KeepTransition keepTransition;
+  private final Predicate<Transition> keepTransition;
 
-  StarRunwayTransitionInferrer(LookupService<Procedure> proceduresByName, String arrivalRunway, CategoryAndType categoryAndType) {
+  StarRunwayTransitionInferrer(LookupService<Procedure> proceduresByName, String arrivalRunway, Predicate<Transition> keepTransition) {
     this.proceduresByName = requireNonNull(proceduresByName);
     this.arrivalRunway = arrivalRunway;
-    this.keepTransition = KeepTransition.of(requireNonNull(categoryAndType));
+    this.keepTransition = keepTransition;
   }
 
   @Override

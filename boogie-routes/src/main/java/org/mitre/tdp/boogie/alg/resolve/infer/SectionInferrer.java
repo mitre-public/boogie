@@ -3,13 +3,14 @@ package org.mitre.tdp.boogie.alg.resolve.infer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
@@ -47,11 +48,11 @@ public interface SectionInferrer {
    *
    * @param proceduresByName lookup service providing procedures indexed by their identifier (e.g. {@code CHPPR1, GNDLF2})
    * @param sid              the identifier of the SID to use
-   * @param categoryAndType the category and type for this expansion
+   * @param keepTransition the category and type for this expansion
    * @return the inferrer for this expansion
    */
-  static SectionInferrer defaultSid(LookupService<Procedure> proceduresByName, String sid, CategoryAndType categoryAndType) {
-    return new DefaultSidInferrer(proceduresByName, sid, categoryAndType);
+  static SectionInferrer defaultSid(LookupService<Procedure> proceduresByName, String sid, Predicate<Transition> keepTransition) {
+    return new DefaultSidInferrer(proceduresByName, sid, keepTransition);
   }
 
   /**
@@ -65,12 +66,12 @@ public interface SectionInferrer {
    * </ol>
    *
    * @param proceduresByName lookup service providing procedures indexed by their identifier (e.g. {@code CHPPR1, GNDLF2})
-   * @param star             star identifier of the STAR to use
-   * @param categoryAndType the category and type for this expansion
+   * @param star star identifier of the STAR to use
+   * @param keepTransition the category and type for this expansion
    * @return the inferrer for this expansion
    */
-  static SectionInferrer defaultStar(LookupService<Procedure> proceduresByName, String star, CategoryAndType categoryAndType) {
-    return new DefaultStarInferrer(proceduresByName, star, categoryAndType);
+  static SectionInferrer defaultStar(LookupService<Procedure> proceduresByName, String star, Predicate<Transition> keepTransition) {
+    return new DefaultStarInferrer(proceduresByName, star, keepTransition);
   }
 
   /**
@@ -79,11 +80,11 @@ public interface SectionInferrer {
    *
    * @param proceduresByName lookup service providing procedures indexed by their identifier (e.g. {@code CHPPR1, GNDLF2})
    * @param departureRunway  the identifier of the intended departure runway (e.g. {@code RW28L})
-   * @param categoryAndType the category and type for this expansion
+   * @param keepTransition the category and type for this expansion
    * @return the inferrer for this expansion
    */
-  static SectionInferrer sidRunwayTransition(LookupService<Procedure> proceduresByName, String departureRunway, CategoryAndType categoryAndType) {
-    return new SidRunwayTransitionInferrer(proceduresByName, departureRunway, categoryAndType);
+  static SectionInferrer sidRunwayTransition(LookupService<Procedure> proceduresByName, String departureRunway, Predicate<Transition> keepTransition) {
+    return new SidRunwayTransitionInferrer(proceduresByName, departureRunway, keepTransition);
   }
 
   /**
@@ -92,11 +93,11 @@ public interface SectionInferrer {
    *
    * @param proceduresByName lookup service providing procedures indexed by their identifier (e.g. {@code CHPPR1, GNDLF2})
    * @param arrivalRunway    the identifier of the intended departure runway (e.g. {@code RW28L})
-   * @param categoryAndType the category and type for this expansion
+   * @param keepTransition the category and type for this expansion
    * @return the inferrer for this expansion
    */
-  static SectionInferrer starRunwayTransition(LookupService<Procedure> proceduresByName, String arrivalRunway, CategoryAndType categoryAndType) {
-    return new StarRunwayTransitionInferrer(proceduresByName, arrivalRunway, categoryAndType);
+  static SectionInferrer starRunwayTransition(LookupService<Procedure> proceduresByName, String arrivalRunway, Predicate<Transition> keepTransition) {
+    return new StarRunwayTransitionInferrer(proceduresByName, arrivalRunway, keepTransition);
   }
 
   /**
@@ -104,13 +105,13 @@ public interface SectionInferrer {
    * preferences will search for an appropriate approach procedure to get from the STAR onto the runway.
    *
    * @param proceduresAtAirport lookup service providing procedures indexed by the airport they serve (e.g. {@code KATL})
-   * @param arrivalRunway       the arrival runway for the flight
-   * @param preferredEquipages  equipages for the approach in preference order
-   * @param categoryAndType the category and type for this expansion
+   * @param arrivalRunway the arrival runway for the flight
+   * @param preferredEquipages equipages for the approach in preference order
+   * @param keepTransition the category and type for this expansion
    * @return the inferrer for this expansion
    */
-  static SectionInferrer approach(LookupService<Procedure> proceduresAtAirport, String arrivalRunway, List<RequiredNavigationEquipage> preferredEquipages, CategoryAndType categoryAndType) {
-    return new ApproachInferrer(arrivalRunway, preferredEquipages, proceduresAtAirport, categoryAndType);
+  static SectionInferrer approach(LookupService<Procedure> proceduresAtAirport, String arrivalRunway, List<RequiredNavigationEquipage> preferredEquipages, Predicate<Transition> keepTransition) {
+    return new ApproachInferrer(arrivalRunway, preferredEquipages, proceduresAtAirport, keepTransition);
   }
 
   /**

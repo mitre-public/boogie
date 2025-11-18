@@ -3,10 +3,11 @@ package org.mitre.tdp.boogie.alg;
 import static java.util.Optional.ofNullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.CategoryAndType;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 
 /**
@@ -33,8 +34,8 @@ public interface RouteContext {
       }
 
       @Override
-      public CategoryAndType categoryAndType() {
-        return null;
+      public Predicate<Transition> keepTransition() {
+        return (t) -> true;
       }
     };
   }
@@ -68,7 +69,7 @@ public interface RouteContext {
    * The route will need to be expanded within the context of the category and type of the aircraft flying
    * @return the cat/type
    */
-  CategoryAndType categoryAndType();
+  Predicate<Transition> keepTransition();
 
   final class Standard {
 
@@ -86,7 +87,7 @@ public interface RouteContext {
 
     private List<RequiredNavigationEquipage> equipagePreference;
 
-    private CategoryAndType categoryAndType;
+    private Predicate<Transition> keepTransition;
 
     private Standard() {
     }
@@ -175,12 +176,12 @@ public interface RouteContext {
     }
 
     /**
-     *  Sets the category and type of this context
-     * @param categoryAndType the category/type information
+     * Sets the category and type of this context that will be kept in expansion
+     * @param keepTransition the category/type information
      * @return this builder
      */
-    public Standard categoryAndType(CategoryAndType categoryAndType) {
-      this.categoryAndType = categoryAndType;
+    public Standard keepTransition(Predicate<Transition> keepTransition) {
+      this.keepTransition = keepTransition;
       return this;
     }
 
@@ -190,7 +191,7 @@ public interface RouteContext {
      */
     private SectionInferrer defaultSid() {
       return ofNullable(defaultSid)
-          .map(sid -> SectionInferrer.defaultSid(proceduresByName, sid, categoryAndType))
+          .map(sid -> SectionInferrer.defaultSid(proceduresByName, sid, keepTransition))
           .orElseGet(SectionInferrer::noop);
     }
 
@@ -200,7 +201,7 @@ public interface RouteContext {
      */
     private SectionInferrer defaultStar() {
       return ofNullable(defaultStar)
-          .map(star -> SectionInferrer.defaultStar(proceduresByName, star, categoryAndType))
+          .map(star -> SectionInferrer.defaultStar(proceduresByName, star, keepTransition))
           .orElseGet(SectionInferrer::noop);
     }
 
@@ -210,7 +211,7 @@ public interface RouteContext {
      */
     private SectionInferrer sidRunwayTransition() {
       return ofNullable(departureRunway)
-          .map(runway -> SectionInferrer.sidRunwayTransition(proceduresByName, runway, categoryAndType))
+          .map(runway -> SectionInferrer.sidRunwayTransition(proceduresByName, runway, keepTransition))
           .orElseGet(SectionInferrer::noop);
     }
 
@@ -220,7 +221,7 @@ public interface RouteContext {
      */
     private SectionInferrer starRunwayTransition() {
       return ofNullable(arrivalRunway)
-          .map(runway -> SectionInferrer.starRunwayTransition(proceduresByName, runway, categoryAndType))
+          .map(runway -> SectionInferrer.starRunwayTransition(proceduresByName, runway, keepTransition))
           .orElseGet(SectionInferrer::noop);
     }
 
@@ -232,7 +233,7 @@ public interface RouteContext {
       return ofNullable(equipagePreference)
           .filter(e -> !e.isEmpty())
           .filter(e -> arrivalRunway != null)
-          .map(equipages -> SectionInferrer.approach(proceduresByAirport, arrivalRunway, equipages, categoryAndType))
+          .map(equipages -> SectionInferrer.approach(proceduresByAirport, arrivalRunway, equipages, keepTransition))
           .orElseGet(SectionInferrer::noop);
     }
 
@@ -244,8 +245,8 @@ public interface RouteContext {
         }
 
         @Override
-        public CategoryAndType categoryAndType() {
-          return categoryAndType;
+        public Predicate<Transition> keepTransition() {
+          return keepTransition;
         }
       };
     }

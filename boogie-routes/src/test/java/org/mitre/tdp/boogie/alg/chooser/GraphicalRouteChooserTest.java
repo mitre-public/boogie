@@ -19,7 +19,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MockObjects;
@@ -63,7 +62,7 @@ class GraphicalRouteChooserTest {
 
   @Test
   void testShortestPath() {
-    List<ResolvedLeg> legs = split().andThen(i -> apfResolver().applyTo(i, CategoryAndType.NULL)).andThen(routeChooser::chooseRoute)
+    List<ResolvedLeg> legs = split().andThen(i -> apfResolver().applyTo(i, (t) -> true)).andThen(routeChooser::chooseRoute)
         .apply("KIND.BLSTR1.VNY");
 
     String message = "Check initiation point of leg graph shortest path or the comparator for subsequent paths.";
@@ -96,7 +95,7 @@ class GraphicalRouteChooserTest {
   }
 
   private SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> toGraph(String route) {
-    List<ResolvedTokens> resolvedTokens = split().andThen(i -> apfResolver().applyTo(i, CategoryAndType.NULL)).apply(route);
+    List<ResolvedTokens> resolvedTokens = split().andThen(i -> apfResolver().applyTo(i, (t) -> true)).apply(route);
     return routeChooser.constructRouteGraph(routeChooser.toLinkableTokens(resolvedTokens));
   }
 

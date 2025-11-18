@@ -9,13 +9,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.LookupService;
-import org.mitre.tdp.boogie.alg.resolve.infer.KeepTransition;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
 
@@ -171,8 +176,7 @@ public interface RouteTokenResolver {
    */
   ResolvedTokens resolve(@Nullable RouteToken previous, RouteToken current, @Nullable RouteToken next);
 
-  default List<ResolvedTokens> applyTo(List<RouteToken> sectionSplits, CategoryAndType categoryAndType) {
-    KeepTransition keepTransition = KeepTransition.of(categoryAndType);
+  default List<ResolvedTokens> applyTo(List<RouteToken> sectionSplits, Predicate<Transition> keepTransition) {
     return triplesWithNulls(sectionSplits, this::resolve)
         .map(token -> thinAll(token, keepTransition))
         .toList();
@@ -184,14 +188,14 @@ public interface RouteTokenResolver {
    * @param keepTransition the predicate for keeping a transition
    * @return a thinned or not token
    */
-  default ResolvedTokens thinAll(ResolvedTokens tokens, KeepTransition keepTransition) {
+  default ResolvedTokens thinAll(ResolvedTokens tokens, Predicate<Transition> keepTransition) {
     List<ResolvedToken> list = tokens.resolvedTokens().stream()
         .map(token -> thin(token, keepTransition))
         .toList();
     return new ResolvedTokens(tokens.routeToken(), list);
   }
 
-  default ResolvedToken thin(ResolvedToken token, KeepTransition keepTransition) {
+  default ResolvedToken thin(ResolvedToken token, Predicate<Transition> keepTransition) {
     Optional<ResolvedToken> sid = ResolvedTokenVisitor.sid(token).map(i -> Procedure.maskTransitions(i,keepTransition.negate())).map(ResolvedToken::sidEnrouteCommon);
     Supplier<Optional<ResolvedToken>> star = () -> ResolvedTokenVisitor.star(token).map(i -> Procedure.maskTransitions(i,keepTransition.negate())).map(i -> (ResolvedToken) ResolvedToken.starEnrouteCommon(i));
     return sid.or(star).orElse(token);

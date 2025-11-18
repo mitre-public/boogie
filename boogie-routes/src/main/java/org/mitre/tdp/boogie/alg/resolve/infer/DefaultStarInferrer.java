@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -25,12 +24,12 @@ final class DefaultStarInferrer implements SectionInferrer {
 
   private final String star;
 
-  private final KeepTransition keepTransition;
+  private final Predicate<Transition> keepTransition;
 
-  DefaultStarInferrer(LookupService<Procedure> proceduresByName, String star, CategoryAndType categoryAndType) {
+  DefaultStarInferrer(LookupService<Procedure> proceduresByName, String star, Predicate<Transition> keepTransition) {
     this.proceduresByName = requireNonNull(proceduresByName);
     this.star = requireNonNull(star);
-    this.keepTransition = KeepTransition.of(requireNonNull(categoryAndType));
+    this.keepTransition = keepTransition;
   }
 
   @Override

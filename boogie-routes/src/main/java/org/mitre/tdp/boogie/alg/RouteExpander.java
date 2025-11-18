@@ -7,9 +7,7 @@ import static java.util.stream.Collectors.joining;
 import static org.mitre.caasd.commons.collect.HashedLinkedSequence.newHashedLinkedSequence;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.collect.HashedLinkedSequence;
 import org.mitre.tdp.boogie.alg.chooser.RouteChooser;
@@ -21,7 +19,6 @@ import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.resolve.infer.SectionInferrer;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
 import org.mitre.tdp.boogie.alg.split.RouteTokenizer;
-import org.mitre.tdp.boogie.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +94,7 @@ public interface RouteExpander {
 
       List<RouteToken> routeTokens = logRouteTokens(routeTokenizer.tokenize(route));
 
-      HashedLinkedSequence<ResolvedTokens> resolvedTokens = newHashedLinkedSequence(routeTokenResolver.applyTo(routeTokens, context.categoryAndType()));
+      HashedLinkedSequence<ResolvedTokens> resolvedTokens = newHashedLinkedSequence(routeTokenResolver.applyTo(routeTokens, context.keepTransition()));
 
       context.inferrers().forEach(inferrer -> appendInferredSections(resolvedTokens, inferrer));
 

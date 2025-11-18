@@ -15,7 +15,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.CategoryAndType;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
@@ -39,16 +38,16 @@ final class ApproachInferrer implements SectionInferrer {
   private final String arrivalRunway;
   private final Function<Collection<Procedure>, Collection<Procedure>> equippedProcedures;
   private final LookupService<Procedure> proceduresByAirport;
-  private final KeepTransition keepTransition;
+  private final Predicate<Transition> keepTransition;
 
-  ApproachInferrer(String arrivalRunway, List<RequiredNavigationEquipage> requiredNavigationEquipages, LookupService<Procedure> proceduresByAirport, CategoryAndType categoryAndType) {
+  ApproachInferrer(String arrivalRunway, List<RequiredNavigationEquipage> requiredNavigationEquipages, LookupService<Procedure> proceduresByAirport, Predicate<Transition> keepTransition) {
     this.arrivalRunway = requireNonNull(arrivalRunway);
     this.equippedProcedures = PreferredProcedures.equipagePreference(requiredNavigationEquipages);
     this.proceduresByAirport = requireNonNull(proceduresByAirport)
         .filtered(procedure -> ProcedureType.APPROACH.equals(procedure.procedureType()))
         // mask the missed-approach portions of the approach procedure
         .transformed(procedure -> procedure.stream().map(p -> Procedure.maskTransitions(p, MISSED)).collect(toList()));
-    this.keepTransition = KeepTransition.of(categoryAndType);
+    this.keepTransition = keepTransition;
   }
 
   @Override
