@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * designation is based on the route type/qualifier designation of that transition (the ENROUTE/RUNWAY transitions may have diff
  * designations).
  */
-final class RouteTypeEquipageClassifier implements Function<ArincProcedureLeg, Optional<RequiredNavigationEquipage>> {
+public final class RouteTypeEquipageClassifier implements Function<ArincProcedureLeg, Optional<RequiredNavigationEquipage>> {
   private static final Logger log = LoggerFactory.getLogger(RouteTypeEquipageClassifier.class);
 
   private boolean requiresRnpEquip(ArincRouteType rt, @Nullable ArincRouteQualifier q1, @Nullable ArincRouteQualifier q2) {

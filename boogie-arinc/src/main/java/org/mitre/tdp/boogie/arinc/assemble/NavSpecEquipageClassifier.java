@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
  * This approach to classifying a procedure works by checking to see if the route qualifier 3 is there, if so use it.
  * If not check the route type to see if this is conventional.
  */
-final class NavSpecEquipageClassifier implements Function<ArincProcedureLeg, Optional<RequiredNavigationEquipage>> {
+public final class NavSpecEquipageClassifier implements Function<ArincProcedureLeg, Optional<RequiredNavigationEquipage>> {
   /**
    * The set of concatenated {subSectionCode, routeType} pairs indicating the procedure has {@link RequiredNavigationEquipage#CONV}.
    */
