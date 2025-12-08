@@ -14,20 +14,14 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import com.google.common.base.Joiner;
 
-public class TestHoldingPatternValidator {
+public class TestHeliportValidator {
+  static HeliportValidator validator =  new HeliportValidator();
 
-  private static final HoldingPatternValidator VALIDATOR = new HoldingPatternValidator();
 
   @Test
   void testIsCorrectSectionSubSection() {
-    ArincRecord record = newArincRecord("EP");
-    assertTrue(HoldingPatternValidator.isCorrectSectionSubSection(record), "If we can't get this right, we are doomed");
-  }
-
-  @Test
-  void testBasicsAreThere() {
-    ArincRecord record = newArincRecord("fixIdentifier", "turnDirection", "inboundHoldingCourse");
-    assertTrue(VALIDATOR.test(record));
+    ArincRecord record = newArincRecord("latitude", "longitude", "heliportIdentifier", "heliportIcaoRegion");
+    assertTrue(validator.test(record), "If we can't get this right, we are doomed");
   }
 
 
@@ -36,8 +30,8 @@ public class TestHoldingPatternValidator {
     when(presentOptional.isPresent()).thenReturn(true);
 
     ArincRecord record = mock(ArincRecord.class);
-    when(record.optionalField(eq("sectionCode"))).thenReturn(Optional.of(SectionCode.E));
-    when(record.optionalField(eq("subSectionCode"))).thenReturn(Optional.of("P"));
+    when(record.optionalField(eq("sectionCode"))).thenReturn(Optional.of(SectionCode.H));
+    when(record.optionalField(eq("subSectionCode"))).thenReturn(Optional.of("A"));
     when(record.optionalField(matches(Joiner.on("|").join(fields)))).thenReturn(presentOptional);
     return record;
   }
