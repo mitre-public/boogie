@@ -72,7 +72,7 @@ import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
 import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
-class TestCifpProcedureAssembler {
+class TestV19ProcedureAssembler {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 

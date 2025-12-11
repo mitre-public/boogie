@@ -93,6 +93,29 @@ public class TestHeliportAssembler {
         () -> assertEquals(-74.00743611111112, heliport.longitude())
     );
   }
+  /**
+   * The way these used to be is really bad feeling but this is how we go.
+   * The main issues is that this prevents the HA record from being used directly as a fix
+   * .... which they are not in -19 (restriction) so its ok.
+   */
+  @Test
+  void test50MS() {
+    List<Heliport> ports = arincTerminalAreaDatabase19.heliports("50MS").stream()
+        .map(assembler19::assemble)
+        .toList();
+    Heliport heliport = ports.get(0);
+    Heliport heliport2 = ports.get(1);
+    Map<String, Helipad> helipads = heliport.helipads().stream().collect(Collectors.toMap(Helipad::padIdentifier, Function.identity()));
+    Map<String, Helipad> helipads2 = heliport2.helipads().stream().collect(Collectors.toMap(Helipad::padIdentifier, Function.identity()));
+
+    assertAll("Making it explicit that we have duplicate (by ident) heliports because of pads being included",
+        () -> assertEquals("50MS", heliport.heliportIdentifier(), "Has the name"),
+        () -> assertEquals("50MS", heliport2.heliportIdentifier(), "has the name"),
+        () -> assertNotEquals(heliport, heliport2, "BUT NOT THE SAME OBJECT OR VALUE"),
+        () -> assertEquals("H1", helipads.get("H1").padIdentifier()),
+        () -> assertEquals("H2", helipads2.get("H2").padIdentifier())
+    );
+  }
 
   /**
    * Because the later versions of 424 have pads to integrate we need to test data that follows that scheme as well.
@@ -121,27 +144,4 @@ public class TestHeliportAssembler {
     );
   }
 
-  /**
-   * The way these used to be is really bad feeling but this is how we go.
-   * The main issues is that this prevents the HA record from being used directly as a fix
-   * .... which they are not in -19 (restriction) so its ok.
-   */
-  @Test
-  void test50MS() {
-    List<Heliport> ports = arincTerminalAreaDatabase19.heliports("50MS").stream()
-        .map(assembler19::assemble)
-        .toList();
-    Heliport heliport = ports.get(0);
-    Heliport heliport2 = ports.get(1);
-    Map<String, Helipad> helipads = heliport.helipads().stream().collect(Collectors.toMap(Helipad::padIdentifier, Function.identity()));
-    Map<String, Helipad> helipads2 = heliport2.helipads().stream().collect(Collectors.toMap(Helipad::padIdentifier, Function.identity()));
-
-    assertAll("Making it explicit that we have duplicate (by ident) heliports because of pads being included",
-        () -> assertEquals("50MS", heliport.heliportIdentifier(), "Has the name"),
-        () -> assertEquals("50MS", heliport2.heliportIdentifier(), "has the name"),
-        () -> assertNotEquals(heliport, heliport2, "BUT NOT THE SAME OBJECT OR VALUE"),
-        () -> assertEquals("H1", helipads.get("H1").padIdentifier()),
-        () -> assertEquals("H2", helipads2.get("H2").padIdentifier())
-    );
-  }
 }

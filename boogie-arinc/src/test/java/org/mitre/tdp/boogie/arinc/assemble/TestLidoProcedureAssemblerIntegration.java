@@ -75,7 +75,7 @@ public class TestLidoProcedureAssemblerIntegration {
 
   @Test
   void testGlobalProcedureCountIsAccurate() {
-    assertEquals(100716L, proceduresByAirport.values().stream().mapToLong(Collection::size).sum(), "This is less about the exact number and more about being able to parse/assemble without breaking.");
+    assertEquals(101085L, proceduresByAirport.values().stream().mapToLong(Collection::size).sum(), "This is less about the exact number and more about being able to parse/assemble without breaking.");
   }
 
   @Test
@@ -89,7 +89,8 @@ public class TestLidoProcedureAssemblerIntegration {
         () -> assertEquals(101, proceduresByAirport.get("WSSS").size(), "WSSS counts"),
         () -> assertEquals(64, proceduresByAirport.get("EDDH").size(), "EDDH counts"),
         () -> assertEquals(43, proceduresByAirport.get("SBGL").size(), "SBGL counts"),
-        () -> assertEquals(57, proceduresByAirport.get("GQNO").size(), "GQNO counts")
+        () -> assertEquals(57, proceduresByAirport.get("GQNO").size(), "GQNO counts"),
+        () -> assertEquals(1, proceduresByAirport.get("KJRA").size(), "KJRA (heliport) counts")
     );
   }
 
