@@ -77,7 +77,7 @@ public final class WaypointSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return (arincRecord.regionMatches(4, "EA", 0, 2) || (arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'C'))
+    return (arincRecord.regionMatches(4, "EA", 0, 2) || (arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'C') || (arincRecord.charAt(4) == 'H' && arincRecord.charAt(12) == 'C'))
         && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
   }
 }

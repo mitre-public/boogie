@@ -7,12 +7,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.AiracCycle;
+import org.mitre.tdp.boogie.Declinations;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -76,6 +78,14 @@ public interface FixAssemblyStrategy<F> {
    * @param airport input 424 airport record
    */
   F convertAirport(ArincAirport airport);
+
+  /**
+   * Converts the incoming 424 heliport record into a user-defined type. It's not uncommon to see an airport reference point used
+   * as the origin point of a {@link PathTerminator#FM} leg.
+   *
+   * @param heliport input 424 airport record
+   */
+  F convertHeliport(ArincHeliport heliport);
 
   /**
    * Converts the incoming 424 runway record into the user-defined type. It's not uncommon to see runways used as center fixes of
@@ -154,6 +164,20 @@ public interface FixAssemblyStrategy<F> {
           .fixIdentifier(navaid.vhfIdentifier())
           .latLong(LatLong.of(navaid.latitude(), navaid.longitude()))
           .magneticVariation(MagneticVariation.from(navaid.latitude(), navaid.longitude(), cycleDate))
+          .build();
+    }
+
+    @Override
+    public Fix convertHeliport(ArincHeliport heliport) {
+      Double magneticVariation = heliport.magneticVariation()
+          .or(() -> heliport.cycleDate().map(AiracCycle::startDate).map(i -> Declinations.declination(heliport.latitude(), heliport.longitude(), i)))
+          .orElseGet(() -> Declinations.approx(heliport.latitude(), heliport.longitude()));
+      MagneticVariation mv = MagneticVariation.ofDegrees(magneticVariation);
+
+      return Fix.builder()
+          .fixIdentifier(heliport.heliportIdentifier())
+          .latLong(LatLong.of(heliport.latitude(), heliport.longitude()))
+          .magneticVariation(mv)
           .build();
     }
 
@@ -258,6 +282,11 @@ public interface FixAssemblyStrategy<F> {
     @Override
     public F convertAirport(ArincAirport airport) {
       return cache.computeIfAbsent(airport, a -> delegate.convertAirport((ArincAirport) a));
+    }
+
+    @Override
+    public F convertHeliport(ArincHeliport heliport) {
+      return cache.computeIfAbsent(heliport, a -> delegate.convertHeliport((ArincHeliport) a));
     }
 
     @Override

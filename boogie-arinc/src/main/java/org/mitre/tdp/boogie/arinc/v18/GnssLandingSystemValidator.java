@@ -44,6 +44,7 @@ public final class GnssLandingSystemValidator implements Predicate<ArincRecord> 
   boolean isCorrectSectionSubSection(ArincRecord arincRecord) {
     Optional<SectionCode> sectionCode = arincRecord.optionalField("sectionCode");
     Optional<String> subSectionCode = arincRecord.optionalField("subSectionCode");
-    return sectionCode.filter(SectionCode.P::equals).isPresent() && subSectionCode.filter("T"::equals).isPresent();
+    return (sectionCode.filter(SectionCode.P::equals).isPresent() || sectionCode.filter(SectionCode.H::equals).isPresent())
+        && subSectionCode.filter("T"::equals).isPresent();
   }
 }

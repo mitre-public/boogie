@@ -59,12 +59,13 @@ public final class ProcedureLegValidator implements Predicate<ArincRecord> {
   }
 
   private static final Set<String> allowedSubsections = newHashSet("D", "E", "F");
+  private static final Set<SectionCode> allowedSections = newHashSet(SectionCode.P, SectionCode.H);
 
   boolean isCorrectSectionSubSection(ArincRecord arincRecord) {
     Optional<SectionCode> sectionCode = arincRecord.optionalField("sectionCode");
     Optional<String> subSectionCode = arincRecord.optionalField("subSectionCode");
 
-    return sectionCode.filter(SectionCode.P::equals).isPresent() && subSectionCode.filter(allowedSubsections::contains).isPresent();
+    return sectionCode.filter(allowedSections::contains).isPresent() && subSectionCode.filter(allowedSubsections::contains).isPresent();
   }
 
   Predicate<ArincRecord> legTypeValidator(ArincRecord arincRecord) {

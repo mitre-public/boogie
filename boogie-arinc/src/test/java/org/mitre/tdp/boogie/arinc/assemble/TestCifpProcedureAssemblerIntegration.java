@@ -57,7 +57,8 @@ class TestCifpProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincProcedureLegs(),
         EmbeddedCifpFile.instance().arincGnssLandingSystems(),
-        Collections.emptySet()
+        Collections.emptySet(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
 
     ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
@@ -65,7 +66,8 @@ class TestCifpProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincAirports(),
-        EmbeddedCifpFile.instance().arincHoldingPatterns()
+        EmbeddedCifpFile.instance().arincHoldingPatterns(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
 
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.withStrategy(

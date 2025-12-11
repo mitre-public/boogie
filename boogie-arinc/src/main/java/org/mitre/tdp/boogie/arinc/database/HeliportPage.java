@@ -4,47 +4,43 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
+import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 
 /**
- * Represents a page of structured ARINC 424 data related to an {@link ArincAirport}.
+ * Represents a page of structured ARINC 424 data related to an {@link ArincHeliport}.
  */
-final class AirportPage {
+final class HeliportPage {
 
-  private final ArincAirport airport;
-  private final Map<String, RunwayPage> runwayPages;
+  private final ArincHeliport airport;
   private final Map<String, HelipadPage> helipadPages;
   private final SupportingPage supportingPage;
 
-  AirportPage(
-      ArincAirport airport,
-      Map<String, RunwayPage> runwayPages,
+  HeliportPage(
+      ArincHeliport airport,
       Map<String, HelipadPage> helipadPages,
       SupportingPage supportingPage
   ) {
     this.airport = requireNonNull(airport);
-    this.runwayPages = runwayPages;
     this.helipadPages = helipadPages;
     this.supportingPage = supportingPage;
   }
 
-  public ArincAirport airport() {
+  public ArincHeliport airport() {
     return airport;
-  }
-
-  public Collection<ArincRunway> runways() {
-    return runwayPages.values().stream().map(RunwayPage::runway).collect(Collectors.toCollection(LinkedHashSet::new));
-  }
-
-  public Optional<ArincRunway> runway(String identifier) {
-    return Optional.ofNullable(runwayPages.get(identifier)).map(RunwayPage::runway);
   }
 
   public Collection<ArincHelipad> helipads() {
@@ -56,16 +52,7 @@ final class AirportPage {
   }
 
   public Optional<ArincLocalizerGlideSlope> localizerGlideSlope(String identifier) {
-    return Optional.ofNullable(runwayLocalizerGlideSlopes().get(identifier))
-        .or(() -> Optional.ofNullable(helipadLocalizerGlideSlopes().get(identifier)));
-  }
-
-  public Map<String, ArincLocalizerGlideSlope> runwayLocalizerGlideSlopes() {
-    return runwayPages.values().stream()
-        .flatMap(page -> Stream.of(page.primaryLocalizerGlideSlope(), page.secondaryLocalizerGlideSlope()))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toMap(ArincLocalizerGlideSlope::localizerIdentifier, Function.identity(), (f,s) -> f));
+    return Optional.ofNullable(helipadLocalizerGlideSlopes().get(identifier));
   }
 
   public Map<String, ArincLocalizerGlideSlope> helipadLocalizerGlideSlopes() {
@@ -77,15 +64,7 @@ final class AirportPage {
   }
 
   public Optional<ArincGnssLandingSystem> gnssLandingSystem(String identifier) {
-    return Optional.ofNullable(runwayGnssLandingSystems().get(identifier))
-        .or(() -> Optional.ofNullable(helipadGnssLandingSystems().get(identifier)));
-  }
-
-  public Map<String, ArincGnssLandingSystem> runwayGnssLandingSystems() {
-    return runwayPages.values().stream()
-        .map(RunwayPage::gnssLandingSystem)
-        .flatMap(Collection::stream)
-        .collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity(), (f,s) -> f));
+    return Optional.ofNullable(helipadGnssLandingSystems().get(identifier));
   }
 
   public Map<String, ArincGnssLandingSystem> helipadGnssLandingSystems() {
@@ -93,14 +72,6 @@ final class AirportPage {
         .map(HelipadPage::gnssLandingSystem)
         .flatMap(Collection::stream)
         .collect(Collectors.toMap(ArincGnssLandingSystem::glsRefPathIdentifier, Function.identity(), (f,s) -> f));
-  }
-
-  public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeForRunway(String runwayId) {
-    return Optional.ofNullable(runwayPages.get(runwayId)).flatMap(RunwayPage::primaryLocalizerGlideSlope);
-  }
-
-  public Optional<ArincLocalizerGlideSlope> secondaryLocalizerGlideSlopeForRunway(String runwayId) {
-    return Optional.ofNullable(runwayPages.get(runwayId)).flatMap(RunwayPage::secondaryLocalizerGlideSlope);
   }
 
   public Optional<ArincLocalizerGlideSlope> primaryLocalizerGlideSlopeForHelipad(String id) {

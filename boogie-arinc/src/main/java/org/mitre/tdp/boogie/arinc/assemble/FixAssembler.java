@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincModel;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -54,6 +55,7 @@ public interface FixAssembler<F> {
       return switch (sectionSubSection) {
         // airports
         case "PA" -> strategy.convertAirport((ArincAirport) arincModel);
+        case "HA" -> strategy.convertHeliport((ArincHeliport)  arincModel);
         // Enroute NDB Navaids
         case "DB" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
         // Terminal NDB Navaids
@@ -63,15 +65,14 @@ public interface FixAssembler<F> {
         // Enroute waypoints
         case "EA" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
         // Terminal waypoints
-        case "PC" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
+        case "PC", "HC" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
         // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
         case "PG" -> strategy.convertRunway((ArincRunway) arincModel);
         // localizerGlideSlopes - generally used as a recommended navaid on some approaches
-        case "PI" -> strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
+        case "PI", "HI" -> strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
         //gnss landing systems - usually used on gls approach or as rec navs rarely
-        case "PT" -> strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
-        case "PH" -> //helipads at airports
-            strategy.convertHelipad((ArincHelipad) arincModel);
+        case "PT", "HT" -> strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
+        case "PH", "HH" -> strategy.convertHelipad((ArincHelipad) arincModel);
         // anything else is not explicitly supported as a reference object in a leg
         default -> throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
       };

@@ -32,7 +32,8 @@ public class TestLidoControlledAirspaceAssembler {
         consumer22.arincVhfNavaids(),
         consumer22.arincWaypoints(),
         consumer22.arincAirports(),
-        consumer22.arincHoldingPatterns()
+        consumer22.arincHoldingPatterns(),
+        consumer22.arincHeliports()
     );
 
     assembler22 = ControlledAirspaceAssembler.standard(arincFixDatabase22);

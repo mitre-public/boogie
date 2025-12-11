@@ -77,5 +77,5 @@ public final class HelipadSpec implements RecordSpec {
     return sectionSubSections.contains(sectionSubsection);
   }
 
-  private static final Set<String> sectionSubSections = Set.of("PH"); //leaving it like this so easier to add heliports
+  private static final Set<String> sectionSubSections = Set.of("PH", "HH");
 }

@@ -50,7 +50,8 @@ public class TestLidoProcedureAssemblerIntegration {
         EmbeddedLidoFile.instance().arincWaypoints(),
         EmbeddedLidoFile.instance().arincProcedureLegs(),
         EmbeddedLidoFile.instance().arincGnssLandingSystems(),
-        EmbeddedLidoFile.instance().arincHelipads()
+        EmbeddedLidoFile.instance().arincHelipads(),
+        EmbeddedLidoFile.instance().arincHeliports()
     );
 
     ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
@@ -58,7 +59,8 @@ public class TestLidoProcedureAssemblerIntegration {
         EmbeddedLidoFile.instance().arincVhfNavaids(),
         EmbeddedLidoFile.instance().arincWaypoints(),
         EmbeddedLidoFile.instance().arincAirports(),
-        EmbeddedLidoFile.instance().arincHoldingPatterns()
+        EmbeddedLidoFile.instance().arincHoldingPatterns(),
+        EmbeddedLidoFile.instance().arincHeliports()
     );
 
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.withStrategy(

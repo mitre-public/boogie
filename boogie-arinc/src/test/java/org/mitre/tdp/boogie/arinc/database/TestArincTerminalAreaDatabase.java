@@ -40,8 +40,14 @@ class TestArincTerminalAreaDatabase {
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincProcedureLegs(),
         testV18Consumer.arincGnssLandingSystems(),
-        testV18Consumer.arincHelipads()
+        testV18Consumer.arincHelipads(),
+        testV18Consumer.arincHeliports()
     );
+  }
+
+  @Test
+  void heliports() {
+    fail();
   }
 
   @Test
@@ -146,7 +152,8 @@ class TestArincTerminalAreaDatabase {
       new RunwaySpec(),
       new VhfNavaidSpec(),
       new WaypointSpec(),
-      new HelipadSpec() //not really v18 but will be ok with the default consumer
+      new HelipadSpec(), //not really v18 but will be ok with the default consumer
+      new HeliportSpec()
   );
 
   /**
@@ -183,5 +190,7 @@ class TestArincTerminalAreaDatabase {
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .headerDelegator(new Header01Validator())
       .headerConverter(new Header01Converter())
+      .heliportConverter(new HeliportConverter())
+      .heliportDelegator(new HeliportValidator())
       .build();
 }

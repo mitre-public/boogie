@@ -45,7 +45,8 @@ class TestAirportAssemblerIntegration {
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincProcedureLegs(),
         EmbeddedCifpFile.instance().arincGnssLandingSystems(),
-        Collections.emptySet()
+        Collections.emptySet(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
 
     AirportAssembler<Airport> assembler = AirportAssembler.standard(arincTerminalAreaDatabase);

@@ -15,6 +15,7 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
 import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -22,6 +23,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +63,8 @@ public final class ArincDatabaseFactory {
       Collection<ArincVhfNavaid> vhfNavaids,
       Collection<ArincWaypoint> waypoints,
       Collection<ArincAirport> airports,
-      Collection<ArincHoldingPattern> holdingPatterns) {
+      Collection<ArincHoldingPattern> holdingPatterns,
+      Collection<ArincHeliport> heliports) {
 
     LinkedHashMultimap<ArincKey, Object> lookup = LinkedHashMultimap.create();
 
@@ -80,11 +83,14 @@ public final class ArincDatabaseFactory {
     LOG.debug("Indexing {} Holding Patterns in the FixDatabase.", airports.size());
     holdingPatterns.forEach(arincHoldingPattern -> lookup.put(holdingToHoldingIndex.apply(arincHoldingPattern), arincHoldingPattern));
 
+    LOG.debug("Indexing {} Heliports in the FixDatabase.", heliports.size());
+    heliports.forEach(arincHeliport -> lookup.put(heliportToFixIndex.apply(arincHeliport), arincHeliport));
+
     return new ArincFixDatabase(lookup);
   }
 
   public static ArincTerminalAreaDatabase emptyTerminalAreaDatabase() {
-    return new ArincTerminalAreaDatabase(LinkedHashMultimap.create());
+    return new ArincTerminalAreaDatabase(LinkedHashMultimap.create(), LinkedHashMultimap.create());
   }
 
   /**
@@ -100,95 +106,151 @@ public final class ArincDatabaseFactory {
       Collection<ArincWaypoint> waypoints,
       Collection<ArincProcedureLeg> procedureLegs,
       Collection<ArincGnssLandingSystem> gnssLandingSystems,
-      Collection<ArincHelipad> helipads) {
+      Collection<ArincHelipad> helipads,
+      Collection<ArincHeliport> heliports) {
 
-    LinkedHashMultimap<Pair<String, String>, AirportPage> lookup = LinkedHashMultimap.create();
+    LinkedHashMultimap<Pair<String, String>, AirportPage> airportLookup = LinkedHashMultimap.create();
+    LinkedHashMultimap<Pair<String, String>, HeliportPage> heliportLookup = LinkedHashMultimap.create();
 
     Map<Pair<String, String>, List<ArincRunway>> runwayMap = runways.stream().collect(Collectors.groupingBy(runwayToAirportIndex));
     Map<Pair<String, String>, List<ArincLocalizerGlideSlope>> localizerMap = localizerGlideSlopes.stream().collect(Collectors.groupingBy(localizerGlideSlopeToAirportIndex));
+    LOG.debug("Indexing {} NDB Navaids in the ArincTerminalAreaDatabase.", ndbNavaids.size());
     Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap = ndbNavaids.stream().collect(Collectors.groupingBy(ndbNavaidToAirportIndex));
+    LOG.debug("Indexing {} VHF Navaids in the ArincTerminalAreaDatabase.", vhfNavaids.size());
     Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap = vhfNavaids.stream().collect(Collectors.groupingBy(vhfNavaidToAirportIndex));
-    Map<Pair<String, String>, List<ArincWaypoint>> waypointMap = waypoints.stream().collect(Collectors.groupingBy(waypointToAirportIndex));
+    LOG.debug("Indexing {} Waypoints in the ArincTerminalAreaDatabase.", waypoints.size());
+    Map<Pair<String, String>, List<ArincWaypoint>> waypointMap = waypoints.stream()
+        .filter(w -> SectionCode.P.equals(w.sectionCode()) || SectionCode.H.equals(w.sectionCode()))
+        .collect(Collectors.groupingBy(waypointToAirportIndex));
+    LOG.debug("Indexing {} Procedure Legs in the ArincTerminalAreaDatabase.", procedureLegs.size());
     Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap = procedureLegs.stream().collect(Collectors.groupingBy(procedureLegToAirportIndex));
+    LOG.debug("Indexing {} Gnss Landing Systems in the ArincTerminalAreaDatabase.", gnssLandingSystems.size());
     Map<Pair<String, String>, List<ArincGnssLandingSystem>> gnssLandingSystemMap = gnssLandingSystems.stream().collect(Collectors.groupingBy(gnssLandingSystemToAirportIndex));
+    LOG.debug("Indexing {} Helipads in the ArincTerminalAreaDatabase.", gnssLandingSystems.size());
     Map<Pair<String, String>, List<ArincHelipad>> helipadMap = helipads.stream().collect(Collectors.groupingBy(helipadToAirportIndex));
-    //airport and region for gls
-    airports.forEach(airport -> {
-      Pair<String, String> index = airportToAirportIndex.apply(airport); //name and region
 
-      Map<String, List<ArincProcedureLeg>> plm = procedureLegMap.getOrDefault(index, emptyList()).stream()
-          .collect(Collectors.groupingBy(ArincProcedureLeg::sidStarIdentifier));
+    LOG.debug("Indexing {} Airports in the ArincTerminalAreaDatabase.", airports.size());
+    airports.forEach(airport -> airportPage(runwayMap, localizerMap, ndbNavaidMap, vhfNavaidMap, waypointMap, procedureLegMap, gnssLandingSystemMap, helipadMap, airport, airportLookup));
+    LOG.debug("Indexing {} Heliports in the ArincTerminalAreaDatabase.", heliports.size());
+    heliports.forEach(heliport -> heliportPage(localizerMap, ndbNavaidMap, vhfNavaidMap, waypointMap, procedureLegMap, gnssLandingSystemMap, helipadMap, heliport, heliportLookup));
 
-      // apply some nice-to-have sorting to the entries in the internal structure
-      plm.keySet().forEach(key -> plm.computeIfPresent(key, (k, list) -> list.stream().sorted(procedureLegComparator).collect(Collectors.toList())));
+    return new ArincTerminalAreaDatabase(airportLookup, heliportLookup);
+  }
 
-      Map<String, ArincWaypoint> wm = waypointMap.getOrDefault(index, emptyList()).stream()
-          .collect(Collectors.toMap(ArincWaypoint::waypointIdentifier, Function.identity()));
+  private static void airportPage(Map<Pair<String, String>, List<ArincRunway>> runwayMap,
+      Map<Pair<String, String>, List<ArincLocalizerGlideSlope>> localizerMap,
+      Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap,
+      Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap,
+      Map<Pair<String, String>, List<ArincWaypoint>> waypointMap,
+      Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap,
+      Map<Pair<String, String>, List<ArincGnssLandingSystem>> gnssLandingSystemMap,
+      Map<Pair<String, String>, List<ArincHelipad>> helipadMap,
+      ArincAirport airport,
+      LinkedHashMultimap<Pair<String, String>, AirportPage> airportLookup
+  ) {
+    Pair<String, String> index = airportToAirportIndex.apply(airport); //name and region
 
-      Map<String, ArincNdbNavaid> nm = ndbNavaidMap.getOrDefault(index, emptyList()).stream()
-          .collect(Collectors.toMap(ArincNdbNavaid::ndbIdentifier, Function.identity()));
+    Map<Pair<String, String>, ArincLocalizerGlideSlope> lgm = localizerMap.getOrDefault(index, emptyList()).stream()
+        .collect(Collectors.toMap(lgs -> Pair.of(lgs.runwayIdentifier(), lgs.localizerIdentifier()), Function.identity()));
 
-      Map<String, ArincVhfNavaid> vm = vhfNavaidMap.getOrDefault(index, emptyList()).stream()
-          .collect(Collectors.toMap(ArincVhfNavaid::vhfIdentifier, Function.identity()));
+    Multimap<String, ArincGnssLandingSystem> gm = Multimaps.index(gnssLandingSystemMap.getOrDefault(index, emptyList()), ArincGnssLandingSystem::runwayIdentifier);
 
-      Map<Pair<String, String>, ArincLocalizerGlideSlope> lgm = localizerMap.getOrDefault(index, emptyList()).stream()
-          .collect(Collectors.toMap(lgs -> Pair.of(lgs.runwayIdentifier(), lgs.localizerIdentifier()), Function.identity()));
+    Map<String, RunwayPage> rm = new HashMap<>();
+    runwayMap.getOrDefault(index, emptyList()).forEach(runway -> {
 
-      Multimap<String, ArincGnssLandingSystem> gm = Multimaps.index(gnssLandingSystemMap.getOrDefault(index, emptyList()), ArincGnssLandingSystem::runwayIdentifier);
+      //data publication issues makes relying on the fields in the runways alone not enough for lots of records
+      List<ArincLocalizerGlideSlope> allRywLoc = lgm.entrySet().stream()
+          .filter(k -> k.getKey().first().equals(runway.runwayIdentifier()))
+          .map(Map.Entry::getValue)
+          .toList();
 
-      Map<String, RunwayPage> rm = new HashMap<>();
-      runwayMap.getOrDefault(index, emptyList()).forEach(runway -> {
+      ArincLocalizerGlideSlope primary = runway.ilsMlsGlsIdentifier().map(i -> lgm.get(Pair.of(runway.runwayIdentifier(), i)))
+          .or(() -> allRywLoc.stream().findFirst())
+          .orElse(null);
+      ArincLocalizerGlideSlope secondary = runway.secondaryIlsMlsGlsIdentifier().map(i -> lgm.get(Pair.of(runway.runwayIdentifier(), i)))
+          .or(() -> allRywLoc.stream().skip(1).findFirst())
+          .filter(i -> nonNull(primary) && !primary.localizerIdentifier().equals(i.localizerIdentifier()))
+          .orElse(null);
 
-        //data publication issues makes relying on the fields in the runways alone not enough for lots of records
-        List<ArincLocalizerGlideSlope> allRywLoc = lgm.entrySet().stream()
-            .filter(k -> k.getKey().first().equals(runway.runwayIdentifier()))
-            .map(Map.Entry::getValue)
-            .toList();
+      RunwayPage runwayPage = new RunwayPage(
+          runway,
+          primary,
+          secondary,
+          gm.get(runway.runwayIdentifier())
+      );
 
-        ArincLocalizerGlideSlope primary = runway.ilsMlsGlsIdentifier().map(i -> lgm.get(Pair.of(runway.runwayIdentifier(), i)))
-            .or(() -> allRywLoc.stream().findFirst())
-            .orElse(null);
-        ArincLocalizerGlideSlope secondary = runway.secondaryIlsMlsGlsIdentifier().map(i -> lgm.get(Pair.of(runway.runwayIdentifier(), i)))
-            .or(() -> allRywLoc.stream().skip(1).findFirst())
-            .filter(i -> nonNull(primary) && !primary.localizerIdentifier().equals(i.localizerIdentifier()))
-            .orElse(null);
-
-        RunwayPage runwayPage = new RunwayPage(
-            runway,
-            primary,
-            secondary,
-            gm.get(runway.runwayIdentifier())
-        );
-
-        rm.putIfAbsent(runway.runwayIdentifier(), runwayPage);
-      });
-
-      Map<String, HelipadPage> hm = new HashMap<>();
-      //not great but needed because they can have landing systems and for some reason pads don't reference they systems
-      helipadMap.getOrDefault(index, emptyList()).forEach(helipad -> {
-        List<ArincLocalizerGlideSlope> locs = localizerMap.getOrDefault(Pair.of(helipad.airportHeliportIdentifier(), helipad.icaoCode()), emptyList()).stream()
-            .filter(i -> i.runwayIdentifier().equals(helipad.helipadIdentifier()))
-            .toList();
-        ArincLocalizerGlideSlope primary = locs.stream().findFirst().orElse(null);
-        ArincLocalizerGlideSlope secondary = locs.stream().skip(1).findFirst().orElse(null);
-        List<ArincGnssLandingSystem> gls = gnssLandingSystemMap.getOrDefault(Pair.of(helipad.airportHeliportIdentifier(), helipad.icaoCode()), emptyList()).stream()
-            .filter(i -> i.runwayIdentifier().equals(helipad.helipadIdentifier()))
-            .toList();
-        HelipadPage page = new HelipadPage(
-            helipad,
-            primary,
-            secondary,
-            gls
-        );
-        hm.putIfAbsent(helipad.helipadIdentifier(), page);
-      });
-
-      AirportPage airportPage = new AirportPage(airport, rm, plm, wm, nm, vm, hm);
-
-      lookup.put(index, airportPage);
+      rm.putIfAbsent(runway.runwayIdentifier(), runwayPage);
     });
 
-    return new ArincTerminalAreaDatabase(lookup);
+    Map<String, HelipadPage> hm = helipadMap(localizerMap, gnssLandingSystemMap, helipadMap, index);
+    SupportingPage supportingPage = supportingPage(ndbNavaidMap, vhfNavaidMap, waypointMap, procedureLegMap, index);
+    AirportPage airportPage = new AirportPage(airport, rm, hm, supportingPage);
+    airportLookup.put(index, airportPage);
+  }
+
+  private static void heliportPage(
+      Map<Pair<String, String>, List<ArincLocalizerGlideSlope>> localizerMap,
+      Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap,
+      Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap,
+      Map<Pair<String, String>, List<ArincWaypoint>> waypointMap,
+      Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap,
+      Map<Pair<String, String>, List<ArincGnssLandingSystem>> gnssLandingSystemMap,
+      Map<Pair<String, String>, List<ArincHelipad>> helipadMap,
+      ArincHeliport heliport,
+      LinkedHashMultimap<Pair<String, String>, HeliportPage> heliportLookup
+  ) {
+    Pair<String, String> index = heliportToHeliportIndex.apply(heliport); //name and region
+    Map<String, HelipadPage> hm = helipadMap(localizerMap, gnssLandingSystemMap, helipadMap, index);
+    SupportingPage supportingPage = supportingPage(ndbNavaidMap, vhfNavaidMap, waypointMap, procedureLegMap, index);
+    HeliportPage heliportPage = new HeliportPage(heliport, hm, supportingPage);
+    heliportLookup.put(index, heliportPage);
+  }
+
+  private static Map<String, HelipadPage> helipadMap(Map<Pair<String, String>, List<ArincLocalizerGlideSlope>> localizerMap, Map<Pair<String, String>, List<ArincGnssLandingSystem>> gnssLandingSystemMap, Map<Pair<String, String>, List<ArincHelipad>> helipadMap, Pair<String, String> index) {
+    Map<String, HelipadPage> hm = new HashMap<>();
+    //not great but needed because they can have landing systems and for some reason pads don't reference they systems
+    helipadMap.getOrDefault(index, emptyList()).forEach(helipad -> {
+      List<ArincLocalizerGlideSlope> locs = localizerMap.getOrDefault(Pair.of(helipad.airportHeliportIdentifier(), helipad.icaoCode()), emptyList()).stream()
+          .filter(i -> i.runwayIdentifier().equals(helipad.helipadIdentifier()))
+          .toList();
+      ArincLocalizerGlideSlope primary = locs.stream().findFirst().orElse(null);
+      ArincLocalizerGlideSlope secondary = locs.stream().skip(1).findFirst().orElse(null);
+      List<ArincGnssLandingSystem> gls = gnssLandingSystemMap.getOrDefault(Pair.of(helipad.airportHeliportIdentifier(), helipad.icaoCode()), emptyList()).stream()
+          .filter(i -> i.runwayIdentifier().equals(helipad.helipadIdentifier()))
+          .toList();
+      HelipadPage page = new HelipadPage(
+          helipad,
+          primary,
+          secondary,
+          gls
+      );
+      hm.putIfAbsent(helipad.helipadIdentifier(), page);
+    });
+    return hm;
+  }
+
+  private static SupportingPage supportingPage(Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap,
+      Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap,
+      Map<Pair<String, String>, List<ArincWaypoint>> waypointMap,
+      Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap,
+      Pair<String, String> index) {
+
+    Map<String, List<ArincProcedureLeg>> plm = procedureLegMap.getOrDefault(index, emptyList()).stream()
+        .collect(Collectors.groupingBy(ArincProcedureLeg::sidStarIdentifier));
+
+    // apply some nice-to-have sorting to the entries in the internal structure
+    plm.keySet().forEach(key -> plm.computeIfPresent(key, (k, list) -> list.stream().sorted(procedureLegComparator).collect(Collectors.toList())));
+
+    Map<String, ArincWaypoint> wm = waypointMap.getOrDefault(index, emptyList()).stream()
+        .collect(Collectors.toMap(ArincWaypoint::waypointIdentifier, Function.identity()));
+
+    Map<String, ArincNdbNavaid> nm = ndbNavaidMap.getOrDefault(index, emptyList()).stream()
+        .collect(Collectors.toMap(ArincNdbNavaid::ndbIdentifier, Function.identity()));
+
+    Map<String, ArincVhfNavaid> vm = vhfNavaidMap.getOrDefault(index, emptyList()).stream()
+        .collect(Collectors.toMap(ArincVhfNavaid::vhfIdentifier, Function.identity()));
+
+    return new SupportingPage(plm, wm, nm, vm);
   }
 
   /**
@@ -201,6 +263,11 @@ public final class ArincDatabaseFactory {
   private static final Function<ArincAirport, Pair<String, String>> airportToAirportIndex = arincAirport -> Pair.of(
       arincAirport.airportIdentifier(),
       arincAirport.airportIcaoRegion()
+  );
+
+  private static final Function<ArincHeliport, Pair<String, String>> heliportToHeliportIndex = arincHeliport -> Pair.of(
+      arincHeliport.heliportIdentifier(),
+      arincHeliport.heliportIcaoRegion()
   );
 
   private static final Function<ArincRunway, Pair<String, String>> runwayToAirportIndex = arincRunway -> Pair.of(
@@ -271,17 +338,17 @@ public final class ArincDatabaseFactory {
       arincAirport.subSectionCode().orElse(null)
   );
 
+  private static final Function<ArincHeliport, ArincKey> heliportToFixIndex = arincHeliport -> new ArincKey(
+      arincHeliport.heliportIdentifier(),
+      arincHeliport.heliportIcaoRegion(),
+      arincHeliport.sectionCode(),
+      arincHeliport.subSectionCode().orElse(null)
+  );
+
   private static final Function<ArincHoldingPattern, ArincKey> holdingToHoldingIndex = arincHoldingPattern -> new ArincKey(
       arincHoldingPattern.fixIdentifier(),
       arincHoldingPattern.fixIcaoRegion(),
       arincHoldingPattern.sectionCode(),
       arincHoldingPattern.subSectionCode()
-  );
-
-  private static final Function<ArincHelipad, ArincKey> helipadToHelipadIndex = arincHelipad -> new ArincKey(
-      arincHelipad.helipadIdentifier(),
-      arincHelipad.icaoCode(),
-      arincHelipad.sectionCode(),
-      arincHelipad.subSectionCode().orElse(null)
   );
 }

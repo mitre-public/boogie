@@ -84,7 +84,8 @@ class TestCifpAirportAssembler {
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincProcedureLegs(),
         testV18Consumer.arincGnssLandingSystems(),
-        Collections.emptySet()
+        Collections.emptySet(),
+        testV18Consumer.arincHeliports()
     );
 
     assembler = AirportAssembler.standard(arincTerminalAreaDatabase);

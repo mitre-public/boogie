@@ -13,6 +13,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Heliport;
 import org.mitre.tdp.boogie.Procedure;
 
 @Tag("LIDO")
@@ -20,7 +21,7 @@ import org.mitre.tdp.boogie.Procedure;
 public class OneShotRecordParserLidoIntegrationTest {
   @Test
   void testParseLido() {
-    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace> records;
+    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace, Heliport> records;
 
     try (InputStream is = EmbeddedLidoFile.getInputStream()) {
       records = OneshotRecordParser.standard(ArincVersion.V22).assembleFrom(is);
@@ -30,12 +31,13 @@ public class OneShotRecordParserLidoIntegrationTest {
 
     assertAll(
         () -> assertEquals(26960, records.airports().size(), "Airports"),
-        () -> assertEquals(269229, records.fixes().size(), "Fixes"),
+        () -> assertEquals(270393, records.fixes().size(), "Fixes"),
         () -> assertEquals(14588, records.airways().size(), "Airways"),
-        () -> assertEquals(100716, records.procedures().size(), "Procedures"),
+        () -> assertEquals(101085, records.procedures().size(), "Procedures"),
         () -> assertEquals(357, records.firUirs().size(), "FIRs and UIRs"),
         () -> assertEquals(11761, records.conrolledAirspaces().size(), "Controlled Airspaces"),
-        () -> assertEquals("A424-22std.dat", records.headerOne().get().fileName().get())
+        () -> assertEquals("A424-22std.dat", records.headerOne().get().fileName().get()),
+        () -> assertEquals(9646, records.heliports().size(), "heliports")
     );
   }
 }

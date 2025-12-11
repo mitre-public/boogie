@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
@@ -311,14 +312,4 @@ public enum ArincRouteType {
   public static final Set<String> VALID = Arrays.stream(ArincRouteType.values())
       .map(ArincRouteType::name)
       .collect(Collectors.toSet());
-
-  static ArincRouteType from(ArincProcedureLeg arincProcedureLeg) {
-    requireNonNull(arincProcedureLeg);
-    String candidate = arincProcedureLeg.sectionCode().name()
-        .concat(arincProcedureLeg.subSectionCode().orElseThrow(IllegalStateException::new))
-        .concat("_")
-        .concat(arincProcedureLeg.routeType());
-
-    return Optional.of(candidate).filter(VALID::contains).map(ArincRouteType::valueOf).orElse(null);
-  }
 }

@@ -80,7 +80,7 @@ public final class RouteTypeEquipageClassifier implements Function<ArincProcedur
   }
 
   private RequiredNavigationEquipage routeTypeClassifier(ArincProcedureLeg representative) {
-    ArincRouteType arincRouteType = ArincRouteType.from(representative);
+    ArincRouteType arincRouteType = RouteTypeExtractor.INSTANCE.apply(representative);
     ArincRouteQualifier qualifier1 = representative.routeTypeQualifier1().filter(ArincRouteQualifier.VALID::contains).map(ArincRouteQualifier::valueOf).orElse(null);
     ArincRouteQualifier qualifier2 = representative.routeTypeQualifier2().filter(ArincRouteQualifier.VALID::contains).map(ArincRouteQualifier::valueOf).orElse(null);
     String qual3 = representative.routeTypeQualifier3().orElse(null);

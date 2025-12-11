@@ -3,35 +3,33 @@ package org.mitre.tdp.boogie.arinc.database;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
+import org.mitre.tdp.boogie.arinc.EmbeddedLidoFile;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
-@Tag("CIFP")
+@Tag("LIDO")
 @Tag("INTEGRATION")
-class TestArincTerminalAreaDatabaseIntegration {
-
+public class TestNuevoHeliportTerminalDatabaseIntegration {
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
 
   @BeforeAll
   static void setup() {
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
-        EmbeddedCifpFile.instance().arincAirports(),
-        EmbeddedCifpFile.instance().arincRunways(),
-        EmbeddedCifpFile.instance().arincLocalizerGlideSlopes(),
-        EmbeddedCifpFile.instance().arincNdbNavaids(),
-        EmbeddedCifpFile.instance().arincVhfNavaids(),
-        EmbeddedCifpFile.instance().arincWaypoints(),
-        EmbeddedCifpFile.instance().arincProcedureLegs(),
-        EmbeddedCifpFile.instance().arincGnssLandingSystems(),
-        EmbeddedCifpFile.instance().arincHelipads(),
-        EmbeddedCifpFile.instance().arincHeliports()
+        EmbeddedLidoFile.instance().arincAirports(),
+        EmbeddedLidoFile.instance().arincRunways(),
+        EmbeddedLidoFile.instance().arincLocalizerGlideSlopes(),
+        EmbeddedLidoFile.instance().arincNdbNavaids(),
+        EmbeddedLidoFile.instance().arincVhfNavaids(),
+        EmbeddedLidoFile.instance().arincWaypoints(),
+        EmbeddedLidoFile.instance().arincProcedureLegs(),
+        EmbeddedLidoFile.instance().arincGnssLandingSystems(),
+        EmbeddedLidoFile.instance().arincHelipads(),
+        EmbeddedLidoFile.instance().arincHeliports()
     );
   }
 

@@ -24,7 +24,8 @@ public final class AirportValidator implements Predicate<ArincRecord> {
   private final BiConsumer<ArincRecord, String> missingFieldConsumer;
 
   public AirportValidator() {
-    this((arincRecord, field) -> LOG.debug("Missing required field {} in record {}.", field, arincRecord.rawRecord()));
+    this((arincRecord, field) ->
+        LOG.debug("Missing required field {} in record {}.", field, arincRecord.rawRecord()));
   }
 
   public AirportValidator(BiConsumer<ArincRecord, String> missingFieldConsumer) {

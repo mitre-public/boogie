@@ -45,7 +45,8 @@ public class TestLidoProcedureAssembler {
         consumer.arincWaypoints(),
         consumer.arincProcedureLegs(),
         consumer.arincGnssLandingSystems(),
-        consumer.arincHelipads()
+        consumer.arincHelipads(),
+        consumer.arincHeliports()
     );
 
     arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
@@ -53,7 +54,8 @@ public class TestLidoProcedureAssembler {
         consumer.arincVhfNavaids(),
         consumer.arincWaypoints(),
         consumer.arincAirports(),
-        consumer.arincHoldingPatterns()
+        consumer.arincHoldingPatterns(),
+        consumer.arincHeliports()
     );
 
     assembler = ProcedureAssembler.standard(arincTerminalAreaDatabase, arincFixDatabase);

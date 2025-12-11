@@ -7,6 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
+import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

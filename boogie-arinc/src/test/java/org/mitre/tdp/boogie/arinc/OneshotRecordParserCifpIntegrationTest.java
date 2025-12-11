@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Heliport;
 import org.mitre.tdp.boogie.Procedure;
 
 @Tag("CIFP")
@@ -23,7 +24,7 @@ class OneshotRecordParserCifpIntegrationTest {
   @Test
   void testParse() {
 
-    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace> records;
+    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace, Heliport> records;
 
     try (InputStream is = EmbeddedCifpFile.getInputStream()) {
       records = OneshotRecordParser.standard(ArincVersion.V19).assembleFrom(is);
@@ -33,12 +34,13 @@ class OneshotRecordParserCifpIntegrationTest {
 
     assertAll(
         () -> assertEquals(13779, records.airports().size(), "Airports"),
-        () -> assertEquals(67910, records.fixes().size(), "Fixes"),
+        () -> assertEquals(67922, records.fixes().size(), "Fixes"),
         () -> assertEquals(1550, records.airways().size(), "Airways"),
-        () -> assertEquals(14258, records.procedures().size(), "Procedures"),
+        () -> assertEquals(14262, records.procedures().size(), "Procedures"),
         () -> assertEquals(0, records.firUirs().size(), "FIR-UIRs"),
         () -> assertEquals(1350, records.conrolledAirspaces().size(), "Controlled Airspaces"),
-        () -> assertEquals("FAACIFP18", records.headerOne().get().fileName().get())
+        () -> assertEquals("FAACIFP18", records.headerOne().get().fileName().get()),
+        () -> assertEquals(6466, records.heliports().size(), "Heliports")
     );
   }
 }

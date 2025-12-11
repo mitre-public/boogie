@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_0;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_1;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_2;
@@ -34,6 +35,7 @@ import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_R;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_S;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -86,7 +88,7 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
     public TransitionType apply(List<ArincProcedureLeg> arincProcedureLegs) {
       ArincProcedureLeg representative = arincProcedureLegs.get(0);
 
-      ArincRouteType arincRouteType = ArincRouteType.from(representative);
+      ArincRouteType arincRouteType = RouteTypeExtractor.INSTANCE.apply(representative);
 
       if (LABELED_COMMON.contains(arincRouteType)) {
         return TransitionType.COMMON;
