@@ -76,7 +76,7 @@ public class TestV22ProcedureAssembler {
     Procedure r210 = procedures.stream().filter(i -> i.procedureIdentifier().equals("R210")).findFirst().orElseThrow();
 
     assertAll("Make sure there are the right number of legs and that they are the right type",
-        () -> assertEquals(91, procedures.size()),
+        () -> assertEquals(93, procedures.size()),
         () -> assertEquals(RequiredNavigationEquipage.CONV, orw7.requiredNavigationEquipage()), //sid
         () -> assertEquals(RequiredNavigationEquipage.RNAV, blzzr6.requiredNavigationEquipage()), //sid
         () -> assertEquals(RequiredNavigationEquipage.RNAV, jfund2.requiredNavigationEquipage()), //star

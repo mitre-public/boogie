@@ -88,5 +88,7 @@ class TestConvertingArincRecordMapper {
       .controlledAirspaceDelegator(new ControlledAirspaceValidator())
       .headerOneDelegator(new Header01Validator())
       .headerOneConverter(new Header01Converter())
+      .heliportConverter(new HeliportConverter())
+      .heliportDelegator(new HeliportValidator())
       .build();
 }

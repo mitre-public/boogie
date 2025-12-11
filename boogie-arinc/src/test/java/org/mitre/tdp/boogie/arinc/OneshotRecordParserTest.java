@@ -33,11 +33,11 @@ class OneshotRecordParserTest {
 
     assertAll(
         () -> assertEquals(358, records.airports().size(), "Airports"),
-        () -> assertEquals(1298, records.fixes().size(), "Fixes"),
+        () -> assertEquals(1301, records.fixes().size(), "Fixes"),
         () -> assertEquals(204, records.airways().size(), "Airways"),
         () -> assertEquals(1438, records.procedures().size(), "Procedures"),
         () -> assertEquals(1, records.firUirs().size(), "FIR-UIRs"),
-        () -> assertEquals(272, records.heliports().size(), "Heliports")
+        () -> assertEquals(273, records.heliports().size(), "Heliports")
     );
   }
 }
