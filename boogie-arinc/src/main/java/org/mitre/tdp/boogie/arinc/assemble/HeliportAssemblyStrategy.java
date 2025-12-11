@@ -42,6 +42,13 @@ public interface HeliportAssemblyStrategy<H, P> {
    */
   P convertHelipad(ArincHelipad pad);
 
+  /**
+   * This method is used to create a fake helipad at legacy 424 heliport locations (which are their own pad records).
+   * @param port the heliport to make into a pad
+   * @return the helipad for the heliport (aka the landing surface at the heliport)
+   */
+  Optional<P> convertToHelipad(ArincHeliport port);
+
   final class Standard implements HeliportAssemblyStrategy<Heliport, Helipad> {
 
     private Standard() {
@@ -49,10 +56,15 @@ public interface HeliportAssemblyStrategy<H, P> {
 
     @Override
     public Heliport convertHeliport(ArincHeliport port, List<Helipad> convertedHelipads) {
+      LatLong place = LatLong.of(port.latitude(), port.longitude());
+      List<Helipad> padsOrFromPort = Optional.ofNullable(convertedHelipads).filter(l -> !l.isEmpty())
+          .or(() -> convertToHelipad(port).map(List::of))
+          .orElse(null);
       return Heliport.builder()
           .heliportIdentifier(port.heliportIdentifier())
           .magneticVariation(magneticVariation(port))
-          .helipads(convertedHelipads)
+          .helipads(padsOrFromPort)
+          .latLong(place)
           .build();
     }
 
@@ -62,6 +74,12 @@ public interface HeliportAssemblyStrategy<H, P> {
           .origin(LatLong.of(pad.latitude(), pad.longitude()))
           .padIdentifier(pad.helipadIdentifier())
           .build();
+    }
+
+    @Override
+    public Optional<Helipad> convertToHelipad(ArincHeliport port) {
+      LatLong place = LatLong.of(port.latitude(), port.longitude());
+      return port.padIdentifier().map(i -> Helipad.builder().origin(place).padIdentifier(i).build());
     }
 
     private MagneticVariation magneticVariation(ArincHeliport port) {

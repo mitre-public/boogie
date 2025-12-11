@@ -59,7 +59,7 @@ public interface HeliportAssembler<H> {
     public H assemble(ArincHeliport arincHeliport) {
       requireNonNull(arincHeliport);
 
-      Collection<ArincHelipad> arincHelipads = arincTerminalAreaDatabase.helipadsAt(arincHeliport.heliportIdentifier(), arincHeliport.heliportIcaoRegion());
+      Collection<ArincHelipad> arincHelipads = arincTerminalAreaDatabase.heliportsHelipadsAt(arincHeliport.heliportIdentifier(), arincHeliport.heliportIcaoRegion());
       List<P> helipads = arincHelipads.stream().map(strategy::convertHelipad).toList();
 
       return strategy.convertHeliport(arincHeliport, helipads);

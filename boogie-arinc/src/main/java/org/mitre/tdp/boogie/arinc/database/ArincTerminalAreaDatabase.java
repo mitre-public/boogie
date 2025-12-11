@@ -33,6 +33,18 @@ public final class ArincTerminalAreaDatabase {
     this.addIdentifierOnlyIndices();
   }
 
+  public Optional<ArincHeliport> heliport(String heliportIdentifier) {
+    return highlander(heliportLookup.get(Pair.of(heliportIdentifier, null))).map(HeliportPage::heliport);
+  }
+
+  public Optional<ArincHeliport> heliport(String identifier, String icaoRegion) {
+    return highlander(heliportLookup.get(Pair.of(identifier, icaoRegion))).map(HeliportPage::heliport);
+  }
+
+  public Set<ArincHeliport> heliports(String identifier) {
+    return heliportLookup.get(Pair.of(identifier, null)).stream().map(HeliportPage::heliport).collect(Collectors.toSet());
+  }
+
   public Optional<ArincAirport> airport(String identifier) {
     return highlander(airportLookup.get(Pair.of(identifier, null))).map(AirportPage::airport);
   }
@@ -69,7 +81,7 @@ public final class ArincTerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(page -> page.helipad(helipadID));
   }
 
-  public Optional<ArincHelipad> heliportsHelipadsAt(String heliport, String icaoRegion, String helipadID) {
+  public Optional<ArincHelipad> heliportsHelipadAt(String heliport, String icaoRegion, String helipadID) {
     return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).flatMap(page -> page.helipad(helipadID));
   }
 
@@ -78,7 +90,15 @@ public final class ArincTerminalAreaDatabase {
   }
 
   public Collection<ArincHelipad> helipadsAt(String airport, String icaoRegion) {
-    return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::helipads).orElse(Collections.emptySet());
+    return highlander(airportLookup.get(Pair.of(airport, icaoRegion)))
+        .map(AirportPage::helipads)
+        .orElse(Collections.emptySet());
+  }
+
+  public Collection<ArincHelipad> heliportsHelipadsAt(String airport, String icaoRegion) {
+    return highlander(heliportLookup.get(Pair.of(airport, icaoRegion)))
+        .map(HeliportPage::helipads)
+        .orElse(Collections.emptySet());
   }
 
   public Optional<ArincLocalizerGlideSlope> localizerGlideSlopeAt(String airport, String identifier) {
@@ -132,7 +152,6 @@ public final class ArincTerminalAreaDatabase {
   public Optional<ArincWaypoint> waypointAt(String airport, String icaoRegion, String waypoint) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(i -> i.waypoint(waypoint));
   }
-
   public Optional<ArincWaypoint> heliportsWaypoints(String heliport, String icaoRegion, String waypoint) {
     return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).flatMap(i -> i.waypoint(waypoint));
   }
@@ -153,12 +172,27 @@ public final class ArincTerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::ndbNavaids).orElse(Collections.emptySet());
   }
 
+  public Collection<ArincNdbNavaid> heliportsNdbsAt(String heliport, String icaoRegion) {
+    return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).map(HeliportPage::ndbNavaids).orElse(Collections.emptySet());
+  }
   public Collection<ArincProcedureLeg> allProcedureLegsAtAll(String airport) {
-    return airportLookup.get(Pair.of(airport, null)).stream().map(AirportPage::procedureLegs).flatMap(Collection::stream).collect(Collectors.toSet());
+    return airportLookup.get(Pair.of(airport, null)).stream()
+        .map(AirportPage::procedureLegs)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toSet());
+  }
+
+  public Collection<ArincProcedureLeg> allHeliportProcedureLegsAtAll(String heliport) {
+    return heliportLookup.get(Pair.of(heliport, null)).stream()
+        .map(HeliportPage::procedureLegs)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toSet());
   }
 
   public Collection<ArincProcedureLeg> allProcedureLegsAt(String airport) {
-    return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::procedureLegs).orElse(Collections.emptySet());
+    return highlander(airportLookup.get(Pair.of(airport, null)))
+        .map(AirportPage::procedureLegs)
+        .orElse(Collections.emptySet());
   }
 
   public Collection<ArincProcedureLeg> allProcedureLegsAt(String airport, String icaoRegion) {
@@ -172,8 +206,6 @@ public final class ArincTerminalAreaDatabase {
   public Collection<ArincProcedureLeg> legsForProcedure(String airport, String icaoRegion, String procedure) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(page -> page.procedureLegs(procedure)).orElse(Collections.emptySet());
   }
-
-
 
   /**
    * "There can only be one"

@@ -1,0 +1,55 @@
+SUSAD        AML   K6111350VDLW N38560453W077280013AML N38560453W077280013W0080002961  323NARARMEL                       NA658042303
+SUSAEAENRT   ANDOZ K61    W F   N38565670W077551605                       W0103     NAR        P  ANDOZ                    757822210
+SUSAD        CSN   K6111630VTHW N38382833W077515580CSN N38382833W077515580W0060004422  402NARCASANOVA                    NC662452210
+SUSAD        CSN   K62PKZDCKZDC                                                                                            662462210
+SUSAD        CSN   K63S    SN                                             W010200442                                       662472211
+SUSAEAENRT   APTLY K61    W F   N39010804W077551062                       W0103     NAR        P  APTLY                    760502210
+SUSAEAENRT   ATAPS K61    W F   N39021198W077542805                       W0103     NAR        P  ATAPS                    764942210
+SUSAEAENRT   ATAPS K62PKZDCKZDC                                                                                            764952210
+SUSAH KJRAK6A        110000NARY N40451764W074002543W013000007250      1800018000CR00Y      M EAST 29TH ST                  742502212
+SUSAH KJRAK6A        2PKZNYKZNY                                   TKLGAK6S                                                 742512210
+SUSAH KJRAK6CERORE K61    WAF   N40571735W073535724                       W0126     NAR        P  ERORE                    742522210
+SUSAH KJRAK6CERORE K62PKZNYKZNY                                                                                            742532210
+SUSAH KJRAK6CZABKI K61    WSF   N40540800W073551410                       W0126     NAR        P  ZABKI                    742542210
+SUSAH KJRAK6CZABKI K62PKZNYKZNY                                                                                            742552210
+SUSAH KJRAK6FR210  AFEMDUH010FEMDUK6EA1E  A    IF                                             18000                 C JLH  742562210
+SUSAH KJRAK6FR210  AFEMDUH010FEMDUK6EA2E                    W0130P                                                    JLH  742572210
+SUSAH KJRAK6FR210  AFEMDUH020JEDILK6EA0EE B 010TF                                 + 01700          090              C-JLH  742582210
+SUSAH KJRAK6FR210  AWUDGOH010WUDGOK6EA1E  A    IF                                             18000                 C JLH  742592210
+SUSAH KJRAK6FR210  AWUDGOH010WUDGOK6EA2E                    W0130P                                                    JLH  742602210
+SUSAH KJRAK6FR210  AWUDGOH020JEDILK6EA0EE B 010TF                                 + 01700          090              C-JLH  742612210
+SUSAH KJRAK6FR210  R     H010JEDILK6EA1E  I    IF                                 + 01700     18000070    JORBAAK6EAA-JLH  742622210
+SUSAH KJRAK6FR210  R     H010JEDILK6EA2E                    W0130P                                                    JLH  742632210
+SUSAH KJRAK6FR210  R     H020EROREK6HC1E  F 010TF                                 + 01500                           A JLH  742642210
+SUSAH KJRAK6FR210  R     H020EROREK6HC2WN          N          ALNAV                                                   JLH  742652210
+SUSAH KJRAK6FR210  R     H030ZABKIK6HC0E S  031TF                                 + 00860             -300          A JLH  742662301
+SUSAH KJRAK6FR210  R     H040JORBAK6EA1EY M 031TF                                   00780             -300          A JLH  742672210
+SUSAH KJRAK6FR210  R     H040JORBAK6EA2E350                                                                           JLH  742682210
+SUSAH KJRAK6FR210  Z     H050JEDILK6EA0EYM L010DF                                   02000          070              A-JAH  742692210
+SUSAH KJRAK6FR210  Z     H060JEDILK6EA0EE  R   HM                     19300040  I                  090              A-JAH  742702210
+SUSAH KJRAK6HH1      0C00045000 N40451577W074002677HASPH   U     00007                                                     742712409
+SUSAH KJRAK6HH2      0C00045000 N40451633W074002637HASPH   U     00007                                                     742722409
+SUSAH KJRAK6HH3      0C00045000 N40451785W074002531HASPH   U     00007                                                     742732409
+SUSAH KJRAK6HH4      0C00045000 N40451846W074002485HASPH   U     00007                                                     742742409
+SUSAH KJRAK6HH5      0C00045000 N40451897W074002446HASPH   U     00007                                                     742752409
+SUSAH KJRAK6HH6      0C00045000 N40451953W074002406HASPH   U     00007                                                     742762409
+SUSAH 9VA5K6A        110000NARYUN39034792W077532412W010001707250      1800018000PR00Y      M BLUEGRASS                     711712210
+SUSAH 9VA5K6FR040  AAML  H005AML  K6D 1V       IF                                             18000                 C JHH  712072210
+SUSAH 9VA5K6FR040  AAML  H005AML  K6D 2E                    W0100P                                                    JHH  712082210
+SUSAH 9VA5K6FR040  AAML  H010ANDOZK6EA0EE B 010TF                                 + 03000                           C JHH  712092210
+SUSAH 9VA5K6FR040  AANDOZH010ANDOZK6EA1EE AR   HF                     01100040  I + 03000     18000175              C-JHH  712102210
+SUSAH 9VA5K6FR040  AANDOZH010ANDOZK6EA2E                    W0100P                                                    JHH  712112210
+SUSAH 9VA5K6FR040  ACSN  H005CSN  K6D 1V       IF                                             18000                 C JHH  712122210
+SUSAH 9VA5K6FR040  ACSN  H005CSN  K6D 2E                    W0100P                                                    JHH  712132210
+SUSAH 9VA5K6FR040  ACSN  H010ANDOZK6EA0EE B 010TF                                 + 03000                           C JHH  712142210
+SUSAH 9VA5K6FR040  R     H010ANDOZK6EA1E  I    IF                                 + 03000     18000       9VA5 AK6HAA JHH  712152210
+SUSAH 9VA5K6FR040  R     H010ANDOZK6EA2E                    W0100P                                                    JHH  712162210
+SUSAH 9VA5K6FR040  R     H020APTLYK6EA1E  F 010TF                                 + 02800                           A JHH  712172210
+SUSAH 9VA5K6FR040  R     H020APTLYK6EA2WN          N          ALNAV                                                   JHH  712182210
+SUSAH 9VA5K6FR040  R     H030ATAPSK6EA0E S  031TF                                 + 02600             -401          A JHH  712192301
+SUSAH 9VA5K6FR040  R     H040H1   K6HH1GY M 031TF                                   02560             -401          A JHH  712202210
+SUSAH 9VA5K6FR040  R     H040H1   K6HH2E040                                                                           JHH  712212210
+SUSAH 9VA5K6FR040  Z     H050         0  M  010CA                     0370        + 02700                           A JAH  712222210
+SUSAH 9VA5K6FR040  Z     H060ANDOZK6EA0EY  R010DF                                   03000                           A JAH  712232210
+SUSAH 9VA5K6FR040  Z     H070ANDOZK6EA0EE  R   HM                     00800040  I   03000          175              A-JAH  712242210
+SUSAH 9VA5K6HH1      0U00050050 N39034792W077532412UUNKN   U     01707                                                     712592409

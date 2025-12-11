@@ -29,7 +29,6 @@ import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
 import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
@@ -39,6 +38,8 @@ import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
 import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
+import org.mitre.tdp.boogie.arinc.v18.HeliportConverter;
+import org.mitre.tdp.boogie.arinc.v18.HeliportValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
@@ -62,7 +63,7 @@ import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
 import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
-class TestCifpAirportAssembler {
+class TestAirportAssembler {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
@@ -117,7 +118,6 @@ class TestCifpAirportAssembler {
    */
   private static final ArincFileParser fileParser = new ArincFileParser(
       new AirportSpec(),
-      new AirwayLegSpec(),
       new LocalizerGlideSlopeSpec(),
       new NdbNavaidSpec(),
       // the V19 leg spec - thanks CIFP
@@ -161,5 +161,7 @@ class TestCifpAirportAssembler {
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .headerDelegator(new Header01Validator())
       .headerConverter(new Header01Converter())
+      .heliportDelegator(new HeliportValidator())
+      .heliportConverter(new HeliportConverter())
       .build();
 }

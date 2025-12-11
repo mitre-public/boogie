@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -82,7 +83,7 @@ public interface Heliport extends HasPosition {
 
     @Override
     public Collection<? extends Helipad> helipads() {
-      return helipads;
+      return Optional.ofNullable(helipads).orElse(List.of());
     }
 
     @Override

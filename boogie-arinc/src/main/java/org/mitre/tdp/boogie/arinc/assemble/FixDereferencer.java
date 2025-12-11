@@ -61,7 +61,7 @@ public final class FixDereferencer<F> {
       case "PT" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.gnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));
       case "HT" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsGnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));
       case "PH" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.helipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
-      case "HH" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsHelipadsAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
+      case "HH" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsHelipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
       default -> throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
     };
   }

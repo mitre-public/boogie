@@ -10,7 +10,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
@@ -25,22 +24,22 @@ import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
  */
 final class HeliportPage {
 
-  private final ArincHeliport airport;
+  private final ArincHeliport heliport;
   private final Map<String, HelipadPage> helipadPages;
   private final SupportingPage supportingPage;
 
   HeliportPage(
-      ArincHeliport airport,
+      ArincHeliport heliport,
       Map<String, HelipadPage> helipadPages,
       SupportingPage supportingPage
   ) {
-    this.airport = requireNonNull(airport);
+    this.heliport = requireNonNull(heliport);
     this.helipadPages = helipadPages;
     this.supportingPage = supportingPage;
   }
 
-  public ArincHeliport airport() {
-    return airport;
+  public ArincHeliport heliport() {
+    return heliport;
   }
 
   public Collection<ArincHelipad> helipads() {
