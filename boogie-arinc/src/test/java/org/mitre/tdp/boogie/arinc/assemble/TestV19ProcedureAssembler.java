@@ -48,6 +48,7 @@ import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
 import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
 import org.mitre.tdp.boogie.arinc.v18.HeliportConverter;
+import org.mitre.tdp.boogie.arinc.v18.HeliportSpec;
 import org.mitre.tdp.boogie.arinc.v18.HeliportValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
@@ -109,6 +110,30 @@ class TestV19ProcedureAssembler {
     );
 
     assembler = ProcedureAssembler.standard(arincTerminalAreaDatabase, arincFixDatabase);
+  }
+
+  @Test
+  void testAssemblyOfHUDSN1_SID() {
+    Collection<ArincProcedureLeg> hudsn1LEgs = arincTerminalAreaDatabase.heliportsLegsForProcedure("KJRA", "K6", "HUDSN1");
+    Collection<Procedure> procedures = assembler.assemble(hudsn1LEgs).collect(Collectors.toSet());
+    assertEquals(1, procedures.size());
+    Procedure HUDSN1 = procedures.iterator().next();
+    Map<String, Transition> transitions = HUDSN1.transitions().stream()
+        .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse("ALL"), Function.identity()));
+    assertAll(
+        "Assertions about the contents of our HUDSN1 procedure.",
+        () -> assertEquals("HUDSN1", HUDSN1.procedureIdentifier()),
+        () -> assertEquals("KJRA", HUDSN1.airportIdentifier()),
+        () -> assertEquals(ProcedureType.SID, HUDSN1.procedureType()),
+        () -> assertEquals(RequiredNavigationEquipage.RNAV, HUDSN1.requiredNavigationEquipage()),
+        () -> assertEquals(1, HUDSN1.transitions().size()),
+
+        // check tha actual transition contents...
+        () -> assertEquals(TransitionType.ENROUTE, transitions.get("YOMAN").transitionType()),
+        () -> assertEquals(5, transitions.get("YOMAN").legs().size()),
+        () -> assertEquals("IF|TF|TF|TF|TF", pathTerminatorSequence(transitions.get("YOMAN").legs())),
+        () -> assertEquals("HUDSN|RINNG|CHNZO|JOTRE|YOMAN", associatedFixSequence(transitions.get("YOMAN").legs()))
+    );
   }
 
   @Test
@@ -265,7 +290,8 @@ class TestV19ProcedureAssembler {
       new ProcedureLegSpec(),
       new RunwaySpec(),
       new VhfNavaidSpec(),
-      new WaypointSpec()
+      new WaypointSpec(),
+      new HeliportSpec()
   );
 
   /**

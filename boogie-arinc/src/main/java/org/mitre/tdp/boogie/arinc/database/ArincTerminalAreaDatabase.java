@@ -203,6 +203,10 @@ public final class ArincTerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, null))).map(page -> page.procedureLegs(procedure)).orElse(Collections.emptySet());
   }
 
+  public Collection<ArincProcedureLeg> heliportsLegsForProcedure(String heliport, String icaoRegion, String procedure) {
+    return highlander(heliportLookup.get(Pair.of(heliport, null))).map(page -> page.procedureLegs(procedure)).orElse(Collections.emptySet());
+  }
+
   public Collection<ArincProcedureLeg> legsForProcedure(String airport, String icaoRegion, String procedure) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(page -> page.procedureLegs(procedure)).orElse(Collections.emptySet());
   }
