@@ -39,7 +39,8 @@ class TestArincFixDatabase {
 
   @Test
   void testHeliport() {
-    fail();
+    ArincHeliport heliport = arincFixDatabase.heliport("KJRA").orElseThrow();
+    assertEquals("KJRA", heliport.heliportIdentifier());
   }
 
   @Test
