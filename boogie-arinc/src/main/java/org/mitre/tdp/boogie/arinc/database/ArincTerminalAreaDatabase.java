@@ -152,12 +152,17 @@ public final class ArincTerminalAreaDatabase {
   public Optional<ArincWaypoint> waypointAt(String airport, String icaoRegion, String waypoint) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(i -> i.waypoint(waypoint));
   }
-  public Optional<ArincWaypoint> heliportsWaypoints(String heliport, String icaoRegion, String waypoint) {
+
+  public Optional<ArincWaypoint> heliportsWaypoint(String heliport, String icaoRegion, String waypoint) {
     return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).flatMap(i -> i.waypoint(waypoint));
   }
 
   public Collection<ArincWaypoint> waypointsAt(String airport) {
     return highlander(airportLookup.get(Pair.of(airport, null))).map(AirportPage::waypoints).orElse(Collections.emptySet());
+  }
+
+  public Collection<ArincWaypoint> heliportsWaypointsAt(String heliport) {
+    return highlander(heliportLookup.get(Pair.of(heliport, null))).map(HeliportPage::waypoints).orElse(Collections.emptySet());
   }
 
   public Collection<ArincWaypoint> waypointsAt(String airport, String icaoRegion) {
