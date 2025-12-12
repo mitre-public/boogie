@@ -8,13 +8,12 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.EmbeddedLidoFile;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
 @Tag("LIDO")
 @Tag("INTEGRATION")
-public class TestNuevoHeliportTerminalDatabaseIntegration {
+public class TestNuevoTerminalDatabaseIntegration {
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
 
   @BeforeAll
@@ -36,7 +35,7 @@ public class TestNuevoHeliportTerminalDatabaseIntegration {
   @Test
   void testLocalizersExistForRunwayReferences() {
 
-    List<ArincRunway> runwaysWithPrimaryIlsMlsGlsReference = EmbeddedCifpFile.instance().arincRunways().stream()
+    List<ArincRunway> runwaysWithPrimaryIlsMlsGlsReference = EmbeddedLidoFile.instance().arincRunways().stream()
         .filter(arincRunway -> arincRunway.ilsMlsGlsIdentifier().isPresent())
         .toList();
 
@@ -46,7 +45,7 @@ public class TestNuevoHeliportTerminalDatabaseIntegration {
 
     int missingPrimaryReferences = runwaysWithPrimaryIlsMlsGlsReference.size() - runwaysWithMatchingPrimaryIlsMlsGlsReference.size();
 
-    List<ArincRunway> runwaysWithSecondaryIlsMlsGlsReference = EmbeddedCifpFile.instance().arincRunways().stream()
+    List<ArincRunway> runwaysWithSecondaryIlsMlsGlsReference = EmbeddedLidoFile.instance().arincRunways().stream()
         .filter(arincRunway -> arincRunway.secondaryIlsMlsGlsIdentifier().isPresent())
         .toList();
 
