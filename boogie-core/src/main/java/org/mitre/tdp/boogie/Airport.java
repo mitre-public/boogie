@@ -5,7 +5,6 @@ import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
