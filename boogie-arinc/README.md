@@ -60,7 +60,14 @@ to either NDB/VHF Navaids, Enroute/Terminal Waypoints, Airports, or even Runways
 provides a collection of easy-to-instantiate and pre-configured (and relatively simple) databases with the appropriate indexing for these records set-up.
 
 ```java
-ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(ndbNavaids, vhfNavaids, waypoints, airports);
+ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
+        testV18Consumer.arincNdbNavaids(),
+        testV18Consumer.arincVhfNavaids(),
+        testV18Consumer.arincWaypoints(),
+        testV18Consumer.arincAirports(),
+        testV18Consumer.arincHoldingPatterns(),
+        testV18Consumer.arincHeliports()
+    );
 
 // unique lookups (via) including the ICAO region in the query
 Optional<ArincWaypoint> jmack = arincFixDatabase.waypoint("JMACK", "K6");
@@ -73,7 +80,18 @@ Optional<ArincWaypoint> jmack = arincFixDatabase.waypoint("JMACK");  // etc. for
 Collection<ArincWaypoint> l254 = arincFixDatabase.waypoints("JMACK", "DKUN1"); // etc. for other fix types
 
 // the other common database instantiation is:
-ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(airports, runways, localizerGlideSlopes, ndbNavaids, vhfNavaids, waypoints, procedureLegs);
+ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+        testV18Consumer.arincAirports(),
+        testV18Consumer.arincRunways(),
+        testV18Consumer.arincLocalizerGlideSlopes(),
+        testV18Consumer.arincNdbNavaids(),
+        testV18Consumer.arincVhfNavaids(),
+        testV18Consumer.arincWaypoints(),
+        testV18Consumer.arincProcedureLegs(),
+        testV18Consumer.arincGnssLandingSystems(),
+        testV18Consumer.arincHelipads(), //no pads
+        testV18Consumer.arincHeliports()
+    );
 
 // the above is an airport-indexed view of all of the listed argument data and is useful for common queries 
 // about records which can be directly related to an airport
