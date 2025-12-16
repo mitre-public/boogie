@@ -225,12 +225,14 @@ The current set of java POJO conversions are based on the V18 record <i>format</
 about the specific contents of any field and should therefore be valid targets for data from any of the following versions and record types (i.e. the extracted content of a field may change - but 
 since the <i>structure</i> of the records has remained consistent the java POJOs have valid landing grounds for that info).
 
-| Version | Airport (PA) | Runway (PG) | Loc/GlideSlope (PI) | NDB Navaid (DB, PN) | VHF Navaid (D) | Waypoints (EA, PC) | ProcedureLegs (PD, PE, PF) | Airways (ER) | Airspace (UR) |
-|:-------:|:------------:|:-----------:|:-------------------:|:-------------------:|:--------------:|:------------------:|:--------------------------:|:------------:|:-------------:|
-| 18      |y             |y            |y                    |y                    |y               |y                   |y                           |y             |y              |
-| 19a     |y             |y            |y                    |y                    |y               |y                   |y                           |y             |y              |
-| 21      |y             |y            |y                    |y                    |y               |y                   |y                           |y             |y              |
-
+| Version | Airport (PA) | Runway (PG) | Loc/GlideSlope (PI, HI) | NDB Navaid (DB, PN) | VHF Navaid (D) | Waypoints (EA, PC, HC) | ProcedureLegs (PD, PE, PF, HD, HE, HF) | Airways (ER) | Airspace (UR, UC) | Heliports (HA) | Helipads (PH, HH) |
+|:-------:|:------------:|:-----------:|:-----------------------:|:-------------------:|:--------------:|:----------------------:|:--------------------------------------:|:------------:|:-----------------:|:---------------|:-----------------:|
+| 18      |y             |y            |y                        |y                    |y               |y                       |y                                       |y             |y                  |y               |n                  |
+| 19a     |y             |y            |y                        |y                    |y               |y                       |y                                       |y             |y                  |y               |n                  |
+| 20      |y             |y            |y                        |y                    |y               |y                       |y                                       |y             |y                  |y               |n                  |
+| 21      |y             |y            |y                        |y                    |y               |y                       |y                                       |y             |y                  |y               |y                  |
+| 22      |y             |y            |y                        |y                    |y               |y                       |y                                       |y             |y                  |y               |y                  |
+      
 It should be noted that the above *is not* a complete parsing of all of the available record types within the 424 spec - and is instead a focused (high value) subset for general use in aviation 
 research.
 
@@ -241,9 +243,10 @@ While the ARINC data models themselves (in the raw data) don't contain version i
 version of the data they're working with downstream of the more robust parsing and lightweight field-level validation Boogie provides. These are:
 
 1. From <b>18 -> 19a</b>: multiple new routeTypeQualifier values were added for approach types (e.g. F, H, I, etc.).
-2. From <b>19a -> 21</b>: routeTypeQualifiers became allowed on SID/STAR records as opposed to only Approach records in previous versions. 
+2. From <b>19a -> 21</b>: routeTypeQualifiers became allowed on SID/STAR records as opposed to only Approach records in previous versions.
+3. From <b>21+</b> the route qualifiers were expanded and had schema breaking changes. IN addition heliports became first-class parent objects with chilren pads. This also resolved issues with referencing pads in procedures.
 
-<i>Most</i> ARINC data (we have in MITRE) is <i>allegedly</i> V18 - however in actuality a lot of our data providers have taken a degree of liberty with their interpretations of what that 
+<i>Most</i> ARINC data (we have in MITRE) is <i>allegedly</i> V18 or V22 - however in actuality a lot of our data providers have taken a degree of liberty with their interpretations of what that 
 means over the years (even though there is <i>very</i> good documentation around what should be in that data). The most notable exception is CIFP - who uses the updated qualifiers 
 (from 19a) on Approach records (and the updated approach naming conventions - i.e. RNP approaches start with an H) as part of their standard publication even though it claims to be published 
 as V18.
@@ -285,4 +288,5 @@ Once you have the above specified you can simply add it to the required/appropri
 #### Rules of thumb
 
 Ideally most record/field specifications should automatically reject data that aren't to spec. Most of the publicly available 424 data out there *isn't* exactly to spec and so it's important 
-parsers converting the raw records -> semi-structured data are robust to potentially bad/non-standard input.
+parsers converting the raw records -> semi-structured data are robust to potentially bad/non-standard input. Note that we are fairly permissive about what is optional, but some items that the primary
+use case for is to navigate-to .... we require coordiantes in parsing. So runways without coordiantes get dropped in parsing.
