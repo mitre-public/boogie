@@ -32,8 +32,15 @@ class TestArincFixDatabase {
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincAirports(),
-        testV18Consumer.arincHoldingPatterns()
+        testV18Consumer.arincHoldingPatterns(),
+        testV18Consumer.arincHeliports()
     );
+  }
+
+  @Test
+  void testHeliport() {
+    ArincHeliport heliport = arincFixDatabase.heliport("KJRA").orElseThrow();
+    assertEquals("KJRA", heliport.heliportIdentifier());
   }
 
   @Test
@@ -92,7 +99,8 @@ class TestArincFixDatabase {
       new RunwaySpec(),
       new VhfNavaidSpec(),
       new WaypointSpec(),
-      new HoldingPatternSpec()
+      new HoldingPatternSpec(),
+      new HeliportSpec()
   );
 
   /**
@@ -129,5 +137,7 @@ class TestArincFixDatabase {
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .headerDelegator(new Header01Validator())
       .headerConverter(new Header01Converter())
+      .heliportConverter(new HeliportConverter())
+      .heliportDelegator(new HeliportValidator())
       .build();
 }

@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
 import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
@@ -104,6 +105,24 @@ public final class ArincFixDatabase {
         ArincWaypoint.class,
         new ArincKey(identifier, icaoRegion, SectionCode.E, "A")
     );
+  }
+
+  public Optional<ArincHeliport> heliport(String identifier, String icaoRegion) {
+    return castingLookup(ArincHeliport.class, new ArincKey(identifier, icaoRegion, SectionCode.H, "A"));
+  }
+
+  public Optional<ArincHeliport> heliport(String identifier) {
+    return highlander(heliports(identifier));
+  }
+
+  public Collection<ArincHeliport> heliports(String identifier) {
+    return multiCastLookup(ArincHeliport.class, new ArincKey(identifier, null, SectionCode.H, "A")).collect(Collectors.toSet());
+  }
+
+  public Collection<ArincHeliport> heliports(String... identifiers) {
+    return Arrays.stream(identifiers)
+        .flatMap(identifier -> castingLookup(ArincHeliport.class, new ArincKey(identifier, null, SectionCode.H, "A")).stream())
+        .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   public Optional<ArincAirport> airport(String identifier) {
@@ -217,11 +236,11 @@ public final class ArincFixDatabase {
     );
   }
 
-  public <T> Optional<T> castingLookup(Class<T> clz, ArincKey key) {
+  private  <T> Optional<T> castingLookup(Class<T> clz, ArincKey key) {
     return fixLookup.get(key).stream().filter(clz::isInstance).map(clz::cast).findFirst();
   }
 
-  public <T> Stream<T> multiCastLookup(Class<T> clz, ArincKey key) {
+  private  <T> Stream<T> multiCastLookup(Class<T> clz, ArincKey key) {
     return fixLookup.get(key).stream().filter(clz::isInstance).map(clz::cast);
   }
 
@@ -231,7 +250,7 @@ public final class ArincFixDatabase {
    * <br>
    * As this class does internal class filtering it won't throw a {@link ClassCastException}, so it's at least somewhat safe.
    */
-  public <T> Collection<T> castingLookups(Class<T> clz, ArincKey... keys) {
+  private  <T> Collection<T> castingLookups(Class<T> clz, ArincKey... keys) {
     return Arrays.stream(keys).map(fixLookup::get).flatMap(Collection::stream)
         .filter(o -> clz.isAssignableFrom(o.getClass())).map(clz::cast).collect(Collectors.toCollection(LinkedHashSet::new));
   }

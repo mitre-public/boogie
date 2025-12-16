@@ -20,28 +20,19 @@ final class AirportPage {
 
   private final ArincAirport airport;
   private final Map<String, RunwayPage> runwayPages;
-  private final Map<String, List<ArincProcedureLeg>> procedureLegs;
-  private final Map<String, ArincWaypoint> waypoints;
-  private final Map<String, ArincNdbNavaid> ndbNavaids;
-  private final Map<String, ArincVhfNavaid> vhfNavaids;
   private final Map<String, HelipadPage> helipadPages;
+  private final SupportingPage supportingPage;
 
   AirportPage(
       ArincAirport airport,
       Map<String, RunwayPage> runwayPages,
-      Map<String, List<ArincProcedureLeg>> procedureLegs,
-      Map<String, ArincWaypoint> waypoints,
-      Map<String, ArincNdbNavaid> ndbNavaids,
-      Map<String, ArincVhfNavaid> vhfNavaids,
-      Map<String, HelipadPage> helipadPages
+      Map<String, HelipadPage> helipadPages,
+      SupportingPage supportingPage
   ) {
     this.airport = requireNonNull(airport);
     this.runwayPages = runwayPages;
-    this.procedureLegs = procedureLegs;
-    this.waypoints = waypoints;
-    this.ndbNavaids = ndbNavaids;
-    this.vhfNavaids = vhfNavaids;
     this.helipadPages = helipadPages;
+    this.supportingPage = supportingPage;
   }
 
   public ArincAirport airport() {
@@ -121,38 +112,38 @@ final class AirportPage {
   }
 
   public Collection<String> procedureNames() {
-    return procedureLegs.keySet();
+    return supportingPage.procedureNames();
   }
 
   public Collection<ArincProcedureLeg> procedureLegs() {
-    return procedureLegs.values().stream().flatMap(Collection::stream).collect(Collectors.toCollection(LinkedHashSet::new));
+    return supportingPage.procedureLegs();
   }
 
   public Collection<ArincProcedureLeg> procedureLegs(String procedure) {
-    return procedureLegs.get(procedure);
+    return supportingPage.procedureLegs(procedure);
   }
 
   public Optional<ArincWaypoint> waypoint(String waypoint) {
-    return Optional.ofNullable(waypoints.get(waypoint));
+    return supportingPage.waypoint(waypoint);
   }
 
   public Collection<ArincWaypoint> waypoints() {
-    return waypoints.values();
+    return supportingPage.waypoints();
   }
 
   public Optional<ArincNdbNavaid> ndbNavaid(String identifier) {
-    return Optional.ofNullable(ndbNavaids.get(identifier));
+    return supportingPage.ndbNavaid(identifier);
   }
 
   public Collection<ArincNdbNavaid> ndbNavaids() {
-    return ndbNavaids.values();
+    return supportingPage.ndbNavaids();
   }
 
   public Optional<ArincVhfNavaid> vhfNavaid(String identifier) {
-    return Optional.ofNullable(vhfNavaids.get(identifier));
+    return supportingPage.vhfNavaid(identifier);
   }
 
   public Collection<ArincVhfNavaid> vhfNavaids() {
-    return vhfNavaids.values();
+    return supportingPage.vhfNavaids();
   }
 }

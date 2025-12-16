@@ -17,7 +17,7 @@ import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 
-public class TestLidoControlledAirspaceAssembler {
+public class TestV22ControlledAirspaceAssembler {
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/controlled.txt"));
   private static final ArincFileParser fileParser22 = new ArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
   private static final ConvertingArincRecordConsumer consumer22 = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
@@ -32,7 +32,8 @@ public class TestLidoControlledAirspaceAssembler {
         consumer22.arincVhfNavaids(),
         consumer22.arincWaypoints(),
         consumer22.arincAirports(),
-        consumer22.arincHoldingPatterns()
+        consumer22.arincHoldingPatterns(),
+        consumer22.arincHeliports()
     );
 
     assembler22 = ControlledAirspaceAssembler.standard(arincFixDatabase22);

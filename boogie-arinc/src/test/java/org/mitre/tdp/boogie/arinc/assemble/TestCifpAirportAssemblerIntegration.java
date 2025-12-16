@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 
 @Tag("CIFP")
 @Tag("INTEGRATION")
-class TestAirportAssemblerIntegration {
+class TestCifpAirportAssemblerIntegration {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TestCifpProcedureAssemblerIntegration.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestCifpAirportAssemblerIntegration.class);
 
   private static Map<String, List<Airport>> airports;
 
@@ -45,7 +45,8 @@ class TestAirportAssemblerIntegration {
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincProcedureLegs(),
         EmbeddedCifpFile.instance().arincGnssLandingSystems(),
-        Collections.emptySet()
+        Collections.emptySet(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
 
     AirportAssembler<Airport> assembler = AirportAssembler.standard(arincTerminalAreaDatabase);

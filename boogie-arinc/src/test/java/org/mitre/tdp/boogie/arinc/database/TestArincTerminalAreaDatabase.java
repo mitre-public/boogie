@@ -3,12 +3,15 @@ package org.mitre.tdp.boogie.arinc.database;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincFileParser;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
@@ -23,13 +26,17 @@ class TestArincTerminalAreaDatabase {
   private static final File withHelipad = new File(System.getProperty("user.dir").concat("/src/test/resources/02nh-helipads.txt"));
   private static final File withLoc = new File(System.getProperty("user.dir").concat("/src/test/resources/loc.txt"));
 
+  private static final File heliports = new File(System.getProperty("user.dir").concat("/src/test/resources/kjra_9vak5-and-friends"));
+
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
+  private static ArincTerminalAreaDatabase arincTerminalAreaDatabase2;
 
   @BeforeAll
   static void setup() {
     fileParser.apply(arincTestFile).forEach(testV18Consumer);
     fileParser.apply(withHelipad).forEach(testV18Consumer); //this only works because the default consumer has a helipad implementation
     fileParser.apply(withLoc).forEach(testV18Consumer);
+    fileParser2.apply(heliports).forEach(testV22Consumer);
 
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         testV18Consumer.arincAirports(),
@@ -40,9 +47,40 @@ class TestArincTerminalAreaDatabase {
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincProcedureLegs(),
         testV18Consumer.arincGnssLandingSystems(),
-        testV18Consumer.arincHelipads()
+        testV18Consumer.arincHelipads(),
+        testV18Consumer.arincHeliports()
+    );
+
+    arincTerminalAreaDatabase2 = ArincDatabaseFactory.newTerminalAreaDatabase(
+        testV22Consumer.arincAirports(),
+        testV22Consumer.arincRunways(),
+        testV22Consumer.arincLocalizerGlideSlopes(),
+        testV22Consumer.arincNdbNavaids(),
+        testV22Consumer.arincVhfNavaids(),
+        testV22Consumer.arincWaypoints(),
+        testV22Consumer.arincProcedureLegs(),
+        testV22Consumer.arincGnssLandingSystems(),
+        testV22Consumer.arincHelipads(),
+        testV22Consumer.arincHeliports()
     );
   }
+
+  @Test
+  void heliports() {
+    Set<ArincHeliport> ports = arincTerminalAreaDatabase2.heliports("KJRA");
+    ArincHeliport heliport = ports.iterator().next();
+    assertAll(
+        () -> assertEquals(1, ports.size()),
+        () -> assertEquals("EAST 29TH ST", heliport.heliportName().orElseThrow())
+    );
+  }
+
+  @Test
+  void heliportTerminalStuff() {
+    Collection<ArincWaypoint> points = arincTerminalAreaDatabase2.heliportsWaypointsAt("KJRA");
+    assertEquals(2, points.size());
+  }
+
 
   @Test
   void ruwwaysNoLocs() {
@@ -146,9 +184,12 @@ class TestArincTerminalAreaDatabase {
       new RunwaySpec(),
       new VhfNavaidSpec(),
       new WaypointSpec(),
-      new HelipadSpec() //not really v18 but will be ok with the default consumer
+      new HelipadSpec(), //not really v18 but will be ok with the default consumer
+      new HeliportSpec()
   );
+  private static final ArincFileParser fileParser2 = new ArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
 
+  private static final ConvertingArincRecordConsumer testV22Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
   /**
    * In implementation this could be done from the factory class {@link ArincRecordConverterFactory}.
    */
@@ -183,5 +224,7 @@ class TestArincTerminalAreaDatabase {
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .headerDelegator(new Header01Validator())
       .headerConverter(new Header01Converter())
+      .heliportConverter(new HeliportConverter())
+      .heliportDelegator(new HeliportValidator())
       .build();
 }

@@ -25,7 +25,9 @@ public class TestLidoControlledAirspaceIntegration {
         EmbeddedLidoFile.instance().arincVhfNavaids(),
         EmbeddedLidoFile.instance().arincWaypoints(),
         EmbeddedLidoFile.instance().arincAirports(),
-        EmbeddedLidoFile.instance().arincHoldingPatterns()
+        EmbeddedLidoFile.instance().arincHoldingPatterns(),
+        EmbeddedLidoFile.instance().arincHeliports()
+
     );
     ControlledAirspaceAssembler<Airspace> assembler = ControlledAirspaceAssembler.standard(fixes);
     map = assembler.assemble(EmbeddedLidoFile.instance().arincControlledAirspaceLegs())
@@ -34,6 +36,6 @@ public class TestLidoControlledAirspaceIntegration {
 
   @Test
   void test() {
-    assertEquals(11761, map.values().size());
+    assertEquals(11761, map.size());
   }
 }

@@ -47,6 +47,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   private final DelegatableCollection<ArincHelipad> arincHelipads;
   private final DelegatableCollection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs;
   private final DelegatableCollection<ArincHeaderOne> arincHeaderOnes;
+  private final DelegatableCollection<ArincHeliport> arincHeliports;
 
   private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;
 
@@ -66,6 +67,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincHelipads = new DelegatableCollection<>(builder.helipadDelegator, builder.helipadConverter);
     this.arincControlledAirspaceLegs = new DelegatableCollection<>(builder.arincControlledAirspaceLegDelegator, builder.arincControlledAirspaceConverter);
     this.arincHeaderOnes = new DelegatableCollection<>(builder.headerDelegator, builder.headerConverter);
+    this.arincHeliports = new DelegatableCollection<>(builder.heliportDelegator, builder.heliportConverter);
 
     this.consumer = new MRUDequeConsumer<>(
         this.arincAirports,
@@ -82,7 +84,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         this.arincFirUirLeg,
         this.arincHelipads,
         this.arincControlledAirspaceLegs,
-        this.arincHeaderOnes
+        this.arincHeaderOnes,
+        this.arincHeliports
     );
   }
 
@@ -144,6 +147,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
   public Optional<ArincHeaderOne>  arincHeaderOne() {
     return arincHeaderOnes.records().stream().findFirst();
+  }
+
+  public Collection<ArincHeliport> arincHeliports() {
+    return arincHeliports.records();
   }
 
   @Override
@@ -247,6 +254,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     private Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> arincControlledAirspaceConverter;
     private Predicate<ArincRecord> headerDelegator;
     private Function<ArincRecord, Optional<ArincHeaderOne>> headerConverter;
+    private Predicate<ArincRecord> heliportDelegator;
+    private Function<ArincRecord, Optional<ArincHeliport>> heliportConverter;
 
     public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
       this.airportContinuationDelegator = airportContinuationDelegator;
@@ -395,6 +404,16 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     public Builder headerDelegator(Predicate<ArincRecord> headerDelegator) {
       this.headerDelegator = headerDelegator;
+      return this;
+    }
+
+    public Builder heliportDelegator(Predicate<ArincRecord> heliportDelegator) {
+      this.heliportDelegator = heliportDelegator;
+      return this;
+    }
+
+    public Builder heliportConverter(Function<ArincRecord, Optional<ArincHeliport>> heliportConverter) {
+      this.heliportConverter = heliportConverter;
       return this;
     }
 

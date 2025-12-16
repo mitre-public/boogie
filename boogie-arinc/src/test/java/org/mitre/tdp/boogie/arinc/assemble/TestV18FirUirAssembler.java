@@ -17,7 +17,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 import org.mitre.tdp.boogie.arinc.v18.FirUirLegSpec;
 
-public class TestLidoFirUirAssembler {
+public class TestV18FirUirAssembler {
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-fir-v18.txt"));
   private static final ArincFileParser PARSER = new ArincFileParser(new FirUirLegSpec());
   private static final ConvertingArincRecordConsumer V18_CONSUMER = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V18);

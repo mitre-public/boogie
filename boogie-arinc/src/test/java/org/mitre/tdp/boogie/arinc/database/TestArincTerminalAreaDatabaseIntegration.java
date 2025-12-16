@@ -30,7 +30,8 @@ class TestArincTerminalAreaDatabaseIntegration {
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincProcedureLegs(),
         EmbeddedCifpFile.instance().arincGnssLandingSystems(),
-        EmbeddedCifpFile.instance().arincHelipads()
+        EmbeddedCifpFile.instance().arincHelipads(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
   }
 
@@ -39,21 +40,21 @@ class TestArincTerminalAreaDatabaseIntegration {
 
     List<ArincRunway> runwaysWithPrimaryIlsMlsGlsReference = EmbeddedCifpFile.instance().arincRunways().stream()
         .filter(arincRunway -> arincRunway.ilsMlsGlsIdentifier().isPresent())
-        .collect(Collectors.toList());
+        .toList();
 
     List<ArincRunway> runwaysWithMatchingPrimaryIlsMlsGlsReference = runwaysWithPrimaryIlsMlsGlsReference.stream()
         .filter(arincRunway -> arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf(arincRunway.airportIdentifier(), arincRunway.runwayIdentifier()).isPresent())
-        .collect(Collectors.toList());
+        .toList();
 
     int missingPrimaryReferences = runwaysWithPrimaryIlsMlsGlsReference.size() - runwaysWithMatchingPrimaryIlsMlsGlsReference.size();
 
     List<ArincRunway> runwaysWithSecondaryIlsMlsGlsReference = EmbeddedCifpFile.instance().arincRunways().stream()
         .filter(arincRunway -> arincRunway.secondaryIlsMlsGlsIdentifier().isPresent())
-        .collect(Collectors.toList());
+        .toList();
 
     List<ArincRunway> runwaysWithMatchingSecondaryIlsMlsGlsReference = runwaysWithSecondaryIlsMlsGlsReference.stream()
         .filter(arincRunway -> arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf(arincRunway.airportIdentifier(), arincRunway.runwayIdentifier()).isPresent())
-        .collect(Collectors.toList());
+        .toList();
 
     int missingSecondaryReferences = runwaysWithSecondaryIlsMlsGlsReference.size() - runwaysWithMatchingSecondaryIlsMlsGlsReference.size();
 

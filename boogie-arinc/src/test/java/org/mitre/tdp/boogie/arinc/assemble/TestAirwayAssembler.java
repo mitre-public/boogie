@@ -39,6 +39,8 @@ import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
 import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
+import org.mitre.tdp.boogie.arinc.v18.HeliportConverter;
+import org.mitre.tdp.boogie.arinc.v18.HeliportValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
@@ -86,7 +88,8 @@ class TestAirwayAssembler {
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincAirports(),
-        testV18Consumer.arincHoldingPatterns()
+        testV18Consumer.arincHoldingPatterns(),
+        testV18Consumer.arincHeliports()
     );
 
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(arincFixDatabase);
@@ -188,5 +191,7 @@ class TestAirwayAssembler {
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .headerDelegator(new Header01Validator())
       .headerConverter(new Header01Converter())
+      .heliportConverter(new HeliportConverter())
+      .heliportDelegator(new HeliportValidator())
       .build();
 }

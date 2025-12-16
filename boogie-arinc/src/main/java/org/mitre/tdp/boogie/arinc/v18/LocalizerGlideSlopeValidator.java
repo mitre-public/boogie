@@ -64,6 +64,6 @@ public final class LocalizerGlideSlopeValidator implements Predicate<ArincRecord
     Optional<SectionCode> sectionCode = arincRecord.optionalField("sectionCode");
     Optional<String> subSectionCode = arincRecord.optionalField("subSectionCode");
 
-    return sectionCode.filter(SectionCode.P::equals).isPresent() && subSectionCode.filter("I"::equals).isPresent();
+    return (sectionCode.filter(SectionCode.P::equals).isPresent() || sectionCode.filter(SectionCode.H::equals).isPresent()) && subSectionCode.filter("I"::equals).isPresent();
   }
 }

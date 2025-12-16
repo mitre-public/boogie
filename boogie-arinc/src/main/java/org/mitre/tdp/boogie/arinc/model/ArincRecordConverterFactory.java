@@ -16,6 +16,8 @@ import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
 import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
+import org.mitre.tdp.boogie.arinc.v18.HeliportConverter;
+import org.mitre.tdp.boogie.arinc.v18.HeliportValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
@@ -74,7 +76,9 @@ public final class ArincRecordConverterFactory {
         .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
         .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
         .headerConverter(new Header01Converter())
-        .headerDelegator(new Header01Validator());
+        .headerDelegator(new Header01Validator())
+        .heliportDelegator(new HeliportValidator())
+        .heliportConverter(new HeliportConverter());
   }
 
   private static ConvertingArincRecordMapper.Builder standardMapper() {
@@ -107,7 +111,9 @@ public final class ArincRecordConverterFactory {
         .controlledAirspaceDelegator(new ControlledAirspaceValidator())
         .controlledAirspaceConverter(new ControlledAirspaceLegConverter())
         .headerOneConverter(new Header01Converter())
-        .headerOneDelegator(new Header01Validator());
+        .headerOneDelegator(new Header01Validator())
+        .heliportConverter(new HeliportConverter())
+        .holdingPatternDelegator(new HoldingPatternValidator());
   }
 
   /**
@@ -143,6 +149,7 @@ public final class ArincRecordConverterFactory {
           .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
           .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
           .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
+          .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
           .build();
       case V22, V22_NAV -> standardConsumer()
           .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v22.AirwayLegConverter())
@@ -150,6 +157,7 @@ public final class ArincRecordConverterFactory {
           .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
           .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v22.ProcedureLegConverter())
           .runwayConverter(new org.mitre.tdp.boogie.arinc.v22.RunwayConverter())
+          .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
           .build();
     };
   }

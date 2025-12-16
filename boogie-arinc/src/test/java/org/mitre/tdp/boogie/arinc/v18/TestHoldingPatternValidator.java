@@ -21,7 +21,7 @@ public class TestHoldingPatternValidator {
   @Test
   void testIsCorrectSectionSubSection() {
     ArincRecord record = newArincRecord("EP");
-    assertTrue(VALIDATOR.isCorrectSectionSubSection(record), "If we can't get this right, we are doomed");
+    assertTrue(HoldingPatternValidator.isCorrectSectionSubSection(record), "If we can't get this right, we are doomed");
   }
 
   @Test

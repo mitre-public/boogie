@@ -35,7 +35,8 @@ class TestCifpAirwayAssemblerIntegration {
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincAirports(),
-        EmbeddedCifpFile.instance().arincHoldingPatterns()
+        EmbeddedCifpFile.instance().arincHoldingPatterns(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
 
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(arincFixDatabase);

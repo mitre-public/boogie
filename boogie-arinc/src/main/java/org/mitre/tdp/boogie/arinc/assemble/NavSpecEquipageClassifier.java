@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -30,9 +33,9 @@ public final class NavSpecEquipageClassifier implements Function<ArincProcedureL
     String subsection = leg.subSectionCode().orElseThrow(() -> new IllegalStateException("Should not have procedure legs without subsection code: ".concat(leg.toString())));
     ProcedureSectionSubsection sectionSubsection = ProcedureSectionSubsection.valueOf(section.concat(subsection));
     return switch (sectionSubsection) {
-      case PD -> NavSpecFromSid.INSTANCE.apply(leg).map(NavSpecEquipageClassifier::fromNavSpec);
-      case PE -> NavSpecFromStar.INSTANCE.apply(leg).map(NavSpecEquipageClassifier::fromNavSpec);
-      case PF -> NavSpecFromApproach.INSTANCE.apply(leg).map(NavSpecEquipageClassifier::fromNavSpec);
+      case PD, HD -> NavSpecFromSid.INSTANCE.apply(leg).map(NavSpecEquipageClassifier::fromNavSpec);
+      case PE, HE -> NavSpecFromStar.INSTANCE.apply(leg).map(NavSpecEquipageClassifier::fromNavSpec);
+      case PF, HF -> NavSpecFromApproach.INSTANCE.apply(leg).map(NavSpecEquipageClassifier::fromNavSpec);
     };
   }
 
@@ -59,7 +62,7 @@ public final class NavSpecEquipageClassifier implements Function<ArincProcedureL
 
   private Optional<RequiredNavigationEquipage> findIfApproachIsConventional(ArincProcedureLeg leg) {
     return Optional.of(leg)
-        .map(ArincRouteType::from)
+        .map(RouteTypeExtractor.INSTANCE)
         .filter(CONV_TYPES::contains) //the old way still works for approaches because qual2 is different on approach vs sid/star
         .map(i -> RequiredNavigationEquipage.CONV);
   }

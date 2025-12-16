@@ -47,6 +47,9 @@ import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
 import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
 import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
 import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
+import org.mitre.tdp.boogie.arinc.v18.HeliportConverter;
+import org.mitre.tdp.boogie.arinc.v18.HeliportSpec;
+import org.mitre.tdp.boogie.arinc.v18.HeliportValidator;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
 import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
@@ -70,7 +73,7 @@ import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
 import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
-class TestCifpProcedureAssembler {
+class TestV19ProcedureAssembler {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
@@ -93,7 +96,8 @@ class TestCifpProcedureAssembler {
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincProcedureLegs(),
         testV18Consumer.arincGnssLandingSystems(),
-        Collections.emptySet()
+        Collections.emptySet(),
+        testV18Consumer.arincHeliports()
     );
 
     arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
@@ -101,10 +105,35 @@ class TestCifpProcedureAssembler {
         testV18Consumer.arincVhfNavaids(),
         testV18Consumer.arincWaypoints(),
         testV18Consumer.arincAirports(),
-        testV18Consumer.arincHoldingPatterns()
+        testV18Consumer.arincHoldingPatterns(),
+        testV18Consumer.arincHeliports()
     );
 
     assembler = ProcedureAssembler.standard(arincTerminalAreaDatabase, arincFixDatabase);
+  }
+
+  @Test
+  void testAssemblyOfHUDSN1_SID() {
+    Collection<ArincProcedureLeg> hudsn1LEgs = arincTerminalAreaDatabase.heliportsLegsForProcedure("KJRA", "K6", "HUDSN1");
+    Collection<Procedure> procedures = assembler.assemble(hudsn1LEgs).collect(Collectors.toSet());
+    assertEquals(1, procedures.size());
+    Procedure HUDSN1 = procedures.iterator().next();
+    Map<String, Transition> transitions = HUDSN1.transitions().stream()
+        .collect(Collectors.toMap(t -> t.transitionIdentifier().orElse("ALL"), Function.identity()));
+    assertAll(
+        "Assertions about the contents of our HUDSN1 procedure.",
+        () -> assertEquals("HUDSN1", HUDSN1.procedureIdentifier()),
+        () -> assertEquals("KJRA", HUDSN1.airportIdentifier()),
+        () -> assertEquals(ProcedureType.SID, HUDSN1.procedureType()),
+        () -> assertEquals(RequiredNavigationEquipage.RNAV, HUDSN1.requiredNavigationEquipage()),
+        () -> assertEquals(1, HUDSN1.transitions().size()),
+
+        // check tha actual transition contents...
+        () -> assertEquals(TransitionType.ENROUTE, transitions.get("YOMAN").transitionType()),
+        () -> assertEquals(5, transitions.get("YOMAN").legs().size()),
+        () -> assertEquals("IF|TF|TF|TF|TF", pathTerminatorSequence(transitions.get("YOMAN").legs())),
+        () -> assertEquals("HUDSN|RINNG|CHNZO|JOTRE|YOMAN", associatedFixSequence(transitions.get("YOMAN").legs()))
+    );
   }
 
   @Test
@@ -261,7 +290,8 @@ class TestCifpProcedureAssembler {
       new ProcedureLegSpec(),
       new RunwaySpec(),
       new VhfNavaidSpec(),
-      new WaypointSpec()
+      new WaypointSpec(),
+      new HeliportSpec()
   );
 
   /**
@@ -298,5 +328,7 @@ class TestCifpProcedureAssembler {
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
       .headerDelegator(new Header01Validator())
       .headerConverter(new Header01Converter())
+      .heliportConverter(new HeliportConverter())
+      .heliportDelegator(new HeliportValidator())
       .build();
 }

@@ -44,6 +44,7 @@ public final class WaypointValidator implements Predicate<ArincRecord> {
     Optional<String> terminalSubSectionCode = arincRecord.optionalField("terminalSubSectionCode");
 
     return (sectionCode.filter(SectionCode.P::equals).isPresent() && terminalSubSectionCode.filter("C"::equals).isPresent())
-        || (sectionCode.filter(SectionCode.E::equals).isPresent() && enrouteSubSectionCode.filter("A"::equals).isPresent());
+        || (sectionCode.filter(SectionCode.E::equals).isPresent() && enrouteSubSectionCode.filter("A"::equals).isPresent())
+        || (sectionCode.filter(SectionCode.H::equals).isPresent() && terminalSubSectionCode.filter("C"::equals).isPresent());
   }
 }

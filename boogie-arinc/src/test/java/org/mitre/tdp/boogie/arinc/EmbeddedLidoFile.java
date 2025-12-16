@@ -14,6 +14,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
 import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
@@ -109,6 +110,10 @@ public final class EmbeddedLidoFile {
     return records.arincControlledAirspaceLegs();
   }
 
+  public Collection<ArincHeliport> arincHeliports() {
+    return records.arincHeliports();
+  }
+
   public int totalRecords() {
     return arincAirports().size()
         + arincRunways().size()
@@ -120,7 +125,10 @@ public final class EmbeddedLidoFile {
         + arincProcedureLegs().size()
         + arincGnssLandingSystems().size()
         + arincHoldingPatterns().size()
-        + arincFirUirLegs().size();
+        + arincFirUirLegs().size()
+        + arincControlledAirspaceLegs().size()
+        + arincHeliports().size()
+        + arincHelipads().size();
   }
 
   /**

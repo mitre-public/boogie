@@ -57,7 +57,8 @@ class TestCifpProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincProcedureLegs(),
         EmbeddedCifpFile.instance().arincGnssLandingSystems(),
-        Collections.emptySet()
+        Collections.emptySet(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
 
     ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
@@ -65,7 +66,8 @@ class TestCifpProcedureAssemblerIntegration {
         EmbeddedCifpFile.instance().arincVhfNavaids(),
         EmbeddedCifpFile.instance().arincWaypoints(),
         EmbeddedCifpFile.instance().arincAirports(),
-        EmbeddedCifpFile.instance().arincHoldingPatterns()
+        EmbeddedCifpFile.instance().arincHoldingPatterns(),
+        EmbeddedCifpFile.instance().arincHeliports()
     );
 
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.withStrategy(
@@ -80,7 +82,7 @@ class TestCifpProcedureAssemblerIntegration {
 
   @Test
   void testGlobalProcedureCountIsAccurate() {
-    assertEquals(14258L, proceduresByAirport.values().stream().mapToLong(Collection::size).sum(), "This is less about the exact number and more about being able to parse/assemble without breaking.");
+    assertEquals(14262L, proceduresByAirport.values().stream().mapToLong(Collection::size).sum(), "This is less about the exact number and more about being able to parse/assemble without breaking.");
   }
 
   @Test
@@ -90,7 +92,8 @@ class TestCifpProcedureAssemblerIntegration {
         () -> assertEquals(63, proceduresByAirport.get("KORD").size(), "KORD counts"),
         () -> assertEquals(39, proceduresByAirport.get("KJFK").size(), "KJFK counts"),
         () -> assertEquals(29, proceduresByAirport.get("KEWR").size(), "KEWR counts"),
-        () -> assertEquals(41, proceduresByAirport.get("KSFO").size(), "KSFO counts")
+        () -> assertEquals(41, proceduresByAirport.get("KSFO").size(), "KSFO counts"),
+        () -> assertEquals(1, proceduresByAirport.get("KJRA").size(), "KJRA (Heliport) counts")
     );
   }
 
@@ -129,8 +132,8 @@ class TestCifpProcedureAssemblerIntegration {
 
     assertAll(
         () -> assertEquals(410, countsByEquip.getOrDefault(RequiredNavigationEquipage.RNP, 0L), "RNP"),
-        () -> assertEquals(8660, countsByEquip.getOrDefault(RequiredNavigationEquipage.RNAV, 0L), "RNAV"),
-        () -> assertEquals(5188, countsByEquip.getOrDefault(RequiredNavigationEquipage.CONV, 0L), "CONV"),
+        () -> assertEquals(8663, countsByEquip.getOrDefault(RequiredNavigationEquipage.RNAV, 0L), "RNAV"),
+        () -> assertEquals(5189, countsByEquip.getOrDefault(RequiredNavigationEquipage.CONV, 0L), "CONV"),
         () -> assertEquals(0, countsByEquip.getOrDefault(RequiredNavigationEquipage.UNKNOWN, 0L), "UNKNOWN")
     );
   }

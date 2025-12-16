@@ -12,5 +12,8 @@ public enum ProcedureSectionSubsection {
   /**
    * Approach
    */
-  PF
+  PF,
+  HD,
+  HE,
+  HF
 }
