@@ -11,7 +11,7 @@ import org.mitre.tdp.boogie.Leg;
  * Simple decorator class for a source of {@link Leg}s which can be composed into {@link FlyableLeg} elements (i.e. has some
  * assumed structure - rather than being a free-form object).
  */
-public final class Route {
+public final class Route<S> {
 
   /**
    * Functional to apply to the source to extract a consecutive sequence of legs.
@@ -20,7 +20,7 @@ public final class Route {
   /**
    * The source object of the legs.
    */
-  private final Object source;
+  private final S source;
 
   /**
    * The precomputed hash of the route object - turns out it can be expensive to continually be computing this value and in
@@ -28,13 +28,13 @@ public final class Route {
    */
   private final int hash;
 
-  private Route(List<Leg> legs, Object source) {
+  private Route(List<Leg> legs, S source) {
     this.legs = legs;
     this.source = source;
     this.hash = Objects.hash(legs, source);
   }
 
-  public Object source() {
+  public S source() {
     return source;
   }
 
@@ -42,21 +42,16 @@ public final class Route {
     return legs;
   }
 
-  public static Route newRoute(List<? extends Leg> legs, Object source) {
-    return new Route((List<Leg>) legs, checkNotNull(source));
+  public static <S> Route<S> newRoute(List<Leg> legs, S source) {
+    return new Route<>(legs, checkNotNull(source));
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
-    Route route = (Route) o;
-    return Objects.equals(legs, route.legs) &&
-        Objects.equals(source, route.source);
+    Route<?> route = (Route<?>) o;
+    return hash == route.hash && Objects.equals(legs, route.legs) && Objects.equals(source, route.source);
   }
 
   @Override

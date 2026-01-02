@@ -56,11 +56,11 @@ class TestRouteAssigner {
         })
         .collect(Collectors.toList());
 
-    Route route0 = route(Arrays.asList(source, a));
-    Route route1 = route(Arrays.asList(b, c, d, e));
-    Route route2 = route(Arrays.asList(f, g, h, i));
+    Route<?> route0 = route(Arrays.asList(source, a));
+    Route<?> route1 = route(Arrays.asList(b, c, d, e));
+    Route<?> route2 = route(Arrays.asList(f, g, h, i));
 
-    List<Route> routes = Arrays.asList(route0, route1, route2);
+    List<Route<?>> routes = Arrays.asList(route0, route1, route2);
 
     LinkingStrategy linkingStrategy = LinkingStrategy.supplied(
         Pair.of(new FlyableLeg(source, a, null, route0), new FlyableLeg(null, b, c, route1)),
@@ -126,8 +126,8 @@ class TestRouteAssigner {
     return pt;
   }
 
-  private Route route(List<Leg> legs) {
-    Route route = mock(Route.class);
+  private Route<?> route(List<Leg> legs) {
+    Route<?> route = mock(Route.class);
     when(route.legs()).thenReturn(legs);
     return route;
   }

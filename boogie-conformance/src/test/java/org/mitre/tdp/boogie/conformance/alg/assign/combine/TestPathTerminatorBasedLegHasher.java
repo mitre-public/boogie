@@ -46,5 +46,4 @@ class TestPathTerminatorBasedLegHasher {
     when(fix.longitude()).thenReturn(latLong.longitude());
     return flyableLeg;
   }
-
 }
