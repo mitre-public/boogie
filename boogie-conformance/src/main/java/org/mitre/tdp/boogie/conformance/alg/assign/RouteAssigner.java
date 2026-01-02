@@ -21,32 +21,33 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
- * The route assigner takes a collection of (potentially filtered) routing information + point information and produces for
+ * The route assigner takes a collection of (potentially filtered) routing information and point information and produces for
  * each point an assigned leg representing the most likely leg the aircraft was flying at that point.
  *
- * This algorithm can be broken up into five primary parts:
+ * <p>This algorithm can be broken up into five primary parts:
+ * <ol>
+ *   <li><b>Leg generation:</b> where input routes are assembled into {@link FlyableLeg}s representing a single leg plus the potentially
+ *   necessary context of the previous/next leg to determine how it should be flown.</li>
  *
- * 1) Leg generation: where input routes are assembled into {@link FlyableLeg}s representing a single leg plus the potentially
- * necessary context of the previous/next leg to determine how it should be flown.
+ *   <li><b>Leg combination:</b> where the flyable legs are compared with each other (as logically similar legs may be generated from
+ *   multiple routes) and reduced into a single final representation. For example, why have the same TF leg represented twice - the notion
+ *   of logical equivalence here depends on the supplied {@link CombinationStrategy}.</li>
  *
- * 2) Leg combination: where the flyable legs are compared with each other (as logically similar legs may be generated from
- * multiple routes) and reduced into a single final representation. I.e. why have the same TF leg represented twice - the notion
- * of logical equivalence here depends on the supplied {@link CombinationStrategy}.
+ *   <li><b>Leg linking:</b> where the previously combined flyable legs are examined to determine whether additional links should be added
+ *   between them before they are handed off to the {@code LegTransitionGraph} which will back the next stages {@code ViterbiTagger}
+ *   in terms of determining allowed transitions between leg states.</li>
  *
- * 3) Leg linking: where the previously combined flyable legs are examined to determine whether additional links should be added
- * between them before they are handed off to the {@link LegTransitionGraph} which will back the next stages {@link ViterbiTagger}
- * in terms of determining allowed transitions between leg states.
+ *   <li><b>Graph assembly:</b> where the generated links and final combined set of legs are loaded into a {@code LegTransitionGraph} which
+ *   will back the allowed transitions between leg states within the final stages {@code ViterbiTagger}.</li>
  *
- * 4) Graph assembly: where the generated links and final combined set of legs are loaded into a {@link LegTransitionGraph} which
- * will back the allowed transitions between leg states within the final stages {@link ViterbiTagger}.
+ *   <li><b>Leg assignment:</b> where the points and leg graph are leveraged by the {@code ViterbiTagger} to produce an optimal sequence
+ *   of leg assignments.</li>
+ * </ol>
  *
- * 5) Leg assignment: where the points and leg graph are leveraged by the {@link ViterbiTagger} to produce an optimal sequence
- * of leg assignments.
+ * <p>These assignments are then returned as a mapping from {@link ConformablePoint} to {@link FlyableLeg}.
  *
- * These assignments are then returned as a mapping from {@link ConformablePoint} to {@link FlyableLeg}.
- *
- * Note - all of steps 1-4 are handled in the delegate class {@link TransitionGraphAssembler} which can (given a combination and
- * linking strategy) be used to generated a {@link LegTransitionGraph}.
+ * <p>Note: All steps 1-4 are handled in the delegate class {@link TransitionGraphAssembler} which can (given a combination and
+ * linking strategy) be used to generate a {@code LegTransitionGraph}.
  */
 public final class RouteAssigner {
 
@@ -71,14 +72,14 @@ public final class RouteAssigner {
     this.scoringStrategy = requireNonNull(scoringStrategy);
   }
 
-  public TransitionGraphAssembler.AssemblyResult transitionGraph(Collection<? extends Route> routes) {
+  public TransitionGraphAssembler.AssemblyResult transitionGraph(Collection<Route<?>> routes) {
     LOG.info("Generating transition graph.");
     return transitionGraphAssembler.assembleFrom(routes);
   }
 
   public ViterbiTagger<ConformablePoint, FlyableLeg> tagger(
       Collection<? extends ConformablePoint> points,
-      Collection<? extends Route> routes) {
+      Collection<Route<?>> routes) {
     return tagger(points, transitionGraph(routes).graph());
   }
 
@@ -107,7 +108,7 @@ public final class RouteAssigner {
 
   public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis(
       Collection<? extends ConformablePoint> points,
-      Collection<? extends Route> routes) {
+      Collection<Route<?>> routes) {
     return trellis(points, transitionGraph(routes).graph());
   }
 
@@ -125,7 +126,7 @@ public final class RouteAssigner {
    */
   public Map<ConformablePoint, FlyableLeg> assignments(
       Collection<? extends ConformablePoint> points,
-      Collection<? extends Route> routes) {
+      Collection<Route<?>> routes) {
     return assignments(points, transitionGraph(routes).graph());
   }
 }

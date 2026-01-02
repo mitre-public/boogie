@@ -19,7 +19,7 @@ public final class FlyableLegAssembler {
   /**
    * Generates the sequence of flyable legs via traversing the given route in order.
    */
-  public static List<FlyableLeg> assemble(Route route) {
+  public static List<FlyableLeg> assemble(Route<?> route) {
     List<? extends Leg> legs = route.legs();
 
     if (legs.isEmpty()) {
@@ -31,11 +31,11 @@ public final class FlyableLegAssembler {
     return assembled;
   }
 
-  public static Pair<Collection<FlyableLeg>, Collection<Pair<FlyableLeg, FlyableLeg>>> assembleWithLinks(Collection<? extends Route> routes) {
+  public static Pair<Collection<FlyableLeg>, Collection<Pair<FlyableLeg, FlyableLeg>>> assembleWithLinks(Collection<Route<?>> routes) {
     Collection<FlyableLeg> flyableLegs = new ArrayList<>();
     Collection<Pair<FlyableLeg, FlyableLeg>> links = new ArrayList<>();
 
-    for (Route route : routes) {
+    for (Route<?> route : routes) {
       List<FlyableLeg> legs = FlyableLegAssembler.assemble(route);
       List<Pair<FlyableLeg, FlyableLeg>> linked = links(legs);
 

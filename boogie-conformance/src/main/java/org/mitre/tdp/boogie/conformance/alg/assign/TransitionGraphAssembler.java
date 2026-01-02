@@ -27,16 +27,16 @@ import com.google.common.base.Preconditions;
 
 /**
  * Class for generating a {@link LegTransitionGraph} from an input collection of routes and a:
- *
+ * <p>
  * 1) {@link CombinationStrategy}
  * 2) {@link LinkingStrategy}
  * 3) {@link BiFunction} - to generate edge weights between {@link FlyableLeg} vertices.
- *
+ * <p>
  * At a high level this class takes a collection of {@link Route} records representing naturally linked legs (e.g. member legs of
  * the same transition, legs filed consecutively in a flight plan) and a separate "linking strategy" which can be used to supply
  * additional edges and generates a graph representing all of the legs how flights transition
  * to/from them.
- * <br>
+ * <p>
  * Note - this assembler automatically adds self-edges/loops under the assumption that the aircraft can always stay on its current
  * leg (though the weight of these edges are still configurable via the provided {@link #transitionScorer}).
  */
@@ -72,7 +72,7 @@ public final class TransitionGraphAssembler {
    * Assembles a new {@link LegTransitionGraph} for the given input collection of routes with the provided Combination/Linking
    * strategies.
    */
-  public AssemblyResult assembleFrom(Collection<? extends Route> routes) {
+  public AssemblyResult assembleFrom(Collection<Route<?>> routes) {
     Preconditions.checkArgument(!routes.isEmpty(), String.format("Invalid number of supplied routes %s.", routes.size()));
     Preconditions.checkArgument(!routes.stream().allMatch(route -> route.legs().isEmpty()), "At least one route must have legs.");
 
@@ -133,7 +133,6 @@ public final class TransitionGraphAssembler {
 
   /**
    * Initializes a new graph to hold valid transitions between legs which:
-   *
    * Directed
    * Weighted
    * Allows Self-Loops
