@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.validate;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.mitre.tdp.boogie.PathTerminator.*;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -16,7 +17,7 @@ import org.mitre.tdp.boogie.PathTerminator;
  * In this instance, we don't care about the actual arinc version.
  * This is about combinations that actually work from the perspective of having a single continuous route of flight per our use of the ARINC 424 data in MITRE code.
  */
-public final class PathTerminatorBasedNextLegValidator implements BiPredicate<Leg, Leg> {
+public final class PathTerminatorBasedNextLegValidator implements BiPredicate<Leg, Leg>, Serializable {
   public static final Set<PathTerminator> AF_NEXT_LEG = Set.of(AF, CA, CD, CF, CI, CR, FA, FC, FD, FM, HA, HF, HM, RF, TF, VA, VD, VI, VM, VR);
   public static final Set<PathTerminator> CA_CR_FA_VA_VM_VR_NEXT_LEG = Set.of(CA, CD, CF, CI, CR, DF, FA, FC, FD, FM, IF, VA, VD, VI, VM, VR);
   public static final Set<PathTerminator> CD_VD_NEXT_LEG = Set.of(AF, CA, CD, CF, CI, CR, DF, FA, FC, FD, FM, IF, VA, VD, VI, VM, VR);
@@ -57,6 +58,10 @@ public final class PathTerminatorBasedNextLegValidator implements BiPredicate<Le
 
   public PathTerminatorBasedNextLegValidator() {
     checkArgument(NEXT_LEGS.size() == 23, "Wrong number of path terminators in the map");
+  }
+
+  public static PathTerminatorBasedNextLegValidator getInstance() {
+    return new PathTerminatorBasedNextLegValidator();
   }
 
   /**

@@ -7,7 +7,7 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.ConformablePoint;
 
 public record TrackPoint(String key, Instant time, Double lat, Double lon, Double alt, Double course, Double speed, Double climb) implements ConformablePoint {
-  public static ConformablePoint from(String key, Instant time, Double lat, Double lon, Double alt, Double course, Double speed, Double climb) {
+  public static TrackPoint from(String key, Instant time, Double lat, Double lon, Double alt, Double course, Double speed, Double climb) {
     return new TrackPoint(key, time, lat, lon, alt, course, speed, climb);
   }
 
