@@ -64,7 +64,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
     }
 
     public Hasher withAssociatedFix(Leg leg) {
-      Fix associatedFix = leg.associatedFix().orElseThrow(IllegalStateException::new);
+      Fix associatedFix = leg.associatedFix().orElseThrow(() -> new IllegalStateException("associated fix has no associated fix: " + leg));
       builder.append(associatedFix.fixIdentifier());
       builder.append(FastMath.round(associatedFix.latitude() / HASH_RESOLUTION));
       builder.append(FastMath.round(associatedFix.longitude() / HASH_RESOLUTION));
