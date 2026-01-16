@@ -11,7 +11,7 @@ import java.util.Optional;
 import org.mitre.tdp.boogie.ConformablePoint;
 
 public class TrackParser {
-  public static List<ConformablePoint> parse(String path) {
+  public static List<TrackPoint> parse(String path) {
     try (BufferedReader br = new BufferedReader(new FileReader(path))) {
       return br.lines()
           .skip(1)

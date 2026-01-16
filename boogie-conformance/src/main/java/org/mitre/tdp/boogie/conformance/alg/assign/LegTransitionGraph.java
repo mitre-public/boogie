@@ -25,7 +25,7 @@ public final class LegTransitionGraph extends SimpleDirectedWeightedGraph<Flyabl
 
   /**
    * The mapping from the representative {@link FlyableLeg} which was inserted into the graph as a vertex to it's union cohort.
-   *
+   * <p>
    * This mapping is maintained here for applications which want traceability from the assigned representative legs to their
    * explicit sources.
    */

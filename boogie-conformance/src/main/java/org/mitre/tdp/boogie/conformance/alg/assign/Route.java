@@ -42,21 +42,16 @@ public final class Route {
     return legs;
   }
 
-  public static Route newRoute(List<? extends Leg> legs, Object source) {
-    return new Route((List<Leg>) legs, checkNotNull(source));
+  public static Route newRoute(List<Leg> legs, Object source) {
+    return new Route(legs, checkNotNull(source));
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     Route route = (Route) o;
-    return Objects.equals(legs, route.legs) &&
-        Objects.equals(source, route.source);
+    return hash == route.hash && Objects.equals(legs, route.legs) && Objects.equals(source, route.source);
   }
 
   @Override
