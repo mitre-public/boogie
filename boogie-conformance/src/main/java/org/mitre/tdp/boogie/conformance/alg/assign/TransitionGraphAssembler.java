@@ -72,7 +72,7 @@ public final class TransitionGraphAssembler {
    * Assembles a new {@link LegTransitionGraph} for the given input collection of routes with the provided Combination/Linking
    * strategies.
    */
-  public AssemblyResult assembleFrom(Collection<Route<?>> routes) {
+  public AssemblyResult assembleFrom(Collection<? extends Route> routes) {
     Preconditions.checkArgument(!routes.isEmpty(), String.format("Invalid number of supplied routes %s.", routes.size()));
     Preconditions.checkArgument(!routes.stream().allMatch(route -> route.legs().isEmpty()), "At least one route must have legs.");
 

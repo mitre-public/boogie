@@ -12,7 +12,7 @@ import org.mitre.tdp.boogie.conformance.alg.assign.RouteAssigner;
  */
 public final class CompositeLeg {
 
-  private final LinkedHashSet<Route<?>> routes;
+  private final LinkedHashSet<Route> routes;
   private final LinkedHashSet<FlyableLeg> members;
 
   public CompositeLeg(FlyableLeg representative) {

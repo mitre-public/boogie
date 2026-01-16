@@ -137,8 +137,8 @@ public class TestRouteAssignerIntegration {
   }
 
   private RouteAssigner newAssigner(List<Route<?>> enroute, List<Route<?>> approach) {
-    HybridHasher hybridHasher = HybridHasher.from(List.of(RouteHasher.newInstance(), PathTerminatorBasedLegHasher.newInstance()));
     LinkingStrategy supplied = PhaseOfFlightLinker.newStrategyFor(List.of(), enroute, List.of(), approach);
+    HybridHasher hybridHasher = HybridHasher.from(List.of(RouteHasher.newInstance(), PathTerminatorBasedLegHasher.newInstance()));
     CombinationStrategy combinationStrategy = new HashCombinationStrategy(hybridHasher);
     StandardLegFeatureScorer standardLegFeatureScorer = new StandardLegFeatureScorer();
     StandardLegFeatureExtractor standardLegFeatureExtractor = new StandardLegFeatureExtractor();

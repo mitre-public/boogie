@@ -20,12 +20,12 @@ public interface SuppliedLinkStrategy {
   static SuppliedLinkStrategy leftToRight() {
     return new LeftToRightLinker();
   }
-  List<Pair<FlyableLeg, FlyableLeg>> generateLinks(Route<?> left, Route<?> right);
+  List<Pair<FlyableLeg, FlyableLeg>> generateLinks(Route left, Route right);
 
   final class LeftToRightLinker implements SuppliedLinkStrategy {
     private LeftToRightLinker() {}
     @Override
-    public List<Pair<FlyableLeg, FlyableLeg>> generateLinks(Route<?> left, Route<?> right) {
+    public List<Pair<FlyableLeg, FlyableLeg>> generateLinks(Route left, Route right) {
       List<FlyableLeg> leftLegs = FlyableLegAssembler.assemble(left);
       List<FlyableLeg> rightLegs = FlyableLegAssembler.assemble(right);
       FlyableLeg a = leftLegs.get(leftLegs.size() -1);
