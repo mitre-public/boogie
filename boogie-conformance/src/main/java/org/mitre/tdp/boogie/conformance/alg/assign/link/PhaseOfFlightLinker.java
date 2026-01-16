@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.link;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-public class PhaseOfFlightLinker implements LinkingStrategy {
+public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(PhaseOfFlightLinker.class);
 
@@ -34,13 +35,13 @@ public class PhaseOfFlightLinker implements LinkingStrategy {
   }
 
   public static PhaseOfFlightLinker newStrategyFor(
-      Collection<Route<?>> departure,
-      Collection<Route<?>> enroute,
-      Collection<Route<?>> arrival,
-      Collection<Route<?>> approach
+      Collection<Route> departure,
+      Collection<Route> enroute,
+      Collection<Route> arrival,
+      Collection<Route> approach
   ) {
 
-    NavigableMap<EnvelopeSection, Collection<Route<?>>> keyed = new TreeMap<>();
+    NavigableMap<EnvelopeSection, Collection<Route>> keyed = new TreeMap<>();
 
     keyed.put(EnvelopeSection.SID, departure);
     LOG.info("Departure candidate route count {}", keyed.get(EnvelopeSection.SID).size());
@@ -55,7 +56,7 @@ public class PhaseOfFlightLinker implements LinkingStrategy {
     LOG.info("Approach candidate route count {}", keyed.get(EnvelopeSection.APPROACH).size());
 
     keyed = Maps.filterEntries(keyed, entry -> !entry.getValue().isEmpty());
-    List<Collection<Route<?>>> routes = new ArrayList<>(keyed.values());
+    List<Collection<Route>> routes = new ArrayList<>(keyed.values());
 
     Set<Pair<FlyableLeg, FlyableLeg>> links = new HashSet<>();
 
@@ -84,7 +85,7 @@ public class PhaseOfFlightLinker implements LinkingStrategy {
         ));
       }
     } else {
-      LOG.warn("Insufficient routes from envelope portions to apply strategy, {}", keyed.keySet().size());
+      LOG.warn("Insufficient routes from envelope portions to apply strategy, {}", keyed.size());
     }
 
     LOG.info("Generating new supplied link strategy with {} total links.", links.size());

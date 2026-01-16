@@ -29,13 +29,13 @@ public final class FlyableLeg {
   /**
    * The source {@link Route}(s) which reference this flyable leg.
    */
-  private final LinkedHashSet<Route<?>> routes;
+  private final LinkedHashSet<Route> routes;
 
   public FlyableLeg(
       @Nullable Leg previous,
       Leg current,
       @Nullable Leg next,
-      Route<?>... routes) {
+      Route... routes) {
     this(previous, current, next, new LinkedHashSet<>(Arrays.asList(routes)));
   }
 
@@ -43,7 +43,7 @@ public final class FlyableLeg {
       @Nullable Leg previous,
       Leg current,
       @Nullable Leg next,
-      LinkedHashSet<Route<?>> routes) {
+      LinkedHashSet<Route> routes) {
     this.previous = previous;
     this.current = checkNotNull(current);
     this.next = next;
@@ -70,12 +70,12 @@ public final class FlyableLeg {
     return next().flatMap(ext);
   }
 
-  public Route<?> route() {
+  public Route route() {
     checkArgument(routes().size() == 1, String.format("Method use should be limited to flyable legs with only 1 source route, actual number was %s", routes.size()));
     return routes().iterator().next();
   }
 
-  public LinkedHashSet<Route<?>> routes() {
+  public LinkedHashSet<Route> routes() {
     return routes;
   }
 

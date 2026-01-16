@@ -5,11 +5,11 @@ import java.util.function.Function;
 
 import org.mitre.tdp.boogie.model.ProcedureGraph;
 
-public final class ProcedureRoutesExtractor implements Function<ProcedureGraph, Collection<Route<ProcedureGraph>>> {
+public final class ProcedureRoutesExtractor implements Function<ProcedureGraph, Collection<Route>> {
   public static final ProcedureRoutesExtractor INSTANCE = new ProcedureRoutesExtractor();
   private ProcedureRoutesExtractor() {}
   @Override
-  public Collection<Route<ProcedureGraph>> apply(ProcedureGraph procedureGraph) {
+  public Collection<Route> apply(ProcedureGraph procedureGraph) {
     return procedureGraph.allPaths().stream()
         .map(l -> Route.newRoute(l, procedureGraph))
         .toList();

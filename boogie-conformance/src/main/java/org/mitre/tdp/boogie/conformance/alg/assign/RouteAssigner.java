@@ -72,14 +72,14 @@ public final class RouteAssigner {
     this.scoringStrategy = requireNonNull(scoringStrategy);
   }
 
-  public TransitionGraphAssembler.AssemblyResult transitionGraph(Collection<Route<?>> routes) {
+  public TransitionGraphAssembler.AssemblyResult transitionGraph(Collection<? extends Route> routes) {
     LOG.info("Generating transition graph.");
     return transitionGraphAssembler.assembleFrom(routes);
   }
 
   public ViterbiTagger<ConformablePoint, FlyableLeg> tagger(
       Collection<? extends ConformablePoint> points,
-      Collection<Route<?>> routes) {
+      Collection<? extends Route> routes) {
     return tagger(points, transitionGraph(routes).graph());
   }
 
@@ -108,7 +108,7 @@ public final class RouteAssigner {
 
   public ViterbiTrellis<ConformablePoint, FlyableLeg> trellis(
       Collection<? extends ConformablePoint> points,
-      Collection<Route<?>> routes) {
+      Collection<? extends Route> routes) {
     return trellis(points, transitionGraph(routes).graph());
   }
 
@@ -126,7 +126,7 @@ public final class RouteAssigner {
    */
   public Map<ConformablePoint, FlyableLeg> assignments(
       Collection<? extends ConformablePoint> points,
-      Collection<Route<?>> routes) {
+      Collection<? extends Route> routes) {
     return assignments(points, transitionGraph(routes).graph());
   }
 }
