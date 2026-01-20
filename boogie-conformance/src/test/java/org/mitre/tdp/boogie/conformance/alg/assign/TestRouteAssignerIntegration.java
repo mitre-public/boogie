@@ -73,18 +73,18 @@ public class TestRouteAssignerIntegration {
   void test() throws FileNotFoundException {
     Procedure special = records.procedures().stream().findFirst().orElseThrow();
     ProcedureGraph graphA = ProcedureFactory.newProcedureGraph(special);
-    Collection<Route<ProcedureGraph>> routesA = ProcedureRoutesExtractor.INSTANCE.apply(graphA);
+    Collection<Route> routesA = ProcedureRoutesExtractor.INSTANCE.apply(graphA);
 
     Procedure approachB = records2.procedures().stream().findFirst().orElseThrow();
     ProcedureGraph graphB = ProcedureFactory.newProcedureGraph(approachB);
-    Collection<Route<ProcedureGraph>> routesB = ProcedureRoutesExtractor.INSTANCE.apply(graphB);
-    Route<String> enroute0 = plannedRoute0();
-    Route<String> enroute = plannedRoute1();
+    Collection<Route> routesB = ProcedureRoutesExtractor.INSTANCE.apply(graphB);
+    Route enroute0 = plannedRoute0();
+    Route enroute = plannedRoute1();
 
-    Collection<Route<?>> allRoutes = Stream.of(routesA, routesB, List.of(enroute, enroute0))
+    Collection<Route> allRoutes = Stream.of(routesA, routesB, List.of(enroute, enroute0))
         .flatMap(Collection::stream)
         .collect(Collectors.toSet());
-    List<Route<?>> approaches = Stream.of(routesA, routesB)
+    List<Route> approaches = Stream.of(routesA, routesB)
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
 
@@ -101,16 +101,16 @@ public class TestRouteAssignerIntegration {
             Collectors.mapping(i -> i.getKey().latLong(), Collectors.toList())
         ));
 
-    Route<ProcedureGraph> flownTransition = routesA.stream().filter(i -> i.legs().get(0).associatedFix().get().fixIdentifier().equals("HBU")).findFirst().orElseThrow();
+    Route flownTransition = routesA.stream().filter(i -> i.legs().get(0).associatedFix().get().fixIdentifier().equals("HBU")).findFirst().orElseThrow();
 
     List<FlyableLeg> assignedEnroute0 = byLeg.keySet().stream().filter(i -> i.route().equals(enroute0)).toList();
     List<FlyableLeg> assignedEnroute = byLeg.keySet().stream().filter(i -> i.route().equals(enroute)).toList();
     List<FlyableLeg> assignedApproach = byLeg.keySet().stream().filter(i -> i.route().equals(flownTransition)).toList();
     Map<Route, List<FlyableLeg>> assignedWrongApproach = assignments.values().stream()
-        .collect(Collectors.groupingBy(i -> i.route(), Collectors.mapping(i -> i, Collectors.toList())));
+        .collect(Collectors.groupingBy(FlyableLeg::route, Collectors.mapping(i -> i, Collectors.toList())));
 
     Graph<FlyableLeg, DefaultWeightedEdge> graph = assigner.transitionGraph(allRoutes).graph();
-    DOTExporter<FlyableLeg, DefaultWeightedEdge> exporter = new DOTExporter<>(i -> signature(i));
+    DOTExporter<FlyableLeg, DefaultWeightedEdge> exporter = new DOTExporter<>(this::signature);
     asDotGraph(exporter, graph);
 
     List<MapFeature> byLegFeatures = byLeg.entrySet().stream()
@@ -136,7 +136,7 @@ public class TestRouteAssignerIntegration {
         .toFile(new File("map.jpg"));
   }
 
-  private RouteAssigner newAssigner(List<Route<?>> enroute, List<Route<?>> approach) {
+  private RouteAssigner newAssigner(List<Route> enroute, List<Route> approach) {
     LinkingStrategy supplied = PhaseOfFlightLinker.newStrategyFor(List.of(), enroute, List.of(), approach);
     HybridHasher hybridHasher = HybridHasher.from(List.of(RouteHasher.newInstance(), PathTerminatorBasedLegHasher.newInstance()));
     CombinationStrategy combinationStrategy = new HashCombinationStrategy(hybridHasher);
@@ -161,7 +161,7 @@ public class TestRouteAssignerIntegration {
     return new Color(r, g, b);
   }
 
-  public static Route<String> plannedRoute0() {
+  public static Route plannedRoute0() {
     LatLong depArpt = LatLong.of(39.861666666666665, -104.67316666666667);
     Fix dep = Fix.builder().fixIdentifier("DEP_ARPT").latLong(depArpt).build();
     LatLong tailored = LatLong.of(39.11363444047107, -106.26381461591687);
@@ -184,7 +184,7 @@ public class TestRouteAssignerIntegration {
     return Route.newRoute(legs, "FLIGHT_PLAN_0");
   }
 
-  public static Route<String> plannedRoute1() {
+  public static Route plannedRoute1() {
     LatLong depArpt = LatLong.of(39.861666666666665, -104.67316666666667);
     Fix dep = Fix.builder().fixIdentifier("DEP_ARPT").latLong(depArpt).build();
     LatLong tailored = LatLong.of(38.628310052628024, -106.97503535163497);
