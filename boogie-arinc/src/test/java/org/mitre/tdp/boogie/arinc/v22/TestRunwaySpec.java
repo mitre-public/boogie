@@ -16,7 +16,7 @@ public class TestRunwaySpec {
   static ArincRecordParser parser = ArincRecordParser.standard(new RunwaySpec());
   static RunwayConverter converter = new RunwayConverter();
   static String rawNoCoords = "SAFRP DBBNDBGRW04    1039370350                                   014240000  148D     0197     050                         350332310";
-  static String withAccuracy = "SUSAP KDCAK6GRW04    1050000370 N38502984W077022815               000120200  150D     0000     050YY                       431982210";
+  static String withAccuracy = "SUSAP KDCAK6GRW04    1050000370 N38502984W077022815               000120200  150D     0000     050YN                       431982210";
 
   @Test
   public void testNoCoords() {
@@ -33,11 +33,14 @@ public class TestRunwaySpec {
   public void testWithAccuracy() {
     ArincRecord record = parser.parse(withAccuracy).orElseThrow();
     ArincRunway runway = converter.apply(record).orElseThrow();
+    ArincRunway rebuild = runway.toBuilder().build();
     assertAll(
         () -> assertTrue(record.containsParsedField("runwayAccuracyComplianceFlag")),
         () -> assertTrue(record.containsParsedField("landingThresholdElevationAccuracyComplianceFlag")),
         () -> assertEquals("Y", runway.runwayAccuracyComplianceFlag().orElseThrow()),
-        () -> assertEquals("Y", runway.landingThresholdAccuracyComplianceFlag().orElseThrow())
+        () -> assertEquals("N", runway.landingThresholdElevationComplianceFlag().orElseThrow()),
+        () -> assertEquals("Y", rebuild.runwayAccuracyComplianceFlag().orElseThrow()),
+        () -> assertEquals("N", rebuild.landingThresholdElevationComplianceFlag().orElseThrow())
     );
   }
 }
