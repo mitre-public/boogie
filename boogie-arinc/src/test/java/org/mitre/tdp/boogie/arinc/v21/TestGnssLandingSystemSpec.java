@@ -19,7 +19,9 @@ public class TestGnssLandingSystemSpec {
   @Test
   void testConvert() {
     ArincGnssLandingSystem system = parser.parse(PT).flatMap(converter).orElseThrow();
+    ArincGnssLandingSystem rebuild = system.toBuilder().build();
     assertEquals(53, system.glidePathTCH().get());
+    assertEquals(system, rebuild);
   }
 
 }

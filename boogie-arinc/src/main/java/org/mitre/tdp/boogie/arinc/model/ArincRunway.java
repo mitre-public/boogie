@@ -185,7 +185,7 @@ public final class ArincRunway implements ArincModel {
     return Optional.ofNullable(runwayAccuracyComplianceFlag);
   }
 
-  public Optional<String> landingThresholdAccuracyComplianceFlag() {
+  public Optional<String> landingThresholdElevationComplianceFlag() {
     return Optional.ofNullable(landingThresholdAccuracyComplianceFlag);
   }
 
@@ -226,7 +226,7 @@ public final class ArincRunway implements ArincModel {
         .secondaryIlsMlsGlsIdentifier(secondaryIlsMlsGlsIdentifier().orElse(null))
         .secondaryIlsMlsGlsCategory(secondaryIlsMlsGlsCategory().orElse(null))
         .runwayAccuracyComplianceFlag(runwayAccuracyComplianceFlag().orElse(null))
-        .landingThresholdElevationComplianceFlag(runwayAccuracyComplianceFlag().orElse(null))
+        .landingThresholdElevationComplianceFlag(landingThresholdElevationComplianceFlag().orElse(null))
         .runwayDescription(runwayDescription().orElse(null))
         .fileRecordNumber(fileRecordNumber())
         .lastUpdateCycle(lastUpdateCycle());

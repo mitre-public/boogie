@@ -32,7 +32,7 @@ class TestArincNdbNavaid {
   @Test
   void testFieldAccess() {
     ArincNdbNavaid navaid = PARSER.parse(navaid1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
-
+    ArincNdbNavaid rebuilt = navaid.toBuilder().build();
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),
         () -> Assertions.assertEquals(CustomerAreaCode.EEU, navaid.customerAreaCode().orElseThrow(AssertionError::new)),
@@ -51,7 +51,8 @@ class TestArincNdbNavaid {
         () -> assertEquals("RPE", navaid.datumCode().orElseThrow(AssertionError::new)),
         () -> assertEquals("LIPETSK LMM RW15", navaid.ndbNavaidName().orElseThrow(AssertionError::new)),
         () -> assertEquals(Integer.valueOf(35303), navaid.fileRecordNumber()),
-        () -> assertEquals("2003", navaid.lastUpdateCycle())
+        () -> assertEquals("2003", navaid.lastUpdateCycle()),
+        () -> assertEquals(navaid, rebuilt)
     );
   }
 }

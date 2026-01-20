@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.v18.field.ArcBearing;
@@ -188,6 +189,38 @@ public final class ArincFirUirLeg implements ArincModel {
     return Optional.of(continuationRecordNumber);
   }
 
+  public Builder toBuilder() {
+    return new Builder()
+        .recordType(recordType())
+        .customerAreaCode(customerAreaCode())
+        .sectionCode(sectionCode())
+        .subSectionCode(subSectionCode().orElse(null))
+        .firUirIdentifier(firUirIdentifier())
+        .firUirAddress(firUirAddress().orElse(null))
+        .firUirIndicator(firUirIndicator())
+        .sequenceNumber(sequenceNumber())
+        .continuationRecordNumber(continuationRecordNumber().orElse(null))
+        .adjacentFirIdentifier(adjacentFirIdentifier().orElse(null))
+        .adjacentUirIdentifier(adjacentUirIdentifier().orElse(null))
+        .reportingUnitsSpeed(reportingUnitsSpeed().orElse(null))
+        .reportingUnitsAltitude(reportingUnitsAltitude().orElse(null))
+        .firUirEntryReport(entryReport().orElse(null))
+        .boundaryVia(boundaryVia())
+        .firUirLatitude(firUirLatitude().orElse(null))
+        .firUirLongitude(firUirLongitude().orElse(null))
+        .arcOriginLatitude(arcOriginLatitude().orElse(null))
+        .arcOriginLongitude(arcOriginLongitude().orElse(null))
+        .arcDistance(arcDistance().orElse(null))
+        .arcBearing(arcBearing().orElse(null))
+        .firUpperLimit(firUpperLimit().orElse(null))
+        .uirLowerLimit(uirLowerLimit().orElse(null))
+        .uirUpperLimit(uirUpperLimit().orElse(null))
+        .cruiseTableIndicator(cruiseTableIndicator().orElse(null))
+        .firUirName(firUirName().orElse(null))
+        .fileRecordNumber(fileRecordNumber())
+        .cycleDate(cycleDate());
+  }
+
   public RecordType recordType() {
     return recordType;
   }
@@ -286,6 +319,53 @@ public final class ArincFirUirLeg implements ArincModel {
 
   public String cycleDate() {
     return cycleDate;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass())
+      return false;
+    ArincFirUirLeg that = (ArincFirUirLeg) o;
+    return recordType == that.recordType && customerAreaCode == that.customerAreaCode && sectionCode == that.sectionCode && Objects.equals(subSectionCode, that.subSectionCode) && Objects.equals(firUirIdentifier, that.firUirIdentifier) && Objects.equals(firUirAddress, that.firUirAddress) && firUirIndicator == that.firUirIndicator && Objects.equals(sequenceNumber, that.sequenceNumber) && Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && Objects.equals(adjacentFirIdentifier, that.adjacentFirIdentifier) && Objects.equals(adjacentUirIdentifier, that.adjacentUirIdentifier) && Objects.equals(reportingUnitsSpeed, that.reportingUnitsSpeed) && Objects.equals(reportingUnitsAltitude, that.reportingUnitsAltitude) && Objects.equals(firUirEntryReport, that.firUirEntryReport) && boundaryVia == that.boundaryVia && Objects.equals(firUirLatitude, that.firUirLatitude) && Objects.equals(firUirLongitude, that.firUirLongitude) && Objects.equals(arcOriginLatitude, that.arcOriginLatitude) && Objects.equals(arcOriginLongitude, that.arcOriginLongitude) && Objects.equals(arcDistance, that.arcDistance) && Objects.equals(arcBearing, that.arcBearing) && Objects.equals(firUpperLimit, that.firUpperLimit) && Objects.equals(uirLowerLimit, that.uirLowerLimit) && Objects.equals(uirUpperLimit, that.uirUpperLimit) && Objects.equals(cruiseTableIndicator, that.cruiseTableIndicator) && Objects.equals(firUirName, that.firUirName) && Objects.equals(fileRecordNumber, that.fileRecordNumber) && Objects.equals(cycleDate, that.cycleDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, firUirIdentifier, firUirAddress, firUirIndicator, sequenceNumber, continuationRecordNumber, adjacentFirIdentifier, adjacentUirIdentifier, reportingUnitsSpeed, reportingUnitsAltitude, firUirEntryReport, boundaryVia, firUirLatitude, firUirLongitude, arcOriginLatitude, arcOriginLongitude, arcDistance, arcBearing, firUpperLimit, uirLowerLimit, uirUpperLimit, cruiseTableIndicator, firUirName, fileRecordNumber, cycleDate);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincFirUirLeg{" +
+        "recordType=" + recordType +
+        ", customerAreaCode=" + customerAreaCode +
+        ", sectionCode=" + sectionCode +
+        ", subSectionCode='" + subSectionCode + '\'' +
+        ", firUirIdentifier='" + firUirIdentifier + '\'' +
+        ", firUirAddress='" + firUirAddress + '\'' +
+        ", firUirIndicator=" + firUirIndicator +
+        ", sequenceNumber=" + sequenceNumber +
+        ", continuationRecordNumber='" + continuationRecordNumber + '\'' +
+        ", adjacentFirIdentifier='" + adjacentFirIdentifier + '\'' +
+        ", adjacentUirIdentifier='" + adjacentUirIdentifier + '\'' +
+        ", reportingUnitsSpeed='" + reportingUnitsSpeed + '\'' +
+        ", reportingUnitsAltitude='" + reportingUnitsAltitude + '\'' +
+        ", firUirEntryReport=" + firUirEntryReport +
+        ", boundaryVia=" + boundaryVia +
+        ", firUirLatitude=" + firUirLatitude +
+        ", firUirLongitude=" + firUirLongitude +
+        ", arcOriginLatitude=" + arcOriginLatitude +
+        ", arcOriginLongitude=" + arcOriginLongitude +
+        ", arcDistance=" + arcDistance +
+        ", arcBearing=" + arcBearing +
+        ", firUpperLimit=" + firUpperLimit +
+        ", uirLowerLimit=" + uirLowerLimit +
+        ", uirUpperLimit=" + uirUpperLimit +
+        ", cruiseTableIndicator='" + cruiseTableIndicator + '\'' +
+        ", firUirName='" + firUirName + '\'' +
+        ", fileRecordNumber=" + fileRecordNumber +
+        ", cycleDate='" + cycleDate + '\'' +
+        '}';
   }
 
   public static final class Builder {

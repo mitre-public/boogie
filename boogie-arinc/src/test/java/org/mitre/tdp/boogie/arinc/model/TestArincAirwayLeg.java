@@ -33,6 +33,7 @@ class TestArincAirwayLeg {
   @Test
   void testFieldAccess() {
     ArincAirwayLeg airway = PARSER.apply(airway3).toBuilder().build();
+    ArincAirwayLeg rebuilt = airway.toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, airway.recordType()),
@@ -68,7 +69,8 @@ class TestArincAirwayLeg {
         () -> assertEquals(60000.0d, airway.maxAltitude().orElseThrow(AssertionError::new)),
         () -> assertFalse(airway.fixedRadiusTransitionIndicator().isPresent()),
         () -> assertEquals(Integer.valueOf(23365), airway.fileRecordNumber()),
-        () -> assertEquals("2006", airway.lastUpdateCycle())
+        () -> assertEquals("2006", airway.lastUpdateCycle()),
+        () -> assertEquals(airway, rebuilt)
     );
   }
 }

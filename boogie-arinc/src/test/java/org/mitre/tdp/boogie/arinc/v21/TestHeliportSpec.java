@@ -1,6 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v21;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
@@ -28,6 +31,7 @@ public class TestHeliportSpec {
   @Test
   void testConvert() {
     ArincHeliport heliport = parser.parse(raw).flatMap(converter).orElseThrow();
+    ArincHeliport rebuilt = heliport.toBuilder().build();
     assertAll("Should all be the same minus the 3 changes",
         () -> assertEquals(RecordType.S, heliport.recordType()),
         () -> assertEquals(CustomerAreaCode.USA, heliport.customerAreaCode()),
@@ -57,7 +61,8 @@ public class TestHeliportSpec {
         () -> assertTrue(heliport.padXDimension().isEmpty()),
         () -> assertEquals("ST MARY MEDICAL CENTER", heliport.heliportName().get()),
         () -> assertEquals(Integer.valueOf(68647), heliport.fileRecordNumber().get()),
-        () -> assertEquals("1703", heliport.cycleDate().get())
+        () -> assertEquals("1703", heliport.cycleDate().get()),
+        () -> assertEquals(heliport, rebuilt)
     );
   }
 }

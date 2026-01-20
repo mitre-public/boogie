@@ -41,6 +41,8 @@ public class TestHoldingPatternSpec {
   @Test
   void convert() {
     ArincHoldingPattern pattern = PARSER.parse(HOLD3).flatMap(CONVERTER).orElseThrow();
+    ArincHoldingPattern rebuild = pattern.toBuilder().build();
     assertEquals("I", pattern.inboundOutboundIndicator().orElseThrow(), "only one change");
+    assertEquals(pattern, rebuild);
   }
 }

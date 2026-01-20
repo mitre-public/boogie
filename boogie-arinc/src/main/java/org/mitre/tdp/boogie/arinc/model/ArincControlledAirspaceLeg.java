@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.v18.field.AirspaceCenter;
 import org.mitre.tdp.boogie.arinc.v18.field.AirspaceClassification;
 import org.mitre.tdp.boogie.arinc.v18.field.AirspaceType;
@@ -25,8 +28,6 @@ import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.TimeCode;
 import org.mitre.tdp.boogie.arinc.v18.field.UnitIndicator;
-
-import java.util.Optional;
 
 /**
  * Section/Subsection = UC
@@ -206,6 +207,41 @@ public final class ArincControlledAirspaceLeg implements ArincModel {
     return Optional.of(continuationRecordNumber);
   }
 
+  public Builder toBuilder() {
+    return new Builder()
+        .recordType(recordType())
+        .customerAreaCode(customerAreaCode())
+        .sectionCode(sectionCode())
+        .subSectionCode(subSectionCode().orElse(null))
+        .icaoCode(icaoRegion())
+        .airspaceType(airspaceType())
+        .airspaceCenter(airspaceCenter())
+        .suppliedSectionCode(supplierSectionCode().map(Enum::name).orElse(null))
+        .supplierSubSectionCode(supplierSubSectionCode().orElse(null))
+        .airspaceClassification(airspaceClassification().orElse(null))
+        .multipleCode(multipleCode().orElse(null))
+        .sequenceNumber(sequenceNumber())
+        .continuationRecordNumber(continuationRecordNumber().orElse(null))
+        .level(level().orElse(null))
+        .timeCode(timeCode().orElse(null))
+        .notam(notam().orElse(null))
+        .boundaryVia(boundaryVia())
+        .latitude(latitude().orElse(null))
+        .longitude(longitude().orElse(null))
+        .arcOriginLatitude(arcOriginLatitude().orElse(null))
+        .arcOriginLongitude(arcOriginLongitude().orElse(null))
+        .arcDistance(arcDistance().orElse(null))
+        .arcBearing(arcBearing().orElse(null))
+        .rnp(rnp().orElse(null))
+        .lowerLimit(lowerLimit().orElse(null))
+        .lowerUnitIndicator(lowerUnitIndicator().orElse(null))
+        .upperLimit(upperLimit().orElse(null))
+        .upperUnitIndicator(upperUnitIndicator().orElse(null))
+        .controlledAirspaceName(controlledAirspaceName().orElse(null))
+        .fileRecordNumber(fileRecordNumber())
+        .cycleDate(cycleDate());
+  }
+
   public String airspaceCenter() {
     return airspaceCenter;
   }
@@ -316,6 +352,56 @@ public final class ArincControlledAirspaceLeg implements ArincModel {
 
   public String cycleDate() {
     return cycleDate;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass())
+      return false;
+    ArincControlledAirspaceLeg that = (ArincControlledAirspaceLeg) o;
+    return recordType == that.recordType && customerAreaCode == that.customerAreaCode && sectionCode == that.sectionCode && Objects.equals(subSectionCode, that.subSectionCode) && Objects.equals(icaoRegion, that.icaoRegion) && airspaceType == that.airspaceType && Objects.equals(airspaceCenter, that.airspaceCenter) && Objects.equals(supplierSectionCode, that.supplierSectionCode) && Objects.equals(supplierSubSectionCode, that.supplierSubSectionCode) && Objects.equals(airspaceClassification, that.airspaceClassification) && Objects.equals(multipleCode, that.multipleCode) && Objects.equals(sequenceNumber, that.sequenceNumber) && Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && level == that.level && Objects.equals(timeCode, that.timeCode) && Objects.equals(notam, that.notam) && boundaryVia == that.boundaryVia && Objects.equals(latitude, that.latitude) && Objects.equals(longitude, that.longitude) && Objects.equals(arcOriginLatitude, that.arcOriginLatitude) && Objects.equals(arcOriginLongitude, that.arcOriginLongitude) && Objects.equals(arcDistance, that.arcDistance) && Objects.equals(arcBearing, that.arcBearing) && Objects.equals(rnp, that.rnp) && Objects.equals(lowerLimit, that.lowerLimit) && Objects.equals(lowerUnitIndicator, that.lowerUnitIndicator) && Objects.equals(upperLimit, that.upperLimit) && Objects.equals(upperUnitIndicator, that.upperUnitIndicator) && Objects.equals(controlledAirspaceName, that.controlledAirspaceName) && Objects.equals(fileRecordNumber, that.fileRecordNumber) && Objects.equals(cycleDate, that.cycleDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, icaoRegion, airspaceType, airspaceCenter, supplierSectionCode, supplierSubSectionCode, airspaceClassification, multipleCode, sequenceNumber, continuationRecordNumber, level, timeCode, notam, boundaryVia, latitude, longitude, arcOriginLatitude, arcOriginLongitude, arcDistance, arcBearing, rnp, lowerLimit, lowerUnitIndicator, upperLimit, upperUnitIndicator, controlledAirspaceName, fileRecordNumber, cycleDate);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincControlledAirspaceLeg{" +
+        "recordType=" + recordType +
+        ", customerAreaCode=" + customerAreaCode +
+        ", sectionCode=" + sectionCode +
+        ", subSectionCode='" + subSectionCode + '\'' +
+        ", icaoRegion='" + icaoRegion + '\'' +
+        ", airspaceType=" + airspaceType +
+        ", airspaceCenter='" + airspaceCenter + '\'' +
+        ", supplierSectionCode='" + supplierSectionCode + '\'' +
+        ", supplierSubSectionCode='" + supplierSubSectionCode + '\'' +
+        ", airspaceClassification='" + airspaceClassification + '\'' +
+        ", multipleCode='" + multipleCode + '\'' +
+        ", sequenceNumber=" + sequenceNumber +
+        ", continuationRecordNumber='" + continuationRecordNumber + '\'' +
+        ", level=" + level +
+        ", timeCode='" + timeCode + '\'' +
+        ", notam='" + notam + '\'' +
+        ", boundaryVia=" + boundaryVia +
+        ", latitude=" + latitude +
+        ", longitude=" + longitude +
+        ", arcOriginLatitude=" + arcOriginLatitude +
+        ", arcOriginLongitude=" + arcOriginLongitude +
+        ", arcDistance=" + arcDistance +
+        ", arcBearing=" + arcBearing +
+        ", rnp=" + rnp +
+        ", lowerLimit=" + lowerLimit +
+        ", lowerUnitIndicator='" + lowerUnitIndicator + '\'' +
+        ", upperLimit=" + upperLimit +
+        ", upperUnitIndicator='" + upperUnitIndicator + '\'' +
+        ", controlledAirspaceName='" + controlledAirspaceName + '\'' +
+        ", fileRecordNumber=" + fileRecordNumber +
+        ", cycleDate='" + cycleDate + '\'' +
+        '}';
   }
 
   public static final class Builder {
