@@ -125,6 +125,8 @@ public class TestArincFirUirLeg {
     ArincRecord record = PARSER.parse(ARC).orElseThrow(AssertionError::new);
     assertTrue(VALIDATOR.test(record));
     ArincFirUirLeg firUirLeg = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+    ArincFirUirLeg rebuilt = firUirLeg.toBuilder().build();
     assertEquals("CE", firUirLeg.boundaryVia().name());
+    assertEquals(firUirLeg, rebuilt);
   }
 }

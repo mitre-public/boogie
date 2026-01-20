@@ -1,8 +1,13 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Optional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.AirportGateConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirportGateSpec;
@@ -10,12 +15,6 @@ import org.mitre.tdp.boogie.arinc.v18.AirportGateValidator;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TestArincAirportGate {
 
@@ -38,7 +37,7 @@ public class TestArincAirportGate {
   @Test
   void testParse_JFK_GATE() {
     ArincAirportGate gate = PARSER.parse(JFK_GATE).flatMap(converter).orElseThrow(AssertionError::new);
-
+    ArincAirportGate rebuilt = gate.toBuilder().build();
     assertAll(
         () -> assertEquals(RecordType.S, gate.getRecordType()),
         () -> assertEquals(CustomerAreaCode.USA, gate.getCustomerAreaCode()),
@@ -52,7 +51,8 @@ public class TestArincAirportGate {
         () -> assertNull(gate.getName()),
         () -> assertEquals(73343, gate.getFileRecordNumber()),
         () -> assertEquals(Optional.of("0"), gate.continuationRecordNumber()),
-        () -> assertEquals("2003", gate.getLastUpdatedCycle())
+        () -> assertEquals("2003", gate.getLastUpdatedCycle()),
+        () -> assertEquals(gate, rebuilt)
     );
   }
 }

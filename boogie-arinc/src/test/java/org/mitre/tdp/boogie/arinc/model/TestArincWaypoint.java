@@ -31,7 +31,7 @@ class TestArincWaypoint {
   @Test
   void testEnrouteFieldAccess() {
     ArincWaypoint waypoint = PARSER.parse(enrouteWaypoint).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
-
+    ArincWaypoint rebuilt = waypoint.toBuilder().build();
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, waypoint.recordType()),
         () -> Assertions.assertEquals(CustomerAreaCode.SAM, waypoint.customerAreaCode().orElseThrow(AssertionError::new)),
@@ -51,7 +51,8 @@ class TestArincWaypoint {
         () -> assertEquals("P  ", waypoint.nameFormat().orElseThrow(AssertionError::new)),
         () -> assertEquals("UMGOS", waypoint.waypointNameDescription().orElseThrow(AssertionError::new)),
         () -> assertEquals(Integer.valueOf(20914), waypoint.fileRecordNumber()),
-        () -> assertEquals("2003", waypoint.lastUpdateCycle())
+        () -> assertEquals("2003", waypoint.lastUpdateCycle()),
+        () -> assertEquals(waypoint, rebuilt)
     );
   }
 

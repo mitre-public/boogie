@@ -31,7 +31,7 @@ class TestArincAirport {
   @Test
   void testFieldAccess() {
     ArincAirport airport = PARSER.parse(TestAirportSpec.KJFK).flatMap(new AirportConverter()).orElseThrow(AssertionError::new).toBuilder().build();
-
+    ArincAirport rebuilt = airport.toBuilder().build();
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, airport.recordType()),
         () -> Assertions.assertEquals(CustomerAreaCode.USA, airport.customerAreaCode().orElseThrow(AssertionError::new)),
@@ -60,7 +60,8 @@ class TestArincAirport {
         () -> assertEquals("NAR", airport.datumCode().orElseThrow(AssertionError::new)),
         () -> assertEquals("NEW YORK/JOHN F KENNEDY INTL", airport.airportFullName().orElseThrow(AssertionError::new)),
         () -> assertEquals(Integer.valueOf(14599), airport.fileRecordNumber()),
-        () -> assertEquals("2003", airport.lastUpdateCycle())
+        () -> assertEquals("2003", airport.lastUpdateCycle()),
+        () -> assertEquals(airport, rebuilt)
     );
   }
 }

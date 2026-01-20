@@ -39,7 +39,7 @@ class TestArincProcedureLeg {
   @Test
   void testFieldAccessTF() {
     ArincProcedureLeg procedureLeg = PARSER.parse(TF).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
-
+    ArincProcedureLeg rebuilt = procedureLeg.toBuilder().build();
     assertAll(
         () -> assertEquals(RecordType.S, procedureLeg.recordType()),
         () -> assertEquals(CustomerAreaCode.USA, procedureLeg.customerAreaCode().orElseThrow(AssertionError::new)),
@@ -81,7 +81,8 @@ class TestArincProcedureLeg {
         () -> assertEquals("N", procedureLeg.routeTypeQualifier1().orElseThrow(AssertionError::new)),
         () -> assertEquals("S", procedureLeg.routeTypeQualifier2().orElseThrow(AssertionError::new)),
         () -> assertEquals(Integer.valueOf(15338), procedureLeg.fileRecordNumber()),
-        () -> assertEquals("2004", procedureLeg.lastUpdateCycle())
+        () -> assertEquals("2004", procedureLeg.lastUpdateCycle()),
+        () -> assertEquals(procedureLeg, rebuilt)
     );
   }
 

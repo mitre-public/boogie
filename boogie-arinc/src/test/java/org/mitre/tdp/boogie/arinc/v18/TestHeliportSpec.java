@@ -56,6 +56,7 @@ public class TestHeliportSpec {
   @Test
   void testConverted() {
     ArincHeliport hpt = parser.parse(heliport).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincHeliport rebuilt = hpt.toBuilder().build();
     assertAll(
         () -> assertEquals(RecordType.S, hpt.recordType()),
         () -> assertEquals(CustomerAreaCode.USA, hpt.customerAreaCode()),
@@ -86,7 +87,8 @@ public class TestHeliportSpec {
         () -> assertEquals(MagneticTrueIndicator.M, hpt.magneticTrueIndicator().orElseThrow()),
         () -> assertEquals("JOHNSON MEML HOSPITAL", hpt.heliportName().orElseThrow()),
         () -> assertEquals(Integer.valueOf(73079), hpt.fileRecordNumber().orElseThrow()),
-        () -> assertEquals("2403", hpt.cycleDate().orElseThrow())
+        () -> assertEquals("2403", hpt.cycleDate().orElseThrow()),
+        () -> assertEquals(hpt, rebuilt)
     );
   }
 }

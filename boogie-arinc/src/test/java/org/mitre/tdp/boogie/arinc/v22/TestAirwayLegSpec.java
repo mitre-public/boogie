@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v22;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
@@ -14,10 +16,12 @@ public class TestAirwayLegSpec {
   @Test
   void testParse() {
     ArincAirwayLeg leg = parser.parse(US_ER).flatMap(converter).orElseThrow();
+    ArincAirwayLeg rebuilt = leg.toBuilder().build();
     assertAll(
         () -> assertTrue(leg.routeTypeQualifier1().isEmpty()),
         () -> assertTrue(leg.routeTypeQualifier2().isEmpty()),
-        () -> assertEquals("N", leg.routeTypeQualifier3().orElseThrow(), "non pbn leg in a pbn route, yay")
+        () -> assertEquals("N", leg.routeTypeQualifier3().orElseThrow(), "non pbn leg in a pbn route, yay"),
+        () -> assertEquals(leg, rebuilt)
     );
   }
 }

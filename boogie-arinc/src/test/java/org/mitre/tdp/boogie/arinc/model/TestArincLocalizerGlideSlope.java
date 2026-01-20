@@ -32,6 +32,7 @@ class TestArincLocalizerGlideSlope {
   @Test
   void testFieldAccess() {
     ArincLocalizerGlideSlope localizer = PARSER.apply(glideslope1).toBuilder().build();
+    ArincLocalizerGlideSlope rebuilt = localizer.toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, localizer.recordType(), "RecordType"),
@@ -63,7 +64,8 @@ class TestArincLocalizerGlideSlope {
         () -> assertFalse(localizer.supportingFacilitySectionCode().isPresent(), "SupportingFacilitySectionCode"),
         () -> assertFalse(localizer.supportingFacilitySubSectionCode().isPresent(), "SupportingFacilitySubSectionCode"),
         () -> assertEquals(Integer.valueOf(58775), localizer.fileRecordNumber(), "FileRecordNumber"),
-        () -> assertEquals("2003", localizer.lastUpdateCycle(), "LastUpdateCycle")
+        () -> assertEquals("2003", localizer.lastUpdateCycle(), "LastUpdateCycle"),
+        () -> assertEquals(localizer, rebuilt)
     );
   }
 }

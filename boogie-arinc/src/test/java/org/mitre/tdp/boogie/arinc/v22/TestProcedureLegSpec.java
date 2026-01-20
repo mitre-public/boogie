@@ -53,10 +53,12 @@ public class TestProcedureLegSpec {
   @Test
   void convertApproach() {
     ArincProcedureLeg leg = parser.parse(APPROACH).flatMap(converter).orElseThrow();
+    ArincProcedureLeg rebuilt = leg.toBuilder().build();
     assertAll(
         () -> assertEquals("P", leg.routeTypeQualifier1().orElseThrow()),
         () -> assertEquals("S", leg.routeTypeQualifier2().orElseThrow()),
-        () -> assertEquals("H", leg.routeTypeQualifier3().orElseThrow())
+        () -> assertEquals("H", leg.routeTypeQualifier3().orElseThrow()),
+        () -> assertEquals(leg, rebuilt)
     );
   }
 

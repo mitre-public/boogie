@@ -73,6 +73,7 @@ public class TestArincControlledAirspaceLeg {
     assertTrue(VALIDATOR.test(record));
     
     ArincControlledAirspaceLeg controlledAirspace = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+    ArincControlledAirspaceLeg rebuilt = controlledAirspace.toBuilder().build();
     
     assertAll(
         () -> assertEquals(RecordType.S, controlledAirspace.recordType()),
@@ -105,7 +106,8 @@ public class TestArincControlledAirspaceLeg {
         () -> assertEquals("M", controlledAirspace.upperUnitIndicator().get()),
         () -> assertEquals("HONIARA CTA", controlledAirspace.controlledAirspaceName().get()),
         () -> assertEquals(79472, controlledAirspace.fileRecordNumber()),
-        () -> assertEquals("2210", controlledAirspace.cycleDate())
+        () -> assertEquals("2210", controlledAirspace.cycleDate()),
+        () -> assertEquals(controlledAirspace, rebuilt)
     );
   }
 }

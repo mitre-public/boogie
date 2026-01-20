@@ -3,7 +3,6 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -42,6 +41,7 @@ class TestArincRunway {
   @Test
   void testFieldAccess() {
     ArincRunway runway = PARSER.parse(runway1).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
+    ArincRunway rebuilt = runway.toBuilder().build();
 
     assertAll(
         () -> assertEquals(RecordType.S, runway.recordType()),
@@ -68,7 +68,8 @@ class TestArincRunway {
         () -> assertFalse(runway.secondaryIlsMlsGlsCategory().isPresent()),
         () -> assertEquals("CONC     090RBWT", runway.runwayDescription().orElseThrow(AssertionError::new)),
         () -> assertEquals(Integer.valueOf(15519), runway.fileRecordNumber()),
-        () -> assertEquals("2003", runway.lastUpdateCycle())
+        () -> assertEquals("2003", runway.lastUpdateCycle()),
+        () -> assertEquals(runway, rebuilt)
     );
   }
 }

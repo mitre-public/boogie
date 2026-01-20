@@ -1,11 +1,11 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-
-import java.util.Objects;
-import java.util.Optional;
 
 public final class ArincAirportGate implements ArincModel {
   private final RecordType recordType;
@@ -110,21 +110,6 @@ public final class ArincAirportGate implements ArincModel {
     return Optional.of(continuationRecordNumber);
   }
 
-  public boolean equals (Object object){
-    if (this == object)
-      return true;
-    if (object == null || getClass() != object.getClass())
-      return false;
-    if (!super.equals(object))
-      return false;
-    ArincAirportGate that = (ArincAirportGate) object;
-    return java.util.Objects.equals(recordType, that.recordType) && java.util.Objects.equals(customerAreaCode, that.customerAreaCode) && java.util.Objects.equals(sectionCode, that.sectionCode) && java.util.Objects.equals(airportIdentifier, that.airportIdentifier) && java.util.Objects.equals(airportIcaoRegion, that.airportIcaoRegion) && java.util.Objects.equals(subSectionCode, that.subSectionCode) && java.util.Objects.equals(gateIdentifier, that.gateIdentifier) && java.util.Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && java.util.Objects.equals(latitude, that.latitude) && java.util.Objects.equals(longitude, that.longitude) && java.util.Objects.equals(name, that.name) && java.util.Objects.equals(fileRecordNumber, that.fileRecordNumber) && java.util.Objects.equals(lastUpdatedCycle, that.lastUpdatedCycle);
-  }
-
-  public int hashCode () {
-    return Objects.hash(super.hashCode(), recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, gateIdentifier, continuationRecordNumber, latitude, longitude, name, fileRecordNumber, lastUpdatedCycle);
-  }
-
   public Builder toBuilder () {
     return new Builder()
         .recordType(getRecordType())
@@ -140,6 +125,38 @@ public final class ArincAirportGate implements ArincModel {
         .name(getName())
         .fileRecordNumber(getFileRecordNumber())
         .lastUpdatedCycle(getLastUpdatedCycle());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass())
+      return false;
+    ArincAirportGate that = (ArincAirportGate) o;
+    return recordType == that.recordType && customerAreaCode == that.customerAreaCode && sectionCode == that.sectionCode && Objects.equals(airportIdentifier, that.airportIdentifier) && Objects.equals(airportIcaoRegion, that.airportIcaoRegion) && Objects.equals(subSectionCode, that.subSectionCode) && Objects.equals(gateIdentifier, that.gateIdentifier) && Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && Objects.equals(latitude, that.latitude) && Objects.equals(longitude, that.longitude) && Objects.equals(name, that.name) && Objects.equals(fileRecordNumber, that.fileRecordNumber) && Objects.equals(lastUpdatedCycle, that.lastUpdatedCycle);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, gateIdentifier, continuationRecordNumber, latitude, longitude, name, fileRecordNumber, lastUpdatedCycle);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincAirportGate{" +
+        "recordType=" + recordType +
+        ", customerAreaCode=" + customerAreaCode +
+        ", sectionCode=" + sectionCode +
+        ", airportIdentifier='" + airportIdentifier + '\'' +
+        ", airportIcaoRegion='" + airportIcaoRegion + '\'' +
+        ", subSectionCode='" + subSectionCode + '\'' +
+        ", gateIdentifier='" + gateIdentifier + '\'' +
+        ", continuationRecordNumber='" + continuationRecordNumber + '\'' +
+        ", latitude=" + latitude +
+        ", longitude=" + longitude +
+        ", name='" + name + '\'' +
+        ", fileRecordNumber=" + fileRecordNumber +
+        ", lastUpdatedCycle='" + lastUpdatedCycle + '\'' +
+        '}';
   }
 
   public static final class Builder {

@@ -40,7 +40,8 @@ public class TestRunwaySpec {
         () -> assertEquals("Y", runway.runwayAccuracyComplianceFlag().orElseThrow()),
         () -> assertEquals("N", runway.landingThresholdElevationComplianceFlag().orElseThrow()),
         () -> assertEquals("Y", rebuild.runwayAccuracyComplianceFlag().orElseThrow()),
-        () -> assertEquals("N", rebuild.landingThresholdElevationComplianceFlag().orElseThrow())
+        () -> assertEquals("N", rebuild.landingThresholdElevationComplianceFlag().orElseThrow()),
+        () -> assertEquals(runway, rebuild)
     );
   }
 }

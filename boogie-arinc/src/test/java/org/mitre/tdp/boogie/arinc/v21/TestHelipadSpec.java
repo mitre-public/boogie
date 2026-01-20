@@ -49,6 +49,7 @@ public class TestHelipadSpec {
   void testConvert() {
     ArincRecord record = parser.parse(PAD_2).orElseThrow();
     ArincHelipad helipad = converter.apply(record).orElseThrow();
+    ArincHelipad rebuilt = helipad.toBuilder().build();
     assertAll(
         () -> assertEquals(RecordType.S, helipad.recordType()),
         () -> assertEquals(CustomerAreaCode.CAN, helipad.customerAreaCode()),
@@ -69,7 +70,8 @@ public class TestHelipadSpec {
         () -> assertEquals(HelicopterPerformanceRequirement.U.name(), helipad.helicopterPerformanceRequirement().orElseThrow()),
         () -> assertEquals(144.0, helipad.padElevation().orElseThrow()),
         () -> assertEquals(19475, helipad.fileRecordNumber()),
-        () -> assertEquals("2409", helipad.cycle())
+        () -> assertEquals("2409", helipad.cycle()),
+        () -> assertEquals(helipad, rebuilt)
     );
   }
 }

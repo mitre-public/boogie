@@ -180,7 +180,35 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
   }
 
   public Builder toBuilder() {
-    return new Builder().recordType(this.recordType).customerAreaCode(this.customerAreaCode).sectionCode(this.sectionCode).subSectionCode(this.subSectionCode).regionCode(this.regionCode).icaoRegion(this.icaoRegion).duplicateIdentifier(this.duplicateIdentifier).fixIdentifier(this.fixIdentifier).fixIcaoRegion(this.fixIcaoRegion).fixSectionCode(this.fixSectionCode).fixSubsectionCode(this.fixSubsectionCode).continuationRecordNumber(this.continuationRecordNumber).inboundHoldingCourse(this.inboundHoldingCourse).turnDirection(this.turnDirection).legLength(this.legLength).legTime(this.legTime).minimumAltitude(this.minimumAltitude).maxAltitude(this.maxAltitude).holdingSpeed(this.holdingSpeed).rnp(this.rnp).arcRadius(this.arcRadius).verticalScaleFactor(this.verticalScaleFactor).rvsmMax(this.rvsmMax).rvsmMin(this.rvsmMin).holdingName(this.holdingName).fileRecordNumber(this.fileRecordNumber).lastUpdatedCycle(this.lastUpdatedCycle);
+    return new Builder()
+        .recordType(this.recordType)
+        .customerAreaCode(this.customerAreaCode)
+        .sectionCode(this.sectionCode)
+        .subSectionCode(this.subSectionCode)
+        .regionCode(this.regionCode)
+        .icaoRegion(this.icaoRegion)
+        .duplicateIdentifier(this.duplicateIdentifier)
+        .fixIdentifier(this.fixIdentifier)
+        .fixIcaoRegion(this.fixIcaoRegion)
+        .fixSectionCode(this.fixSectionCode)
+        .fixSubsectionCode(this.fixSubsectionCode)
+        .continuationRecordNumber(this.continuationRecordNumber)
+        .inboundHoldingCourse(this.inboundHoldingCourse)
+        .turnDirection(this.turnDirection)
+        .legLength(this.legLength)
+        .legTime(this.legTime)
+        .minimumAltitude(this.minimumAltitude)
+        .maxAltitude(this.maxAltitude)
+        .holdingSpeed(this.holdingSpeed)
+        .rnp(this.rnp)
+        .arcRadius(this.arcRadius)
+        .verticalScaleFactor(this.verticalScaleFactor)
+        .rvsmMax(this.rvsmMax)
+        .rvsmMin(this.rvsmMin)
+        .holdingName(this.holdingName)
+        .fileRecordNumber(this.fileRecordNumber)
+        .lastUpdatedCycle(this.lastUpdatedCycle)
+        .inboundOutboundIndicator(this.inboundOutboundIndicator);
   }
 
   public RecordType recordType() {

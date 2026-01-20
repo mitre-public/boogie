@@ -33,7 +33,7 @@ class TestArincVhfNavaid {
   @Test
   void testFieldAccess_2() {
     ArincVhfNavaid navaid = PARSER.parse(navaid2).flatMap(converter).orElseThrow(AssertionError::new).toBuilder().build();
-
+    ArincVhfNavaid rebuilt = navaid.toBuilder().build();
     assertAll(
         () -> Assertions.assertEquals(RecordType.S, navaid.recordType()),
         () -> Assertions.assertEquals(CustomerAreaCode.USA, navaid.customerAreaCode().orElseThrow(AssertionError::new)),
@@ -58,7 +58,8 @@ class TestArincVhfNavaid {
         () -> assertEquals(423.0d, navaid.frequencyProtectionDistance().orElseThrow(AssertionError::new)),
         () -> assertEquals("NAR", navaid.datumCode().orElseThrow(AssertionError::new)),
         () -> assertEquals(Integer.valueOf(5758), navaid.fileRecordNumber()),
-        () -> assertEquals("2003", navaid.lastUpdateCycle())
+        () -> assertEquals("2003", navaid.lastUpdateCycle()),
+        () -> assertEquals(navaid, rebuilt)
     );
   }
 
