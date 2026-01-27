@@ -34,7 +34,7 @@ public final class AreaProximitySupplier implements Supplier<Optional<FlyableLeg
   @Override
   public Optional<FlyableLeg> get() {
     Collection<Pair<Leg, Leg>> pairs = Combinatorics.cartesianProduct(left.legs(), right.legs());
-    //going to link up so ok.
+    //going to link up via the leg linker so don't create anything here.
     if (pairs.stream().anyMatch(FIX_EQUAL_AND_THERE)) {
       return Optional.empty();
     }
