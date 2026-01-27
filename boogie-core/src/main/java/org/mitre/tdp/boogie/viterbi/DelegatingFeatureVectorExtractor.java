@@ -47,6 +47,12 @@ public final class DelegatingFeatureVectorExtractor<STAGE, STATE> implements BiF
     return new Builder<>();
   }
 
+  public Builder<STAGE, STATE> toBuilder() {
+    Builder<STAGE, STATE> builder = new Builder<>();
+    builder.extractors.addAll(this.featureExtractors);
+    return builder;
+  }
+
   /**
    * Builder class for adding delegatable {@link ViterbiFeatureVectorExtractor}s to the configuration.
    */

@@ -29,8 +29,8 @@ class TestSuppliedLinkStrategy {
   static String routeSource = "SOURCE_1";
   static String routeSource2 = "SOURCE_2";
 
-  static Route<String> route1 = Route.newRoute(List.of(ifLeg, tfLeg), routeSource);
-  static Route<String> route2 = Route.newRoute(List.of(tfLeg2), routeSource2);
+  static Route route1 = Route.newRoute(List.of(ifLeg, tfLeg), routeSource);
+  static Route route2 = Route.newRoute(List.of(tfLeg2), routeSource2);
 
   @Test
   void testLink() {

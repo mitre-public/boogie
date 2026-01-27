@@ -5,6 +5,48 @@ import java.util.function.BiFunction;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.AfDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.AfFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CaDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CaFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CdDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CdFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CfDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CfFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CiDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CiFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CrDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.CrFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.DfDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.DfFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FaDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FaFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FcDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FcFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FdDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FdFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FmDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FmFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.IfDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.IfFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.RfDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.RfFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.TfDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.TfFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VaDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VaFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VdDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VdFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.ViDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.ViFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VmDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VmFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VrDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.VrFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.source.AirportDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.source.AirportFeatureScorer;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.source.AreaProximityDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.source.AreaProximityScorer;
 import org.mitre.tdp.boogie.viterbi.DelegatingFeatureVectorScorer;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
 
@@ -14,6 +56,8 @@ import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
  * <p>
  * Generally speaking this class delegates feature extraction to different extractors based on the {@link Leg#pathTerminator()} of the
  * {@link FlyableLeg#current()} leg of the provided flyable leg.
+ * <p>
+ * The class leaves out the holds and procedure turns as they look pretty different then these legs and we can find them by exclusion.
  */
 public final class StandardLegFeatureScorer implements BiFunction<ConformablePoint, FlyableLeg, ViterbiFeatureVectorScorer> {
 
@@ -23,8 +67,14 @@ public final class StandardLegFeatureScorer implements BiFunction<ConformablePoi
    */
   private final DelegatingFeatureVectorScorer<ConformablePoint, FlyableLeg> scorer;
 
+  public StandardLegFeatureScorer(DelegatingFeatureVectorScorer<ConformablePoint, FlyableLeg> scorer) {
+    this.scorer = scorer;
+  }
+
   public StandardLegFeatureScorer() {
     this.scorer = DelegatingFeatureVectorScorer.<ConformablePoint, FlyableLeg>newBuilder()
+        .addFeatureScorer(new AreaProximityDelegator(), new AreaProximityScorer())
+        .addFeatureScorer(new AirportDelegator(), new AirportFeatureScorer())
         .addFeatureScorer(new AfDelegator(), new AfFeatureScorer())
         .addFeatureScorer(new RfDelegator(), new RfFeatureScorer())
         .addFeatureScorer(new DfDelegator(), new DfFeatureScorer())
@@ -46,6 +96,10 @@ public final class StandardLegFeatureScorer implements BiFunction<ConformablePoi
         .addFeatureScorer(new CrDelegator(), new CrFeatureScorer())
         .addFeatureScorer((conformablePoint, flyableLeg) -> true, viterbiFeatureVector -> 1e-30)
         .build();
+  }
+
+  public DelegatingFeatureVectorScorer<ConformablePoint, FlyableLeg> scorer() {
+    return scorer;
   }
 
   @Override

@@ -50,7 +50,7 @@ class TestProcedureRoutesExtractor {
 
   @Test
   void testExtract() {
-    Collection<Route<ProcedureGraph>> routes = procRoutesExtractor.apply(graph);
+    Collection<Route> routes = procRoutesExtractor.apply(graph);
     assertEquals(1, routes.size());
   }
 }

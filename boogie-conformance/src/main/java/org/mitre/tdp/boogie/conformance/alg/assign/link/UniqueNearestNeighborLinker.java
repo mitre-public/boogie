@@ -22,9 +22,10 @@ import org.slf4j.LoggerFactory;
  * <p>
  * This class is really attempting to (given two potentially large sets of potential legs) the unique nearest pairwise connections
  * between legs originating from each set (which have location information - obviously).
+ * <p>
+ * The implied design here is that this is finding links, but its better than just making links to every singe downstream thing.
  */
 final class UniqueNearestNeighborLinker implements LegsLinker {
-  private static final PathTerminatorBasedNextLegValidator VALIDATOR = new PathTerminatorBasedNextLegValidator();
   private static final Logger LOG = LoggerFactory.getLogger(UniqueNearestNeighborLinker.class);
 
   @Override

@@ -19,11 +19,11 @@ public interface LegTransitionScoringStrategy {
   static LegTransitionScoringStrategy legsInSequence()  {
     return new LegsInSequence();
   }
-  static LegTransitionScoringStrategy closeButDifferentRoute() {
-    return new CloseByButDifferentRoute();
+  static LegTransitionScoringStrategy sameFixDifferentRoute() {
+    return new SameFixDifferentRoute();
   }
-  static LegTransitionScoringStrategy linearDistance()  {
-    return new LinearDistance();
+  static LegTransitionScoringStrategy linearDistanceBetweenFix()  {
+    return new LinearDistanceBetweenFix();
   }
 
   Optional<Double> score(FlyableLeg currentLeg, FlyableLeg nextLeg);
@@ -58,8 +58,8 @@ public interface LegTransitionScoringStrategy {
   /**
    * If the current's next has the same fix as the next's current BUT the routes are different the edge is less likely.
    */
-  final class CloseByButDifferentRoute implements LegTransitionScoringStrategy {
-    private CloseByButDifferentRoute() {}
+  final class SameFixDifferentRoute implements LegTransitionScoringStrategy {
+    private SameFixDifferentRoute() {}
     @Override
     public Optional<Double> score(FlyableLeg currentLeg, FlyableLeg nextLeg) {
 
@@ -76,8 +76,8 @@ public interface LegTransitionScoringStrategy {
   /**
    * If the legs are near each other, then they are more likely.
    */
-  final class LinearDistance implements LegTransitionScoringStrategy {
-    private LinearDistance() {}
+  final class LinearDistanceBetweenFix implements LegTransitionScoringStrategy {
+    private LinearDistanceBetweenFix() {}
     @Override
     public Optional<Double> score(FlyableLeg currentLeg, FlyableLeg nextLeg) {
       if (currentLeg.current().associatedFix().isPresent() &&  nextLeg.current().associatedFix().isPresent() && !currentLeg.routes().equals(nextLeg.routes())) {

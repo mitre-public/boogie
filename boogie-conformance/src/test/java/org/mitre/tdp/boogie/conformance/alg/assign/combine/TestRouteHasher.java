@@ -13,8 +13,8 @@ public class TestRouteHasher {
   @Test
   void hash() {
     List<Leg> legs = List.of();
-    Route<String> route = Route.newRoute(legs, "SOURCE");
-    Route<String> route2 = Route.newRoute(legs, "SOURCE_2");
+    Route route = Route.newRoute(legs, "SOURCE");
+    Route route2 = Route.newRoute(legs, "SOURCE_2");
     assertNotEquals(route.hashCode(), route2.hashCode());
   }
 }

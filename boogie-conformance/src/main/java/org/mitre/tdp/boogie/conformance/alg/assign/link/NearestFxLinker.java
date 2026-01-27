@@ -40,9 +40,10 @@ final class NearestFxLinker implements LegsLinker, Serializable {
               .distinct()
               .map(l -> Pair.of(l, flyableLeg));
         })
+        .filter(p -> p.first().current().associatedFix().get().distanceInNmTo(p.second().current().associatedFix().get()) < 150)
         .collect(Collectors.toList());
 
-    LOG.info("Returning with an additional {} links.", pairs.size());
+    LOG.info("Returning with an additional {} links to Fx legs.", pairs.size());
     return pairs;
   }
 

@@ -37,6 +37,12 @@ public final class DelegatingFeatureVectorScorer<STAGE, STATE> implements BiFunc
     return new Builder<>();
   }
 
+  public Builder<STAGE, STATE> toBuilder() {
+    Builder<STAGE, STATE> builder = new Builder<>();
+    builder.scorers.addAll(this.featureScorers);
+    return builder;
+  }
+
   /**
    * Builder class for adding delegatable {@link ViterbiFeatureVectorExtractor}s to the configuration.
    */

@@ -28,7 +28,7 @@ public class TestHybridHasher {
 
   static String routeSource = "SOURCE_1";
 
-  static Route<String> route1 = Route.newRoute(List.of(ifLeg, tfLeg, tfLeg2), routeSource);
+  static Route route1 = Route.newRoute(List.of(ifLeg, tfLeg, tfLeg2), routeSource);
   static FlyableLeg flyableLeg = new FlyableLeg(null, ifLeg, tfLeg, route1);
   static FlyableLeg flyableLeg2 = new FlyableLeg(ifLeg, tfLeg, tfLeg2, route1);
   static FlyableLeg flyableLeg3 = new FlyableLeg(tfLeg, tfLeg2, null, route1);

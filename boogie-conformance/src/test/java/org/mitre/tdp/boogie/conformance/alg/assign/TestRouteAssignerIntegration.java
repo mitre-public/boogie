@@ -36,6 +36,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Heliport;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.OneshotRecordParser;
@@ -44,6 +45,7 @@ import org.mitre.tdp.boogie.conformance.alg.assign.combine.HashCombinationStrate
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.HybridHasher;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.PathTerminatorBasedLegHasher;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.RouteHasher;
+import org.mitre.tdp.boogie.conformance.alg.assign.link.AllPhasesOfFlightLinker;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.PhaseOfFlightLinker;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.StandardLegFeatureExtractor;
@@ -70,29 +72,34 @@ public class TestRouteAssignerIntegration {
   }
 
   @Test
-  void test() throws FileNotFoundException {
+  void test() {
     Procedure special = records.procedures().stream().findFirst().orElseThrow();
     ProcedureGraph graphA = ProcedureFactory.newProcedureGraph(special);
-    Collection<Route> routesA = ProcedureRoutesExtractor.INSTANCE.apply(graphA);
 
-    Procedure approachB = records2.procedures().stream().findFirst().orElseThrow();
-    ProcedureGraph graphB = ProcedureFactory.newProcedureGraph(approachB);
-    Collection<Route> routesB = ProcedureRoutesExtractor.INSTANCE.apply(graphB);
+    Procedure rawAppB = records2.procedures().stream().findFirst().orElseThrow();
+    ProcedureGraph graphB = ProcedureFactory.newProcedureGraph(rawAppB);
+
     Route enroute0 = plannedRoute0();
     Route enroute = plannedRoute1();
 
-    Collection<Route> allRoutes = Stream.of(routesA, routesB, List.of(enroute, enroute0))
+    Collection<Route> apprachA = ProcedureRoutesExtractor.INSTANCE.apply(graphA);
+    Collection<Route> approachB = ProcedureRoutesExtractor.INSTANCE.apply(graphB);
+    Collection<Route> enroutes = List.of(enroute, enroute0);
+    Collection<Route> deps = departureAirport();
+    Collection<Route> arrs = arrivalAirport();
+
+    Collection<Route> allRoutes = Stream.of(deps, apprachA, approachB, enroutes, arrs)
         .flatMap(Collection::stream)
         .collect(Collectors.toSet());
-    List<Route> approaches = Stream.of(routesA, routesB)
+    List<Route> approaches = Stream.of(apprachA, approachB)
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
 
-    RouteAssigner assigner = newAssigner(List.of(enroute, enroute0), approaches);
+    RouteAssigner assigner = newAssigner(deps, enroutes, approaches, arrs);
 
-
-
-    Map<ConformablePoint, FlyableLeg> assignments = assigner.assignments(points.stream().filter(p -> p.time().isAfter(Instant.ofEpochSecond(1686248315000L))).toList(), allRoutes);
+    Map<ConformablePoint, FlyableLeg> assignments = assigner.assignments(points, allRoutes);
+    //chops it to terminal area if u use that instant filter
+    //assigner.assignments(points.stream().filter(p -> p.time().isAfter(Instant.ofEpochSecond(1686248315000L))).toList(), allRoutes);
     Map<FlyableLeg, List<LatLong>> byLeg = assignments.entrySet()
         .stream()
         .sorted(Map.Entry.comparingByKey())
@@ -101,43 +108,55 @@ public class TestRouteAssignerIntegration {
             Collectors.mapping(i -> i.getKey().latLong(), Collectors.toList())
         ));
 
-    Route flownTransition = routesA.stream().filter(i -> i.legs().get(0).associatedFix().get().fixIdentifier().equals("HBU")).findFirst().orElseThrow();
+    Route flownTransitionA = apprachA.stream().filter(i -> i.legs().get(0).associatedFix().get().fixIdentifier().equals("HBU")).findFirst().orElseThrow();
 
-    List<FlyableLeg> assignedEnroute0 = byLeg.keySet().stream().filter(i -> i.route().equals(enroute0)).toList();
-    List<FlyableLeg> assignedEnroute = byLeg.keySet().stream().filter(i -> i.route().equals(enroute)).toList();
-    List<FlyableLeg> assignedApproach = byLeg.keySet().stream().filter(i -> i.route().equals(flownTransition)).toList();
-    Map<Route, List<FlyableLeg>> assignedWrongApproach = assignments.values().stream()
-        .collect(Collectors.groupingBy(FlyableLeg::route, Collectors.mapping(i -> i, Collectors.toList())));
+    List<FlyableLeg> assignedAirport = byLeg.keySet().stream().filter(i -> i.routes().stream().anyMatch(r -> r.source().getClass().isAssignableFrom(Airport.class))).toList();
+    List<FlyableLeg> assignedEnroute0 = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(enroute0)).toList();
+    List<FlyableLeg> assignedEnroute = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(enroute)).toList();
+    List<FlyableLeg> assignedApproach = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(flownTransitionA)).toList();
+    List<FlyableLeg> assignedApproachB = byLeg.keySet().stream().filter(i -> i.routes().stream().anyMatch(approachB::contains)).toList();
 
     Graph<FlyableLeg, DefaultWeightedEdge> graph = assigner.transitionGraph(allRoutes).graph();
     DOTExporter<FlyableLeg, DefaultWeightedEdge> exporter = new DOTExporter<>(this::signature);
-    asDotGraph(exporter, graph);
+
 
     List<MapFeature> byLegFeatures = byLeg.entrySet().stream()
         .map(e -> {
           List<LatLong> latLongs = e.getValue();
           Color color = generateRandomColor();
           MapFeature currentLeg = MapFeatures.text(
-              e.getKey().current().associatedFix().get().fixIdentifier(),
+              e.getKey().current().associatedFix().get().fixIdentifier() + e.getKey().current().pathTerminator(),
               e.getKey().current().associatedFix().get().latLong(),
               color
               );
-          MapFeature path = MapFeatures.path(latLongs, color, 1f);
+          MapFeature path = MapFeatures.path(latLongs, color, 2f);
           return List.of(currentLeg, path);
         })
         .flatMap(Collection::stream)
         .toList();
 
+    System.out.println(asDotGraph(exporter, graph));
     MapBuilder.newMapBuilder()
         .tileSource(new MapBoxApi(MapBoxApi.Style.LIGHT))
-        .width(Distance.ofNauticalMiles(30))
+        //.width(Distance.ofNauticalMiles(40))
+        .width(Distance.ofNauticalMiles(250))
         .addFeatures(byLegFeatures)
-        .center(LatLong.of(38.4401, -106.8233))
+        //.center(LatLong.of(38.4401, -106.8233))
+        .center(LatLong.of(39.11363444047107, -106.26381461591687))
         .toFile(new File("map.jpg"));
   }
 
-  private RouteAssigner newAssigner(List<Route> enroute, List<Route> approach) {
-    LinkingStrategy supplied = PhaseOfFlightLinker.newStrategyFor(List.of(), enroute, List.of(), approach);
+  private RouteAssigner newAssigner(Collection<Route> deps, Collection<Route> enroute, Collection<Route> approach, Collection<Route> arrArpt) {
+    LinkingStrategy allPhases = new AllPhasesOfFlightLinker(
+        deps,
+        List.of(),
+        List.of(),
+        enroute,
+        List.of(),
+        List.of(),
+        List.of(),
+        approach,
+        arrArpt);
     HybridHasher hybridHasher = HybridHasher.from(List.of(RouteHasher.newInstance(), PathTerminatorBasedLegHasher.newInstance()));
     CombinationStrategy combinationStrategy = new HashCombinationStrategy(hybridHasher);
     StandardLegFeatureScorer standardLegFeatureScorer = new StandardLegFeatureScorer();
@@ -146,7 +165,7 @@ public class TestRouteAssignerIntegration {
     StandardTransitionScorer standardTransitionScorer = new StandardTransitionScorer();
 
     return new RouteAssigner(
-        supplied,
+        allPhases,
         combinationStrategy,
         scoringStrategy,
         standardTransitionScorer
@@ -161,9 +180,38 @@ public class TestRouteAssignerIntegration {
     return new Color(r, g, b);
   }
 
-  public static Route plannedRoute0() {
+  public static Collection<Route> arrivalAirport() {
+    LatLong arrLat = LatLong.of(38.534, -106.933);
+    Fix arr = Fix.builder().fixIdentifier("ARR_ARPT").latLong(arrLat).build();
+    Leg l0 = Leg.ifBuilder(arr, 0).build();
+    return List.of(Route.newRoute(List.of(l0), arrLat));
+  }
+
+  public static Collection<Route> departureAirport() {
     LatLong depArpt = LatLong.of(39.861666666666665, -104.67316666666667);
     Fix dep = Fix.builder().fixIdentifier("DEP_ARPT").latLong(depArpt).build();
+    Leg l0 = Leg.ifBuilder(dep, 0).build();
+    Airport leftHere = Airport.builder()
+        .latLong(depArpt)
+        .magneticVariation(MagneticVariation.ZERO)
+        .runways(List.of())
+        .airportIdentifier("DEP_ARPT")
+        .build();
+
+    LatLong depArptSame = LatLong.of(40.0, -40.0);
+    Fix depSame = Fix.builder().fixIdentifier("SOME_OTHER").latLong(depArptSame).build();
+    Leg l01 = Leg.ifBuilder(depSame, 0).build();
+    Airport other = Airport.builder()
+        .latLong(depArptSame)
+        .magneticVariation(MagneticVariation.ZERO)
+        .runways(List.of())
+        .airportIdentifier("SOME_OTHER")
+        .build();
+
+    return List.of(Route.newRoute(List.of(l0), leftHere), Route.newRoute(List.of(l01), other));
+  }
+
+  public static Route plannedRoute0() {
     LatLong tailored = LatLong.of(39.11363444047107, -106.26381461591687);
     Fix f1 = Fix.builder().fixIdentifier("MRFIDK").latLong(tailored).build();
     LatLong hbu = LatLong.of(38.45211666666667, -107.03971388888888);
@@ -172,21 +220,15 @@ public class TestRouteAssignerIntegration {
     Fix f3 = Fix.builder().fixIdentifier("TOMAC").latLong(tomac).build();
     LatLong dufle = LatLong.of(38.43278055555555, -106.65873888888889);
     Fix f4 = Fix.builder().fixIdentifier("DUFLE").latLong(dufle).build();
-    LatLong arrArpt = LatLong.of(38.53433333333333, -106.93175000000001);
-    Fix f5 =  Fix.builder().fixIdentifier("ARPT").latLong(arrArpt).build();
-    Leg l0 = Leg.ifBuilder(dep, 5).build();
     Leg l1 = Leg.dfBuilder(f1, 10).build();
     Leg l2 = Leg.dfBuilder(f2, 20).build();
     Leg l3 = Leg.dfBuilder(f3, 30).build();
     Leg l4 = Leg.dfBuilder(f4, 40).build();
-    Leg l5 = Leg.dfBuilder(f5, 50).build();
-    List<Leg> legs = Arrays.asList(l0, l1, l2, l3, l4, l5);
+    List<Leg> legs = Arrays.asList(l1, l2, l3, l4);
     return Route.newRoute(legs, "FLIGHT_PLAN_0");
   }
 
   public static Route plannedRoute1() {
-    LatLong depArpt = LatLong.of(39.861666666666665, -104.67316666666667);
-    Fix dep = Fix.builder().fixIdentifier("DEP_ARPT").latLong(depArpt).build();
     LatLong tailored = LatLong.of(38.628310052628024, -106.97503535163497);
     Fix f1 = Fix.builder().fixIdentifier("HBU1234").latLong(tailored).build();
     LatLong hbu = LatLong.of(38.45211666666667, -107.03971388888888);
@@ -195,15 +237,11 @@ public class TestRouteAssignerIntegration {
     Fix f3 = Fix.builder().fixIdentifier("TOMAC").latLong(tomac).build();
     LatLong dufle = LatLong.of(38.43278055555555, -106.65873888888889);
     Fix f4 = Fix.builder().fixIdentifier("DUFLE").latLong(dufle).build();
-    LatLong arrArpt = LatLong.of(38.53433333333333, -106.93175000000001);
-    Fix f5 =  Fix.builder().fixIdentifier("ARPT").latLong(arrArpt).build();
-    Leg l0 = Leg.ifBuilder(dep, 5).build();
     Leg l1 = Leg.dfBuilder(f1, 10).build();
     Leg l2 = Leg.dfBuilder(f2, 20).build();
     Leg l3 = Leg.dfBuilder(f3, 30).build();
     Leg l4 = Leg.dfBuilder(f4, 40).build();
-    Leg l5 = Leg.dfBuilder(f5, 50).build();
-    List<Leg> legs = Arrays.asList(l0, l1, l2, l3, l4, l5);
+    List<Leg> legs = Arrays.asList(l1, l2, l3, l4);
     return Route.newRoute(legs, "FLIGHT_PLAN");
   }
 

@@ -106,6 +106,8 @@ public final class TransitionGraphAssembler {
     LOG.info("Adding {} edges to flyable leg graph.", totalLinks);
     Consumer<Collection<Pair<FlyableLeg, FlyableLeg>>> linkAdder = col ->
         col.stream()
+            .filter(pair -> legToComposite.containsKey(pair.first()))
+            .filter(pair -> legToComposite.containsKey(pair.second()))
             .map(pair -> remap(pair, legToComposite::get))
             .filter(pair -> !pair.first().equals(pair.second()))
             .filter(pair -> !graph.containsEdge(pair.second(), pair.first()))
@@ -150,8 +152,8 @@ public final class TransitionGraphAssembler {
    */
   private Pair<FlyableLeg, FlyableLeg> remap(Pair<FlyableLeg, FlyableLeg> pair, Function<FlyableLeg, CompositeLeg> fn) {
     return Pair.of(
-        checkNotNull(fn.apply(pair.first()).representative(), String.format("Failed to re-map: %s", pair.first())),
-        checkNotNull(fn.apply(pair.second()).representative(), String.format("Failed to re-map: %s", pair.second()))
+        checkNotNull(fn.apply(pair.first()).representative(), String.format("Failed to re-map: %s", pair)),
+        checkNotNull(fn.apply(pair.second()).representative(), String.format("Failed to re-map: %s", pair))
     );
   }
 
