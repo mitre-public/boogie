@@ -117,6 +117,7 @@ tasks.register<Test>("cifp-integration") {
         includeTags("CIFP")
         excludeTags("LIDO")
         excludeTags("DAFIF")
+        excludeTags("ASSIGNMENT")
     }
 
     maxHeapSize = "2G"
@@ -150,6 +151,7 @@ tasks.register<Test>("lido-integration") {
         includeTags("INTEGRATION")
         excludeTags("DAFIF")
         excludeTags("CIFP")
+        excludeTags("ASSIGNMENT")
     }
 
     maxHeapSize = "8G"
@@ -166,6 +168,7 @@ tasks.register<Test>("dafif-integration") {
         includeTags("INTEGRATION")
         excludeTags("LIDO")
         excludeTags("CIFP")
+        excludeTags("ASSIGNMENT")
     }
 
     maxHeapSize = "4G"
