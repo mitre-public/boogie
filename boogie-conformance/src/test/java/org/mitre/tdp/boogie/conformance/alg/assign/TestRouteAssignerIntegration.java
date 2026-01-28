@@ -1,12 +1,14 @@
 package org.mitre.tdp.boogie.conformance.alg.assign;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -18,13 +20,12 @@ import java.util.stream.Stream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.nio.ExportException;
-import org.jgrapht.nio.GraphExporter;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
-import org.mitre.caasd.commons.Pair;
 import org.mitre.caasd.commons.maps.MapBoxApi;
 import org.mitre.caasd.commons.maps.MapBuilder;
 import org.mitre.caasd.commons.maps.MapFeature;
@@ -45,19 +46,17 @@ import org.mitre.tdp.boogie.conformance.alg.assign.combine.HashCombinationStrate
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.HybridHasher;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.PathTerminatorBasedLegHasher;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.RouteHasher;
-import org.mitre.tdp.boogie.conformance.alg.assign.generate.AreaProximity;
-import org.mitre.tdp.boogie.conformance.alg.assign.generate.AreaProximitySupplier;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.AllPhasesOfFlightLinker;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
-import org.mitre.tdp.boogie.conformance.alg.assign.link.PhaseOfFlightLinker;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.StandardLegFeatureExtractor;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.StandardLegFeatureScorer;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.StandardScoringStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.transition.StandardTransitionScorer;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
-import org.mitre.tdp.boogie.util.Combinatorics;
 
+@Tag("ASSIGNMENT")
+@Tag("INTEGRATION")
 public class TestRouteAssignerIntegration {
   static OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace, Heliport> records;
   static OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace, Heliport> records2;
@@ -112,7 +111,7 @@ public class TestRouteAssignerIntegration {
 
     Route flownTransitionA = apprachA.stream().filter(i -> i.legs().get(0).associatedFix().get().fixIdentifier().equals("HBU")).findFirst().orElseThrow();
 
-    List<FlyableLeg> assignedAirport = byLeg.keySet().stream().filter(i -> i.routes().stream().anyMatch(r -> r.source().getClass().isAssignableFrom(Airport.class))).toList();
+    List<FlyableLeg> assignedAirport = byLeg.keySet().stream().filter(i -> i.routes().stream().anyMatch(r -> Airport.class.isAssignableFrom(r.source().getClass()))).toList();
     List<FlyableLeg> assignedEnroute0 = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(enroute0)).toList();
     List<FlyableLeg> assignedEnroute = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(enroute)).toList();
     List<FlyableLeg> assignedApproach = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(flownTransitionA)).toList();
@@ -137,7 +136,7 @@ public class TestRouteAssignerIntegration {
         .flatMap(Collection::stream)
         .toList();
 
-    System.out.println(asDotGraph(exporter, graph));
+    /*System.out.println(asDotGraph(exporter, graph));
     MapBuilder.newMapBuilder()
         .tileSource(new MapBoxApi(MapBoxApi.Style.LIGHT))
         //.width(Distance.ofNauticalMiles(40))
@@ -145,7 +144,22 @@ public class TestRouteAssignerIntegration {
         .addFeatures(byLegFeatures)
         //.center(LatLong.of(38.4401, -106.8233))
         .center(LatLong.of(39.11363444047107, -106.26381461591687))
-        .toFile(new File("map.jpg"));
+        .toFile(new File("bigMap.jpg"));
+    MapBuilder.newMapBuilder()
+        .tileSource(new MapBoxApi(MapBoxApi.Style.LIGHT))
+        .width(Distance.ofNauticalMiles(40))
+        .addFeatures(byLegFeatures)
+        .center(LatLong.of(38.4401, -106.8233))
+        .toFile(new File("map.jpg"));*/
+
+    assertAll(
+        () -> assertEquals(13, byLeg.size()),
+        () -> assertEquals(0, assignedApproachB.size()),
+        () -> assertEquals(10, assignedApproach.size()),
+        () -> assertEquals(0, assignedEnroute.size()),
+        () -> assertEquals(2, assignedEnroute0.size()),
+        () -> assertEquals(1, assignedAirport.size())
+    );
   }
 
   private RouteAssigner newAssigner(Collection<Route> deps, Collection<Route> enroute, Collection<Route> approach, Collection<Route> arrArpt) {
