@@ -15,10 +15,13 @@ import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 import org.mitre.tdp.boogie.util.Combinatorics;
 
+import com.google.common.annotations.Beta;
+
 /**
  * This class supplies an {@link AreaProximity} "leg" when the left and right don't share any fixes.
  * This will hopefully create an option for when a route is arriving -> fly around in a circle -> approach.
  */
+@Beta
 public final class AreaProximitySupplier implements Supplier<Collection<Route>>, Serializable {
 
   private static final Predicate<Pair<Leg, Leg>> FIX_EQUAL_AND_THERE = p -> p.first().associatedFix().equals(p.second().associatedFix())

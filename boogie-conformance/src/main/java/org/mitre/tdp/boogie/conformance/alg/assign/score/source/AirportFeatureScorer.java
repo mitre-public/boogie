@@ -8,6 +8,9 @@ import java.util.function.UnaryOperator;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class AirportFeatureScorer implements ViterbiFeatureVectorScorer {
   private final UnaryOperator<Double> distanceFromAirportWeight;
 

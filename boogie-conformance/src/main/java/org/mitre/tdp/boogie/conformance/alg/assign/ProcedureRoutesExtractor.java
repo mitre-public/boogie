@@ -7,6 +7,12 @@ import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
 
+import com.google.common.annotations.Beta;
+
+/**
+ * This class is used to extract all the routes from a {@link Procedure}.
+ */
+@Beta
 public final class ProcedureRoutesExtractor implements Function<Procedure, Collection<Route>> {
   public static final ProcedureRoutesExtractor INSTANCE = new ProcedureRoutesExtractor();
   private ProcedureRoutesExtractor() {}

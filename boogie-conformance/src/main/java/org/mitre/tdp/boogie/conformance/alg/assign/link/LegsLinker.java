@@ -7,6 +7,9 @@ import java.util.function.BiFunction;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 @FunctionalInterface
 public interface LegsLinker extends BiFunction<Collection<FlyableLeg>, Collection<FlyableLeg>, Collection<Pair<FlyableLeg, FlyableLeg>>> {
 

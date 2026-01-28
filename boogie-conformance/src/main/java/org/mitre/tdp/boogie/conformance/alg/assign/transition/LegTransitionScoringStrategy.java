@@ -9,9 +9,12 @@ import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.WeightFunctions;
 
+import com.google.common.annotations.Beta;
+
 /**
  * This class contains strategies for scoring different combinations of {@link FlyableLeg}
  */
+@Beta
 public interface LegTransitionScoringStrategy {
   static LegTransitionScoringStrategy sameLeg()  {
     return new SameLeg();

@@ -11,6 +11,9 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class AreaProximityFeatureExtractor implements Supplier<ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {
   public static final AreaProximityFeatureExtractor INSTANCE = new AreaProximityFeatureExtractor();
 

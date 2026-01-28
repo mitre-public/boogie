@@ -4,9 +4,12 @@ import java.util.function.BiFunction;
 
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
+import com.google.common.annotations.Beta;
+
 /**
  * This is used to impact the weights of edges between legs. So a higher value makes the edge more likely than others.
  */
+@Beta
 public final class StandardTransitionScorer implements BiFunction<FlyableLeg, FlyableLeg, Double> {
   private final LegTransitionScoringStrategy sameLeg = LegTransitionScoringStrategy.sameLeg();
   private final LegTransitionScoringStrategy inSequence = LegTransitionScoringStrategy.legsInSequence();

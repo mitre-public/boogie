@@ -14,12 +14,15 @@ import org.mitre.tdp.boogie.util.Combinatorics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.Beta;
+
 /**
  * This class wants all route suppliers to be split up by phase of flight. Then there are "glue" sections added to the
  * route (e.g., departureTransitions). If the routes are not otherwise linked directly via shared fixes.
  * <p>
  * The attempt here is to link the routes and then add catches for when the published routes/fixds do not directly link.
  */
+@Beta
 public class AllPhasesOfFlightLinker implements LinkingStrategy, Serializable {
   private static final Logger LOG = LoggerFactory.getLogger(AllPhasesOfFlightLinker.class);
   private final Collection<Route> departureAirports;

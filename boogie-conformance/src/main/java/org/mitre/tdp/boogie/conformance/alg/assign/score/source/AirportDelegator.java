@@ -7,9 +7,12 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
+import com.google.common.annotations.Beta;
+
 /**
  * This class determines if the leg is a singleton airport leg.
  */
+@Beta
 public final class AirportDelegator implements BiPredicate<ConformablePoint, FlyableLeg> {
   @Override
   public boolean test(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {

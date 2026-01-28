@@ -4,6 +4,9 @@ import java.util.Optional;
 
 import org.mitre.tdp.boogie.Leg;
 
+import com.google.common.annotations.Beta;
+
+@Beta
 public final class AreaProximityVisitor implements Leg.Visitor{
   private AreaProximity areaProximity;
 

@@ -10,9 +10,12 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Class for returning an appropriate {@link ViterbiFeatureVector} for a {@link Airport} leg.
  */
+@Beta
 public final class AirportFeatureExtractor implements Supplier<ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {
   public static final  AirportFeatureExtractor INSTANCE = new AirportFeatureExtractor();
   /**

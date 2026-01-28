@@ -17,8 +17,10 @@ import org.mitre.tdp.boogie.util.Iterators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
 
+@Beta
 public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(PhaseOfFlightLinker.class);

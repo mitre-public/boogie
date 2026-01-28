@@ -7,11 +7,14 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.RouteAssigner;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 
+import com.google.common.annotations.Beta;
+
 /**
  * A combination strategy defines a methodology for combining {@link FlyableLeg}s which represent logically similar flight
  * paths/trajectories into {@link CompositeLeg}s. A composite leg then elects a representative which can be used in place
  * of the full set of member legs within the {@link RouteAssigner} for scoring, etc.
  */
+@Beta
 @FunctionalInterface
 public interface CombinationStrategy {
 
