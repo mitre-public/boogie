@@ -45,6 +45,8 @@ import org.mitre.tdp.boogie.conformance.alg.assign.combine.HashCombinationStrate
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.HybridHasher;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.PathTerminatorBasedLegHasher;
 import org.mitre.tdp.boogie.conformance.alg.assign.combine.RouteHasher;
+import org.mitre.tdp.boogie.conformance.alg.assign.generate.AreaProximity;
+import org.mitre.tdp.boogie.conformance.alg.assign.generate.AreaProximitySupplier;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.AllPhasesOfFlightLinker;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.LinkingStrategy;
 import org.mitre.tdp.boogie.conformance.alg.assign.link.PhaseOfFlightLinker;
