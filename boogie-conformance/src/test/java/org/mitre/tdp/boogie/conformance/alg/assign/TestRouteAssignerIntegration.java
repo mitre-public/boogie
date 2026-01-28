@@ -72,6 +72,8 @@ public class TestRouteAssignerIntegration {
     points = TrackParser.parse(trackA.getAbsolutePath());
   }
 
+  @Tag("ASSIGNMENT")
+  @Tag("INTEGRATION")
   @Test
   void test() {
     Procedure special = records.procedures().stream().findFirst().orElseThrow();
