@@ -78,16 +78,13 @@ public class TestRouteAssignerIntegration {
   @Test
   void test() {
     Procedure special = records.procedures().stream().findFirst().orElseThrow();
-    ProcedureGraph graphA = ProcedureFactory.newProcedureGraph(special);
-
     Procedure rawAppB = records2.procedures().stream().findFirst().orElseThrow();
-    ProcedureGraph graphB = ProcedureFactory.newProcedureGraph(rawAppB);
 
     Route enroute0 = plannedRoute0();
     Route enroute = plannedRoute1();
 
-    Collection<Route> apprachA = ProcedureRoutesExtractor.INSTANCE.apply(graphA);
-    Collection<Route> approachB = ProcedureRoutesExtractor.INSTANCE.apply(graphB);
+    Collection<Route> apprachA = ProcedureRoutesExtractor.INSTANCE.apply(special);
+    Collection<Route> approachB = ProcedureRoutesExtractor.INSTANCE.apply(rawAppB);
     Collection<Route> enroutes = List.of(enroute, enroute0);
     Collection<Route> deps = departureAirport();
     Collection<Route> arrs = arrivalAirport();
@@ -117,7 +114,9 @@ public class TestRouteAssignerIntegration {
     List<FlyableLeg> assignedAirport = byLeg.keySet().stream().filter(i -> i.routes().stream().anyMatch(r -> Airport.class.isAssignableFrom(r.source().getClass()))).toList();
     List<FlyableLeg> assignedEnroute0 = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(enroute0)).toList();
     List<FlyableLeg> assignedEnroute = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(enroute)).toList();
-    List<FlyableLeg> assignedApproach = byLeg.keySet().stream().filter(i -> i.routes().stream().findFirst().get().equals(flownTransitionA)).toList();
+    List<FlyableLeg> assignedApproach = byLeg.keySet().stream()
+        .filter(i -> i.routes().contains(flownTransitionA))
+        .toList();
     List<FlyableLeg> assignedApproachB = byLeg.keySet().stream().filter(i -> i.routes().stream().anyMatch(approachB::contains)).toList();
 
     Graph<FlyableLeg, DefaultWeightedEdge> graph = assigner.transitionGraph(allRoutes).graph();

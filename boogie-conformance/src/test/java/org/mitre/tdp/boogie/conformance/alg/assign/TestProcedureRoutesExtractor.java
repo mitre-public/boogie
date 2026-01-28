@@ -44,13 +44,11 @@ class TestProcedureRoutesExtractor {
       .transitions(List.of(transition))
       .build();
 
-  static ProcedureGraph graph = ProcedureFactory.newProcedureGraph(proc);
-
   static ProcedureRoutesExtractor procRoutesExtractor = ProcedureRoutesExtractor.INSTANCE;
 
   @Test
   void testExtract() {
-    Collection<Route> routes = procRoutesExtractor.apply(graph);
+    Collection<Route> routes = procRoutesExtractor.apply(proc);
     assertEquals(1, routes.size());
   }
 }
