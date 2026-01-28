@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.conformance.alg.assign.combine;
 
 import java.util.function.Function;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 
@@ -15,10 +16,11 @@ public final class RouteHasher implements Function<FlyableLeg, Integer> {
   }
   @Override
   public Integer apply(FlyableLeg flyableLeg) {
-    return flyableLeg.routes().stream()
-        .findFirst()
+    HashCodeBuilder builder = new HashCodeBuilder();
+    flyableLeg.routes().stream()
         .map(Route::source)
         .map(Object::hashCode)
-        .orElseThrow();
+        .forEach(builder::append);
+    return builder.toHashCode();
   }
 }
