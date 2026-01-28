@@ -57,6 +57,15 @@ public interface LinkingStrategy {
     return new SuppliedLinkStrategy(links);
   }
 
+  /**
+   * This strategy lets others else provide a list of links.
+   * @param links the precomputed links
+   * @return the links that were already computed.
+   */
+  static LinkingStrategy supplied(Collection<Pair<FlyableLeg, FlyableLeg>> links) {
+    return new SuppliedLinkStrategy(links);
+  }
+
   final class NoOpLinkingStrategy implements LinkingStrategy {
     NoOpLinkingStrategy() {}
     @Override

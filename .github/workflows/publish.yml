@@ -69,8 +69,29 @@ jobs:
       - name: dafif
         run: ./gradlew dafif-integration
 
+  assignment:
+    needs: unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Assignment Test Data
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          repository: 'mitre-tdp/boogie-test'
+          ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
+          ref: main
+          path: ./boogie-conformance/src/test/resources
+
+      - name: dafif
+        run: ./gradlew assignment-integration
+
   release:
-    needs: [unit, cifp, lido, dafif]
+    needs: [unit, cifp, lido, dafif, assignment]
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.nextStrict }}

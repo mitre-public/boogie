@@ -24,7 +24,7 @@ public final class CompositeLeg {
   /**
    * Returns a {@link FlyableLeg} which is representative of all of the underlying {@link FlyableLeg}s but contains all of
    * their source routing information - so that it can be used in scoring.
-   *
+   * <p>
    * e.g. a transition from leg {@code 1->2} gets higher score if they share a source route.
    */
   public FlyableLeg representative() {

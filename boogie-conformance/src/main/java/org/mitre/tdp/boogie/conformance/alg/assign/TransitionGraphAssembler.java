@@ -27,16 +27,16 @@ import com.google.common.base.Preconditions;
 
 /**
  * Class for generating a {@link LegTransitionGraph} from an input collection of routes and a:
- *
+ * <p>
  * 1) {@link CombinationStrategy}
  * 2) {@link LinkingStrategy}
  * 3) {@link BiFunction} - to generate edge weights between {@link FlyableLeg} vertices.
- *
+ * <p>
  * At a high level this class takes a collection of {@link Route} records representing naturally linked legs (e.g. member legs of
  * the same transition, legs filed consecutively in a flight plan) and a separate "linking strategy" which can be used to supply
  * additional edges and generates a graph representing all of the legs how flights transition
  * to/from them.
- * <br>
+ * <p>
  * Note - this assembler automatically adds self-edges/loops under the assumption that the aircraft can always stay on its current
  * leg (though the weight of these edges are still configurable via the provided {@link #transitionScorer}).
  */
@@ -106,6 +106,8 @@ public final class TransitionGraphAssembler {
     LOG.info("Adding {} edges to flyable leg graph.", totalLinks);
     Consumer<Collection<Pair<FlyableLeg, FlyableLeg>>> linkAdder = col ->
         col.stream()
+            .filter(pair -> legToComposite.containsKey(pair.first()))
+            .filter(pair -> legToComposite.containsKey(pair.second()))
             .map(pair -> remap(pair, legToComposite::get))
             .filter(pair -> !pair.first().equals(pair.second()))
             .filter(pair -> !graph.containsEdge(pair.second(), pair.first()))
@@ -133,7 +135,6 @@ public final class TransitionGraphAssembler {
 
   /**
    * Initializes a new graph to hold valid transitions between legs which:
-   *
    * Directed
    * Weighted
    * Allows Self-Loops
@@ -151,8 +152,8 @@ public final class TransitionGraphAssembler {
    */
   private Pair<FlyableLeg, FlyableLeg> remap(Pair<FlyableLeg, FlyableLeg> pair, Function<FlyableLeg, CompositeLeg> fn) {
     return Pair.of(
-        checkNotNull(fn.apply(pair.first()).representative(), String.format("Failed to re-map: %s", pair.first())),
-        checkNotNull(fn.apply(pair.second()).representative(), String.format("Failed to re-map: %s", pair.second()))
+        checkNotNull(fn.apply(pair.first()).representative(), String.format("Failed to re-map: %s", pair)),
+        checkNotNull(fn.apply(pair.second()).representative(), String.format("Failed to re-map: %s", pair))
     );
   }
 
