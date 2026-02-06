@@ -1,5 +1,3 @@
-import kotlin.text.set
-
 plugins {
     id("java-library")
     id("maven-publish")
@@ -86,27 +84,7 @@ configure<JavaPluginExtension> {
 }
 
 tasks.named<Test>("test") {
-    useJUnitPlatform {
-        excludeTags("LIDO")
-        excludeTags("DAFIF")
-        includeTags("INTEGRATION")
-    }
-
-    maxHeapSize = "8G"
-
-    testLogging {
-        events("passed", "skipped", "failed") // Log these events
-    }
-}
-
-tasks.register<Test>("all-local-data-is-there") {
-    group = "verification"
-    useJUnitPlatform {
-        includeTags("LIDO")
-        includeTags("INTEGRATION")
-        includeTags("DAFIF")
-        includeTags("CIFP")
-    }
+    useJUnitPlatform {}
 
     maxHeapSize = "8G"
 
@@ -122,6 +100,7 @@ tasks.register<Test>("unit") {
         excludeTags("LIDO")
         excludeTags("DAFIF")
         excludeTags("CIFP")
+        excludeTags("ASSIGNMENT")
     }
 
     maxHeapSize = "1G"
@@ -138,9 +117,27 @@ tasks.register<Test>("cifp-integration") {
         includeTags("CIFP")
         excludeTags("LIDO")
         excludeTags("DAFIF")
+        excludeTags("ASSIGNMENT")
     }
 
     maxHeapSize = "2G"
+
+    testLogging {
+        events("passed", "skipped", "failed") // Log these events
+    }
+}
+
+tasks.register<Test>("assignment-integration") {
+    group = "verification"
+    useJUnitPlatform {
+        includeTags("INTEGRATION")
+        includeTags("ASSIGNMENT")
+        excludeTags("DAFIF")
+        excludeTags("CIFP")
+        excludeTags("LIDO")
+    }
+
+    maxHeapSize = "4G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
@@ -154,6 +151,7 @@ tasks.register<Test>("lido-integration") {
         includeTags("INTEGRATION")
         excludeTags("DAFIF")
         excludeTags("CIFP")
+        excludeTags("ASSIGNMENT")
     }
 
     maxHeapSize = "8G"
@@ -170,6 +168,7 @@ tasks.register<Test>("dafif-integration") {
         includeTags("INTEGRATION")
         excludeTags("LIDO")
         excludeTags("CIFP")
+        excludeTags("ASSIGNMENT")
     }
 
     maxHeapSize = "4G"

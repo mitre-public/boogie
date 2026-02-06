@@ -1,0 +1,42 @@
+name: assignment-integration
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Integration Test Data
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          repository: 'mitre-tdp/boogie-test'
+          ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
+          ref: main
+          path: ./boogie-conformance/src/test/resources
+
+      - name: Show Working directory
+        run: ls
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew assignment-integration

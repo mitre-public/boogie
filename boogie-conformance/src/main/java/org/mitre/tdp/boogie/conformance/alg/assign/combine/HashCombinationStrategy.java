@@ -13,7 +13,7 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 /**
  * Represents a combination strategy based on a {@link HashMap} which merges {@link FlyableLeg}s sharing the same generated
  * code via the provided {@link #hasher}.
- *
+ * <p>
  * For an example of a common hash function see {@link PathTerminatorBasedLegHasher}.
  */
 public final class HashCombinationStrategy implements CombinationStrategy {

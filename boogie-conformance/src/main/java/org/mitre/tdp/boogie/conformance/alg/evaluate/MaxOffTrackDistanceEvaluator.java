@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
-import org.mitre.tdp.boogie.conformance.alg.assign.score.RadialAngle;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.RadialAngle;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 
 /**

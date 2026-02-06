@@ -6,3 +6,6 @@ build
 /.idea/
 .DS_Store
 .editorconfig
+
+*/mapbox.token
+*/*.jpg
