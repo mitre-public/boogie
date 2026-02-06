@@ -9,6 +9,9 @@ import java.util.function.UnaryOperator;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
 
+/**
+ * Scores AF legs ontrack and radial wise.
+ */
 public final class AfFeatureScorer implements ViterbiFeatureVectorScorer {
 
   private final UnaryOperator<Double> offTrackWeight;

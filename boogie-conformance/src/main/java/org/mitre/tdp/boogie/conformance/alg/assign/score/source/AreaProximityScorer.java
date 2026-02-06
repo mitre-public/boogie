@@ -10,6 +10,9 @@ import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorScorer;
 
 import com.google.common.annotations.Beta;
 
+/**
+ * Scores the area proximity leg.
+ */
 @Beta
 public class AreaProximityScorer implements ViterbiFeatureVectorScorer {
   private final UnaryOperator<Double> distanceRatioWeight;

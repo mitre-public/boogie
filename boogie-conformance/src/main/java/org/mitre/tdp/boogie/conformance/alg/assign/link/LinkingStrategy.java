@@ -22,6 +22,8 @@ public interface LinkingStrategy {
 
   /**
    * Generates the set of pairwise directional links between {@link FlyableLeg}s in the given input collection.
+   * @param flyableLegs all the legs
+   * @return the links between legs
    */
   Collection<Pair<FlyableLeg, FlyableLeg>> links(Collection<FlyableLeg> flyableLegs);
 
