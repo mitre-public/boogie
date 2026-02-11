@@ -94,7 +94,7 @@ public final class WaypointDescription implements FieldSpec<String> {
     return 'B' == c
         || 'E' == c
         || 'U' == c
-        || 'V' == c;
+        || 'Y' == c;
   }
 
   private boolean allowedColumn3(char c) {
