@@ -23,18 +23,18 @@ public final class DafifFixDatabase {
     this.navaids = navaids;
   }
 
-  Optional<DafifWaypoint> waypoint(String waypointIdentifier, String country) {
+  public Optional<DafifWaypoint> waypoint(String waypointIdentifier, String country) {
     return Optional.ofNullable(waypoints.get(new WaypointKey(waypointIdentifier, country)));
   }
 
-  Optional<DafifNavaid> navaidFor(DafifWaypoint waypoint) {
+  public Optional<DafifNavaid> navaidFor(DafifWaypoint waypoint) {
     return Optional.ofNullable(waypoint)
         .filter(DafifWaypoint::waypointPointNavaidFlag)
         .map(TO_NAV_KEY)
         .map(navaids::get);
   }
 
-  Optional<DafifNavaid> navaid(String naviadIdentifier, String country, Integer type, Integer keyCode) {
+  public Optional<DafifNavaid> navaid(String naviadIdentifier, String country, Integer type, Integer keyCode) {
     return Optional.ofNullable(navaids.get(new NavaidKey(naviadIdentifier, type, country, keyCode)));
   }
 }

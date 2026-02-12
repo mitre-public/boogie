@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.dafif.model;
 
+import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.v81.field.AirportIdentification;
 import org.mitre.tdp.boogie.dafif.v81.field.Collocation;
 import org.mitre.tdp.boogie.dafif.v81.field.ComponentType;
@@ -35,7 +36,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.ThresholdCrossingHeight;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class DafifIls {
+public final class DafifIls implements DafifModel {
 
   /**
    * {@link AirportIdentification}
@@ -363,6 +364,11 @@ public final class DafifIls {
 
   public Optional<Integer> coordinatePrecision() {
     return Optional.ofNullable(coordinatePrecision);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.ILS;
   }
 
   public static final class Builder {

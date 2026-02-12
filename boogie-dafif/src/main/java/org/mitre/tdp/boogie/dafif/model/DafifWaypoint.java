@@ -29,7 +29,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.WaypointRwyIcao;
 import org.mitre.tdp.boogie.dafif.v81.field.WaypointType;
 import org.mitre.tdp.boogie.dafif.v81.field.WaypointUsageCode;
 
-public final class DafifWaypoint {
+public final class DafifWaypoint implements DafifModel {
   /**
    * {@link WaypointIdentifierWptIdent}
    */
@@ -281,6 +281,11 @@ public final class DafifWaypoint {
 
   public Optional<Integer> coordinatePrecision() {
     return Optional.ofNullable(coordinatePrecision);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.WAYPOINT;
   }
 
   public static final class Builder {

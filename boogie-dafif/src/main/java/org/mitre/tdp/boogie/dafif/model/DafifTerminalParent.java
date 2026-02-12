@@ -26,7 +26,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.ProcedureDesignMagvar;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class DafifTerminalParent {
+public final class DafifTerminalParent implements DafifModel {
   /**
    * {@link AirportIdentification}
    */
@@ -261,6 +261,11 @@ public final class DafifTerminalParent {
 
   public Optional<String> procedureDesignMagvar() {
     return Optional.ofNullable(procedureDesignMagvar);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.TERMINAL_PARENT;
   }
 
   public static class Builder {

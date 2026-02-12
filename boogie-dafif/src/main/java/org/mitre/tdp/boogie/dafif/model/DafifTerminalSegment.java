@@ -49,7 +49,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 
-public final class DafifTerminalSegment {
+public final class DafifTerminalSegment implements DafifModel {
   /**
    * {@link AirportIdentification}
    */
@@ -679,6 +679,11 @@ public final class DafifTerminalSegment {
 
   public Optional<Double> arcRadius() {
     return Optional.ofNullable(arcRadius);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.TERMINAL_SEGMENT;
   }
 
   public static class Builder {

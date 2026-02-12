@@ -31,7 +31,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.WAC;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class DafifAirport {
+public final class DafifAirport implements DafifModel {
 
   /**
    * {@link AirportIdentification}
@@ -319,6 +319,11 @@ public final class DafifAirport {
   @Override
   public int hashCode() {
     return Objects.hash(airportIdentification, name, stateProvinceCode, icaoCode, faaHostCountryIdentifier, localHorizontalDatum, geodeticDatum, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, elevation, airportType, magneticVariation, wac, beacon, secondaryAirport, primaryOperatingAgency, secondaryName, secondaryIcaoCode, secondaryFaaHost, secondaryOperatingAgency, cycleDate, terrainImpacted, shoreline, coordinatePrecision, magVarOfRecord);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.AIRPORT;
   }
 
   public static final class Builder {
