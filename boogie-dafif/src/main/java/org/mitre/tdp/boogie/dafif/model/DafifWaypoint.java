@@ -164,6 +164,10 @@ public final class DafifWaypoint implements DafifModel {
     this.coordinatePrecision = builder.coordinatePrecision;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)

@@ -198,6 +198,10 @@ public final class DafifAirport implements DafifModel {
     this.magVarOfRecord = builder.magVarOfRecord;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public String airportIdentification() {
     return airportIdentification;
   }

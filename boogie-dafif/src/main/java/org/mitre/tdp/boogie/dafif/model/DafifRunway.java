@@ -290,6 +290,10 @@ public final class DafifRunway implements DafifModel {
     this.coordinatePrecision = builder.coordinatePrecision;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public String airportIdentification() {
     return airportIdentification;
   }

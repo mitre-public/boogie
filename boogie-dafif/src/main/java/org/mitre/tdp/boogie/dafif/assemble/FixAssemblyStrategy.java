@@ -55,7 +55,7 @@ public interface FixAssemblyStrategy<F> {
           .map(DafifMagVars::fromDynamic)
           .orElseGet(() -> MagneticVariation.from(ils.degreesLatitude().orElseThrow(IllegalArgumentException::new), ils.degreesLongitude().orElseThrow(IllegalArgumentException::new), cycleDate.get()));
       Fix fix = Fix.builder()
-          .fixIdentifier(ils.name().orElseThrow(IllegalArgumentException::new))
+          .fixIdentifier(ils.ilsNavaidIdentifier().orElseThrow(IllegalArgumentException::new))
           .latLong(LatLong.of(ils.degreesLatitude().orElseThrow(IllegalArgumentException::new), ils.degreesLongitude().orElseThrow(IllegalArgumentException::new)))
           .magneticVariation(magneticVariation)
           .build();
@@ -140,7 +140,7 @@ public interface FixAssemblyStrategy<F> {
           .map(DafifMagVars::fromDynamic)
           .orElseGet(() -> MagneticVariation.from(location.latitude(), location.longitude(), cycleDate.get()));
       return List.of(Fix.builder()
-          .fixIdentifier(navaid.name().orElseThrow(IllegalArgumentException::new))
+          .fixIdentifier(navaid.navaidIdentifier())
           .latLong(location)
           .magneticVariation(magneticVariation)
           .build());

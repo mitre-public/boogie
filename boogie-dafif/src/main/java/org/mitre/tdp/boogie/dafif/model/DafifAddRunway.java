@@ -144,6 +144,10 @@ public final class DafifAddRunway implements DafifModel {
     this.cycleDate = builder.cycleDate;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
