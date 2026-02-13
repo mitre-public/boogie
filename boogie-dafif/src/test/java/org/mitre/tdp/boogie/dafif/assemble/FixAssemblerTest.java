@@ -10,6 +10,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.dafif.TestObjects;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
@@ -20,6 +21,7 @@ import org.mitre.tdp.boogie.dafif.model.DafifIls;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
+import org.mitre.tdp.boogie.dafif.utils.DafifMagVars;
 
 public class FixAssemblerTest {
   static FixAssembler<Fix> assembler;
@@ -81,10 +83,12 @@ public class FixAssemblerTest {
   @Test
   void testAirport() {
     Fix airport = assembler.assemble(TestObjects.fakeAirport).stream().findFirst().orElseThrow(AssertionError::new);
+    MagneticVariation mvrRecord = DafifMagVars.fromRecord(TestObjects.fakeAirport.magVarOfRecord().orElseThrow(AssertionError::new));
     assertAll(
         () -> assertEquals("IDK1", airport.fixIdentifier()),
         () -> assertEquals(TestObjects.fakeAirport.degreesLatitude().orElseThrow(), airport.latitude()),
-        () -> assertEquals(TestObjects.fakeAirport.degreesLongitude().orElseThrow(), airport.longitude())
+        () -> assertEquals(TestObjects.fakeAirport.degreesLongitude().orElseThrow(), airport.longitude()),
+        () -> assertEquals(mvrRecord, airport.magneticVariation().orElseThrow())
     );
   }
 
