@@ -14,7 +14,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.CycleDate;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class DafifAddRunway {
+public final class DafifAddRunway implements DafifModel {
   /**
    * {@link AirportIdentification}
    */
@@ -144,6 +144,10 @@ public final class DafifAddRunway {
     this.cycleDate = builder.cycleDate;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -257,6 +261,11 @@ public final class DafifAddRunway {
 
   public Optional<Double> lowEndOverrunDegreesLongitude() {
     return Optional.ofNullable(lowEndOverrunDegreesLongitude);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.ADD_RUNWAY;
   }
 
   public static class Builder {

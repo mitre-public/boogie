@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import org.mitre.tdp.boogie.dafif.DafifRecord;
-import org.mitre.tdp.boogie.dafif.v81.converter.DafifAddRunwayConverter;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -27,7 +26,7 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
   private final DelegatableCollection<DafifTerminalParent> dafifTerminalParents;
   private final DelegatableCollection<DafifTerminalSegment> dafifTerminalSegments;
   private final DelegatableCollection<DafifWaypoint> dafifWaypoints;
-  private final DelegatableCollection<DafifAirTrafficService> dafifAts;
+  private final DelegatableCollection<DafifAirTrafficSegment> dafifAts;
   private final DelegatableCollection<DafifAddRunway> dafifAddRunway;
   private final MRUDequeConsumer<DafifRecord, DelegatableCollection<?>> consumer;
 
@@ -79,7 +78,7 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
   public Collection<DafifWaypoint> dafifWaypoints() {
     return dafifWaypoints.records();
   }
-  public Collection<DafifAirTrafficService> dafifAts() {
+  public Collection<DafifAirTrafficSegment> dafifAts() {
     return dafifAts.records();
   }
   public Collection<DafifAddRunway> dafifAddRunways() {
@@ -163,7 +162,7 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
     private Predicate<DafifRecord> waypointDelegator;
     private Function<DafifRecord, Optional<DafifWaypoint>> waypointConverter;
     private Predicate<DafifRecord> atsDelegator;
-    private Function<DafifRecord, Optional<DafifAirTrafficService>> atsConverter;
+    private Function<DafifRecord, Optional<DafifAirTrafficSegment>> atsConverter;
     private Predicate<DafifRecord> addRunwayDelegator;
     private Function<DafifRecord, Optional<DafifAddRunway>> addRunwayConverter;
 
@@ -242,7 +241,7 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
       return this;
     }
 
-    public Builder atsConverter(Function<DafifRecord, Optional<DafifAirTrafficService>> atsConverter) {
+    public Builder atsConverter(Function<DafifRecord, Optional<DafifAirTrafficSegment>> atsConverter) {
       this.atsConverter = atsConverter;
       return this;
     }

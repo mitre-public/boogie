@@ -29,7 +29,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.WaypointRwyIcao;
 import org.mitre.tdp.boogie.dafif.v81.field.WaypointType;
 import org.mitre.tdp.boogie.dafif.v81.field.WaypointUsageCode;
 
-public final class DafifWaypoint {
+public final class DafifWaypoint implements DafifModel {
   /**
    * {@link WaypointIdentifierWptIdent}
    */
@@ -164,19 +164,8 @@ public final class DafifWaypoint {
     this.coordinatePrecision = builder.coordinatePrecision;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-    DafifWaypoint that = (DafifWaypoint) o;
-    return Objects.equals(waypointIdentifier, that.waypointIdentifier) && Objects.equals(countryCode, that.countryCode) && Objects.equals(stateProvinceCode, that.stateProvinceCode) && Objects.equals(waypointPointNavaidFlag, that.waypointPointNavaidFlag) && Objects.equals(waypointType, that.waypointType) && Objects.equals(waypointDescriptionName, that.waypointDescriptionName) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(waypointUsageCode, that.waypointUsageCode) && Objects.equals(waypointBearing, that.waypointBearing) && Objects.equals(distance, that.distance) && Objects.equals(wac, that.wac) && Objects.equals(localHorizontalDatum, that.localHorizontalDatum) && Objects.equals(geodeticDatum, that.geodeticDatum) && Objects.equals(geodeticLatitude, that.geodeticLatitude) && Objects.equals(degreesLatitude, that.degreesLatitude) && Objects.equals(geodeticLongitude, that.geodeticLongitude) && Objects.equals(degreesLongitude, that.degreesLongitude) && Objects.equals(magneticVariation, that.magneticVariation) && Objects.equals(navaidIdentifier, that.navaidIdentifier) && Objects.equals(navaidType, that.navaidType) && Objects.equals(navaidCountryCode, that.navaidCountryCode) && Objects.equals(navaidKeyCode, that.navaidKeyCode) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(waypointRunwayIdent, that.waypointRunwayIdent) && Objects.equals(waypointRwyIcao, that.waypointRwyIcao) && Objects.equals(coordinatePrecision, that.coordinatePrecision);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(waypointIdentifier, countryCode, stateProvinceCode, waypointPointNavaidFlag, waypointType, waypointDescriptionName, icaoCode, waypointUsageCode, waypointBearing, distance, wac, localHorizontalDatum, geodeticDatum, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, magneticVariation, navaidIdentifier, navaidType, navaidCountryCode, navaidKeyCode, cycleDate, waypointRunwayIdent, waypointRwyIcao, coordinatePrecision);
+  public static Builder builder() {
+    return new Builder();
   }
 
   public String waypointIdentifier() {
@@ -281,6 +270,56 @@ public final class DafifWaypoint {
 
   public Optional<Integer> coordinatePrecision() {
     return Optional.ofNullable(coordinatePrecision);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.WAYPOINT;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass())
+      return false;
+    DafifWaypoint that = (DafifWaypoint) o;
+    return Objects.equals(waypointIdentifier, that.waypointIdentifier) && Objects.equals(countryCode, that.countryCode) && Objects.equals(stateProvinceCode, that.stateProvinceCode) && Objects.equals(waypointPointNavaidFlag, that.waypointPointNavaidFlag) && Objects.equals(waypointType, that.waypointType) && Objects.equals(waypointDescriptionName, that.waypointDescriptionName) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(waypointUsageCode, that.waypointUsageCode) && Objects.equals(waypointBearing, that.waypointBearing) && Objects.equals(distance, that.distance) && Objects.equals(wac, that.wac) && Objects.equals(localHorizontalDatum, that.localHorizontalDatum) && Objects.equals(geodeticDatum, that.geodeticDatum) && Objects.equals(geodeticLatitude, that.geodeticLatitude) && Objects.equals(degreesLatitude, that.degreesLatitude) && Objects.equals(geodeticLongitude, that.geodeticLongitude) && Objects.equals(degreesLongitude, that.degreesLongitude) && Objects.equals(magneticVariation, that.magneticVariation) && Objects.equals(navaidIdentifier, that.navaidIdentifier) && Objects.equals(navaidType, that.navaidType) && Objects.equals(navaidCountryCode, that.navaidCountryCode) && Objects.equals(navaidKeyCode, that.navaidKeyCode) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(waypointRunwayIdent, that.waypointRunwayIdent) && Objects.equals(waypointRwyIcao, that.waypointRwyIcao) && Objects.equals(coordinatePrecision, that.coordinatePrecision);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(waypointIdentifier, countryCode, stateProvinceCode, waypointPointNavaidFlag, waypointType, waypointDescriptionName, icaoCode, waypointUsageCode, waypointBearing, distance, wac, localHorizontalDatum, geodeticDatum, geodeticLatitude, degreesLatitude, geodeticLongitude, degreesLongitude, magneticVariation, navaidIdentifier, navaidType, navaidCountryCode, navaidKeyCode, cycleDate, waypointRunwayIdent, waypointRwyIcao, coordinatePrecision);
+  }
+
+  @Override
+  public String toString() {
+    return "DafifWaypoint{" +
+        "waypointIdentifier='" + waypointIdentifier + '\'' +
+        ", countryCode='" + countryCode + '\'' +
+        ", stateProvinceCode=" + stateProvinceCode +
+        ", waypointPointNavaidFlag=" + waypointPointNavaidFlag +
+        ", waypointType='" + waypointType + '\'' +
+        ", waypointDescriptionName='" + waypointDescriptionName + '\'' +
+        ", icaoCode='" + icaoCode + '\'' +
+        ", waypointUsageCode='" + waypointUsageCode + '\'' +
+        ", waypointBearing=" + waypointBearing +
+        ", distance=" + distance +
+        ", wac='" + wac + '\'' +
+        ", localHorizontalDatum='" + localHorizontalDatum + '\'' +
+        ", geodeticDatum='" + geodeticDatum + '\'' +
+        ", geodeticLatitude='" + geodeticLatitude + '\'' +
+        ", degreesLatitude=" + degreesLatitude +
+        ", geodeticLongitude='" + geodeticLongitude + '\'' +
+        ", degreesLongitude=" + degreesLongitude +
+        ", magneticVariation=" + magneticVariation +
+        ", navaidIdentifier='" + navaidIdentifier + '\'' +
+        ", navaidType=" + navaidType +
+        ", navaidCountryCode='" + navaidCountryCode + '\'' +
+        ", navaidKeyCode=" + navaidKeyCode +
+        ", cycleDate=" + cycleDate +
+        ", waypointRunwayIdent='" + waypointRunwayIdent + '\'' +
+        ", waypointRwyIcao='" + waypointRwyIcao + '\'' +
+        ", coordinatePrecision=" + coordinatePrecision +
+        '}';
   }
 
   public static final class Builder {

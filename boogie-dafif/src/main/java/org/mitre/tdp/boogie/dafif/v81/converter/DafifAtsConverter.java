@@ -1,17 +1,17 @@
 package org.mitre.tdp.boogie.dafif.v81.converter;
 
 import org.mitre.tdp.boogie.dafif.DafifRecord;
-import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficService;
+import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
-public class DafifAtsConverter implements Function<DafifRecord, Optional<DafifAirTrafficService>> {
+public class DafifAtsConverter implements Function<DafifRecord, Optional<DafifAirTrafficSegment>> {
 
   @Override
-  public Optional<DafifAirTrafficService> apply(DafifRecord dafifRecord) {
+  public Optional<DafifAirTrafficSegment> apply(DafifRecord dafifRecord) {
     requireNonNull(dafifRecord, "Cannot convert null DafifRecord.");
 
     String atsIdentifier = dafifRecord.requiredField("atsIdentifier");
@@ -59,7 +59,7 @@ public class DafifAtsConverter implements Function<DafifRecord, Optional<DafifAi
     Integer cycleDate = dafifRecord.requiredField("cycleDate");
     Optional<String> atsDesignator = dafifRecord.optionalField("atsDesignator");
 
-    DafifAirTrafficService airTrafficService = new DafifAirTrafficService.Builder()
+    DafifAirTrafficSegment airTrafficService = new DafifAirTrafficSegment.Builder()
         .atsIdentifier(atsIdentifier)
         .atsRouteSequenceNumber(atsRouteSequenceNumber)
         .atsRouteDirection(atsRouteDirection)
