@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
 import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
+import org.mitre.tdp.boogie.dafif.model.DafifAirport;
 import org.mitre.tdp.boogie.dafif.model.DafifIls;
 import org.mitre.tdp.boogie.dafif.model.DafifModel;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
@@ -34,6 +35,7 @@ public interface FixAssembler<F> {
         case NAVAID ->  strategy.convertNavaid((DafifNavaid) model);
         case RUNWAY ->  strategy.convertRunway((DafifRunway) model);
         case WAYPOINT ->  strategy.convertWaypoint((DafifWaypoint) model);
+        case AIRPORT -> strategy.convertAirport((DafifAirport)  model);
         default -> throw new IllegalArgumentException("Unsupported DAFIF file type for fixes: " + model.getFileType());
       };
     }

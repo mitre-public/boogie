@@ -10,8 +10,12 @@ import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 
 public class TestObjects {
+
+
+
   public static final DafifNavaid aa = DafifNavaid.builder()
       .navaidIdentifier("AA")
+      .navaidKeyCode(0)
       .countryCode("UI")
       .navaidType(5)
       .navaidSlavedVariation(null)
@@ -23,6 +27,7 @@ public class TestObjects {
   public static final DafifNavaid abr = DafifNavaid.builder()
       .navaidIdentifier("ABR")
       .navaidType(4)
+      .navaidKeyCode(0)
       .navaidSlavedVariation("E00700188")
       .cycleDate(202110)
       .degreesLatitude(45.417356)
@@ -30,12 +35,17 @@ public class TestObjects {
       .build();
 
   public static final DafifWaypoint fakeAA = DafifWaypoint.builder()
-      .waypointIdentifier("AA")
+      .waypointIdentifier("N12345")
       .countryCode("UI")
       .waypointType("NR")
+      .navaidKeyCode(0)
+      .navaidType(5)
+      .navaidCountryCode("UI")
+      .navaidIdentifier("AA")
       .waypointPointNavaidFlag(true)
       .degreesLatitude(47.009053)
       .degreesLongitude(-96.815183)
+      .cycleDate(201907)
       .build();
 
   public static final DafifAirport fakeAirport = DafifAirport.builder()
@@ -327,11 +337,32 @@ public class TestObjects {
   public static final DafifNavaid fakeVOR = DafifNavaid.builder()
       .navaidIdentifier("FVR")
       .countryCode("UI")
+      .navaidKeyCode(0)
       .navaidType(4)
       .navaidSlavedVariation("W00200310")
       .cycleDate(202404)
       .degreesLatitude(35.1203)
       .degreesLongitude(-80.9522)
+      .build();
+
+  public static final DafifWaypoint bober = DafifWaypoint.builder()
+      .waypointIdentifier("BOBER")
+      .countryCode("UI")
+      .waypointType("NR")
+      .waypointPointNavaidFlag(false)
+      .degreesLatitude(47.009053)
+      .degreesLongitude(-96.815183)
+      .cycleDate(201907)
+      .build();
+
+  public static final DafifWaypoint fakeWaypointVorCollocated = DafifWaypoint.builder()
+      .waypointIdentifier("FVR")
+      .countryCode("UI")
+      .waypointType("NR")
+      .waypointPointNavaidFlag(false)
+      .degreesLatitude(35.1203)
+      .degreesLongitude(-80.9522)
+      .cycleDate(202404)
       .build();
 
   public static final DafifWaypoint fakeFix = DafifWaypoint.builder()

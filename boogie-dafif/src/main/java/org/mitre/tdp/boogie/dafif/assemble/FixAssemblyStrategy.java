@@ -36,6 +36,7 @@ public interface FixAssemblyStrategy<F> {
   Collection<F> convertRunway(DafifRunway record);
   Collection<F> convertWaypoint(DafifWaypoint record);
   Collection<F> convertNavaid(DafifNavaid record);
+  Collection<F> convertAirport(DafifAirport record);
 
   final class Standard implements FixAssemblyStrategy<Fix> {
 
@@ -144,6 +145,27 @@ public interface FixAssemblyStrategy<F> {
           .latLong(location)
           .magneticVariation(magneticVariation)
           .build());
+    }
+
+    @Override
+    public Collection<Fix> convertAirport(DafifAirport airport) {
+      LatLong location = LatLong.of(airport.degreesLatitude().orElseThrow(IllegalArgumentException::new), airport.degreesLongitude().orElseThrow(IllegalArgumentException::new));
+
+      String ident = Optional.of(airport).map(DafifAirport::icaoCode).filter(i -> i.length() > 2)
+          .or(airport::faaHostCountryIdentifier)
+          .orElseThrow(() -> new IllegalArgumentException("Airport " + airport.name() + " has no icaoCode"));
+
+      MagneticVariation magneticVariation = airport.magVarOfRecord().map(DafifMagVars::fromRecord)
+          .or(() -> Optional.of(MagneticVariation.from(location.latitude(), location.longitude(), AiracCycle.startDate(airport.cycleDate().toString().substring(2)))))
+          .orElseThrow(IllegalArgumentException::new);
+
+      Fix fix = Fix.builder()
+          .fixIdentifier(ident)
+          .latLong(location)
+          .magneticVariation(magneticVariation)
+          .build();
+
+      return List.of(fix);
     }
   }
 }

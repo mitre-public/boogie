@@ -9,10 +9,10 @@ import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 
 public final class DafifFixDatabase {
   private static final Function<DafifWaypoint, NavaidKey> TO_NAV_KEY = sn -> {
-    String ident = sn.navaidIdentifier().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
-    Integer navType = sn.navaidType().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
-    String navCountry = sn.navaidCountryCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
-    Integer navKeyCode = sn.navaidKeyCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
+    String ident = sn.navaidIdentifier().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
+    Integer navType = sn.navaidType().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
+    String navCountry = sn.navaidCountryCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
+    Integer navKeyCode = sn.navaidKeyCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
     return new NavaidKey(ident, navType, navCountry, navKeyCode);
   };
   private final Map<WaypointKey, DafifWaypoint> waypoints;
