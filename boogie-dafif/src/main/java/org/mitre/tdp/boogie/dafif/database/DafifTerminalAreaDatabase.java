@@ -10,6 +10,7 @@ import org.mitre.tdp.boogie.dafif.model.DafifAddRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifAirport;
 import org.mitre.tdp.boogie.dafif.model.DafifIls;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
+import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 
 import com.google.common.collect.Multimap;
 
@@ -18,12 +19,14 @@ public final class DafifTerminalAreaDatabase {
   private final Multimap<AirportKey, DafifRunway> runways;
   private final Multimap<AirportKey, DafifAddRunway> addRunways;
   private final Multimap<IlsKey, DafifIls> ils;
+  private final Multimap<AirportKey, DafifTerminalSegment> terminalSegments;
 
-  public DafifTerminalAreaDatabase(Map<AirportKey, DafifAirport> airports, Multimap<AirportKey, DafifRunway> runways, Multimap<AirportKey, DafifAddRunway> addRunways, Multimap<IlsKey, DafifIls> ils) {
+  public DafifTerminalAreaDatabase(Map<AirportKey, DafifAirport> airports, Multimap<AirportKey, DafifRunway> runways, Multimap<AirportKey, DafifAddRunway> addRunways, Multimap<IlsKey, DafifIls> ils, Multimap<AirportKey, DafifTerminalSegment> terminalSegments) {
     this.airports = airports;
     this.runways = runways;
     this.addRunways = addRunways;
     this.ils = ils;
+    this.terminalSegments = terminalSegments;
   }
 
   public Optional<DafifAirport> airport(String airportIdentifier) {
@@ -64,5 +67,9 @@ public final class DafifTerminalAreaDatabase {
     Collection<DafifIls> lowEnd = ilsComponents(runway.airportIdentification(), runway.lowEndIdentifier());
     Collection<DafifIls> highEnd = ilsComponents(runway.airportIdentification(), runway.highEndIdentifier());
     return Stream.of(lowEnd, highEnd).flatMap(Collection::stream).collect(Collectors.toList());
+  }
+
+  public Collection<DafifTerminalSegment> terminalSegmentsAt(String airportIdentifier) {
+    return terminalSegments.get(new AirportKey(airportIdentifier));
   }
 }

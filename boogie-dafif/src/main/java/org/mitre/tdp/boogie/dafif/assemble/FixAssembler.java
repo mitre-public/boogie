@@ -12,10 +12,18 @@ import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 
+/**
+ * This class assembles DAFIF fix suppliers into Fix objects. Note this does require parsing as dafif has many supplier/consumer relationships.
+ * @param <F> the class of the output fix.
+ */
 public interface FixAssembler<F> {
 
   static FixAssembler<Fix> standard(DafifTerminalAreaDatabase terminalAreaDatabase, DafifFixDatabase fixDatabase) {
     return new Standard<>(FixAssemblyStrategy.standard(terminalAreaDatabase, fixDatabase));
+  }
+
+  static <F> FixAssembler<F> withStrategy(FixAssemblyStrategy<F> strategy) {
+    return new Standard<>(strategy);
   }
 
   Collection<F> assemble(DafifModel model);
