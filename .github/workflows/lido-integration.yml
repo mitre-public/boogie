@@ -24,7 +24,7 @@ jobs:
           repository: 'mitre-tdp/boogie-test'
           ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
           ref: main
-          path: ./boogie-arinc/src/test/resources
+          path: ./boogie-lido/src/test/resources
 
       - name: Show Working directory
         run: ls
