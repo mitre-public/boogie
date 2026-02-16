@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -28,7 +29,7 @@ public class AirportAssemblerTest {
     Collection<DafifRunway> runways = Set.of(TestObjects.rwy1129, TestObjects.rwy0523, TestObjects.rwy0918);
     Collection<DafifAddRunway> addRunways = Set.of(TestObjects.addRunway, TestObjects.addRunway0918, TestObjects.addRunway0523);
     Collection<DafifIls> ils = Set.of(TestObjects.fakeIls, TestObjects.fakeIls05, TestObjects.fakeIls09);
-    DafifTerminalAreaDatabase tad = DafifDatabaseFactory.newTerminalAreaDatabase(airports, runways, addRunways, ils);
+    DafifTerminalAreaDatabase tad = DafifDatabaseFactory.newTerminalAreaDatabase(airports, runways, addRunways, ils, List.of());
     assembler = AirportAssembler.standard(tad);
   }
 
