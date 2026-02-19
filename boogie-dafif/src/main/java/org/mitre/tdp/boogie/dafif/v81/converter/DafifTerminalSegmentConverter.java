@@ -94,7 +94,7 @@ public class DafifTerminalSegmentConverter implements Function<DafifRecord, Opti
         .trackDescriptionCode(trackDescriptionCode)
         .termSegWaypointIdentifier(termSegWaypointIdentifier.orElse(null))
         .waypointCountryCode(waypointCountryCode.orElse(null))
-        .terminalWaypointDescriptionCode1Arpt(terminalWaypointDescriptionCode1Arpt.orElse(null))
+        .terminalWaypointDescriptionCode1(terminalWaypointDescriptionCode1Arpt.orElse(null))
         .terminalWaypointDescriptionCode2(terminalWaypointDescriptionCode2.orElse(null))
         .terminalWaypointDescriptionCode3(terminalWaypointDescriptionCode3.orElse(null))
         .terminalWaypointDescriptionCode4(terminalWaypointDescriptionCode4.orElse(null))

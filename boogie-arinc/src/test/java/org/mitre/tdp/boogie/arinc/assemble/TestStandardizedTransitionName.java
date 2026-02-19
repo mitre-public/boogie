@@ -10,11 +10,11 @@ class TestStandardizedTransitionName {
   @Test
   void testStandardization() {
     assertAll(
-        () -> assertEquals("RW26L", StandardizedTransitionName.INSTANCE.apply("RW26L"), "RW26L->RW26L"),
-        () -> assertEquals("GOROK", StandardizedTransitionName.INSTANCE.apply("GOROK"), "GOROK->GOROK"),
-        () -> assertEquals("ALL", StandardizedTransitionName.INSTANCE.apply(null), "Null->ALL"),
-        () -> assertEquals("ALL", StandardizedTransitionName.INSTANCE.apply("    "), "Blank->ALL"),
-        () -> assertEquals("ALL", StandardizedTransitionName.INSTANCE.apply("ALL"), "ALL->ALL")
+        () -> assertEquals("RW26L", org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply("RW26L"), "RW26L->RW26L"),
+        () -> assertEquals("GOROK", org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply("GOROK"), "GOROK->GOROK"),
+        () -> assertEquals("ALL", org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply(null), "Null->ALL"),
+        () -> assertEquals("ALL", org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply("    "), "Blank->ALL"),
+        () -> assertEquals("ALL", org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply("ALL"), "ALL->ALL")
     );
   }
 }

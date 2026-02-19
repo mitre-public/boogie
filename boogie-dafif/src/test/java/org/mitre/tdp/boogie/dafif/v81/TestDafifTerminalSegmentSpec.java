@@ -116,7 +116,7 @@ public class TestDafifTerminalSegmentSpec {
         () -> assertEquals("IF", terminalSegment.trackDescriptionCode()),
         () -> assertEquals("ADRIV", terminalSegment.termSegWaypointIdentifier().orElseThrow()),
         () -> assertEquals("AA", terminalSegment.waypointCountryCode().orElseThrow()),
-        () -> assertEquals("E", terminalSegment.terminalWaypointDescriptionCode1Arpt().orElseThrow()),
+        () -> assertEquals("E", terminalSegment.terminalWaypointDescriptionCode1().orElseThrow()),
         () -> assertEquals("+", terminalSegment.altitudeDescription().orElseThrow()),
         () -> assertEquals("FL40", terminalSegment.altitude1().orElseThrow()),
         () -> assertEquals(201707, terminalSegment.cycleDate()),

@@ -2,17 +2,21 @@ package org.mitre.tdp.boogie.dafif.assemble;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nullable;
 
+import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.dafif.FlyOverIndicator;
+import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 
 import com.google.common.collect.Range;
@@ -20,20 +24,19 @@ import com.google.common.collect.Range;
 public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
   /**
-      * Converts the incoming DAFIF representative procedure leg and the sequence of converted transition (plus derived equipage) to
+   * Converts the incoming DAFIF representative procedure leg and the sequence of converted transition (plus derived equipage) to
    * the user-defined type.
-      *
-      * <p>The DAFIF spec provides fine-grained equipage characteristics for each leg of a procedure. This function provides alongside
+   *
+   * <p>The DAFIF spec provides fine-grained equipage characteristics for each leg of a procedure. This function provides alongside
    * that information an up-leveled required equipage to the basic categories most clients expect. Deriving this from the
    * DAFIF specification for all the legs in a procedure is non-trivial and easy to get wrong.
-      *
-      * @param representative             a 424 procedure leg elected the "representative" of the transition, provided at the top-level
+   *
+   * @param parent                     the parent record which identifies information that applies to the whole procedure, but not enough that we don't still need a representative next.
+   * @param representative             a 424 procedure leg elected the "representative" of the transition, provided at the top-level
    *                                   to allow client code easy access to procedure/transition metadata
-   * @param requiredNavigationEquipage the inferred minimum required navigation equipage for the procedure, this is derived from
-   *                                   the various fine-grained transition-level equipage codes provided in the 424
-      * @param transitions                the sequence of converted transition that make up the procedure, converted with {@code .convertTransition(...)}
+   * @param transitions                the sequence of converted transition that make up the procedure, converted with {@code .convertTransition(...)}
    */
-  P convertProcedure(DafifTerminalSegment representative, RequiredNavigationEquipage requiredNavigationEquipage, List<T> transitions);
+  P convertProcedure(DafifTerminalParent parent, DafifTerminalSegment representative, List<T> transitions);
 
   /**
    * Converts the incoming DAFIF representative procedure leg and the sequence of converted legs (plus derived transition type) to
@@ -41,11 +44,9 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    *
    * @param representative a DAFIF procedure leg elected the "representative" of the transition, provided at the top-level to allow
    *                       client code easy access to procedure/transition metadata
-   * @param transitionType the inferred transition type, the transition type is useful for sequencing likely transition transit
-   *                       order (e.g. {@code RUNWAY->COMMON->ENROUTE} for a SID)
    * @param legs           the sequence of converted procedure legs that make up the transition, converted with {@code .convertLeg(...)}
    */
-  T convertTransition(DafifTerminalSegment representative, TransitionType transitionType, List<L> legs);
+  T convertTransition(DafifTerminalSegment representative, List<L> legs);
 
   /**
    * Converts the provided procedure leg and its (optional) associated fix, (optional) recommended navaid, and (optional) center
@@ -67,13 +68,41 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
   final class Standard implements ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> {
 
     @Override
-    public Procedure convertProcedure(DafifTerminalSegment representative, RequiredNavigationEquipage requiredNavigationEquipage, List<Transition> transitions) {
-      return null;
+    public Procedure convertProcedure(DafifTerminalParent parent, DafifTerminalSegment representative, List<Transition> transitions) {
+      ProcedureType procedureType = switch (parent.terminalProcedureType()) {
+        case 1 -> ProcedureType.STAR; //yes sid/star are backwards compared to arinc
+        case 2 -> ProcedureType.SID;
+        case 3 -> ProcedureType.APPROACH;
+        default -> throw new IllegalArgumentException("Unknown procedure type: " + parent.terminalProcedureType());
+      };
+
+      RequiredNavigationEquipage requiredNavigationEquipage = PbnEquipageEvaluator.INSTANCE.apply(representative);
+
+      return Procedure.builder()
+          .procedureIdentifier(parent.terminalIdentifier())
+          .airportIdentifier(parent.airportIdentification()) //this is the dafif ident not the e.g., icao code
+          .procedureType(procedureType)
+          .requiredNavigationEquipage(requiredNavigationEquipage)
+          .transitions(transitions)
+          .build();
     }
 
     @Override
-    public Transition convertTransition(DafifTerminalSegment representative, TransitionType transitionType, List<Leg> legs) {
-      return null;
+    public Transition convertTransition(DafifTerminalSegment representative, List<Leg> legs) {
+      TransitionType transitionType = TransitionTypeEvaluator.INSTANCE.apply(representative);
+
+      String identifier = TransitionType.MISSED.equals(transitionType)
+          ? "MISSED"
+          : org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier());
+
+      Set<CategoryOrType> categoryOrType = Set.of(CategoryOrType.NOT_SPECIFIED);
+
+      return Transition.builder()
+          .transitionIdentifier(identifier)
+          .transitionType(transitionType)
+          .legs(legs)
+          .categoryOrTypes(categoryOrType)
+          .build();
     }
 
     @Override

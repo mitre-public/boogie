@@ -34,6 +34,7 @@ public interface FixAssemblyStrategy<F> {
 
   Collection<F> convertIls(DafifIls record);
   Collection<F> convertRunway(DafifRunway record);
+  Collection<F> convertRunwayEnd(DafifRunway record, String waypointIdent);
   Collection<F> convertWaypoint(DafifWaypoint record);
   Collection<F> convertNavaid(DafifNavaid record);
   Collection<F> convertAirport(DafifAirport record);
@@ -61,6 +62,13 @@ public interface FixAssemblyStrategy<F> {
           .magneticVariation(magneticVariation)
           .build();
       return List.of(fix);
+    }
+
+    @Override
+    public Collection<Fix> convertRunwayEnd(DafifRunway record, String waypointIdent) {
+      return convertRunway(record).stream()
+          .filter(r ->waypointIdent.contains(r.fixIdentifier()))
+          .toList();
     }
 
     @Override

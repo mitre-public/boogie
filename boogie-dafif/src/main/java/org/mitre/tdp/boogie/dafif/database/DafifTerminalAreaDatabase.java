@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.dafif.model.DafifAddRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifAirport;
 import org.mitre.tdp.boogie.dafif.model.DafifIls;
@@ -16,13 +17,15 @@ import com.google.common.collect.Multimap;
 
 public final class DafifTerminalAreaDatabase {
   private final Map<AirportKey, DafifAirport> airports;
+  private final Multimap<AirportNaturalKey, AirportKey> airportNaturalKeys;
   private final Multimap<AirportKey, DafifRunway> runways;
   private final Multimap<AirportKey, DafifAddRunway> addRunways;
   private final Multimap<IlsKey, DafifIls> ils;
   private final Multimap<AirportKey, DafifTerminalSegment> terminalSegments;
 
-  public DafifTerminalAreaDatabase(Map<AirportKey, DafifAirport> airports, Multimap<AirportKey, DafifRunway> runways, Multimap<AirportKey, DafifAddRunway> addRunways, Multimap<IlsKey, DafifIls> ils, Multimap<AirportKey, DafifTerminalSegment> terminalSegments) {
+  public DafifTerminalAreaDatabase(Map<AirportKey, DafifAirport> airports, Multimap<AirportNaturalKey, AirportKey> airportNaturalKeys, Multimap<AirportKey, DafifRunway> runways, Multimap<AirportKey, DafifAddRunway> addRunways, Multimap<IlsKey, DafifIls> ils, Multimap<AirportKey, DafifTerminalSegment> terminalSegments) {
     this.airports = airports;
+    this.airportNaturalKeys = airportNaturalKeys;
     this.runways = runways;
     this.addRunways = addRunways;
     this.ils = ils;
@@ -31,6 +34,13 @@ public final class DafifTerminalAreaDatabase {
 
   public Optional<DafifAirport> airport(String airportIdentifier) {
     return Optional.ofNullable(airports.get(new AirportKey(airportIdentifier)));
+  }
+
+  public Optional<DafifAirport> airportAt(String waypointIdent, String countryCode) {
+    return airportNaturalKeys.get(new AirportNaturalKey(waypointIdent, countryCode)).stream()
+        .map(i -> airport(i.airportIdentifier()))
+        .flatMap(Optional::stream)
+        .findFirst();
   }
 
   public Collection<DafifRunway> runwaysAt(String airportIdentifier) {

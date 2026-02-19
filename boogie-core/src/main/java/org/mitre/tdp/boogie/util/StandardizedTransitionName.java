@@ -1,4 +1,4 @@
-package org.mitre.tdp.boogie.arinc.assemble;
+package org.mitre.tdp.boogie.util;
 
 import java.util.Optional;
 import java.util.function.UnaryOperator;
