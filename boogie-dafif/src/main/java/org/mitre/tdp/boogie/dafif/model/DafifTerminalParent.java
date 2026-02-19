@@ -152,6 +152,10 @@ public final class DafifTerminalParent implements DafifModel {
     this.procedureDesignMagvar = builder.procedureDesignMagvar;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -165,6 +169,36 @@ public final class DafifTerminalParent implements DafifModel {
   @Override
   public int hashCode() {
     return Objects.hash(airportIdentification, terminalProcedureType, terminalIdentifier, icaoCode, emergencySafeAltitude, julianDate, amendmentNumber, officeOfPrimaryResponsibility, hostCountryAuthority, cycleDate, alternateTakeoffMinimums, transitionAltitude, transitionLevel, procedureDesignCriteria, procedureAmendmentDate, approachRouteQualifier1, approachRouteQualifier2, levelOfService1, levelOfServiceName1, levelOfService2, levelOfServiceName2, levelOfService3, levelOfServiceName3, procedureDesignMagvar);
+  }
+
+  @Override
+  public String toString() {
+    return "DafifTerminalParent{" +
+        "airportIdentification='" + airportIdentification + '\'' +
+        ", terminalProcedureType=" + terminalProcedureType +
+        ", terminalIdentifier='" + terminalIdentifier + '\'' +
+        ", icaoCode='" + icaoCode + '\'' +
+        ", emergencySafeAltitude=" + emergencySafeAltitude +
+        ", julianDate=" + julianDate +
+        ", amendmentNumber='" + amendmentNumber + '\'' +
+        ", officeOfPrimaryResponsibility='" + officeOfPrimaryResponsibility + '\'' +
+        ", hostCountryAuthority='" + hostCountryAuthority + '\'' +
+        ", cycleDate=" + cycleDate +
+        ", alternateTakeoffMinimums='" + alternateTakeoffMinimums + '\'' +
+        ", transitionAltitude=" + transitionAltitude +
+        ", transitionLevel=" + transitionLevel +
+        ", procedureDesignCriteria='" + procedureDesignCriteria + '\'' +
+        ", procedureAmendmentDate='" + procedureAmendmentDate + '\'' +
+        ", approachRouteQualifier1='" + approachRouteQualifier1 + '\'' +
+        ", approachRouteQualifier2='" + approachRouteQualifier2 + '\'' +
+        ", levelOfService1='" + levelOfService1 + '\'' +
+        ", levelOfServiceName1='" + levelOfServiceName1 + '\'' +
+        ", levelOfService2='" + levelOfService2 + '\'' +
+        ", levelOfServiceName2='" + levelOfServiceName2 + '\'' +
+        ", levelOfService3='" + levelOfService3 + '\'' +
+        ", levelOfServiceName3='" + levelOfServiceName3 + '\'' +
+        ", procedureDesignMagvar='" + procedureDesignMagvar + '\'' +
+        '}';
   }
 
   public String airportIdentification() {

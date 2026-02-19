@@ -394,6 +394,10 @@ public final class DafifTerminalSegment implements DafifModel {
     this.arcRadius = builder.arcRadius;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -407,6 +411,80 @@ public final class DafifTerminalSegment implements DafifModel {
   @Override
   public int hashCode() {
     return Objects.hash(airportIdentification, terminalProcedureType, terminalIdentifier, terminalSequenceNumber, terminalApproachType, transitionIdentifier, icaoCode, trackDescriptionCode, termSegWaypointIdentifier, waypointCountryCode, terminalWaypointDescriptionCode1, terminalWaypointDescriptionCode2, terminalWaypointDescriptionCode3, terminalWaypointDescriptionCode4, terminalSegmentTurnDirection, navaid1Identifier, navaid1Type, navaid1CountryCode, navaid1KeyCode, nav1Bearing, nav1Distance, navaid2Identifier, navaid2Type, navaid2CountryCode, navaid2KeyCode, nav2Bearing, nav2Distance, terminalMagneticCourse, distance, altitudeDescription, altitude1, altitude2, requiredNavPerformance, cycleDate, waypointGeodeticLatitude, waypointDegreesLatitude, waypointGeodeticLongitude, waypointDegreesLongitude, waypointMagneticVariation, navaid1GeodeticLatitude, navaid1DegreesLatitude, navaid1GeodeticLongitude, navaid1DegreesLongitude, navaid1MagneticVariation, navaid1DmeGeodeticLatitude, navaid1DmeDegreesLatitude, navaid1DmeGeodeticLongitude, navaid1DmeDegreesLongitude, navaid2GeodeticLatitude, navaid2DegreesLatitude, navaid2GeodeticLongitude, navaid2DegreesLongitude, navaid2MagneticVariation, navaid2DmeGeodeticLatitude, navaid2DmeDegreesLatitude, navaid2DmeGeodeticLongitude, navaid2DmeDegreesLongitude, speedLimit1, speedLimitAircraftType1, speedLimitAltitude1, speedLimit2, speedLimitAircraftType2, speedLimitAltitude2, verticalNavigationVnav, thresholdCrossingHeight, arcWaypointIdentifier, arcWaypointCountryCode, arcRadius);
+  }
+
+  @Override
+  public String toString() {
+    return "DafifTerminalSegment{" +
+        "airportIdentification='" + airportIdentification + '\'' +
+        ", terminalProcedureType=" + terminalProcedureType +
+        ", terminalIdentifier='" + terminalIdentifier + '\'' +
+        ", terminalSequenceNumber=" + terminalSequenceNumber +
+        ", terminalApproachType='" + terminalApproachType + '\'' +
+        ", transitionIdentifier='" + transitionIdentifier + '\'' +
+        ", icaoCode='" + icaoCode + '\'' +
+        ", trackDescriptionCode='" + trackDescriptionCode + '\'' +
+        ", termSegWaypointIdentifier='" + termSegWaypointIdentifier + '\'' +
+        ", waypointCountryCode='" + waypointCountryCode + '\'' +
+        ", terminalWaypointDescriptionCode1='" + terminalWaypointDescriptionCode1 + '\'' +
+        ", terminalWaypointDescriptionCode2='" + terminalWaypointDescriptionCode2 + '\'' +
+        ", terminalWaypointDescriptionCode3='" + terminalWaypointDescriptionCode3 + '\'' +
+        ", terminalWaypointDescriptionCode4='" + terminalWaypointDescriptionCode4 + '\'' +
+        ", terminalSegmentTurnDirection='" + terminalSegmentTurnDirection + '\'' +
+        ", navaid1Identifier='" + navaid1Identifier + '\'' +
+        ", navaid1Type='" + navaid1Type + '\'' +
+        ", navaid1CountryCode='" + navaid1CountryCode + '\'' +
+        ", navaid1KeyCode=" + navaid1KeyCode +
+        ", nav1Bearing=" + nav1Bearing +
+        ", nav1Distance=" + nav1Distance +
+        ", navaid2Identifier='" + navaid2Identifier + '\'' +
+        ", navaid2Type='" + navaid2Type + '\'' +
+        ", navaid2CountryCode='" + navaid2CountryCode + '\'' +
+        ", navaid2KeyCode=" + navaid2KeyCode +
+        ", nav2Bearing=" + nav2Bearing +
+        ", nav2Distance=" + nav2Distance +
+        ", terminalMagneticCourse='" + terminalMagneticCourse + '\'' +
+        ", distance=" + distance +
+        ", altitudeDescription='" + altitudeDescription + '\'' +
+        ", altitude1='" + altitude1 + '\'' +
+        ", altitude2='" + altitude2 + '\'' +
+        ", requiredNavPerformance=" + requiredNavPerformance +
+        ", cycleDate=" + cycleDate +
+        ", waypointGeodeticLatitude='" + waypointGeodeticLatitude + '\'' +
+        ", waypointDegreesLatitude=" + waypointDegreesLatitude +
+        ", waypointGeodeticLongitude='" + waypointGeodeticLongitude + '\'' +
+        ", waypointDegreesLongitude=" + waypointDegreesLongitude +
+        ", waypointMagneticVariation=" + waypointMagneticVariation +
+        ", navaid1GeodeticLatitude='" + navaid1GeodeticLatitude + '\'' +
+        ", navaid1DegreesLatitude=" + navaid1DegreesLatitude +
+        ", navaid1GeodeticLongitude='" + navaid1GeodeticLongitude + '\'' +
+        ", navaid1DegreesLongitude=" + navaid1DegreesLongitude +
+        ", navaid1MagneticVariation=" + navaid1MagneticVariation +
+        ", navaid1DmeGeodeticLatitude='" + navaid1DmeGeodeticLatitude + '\'' +
+        ", navaid1DmeDegreesLatitude=" + navaid1DmeDegreesLatitude +
+        ", navaid1DmeGeodeticLongitude='" + navaid1DmeGeodeticLongitude + '\'' +
+        ", navaid1DmeDegreesLongitude=" + navaid1DmeDegreesLongitude +
+        ", navaid2GeodeticLatitude='" + navaid2GeodeticLatitude + '\'' +
+        ", navaid2DegreesLatitude=" + navaid2DegreesLatitude +
+        ", navaid2GeodeticLongitude='" + navaid2GeodeticLongitude + '\'' +
+        ", navaid2DegreesLongitude=" + navaid2DegreesLongitude +
+        ", navaid2MagneticVariation=" + navaid2MagneticVariation +
+        ", navaid2DmeGeodeticLatitude='" + navaid2DmeGeodeticLatitude + '\'' +
+        ", navaid2DmeDegreesLatitude=" + navaid2DmeDegreesLatitude +
+        ", navaid2DmeGeodeticLongitude='" + navaid2DmeGeodeticLongitude + '\'' +
+        ", navaid2DmeDegreesLongitude=" + navaid2DmeDegreesLongitude +
+        ", speedLimit1=" + speedLimit1 +
+        ", speedLimitAircraftType1='" + speedLimitAircraftType1 + '\'' +
+        ", speedLimitAltitude1='" + speedLimitAltitude1 + '\'' +
+        ", speedLimit2=" + speedLimit2 +
+        ", speedLimitAircraftType2='" + speedLimitAircraftType2 + '\'' +
+        ", speedLimitAltitude2='" + speedLimitAltitude2 + '\'' +
+        ", verticalNavigationVnav=" + verticalNavigationVnav +
+        ", thresholdCrossingHeight=" + thresholdCrossingHeight +
+        ", arcWaypointIdentifier='" + arcWaypointIdentifier + '\'' +
+        ", arcWaypointCountryCode='" + arcWaypointCountryCode + '\'' +
+        ", arcRadius=" + arcRadius +
+        '}';
   }
 
   public String airportIdentification() {

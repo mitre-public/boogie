@@ -6,8 +6,12 @@ import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.dafif.assemble.FixAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ConvertingLegDereferencer<F> {
+  private static final Logger LOG = LoggerFactory.getLogger(ConvertingLegDereferencer.class);
+
   private final DafifFixDatabase fixDatabase;
   private final DafifTerminalAreaDatabase terminalAreaDatabase;
   private final FixAssemblyStrategy<F> fixAssemblyStrategy;
@@ -55,7 +59,10 @@ public final class ConvertingLegDereferencer<F> {
           .map(n -> fixAssemblyStrategy.convertNavaid(n).stream())
           .flatMap(Stream::findFirst)
           .orElse(null);
-      case "P", "S" -> null; //MLS What year is it.
+      case "P", "S" -> {
+        LOG.warn("MLS What year is it nav1 type: '{}' for navaid {} at {}", nav1Type, nav1Ident, airportIdentifier);
+        yield null;
+      }
       case "Z" -> terminalAreaDatabase.airport(airportIdentifier).stream() //yes this is how you must do it :(
           .findFirst()
           .map(a -> {
@@ -69,7 +76,14 @@ public final class ConvertingLegDereferencer<F> {
           .map(i -> fixAssemblyStrategy.convertIls(i).stream())
           .flatMap(Stream::findFirst)
           .orElse(null);
-      default -> throw new IllegalArgumentException("Invalid nav1 type: " + nav1Type);
+      case "D" -> terminalAreaDatabase.ilsByNavaidIdentifier(airportIdentifier, nav1Ident)
+          .map(i -> fixAssemblyStrategy.convertIls(i).stream())
+          .flatMap(Stream::findFirst)
+          .orElse(null);
+      default -> {
+        LOG.warn("Unhandled nav1 type: '{}' for navaid {} at {}", nav1Type, nav1Ident, airportIdentifier);
+        yield null;
+      }
     };
   }
 

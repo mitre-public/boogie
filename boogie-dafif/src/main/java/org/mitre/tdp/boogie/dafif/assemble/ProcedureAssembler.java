@@ -61,10 +61,11 @@ public interface ProcedureAssembler<P> {
           .collect(Collectors.toMap(this::procedureIdentifier, Function.identity()));
       Map<String, List<DafifTerminalSegment>> segmentsByProcedureIdent = parents.stream()
           .findFirst()
-          .map(p -> tad.terminalSegmentsAt(p.terminalIdentifier()).stream().collect(Collectors.groupingBy(this::procedureIdentifier)))
+          .map(p -> tad.terminalSegmentsAt(p.airportIdentification()).stream().collect(Collectors.groupingBy(this::procedureIdentifier)))
           .orElse(Collections.emptyMap());
 
       return parentByProcedureIdent.keySet().stream()
+          .filter(segmentsByProcedureIdent::containsKey)
           .map(k -> oneProcedure(parentByProcedureIdent.get(k), segmentsByProcedureIdent.get(k)));
     }
 

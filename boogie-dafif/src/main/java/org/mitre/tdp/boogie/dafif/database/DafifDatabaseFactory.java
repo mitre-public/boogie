@@ -38,12 +38,25 @@ public final class DafifDatabaseFactory {
 
   public static DafifTerminalAreaDatabase newTerminalAreaDatabase(Collection<DafifAirport> airports, Collection<DafifRunway> runways, Collection<DafifAddRunway> addRunways, Collection<DafifIls> ils, Collection<DafifTerminalSegment> terminalSegments) {
     Map<AirportKey, DafifAirport> airportMap= airports.stream().collect(Collectors.toMap(ARPT_KEY, Function.identity()));
+    Multimap<AirportNaturalKey, AirportKey> naturalKeys = buildAirportNaturalKeys(airports);
     Multimap<AirportKey, DafifRunway> runwayMap = Multimaps.index(runways, RWY_KEY::apply);
     Multimap<AirportKey, DafifAddRunway> addMap = Multimaps.index(addRunways, ADD_Key::apply);
     Multimap<IlsKey, DafifIls> ilsMap = Multimaps.index(ils, ILS_KEY::apply);
     Multimap<AirportKey, DafifTerminalSegment> segs = Multimaps.index(terminalSegments,SEG_KEY::apply);
 
-    return new DafifTerminalAreaDatabase(airportMap, runwayMap, addMap, ilsMap, segs);
+    return new DafifTerminalAreaDatabase(airportMap, naturalKeys, runwayMap, addMap, ilsMap, segs);
+  }
+
+  private static Multimap<AirportNaturalKey, AirportKey> buildAirportNaturalKeys(Collection<DafifAirport> airports) {
+    com.google.common.collect.ImmutableMultimap.Builder<AirportNaturalKey, AirportKey> builder = com.google.common.collect.ImmutableMultimap.builder();
+    for (DafifAirport airport : airports) {
+      String icao = airport.icaoCode();
+      String country = airport.airportIdentification().substring(0, 2);
+      if (icao != null) {
+        builder.put(new AirportNaturalKey(icao, country), new AirportKey(airport.airportIdentification()));
+      }
+    }
+    return builder.build();
   }
 
   public static DafifTerminalAreaDatabase newTerminalAreaDatabase(ConvertingDafifRecordConsumer consumer) {

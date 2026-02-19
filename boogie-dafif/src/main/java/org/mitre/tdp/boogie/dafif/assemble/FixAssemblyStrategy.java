@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.AiracCycle;
+import org.mitre.tdp.boogie.Declinations;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
@@ -18,6 +19,8 @@ import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 import org.mitre.tdp.boogie.dafif.utils.DafifMagVars;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.Beta;
 
@@ -40,7 +43,7 @@ public interface FixAssemblyStrategy<F> {
   Collection<F> convertAirport(DafifAirport record);
 
   final class Standard implements FixAssemblyStrategy<Fix> {
-
+    private static final Logger LOG = LoggerFactory.getLogger(Standard.class);
     private final DafifTerminalAreaDatabase terminalAreaDatabase;
     private final DafifFixDatabase fixDatabase;
 
@@ -51,14 +54,20 @@ public interface FixAssemblyStrategy<F> {
 
     @Override
     public Collection<Fix> convertIls(DafifIls ils) {
+      String fixIdentifier = ils.ilsNavaidIdentifier()
+          .orElseGet(() -> ils.airportIdentification() + "-" + ils.runwayIdentifier() + "-" + ils.componentType());
+
+      double lat = ils.degreesLatitude().orElseThrow(() -> new IllegalArgumentException("ILS " + fixIdentifier + " has no latitude"));
+      double lon = ils.degreesLongitude().orElseThrow(() -> new IllegalArgumentException("ILS " + fixIdentifier + " has no longitude"));
+
       Supplier<Instant> cycleDate = () -> AiracCycle.startDate(ils.cycleDate().toString().substring(2));
       MagneticVariation magneticVariation = Optional.of(ils)
           .flatMap(DafifIls::ilsSlaveVariation)
           .map(DafifMagVars::fromDynamic)
-          .orElseGet(() -> MagneticVariation.from(ils.degreesLatitude().orElseThrow(IllegalArgumentException::new), ils.degreesLongitude().orElseThrow(IllegalArgumentException::new), cycleDate.get()));
+          .orElseGet(() -> MagneticVariation.from(lat, lon, cycleDate.get()));
       Fix fix = Fix.builder()
-          .fixIdentifier(ils.ilsNavaidIdentifier().orElseThrow(IllegalArgumentException::new))
-          .latLong(LatLong.of(ils.degreesLatitude().orElseThrow(IllegalArgumentException::new), ils.degreesLongitude().orElseThrow(IllegalArgumentException::new)))
+          .fixIdentifier(fixIdentifier)
+          .latLong(LatLong.of(lat, lon))
           .magneticVariation(magneticVariation)
           .build();
       return List.of(fix);
@@ -118,13 +127,20 @@ public interface FixAssemblyStrategy<F> {
       Supplier<LatLong> latLongSupplier = () -> Optional.of(waypoint)
           .filter(w -> w.degreesLatitude().isPresent() && w.degreesLongitude().isPresent())
           .map(w -> LatLong.of(w.degreesLatitude().get(), w.degreesLongitude().get()))
-          .orElseThrow(() -> new IllegalArgumentException("Waypoint " + waypoint.waypointIdentifier() + " has no latitude or longitude"));
+          .orElseThrow(() -> new IllegalArgumentException("Waypoint " + waypoint + " has no latitude or longitude"));
 
-      Supplier<MagneticVariation> magneticVariationSupplier = () -> MagneticVariation.from(
-          latLongSupplier.get().latitude(),
-          latLongSupplier.get().longitude(),
-          AiracCycle.startDate(waypoint.cycleDate().toString().substring(2))
-      );
+      Supplier<MagneticVariation> magneticVariationSupplier = () -> {
+        try {
+          return MagneticVariation.from(
+              latLongSupplier.get().latitude(),
+              latLongSupplier.get().longitude(),
+              AiracCycle.startDate(waypoint.cycleDate().toString().substring(2))
+          );
+        } catch (IllegalArgumentException e) {
+          LOG.warn("Unable to compute magnetic variation for waypoint {}: {}", waypoint, e.getMessage());
+          return MagneticVariation.ofDegrees(Declinations.approx(latLongSupplier.get().latitude(), latLongSupplier.get().longitude()));
+        }
+      };
 
       return fromNavaid.orElseGet(() -> List.of(Fix.builder()
           .fixIdentifier(waypoint.waypointIdentifier())

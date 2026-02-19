@@ -79,6 +79,13 @@ public final class DafifTerminalAreaDatabase {
     return Stream.of(lowEnd, highEnd).flatMap(Collection::stream).collect(Collectors.toList());
   }
 
+  public Optional<DafifIls> ilsByNavaidIdentifier(String airportIdentifier, String navaidIdentifier) {
+    return runwaysAt(airportIdentifier).stream()
+        .flatMap(r -> ilsComponentsForRunway(r).stream())
+        .filter(i -> i.ilsNavaidIdentifier().map(navaidIdentifier::equals).orElse(false))
+        .findFirst();
+  }
+
   public Collection<DafifTerminalSegment> terminalSegmentsAt(String airportIdentifier) {
     return terminalSegments.get(new AirportKey(airportIdentifier));
   }

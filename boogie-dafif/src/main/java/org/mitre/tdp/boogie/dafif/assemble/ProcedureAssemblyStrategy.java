@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -67,6 +70,8 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
   final class Standard implements ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Standard.class);
+
     @Override
     public Procedure convertProcedure(DafifTerminalParent parent, DafifTerminalSegment representative, List<Transition> transitions) {
       ProcedureType procedureType = switch (parent.terminalProcedureType()) {
@@ -78,8 +83,10 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
       RequiredNavigationEquipage requiredNavigationEquipage = PbnEquipageEvaluator.INSTANCE.apply(representative);
 
+      LOG.debug("Converting procedure {} at {} with {} transitions", parent.terminalIdentifier(), parent.airportIdentification(), transitions.size());
+
       return Procedure.builder()
-          .procedureIdentifier(parent.terminalIdentifier())
+          .procedureIdentifier(parent.terminalIdentifier().split(" ")[0])
           .airportIdentifier(parent.airportIdentification()) //this is the dafif ident not the e.g., icao code
           .procedureType(procedureType)
           .requiredNavigationEquipage(requiredNavigationEquipage)
@@ -97,6 +104,8 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
       Set<CategoryOrType> categoryOrType = Set.of(CategoryOrType.NOT_SPECIFIED);
 
+      LOG.debug("Converting transition {} ({}) with {} legs", identifier, transitionType, legs.size());
+
       return Transition.builder()
           .transitionIdentifier(identifier)
           .transitionType(transitionType)
@@ -112,11 +121,13 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .map(DafifTerminalSegment::trackDescriptionCode)
           .filter(PathTerminator.VALID::contains)
           .map(PathTerminator::valueOf)
-          .orElseThrow(() -> new IllegalStateException("No valid path terminator value found"));
+          .orElseThrow(() -> new IllegalStateException("No valid path terminator for segment " + leg.terminalSequenceNumber() + " in " + leg.terminalIdentifier() + " at " + leg.airportIdentification() + " trackDescCode=" + leg.trackDescriptionCode()));
+
+      LOG.trace("Converting leg seq={} pt={} fix={} at {}", leg.terminalSequenceNumber(), pathTerminator, leg.termSegWaypointIdentifier().orElse("none"), leg.airportIdentification());
 
       Range<Double> speedConstraint = leg.speedLimit1().map(SpeedLimitToRange.INSTANCE).orElse(Range.all());
-      Double alt1 = leg.altitude1().filter(i -> !i.isEmpty()).map(Double::valueOf).orElse(null);
-      Double alt2 = leg.altitude2().filter(i -> !i.isEmpty()).map(Double::valueOf).orElse(null);
+      Double alt1 = leg.altitude1().filter(i -> !i.isEmpty()).map(Standard::parseAltitude).orElse(null);
+      Double alt2 = leg.altitude2().filter(i -> !i.isEmpty()).map(Standard::parseAltitude).orElse(null);
       Range<Double> altitudeConstraint = leg.altitudeDescription().map(d -> AltitudeConstraintToRange.INSTANCE.apply(d, alt1, alt2))
           .orElse(Range.all());
       TurnDirection turnDirection = leg.terminalSegmentTurnDirection().map(TurnDirector.INSTANCE).orElse(TurnDirection.either());
@@ -129,7 +140,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .centerFix(centerFix)
           .speedConstraint(speedConstraint)
           .altitudeConstraint(altitudeConstraint)
-          .outboundMagneticCourse(leg.terminalMagneticCourse().map(Double::valueOf).orElse(null))
+          .outboundMagneticCourse(leg.terminalMagneticCourse().map(Standard::parseCourse).orElse(null))
           .theta(leg.nav1Bearing().orElse(null))
           .rho(leg.nav1Distance().orElse(null))
           .rnp(leg.requiredNavPerformance().orElse(null))
@@ -140,6 +151,31 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .isPublishedHoldingFix(false) //fixme idk if supported.
           .isFlyOverFix(isFlyOverFix)
           .build();
+    }
+    private static Double parseCourse(String course) {
+      String stripped = course.replaceAll("[^0-9.]", "");
+      if (stripped.isEmpty()) {
+        LOG.warn("Unable to parse course value: '{}'", course);
+        return null;
+      }
+      try {
+        return Double.valueOf(stripped);
+      } catch (NumberFormatException e) {
+        LOG.warn("Unable to parse course value: '{}'", course);
+        return null;
+      }
+    }
+
+    private static Double parseAltitude(String alt) {
+      if (alt.startsWith("FL")) {
+        return Double.valueOf(alt.substring(2)) * 100.0;
+      }
+      try {
+        return Double.valueOf(alt);
+      } catch (NumberFormatException e) {
+        LOG.warn("Unable to parse altitude value: '{}'", alt);
+        return null;
+      }
     }
   }
 }
