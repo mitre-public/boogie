@@ -42,6 +42,9 @@ public final class TransitionTypeEvaluator implements Function<DafifTerminalSegm
   }
 
   private TransitionType approach(DafifTerminalSegment dafifTerminalSegment) {
+    if (dafifTerminalSegment.terminalWaypointDescriptionCode3().map("M"::equals).orElse(false)) {
+      return TransitionType.MISSED;
+    }
     if (dafifTerminalSegment.terminalApproachType().equals("A")) {
       return TransitionType.APPROACH;
     }

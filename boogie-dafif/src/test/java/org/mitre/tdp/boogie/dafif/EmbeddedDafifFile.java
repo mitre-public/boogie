@@ -96,7 +96,7 @@ public final class EmbeddedDafifFile {
         String entryName = entry.getName();
         String filename = entryName.contains("/") ? entryName.substring(entryName.lastIndexOf('/') + 1) : entryName;
 
-        if (!entry.isDirectory() && entryName.contains("DAFIFT/") && PARSEABLE_FILES.contains(filename)) {
+        if (!entry.isDirectory() && entryName.contains("DAFIFT/") && !entryName.contains("TRMH/") && !entryName.contains("SUPPH/") && PARSEABLE_FILES.contains(filename)) {
           LOG.info("Parsing zip entry: {}", entryName);
           Collection<DafifRecord> parsed = parser.apply(new NonClosingInputStream(zis), filename);
           parsed.forEach(records);

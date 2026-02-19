@@ -19,7 +19,7 @@ public class DafifTerminalSegmentConverter implements Function<DafifRecord, Opti
     String terminalIdentifier = dafifRecord.requiredField("terminalIdentifier");
     Integer terminalSequenceNumber = dafifRecord.requiredField("terminalSequenceNumber");
     String terminalApproachType = dafifRecord.requiredField("terminalApproachType");
-    String transitionIdentifier = dafifRecord.requiredField("transitionIdentifier");
+    String transitionIdentifier = dafifRecord.<String>optionalField("transitionIdentifier").orElse("");
     String icaoCode = dafifRecord.requiredField("icaoCode");
     String trackDescriptionCode = dafifRecord.requiredField("trackDescriptionCode");
     Optional<String> termSegWaypointIdentifier = dafifRecord.optionalField("termSegWaypointIdentifier");

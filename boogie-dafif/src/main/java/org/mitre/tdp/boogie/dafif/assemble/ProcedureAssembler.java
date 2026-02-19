@@ -89,14 +89,14 @@ public interface ProcedureAssembler<P> {
 
     private List<T> sidStarTransitions(Map<String, List<DafifTerminalSegment>> segmentsByTransition) {
       return segmentsByTransition.values().stream()
-          .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber).reversed()).toList())
+          .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber)).toList())
           .map(this::oneTransition)
           .toList();
     }
 
     private List<T> approachTransitions(Map<String, List<DafifTerminalSegment>> segmentsByTransition) {
       return segmentsByTransition.values().stream()
-          .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber).reversed()).toList())
+          .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber)).toList())
           .map(this::repartition)
           .flatMap(Collection::stream)
           .map(this::oneTransition)

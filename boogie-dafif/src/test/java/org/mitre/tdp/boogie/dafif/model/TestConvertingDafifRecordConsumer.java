@@ -64,7 +64,7 @@ public class TestConvertingDafifRecordConsumer {
         () -> assertEquals(13189, consumer.dafifIls().size()),
         () -> assertEquals(8369, consumer.dafifNavaids().size()),
         () -> assertEquals(5530, consumer.dafifTerminalParents().size()),
-        () -> assertEquals(2319, consumer.dafifTerminalSegments().size()),
+        () -> assertEquals(3213, consumer.dafifTerminalSegments().size()),
         () -> assertEquals(10450, consumer.dafifWaypoints().size()),
         () -> assertEquals(15019, consumer.dafifAts().size()),
         () -> assertEquals(5476, consumer.dafifAddRunways().size())
