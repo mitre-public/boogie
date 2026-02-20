@@ -17,6 +17,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
@@ -93,6 +94,32 @@ public class ProcedureAssemblerIntegrationTest {
                     "Leg seq=" + l.sequenceNumber() + " pt=" + l.pathTerminator()
                         + " in " + t.transitionIdentifier() + "/" + p.procedureIdentifier()
                         + " at " + p.airportIdentifier() + " should have associatedFix"))))
+        .collect(Collectors.toList()));
+  }
+
+  @Test
+  void testRfLegsHaveArcCenter() {
+    assertAll(allProcedures.stream()
+        .flatMap(p -> p.transitions().stream()
+            .flatMap(t -> t.legs().stream()
+                .filter(l -> PathTerminator.RF.equals(l.pathTerminator()))
+                .<Executable>map(l -> () -> assertTrue(l.centerFix().isPresent(),
+                    "RF leg seq=" + l.sequenceNumber()
+                        + " in " + t.transitionIdentifier() + "/" + p.procedureIdentifier()
+                        + " at " + p.airportIdentifier() + " should have centerFix"))))
+        .collect(Collectors.toList()));
+  }
+
+  @Test
+  void testAfLegsHaveRecommendedNavaid() {
+    assertAll(allProcedures.stream()
+        .flatMap(p -> p.transitions().stream()
+            .flatMap(t -> t.legs().stream()
+                .filter(l -> PathTerminator.AF.equals(l.pathTerminator()))
+                .<Executable>map(l -> () -> assertTrue(l.recommendedNavaid().isPresent(),
+                    "AF leg seq=" + l.sequenceNumber()
+                        + " in " + t.transitionIdentifier() + "/" + p.procedureIdentifier()
+                        + " at " + p.airportIdentifier() + " should have recommendedNavaid"))))
         .collect(Collectors.toList()));
   }
 

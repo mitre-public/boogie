@@ -14,72 +14,38 @@ public class DafifIlsConverter implements Function<DafifRecord, Optional<DafifIl
   public Optional<DafifIls> apply(DafifRecord dafifRecord) {
     requireNonNull(dafifRecord, "Cannot convert null DafifRecord.");
 
-    String airportIdentification = dafifRecord.requiredField("airportIdentification");
-    String runwayIdentifier = dafifRecord.requiredField("runwayIdentifier");
-    String componentType = dafifRecord.requiredField("componentType");
-    Optional<String> collocation = dafifRecord.optionalField("collocation");
-    Optional<String> name = dafifRecord.optionalField("name");
-    Optional<String> navaidFrequency = dafifRecord.optionalField("navaidFrequency");
-    Optional<String> navaidChannel = dafifRecord.optionalField("navaidChannel");
-    Optional<Double> ilsGlideSlopeAngle = dafifRecord.optionalField("ilsGlideSlopeAngle");
-    Optional<String> localizerOrGlideSlopeLocation = dafifRecord.optionalField("localizerOrGlideSlopeLocation");
-    Optional<String> locatorOrMarkerLocation = dafifRecord.optionalField("locatorOrMarkerLocation");
-    String ilsNavaidElevation = dafifRecord.requiredField("ilsNavaidElevation");
-    Optional<String> localHorizontalDatum = dafifRecord.optionalField("localHorizontalDatum");
-    String geodeticDatum = dafifRecord.requiredField("geodeticDatum");
-    Optional<String> ilsMlsCategory = dafifRecord.optionalField("ilsMlsCategory");
-    Optional<String> geodeticLatitude = dafifRecord.optionalField("geodeticLatitude");
-    Optional<Double> degreesLatitude = dafifRecord.optionalField("degreesLatitude");
-    Optional<String> geodeticLongitude = dafifRecord.optionalField("geodeticLongitude");
-    Optional<Double> degreesLongitude = dafifRecord.optionalField("degreesLongitude");
-    Optional<String> ilsNavaidIdentifier = dafifRecord.optionalField("ilsNavaidIdentifier");
-    Optional<Integer> navaidType = dafifRecord.optionalField("navaidType");
-    Optional<String> countryCode = dafifRecord.optionalField("countryCode");
-    Optional<Integer> navaidKeyCode = dafifRecord.optionalField("navaidKeyCode");
-    String magneticVariation = dafifRecord.requiredField("magneticVariation");
-    Optional<String> ilsSlaveVariation = dafifRecord.optionalField("ilsSlaveVariation");
-    Optional<String> ilsBearingCourse = dafifRecord.optionalField("ilsBearingCourse");
-    Optional<Double> localizerWidth = dafifRecord.optionalField("localizerWidth");
-    Optional<Integer> thresholdCrossingHeight = dafifRecord.optionalField("thresholdCrossingHeight");
-    Optional<Double> ilsDmeBias = dafifRecord.optionalField("ilsDmeBias");
-    Integer cycleDate = dafifRecord.requiredField("cycleDate");
-    Optional<String> mlsDmePrecisionNonPrecision = dafifRecord.optionalField("mlsDmePrecisionNonPrecision");
-    Optional<Integer> coordinatePrecision = dafifRecord.optionalField("coordinatePrecision");
-
-    DafifIls dafifIls = new DafifIls.Builder()
-        .airportIdentification(airportIdentification)
-        .runwayIdentifier(runwayIdentifier)
-        .componentType(componentType)
-        .collocation(collocation.orElse(null))
-        .name(name.orElse(null))
-        .navaidFrequency(navaidFrequency.orElse(null))
-        .navaidChannel(navaidChannel.orElse(null))
-        .ilsGlideSlopeAngle(ilsGlideSlopeAngle.orElse(null))
-        .localizerOrGlideSlopeLocation(localizerOrGlideSlopeLocation.orElse(null))
-        .locatorOrMarkerLocation(locatorOrMarkerLocation.orElse(null))
-        .ilsNavaidElevation(ilsNavaidElevation)
-        .localHorizontalDatum(localHorizontalDatum.orElse(null))
-        .geodeticDatum(geodeticDatum)
-        .ilsMlsCategory(ilsMlsCategory.orElse(null))
-        .geodeticLatitude(geodeticLatitude.orElse(null))
-        .degreesLatitude(degreesLatitude.orElse(null))
-        .geodeticLongitude(geodeticLongitude.orElse(null))
-        .degreesLongitude(degreesLongitude.orElse(null))
-        .ilsNavaidIdentifier(ilsNavaidIdentifier.orElse(null))
-        .navaidType(navaidType.orElse(null))
-        .countryCode(countryCode.orElse(null))
-        .navaidKeyCode(navaidKeyCode.orElse(null))
-        .magneticVariation(magneticVariation)
-        .ilsSlaveVariation(ilsSlaveVariation.orElse(null))
-        .ilsBearingCourse(ilsBearingCourse.orElse(null))
-        .localizerWidth(localizerWidth.orElse(null))
-        .thresholdCrossingHeight(thresholdCrossingHeight.orElse(null))
-        .ilsDmeBias(ilsDmeBias.orElse(null))
-        .cycleDate(cycleDate)
-        .mlsDmePrecisionNonPrecision(mlsDmePrecisionNonPrecision.orElse(null))
-        .coordinatePrecision(coordinatePrecision.orElse(null))
-        .build();
-
-    return Optional.of(dafifIls);
+    return Optional.of(new DafifIls.Builder()
+        .airportIdentification(dafifRecord.requiredField("airportIdentification"))
+        .runwayIdentifier(dafifRecord.requiredField("runwayIdentifier"))
+        .componentType(dafifRecord.requiredField("componentType"))
+        .collocation(dafifRecord.<String>optionalField("collocation").orElse(null))
+        .name(dafifRecord.<String>optionalField("name").orElse(null))
+        .navaidFrequency(dafifRecord.<String>optionalField("navaidFrequency").orElse(null))
+        .navaidChannel(dafifRecord.<String>optionalField("navaidChannel").orElse(null))
+        .ilsGlideSlopeAngle(dafifRecord.<Double>optionalField("ilsGlideSlopeAngle").orElse(null))
+        .localizerOrGlideSlopeLocation(dafifRecord.<String>optionalField("localizerOrGlideSlopeLocation").orElse(null))
+        .locatorOrMarkerLocation(dafifRecord.<String>optionalField("locatorOrMarkerLocation").orElse(null))
+        .ilsNavaidElevation(dafifRecord.requiredField("ilsNavaidElevation"))
+        .localHorizontalDatum(dafifRecord.<String>optionalField("localHorizontalDatum").orElse(null))
+        .geodeticDatum(dafifRecord.requiredField("geodeticDatum"))
+        .ilsMlsCategory(dafifRecord.<String>optionalField("ilsMlsCategory").orElse(null))
+        .geodeticLatitude(dafifRecord.<String>optionalField("geodeticLatitude").orElse(null))
+        .degreesLatitude(dafifRecord.<Double>optionalField("degreesLatitude").orElse(null))
+        .geodeticLongitude(dafifRecord.<String>optionalField("geodeticLongitude").orElse(null))
+        .degreesLongitude(dafifRecord.<Double>optionalField("degreesLongitude").orElse(null))
+        .ilsNavaidIdentifier(dafifRecord.<String>optionalField("ilsNavaidIdentifier").orElse(null))
+        .navaidType(dafifRecord.<Integer>optionalField("navaidType").orElse(null))
+        .countryCode(dafifRecord.<String>optionalField("countryCode").orElse(null))
+        .navaidKeyCode(dafifRecord.<Integer>optionalField("navaidKeyCode").orElse(null))
+        .magneticVariation(dafifRecord.requiredField("magneticVariation"))
+        .ilsSlaveVariation(dafifRecord.<String>optionalField("ilsSlaveVariation").orElse(null))
+        .ilsBearingCourse(dafifRecord.<String>optionalField("ilsBearingCourse").orElse(null))
+        .localizerWidth(dafifRecord.<Double>optionalField("localizerWidth").orElse(null))
+        .thresholdCrossingHeight(dafifRecord.<Integer>optionalField("thresholdCrossingHeight").orElse(null))
+        .ilsDmeBias(dafifRecord.<Double>optionalField("ilsDmeBias").orElse(null))
+        .cycleDate(dafifRecord.requiredField("cycleDate"))
+        .mlsDmePrecisionNonPrecision(dafifRecord.<String>optionalField("mlsDmePrecisionNonPrecision").orElse(null))
+        .coordinatePrecision(dafifRecord.<Integer>optionalField("coordinatePrecision").orElse(null))
+        .build());
   }
 }
