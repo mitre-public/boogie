@@ -124,7 +124,7 @@ public class ProcedureAssemblerIntegrationTest {
   void testProceduresByAirport() {
     Map<String, List<Procedure>> byAirport = allProcedures.stream()
         .collect(Collectors.groupingBy(Procedure::airportIdentifier));
-    assertTrue(byAirport.size() > 1, "Procedures should span multiple airports");
+    assertEquals(4384, byAirport.size(), "Unique airports with procedures should match TRM_PAR unique airport identifiers");
   }
 
   @Test
