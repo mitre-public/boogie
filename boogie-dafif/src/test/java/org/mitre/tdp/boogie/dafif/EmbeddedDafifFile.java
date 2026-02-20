@@ -10,6 +10,7 @@ import java.util.zip.ZipInputStream;
 
 import org.mitre.tdp.boogie.dafif.model.ConvertingDafifRecordConsumer;
 import org.mitre.tdp.boogie.dafif.model.DafifAddRunway;
+import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 import org.mitre.tdp.boogie.dafif.model.DafifAirport;
 import org.mitre.tdp.boogie.dafif.model.DafifIls;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
@@ -35,7 +36,7 @@ public final class EmbeddedDafifFile {
   private static final String EMBEDDED_FILE_NAME = "DAFIF8_1_2601.zip";
 
   private static final Set<String> PARSEABLE_FILES = Set.of(
-      "ARPT.TXT", "RWY.TXT", "ADD_RWY.TXT", "ILS.TXT", "NAV.TXT", "WPT.TXT", "TRM_PAR.TXT", "TRM_SEG.TXT"
+      "ARPT.TXT", "RWY.TXT", "ADD_RWY.TXT", "ILS.TXT", "NAV.TXT", "WPT.TXT", "TRM_PAR.TXT", "TRM_SEG.TXT", "ATS.TXT"
   );
 
   private final ConvertingDafifRecordConsumer records;
@@ -82,6 +83,10 @@ public final class EmbeddedDafifFile {
 
   public Collection<DafifTerminalSegment> dafifTerminalSegments() {
     return records.dafifTerminalSegments();
+  }
+
+  public Collection<DafifAirTrafficSegment> dafifAts() {
+    return records.dafifAts();
   }
 
   private void loadRecords() {

@@ -37,4 +37,13 @@ public final class DafifFixDatabase {
   public Optional<DafifNavaid> navaid(String naviadIdentifier, String country, Integer type, Integer keyCode) {
     return Optional.ofNullable(navaids.get(new NavaidKey(naviadIdentifier, type, country, keyCode)));
   }
+
+  public Optional<DafifNavaid> navaid(String navaidIdentifier, String country, Integer type) {
+    return navaids.entrySet().stream()
+        .filter(e -> e.getKey().navaidIdentifier().equals(navaidIdentifier)
+            && e.getKey().country().equals(country)
+            && e.getKey().type() == type)
+        .map(Map.Entry::getValue)
+        .findFirst();
+  }
 }
