@@ -507,8 +507,8 @@ public final class DafifTerminalSegment implements DafifModel {
     return terminalApproachType;
   }
 
-  public String transitionIdentifier() {
-    return transitionIdentifier;
+  public Optional<String> transitionIdentifier() {
+    return Optional.ofNullable(transitionIdentifier);
   }
 
   public String icaoCode() {

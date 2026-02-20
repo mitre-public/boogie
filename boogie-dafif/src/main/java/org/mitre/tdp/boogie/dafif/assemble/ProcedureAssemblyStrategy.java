@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import org.mitre.tdp.boogie.util.StandardizedTransitionName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
       String identifier = TransitionType.MISSED.equals(transitionType)
           ? "MISSED"
-          : org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier());
+          : representative.transitionIdentifier().map(StandardizedTransitionName.INSTANCE).orElse(null);
 
       Set<CategoryOrType> categoryOrType = Set.of(CategoryOrType.NOT_SPECIFIED);
 

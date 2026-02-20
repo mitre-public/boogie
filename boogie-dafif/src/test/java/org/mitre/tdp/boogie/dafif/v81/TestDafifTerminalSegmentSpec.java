@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.dafif.v81;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
@@ -111,7 +113,7 @@ public class TestDafifTerminalSegmentSpec {
         () -> assertEquals("ADRI1C ADRIV 1C (RNAV)", terminalSegment.terminalIdentifier()),
         () -> assertEquals(10, terminalSegment.terminalSequenceNumber()),
         () -> assertEquals("5", terminalSegment.terminalApproachType()),
-        () -> assertEquals("RW29", terminalSegment.transitionIdentifier()),
+        () -> assertEquals(Optional.of("RW29"), terminalSegment.transitionIdentifier()),
         () -> assertEquals("TNCA", terminalSegment.icaoCode()),
         () -> assertEquals("IF", terminalSegment.trackDescriptionCode()),
         () -> assertEquals("ADRIV", terminalSegment.termSegWaypointIdentifier().orElseThrow()),

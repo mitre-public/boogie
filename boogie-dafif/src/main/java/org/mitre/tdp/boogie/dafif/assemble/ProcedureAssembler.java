@@ -75,7 +75,7 @@ public interface ProcedureAssembler<P> {
           .findFirst()
           .orElseGet(() -> proceduresSegments.get(0));
 
-      Map<String, List<DafifTerminalSegment>> segmentsByTransition = proceduresSegments.stream()
+      Map<Optional<String>, List<DafifTerminalSegment>> segmentsByTransition = proceduresSegments.stream()
           .collect(Collectors.groupingBy(DafifTerminalSegment::transitionIdentifier));
 
       List<T> transitions = switch (representative.terminalProcedureType()) {
@@ -87,14 +87,14 @@ public interface ProcedureAssembler<P> {
       return procedureAssemblyStrategy.convertProcedure(parent, representative, transitions);
     }
 
-    private List<T> sidStarTransitions(Map<String, List<DafifTerminalSegment>> segmentsByTransition) {
+    private List<T> sidStarTransitions(Map<Optional<String>, List<DafifTerminalSegment>> segmentsByTransition) {
       return segmentsByTransition.values().stream()
           .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber)).toList())
           .map(this::oneTransition)
           .toList();
     }
 
-    private List<T> approachTransitions(Map<String, List<DafifTerminalSegment>> segmentsByTransition) {
+    private List<T> approachTransitions(Map<Optional<String>, List<DafifTerminalSegment>> segmentsByTransition) {
       return segmentsByTransition.values().stream()
           .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber)).toList())
           .map(this::repartition)
