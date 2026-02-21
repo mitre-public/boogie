@@ -9,10 +9,10 @@ import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 
 public final class DafifFixDatabase {
   private static final Function<DafifWaypoint, NavaidKey> TO_NAV_KEY = sn -> {
-    String ident = sn.navaidIdentifier().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
-    Integer navType = sn.navaidType().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
-    String navCountry = sn.navaidCountryCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
-    Integer navKeyCode = sn.navaidKeyCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid".concat(sn.toString())));
+    String ident = sn.navaidIdentifier().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
+    Integer navType = sn.navaidType().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
+    String navCountry = sn.navaidCountryCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
+    Integer navKeyCode = sn.navaidKeyCode().orElseThrow(() -> new IllegalArgumentException("Not a secret navaid: ".concat(sn.toString())));
     return new NavaidKey(ident, navType, navCountry, navKeyCode);
   };
   private final Map<WaypointKey, DafifWaypoint> waypoints;
@@ -23,18 +23,27 @@ public final class DafifFixDatabase {
     this.navaids = navaids;
   }
 
-  Optional<DafifWaypoint> waypoint(String waypointIdentifier, String country) {
+  public Optional<DafifWaypoint> waypoint(String waypointIdentifier, String country) {
     return Optional.ofNullable(waypoints.get(new WaypointKey(waypointIdentifier, country)));
   }
 
-  Optional<DafifNavaid> navaidFor(DafifWaypoint waypoint) {
+  public Optional<DafifNavaid> navaidFor(DafifWaypoint waypoint) {
     return Optional.ofNullable(waypoint)
         .filter(DafifWaypoint::waypointPointNavaidFlag)
         .map(TO_NAV_KEY)
         .map(navaids::get);
   }
 
-  Optional<DafifNavaid> navaid(String naviadIdentifier, String country, Integer type, Integer keyCode) {
+  public Optional<DafifNavaid> navaid(String naviadIdentifier, String country, Integer type, Integer keyCode) {
     return Optional.ofNullable(navaids.get(new NavaidKey(naviadIdentifier, type, country, keyCode)));
+  }
+
+  public Optional<DafifNavaid> navaid(String navaidIdentifier, String country, Integer type) {
+    return navaids.entrySet().stream()
+        .filter(e -> e.getKey().navaidIdentifier().equals(navaidIdentifier)
+            && e.getKey().country().equals(country)
+            && e.getKey().type() == type)
+        .map(Map.Entry::getValue)
+        .findFirst();
   }
 }

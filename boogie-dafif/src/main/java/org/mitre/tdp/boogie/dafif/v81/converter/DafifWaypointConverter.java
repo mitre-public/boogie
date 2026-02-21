@@ -15,62 +15,33 @@ public class DafifWaypointConverter implements Function<DafifRecord, Optional<Da
   public Optional<DafifWaypoint> apply(DafifRecord dafifRecord) {
     requireNonNull(dafifRecord, "Cannot convert null DafifRecord.");
 
-    String waypointIdentifierWptIdent = dafifRecord.requiredField("waypointIdentifierWptIdent");
-    String countryCode = dafifRecord.requiredField("countryCode");
-    Optional<Integer> stateProvinceCode = dafifRecord.optionalField("stateProvinceCode");
-    Optional<String> waypointPointNavaidFlag = dafifRecord.optionalField("waypointPointNavaidFlag");
-    String waypointType = dafifRecord.requiredField("waypointType");
-    Optional<String> waypointDescriptionName = dafifRecord.optionalField("waypointDescriptionName");
-    String icaoCode = dafifRecord.requiredField("icaoCode");
-    String waypointUsageCode = dafifRecord.requiredField("waypointUsageCode");
-    Optional<Double> waypointBearing = dafifRecord.optionalField("waypointBearing");
-    Optional<Double> distance = dafifRecord.optionalField("distance");
-    String wac = dafifRecord.requiredField("wAC");
-    Optional<String> localHorizontalDatum = dafifRecord.optionalField("localHorizontalDatum");
-    String geodeticDatum = dafifRecord.requiredField("geodeticDatum");
-    Optional<String> geodeticLatitude = dafifRecord.optionalField("geodeticLatitude");
-    Optional<Double> degreesLatitude = dafifRecord.optionalField("degreesLatitude");
-    Optional<String> geodeticLongitude = dafifRecord.optionalField("geodeticLongitude");
-    Optional<Double> degreesLongitude = dafifRecord.optionalField("degreesLongitude");
-    Double magneticVariation = DafifMagVars.fromDynamic(dafifRecord.requiredField("magneticVariation")).angle().inDegrees();
-    Optional<String> navaidIdentifier = dafifRecord.optionalField("navaidIdentifier");
-    Optional<Integer> navaidType = dafifRecord.optionalField("navaidType");
-    Optional<String> navaidCountryCode = dafifRecord.optionalField("navaidCountryCode");
-    Optional<Integer> navaidKeyCode = dafifRecord.optionalField("navaidKeyCode");
-    Integer cycleDate = dafifRecord.requiredField("cycleDate");
-    Optional<String> waypointRunwayIdent = dafifRecord.optionalField("waypointRunwayIdent");
-    Optional<String> waypointRwyIcao = dafifRecord.optionalField("waypointRwyIcao");
-    Optional<Integer> coordinatePrecision = dafifRecord.optionalField("coordinatePrecision");
-
-    DafifWaypoint dafifWaypoint = new DafifWaypoint.Builder()
-        .waypointIdentifier(waypointIdentifierWptIdent)
-        .countryCode(countryCode)
-        .stateProvinceCode(stateProvinceCode.orElse(null))
-        .waypointPointNavaidFlag(waypointPointNavaidFlag.filter("Y"::equals).isPresent())
-        .waypointType(waypointType)
-        .waypointDescriptionName(waypointDescriptionName.orElse(null))
-        .icaoCode(icaoCode)
-        .waypointUsageCode(waypointUsageCode)
-        .waypointBearing(waypointBearing.orElse(null))
-        .distance(distance.orElse(null))
-        .wac(wac)
-        .localHorizontalDatum(localHorizontalDatum.orElse(null))
-        .geodeticDatum(geodeticDatum)
-        .geodeticLatitude(geodeticLatitude.orElse(null))
-        .degreesLatitude(degreesLatitude.orElse(null))
-        .geodeticLongitude(geodeticLongitude.orElse(null))
-        .degreesLongitude(degreesLongitude.orElse(null))
-        .magneticVariation(magneticVariation)
-        .navaidIdentifier(navaidIdentifier.orElse(null))
-        .navaidType(navaidType.orElse(null))
-        .navaidCountryCode(navaidCountryCode.orElse(null))
-        .navaidKeyCode(navaidKeyCode.orElse(null))
-        .cycleDate(cycleDate)
-        .waypointRunwayIdent(waypointRunwayIdent.orElse(null))
-        .waypointRwyIcao(waypointRwyIcao.orElse(null))
-        .coordinatePrecision(coordinatePrecision.orElse(null))
-        .build();
-
-    return Optional.of(dafifWaypoint);
+    return Optional.of(new DafifWaypoint.Builder()
+        .waypointIdentifier(dafifRecord.requiredField("waypointIdentifierWptIdent"))
+        .countryCode(dafifRecord.requiredField("countryCode"))
+        .stateProvinceCode(dafifRecord.<Integer>optionalField("stateProvinceCode").orElse(null))
+        .waypointPointNavaidFlag(dafifRecord.<String>optionalField("waypointPointNavaidFlag").filter("Y"::equals).isPresent())
+        .waypointType(dafifRecord.requiredField("waypointType"))
+        .waypointDescriptionName(dafifRecord.<String>optionalField("waypointDescriptionName").orElse(null))
+        .icaoCode(dafifRecord.requiredField("icaoCode"))
+        .waypointUsageCode(dafifRecord.requiredField("waypointUsageCode"))
+        .waypointBearing(dafifRecord.<Double>optionalField("waypointBearing").orElse(null))
+        .distance(dafifRecord.<Double>optionalField("distance").orElse(null))
+        .wac(dafifRecord.requiredField("wAC"))
+        .localHorizontalDatum(dafifRecord.<String>optionalField("localHorizontalDatum").orElse(null))
+        .geodeticDatum(dafifRecord.requiredField("geodeticDatum"))
+        .geodeticLatitude(dafifRecord.<String>optionalField("geodeticLatitude").orElse(null))
+        .degreesLatitude(dafifRecord.<Double>optionalField("degreesLatitude").orElse(null))
+        .geodeticLongitude(dafifRecord.<String>optionalField("geodeticLongitude").orElse(null))
+        .degreesLongitude(dafifRecord.<Double>optionalField("degreesLongitude").orElse(null))
+        .magneticVariation(DafifMagVars.fromDynamic(dafifRecord.requiredField("magneticVariation")).angle().inDegrees())
+        .navaidIdentifier(dafifRecord.<String>optionalField("navaidIdentifier").orElse(null))
+        .navaidType(dafifRecord.<Integer>optionalField("navaidType").orElse(null))
+        .navaidCountryCode(dafifRecord.<String>optionalField("navaidCountryCode").orElse(null))
+        .navaidKeyCode(dafifRecord.<Integer>optionalField("navaidKeyCode").orElse(null))
+        .cycleDate(dafifRecord.requiredField("cycleDate"))
+        .waypointRunwayIdent(dafifRecord.<String>optionalField("waypointRunwayIdent").orElse(null))
+        .waypointRwyIcao(dafifRecord.<String>optionalField("waypointRwyIcao").orElse(null))
+        .coordinatePrecision(dafifRecord.<Integer>optionalField("coordinatePrecision").orElse(null))
+        .build());
   }
 }

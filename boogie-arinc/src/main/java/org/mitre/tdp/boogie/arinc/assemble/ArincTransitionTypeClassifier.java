@@ -3,7 +3,7 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Comparator.comparing;
-import static java.util.Objects.requireNonNull;
+import org.mitre.tdp.boogie.util.StandardizedTransitionName;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_0;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_1;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PD_2;
@@ -35,7 +35,6 @@ import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_R;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PE_S;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;

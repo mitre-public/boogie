@@ -49,7 +49,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 
-public final class DafifTerminalSegment {
+public final class DafifTerminalSegment implements DafifModel {
   /**
    * {@link AirportIdentification}
    */
@@ -93,7 +93,7 @@ public final class DafifTerminalSegment {
   /**
    * {@link TerminalWaypointDescriptionCode1Arpt}
    */
-  private final String terminalWaypointDescriptionCode1Arpt;
+  private final String terminalWaypointDescriptionCode1;
   /**
    * {@link TerminalWaypointDescriptionCode2}
    */
@@ -129,11 +129,11 @@ public final class DafifTerminalSegment {
   /**
    * {@link Fix12Bearing}
    */
-  private final Double fix1Bearing;
+  private final Double nav1Bearing;
   /**
    * {@link Fix12Distance}
    */
-  private final Double fix1Distance;
+  private final Double nav1Distance;
   /**
    * {@link Navaid12Identifier}
    */
@@ -153,11 +153,11 @@ public final class DafifTerminalSegment {
   /**
    * {@link Fix12Bearing}
    */
-  private final Double fix2Bearing;
+  private final Double nav2Bearing;
   /**
    * {@link Fix12Distance}
    */
-  private final Double fix2Distance;
+  private final Double nav2Distance;
   /**
    * {@link TerminalMagneticCourse}
    */
@@ -334,7 +334,7 @@ public final class DafifTerminalSegment {
     this.trackDescriptionCode = builder.trackDescriptionCode;
     this.termSegWaypointIdentifier = builder.termSegWaypointIdentifier;
     this.waypointCountryCode = builder.waypointCountryCode;
-    this.terminalWaypointDescriptionCode1Arpt = builder.terminalWaypointDescriptionCode1Arpt;
+    this.terminalWaypointDescriptionCode1 = builder.terminalWaypointDescriptionCode1;
     this.terminalWaypointDescriptionCode2 = builder.terminalWaypointDescriptionCode2;
     this.terminalWaypointDescriptionCode3 = builder.terminalWaypointDescriptionCode3;
     this.terminalWaypointDescriptionCode4 = builder.terminalWaypointDescriptionCode4;
@@ -343,14 +343,14 @@ public final class DafifTerminalSegment {
     this.navaid1Type = builder.navaid1Type;
     this.navaid1CountryCode = builder.navaid1CountryCode;
     this.navaid1KeyCode = builder.navaid1KeyCode;
-    this.fix1Bearing = builder.fix1Bearing;
-    this.fix1Distance = builder.fix1Distance;
+    this.nav1Bearing = builder.fix1Bearing;
+    this.nav1Distance = builder.fix1Distance;
     this.navaid2Identifier = builder.navaid2Identifier;
     this.navaid2Type = builder.navaid2Type;
     this.navaid2CountryCode = builder.navaid2CountryCode;
     this.navaid2KeyCode = builder.navaid2KeyCode;
-    this.fix2Bearing = builder.fix2Bearing;
-    this.fix2Distance = builder.fix2Distance;
+    this.nav2Bearing = builder.fix2Bearing;
+    this.nav2Distance = builder.fix2Distance;
     this.terminalMagneticCourse = builder.terminalMagneticCourse;
     this.distance = builder.distance;
     this.altitudeDescription = builder.altitudeDescription;
@@ -394,6 +394,10 @@ public final class DafifTerminalSegment {
     this.arcRadius = builder.arcRadius;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -401,12 +405,86 @@ public final class DafifTerminalSegment {
     if (o == null || getClass() != o.getClass())
       return false;
     DafifTerminalSegment that = (DafifTerminalSegment) o;
-    return Objects.equals(airportIdentification, that.airportIdentification) && Objects.equals(terminalProcedureType, that.terminalProcedureType) && Objects.equals(terminalIdentifier, that.terminalIdentifier) && Objects.equals(terminalSequenceNumber, that.terminalSequenceNumber) && Objects.equals(terminalApproachType, that.terminalApproachType) && Objects.equals(transitionIdentifier, that.transitionIdentifier) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(trackDescriptionCode, that.trackDescriptionCode) && Objects.equals(termSegWaypointIdentifier, that.termSegWaypointIdentifier) && Objects.equals(waypointCountryCode, that.waypointCountryCode) && Objects.equals(terminalWaypointDescriptionCode1Arpt, that.terminalWaypointDescriptionCode1Arpt) && Objects.equals(terminalWaypointDescriptionCode2, that.terminalWaypointDescriptionCode2) && Objects.equals(terminalWaypointDescriptionCode3, that.terminalWaypointDescriptionCode3) && Objects.equals(terminalWaypointDescriptionCode4, that.terminalWaypointDescriptionCode4) && Objects.equals(terminalSegmentTurnDirection, that.terminalSegmentTurnDirection) && Objects.equals(navaid1Identifier, that.navaid1Identifier) && Objects.equals(navaid1Type, that.navaid1Type) && Objects.equals(navaid1CountryCode, that.navaid1CountryCode) && Objects.equals(navaid1KeyCode, that.navaid1KeyCode) && Objects.equals(fix1Bearing, that.fix1Bearing) && Objects.equals(fix1Distance, that.fix1Distance) && Objects.equals(navaid2Identifier, that.navaid2Identifier) && Objects.equals(navaid2Type, that.navaid2Type) && Objects.equals(navaid2CountryCode, that.navaid2CountryCode) && Objects.equals(navaid2KeyCode, that.navaid2KeyCode) && Objects.equals(fix2Bearing, that.fix2Bearing) && Objects.equals(fix2Distance, that.fix2Distance) && Objects.equals(terminalMagneticCourse, that.terminalMagneticCourse) && Objects.equals(distance, that.distance) && Objects.equals(altitudeDescription, that.altitudeDescription) && Objects.equals(altitude1, that.altitude1) && Objects.equals(altitude2, that.altitude2) && Objects.equals(requiredNavPerformance, that.requiredNavPerformance) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(waypointGeodeticLatitude, that.waypointGeodeticLatitude) && Objects.equals(waypointDegreesLatitude, that.waypointDegreesLatitude) && Objects.equals(waypointGeodeticLongitude, that.waypointGeodeticLongitude) && Objects.equals(waypointDegreesLongitude, that.waypointDegreesLongitude) && Objects.equals(waypointMagneticVariation, that.waypointMagneticVariation) && Objects.equals(navaid1GeodeticLatitude, that.navaid1GeodeticLatitude) && Objects.equals(navaid1DegreesLatitude, that.navaid1DegreesLatitude) && Objects.equals(navaid1GeodeticLongitude, that.navaid1GeodeticLongitude) && Objects.equals(navaid1DegreesLongitude, that.navaid1DegreesLongitude) && Objects.equals(navaid1MagneticVariation, that.navaid1MagneticVariation) && Objects.equals(navaid1DmeGeodeticLatitude, that.navaid1DmeGeodeticLatitude) && Objects.equals(navaid1DmeDegreesLatitude, that.navaid1DmeDegreesLatitude) && Objects.equals(navaid1DmeGeodeticLongitude, that.navaid1DmeGeodeticLongitude) && Objects.equals(navaid1DmeDegreesLongitude, that.navaid1DmeDegreesLongitude) && Objects.equals(navaid2GeodeticLatitude, that.navaid2GeodeticLatitude) && Objects.equals(navaid2DegreesLatitude, that.navaid2DegreesLatitude) && Objects.equals(navaid2GeodeticLongitude, that.navaid2GeodeticLongitude) && Objects.equals(navaid2DegreesLongitude, that.navaid2DegreesLongitude) && Objects.equals(navaid2MagneticVariation, that.navaid2MagneticVariation) && Objects.equals(navaid2DmeGeodeticLatitude, that.navaid2DmeGeodeticLatitude) && Objects.equals(navaid2DmeDegreesLatitude, that.navaid2DmeDegreesLatitude) && Objects.equals(navaid2DmeGeodeticLongitude, that.navaid2DmeGeodeticLongitude) && Objects.equals(navaid2DmeDegreesLongitude, that.navaid2DmeDegreesLongitude) && Objects.equals(speedLimit1, that.speedLimit1) && Objects.equals(speedLimitAircraftType1, that.speedLimitAircraftType1) && Objects.equals(speedLimitAltitude1, that.speedLimitAltitude1) && Objects.equals(speedLimit2, that.speedLimit2) && Objects.equals(speedLimitAircraftType2, that.speedLimitAircraftType2) && Objects.equals(speedLimitAltitude2, that.speedLimitAltitude2) && Objects.equals(verticalNavigationVnav, that.verticalNavigationVnav) && Objects.equals(thresholdCrossingHeight, that.thresholdCrossingHeight) && Objects.equals(arcWaypointIdentifier, that.arcWaypointIdentifier) && Objects.equals(arcWaypointCountryCode, that.arcWaypointCountryCode) && Objects.equals(arcRadius, that.arcRadius);
+    return Objects.equals(airportIdentification, that.airportIdentification) && Objects.equals(terminalProcedureType, that.terminalProcedureType) && Objects.equals(terminalIdentifier, that.terminalIdentifier) && Objects.equals(terminalSequenceNumber, that.terminalSequenceNumber) && Objects.equals(terminalApproachType, that.terminalApproachType) && Objects.equals(transitionIdentifier, that.transitionIdentifier) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(trackDescriptionCode, that.trackDescriptionCode) && Objects.equals(termSegWaypointIdentifier, that.termSegWaypointIdentifier) && Objects.equals(waypointCountryCode, that.waypointCountryCode) && Objects.equals(terminalWaypointDescriptionCode1, that.terminalWaypointDescriptionCode1) && Objects.equals(terminalWaypointDescriptionCode2, that.terminalWaypointDescriptionCode2) && Objects.equals(terminalWaypointDescriptionCode3, that.terminalWaypointDescriptionCode3) && Objects.equals(terminalWaypointDescriptionCode4, that.terminalWaypointDescriptionCode4) && Objects.equals(terminalSegmentTurnDirection, that.terminalSegmentTurnDirection) && Objects.equals(navaid1Identifier, that.navaid1Identifier) && Objects.equals(navaid1Type, that.navaid1Type) && Objects.equals(navaid1CountryCode, that.navaid1CountryCode) && Objects.equals(navaid1KeyCode, that.navaid1KeyCode) && Objects.equals(nav1Bearing, that.nav1Bearing) && Objects.equals(nav1Distance, that.nav1Distance) && Objects.equals(navaid2Identifier, that.navaid2Identifier) && Objects.equals(navaid2Type, that.navaid2Type) && Objects.equals(navaid2CountryCode, that.navaid2CountryCode) && Objects.equals(navaid2KeyCode, that.navaid2KeyCode) && Objects.equals(nav2Bearing, that.nav2Bearing) && Objects.equals(nav2Distance, that.nav2Distance) && Objects.equals(terminalMagneticCourse, that.terminalMagneticCourse) && Objects.equals(distance, that.distance) && Objects.equals(altitudeDescription, that.altitudeDescription) && Objects.equals(altitude1, that.altitude1) && Objects.equals(altitude2, that.altitude2) && Objects.equals(requiredNavPerformance, that.requiredNavPerformance) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(waypointGeodeticLatitude, that.waypointGeodeticLatitude) && Objects.equals(waypointDegreesLatitude, that.waypointDegreesLatitude) && Objects.equals(waypointGeodeticLongitude, that.waypointGeodeticLongitude) && Objects.equals(waypointDegreesLongitude, that.waypointDegreesLongitude) && Objects.equals(waypointMagneticVariation, that.waypointMagneticVariation) && Objects.equals(navaid1GeodeticLatitude, that.navaid1GeodeticLatitude) && Objects.equals(navaid1DegreesLatitude, that.navaid1DegreesLatitude) && Objects.equals(navaid1GeodeticLongitude, that.navaid1GeodeticLongitude) && Objects.equals(navaid1DegreesLongitude, that.navaid1DegreesLongitude) && Objects.equals(navaid1MagneticVariation, that.navaid1MagneticVariation) && Objects.equals(navaid1DmeGeodeticLatitude, that.navaid1DmeGeodeticLatitude) && Objects.equals(navaid1DmeDegreesLatitude, that.navaid1DmeDegreesLatitude) && Objects.equals(navaid1DmeGeodeticLongitude, that.navaid1DmeGeodeticLongitude) && Objects.equals(navaid1DmeDegreesLongitude, that.navaid1DmeDegreesLongitude) && Objects.equals(navaid2GeodeticLatitude, that.navaid2GeodeticLatitude) && Objects.equals(navaid2DegreesLatitude, that.navaid2DegreesLatitude) && Objects.equals(navaid2GeodeticLongitude, that.navaid2GeodeticLongitude) && Objects.equals(navaid2DegreesLongitude, that.navaid2DegreesLongitude) && Objects.equals(navaid2MagneticVariation, that.navaid2MagneticVariation) && Objects.equals(navaid2DmeGeodeticLatitude, that.navaid2DmeGeodeticLatitude) && Objects.equals(navaid2DmeDegreesLatitude, that.navaid2DmeDegreesLatitude) && Objects.equals(navaid2DmeGeodeticLongitude, that.navaid2DmeGeodeticLongitude) && Objects.equals(navaid2DmeDegreesLongitude, that.navaid2DmeDegreesLongitude) && Objects.equals(speedLimit1, that.speedLimit1) && Objects.equals(speedLimitAircraftType1, that.speedLimitAircraftType1) && Objects.equals(speedLimitAltitude1, that.speedLimitAltitude1) && Objects.equals(speedLimit2, that.speedLimit2) && Objects.equals(speedLimitAircraftType2, that.speedLimitAircraftType2) && Objects.equals(speedLimitAltitude2, that.speedLimitAltitude2) && Objects.equals(verticalNavigationVnav, that.verticalNavigationVnav) && Objects.equals(thresholdCrossingHeight, that.thresholdCrossingHeight) && Objects.equals(arcWaypointIdentifier, that.arcWaypointIdentifier) && Objects.equals(arcWaypointCountryCode, that.arcWaypointCountryCode) && Objects.equals(arcRadius, that.arcRadius);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(airportIdentification, terminalProcedureType, terminalIdentifier, terminalSequenceNumber, terminalApproachType, transitionIdentifier, icaoCode, trackDescriptionCode, termSegWaypointIdentifier, waypointCountryCode, terminalWaypointDescriptionCode1Arpt, terminalWaypointDescriptionCode2, terminalWaypointDescriptionCode3, terminalWaypointDescriptionCode4, terminalSegmentTurnDirection, navaid1Identifier, navaid1Type, navaid1CountryCode, navaid1KeyCode, fix1Bearing, fix1Distance, navaid2Identifier, navaid2Type, navaid2CountryCode, navaid2KeyCode, fix2Bearing, fix2Distance, terminalMagneticCourse, distance, altitudeDescription, altitude1, altitude2, requiredNavPerformance, cycleDate, waypointGeodeticLatitude, waypointDegreesLatitude, waypointGeodeticLongitude, waypointDegreesLongitude, waypointMagneticVariation, navaid1GeodeticLatitude, navaid1DegreesLatitude, navaid1GeodeticLongitude, navaid1DegreesLongitude, navaid1MagneticVariation, navaid1DmeGeodeticLatitude, navaid1DmeDegreesLatitude, navaid1DmeGeodeticLongitude, navaid1DmeDegreesLongitude, navaid2GeodeticLatitude, navaid2DegreesLatitude, navaid2GeodeticLongitude, navaid2DegreesLongitude, navaid2MagneticVariation, navaid2DmeGeodeticLatitude, navaid2DmeDegreesLatitude, navaid2DmeGeodeticLongitude, navaid2DmeDegreesLongitude, speedLimit1, speedLimitAircraftType1, speedLimitAltitude1, speedLimit2, speedLimitAircraftType2, speedLimitAltitude2, verticalNavigationVnav, thresholdCrossingHeight, arcWaypointIdentifier, arcWaypointCountryCode, arcRadius);
+    return Objects.hash(airportIdentification, terminalProcedureType, terminalIdentifier, terminalSequenceNumber, terminalApproachType, transitionIdentifier, icaoCode, trackDescriptionCode, termSegWaypointIdentifier, waypointCountryCode, terminalWaypointDescriptionCode1, terminalWaypointDescriptionCode2, terminalWaypointDescriptionCode3, terminalWaypointDescriptionCode4, terminalSegmentTurnDirection, navaid1Identifier, navaid1Type, navaid1CountryCode, navaid1KeyCode, nav1Bearing, nav1Distance, navaid2Identifier, navaid2Type, navaid2CountryCode, navaid2KeyCode, nav2Bearing, nav2Distance, terminalMagneticCourse, distance, altitudeDescription, altitude1, altitude2, requiredNavPerformance, cycleDate, waypointGeodeticLatitude, waypointDegreesLatitude, waypointGeodeticLongitude, waypointDegreesLongitude, waypointMagneticVariation, navaid1GeodeticLatitude, navaid1DegreesLatitude, navaid1GeodeticLongitude, navaid1DegreesLongitude, navaid1MagneticVariation, navaid1DmeGeodeticLatitude, navaid1DmeDegreesLatitude, navaid1DmeGeodeticLongitude, navaid1DmeDegreesLongitude, navaid2GeodeticLatitude, navaid2DegreesLatitude, navaid2GeodeticLongitude, navaid2DegreesLongitude, navaid2MagneticVariation, navaid2DmeGeodeticLatitude, navaid2DmeDegreesLatitude, navaid2DmeGeodeticLongitude, navaid2DmeDegreesLongitude, speedLimit1, speedLimitAircraftType1, speedLimitAltitude1, speedLimit2, speedLimitAircraftType2, speedLimitAltitude2, verticalNavigationVnav, thresholdCrossingHeight, arcWaypointIdentifier, arcWaypointCountryCode, arcRadius);
+  }
+
+  @Override
+  public String toString() {
+    return "DafifTerminalSegment{" +
+        "airportIdentification='" + airportIdentification + '\'' +
+        ", terminalProcedureType=" + terminalProcedureType +
+        ", terminalIdentifier='" + terminalIdentifier + '\'' +
+        ", terminalSequenceNumber=" + terminalSequenceNumber +
+        ", terminalApproachType='" + terminalApproachType + '\'' +
+        ", transitionIdentifier='" + transitionIdentifier + '\'' +
+        ", icaoCode='" + icaoCode + '\'' +
+        ", trackDescriptionCode='" + trackDescriptionCode + '\'' +
+        ", termSegWaypointIdentifier='" + termSegWaypointIdentifier + '\'' +
+        ", waypointCountryCode='" + waypointCountryCode + '\'' +
+        ", terminalWaypointDescriptionCode1='" + terminalWaypointDescriptionCode1 + '\'' +
+        ", terminalWaypointDescriptionCode2='" + terminalWaypointDescriptionCode2 + '\'' +
+        ", terminalWaypointDescriptionCode3='" + terminalWaypointDescriptionCode3 + '\'' +
+        ", terminalWaypointDescriptionCode4='" + terminalWaypointDescriptionCode4 + '\'' +
+        ", terminalSegmentTurnDirection='" + terminalSegmentTurnDirection + '\'' +
+        ", navaid1Identifier='" + navaid1Identifier + '\'' +
+        ", navaid1Type='" + navaid1Type + '\'' +
+        ", navaid1CountryCode='" + navaid1CountryCode + '\'' +
+        ", navaid1KeyCode=" + navaid1KeyCode +
+        ", nav1Bearing=" + nav1Bearing +
+        ", nav1Distance=" + nav1Distance +
+        ", navaid2Identifier='" + navaid2Identifier + '\'' +
+        ", navaid2Type='" + navaid2Type + '\'' +
+        ", navaid2CountryCode='" + navaid2CountryCode + '\'' +
+        ", navaid2KeyCode=" + navaid2KeyCode +
+        ", nav2Bearing=" + nav2Bearing +
+        ", nav2Distance=" + nav2Distance +
+        ", terminalMagneticCourse='" + terminalMagneticCourse + '\'' +
+        ", distance=" + distance +
+        ", altitudeDescription='" + altitudeDescription + '\'' +
+        ", altitude1='" + altitude1 + '\'' +
+        ", altitude2='" + altitude2 + '\'' +
+        ", requiredNavPerformance=" + requiredNavPerformance +
+        ", cycleDate=" + cycleDate +
+        ", waypointGeodeticLatitude='" + waypointGeodeticLatitude + '\'' +
+        ", waypointDegreesLatitude=" + waypointDegreesLatitude +
+        ", waypointGeodeticLongitude='" + waypointGeodeticLongitude + '\'' +
+        ", waypointDegreesLongitude=" + waypointDegreesLongitude +
+        ", waypointMagneticVariation=" + waypointMagneticVariation +
+        ", navaid1GeodeticLatitude='" + navaid1GeodeticLatitude + '\'' +
+        ", navaid1DegreesLatitude=" + navaid1DegreesLatitude +
+        ", navaid1GeodeticLongitude='" + navaid1GeodeticLongitude + '\'' +
+        ", navaid1DegreesLongitude=" + navaid1DegreesLongitude +
+        ", navaid1MagneticVariation=" + navaid1MagneticVariation +
+        ", navaid1DmeGeodeticLatitude='" + navaid1DmeGeodeticLatitude + '\'' +
+        ", navaid1DmeDegreesLatitude=" + navaid1DmeDegreesLatitude +
+        ", navaid1DmeGeodeticLongitude='" + navaid1DmeGeodeticLongitude + '\'' +
+        ", navaid1DmeDegreesLongitude=" + navaid1DmeDegreesLongitude +
+        ", navaid2GeodeticLatitude='" + navaid2GeodeticLatitude + '\'' +
+        ", navaid2DegreesLatitude=" + navaid2DegreesLatitude +
+        ", navaid2GeodeticLongitude='" + navaid2GeodeticLongitude + '\'' +
+        ", navaid2DegreesLongitude=" + navaid2DegreesLongitude +
+        ", navaid2MagneticVariation=" + navaid2MagneticVariation +
+        ", navaid2DmeGeodeticLatitude='" + navaid2DmeGeodeticLatitude + '\'' +
+        ", navaid2DmeDegreesLatitude=" + navaid2DmeDegreesLatitude +
+        ", navaid2DmeGeodeticLongitude='" + navaid2DmeGeodeticLongitude + '\'' +
+        ", navaid2DmeDegreesLongitude=" + navaid2DmeDegreesLongitude +
+        ", speedLimit1=" + speedLimit1 +
+        ", speedLimitAircraftType1='" + speedLimitAircraftType1 + '\'' +
+        ", speedLimitAltitude1='" + speedLimitAltitude1 + '\'' +
+        ", speedLimit2=" + speedLimit2 +
+        ", speedLimitAircraftType2='" + speedLimitAircraftType2 + '\'' +
+        ", speedLimitAltitude2='" + speedLimitAltitude2 + '\'' +
+        ", verticalNavigationVnav=" + verticalNavigationVnav +
+        ", thresholdCrossingHeight=" + thresholdCrossingHeight +
+        ", arcWaypointIdentifier='" + arcWaypointIdentifier + '\'' +
+        ", arcWaypointCountryCode='" + arcWaypointCountryCode + '\'' +
+        ", arcRadius=" + arcRadius +
+        '}';
   }
 
   public String airportIdentification() {
@@ -429,8 +507,8 @@ public final class DafifTerminalSegment {
     return terminalApproachType;
   }
 
-  public String transitionIdentifier() {
-    return transitionIdentifier;
+  public Optional<String> transitionIdentifier() {
+    return Optional.ofNullable(transitionIdentifier);
   }
 
   public String icaoCode() {
@@ -453,8 +531,8 @@ public final class DafifTerminalSegment {
     return Optional.ofNullable(waypointCountryCode);
   }
 
-  public Optional<String> terminalWaypointDescriptionCode1Arpt() {
-    return Optional.ofNullable(terminalWaypointDescriptionCode1Arpt);
+  public Optional<String> terminalWaypointDescriptionCode1() {
+    return Optional.ofNullable(terminalWaypointDescriptionCode1);
   }
 
   public Optional<String> terminalWaypointDescriptionCode2() {
@@ -489,12 +567,12 @@ public final class DafifTerminalSegment {
     return Optional.ofNullable(navaid1KeyCode);
   }
 
-  public Optional<Double> fix1Bearing() {
-    return Optional.ofNullable(fix1Bearing);
+  public Optional<Double> nav1Bearing() {
+    return Optional.ofNullable(nav1Bearing);
   }
 
-  public Optional<Double> fix1Distance() {
-    return Optional.ofNullable(fix1Distance);
+  public Optional<Double> nav1Distance() {
+    return Optional.ofNullable(nav1Distance);
   }
 
   public Optional<String> navaid2Identifier() {
@@ -513,12 +591,12 @@ public final class DafifTerminalSegment {
     return Optional.ofNullable(navaid2KeyCode);
   }
 
-  public Optional<Double> fix2Bearing() {
-    return Optional.ofNullable(fix2Bearing);
+  public Optional<Double> nav2Bearing() {
+    return Optional.ofNullable(nav2Bearing);
   }
 
-  public Optional<Double> fix2Distance() {
-    return Optional.ofNullable(fix2Distance);
+  public Optional<Double> nav2Distance() {
+    return Optional.ofNullable(nav2Distance);
   }
 
   public Optional<String> terminalMagneticCourse() {
@@ -681,6 +759,11 @@ public final class DafifTerminalSegment {
     return Optional.ofNullable(arcRadius);
   }
 
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.TERMINAL_SEGMENT;
+  }
+
   public static class Builder {
     private String airportIdentification;
     private Integer terminalProcedureType;
@@ -692,7 +775,7 @@ public final class DafifTerminalSegment {
     private String trackDescriptionCode;
     private String termSegWaypointIdentifier;
     private String waypointCountryCode;
-    private String terminalWaypointDescriptionCode1Arpt;
+    private String terminalWaypointDescriptionCode1;
     private String terminalWaypointDescriptionCode2;
     private String terminalWaypointDescriptionCode3;
     private String terminalWaypointDescriptionCode4;
@@ -801,8 +884,8 @@ public final class DafifTerminalSegment {
       return this;
     }
 
-    public Builder terminalWaypointDescriptionCode1Arpt(String terminalWaypointDescriptionCode1Arpt) {
-      this.terminalWaypointDescriptionCode1Arpt = terminalWaypointDescriptionCode1Arpt;
+    public Builder terminalWaypointDescriptionCode1(String terminalWaypointDescriptionCode1) {
+      this.terminalWaypointDescriptionCode1 = terminalWaypointDescriptionCode1;
       return this;
     }
 

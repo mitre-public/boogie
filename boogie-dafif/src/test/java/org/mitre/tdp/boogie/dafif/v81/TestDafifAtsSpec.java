@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
-import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficService;
+import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifAtsConverter;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifAtsSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifAtsValidator;
@@ -78,7 +78,7 @@ public class TestDafifAtsSpec {
 
     assertTrue(validator.test(record));
 
-    DafifAirTrafficService airTrafficService = converter.apply(record).orElseThrow(AssertionError::new);
+    DafifAirTrafficSegment airTrafficService = converter.apply(record).orElseThrow(AssertionError::new);
 
     assertAll(
         () -> assertEquals("1AW1", airTrafficService.atsIdentifier()),

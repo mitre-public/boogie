@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie;
 
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
 
@@ -163,6 +165,10 @@ public enum PathTerminator {
    * HM = Manual Termination
    */
   HM;
+
+  public static final Set<String> VALID = Arrays.stream(PathTerminator.values())
+      .map(PathTerminator::name)
+      .collect(Collectors.toSet());
 
   public boolean isFixTerminating() {
     return FIX_TERMINATING.contains(this);

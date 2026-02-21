@@ -35,7 +35,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.AtsDesignator;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class DafifAirTrafficService {
+public final class DafifAirTrafficSegment implements DafifModel {
   /**
    * {@link AtsIdentifier}
    */
@@ -213,7 +213,7 @@ public final class DafifAirTrafficService {
    */
   private final String atsDesignator;
 
-  private DafifAirTrafficService(Builder builder) {
+  private DafifAirTrafficSegment(Builder builder) {
     this.atsIdentifier = builder.atsIdentifier;
     this.atsRouteSequenceNumber = builder.atsRouteSequenceNumber;
     this.atsRouteDirection = builder.atsRouteDirection;
@@ -266,7 +266,7 @@ public final class DafifAirTrafficService {
       return true;
     if (o == null || getClass() != o.getClass())
       return false;
-    DafifAirTrafficService that = (DafifAirTrafficService) o;
+    DafifAirTrafficSegment that = (DafifAirTrafficSegment) o;
     return Objects.equals(atsIdentifier, that.atsIdentifier) && Objects.equals(atsRouteSequenceNumber, that.atsRouteSequenceNumber) && Objects.equals(atsRouteDirection, that.atsRouteDirection) && Objects.equals(atsRouteType, that.atsRouteType) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(biDirectional, that.biDirectional) && Objects.equals(frequencyClass, that.frequencyClass) && Objects.equals(level, that.level) && Objects.equals(atsRouteStatus, that.atsRouteStatus) && Objects.equals(waypoint1IcaoCode, that.waypoint1IcaoCode) && Objects.equals(waypoint1NavaidType, that.waypoint1NavaidType) && Objects.equals(waypoint1WaypointIdentifierWptIdent, that.waypoint1WaypointIdentifierWptIdent) && Objects.equals(waypoint1CountryCode, that.waypoint1CountryCode) && Objects.equals(waypoint1AtsWaypointDescriptionCode1, that.waypoint1AtsWaypointDescriptionCode1) && Objects.equals(waypoint1AtsWaypointDescriptionCode2, that.waypoint1AtsWaypointDescriptionCode2) && Objects.equals(waypoint1AtsWaypointDescriptionCode3, that.waypoint1AtsWaypointDescriptionCode3) && Objects.equals(waypoint1AtsWaypointDescriptionCode4, that.waypoint1AtsWaypointDescriptionCode4) && Objects.equals(waypoint1GeodeticLatitude, that.waypoint1GeodeticLatitude) && Objects.equals(waypoint1DegreesLatitude, that.waypoint1DegreesLatitude) && Objects.equals(waypoint1GeodeticLongitude, that.waypoint1GeodeticLongitude) && Objects.equals(waypoint1DegreesLongitude, that.waypoint1DegreesLongitude) && Objects.equals(waypoint2IcaoCode, that.waypoint2IcaoCode) && Objects.equals(waypoint2NavaidType, that.waypoint2NavaidType) && Objects.equals(waypoint2WaypointIdentifierWptIdent, that.waypoint2WaypointIdentifierWptIdent) && Objects.equals(waypoint2CountryCode, that.waypoint2CountryCode) && Objects.equals(waypoint2AtsWaypointDescriptionCode1, that.waypoint2AtsWaypointDescriptionCode1) && Objects.equals(waypoint2AtsWaypointDescriptionCode2, that.waypoint2AtsWaypointDescriptionCode2) && Objects.equals(waypoint2AtsWaypointDescriptionCode3, that.waypoint2AtsWaypointDescriptionCode3) && Objects.equals(waypoint2AtsWaypointDescriptionCode4, that.waypoint2AtsWaypointDescriptionCode4) && Objects.equals(waypoint2GeodeticLatitude, that.waypoint2GeodeticLatitude) && Objects.equals(waypoint2DegreesLatitude, that.waypoint2DegreesLatitude) && Objects.equals(waypoint2GeodeticLongitude, that.waypoint2GeodeticLongitude) && Objects.equals(waypoint2DegreesLongitude, that.waypoint2DegreesLongitude) && Objects.equals(atsRouteOutboundMagneticCourse, that.atsRouteOutboundMagneticCourse) && Objects.equals(atsRouteDistance, that.atsRouteDistance) && Objects.equals(atsRouteInboundMagneticCourse, that.atsRouteInboundMagneticCourse) && Objects.equals(minimumAltitude, that.minimumAltitude) && Objects.equals(upperLimit, that.upperLimit) && Objects.equals(lowerLimit, that.lowerLimit) && Objects.equals(maxAuthorizedAltitude, that.maxAuthorizedAltitude) && Objects.equals(cruiseLevelIndicator, that.cruiseLevelIndicator) && Objects.equals(requiredNavPerformance, that.requiredNavPerformance) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(atsDesignator, that.atsDesignator);
   }
 
@@ -449,6 +449,11 @@ public final class DafifAirTrafficService {
 
   public Optional<String> atsDesignator() {
     return Optional.ofNullable(atsDesignator);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.ATS_SERVICE;
   }
 
   public static final class Builder {
@@ -717,8 +722,8 @@ public final class DafifAirTrafficService {
       return this;
     }
 
-    public DafifAirTrafficService build() {
-      return new DafifAirTrafficService(this);
+    public DafifAirTrafficSegment build() {
+      return new DafifAirTrafficSegment(this);
     }
   }
 }

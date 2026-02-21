@@ -37,7 +37,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.WAC;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class DafifNavaid {
+public final class DafifNavaid implements DafifModel {
 
   /**
    * {@link NavaidIdentifier}
@@ -208,6 +208,10 @@ public final class DafifNavaid {
     this.coordinatePrecision = builder.coordinatePrecision;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -353,6 +357,11 @@ public final class DafifNavaid {
 
   public Optional<Integer> coordinatePrecision() {
     return Optional.ofNullable(coordinatePrecision);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.NAVAID;
   }
 
   public static final class Builder {

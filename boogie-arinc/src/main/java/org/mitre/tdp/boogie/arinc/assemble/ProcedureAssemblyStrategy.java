@@ -117,7 +117,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
       String identifier = TransitionType.MISSED.equals(transitionType)
           ? "MISSED"
-          : StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null));
+          : org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null));
 
       Set<CategoryOrType> categoryOrType = representative.categoryOrType().map(CategoryOrTypeClassifier.INSTANCE).orElse(DEFAULT);
 

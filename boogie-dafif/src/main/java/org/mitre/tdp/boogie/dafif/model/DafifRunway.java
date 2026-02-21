@@ -33,7 +33,7 @@ import org.mitre.tdp.boogie.dafif.v81.field.TakeoffRunwayAvailable;
 import org.mitre.tdp.boogie.dafif.v81.field.UsableRunway;
 import org.mitre.tdp.boogie.dafif.v81.field.Width;
 
-public final class DafifRunway {
+public final class DafifRunway implements DafifModel {
 
   /**
    * {@link AirportIdentification}
@@ -290,6 +290,10 @@ public final class DafifRunway {
     this.coordinatePrecision = builder.coordinatePrecision;
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   public String airportIdentification() {
     return airportIdentification;
   }
@@ -471,6 +475,11 @@ public final class DafifRunway {
   @Override
   public int hashCode() {
     return Objects.hash(airportIdentification, highEndIdentifier, lowEndIdentifier, highEndMagneticHeading, lowEndMagneticHeading, length, width, surface, pavementClassificationNumber, highEndGeodeticLatitude, highEndDegreesLatitude, highEndGeodeticLongitude, highEndDegreesLongitude, highEndElevation, highEndSlope, highEndTDZE, highEndDisplacedThreshold, highEndDisplacedThresholdElevation, highEndLightingSystem, lowEndGeodeticLatitude, lowEndDegreesLatitude, lowEndGeodeticLongitude, lowEndDegreesLongitude, lowEndElevation, lowEndSlope, lowEndTDZE, lowEndDisplacedThreshold, lowEndDisplacedThresholdElevation, lowEndLightingSystem, trueHeadingHighEnd, trueHeadingLowEnd, usableRunway, highEndLandingDistance, highEndRunwayDistance, highEndTakeOffDistance, highEndAccelerateStopDistance, lowEndLandingDistance, lowEndRunwayDistance, lowEndTakeOffDistance, lowEndAccelerateStopDistance, cycleDate, coordinatePrecision);
+  }
+
+  @Override
+  public DafifFileType getFileType() {
+    return DafifFileType.RUNWAY;
   }
 
   public static final class Builder {

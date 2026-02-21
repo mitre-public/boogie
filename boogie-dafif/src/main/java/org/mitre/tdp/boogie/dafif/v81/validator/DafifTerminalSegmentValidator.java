@@ -33,7 +33,6 @@ public class DafifTerminalSegmentValidator implements Predicate<DafifRecord> {
         && containsParsedField(dafifRecord, "terminalIdentifier", missingFieldConsumer)
         && containsParsedField(dafifRecord, "terminalSequenceNumber", missingFieldConsumer)
         && containsParsedField(dafifRecord, "terminalApproachType", missingFieldConsumer)
-        && containsParsedField(dafifRecord, "transitionIdentifier", missingFieldConsumer)
         && containsParsedField(dafifRecord, "icaoCode", missingFieldConsumer)
         && containsParsedField(dafifRecord, "trackDescriptionCode", missingFieldConsumer)
         && containsParsedField(dafifRecord, "cycleDate", missingFieldConsumer);
