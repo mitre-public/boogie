@@ -61,6 +61,7 @@ public final class VhfNavaidValidator implements Predicate<ArincRecord> {
 
   boolean isCorrectSectionSubSection(ArincRecord arincRecord) {
     Optional<SectionCode> sectionCode = arincRecord.optionalField("sectionCode");
-    return sectionCode.filter(SectionCode.D::equals).isPresent();
+    Optional<String> subSectionCode = arincRecord.optionalField("subSectionCode");
+    return sectionCode.filter(SectionCode.D::equals).isPresent() && subSectionCode.isEmpty();
   }
 }

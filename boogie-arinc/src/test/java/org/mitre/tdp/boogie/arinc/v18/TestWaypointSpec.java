@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
@@ -110,5 +112,22 @@ class TestWaypointSpec {
   @Test
   void testValidatorPasses_PIRAT() {
     assertTrue(new WaypointValidator().test(PARSER.parse(PIRAT).orElseThrow(AssertionError::new)));
+  }
+
+  static String heliportFix = "SUSAH 1OH4K5CHUROB K50    WDZ   N41284710W081515852                       W0082     NAR        P  HUROB                    190142602";
+  @Test
+  void testHeliportTerminal() {
+    assertAll(
+        () -> assertTrue(new WaypointSpec().matchesRecord(heliportFix)),
+        () -> assertTrue(new WaypointValidator().test(PARSER.parse(heliportFix).orElseThrow(AssertionError::new)))
+    );
+  }
+  @Test
+  void testParseHeliportTerminal() {
+    ArincRecord arincRecord = PARSER.parse(heliportFix).orElseThrow(AssertionError::new);
+    assertAll(
+        () -> assertEquals(SectionCode.H, arincRecord.requiredField("sectionCode")),
+        () -> assertEquals(Optional.of("C"), arincRecord.optionalField("terminalSubSectionCode"))
+    );
   }
 }
