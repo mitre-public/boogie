@@ -27,13 +27,16 @@ final class ArincAirwayValidator implements Predicate<Airway> {
 
   @Override
   public boolean test(Airway airway) {
-    boolean valid = true;
-    valid &= nonNullField(airway, "identifier", airway.getIdentifier(), missingFieldConsumer);
-    valid &= nonNullField(airway, "airwayRouteType", airway.getAirwayRouteType(), missingFieldConsumer);
+    return nonNullField(airway, "identifier", airway.getIdentifier(), missingFieldConsumer)
+        && nonNullField(airway, "airwayRouteType", airway.getAirwayRouteType(), missingFieldConsumer)
+        && legsThere(airway);
+  }
+
+  private boolean legsThere(Airway airway) {
     if (airway.getAirwayLeg().isEmpty()) {
       missingFieldConsumer.accept(airway, "airwayLeg");
-      valid = false;
+      return false;
     }
-    return valid;
+    return true;
   }
 }

@@ -16,6 +16,7 @@ import org.mitre.boogie.xml.model.ArincVhfNavaid;
 import org.mitre.boogie.xml.model.ArincWaypoint;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirwayConverter;
+import org.mitre.boogie.xml.v23_4.convert.ArincHoldingPatternConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincNdbNavaidConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincVhfNavaidConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincWaypointConverter;
@@ -31,6 +32,7 @@ public final class Unmarshaller implements Function<InputStream, Optional<ArincR
   private static final ArincWaypointConverter WAYPOINT_CONVERTER = ArincWaypointConverter.INSTANCE;
   private static final ArincAirportConverter AIRPORT_CONVERTER = ArincAirportConverter.INSTANCE;
   private static final ArincAirwayConverter AIRWAY_CONVERTER = ArincAirwayConverter.INSTANCE;
+  private static final ArincHoldingPatternConverter HOLDING_PATTERN_CONVERTER = ArincHoldingPatternConverter.INSTANCE;
   private static final ArincNdbNavaidConverter NDB_CONVERTER = ArincNdbNavaidConverter.INSTANCE;
   private static final ArincVhfNavaidConverter VHF_CONVERTER = ArincVhfNavaidConverter.INSTANCE;
 
@@ -68,7 +70,8 @@ public final class Unmarshaller implements Function<InputStream, Optional<ArincR
           .flatMap(Optional::stream)
           .collect(Collectors.toSet());
       Set<ArincHoldingPattern> holdingPatterns = pubs.getHoldingPatterns().getHoldingPattern().stream()
-          .map(hp -> new ArincHoldingPattern()) //todo replace with converter
+          .map(HOLDING_PATTERN_CONVERTER)
+          .flatMap(Optional::stream)
           .collect(Collectors.toSet());
       ArincRecords records = ArincRecords.standard()
           .waypoints(enrts)

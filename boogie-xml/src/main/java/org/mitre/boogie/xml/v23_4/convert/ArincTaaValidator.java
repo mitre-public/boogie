@@ -30,6 +30,14 @@ final class ArincTaaValidator implements Predicate<Taa> {
   public boolean test(Taa taa) {
     return validateRecordFields(taa, missingFieldConsumer)
         && nonNullField(taa, "taaFixPositionIndicator", taa.getTaaFixPositionIndicator(), missingFieldConsumer)
-        && !taa.getSectorTaaDetails().isEmpty();
+        && sectorDetails(taa);
+  }
+
+  private boolean sectorDetails(Taa taa) {
+    if (taa.getSectorTaaDetails().isEmpty()) {
+      missingFieldConsumer.accept(taa, "sectorTaaDetails");
+      return false;
+    }
+    return true;
   }
 }

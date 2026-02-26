@@ -30,6 +30,14 @@ final class ArincMsaValidator implements Predicate<Msa> {
   public boolean test(Msa msa) {
     return validateRecordFields(msa, missingFieldConsumer)
         && nonNull(msa.getSector())
-        && !msa.getSector().isEmpty();
+        && sectors(msa);
+  }
+
+  private boolean sectors(Msa msa) {
+    if (msa.getSector().isEmpty()) {
+      missingFieldConsumer.accept(msa, "sector");
+      return false;
+    }
+    return true;
   }
 }
