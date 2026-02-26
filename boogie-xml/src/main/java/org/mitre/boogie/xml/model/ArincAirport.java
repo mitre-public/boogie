@@ -59,9 +59,8 @@ public final class ArincAirport {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincAirport that = (ArincAirport) o;
     return Objects.equals(portInfo, that.portInfo) && Objects.equals(longestRunway, that.longestRunway) && Objects.equals(longestRunwaySurfaceCode, that.longestRunwaySurfaceCode) && Objects.equals(runways, that.runways) && Objects.equals(airportGates, that.airportGates);
   }

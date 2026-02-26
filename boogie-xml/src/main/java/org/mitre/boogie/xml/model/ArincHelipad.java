@@ -234,9 +234,8 @@ public final class ArincHelipad {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincHelipad that = (ArincHelipad) o;
     return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(isWithoutLocation, that.isWithoutLocation) && Objects.equals(isDerivedLocation, that.isDerivedLocation) && Objects.equals(elevation, that.elevation) && Objects.equals(elevationType, that.elevationType) && Objects.equals(tlofPadLengthLongSide, that.tlofPadLengthLongSide) && Objects.equals(tlofPadLengthShortSide, that.tlofPadLengthShortSide) && Objects.equals(tlofPadDiameter, that.tlofPadDiameter) && Objects.equals(fatoPadLengthLongSide, that.fatoPadLengthLongSide) && Objects.equals(fatoPadLengthShortSide, that.fatoPadLengthShortSide) && Objects.equals(fatoPadDiameter, that.fatoPadDiameter) && Objects.equals(safetyPadLengthLongSide, that.safetyPadLengthLongSide) && Objects.equals(safetyPadLengthShortSide, that.safetyPadLengthShortSide) && Objects.equals(safetyPadDiameter, that.safetyPadDiameter) && Objects.equals(helipadShape, that.helipadShape) && Objects.equals(surfaceCode, that.surfaceCode) && Objects.equals(surfaceType, that.surfaceType) && Objects.equals(helicopterPerformanceReq, that.helicopterPerformanceReq) && Objects.equals(isElevated, that.isElevated) && Objects.equals(helipadMaximumRotorDiameter, that.helipadMaximumRotorDiameter) && Objects.equals(helipadOrientationBearing, that.helipadOrientationBearing) && Objects.equals(helipadOrientationIsTrueBearing, that.helipadOrientationIsTrueBearing) && Objects.equals(helipadIdentifierOrientationBearing, that.helipadIdentifierOrientationBearing) && Objects.equals(helipadIdentifierOrientationIsTrueBearing, that.helipadIdentifierOrientationIsTrueBearing) && Objects.equals(preferredApproachBearings, that.preferredApproachBearings);
   }

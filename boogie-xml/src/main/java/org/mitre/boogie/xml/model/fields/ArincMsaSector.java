@@ -1,4 +1,4 @@
-package org.mitre.boogie.xml.model;
+package org.mitre.boogie.xml.model.fields;
 
 public record ArincMsaSector(
     long sectorAltitude,

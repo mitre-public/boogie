@@ -171,24 +171,42 @@ public final class ArincGnssLandingSystem {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincGnssLandingSystem that = (ArincGnssLandingSystem) o;
-    return glsChannel == that.glsChannel && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(category, that.category) && Objects.equals(runwayNumber, that.runwayNumber) && Objects.equals(serviceVolumeRadius, that.serviceVolumeRadius) && Objects.equals(stationType, that.stationType) && Objects.equals(frequencyValue, that.frequencyValue);
+    return glsChannel == that.glsChannel && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(isVFRCheckpoint, that.isVFRCheckpoint) && Objects.equals(runwayRef, that.runwayRef) && Objects.equals(approachAngle, that.approachAngle) && Objects.equals(approachCourseBearingValue, that.approachCourseBearingValue) && Objects.equals(approachCourseBearingIsTrueBearing, that.approachCourseBearingIsTrueBearing) && Objects.equals(category, that.category) && Objects.equals(runwayNumber, that.runwayNumber) && Objects.equals(runwayLeftRightCenterType, that.runwayLeftRightCenterType) && Objects.equals(runwaySuffix, that.runwaySuffix) && Objects.equals(serviceVolumeRadius, that.serviceVolumeRadius) && Objects.equals(stationElevationWgs84, that.stationElevationWgs84) && Objects.equals(stationType, that.stationType) && Objects.equals(tdmaSlots, that.tdmaSlots) && Objects.equals(thresholdCrossingHeight, that.thresholdCrossingHeight) && Objects.equals(stationDeclination, that.stationDeclination) && Objects.equals(frequencyValue, that.frequencyValue) && Objects.equals(freqUnitOfMeasure, that.freqUnitOfMeasure);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, category, runwayNumber, glsChannel, frequencyValue);
+    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, isVFRCheckpoint, runwayRef, approachAngle, approachCourseBearingValue, approachCourseBearingIsTrueBearing, category, runwayNumber, runwayLeftRightCenterType, runwaySuffix, serviceVolumeRadius, stationElevationWgs84, stationType, tdmaSlots, glsChannel, thresholdCrossingHeight, stationDeclination, frequencyValue, freqUnitOfMeasure);
   }
 
   @Override
   public String toString() {
     return "ArincGnssLandingSystem{" +
-        "pointInfo=" + pointInfo +
-        ", glsChannel=" + glsChannel +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", pointInfo=" + pointInfo +
+        ", elevation=" + elevation +
+        ", isVFRCheckpoint=" + isVFRCheckpoint +
+        ", runwayRef='" + runwayRef + '\'' +
+        ", approachAngle=" + approachAngle +
+        ", approachCourseBearingValue=" + approachCourseBearingValue +
+        ", approachCourseBearingIsTrueBearing=" + approachCourseBearingIsTrueBearing +
         ", category='" + category + '\'' +
+        ", runwayNumber=" + runwayNumber +
+        ", runwayLeftRightCenterType='" + runwayLeftRightCenterType + '\'' +
+        ", runwaySuffix='" + runwaySuffix + '\'' +
+        ", serviceVolumeRadius=" + serviceVolumeRadius +
+        ", stationElevationWgs84=" + stationElevationWgs84 +
+        ", stationType='" + stationType + '\'' +
+        ", tdmaSlots='" + tdmaSlots + '\'' +
+        ", glsChannel=" + glsChannel +
+        ", thresholdCrossingHeight=" + thresholdCrossingHeight +
+        ", stationDeclination=" + stationDeclination +
+        ", frequencyValue=" + frequencyValue +
+        ", freqUnitOfMeasure='" + freqUnitOfMeasure + '\'' +
         '}';
   }
 

@@ -158,25 +158,38 @@ public final class ArincNdbNavaid {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincNdbNavaid that = (ArincNdbNavaid) o;
-    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(isVFRCheckpoint, that.isVFRCheckpoint) && Objects.equals(frequencyValue, that.frequencyValue) && Objects.equals(freqUnitOfMeasure, that.freqUnitOfMeasure) && Objects.equals(typeOfEmission, that.typeOfEmission) && Objects.equals(repetitionRate, that.repetitionRate) && Objects.equals(navaidNdbEmissionType, that.navaidNdbEmissionType) && Objects.equals(ndbVoice, that.ndbVoice) && Objects.equals(isBfoRequired, that.isBfoRequired) && Objects.equals(ndbNavaidCoverage, that.ndbNavaidCoverage) && Objects.equals(ndbNavaidIfMarker, that.ndbNavaidIfMarker) && Objects.equals(ndbNavaidType, that.ndbNavaidType) && Objects.equals(ndbNavaidWeatherInfo, that.ndbNavaidWeatherInfo) && Objects.equals(isNoVoice, that.isNoVoice);
+    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(dmeTacanRef, that.dmeTacanRef) && Objects.equals(elevation, that.elevation) && Objects.equals(isVFRCheckpoint, that.isVFRCheckpoint) && Objects.equals(frequencyValue, that.frequencyValue) && Objects.equals(freqUnitOfMeasure, that.freqUnitOfMeasure) && Objects.equals(typeOfEmission, that.typeOfEmission) && Objects.equals(repetitionRate, that.repetitionRate) && Objects.equals(navaidNdbEmissionType, that.navaidNdbEmissionType) && Objects.equals(ndbVoice, that.ndbVoice) && Objects.equals(isBfoRequired, that.isBfoRequired) && Objects.equals(ndbNavaidCoverage, that.ndbNavaidCoverage) && Objects.equals(ndbNavaidIfMarker, that.ndbNavaidIfMarker) && Objects.equals(ndbNavaidType, that.ndbNavaidType) && Objects.equals(ndbNavaidWeatherInfo, that.ndbNavaidWeatherInfo) && Objects.equals(isNoVoice, that.isNoVoice);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, isVFRCheckpoint, frequencyValue, freqUnitOfMeasure, typeOfEmission, repetitionRate, navaidNdbEmissionType, ndbVoice, isBfoRequired, ndbNavaidCoverage, ndbNavaidIfMarker, ndbNavaidType, ndbNavaidWeatherInfo, isNoVoice);
+    return Objects.hash(baseInfo, recordInfo, pointInfo, dmeTacanRef, elevation, isVFRCheckpoint, frequencyValue, freqUnitOfMeasure, typeOfEmission, repetitionRate, navaidNdbEmissionType, ndbVoice, isBfoRequired, ndbNavaidCoverage, ndbNavaidIfMarker, ndbNavaidType, ndbNavaidWeatherInfo, isNoVoice);
   }
 
   @Override
   public String toString() {
     return "ArincNdbNavaid{" +
-        "pointInfo=" + pointInfo +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", pointInfo=" + pointInfo +
+        ", dmeTacanRef='" + dmeTacanRef + '\'' +
         ", elevation=" + elevation +
+        ", isVFRCheckpoint=" + isVFRCheckpoint +
         ", frequencyValue=" + frequencyValue +
         ", freqUnitOfMeasure='" + freqUnitOfMeasure + '\'' +
+        ", typeOfEmission=" + typeOfEmission +
+        ", repetitionRate=" + repetitionRate +
+        ", navaidNdbEmissionType='" + navaidNdbEmissionType + '\'' +
+        ", ndbVoice='" + ndbVoice + '\'' +
+        ", isBfoRequired=" + isBfoRequired +
+        ", ndbNavaidCoverage='" + ndbNavaidCoverage + '\'' +
+        ", ndbNavaidIfMarker='" + ndbNavaidIfMarker + '\'' +
+        ", ndbNavaidType='" + ndbNavaidType + '\'' +
+        ", ndbNavaidWeatherInfo='" + ndbNavaidWeatherInfo + '\'' +
+        ", isNoVoice=" + isNoVoice +
         '}';
   }
 

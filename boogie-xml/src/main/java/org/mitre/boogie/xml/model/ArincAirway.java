@@ -77,24 +77,30 @@ public final class ArincAirway {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincAirway that = (ArincAirway) o;
-    return Objects.equals(identifier, that.identifier) && Objects.equals(airwayRouteType, that.airwayRouteType) && Objects.equals(legs, that.legs);
+    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(identifier, that.identifier) && Objects.equals(recordType, that.recordType) && Objects.equals(customerCode, that.customerCode) && Objects.equals(airwayRouteType, that.airwayRouteType) && Objects.equals(qualifier1, that.qualifier1) && Objects.equals(qualifier2, that.qualifier2) && Objects.equals(rnavPbnNavSpec, that.rnavPbnNavSpec) && Objects.equals(rnpPbnNavSpec, that.rnpPbnNavSpec) && Objects.equals(legs, that.legs);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(identifier, airwayRouteType, legs);
+    return Objects.hash(baseInfo, identifier, recordType, customerCode, airwayRouteType, qualifier1, qualifier2, rnavPbnNavSpec, rnpPbnNavSpec, legs);
   }
 
   @Override
   public String toString() {
     return "ArincAirway{" +
-        "identifier='" + identifier + '\'' +
+        "baseInfo=" + baseInfo +
+        ", identifier='" + identifier + '\'' +
+        ", recordType='" + recordType + '\'' +
+        ", customerCode='" + customerCode + '\'' +
         ", airwayRouteType='" + airwayRouteType + '\'' +
-        ", legs=" + (legs == null ? 0 : legs.size()) +
+        ", qualifier1='" + qualifier1 + '\'' +
+        ", qualifier2='" + qualifier2 + '\'' +
+        ", rnavPbnNavSpec='" + rnavPbnNavSpec + '\'' +
+        ", rnpPbnNavSpec='" + rnpPbnNavSpec + '\'' +
+        ", legs=" + legs +
         '}';
   }
 

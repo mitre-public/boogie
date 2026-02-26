@@ -231,25 +231,49 @@ public final class ArincVhfNavaid {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincVhfNavaid that = (ArincVhfNavaid) o;
-    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(isVFRCheckpoint, that.isVFRCheckpoint) && Objects.equals(frequencyValue, that.frequencyValue) && Objects.equals(freqUnitOfMeasure, that.freqUnitOfMeasure) && Objects.equals(stationDeclination, that.stationDeclination) && Objects.equals(figureOfMerit, that.figureOfMerit) && Objects.equals(frequencyProtection, that.frequencyProtection) && Objects.equals(navaidSynchronization, that.navaidSynchronization) && Objects.equals(vorVoice, that.vorVoice) && Objects.equals(vorRangePower, that.vorRangePower) && Objects.equals(vhfNavaidCoverage, that.vhfNavaidCoverage) && Objects.equals(vhfNavaidWeatherInfo, that.vhfNavaidWeatherInfo) && Objects.equals(isNotCollocated, that.isNotCollocated) && Objects.equals(isBiased, that.isBiased) && Objects.equals(isNoVoice, that.isNoVoice);
+    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(portRef, that.portRef) && Objects.equals(dmeTacanRef, that.dmeTacanRef) && Objects.equals(navaidSubType, that.navaidSubType) && Objects.equals(elevation, that.elevation) && Objects.equals(isVFRCheckpoint, that.isVFRCheckpoint) && Objects.equals(frequencyValue, that.frequencyValue) && Objects.equals(freqUnitOfMeasure, that.freqUnitOfMeasure) && Objects.equals(stationDeclination, that.stationDeclination) && Objects.equals(figureOfMerit, that.figureOfMerit) && Objects.equals(frequencyProtection, that.frequencyProtection) && Objects.equals(navaidSynchronization, that.navaidSynchronization) && Objects.equals(vorVoice, that.vorVoice) && Objects.equals(vorRangePower, that.vorRangePower) && Objects.equals(vhfNavaidCoverage, that.vhfNavaidCoverage) && Objects.equals(vhfNavaidWeatherInfo, that.vhfNavaidWeatherInfo) && Objects.equals(isNotCollocated, that.isNotCollocated) && Objects.equals(isBiased, that.isBiased) && Objects.equals(isNoVoice, that.isNoVoice) && Objects.equals(ilsDmeBias, that.ilsDmeBias) && Objects.equals(isIlsComponent, that.isIlsComponent) && Objects.equals(ilsDmeLocation, that.ilsDmeLocation) && Objects.equals(dmeExpandedServiceVolume, that.dmeExpandedServiceVolume) && Objects.equals(dmeOperationalServiceVolume, that.dmeOperationalServiceVolume) && Objects.equals(isRouteInappropriateDme, that.isRouteInappropriateDme) && Objects.equals(isPaired, that.isPaired) && Objects.equals(isMlsP, that.isMlsP);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, isVFRCheckpoint, frequencyValue, freqUnitOfMeasure, stationDeclination, figureOfMerit, frequencyProtection, navaidSynchronization, vorVoice, vorRangePower, vhfNavaidCoverage, vhfNavaidWeatherInfo, isNotCollocated, isBiased, isNoVoice);
+    return Objects.hash(baseInfo, recordInfo, pointInfo, portRef, dmeTacanRef, navaidSubType, elevation, isVFRCheckpoint, frequencyValue, freqUnitOfMeasure, stationDeclination, figureOfMerit, frequencyProtection, navaidSynchronization, vorVoice, vorRangePower, vhfNavaidCoverage, vhfNavaidWeatherInfo, isNotCollocated, isBiased, isNoVoice, ilsDmeBias, isIlsComponent, ilsDmeLocation, dmeExpandedServiceVolume, dmeOperationalServiceVolume, isRouteInappropriateDme, isPaired, isMlsP);
   }
 
   @Override
   public String toString() {
     return "ArincVhfNavaid{" +
-        "pointInfo=" + pointInfo +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", pointInfo=" + pointInfo +
+        ", portRef='" + portRef + '\'' +
+        ", dmeTacanRef='" + dmeTacanRef + '\'' +
+        ", navaidSubType='" + navaidSubType + '\'' +
         ", elevation=" + elevation +
+        ", isVFRCheckpoint=" + isVFRCheckpoint +
         ", frequencyValue=" + frequencyValue +
         ", freqUnitOfMeasure='" + freqUnitOfMeasure + '\'' +
+        ", stationDeclination=" + stationDeclination +
+        ", figureOfMerit='" + figureOfMerit + '\'' +
+        ", frequencyProtection=" + frequencyProtection +
+        ", navaidSynchronization='" + navaidSynchronization + '\'' +
+        ", vorVoice='" + vorVoice + '\'' +
+        ", vorRangePower='" + vorRangePower + '\'' +
+        ", vhfNavaidCoverage='" + vhfNavaidCoverage + '\'' +
+        ", vhfNavaidWeatherInfo='" + vhfNavaidWeatherInfo + '\'' +
+        ", isNotCollocated=" + isNotCollocated +
+        ", isBiased=" + isBiased +
+        ", isNoVoice=" + isNoVoice +
+        ", ilsDmeBias=" + ilsDmeBias +
+        ", isIlsComponent=" + isIlsComponent +
+        ", ilsDmeLocation='" + ilsDmeLocation + '\'' +
+        ", dmeExpandedServiceVolume='" + dmeExpandedServiceVolume + '\'' +
+        ", dmeOperationalServiceVolume='" + dmeOperationalServiceVolume + '\'' +
+        ", isRouteInappropriateDme=" + isRouteInappropriateDme +
+        ", isPaired=" + isPaired +
+        ", isMlsP=" + isMlsP +
         '}';
   }
 

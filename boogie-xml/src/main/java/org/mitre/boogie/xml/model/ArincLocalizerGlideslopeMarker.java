@@ -176,24 +176,39 @@ public final class ArincLocalizerGlideslopeMarker {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincLocalizerGlideslopeMarker that = (ArincLocalizerGlideslopeMarker) o;
-    return elevation == that.elevation && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(locatorFacilityCharacteristics, that.locatorFacilityCharacteristics) && Objects.equals(locatorFrequencyValue, that.locatorFrequencyValue) && Objects.equals(locatorFreqUnitOfMeasure, that.locatorFreqUnitOfMeasure) && Objects.equals(markerType, that.markerType) && Objects.equals(minorAxisBearing, that.minorAxisBearing) && Objects.equals(runwayNumber, that.runwayNumber) && Objects.equals(runwayLeftRightCenterType, that.runwayLeftRightCenterType) && Objects.equals(runwaySuffix, that.runwaySuffix) && Objects.equals(locatorFacility1, that.locatorFacility1) && Objects.equals(locatorFacility2, that.locatorFacility2) && Objects.equals(locatorCoverage, that.locatorCoverage) && Objects.equals(locatorAddInfo, that.locatorAddInfo) && Objects.equals(locatorWeatherInfo, that.locatorWeatherInfo) && Objects.equals(locatorCollocation, that.locatorCollocation);
+    return elevation == that.elevation && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(localizerRef, that.localizerRef) && Objects.equals(locatorFacilityCharacteristics, that.locatorFacilityCharacteristics) && Objects.equals(locatorFrequencyValue, that.locatorFrequencyValue) && Objects.equals(locatorFreqUnitOfMeasure, that.locatorFreqUnitOfMeasure) && Objects.equals(markerType, that.markerType) && Objects.equals(minorAxisBearing, that.minorAxisBearing) && Objects.equals(runwayNumber, that.runwayNumber) && Objects.equals(runwayLeftRightCenterType, that.runwayLeftRightCenterType) && Objects.equals(runwaySuffix, that.runwaySuffix) && Objects.equals(locatorFacility1, that.locatorFacility1) && Objects.equals(locatorFacility2, that.locatorFacility2) && Objects.equals(locatorCoverage, that.locatorCoverage) && Objects.equals(locatorAddInfo, that.locatorAddInfo) && Objects.equals(locatorWeatherInfo, that.locatorWeatherInfo) && Objects.equals(locatorCollocation, that.locatorCollocation);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, locatorFacilityCharacteristics, locatorFrequencyValue, locatorFreqUnitOfMeasure, markerType, minorAxisBearing, runwayNumber, runwayLeftRightCenterType, runwaySuffix, locatorFacility1, locatorFacility2, locatorCoverage, locatorAddInfo, locatorWeatherInfo, locatorCollocation);
+    return Objects.hash(baseInfo, recordInfo, pointInfo, localizerRef, elevation, locatorFacilityCharacteristics, locatorFrequencyValue, locatorFreqUnitOfMeasure, markerType, minorAxisBearing, runwayNumber, runwayLeftRightCenterType, runwaySuffix, locatorFacility1, locatorFacility2, locatorCoverage, locatorAddInfo, locatorWeatherInfo, locatorCollocation);
   }
 
   @Override
   public String toString() {
     return "ArincLocalizerGlideslopeMarker{" +
-        "pointInfo=" + pointInfo +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", pointInfo=" + pointInfo +
+        ", localizerRef='" + localizerRef + '\'' +
         ", elevation=" + elevation +
+        ", locatorFacilityCharacteristics='" + locatorFacilityCharacteristics + '\'' +
+        ", locatorFrequencyValue=" + locatorFrequencyValue +
+        ", locatorFreqUnitOfMeasure='" + locatorFreqUnitOfMeasure + '\'' +
         ", markerType='" + markerType + '\'' +
+        ", minorAxisBearing=" + minorAxisBearing +
+        ", runwayNumber=" + runwayNumber +
+        ", runwayLeftRightCenterType='" + runwayLeftRightCenterType + '\'' +
+        ", runwaySuffix='" + runwaySuffix + '\'' +
+        ", locatorFacility1='" + locatorFacility1 + '\'' +
+        ", locatorFacility2='" + locatorFacility2 + '\'' +
+        ", locatorCoverage='" + locatorCoverage + '\'' +
+        ", locatorAddInfo='" + locatorAddInfo + '\'' +
+        ", locatorWeatherInfo='" + locatorWeatherInfo + '\'' +
+        ", locatorCollocation='" + locatorCollocation + '\'' +
         '}';
   }
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
+import org.mitre.boogie.xml.model.fields.ArincMsaSector;
 import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.model.fields.MagneticTrueIndicator;
 
@@ -70,9 +71,8 @@ public final class ArincMsa {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincMsa arincMsa = (ArincMsa) o;
     return Objects.equals(baseInfo, arincMsa.baseInfo) && Objects.equals(recordInfo, arincMsa.recordInfo) && Objects.equals(centerFix, arincMsa.centerFix) && Objects.equals(centerFixRef, arincMsa.centerFixRef) && Objects.equals(icaoCode, arincMsa.icaoCode) && Objects.equals(magneticTrueIndicator, arincMsa.magneticTrueIndicator) && Objects.equals(multipleCode, arincMsa.multipleCode) && Objects.equals(sectors, arincMsa.sectors);
   }
@@ -80,6 +80,20 @@ public final class ArincMsa {
   @Override
   public int hashCode() {
     return Objects.hash(baseInfo, recordInfo, centerFix, centerFixRef, icaoCode, magneticTrueIndicator, multipleCode, sectors);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincMsa{" +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", centerFix='" + centerFix + '\'' +
+        ", centerFixRef='" + centerFixRef + '\'' +
+        ", icaoCode='" + icaoCode + '\'' +
+        ", magneticTrueIndicator='" + magneticTrueIndicator + '\'' +
+        ", multipleCode='" + multipleCode + '\'' +
+        ", sectors=" + sectors +
+        '}';
   }
 
   public static class Builder {

@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.mitre.boogie.xml.model.ArincMsa;
-import org.mitre.boogie.xml.model.ArincMsaSector;
+import org.mitre.boogie.xml.model.fields.ArincMsaSector;
 import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.model.fields.MagneticTrueIndicator;

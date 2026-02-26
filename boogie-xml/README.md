@@ -2,6 +2,8 @@
 
 ## Module overview
 
+This model should be considered **BETA**
+
 This module provides an APIs for interacting with ARINC 424 XML formats.
 This module should be considered ALPHA functionality.
 

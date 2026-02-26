@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.ArincMsa;
-import org.mitre.boogie.xml.model.ArincMsaSector;
+import org.mitre.boogie.xml.model.fields.ArincMsaSector;
 import org.mitre.boogie.xml.model.fields.MagneticTrueIndicator;
 import org.mitre.boogie.xml.v23_4.generated.Msa;
 

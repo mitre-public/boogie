@@ -187,24 +187,48 @@ public final class ArincAirwayLeg {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincAirwayLeg that = (ArincAirwayLeg) o;
-    return sequenceNumber == that.sequenceNumber && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(fixIdent, that.fixIdent) && Objects.equals(airwayRouteType, that.airwayRouteType) && Objects.equals(level, that.level);
+    return sequenceNumber == that.sequenceNumber && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(fixRef, that.fixRef) && Objects.equals(fixIdent, that.fixIdent) && Objects.equals(recNavaidIdent, that.recNavaidIdent) && Objects.equals(recNavaidRef, that.recNavaidRef) && Objects.equals(cruiseTableRef, that.cruiseTableRef) && Objects.equals(airwayRouteType, that.airwayRouteType) && Objects.equals(qualifier1, that.qualifier1) && Objects.equals(qualifier2, that.qualifier2) && Objects.equals(rnavPbnNavSpec, that.rnavPbnNavSpec) && Objects.equals(rnpPbnNavSpec, that.rnpPbnNavSpec) && Objects.equals(legDirectionRestriction, that.legDirectionRestriction) && Objects.equals(routeDistanceFrom, that.routeDistanceFrom) && Objects.equals(euIndicator, that.euIndicator) && Objects.equals(fixRadiusTransitionIndicator, that.fixRadiusTransitionIndicator) && Objects.equals(inboundCourseValue, that.inboundCourseValue) && Objects.equals(inboundCourseIsTrue, that.inboundCourseIsTrue) && Objects.equals(outboundCourseValue, that.outboundCourseValue) && Objects.equals(outboundCourseIsTrue, that.outboundCourseIsTrue) && Objects.equals(level, that.level) && Objects.equals(rho, that.rho) && Objects.equals(rnp, that.rnp) && Objects.equals(theta, that.theta) && Objects.equals(verticalScaleFactor, that.verticalScaleFactor) && Objects.equals(rvsmMinAltitude, that.rvsmMinAltitude) && Objects.equals(rvsmMaxAltitude, that.rvsmMaxAltitude);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordInfo, sequenceNumber, fixIdent, airwayRouteType, level);
+    return Objects.hash(baseInfo, recordInfo, sequenceNumber, fixRef, fixIdent, recNavaidIdent, recNavaidRef, cruiseTableRef, airwayRouteType, qualifier1, qualifier2, rnavPbnNavSpec, rnpPbnNavSpec, legDirectionRestriction, routeDistanceFrom, euIndicator, fixRadiusTransitionIndicator, inboundCourseValue, inboundCourseIsTrue, outboundCourseValue, outboundCourseIsTrue, level, rho, rnp, theta, verticalScaleFactor, rvsmMinAltitude, rvsmMaxAltitude);
   }
 
   @Override
   public String toString() {
     return "ArincAirwayLeg{" +
-        "sequenceNumber=" + sequenceNumber +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", sequenceNumber=" + sequenceNumber +
+        ", fixRef='" + fixRef + '\'' +
         ", fixIdent='" + fixIdent + '\'' +
+        ", recNavaidIdent='" + recNavaidIdent + '\'' +
+        ", recNavaidRef='" + recNavaidRef + '\'' +
+        ", cruiseTableRef='" + cruiseTableRef + '\'' +
+        ", airwayRouteType='" + airwayRouteType + '\'' +
+        ", qualifier1='" + qualifier1 + '\'' +
+        ", qualifier2='" + qualifier2 + '\'' +
+        ", rnavPbnNavSpec='" + rnavPbnNavSpec + '\'' +
+        ", rnpPbnNavSpec='" + rnpPbnNavSpec + '\'' +
+        ", legDirectionRestriction='" + legDirectionRestriction + '\'' +
+        ", routeDistanceFrom=" + routeDistanceFrom +
+        ", euIndicator='" + euIndicator + '\'' +
+        ", fixRadiusTransitionIndicator=" + fixRadiusTransitionIndicator +
+        ", inboundCourseValue=" + inboundCourseValue +
+        ", inboundCourseIsTrue=" + inboundCourseIsTrue +
+        ", outboundCourseValue=" + outboundCourseValue +
+        ", outboundCourseIsTrue=" + outboundCourseIsTrue +
         ", level='" + level + '\'' +
+        ", rho=" + rho +
+        ", rnp=" + rnp +
+        ", theta=" + theta +
+        ", verticalScaleFactor=" + verticalScaleFactor +
+        ", rvsmMinAltitude=" + rvsmMinAltitude +
+        ", rvsmMaxAltitude=" + rvsmMaxAltitude +
         '}';
   }
 

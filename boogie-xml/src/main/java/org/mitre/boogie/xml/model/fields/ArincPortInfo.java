@@ -228,9 +228,8 @@ public final class ArincPortInfo {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincPortInfo that = (ArincPortInfo) o;
     return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(ataIataDesignator, that.ataIataDesignator) && Objects.equals(daylightIndicator, that.daylightIndicator) && Objects.equals(isIfrCapable, that.isIfrCapable) && Objects.equals(magneticTrueIndicator, that.magneticTrueIndicator) && Objects.equals(publicMilitaryIndicator, that.publicMilitaryIndicator) && Objects.equals(recommendedNavaidRef, that.recommendedNavaidRef) && Objects.equals(speedLimit, that.speedLimit) && Objects.equals(speedLimitAltitude, that.speedLimitAltitude) && Objects.equals(utcOffset, that.utcOffset) && Objects.equals(transitionAltitude, that.transitionAltitude) && Objects.equals(ndbNavaid, that.ndbNavaid) && Objects.equals(procedures, that.procedures) && Objects.equals(terminalWaypoints, that.terminalWaypoints) && Objects.equals(taas, that.taas) && Objects.equals(communications, that.communications) && Objects.equals(helipads, that.helipads) && Objects.equals(markers, that.markers) && Objects.equals(localizerGlideSlopes, that.localizerGlideSlopes) && Objects.equals(gnssLandingSystems, that.gnssLandingSystems) && Objects.equals(msas, that.msas) && Objects.equals(isVfrCheckpoint, that.isVfrCheckpoint) && Objects.equals(controlledAsArptIndicatorRef, that.controlledAsArptIndicatorRef) && Objects.equals(controlledAirspaceIndicator, that.controlledAirspaceIndicator);
   }

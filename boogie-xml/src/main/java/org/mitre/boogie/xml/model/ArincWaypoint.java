@@ -1,6 +1,7 @@
 package org.mitre.boogie.xml.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
@@ -34,6 +35,33 @@ public final class ArincWaypoint implements Serializable {
 
   public static Builder builder() {
     return new Builder();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass())
+      return false;
+    ArincWaypoint that = (ArincWaypoint) o;
+    return isVfrCheckPoint == that.isVfrCheckPoint && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && nameFormatIndicator == that.nameFormatIndicator && Objects.equals(waypointType, that.waypointType) && Objects.equals(waypointUsage, that.waypointUsage) && Objects.equals(fraInfo, that.fraInfo);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(baseInfo, recordInfo, pointInfo, nameFormatIndicator, waypointType, waypointUsage, fraInfo, isVfrCheckPoint);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincWaypoint{" +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", pointInfo=" + pointInfo +
+        ", nameFormatIndicator=" + nameFormatIndicator +
+        ", waypointType=" + waypointType +
+        ", waypointUsage=" + waypointUsage +
+        ", fraInfo=" + fraInfo +
+        ", isVfrCheckPoint=" + isVfrCheckPoint +
+        '}';
   }
 
   public Builder toBuilder() {

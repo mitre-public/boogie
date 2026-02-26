@@ -181,25 +181,40 @@ public final class ArincAirportCommunications {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincAirportCommunications that = (ArincAirportCommunications) o;
-    return sequenceNumber == that.sequenceNumber && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(location, that.location) && Objects.equals(callSign, that.callSign) && Objects.equals(communicationClass, that.communicationClass) && Objects.equals(communicationType, that.communicationType) && Objects.equals(frequencyUnits, that.frequencyUnits) && Objects.equals(radarService, that.radarService) && Objects.equals(h24Indicator, that.h24Indicator) && Objects.equals(modulation, that.modulation) && Objects.equals(signalEmission, that.signalEmission) && Objects.equals(transmitFrequencyValue, that.transmitFrequencyValue) && Objects.equals(transmitFreqUnitOfMeasure, that.transmitFreqUnitOfMeasure) && Objects.equals(receiveFrequencyValue, that.receiveFrequencyValue) && Objects.equals(receiveFreqUnitOfMeasure, that.receiveFreqUnitOfMeasure) && Objects.equals(transmitterSiteElevation, that.transmitterSiteElevation) && Objects.equals(communicationDistance, that.communicationDistance) && Objects.equals(distanceDescription, that.distanceDescription);
+    return sequenceNumber == that.sequenceNumber && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(remoteFacilityRef, that.remoteFacilityRef) && Objects.equals(location, that.location) && Objects.equals(callSign, that.callSign) && Objects.equals(communicationClass, that.communicationClass) && Objects.equals(communicationType, that.communicationType) && Objects.equals(frequencyUnits, that.frequencyUnits) && Objects.equals(radarService, that.radarService) && Objects.equals(h24Indicator, that.h24Indicator) && Objects.equals(modulation, that.modulation) && Objects.equals(signalEmission, that.signalEmission) && Objects.equals(transmitFrequencyValue, that.transmitFrequencyValue) && Objects.equals(transmitFreqUnitOfMeasure, that.transmitFreqUnitOfMeasure) && Objects.equals(receiveFrequencyValue, that.receiveFrequencyValue) && Objects.equals(receiveFreqUnitOfMeasure, that.receiveFreqUnitOfMeasure) && Objects.equals(transmitterSiteElevation, that.transmitterSiteElevation) && Objects.equals(communicationDistance, that.communicationDistance) && Objects.equals(distanceDescription, that.distanceDescription);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(baseInfo, recordInfo, location, callSign, communicationClass, communicationType, frequencyUnits, radarService, h24Indicator, modulation, sequenceNumber, signalEmission, transmitFrequencyValue, transmitFreqUnitOfMeasure, receiveFrequencyValue, receiveFreqUnitOfMeasure, transmitterSiteElevation, communicationDistance, distanceDescription);
+    return Objects.hash(baseInfo, recordInfo, remoteFacilityRef, location, callSign, communicationClass, communicationType, frequencyUnits, radarService, h24Indicator, modulation, sequenceNumber, signalEmission, transmitFrequencyValue, transmitFreqUnitOfMeasure, receiveFrequencyValue, receiveFreqUnitOfMeasure, transmitterSiteElevation, communicationDistance, distanceDescription);
   }
 
   @Override
   public String toString() {
     return "ArincAirportCommunications{" +
-        "callSign='" + callSign + '\'' +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", remoteFacilityRef='" + remoteFacilityRef + '\'' +
+        ", location=" + location +
+        ", callSign='" + callSign + '\'' +
+        ", communicationClass='" + communicationClass + '\'' +
         ", communicationType='" + communicationType + '\'' +
+        ", frequencyUnits='" + frequencyUnits + '\'' +
+        ", radarService='" + radarService + '\'' +
+        ", h24Indicator='" + h24Indicator + '\'' +
+        ", modulation='" + modulation + '\'' +
         ", sequenceNumber=" + sequenceNumber +
+        ", signalEmission='" + signalEmission + '\'' +
         ", transmitFrequencyValue=" + transmitFrequencyValue +
+        ", transmitFreqUnitOfMeasure='" + transmitFreqUnitOfMeasure + '\'' +
+        ", receiveFrequencyValue=" + receiveFrequencyValue +
+        ", receiveFreqUnitOfMeasure='" + receiveFreqUnitOfMeasure + '\'' +
+        ", transmitterSiteElevation=" + transmitterSiteElevation +
+        ", communicationDistance=" + communicationDistance +
+        ", distanceDescription='" + distanceDescription + '\'' +
         '}';
   }
 

@@ -270,24 +270,54 @@ public final class ArincLocalizerGlideSlope {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || getClass() != o.getClass())
       return false;
-    }
     ArincLocalizerGlideSlope that = (ArincLocalizerGlideSlope) o;
-    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(elevation, that.elevation) && Objects.equals(isVFRCheckpoint, that.isVFRCheckpoint) && Objects.equals(approachAngle, that.approachAngle) && Objects.equals(approachCourseBearingValue, that.approachCourseBearingValue) && Objects.equals(approachCourseBearingIsTrueBearing, that.approachCourseBearingIsTrueBearing) && Objects.equals(category, that.category) && Objects.equals(runwayNumber, that.runwayNumber) && Objects.equals(runwayLeftRightCenterType, that.runwayLeftRightCenterType) && Objects.equals(runwaySuffix, that.runwaySuffix) && Objects.equals(approachRouteIdent, that.approachRouteIdent) && Objects.equals(glideslopeBeamWidth, that.glideslopeBeamWidth) && Objects.equals(glideslopeHeightAtLandingThreshold, that.glideslopeHeightAtLandingThreshold) && Objects.equals(glideslopeLocation, that.glideslopeLocation) && Objects.equals(glideslopePosition, that.glideslopePosition) && Objects.equals(localizerPosition, that.localizerPosition) && Objects.equals(localizerPositionReference, that.localizerPositionReference) && Objects.equals(localizerTrueBearing, that.localizerTrueBearing) && Objects.equals(localizerTrueBearingSource, that.localizerTrueBearingSource) && Objects.equals(localizerWidth, that.localizerWidth) && Objects.equals(stationDeclination, that.stationDeclination) && Objects.equals(frequencyValue, that.frequencyValue) && Objects.equals(freqUnitOfMeasure, that.freqUnitOfMeasure) && Objects.equals(ilsBackCourse, that.ilsBackCourse) && Objects.equals(ilsDmeLocation, that.ilsDmeLocation) && Objects.equals(vhfNavaidCoverage, that.vhfNavaidCoverage) && Objects.equals(vhfNavaidWeatherInfo, that.vhfNavaidWeatherInfo) && Objects.equals(isNotCollocated, that.isNotCollocated) && Objects.equals(isBiased, that.isBiased) && Objects.equals(isNoVoice, that.isNoVoice);
+    return Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && Objects.equals(supportingFacilityRef, that.supportingFacilityRef) && Objects.equals(elevation, that.elevation) && Objects.equals(isVFRCheckpoint, that.isVFRCheckpoint) && Objects.equals(runwayRef, that.runwayRef) && Objects.equals(approachAngle, that.approachAngle) && Objects.equals(approachCourseBearingValue, that.approachCourseBearingValue) && Objects.equals(approachCourseBearingIsTrueBearing, that.approachCourseBearingIsTrueBearing) && Objects.equals(category, that.category) && Objects.equals(runwayNumber, that.runwayNumber) && Objects.equals(runwayLeftRightCenterType, that.runwayLeftRightCenterType) && Objects.equals(runwaySuffix, that.runwaySuffix) && Objects.equals(approachRouteIdent, that.approachRouteIdent) && Objects.equals(glideslopeBeamWidth, that.glideslopeBeamWidth) && Objects.equals(glideslopeHeightAtLandingThreshold, that.glideslopeHeightAtLandingThreshold) && Objects.equals(glideslopeLocation, that.glideslopeLocation) && Objects.equals(glideslopePosition, that.glideslopePosition) && Objects.equals(localizerPosition, that.localizerPosition) && Objects.equals(localizerPositionReference, that.localizerPositionReference) && Objects.equals(localizerTrueBearing, that.localizerTrueBearing) && Objects.equals(localizerTrueBearingSource, that.localizerTrueBearingSource) && Objects.equals(localizerWidth, that.localizerWidth) && Objects.equals(stationDeclination, that.stationDeclination) && Objects.equals(frequencyValue, that.frequencyValue) && Objects.equals(freqUnitOfMeasure, that.freqUnitOfMeasure) && Objects.equals(ilsBackCourse, that.ilsBackCourse) && Objects.equals(ilsDmeLocation, that.ilsDmeLocation) && Objects.equals(vhfNavaidCoverage, that.vhfNavaidCoverage) && Objects.equals(vhfNavaidWeatherInfo, that.vhfNavaidWeatherInfo) && Objects.equals(isNotCollocated, that.isNotCollocated) && Objects.equals(isBiased, that.isBiased) && Objects.equals(isNoVoice, that.isNoVoice);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(baseInfo, recordInfo, pointInfo, elevation, isVFRCheckpoint, approachAngle, approachCourseBearingValue, category, runwayNumber, frequencyValue, freqUnitOfMeasure, ilsBackCourse, ilsDmeLocation);
+    return Objects.hash(baseInfo, recordInfo, pointInfo, supportingFacilityRef, elevation, isVFRCheckpoint, runwayRef, approachAngle, approachCourseBearingValue, approachCourseBearingIsTrueBearing, category, runwayNumber, runwayLeftRightCenterType, runwaySuffix, approachRouteIdent, glideslopeBeamWidth, glideslopeHeightAtLandingThreshold, glideslopeLocation, glideslopePosition, localizerPosition, localizerPositionReference, localizerTrueBearing, localizerTrueBearingSource, localizerWidth, stationDeclination, frequencyValue, freqUnitOfMeasure, ilsBackCourse, ilsDmeLocation, vhfNavaidCoverage, vhfNavaidWeatherInfo, isNotCollocated, isBiased, isNoVoice);
   }
 
   @Override
   public String toString() {
     return "ArincLocalizerGlideSlope{" +
-        "pointInfo=" + pointInfo +
-        ", frequencyValue=" + frequencyValue +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", pointInfo=" + pointInfo +
+        ", supportingFacilityRef='" + supportingFacilityRef + '\'' +
+        ", elevation=" + elevation +
+        ", isVFRCheckpoint=" + isVFRCheckpoint +
+        ", runwayRef='" + runwayRef + '\'' +
+        ", approachAngle=" + approachAngle +
+        ", approachCourseBearingValue=" + approachCourseBearingValue +
+        ", approachCourseBearingIsTrueBearing=" + approachCourseBearingIsTrueBearing +
         ", category='" + category + '\'' +
+        ", runwayNumber=" + runwayNumber +
+        ", runwayLeftRightCenterType='" + runwayLeftRightCenterType + '\'' +
+        ", runwaySuffix='" + runwaySuffix + '\'' +
+        ", approachRouteIdent=" + approachRouteIdent +
+        ", glideslopeBeamWidth=" + glideslopeBeamWidth +
+        ", glideslopeHeightAtLandingThreshold=" + glideslopeHeightAtLandingThreshold +
+        ", glideslopeLocation=" + glideslopeLocation +
+        ", glideslopePosition=" + glideslopePosition +
+        ", localizerPosition=" + localizerPosition +
+        ", localizerPositionReference='" + localizerPositionReference + '\'' +
+        ", localizerTrueBearing=" + localizerTrueBearing +
+        ", localizerTrueBearingSource='" + localizerTrueBearingSource + '\'' +
+        ", localizerWidth=" + localizerWidth +
+        ", stationDeclination=" + stationDeclination +
+        ", frequencyValue=" + frequencyValue +
+        ", freqUnitOfMeasure='" + freqUnitOfMeasure + '\'' +
+        ", ilsBackCourse='" + ilsBackCourse + '\'' +
+        ", ilsDmeLocation='" + ilsDmeLocation + '\'' +
+        ", vhfNavaidCoverage='" + vhfNavaidCoverage + '\'' +
+        ", vhfNavaidWeatherInfo='" + vhfNavaidWeatherInfo + '\'' +
+        ", isNotCollocated=" + isNotCollocated +
+        ", isBiased=" + isBiased +
+        ", isNoVoice=" + isNoVoice +
         '}';
   }
 

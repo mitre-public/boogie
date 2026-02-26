@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.model.ArincTaaSectorDetails;
+import org.mitre.boogie.xml.model.fields.ArincTaaSectorDetails;
 import org.mitre.boogie.xml.model.fields.ArincTaa;
 import org.mitre.boogie.xml.model.fields.MagneticTrueIndicator;
 import org.mitre.boogie.xml.model.fields.TaaSectorIdentifier;

@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.boogie.xml.model.ArincTaaSectorDetails;
-
 public final class ArincTaa {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
