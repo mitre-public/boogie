@@ -81,7 +81,9 @@ public final class ArincPointInfo implements Serializable, HasPosition {
     private String uir;
     private String fir;
     private String referenceId;
-    private Builder() {}
+
+    private Builder() {
+    }
 
     public Builder datumCode(String datumCode) {
       this.datumCode = datumCode;

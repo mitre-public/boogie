@@ -263,8 +263,12 @@ public final class ArincWaypointType implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     ArincWaypointType that = (ArincWaypointType) o;
     return isAirwayIntersection == that.isAirwayIntersection && isArcCenter == that.isArcCenter && isBackmarker == that.isBackmarker && isControlledAirspaceIntersection == that.isControlledAirspaceIntersection && isEnroute == that.isEnroute && isFacf == that.isFacf && isFaf == that.isFaf && isFirOrFraEntryPoint == that.isFirOrFraEntryPoint && isFirOrFraExitPoint == that.isFirOrFraExitPoint && isFirUirFix == that.isFirUirFix && isForApproach == that.isForApproach && isForSid == that.isForSid && isForStar == that.isForStar && isForMultipleProcedures == that.isForMultipleProcedures && isFullDegreeLatFix == that.isFullDegreeLatFix && isHalfDegreeLatFix == that.isHalfDegreeLatFix && isHelicopterOnlyAirwayFix == that.isHelicopterOnlyAirwayFix && isInitialApproachFix == that.isInitialApproachFix && isInitialDepartureFix == that.isInitialDepartureFix && isInnerMarker == that.isInnerMarker && isIntermediateApproachFix == that.isIntermediateApproachFix && isIntersectionDmeFix == that.isIntersectionDmeFix && isMiddleMarker == that.isMiddleMarker && isMissedApproachPoint == that.isMissedApproachPoint && isNdb == that.isNdb && isOceanicGateway == that.isOceanicGateway && isOffRoute == that.isOffRoute && isOuterMarker == that.isOuterMarker && isRequiredOffRoute == that.isRequiredOffRoute && isRfLegNotProcedureFix == that.isRfLegNotProcedureFix && isSourceProvidedEnroute == that.isSourceProvidedEnroute && isStepDownFix == that.isStepDownFix && isUncharted == that.isUncharted && isUnnamed == that.isUnnamed && isVfr == that.isVfr;
   }
@@ -352,7 +356,8 @@ public final class ArincWaypointType implements Serializable {
     private boolean isUnnamed = false;
     private boolean isVfr = false;
 
-    private Builder() {}
+    private Builder() {
+    }
 
     public Builder airwayIntersection(boolean airwayIntersection) {
       isAirwayIntersection = airwayIntersection;

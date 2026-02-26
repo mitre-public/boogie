@@ -10,18 +10,8 @@ import org.mitre.tdp.boogie.MagneticVariation;
  */
 public final class MagneticVariationConverter implements Function<MagVar, Optional<MagneticVariation>> {
   public static final MagneticVariationConverter INSTANCE = new MagneticVariationConverter();
-  private MagneticVariationConverter() {}
-  @Override
-  public Optional<MagneticVariation> apply(MagVar magVar) {
-    return Optional.ofNullable(magVar)
-        .filter(i -> !"TRUE".equals(i.ew()))
-        .map(this::from);
-  }
 
-  private MagneticVariation from(MagVar magVar) {
-    double posNeg = ew(magVar.ew());
-    double value = posNeg * magVar.value();
-    return MagneticVariation.ofDegrees(value);
+  private MagneticVariationConverter() {
   }
 
   private static double ew(String ew) {
@@ -30,5 +20,18 @@ public final class MagneticVariationConverter implements Function<MagVar, Option
       case "WEST" -> 1.0;
       default -> throw new IllegalArgumentException("Unknown ew: " + ew);
     };
+  }
+
+  @Override
+  public Optional<MagneticVariation> apply(MagVar magVar) {
+    return Optional.ofNullable(magVar)
+        .filter(i -> "EAST".equals(i.ew()) || "WEST".equals(i.ew()))
+        .map(this::from);
+  }
+
+  private MagneticVariation from(MagVar magVar) {
+    double posNeg = ew(magVar.ew());
+    double value = posNeg * magVar.value();
+    return MagneticVariation.ofDegrees(value);
   }
 }

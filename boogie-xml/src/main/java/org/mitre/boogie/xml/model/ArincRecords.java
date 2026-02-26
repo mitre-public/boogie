@@ -1,7 +1,6 @@
 package org.mitre.boogie.xml.model;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -14,23 +13,39 @@ public interface ArincRecords {
   }
 
   void addWaypoint(ArincWaypoint waypoint);
+
   void addAirport(ArincAirport airport);
+
   void addNdbNavaid(ArincNdbNavaid ndb);
+
   void addVhfNavaid(ArincVhfNavaid vhf);
+
   void addAirway(ArincAirway arincAirway);
+
   void addHoldingPattern(ArincHoldingPattern holdingPattern);
 
   Set<ArincWaypoint> waypoints();
+
   ArincRecords waypoints(Set<ArincWaypoint> waypoints);
+
   Set<ArincAirport> airports();
+
   ArincRecords airports(Set<ArincAirport> airports);
+
   Set<ArincNdbNavaid> ndbNavaids();
+
   ArincRecords ndbNavaids(Set<ArincNdbNavaid> ndbNavaids);
+
   Set<ArincVhfNavaid> vhfNavaids();
+
   ArincRecords vhfNavaids(Set<ArincVhfNavaid> vhfNavaids);
+
   Set<ArincAirway> arincAirways();
+
   ArincRecords arincAirways(Set<ArincAirway> arincAirways);
+
   Set<ArincHoldingPattern> holdingPatterns();
+
   ArincRecords holdingPatterns(Set<ArincHoldingPattern> holdingPatterns);
 
 
@@ -42,24 +57,30 @@ public interface ArincRecords {
     Set<ArincAirway> arincAirways = new HashSet<>();
     Set<ArincHoldingPattern> holdingPatterns = new HashSet<>();
 
-    private Standard() {}
+    private Standard() {
+    }
 
-    public void addWaypoint(ArincWaypoint waypoint){
+    public void addWaypoint(ArincWaypoint waypoint) {
       waypoints.add(waypoint);
     }
-    public void addAirport(ArincAirport airport){
+
+    public void addAirport(ArincAirport airport) {
       airports.add(airport);
     }
-    public void addNdbNavaid(ArincNdbNavaid ndb){
+
+    public void addNdbNavaid(ArincNdbNavaid ndb) {
       ndbNavaids.add(ndb);
     }
-    public void addVhfNavaid(ArincVhfNavaid vhf){
+
+    public void addVhfNavaid(ArincVhfNavaid vhf) {
       vhfNavaids.add(vhf);
     }
-    public void addAirway(ArincAirway arincAirway){
+
+    public void addAirway(ArincAirway arincAirway) {
       arincAirways.add(arincAirway);
     }
-    public void addHoldingPattern(ArincHoldingPattern holdingPattern){
+
+    public void addHoldingPattern(ArincHoldingPattern holdingPattern) {
       holdingPatterns.add(holdingPattern);
     }
 

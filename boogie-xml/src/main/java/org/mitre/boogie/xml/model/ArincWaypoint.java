@@ -3,13 +3,13 @@ package org.mitre.boogie.xml.model;
 import java.io.Serializable;
 import java.util.Optional;
 
+import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincFraInfo;
 import org.mitre.boogie.xml.model.fields.ArincNameFormatIndicator;
-import org.mitre.boogie.xml.model.fields.ArincWaypointType;
-import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
-import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincPointInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
+import org.mitre.boogie.xml.model.fields.ArincWaypointType;
+import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
 
 public final class ArincWaypoint implements Serializable {
   private final ArincBaseInfo baseInfo;
@@ -89,7 +89,9 @@ public final class ArincWaypoint implements Serializable {
     private ArincWaypointUsage waypointUsage;
     private ArincFraInfo fraInfo;
     private boolean isVfrCheckPoint = false;
-    private Builder() {}
+
+    private Builder() {
+    }
 
     public Builder baseInfo(ArincBaseInfo baseInfo) {
       this.baseInfo = baseInfo;

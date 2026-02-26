@@ -11,7 +11,10 @@ import org.mitre.boogie.xml.v23_4.generated.FraInfo;
  */
 public final class FraConverter implements Function<FraInfo, ArincFraInfo> {
   public static final FraConverter INSTANCE = new FraConverter();
-  private FraConverter() {}
+
+  private FraConverter() {
+  }
+
   @Override
   public ArincFraInfo apply(FraInfo fraInfo) {
     boolean fraArrivalTransition = Optional.ofNullable(fraInfo.isIsFraArrivalTransitionPoint()).orElse(false);

@@ -6,65 +6,65 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum ArincAreaCode implements Serializable {
-    /**
-     * Africa
-     *
-     */
-    AFR,
+  /**
+   * Africa
+   *
+   */
+  AFR,
 
-    /**
-     * Canada
-     *
-     */
-    CAN,
+  /**
+   * Canada
+   *
+   */
+  CAN,
 
-    /**
-     * Eastern Europe and Asia
-     *
-     */
-    EEU,
+  /**
+   * Eastern Europe and Asia
+   *
+   */
+  EEU,
 
-    /**
-     * Europe
-     *
-     */
-    EUR,
+  /**
+   * Europe
+   *
+   */
+  EUR,
 
-    /**
-     * Latin America
-     *
-     */
-    LAM,
+  /**
+   * Latin America
+   *
+   */
+  LAM,
 
-    /**
-     * Middle East
-     *
-     */
-    MES,
+  /**
+   * Middle East
+   *
+   */
+  MES,
 
-    /**
-     * Pacific
-     *
-     */
-    PAC,
+  /**
+   * Pacific
+   *
+   */
+  PAC,
 
-    /**
-     * South America
-     *
-     */
-    SAM,
+  /**
+   * South America
+   *
+   */
+  SAM,
 
-    /**
-     * South Pacific
-     *
-     */
-    SPA,
+  /**
+   * South Pacific
+   *
+   */
+  SPA,
 
-    /**
-     * United States
-     *
-     */
-    USA;
+  /**
+   * United States
+   *
+   */
+  USA;
 
-    public static final Set<String> VALID = Arrays.stream(ArincAreaCode.values()).map(ArincAreaCode::name).collect(Collectors.toSet());
+  public static final Set<String> VALID = Arrays.stream(ArincAreaCode.values()).map(ArincAreaCode::name).collect(Collectors.toSet());
 }

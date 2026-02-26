@@ -60,8 +60,12 @@ public final class ArincFraInfo implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     ArincFraInfo that = (ArincFraInfo) o;
     return isFraArrivalTransitionPoint == that.isFraArrivalTransitionPoint && isFraDepartureTransitionPoint == that.isFraDepartureTransitionPoint && isFraIntermediatePoint == that.isFraIntermediatePoint && isFraTerminalHoldingPoint == that.isFraTerminalHoldingPoint && isFraEntryPoint == that.isFraEntryPoint && isFraExitPoint == that.isFraExitPoint;
   }
@@ -90,7 +94,9 @@ public final class ArincFraInfo implements Serializable {
     private boolean isFraTerminalHoldingPoint = false;
     private boolean isFraEntryPoint = false;
     private boolean isFraExitPoint = false;
-    private Builder() {}
+
+    private Builder() {
+    }
 
     public Builder fraArrivalTransitionPoint(boolean fraArrivalTransitionPoint) {
       isFraArrivalTransitionPoint = fraArrivalTransitionPoint;

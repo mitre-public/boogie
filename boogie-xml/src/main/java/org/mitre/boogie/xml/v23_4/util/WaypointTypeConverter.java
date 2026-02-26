@@ -11,7 +11,10 @@ import org.mitre.boogie.xml.v23_4.generated.WaypointType;
  */
 public final class WaypointTypeConverter implements Function<WaypointType, ArincWaypointType> {
   public static final WaypointTypeConverter INSTANCE = new WaypointTypeConverter();
-  private WaypointTypeConverter() {}
+
+  private WaypointTypeConverter() {
+  }
+
   @Override
   public ArincWaypointType apply(WaypointType waypointType) {
     return ArincWaypointType.builder()

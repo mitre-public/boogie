@@ -5,7 +5,13 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.mitre.boogie.xml.model.ArincWaypoint;
-import org.mitre.boogie.xml.model.fields.*;
+import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
+import org.mitre.boogie.xml.model.fields.ArincFraInfo;
+import org.mitre.boogie.xml.model.fields.ArincNameFormatIndicator;
+import org.mitre.boogie.xml.model.fields.ArincPointInfo;
+import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
+import org.mitre.boogie.xml.model.fields.ArincWaypointType;
+import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
 import org.mitre.boogie.xml.v23_4.generated.Waypoint;
 import org.mitre.boogie.xml.v23_4.util.FraConverter;
 import org.mitre.boogie.xml.v23_4.util.WaypointTypeConverter;
@@ -20,7 +26,7 @@ public final class ArincWaypointConverter implements Function<Waypoint, Optional
   private static final WaypointTypeConverter WAYPOINT_TYPE_CONVERTER = WaypointTypeConverter.INSTANCE;
   private static final FraConverter FRA_CONVERTER = FraConverter.INSTANCE;
 
-  private  ArincWaypointConverter() {
+  private ArincWaypointConverter() {
   }
 
   @Override

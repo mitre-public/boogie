@@ -10,6 +10,9 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.mitre.boogie.xml.model.*;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirportConverter;
+import org.mitre.boogie.xml.v23_4.convert.ArincAirwayConverter;
+import org.mitre.boogie.xml.v23_4.convert.ArincNdbNavaidConverter;
+import org.mitre.boogie.xml.v23_4.convert.ArincVhfNavaidConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincWaypointConverter;
 import org.mitre.boogie.xml.v23_4.generated.*;
 import org.slf4j.Logger;
@@ -27,6 +30,9 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
 
   private static final ArincWaypointConverter WAYPOINT_CONVERTER = ArincWaypointConverter.INSTANCE;
   private static final ArincAirportConverter AIRPORT_CONVERTER = ArincAirportConverter.INSTANCE;
+  private static final ArincAirwayConverter AIRWAY_CONVERTER = ArincAirwayConverter.INSTANCE;
+  private static final ArincNdbNavaidConverter NDB_CONVERTER = ArincNdbNavaidConverter.INSTANCE;
+  private static final ArincVhfNavaidConverter VHF_CONVERTER = ArincVhfNavaidConverter.INSTANCE;
 
   private final List<Class<?>> supportArincXmlClasses;
 
@@ -43,6 +49,7 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
 
       JAXBContext context = JAXBContext.newInstance(supportArincXmlClasses.toArray(new Class[0]));
       Unmarshaller unmarshaller = context.createUnmarshaller();
+      unmarshaller.setProperty(org.glassfish.jaxb.runtime.IDResolver.class.getName(), StringIdResolver.INSTANCE);
 
       try {
         XMLEvent event;
@@ -56,31 +63,26 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airport")) {
             Airport airport = unmarshaller.unmarshal(xmlEventReader, Airport.class).getValue();
             AIRPORT_CONVERTER.apply(airport).ifPresent(records::addAirport);
-            LOG.info("COULD HAVE DONE MORE"); //fixme do rest of the things
           }
 
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("ndb")) {
             Ndb ndb = unmarshaller.unmarshal(xmlEventReader, Ndb.class).getValue();
-            records.addNdbNavaid(new ArincNdbNavaid());
-            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+            NDB_CONVERTER.apply(ndb).ifPresent(records::addNdbNavaid);
           }
 
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("vhfNavaid")) {
-            Navaid vhf = unmarshaller.unmarshal(xmlEventReader, Navaid.class).getValue();
-            records.addVhfNavaid(new ArincVhfNavaid());
-            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+            Navaid navaid = unmarshaller.unmarshal(xmlEventReader, Navaid.class).getValue();
+            VHF_CONVERTER.apply(navaid).ifPresent(records::addVhfNavaid);
           }
 
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("airway")) {
             Airway airway = unmarshaller.unmarshal(xmlEventReader, Airway.class).getValue();
-            records.addAirway(new ArincAirway());
-            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+            AIRWAY_CONVERTER.apply(airway).ifPresent(records::addAirway);
           }
 
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("holdingPattern")) {
             HoldingPattern holdingPattern = unmarshaller.unmarshal(xmlEventReader, HoldingPattern.class).getValue();
-            records.addHoldingPattern(new ArincHoldingPattern());
-            LOG.info("COULD HAVE DONE MORE"); //fixme do things
+            records.addHoldingPattern(new ArincHoldingPattern()); //todo replace with converter
           }
 
           xmlEventReader.nextEvent();

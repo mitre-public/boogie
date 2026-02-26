@@ -9,7 +9,10 @@ import org.mitre.boogie.xml.v23_4.generated.A424Record;
 
 final class ArincRecordConverter implements Function<A424Record, ArincRecordInfo> {
   static final ArincRecordConverter INSTANCE = new ArincRecordConverter();
-  private ArincRecordConverter() {}
+
+  private ArincRecordConverter() {
+  }
+
   @Override
   public ArincRecordInfo apply(A424Record a424Record) {
     return ArincRecordInfo.builder()

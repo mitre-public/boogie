@@ -4,9 +4,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.mitre.boogie.xml.model.*;
-import org.mitre.boogie.xml.model.fields.*;
-import org.mitre.boogie.xml.v23_4.generated.A424Point;
+import org.mitre.boogie.xml.model.ArincAirportCommunications;
+import org.mitre.boogie.xml.model.ArincGnssLandingSystem;
+import org.mitre.boogie.xml.model.ArincHelipad;
+import org.mitre.boogie.xml.model.ArincLocalizerGlideSlope;
+import org.mitre.boogie.xml.model.ArincLocalizerGlideslopeMarker;
+import org.mitre.boogie.xml.model.ArincMsa;
+import org.mitre.boogie.xml.model.ArincNdbNavaid;
+import org.mitre.boogie.xml.model.ArincProcedure;
+import org.mitre.boogie.xml.model.ArincWaypoint;
+import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
+import org.mitre.boogie.xml.model.fields.ArincPointInfo;
+import org.mitre.boogie.xml.model.fields.ArincPortInfo;
+import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
+import org.mitre.boogie.xml.model.fields.ArincTaa;
+import org.mitre.boogie.xml.model.fields.ControlledAirspaceIndicator;
+import org.mitre.boogie.xml.model.fields.MagneticTrueIndicator;
+import org.mitre.boogie.xml.model.fields.PublicMilitaryIndicator;
+import org.mitre.boogie.xml.model.fields.UtcOffset;
 import org.mitre.boogie.xml.v23_4.generated.Constraint;
 import org.mitre.boogie.xml.v23_4.generated.Port;
 
@@ -20,8 +35,17 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
   private static final ArincPointConverter POINT_CONVERTER = ArincPointConverter.INSTANCE;
   private static final ArincRecordConverter RECORD_CONVERTER = ArincRecordConverter.INSTANCE;
   private static final ArincBaseConverter BASE_CONVERTER = ArincBaseConverter.INSTANCE;
+  private static final ArincMsaConverter MSA_CONVERTER = ArincMsaConverter.INSTANCE;
+  private static final ArincAirportCommunicationsConverter COMM_CONVERTER = ArincAirportCommunicationsConverter.INSTANCE;
+  private static final ArincHelipadConverter HELIPAD_CONVERTER = ArincHelipadConverter.INSTANCE;
+  private static final ArincLocalizerGlideslopeMarkerConverter MARKER_CONVERTER = ArincLocalizerGlideslopeMarkerConverter.INSTANCE;
+  private static final ArincLocalizerGlideSlopeConverter ILS_CONVERTER = ArincLocalizerGlideSlopeConverter.INSTANCE;
+  private static final ArincNdbNavaidConverter NDB_CONVERTER = ArincNdbNavaidConverter.INSTANCE;
+  private static final ArincTaaConverter TAA_CONVERTER = ArincTaaConverter.INSTANCE;
+  private static final ArincGnssLandingSystemConverter GLS_CONVERTER = ArincGnssLandingSystemConverter.INSTANCE;
 
-  private ArincPortConverter() {}
+  private ArincPortConverter() {
+  }
 
   @Override
   public ArincPortInfo apply(Port port) {
@@ -40,16 +64,13 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
         .map(PublicMilitaryIndicator::valueOf)
         .map(Enum::name)
         .orElse(null);
-    ArincPointInfo recNavId = Optional.ofNullable(port.getRecommendedNavaidRef())
-        .filter(o -> o.getClass().isAssignableFrom(A424Point.class))
-        .map(A424Point.class::cast)
-        .map(POINT_CONVERTER)
+    String recommendedNavaidRef = Optional.ofNullable(port.getRecommendedNavaidRef())
+        .map(Object::toString)
         .orElse(null);
 
     Range<Long> speedLimit = Optional.ofNullable(port.getSpeedLimit())
         .map(SPEED_LIMIT_CONVERTER)
         .orElse(Range.all());
-
 
     UtcOffset offset = Optional.ofNullable(port.getUtcOffset())
         .filter(org.mitre.boogie.xml.v23_4.generated.UtcOffset::isIsDaylightObserving)
@@ -60,7 +81,11 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
             .map(t -> UtcOffset.from(t.getHourOffset(), t.getMinuteOffset(), false)))
         .orElse(null);
 
-    List<ArincNdbNavaid> ndbs = List.of(); //todo do this
+    List<ArincNdbNavaid> ndbs = port.getTerminalNdb().stream()
+        .map(NDB_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
     List<ArincProcedure> procs = List.of(); //todo do this
 
     List<ArincWaypoint> waypoints = port.getTerminalWaypoint().stream()
@@ -68,19 +93,43 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
         .flatMap(Optional::stream)
         .toList();
 
-    //todo all these things
-    List<ArincTaa>  tas = List.of();
-    List<ArincAirportCommunications> coms = List.of();
-    List<ArincHelipad> pads = List.of();
-    List<ArincLocalizerGlideslopeMarker> markers = List.of();
-    List<ArincLocalizerGlideSlope> ils = List.of();
-    List<ArincGnssLandingSystem> gnssLandingSystems = List.of();
-    List<ArincMsa> msas = List.of();
+    List<ArincTaa> taas = port.getTaa().stream()
+        .map(TAA_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
 
-    ArincPointInfo controlledAirspace = Optional.ofNullable(port.getControlledAsArptIndicator())
-        .filter(o -> o.getClass().isAssignableFrom(A424Point.class))
-        .map(A424Point.class::cast)
-        .map(POINT_CONVERTER)
+    List<ArincGnssLandingSystem> gnssLandingSystems = port.getGls().stream()
+        .map(GLS_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
+    List<ArincAirportCommunications> coms = port.getPortCommunication().stream()
+        .map(COMM_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
+    List<ArincHelipad> pads = port.getHelipad().stream()
+        .map(HELIPAD_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
+    List<ArincLocalizerGlideslopeMarker> markers = port.getLocalizerMarker().stream()
+        .map(MARKER_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
+    List<ArincLocalizerGlideSlope> ils = port.getLocalizerGlideslope().stream()
+        .map(ILS_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
+    List<ArincMsa> msas = port.getMsa().stream()
+        .map(MSA_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
+    String controlledAsArptIndicatorRef = Optional.ofNullable(port.getControlledAsArptIndicator())
+        .map(Object::toString)
         .orElse(null);
 
     String indicator = Optional.ofNullable(port.getControlledAsIndicator())
@@ -100,13 +149,15 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
         .ifrCapable(port.isIsIfrCapable())
         .magneticTrueIndicator(magneticTrueIndicator)
         .publicMilitaryIndicator(publicMilitaryIndicator)
-        .recommendedNavaidId(recNavId)
+        .recommendedNavaidRef(recommendedNavaidRef)
         .speedLimit(speedLimit)
         .speedLimitAltitude(Optional.ofNullable(port.getSpeedLimitAltitude()).map(Constraint::getAltitude).orElse(null))
         .utcOffset(offset)
         .transitionAltitude(port.getTransitionAltitude())
+        .ndbNavaid(ndbs)
+        .procedures(procs)
         .terminalWaypoints(waypoints)
-        .taas(tas)
+        .taas(taas)
         .communications(coms)
         .helipads(pads)
         .markers(markers)
@@ -114,7 +165,7 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
         .gnssLandingSystems(gnssLandingSystems)
         .msas(msas)
         .vfrCheckpoint(port.isIsVFRCheckpoint())
-        .controlledAirspaceId(controlledAirspace)
+        .controlledAsArptIndicatorRef(controlledAsArptIndicatorRef)
         .controlledAirspaceIndicator(indicator)
         .build();
   }

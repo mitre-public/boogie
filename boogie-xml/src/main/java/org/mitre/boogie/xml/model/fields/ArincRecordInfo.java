@@ -56,8 +56,12 @@ public final class ArincRecordInfo implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     ArincRecordInfo that = (ArincRecordInfo) o;
     return Objects.equals(areaCode, that.areaCode) && Objects.equals(customerCode, that.customerCode) && Objects.equals(cycleDate, that.cycleDate) && Objects.equals(notes, that.notes) && recordType == that.recordType;
   }
@@ -85,7 +89,8 @@ public final class ArincRecordInfo implements Serializable {
     private List<String> notes;
     private ArincRecordType recordType;
 
-    private Builder() {}
+    private Builder() {
+    }
 
     public Builder areaCode(String areaCode) {
       this.areaCode = areaCode;
