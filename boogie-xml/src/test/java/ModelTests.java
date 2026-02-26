@@ -6,6 +6,7 @@ import org.mitre.boogie.xml.model.ArincAirway;
 import org.mitre.boogie.xml.model.ArincAirwayLeg;
 import org.mitre.boogie.xml.model.ArincGnssLandingSystem;
 import org.mitre.boogie.xml.model.ArincHelipad;
+import org.mitre.boogie.xml.model.ArincHoldingPattern;
 import org.mitre.boogie.xml.model.ArincLocalizerGlideSlope;
 import org.mitre.boogie.xml.model.ArincLocalizerGlideslopeMarker;
 import org.mitre.boogie.xml.model.ArincMsa;
@@ -44,6 +45,7 @@ public class ModelTests {
     EqualsVerifier.forClass(ArincTaaSectorDetails.class).verify();
     EqualsVerifier.forClass(ArincVhfNavaid.class).verify();
     EqualsVerifier.forClass(ArincWaypoint.class).verify();
+    EqualsVerifier.forClass(ArincHoldingPattern.class).verify();
   }
 
   @Test
