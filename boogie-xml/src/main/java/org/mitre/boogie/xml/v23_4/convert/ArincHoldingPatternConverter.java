@@ -59,7 +59,7 @@ public final class ArincHoldingPatternConverter implements Function<HoldingPatte
         .arcRadius(Optional.ofNullable(holdingPattern.getArcRadius()).map(BigDecimal::doubleValue).orElse(null))
         .holdingPatternName(holdingPattern.getHoldingPatternName())
         .holdingSpeed(holdingPattern.getHoldingSpeed())
-        .holdingTime(XmlDurationConverter.INSTANCE.apply(holdingPattern.getHoldingTime()).orElse(null))
+        .holdingTime(Optional.ofNullable(holdingPattern.getHoldingTime()).flatMap(XmlDurationConverter.INSTANCE).orElse(null))
         .holdingDistance(Optional.ofNullable(holdingPattern.getHoldingDistance()).map(BigDecimal::doubleValue).orElse(null))
         .inboundHoldingCourseValue(inboundCourse.map(FlatCourse::value).orElse(null))
         .inboundHoldingCourseIsTrue(inboundCourse.map(FlatCourse::isTrue).orElse(null))

@@ -32,8 +32,9 @@ final class ArincAirwayLegConverter implements Function<AirwayLeg, Optional<Arin
     ArincBaseInfo baseInfo = BASE_CONVERTER.apply(leg);
     ArincRecordInfo recordInfo = RECORD_CONVERTER.apply(leg);
 
-    Optional<FlatCourse> inboundCourse = COURSE_CONVERTER.apply(leg.getInboundCourse());
-    Optional<FlatCourse> outboundCourse = COURSE_CONVERTER.apply(leg.getOutboundCourse());
+    Optional<FlatCourse> inboundCourse = Optional.ofNullable(leg.getInboundCourse()).flatMap(COURSE_CONVERTER);
+    Optional<FlatCourse> outboundCourse = Optional.ofNullable(leg.getOutboundCourse()).flatMap(COURSE_CONVERTER);
+
     Optional<FlatMinMaxAltitudeConstraint> rvsmMinMax = MIN_MAX_ALT_CONVERTER.apply(leg.getRvsmMinMaxLevels());
 
     return ArincAirwayLeg.builder()
