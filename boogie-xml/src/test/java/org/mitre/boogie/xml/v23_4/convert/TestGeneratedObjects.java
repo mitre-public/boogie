@@ -1,6 +1,10 @@
 package org.mitre.boogie.xml.v23_4.convert;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
 
 import org.mitre.boogie.xml.v23_4.generated.*;
 
@@ -489,6 +493,57 @@ final class TestGeneratedObjects {
     leg.setRnp(BigDecimal.valueOf(2.0));
     leg.setVerticalScaleFactor(100L);
     return leg;
+  }
+
+  static HoldingPattern newValidHoldingPattern() {
+    HoldingPattern hp = new HoldingPattern();
+    hp.setRecordType(RecordType.STANDARD);
+    hp.setCycleDate("2501");
+    hp.setIsEnroute(true);
+    hp.setArcRadius(BigDecimal.valueOf(4.0));
+    hp.setHoldingPatternName("HOLD01");
+    hp.setHoldingSpeed(230L);
+    hp.setHoldingTime(DatatypeFactory.newDefaultInstance().newDuration("PT4M"));
+    hp.setHoldingDistance(BigDecimal.valueOf(5.0));
+    hp.setInboundHoldingCourse(newCourse(270.0, false));
+    hp.setLegInboundOutboundIndicator(LegInboundOutboundIndicator.INBOUND);
+    hp.setTurnDirection(Turn.RIGHT);
+    hp.setVerticalScaleFactor(100L);
+    hp.setFixIdentifier("FIX01");
+    hp.setFixRef("FIX-FIX01");
+    hp.setPortRef("PORT-K6");
+    hp.setMultipleIndicator(BigInteger.ONE);
+    hp.setInboundCourseNavaid("NAVAID-DCA");
+    hp.setInboundCourseTheta(BigDecimal.valueOf(180.0));
+
+    HoldRvsmMinimumMaximumAltitudeConstraint holdMinMax = new HoldRvsmMinimumMaximumAltitudeConstraint();
+    RouteMinimumAltitude holdMin = new RouteMinimumAltitude();
+    holdMin.setAltitude(5000);
+    RouteMaximumAltitude holdMax = new RouteMaximumAltitude();
+    holdMax.setAltitude(8000);
+    holdMinMax.setMinimumAltitude(holdMin);
+    holdMinMax.setMaximumAltitude(holdMax);
+    hp.setHoldMinMaxAltitudes(holdMinMax);
+
+    HoldRvsmMinimumMaximumAltitudeConstraint rvsmMinMax = new HoldRvsmMinimumMaximumAltitudeConstraint();
+    RouteMinimumAltitude rvsmMin = new RouteMinimumAltitude();
+    rvsmMin.setAltitude(10000);
+    RouteMaximumAltitude rvsmMax = new RouteMaximumAltitude();
+    rvsmMax.setAltitude(18000);
+    rvsmMinMax.setMinimumAltitude(rvsmMin);
+    rvsmMinMax.setMaximumAltitude(rvsmMax);
+    hp.setRvsmMinMaxLevels(rvsmMinMax);
+
+    HoldingUses uses = new HoldingUses();
+    uses.setIsOnHigh(true);
+    uses.setIsOnLow(false);
+    uses.setIsOnSid(true);
+    uses.setIsOnStar(false);
+    uses.setIsOnApproach(true);
+    uses.setIsOnMissedApproach(false);
+    hp.setHoldingUses(uses);
+
+    return hp;
   }
 
   static Airway newValidAirway() {

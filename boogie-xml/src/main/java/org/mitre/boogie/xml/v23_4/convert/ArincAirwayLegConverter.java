@@ -8,8 +8,6 @@ import org.mitre.boogie.xml.model.ArincAirwayLeg;
 import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.v23_4.generated.AirwayLeg;
-import org.mitre.boogie.xml.v23_4.generated.Course;
-import org.mitre.boogie.xml.v23_4.generated.HoldRvsmMinimumMaximumAltitudeConstraint;
 
 final class ArincAirwayLegConverter implements Function<AirwayLeg, Optional<ArincAirwayLeg>> {
   static final ArincAirwayLegConverter INSTANCE = new ArincAirwayLegConverter();
@@ -17,6 +15,8 @@ final class ArincAirwayLegConverter implements Function<AirwayLeg, Optional<Arin
   private static final ArincAirwayLegValidator VALIDATOR = ArincAirwayLegValidator.INSTANCE;
   private static final ArincBaseConverter BASE_CONVERTER = ArincBaseConverter.INSTANCE;
   private static final ArincRecordConverter RECORD_CONVERTER = ArincRecordConverter.INSTANCE;
+  private static final FlatCourseConverter COURSE_CONVERTER = FlatCourseConverter.INSTANCE;
+  private static final FlatMinMaxAltitudeConstraintConverter MIN_MAX_ALT_CONVERTER = FlatMinMaxAltitudeConstraintConverter.INSTANCE;
 
   private ArincAirwayLegConverter() {
   }
@@ -32,33 +32,9 @@ final class ArincAirwayLegConverter implements Function<AirwayLeg, Optional<Arin
     ArincBaseInfo baseInfo = BASE_CONVERTER.apply(leg);
     ArincRecordInfo recordInfo = RECORD_CONVERTER.apply(leg);
 
-    Double inboundCourseValue = Optional.ofNullable(leg.getInboundCourse())
-        .map(Course::getCourseValue)
-        .map(BigDecimal::doubleValue)
-        .orElse(null);
-
-    Boolean inboundCourseIsTrue = Optional.ofNullable(leg.getInboundCourse())
-        .map(Course::isIsTrue)
-        .orElse(null);
-
-    Double outboundCourseValue = Optional.ofNullable(leg.getOutboundCourse())
-        .map(Course::getCourseValue)
-        .map(BigDecimal::doubleValue)
-        .orElse(null);
-
-    Boolean outboundCourseIsTrue = Optional.ofNullable(leg.getOutboundCourse())
-        .map(Course::isIsTrue)
-        .orElse(null);
-
-    Integer rvsmMin = Optional.ofNullable(leg.getRvsmMinMaxLevels())
-        .map(HoldRvsmMinimumMaximumAltitudeConstraint::getMinimumAltitude)
-        .map(a -> a.getAltitude())
-        .orElse(null);
-
-    Integer rvsmMax = Optional.ofNullable(leg.getRvsmMinMaxLevels())
-        .map(HoldRvsmMinimumMaximumAltitudeConstraint::getMaximumAltitude)
-        .map(a -> a.getAltitude())
-        .orElse(null);
+    Optional<FlatCourse> inboundCourse = COURSE_CONVERTER.apply(leg.getInboundCourse());
+    Optional<FlatCourse> outboundCourse = COURSE_CONVERTER.apply(leg.getOutboundCourse());
+    Optional<FlatMinMaxAltitudeConstraint> rvsmMinMax = MIN_MAX_ALT_CONVERTER.apply(leg.getRvsmMinMaxLevels());
 
     return ArincAirwayLeg.builder()
         .baseInfo(baseInfo)
@@ -78,17 +54,17 @@ final class ArincAirwayLegConverter implements Function<AirwayLeg, Optional<Arin
         .routeDistanceFrom(Optional.ofNullable(leg.getRouteDistanceFrom()).map(BigDecimal::doubleValue).orElse(null))
         .euIndicator(Optional.ofNullable(leg.getEuIndicator()).map(Enum::name).orElse(null))
         .fixRadiusTransitionIndicator(Optional.ofNullable(leg.getFixRadiusTransitionIndicator()).map(BigDecimal::doubleValue).orElse(null))
-        .inboundCourseValue(inboundCourseValue)
-        .inboundCourseIsTrue(inboundCourseIsTrue)
-        .outboundCourseValue(outboundCourseValue)
-        .outboundCourseIsTrue(outboundCourseIsTrue)
+        .inboundCourseValue(inboundCourse.map(FlatCourse::value).orElse(null))
+        .inboundCourseIsTrue(inboundCourse.map(FlatCourse::isTrue).orElse(null))
+        .outboundCourseValue(outboundCourse.map(FlatCourse::value).orElse(null))
+        .outboundCourseIsTrue(outboundCourse.map(FlatCourse::isTrue).orElse(null))
         .level(Optional.ofNullable(leg.getLevel()).map(Enum::name).orElse(null))
         .rho(Optional.ofNullable(leg.getRho()).map(BigDecimal::doubleValue).orElse(null))
         .rnp(Optional.ofNullable(leg.getRnp()).map(BigDecimal::doubleValue).orElse(null))
         .theta(Optional.ofNullable(leg.getTheta()).map(BigDecimal::doubleValue).orElse(null))
         .verticalScaleFactor(leg.getVerticalScaleFactor())
-        .rvsmMinAltitude(rvsmMin)
-        .rvsmMaxAltitude(rvsmMax)
+        .rvsmMinAltitude(rvsmMinMax.map(FlatMinMaxAltitudeConstraint::minimumAltitude).orElse(null))
+        .rvsmMaxAltitude(rvsmMinMax.map(FlatMinMaxAltitudeConstraint::maximumAltitude).orElse(null))
         .build();
   }
 }

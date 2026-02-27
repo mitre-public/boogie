@@ -1,5 +1,6 @@
 package org.mitre.boogie.xml.model;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public final class ArincHoldingPattern {
   private final Double arcRadius;
   private final String holdingPatternName;
   private final Long holdingSpeed;
-  private final String holdingTime;
+  private final Duration holdingTime;
   private final Double holdingDistance;
 
   private final Double inboundHoldingCourseValue;
@@ -107,7 +108,7 @@ public final class ArincHoldingPattern {
     return Optional.ofNullable(holdingSpeed);
   }
 
-  public Optional<String> holdingTime() {
+  public Optional<Duration> holdingTime() {
     return Optional.ofNullable(holdingTime);
   }
 
@@ -325,7 +326,7 @@ public final class ArincHoldingPattern {
     private Double arcRadius;
     private String holdingPatternName;
     private Long holdingSpeed;
-    private String holdingTime;
+    private Duration holdingTime;
     private Double holdingDistance;
     private Double inboundHoldingCourseValue;
     private Boolean inboundHoldingCourseIsTrue;
@@ -384,7 +385,7 @@ public final class ArincHoldingPattern {
       return this;
     }
 
-    public Builder holdingTime(String holdingTime) {
+    public Builder holdingTime(Duration holdingTime) {
       this.holdingTime = holdingTime;
       return this;
     }
