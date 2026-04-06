@@ -68,6 +68,12 @@ public interface Runway {
    */
   Optional<Course> course();
 
+  /**
+   * The database reported elevation which corresponds to the {@link Runway#origin()} in Feet MSL
+   * @return the msl height of this runway.
+   */
+  Optional<Distance> originElevation();
+
   void accept(Visitor visitor);
 
   /**
@@ -91,6 +97,8 @@ public interface Runway {
 
     private final Course course;
 
+    private final Distance originElevation;
+
     private int hashCode;
 
     private Standard(Builder builder) {
@@ -98,6 +106,7 @@ public interface Runway {
       this.origin = requireNonNull(builder.origin);
       this.length = builder.length;
       this.course = builder.course;
+      this.originElevation = builder.originElevation;
     }
 
     @Override
@@ -120,12 +129,18 @@ public interface Runway {
       return ofNullable(course);
     }
 
+    @Override
+    public Optional<Distance> originElevation() {
+      return ofNullable(originElevation);
+    }
+
     public Builder toBuilder() {
       return builder()
           .runwayIdentifier(runwayIdentifier())
           .origin(origin())
           .length(length().orElse(null))
-          .course(course().orElse(null));
+          .course(course().orElse(null))
+          .originElevation(originElevation().orElse(null));
     }
 
     @Override
@@ -145,7 +160,8 @@ public interface Runway {
       return Objects.equals(runwayIdentifier, standard.runwayIdentifier)
           && Objects.equals(origin, standard.origin)
           && Objects.equals(length, standard.length)
-          && Objects.equals(course, standard.course);
+          && Objects.equals(course, standard.course)
+          && Objects.equals(originElevation, standard.originElevation);
     }
 
     @Override
@@ -157,7 +173,7 @@ public interface Runway {
     }
 
     private int computeHashCode() {
-      return Objects.hash(runwayIdentifier, origin, length, course);
+      return Objects.hash(runwayIdentifier, origin, length, course, originElevation);
     }
 
     @Override
@@ -167,6 +183,7 @@ public interface Runway {
           ", origin=" + origin +
           ", length=" + length +
           ", course=" + course +
+          ", originElevation=" + originElevation +
           '}';
     }
 
@@ -178,6 +195,8 @@ public interface Runway {
       private Distance length;
 
       private Course course;
+
+      private Distance originElevation;
 
       private Builder() {
       }
@@ -203,6 +222,11 @@ public interface Runway {
 
       public Builder course(Course course) {
         this.course = course;
+        return this;
+      }
+
+      public Builder originElevation(Distance originElevation) {
+        this.originElevation = originElevation;
         return this;
       }
     }
@@ -243,6 +267,11 @@ public interface Runway {
     @Override
     public Optional<Course> course() {
       return delegate.course();
+    }
+
+    @Override
+    public Optional<Distance> originElevation() {
+      return delegate.originElevation();
     }
 
     @Override

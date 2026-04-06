@@ -82,6 +82,7 @@ public interface AirportAssemblyStrategy<A, R, P> {
           .origin(LatLong.of(origin.latitude(), origin.longitude()))
           .length(origin.runwayLength().map(Integer::doubleValue).map(Distance::ofFeet).orElse(null))
           .course(trueCourse.orElse(null))
+          .originElevation(origin.landingThresholdElevation().map(Distance::ofFeet).orElse(null))
           .build();
     }
 

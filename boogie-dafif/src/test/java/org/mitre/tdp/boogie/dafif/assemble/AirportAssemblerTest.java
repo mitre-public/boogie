@@ -6,10 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.Distance;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.dafif.TestObjects;
@@ -44,6 +48,18 @@ public class AirportAssemblerTest {
         () -> assertEquals("FAKE1", airport.airportIdentifier()),
         () -> assertEquals(2, airport.magneticVariation().orElseThrow().angle().inDegrees()),
         () -> assertEquals("11", airport.runways().stream().sorted(Comparator.comparing(Runway::runwayIdentifier)).findFirst().get().runwayIdentifier())
+    );
+  }
+
+  @Test
+  void testOriginElevation() {
+    Airport airport = assembler.assemble(TestObjects.fakeAirport);
+
+    Map<String, Runway> runways = airport.runways().stream().collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
+
+    assertAll(
+        () -> assertEquals(Distance.ofFeet(18.), runways.get("11").originElevation().orElse(null), "11 low end elevation"),
+        () -> assertEquals(Distance.ofFeet(69.), runways.get("29").originElevation().orElse(null), "29 high end elevation")
     );
   }
 }
