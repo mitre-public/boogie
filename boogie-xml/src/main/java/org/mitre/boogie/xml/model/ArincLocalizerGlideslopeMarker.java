@@ -17,7 +17,7 @@ import org.mitre.boogie.xml.model.fields.NavaidWeatherInfo;
 import org.mitre.boogie.xml.model.fields.RunwayLeftRightCenterType;
 import org.mitre.boogie.xml.model.fields.RunwaySuffix;
 
-public final class ArincLocalizerGlideslopeMarker {
+public final class ArincLocalizerGlideslopeMarker implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

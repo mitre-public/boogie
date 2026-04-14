@@ -3,6 +3,7 @@ package org.mitre.boogie.xml.v23_4.convert;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.mitre.boogie.xml.model.ArincAirportCommunications;
 import org.mitre.boogie.xml.model.ArincGnssLandingSystem;
@@ -22,7 +23,6 @@ import org.mitre.boogie.xml.model.fields.ControlledAirspaceIndicator;
 import org.mitre.boogie.xml.model.fields.MagneticTrueIndicator;
 import org.mitre.boogie.xml.model.fields.PublicMilitaryIndicator;
 import org.mitre.boogie.xml.model.fields.UtcOffset;
-import org.mitre.boogie.xml.v23_4.generated.Constraint;
 import org.mitre.boogie.xml.v23_4.generated.Port;
 
 import com.google.common.collect.Range;
@@ -43,6 +43,7 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
   private static final ArincNdbNavaidConverter NDB_CONVERTER = ArincNdbNavaidConverter.INSTANCE;
   private static final ArincTaaConverter TAA_CONVERTER = ArincTaaConverter.INSTANCE;
   private static final ArincGnssLandingSystemConverter GLS_CONVERTER = ArincGnssLandingSystemConverter.INSTANCE;
+  private static final ArincProcedureConverter PROCEDURE_CONVERTER = ArincProcedureConverter.INSTANCE;
 
   private ArincPortConverter() {
   }
@@ -86,7 +87,9 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
         .flatMap(Optional::stream)
         .toList();
 
-    List<ArincProcedure> procs = List.of(); //todo do this
+    List<ArincProcedure> procs = Optional.ofNullable(port.getTerminalProcedures())
+        .map(this::convertProcedures)
+        .orElse(List.of());
 
     List<ArincWaypoint> waypoints = port.getTerminalWaypoint().stream()
         .map(WAYPOINT_CONVERTER)
@@ -151,7 +154,7 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
         .publicMilitaryIndicator(publicMilitaryIndicator)
         .recommendedNavaidRef(recommendedNavaidRef)
         .speedLimit(speedLimit)
-        .speedLimitAltitude(Optional.ofNullable(port.getSpeedLimitAltitude()).map(Constraint::getAltitude).orElse(null))
+        .speedLimitAltitude(Optional.ofNullable(port.getSpeedLimitAltitude()).map(ConstraintAltitudeResolver::resolve).orElse(null))
         .utcOffset(offset)
         .transitionAltitude(port.getTransitionAltitude())
         .ndbNavaid(ndbs)
@@ -168,5 +171,16 @@ final class ArincPortConverter implements Function<Port, ArincPortInfo> {
         .controlledAsArptIndicatorRef(controlledAsArptIndicatorRef)
         .controlledAirspaceIndicator(indicator)
         .build();
+  }
+
+  private List<ArincProcedure> convertProcedures(org.mitre.boogie.xml.v23_4.generated.TerminalProcedures tp) {
+    return Stream.of(
+            tp.getSid().stream().map(s -> (org.mitre.boogie.xml.v23_4.generated.Procedure) s),
+            tp.getStar().stream().map(s -> (org.mitre.boogie.xml.v23_4.generated.Procedure) s),
+            tp.getApproach().stream().map(s -> (org.mitre.boogie.xml.v23_4.generated.Procedure) s))
+        .flatMap(Function.identity())
+        .map(PROCEDURE_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
   }
 }

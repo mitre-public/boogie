@@ -12,7 +12,7 @@ import org.mitre.boogie.xml.model.fields.RunwayLeftRightCenterType;
 import org.mitre.boogie.xml.model.fields.RunwaySuffix;
 import org.mitre.tdp.boogie.MagneticVariation;
 
-public final class ArincGnssLandingSystem {
+public final class ArincGnssLandingSystem implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

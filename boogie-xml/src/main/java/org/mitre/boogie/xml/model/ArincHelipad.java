@@ -13,7 +13,7 @@ import org.mitre.boogie.xml.model.fields.HelipadShape;
 import org.mitre.boogie.xml.model.fields.RunwaySurfaceCode;
 import org.mitre.boogie.xml.model.fields.SurfaceType;
 
-public final class ArincHelipad {
+public final class ArincHelipad implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

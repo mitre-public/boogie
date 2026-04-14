@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.boogie.xml.model.ArincAirportCommunications;
+import org.mitre.boogie.xml.model.ArincFixRecord;
 import org.mitre.boogie.xml.model.ArincGnssLandingSystem;
 import org.mitre.boogie.xml.model.ArincHelipad;
 import org.mitre.boogie.xml.model.ArincLocalizerGlideSlope;
@@ -16,7 +17,7 @@ import org.mitre.boogie.xml.model.ArincWaypoint;
 
 import com.google.common.collect.Range;
 
-public final class ArincPortInfo {
+public final class ArincPortInfo implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

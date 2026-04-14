@@ -15,7 +15,8 @@ final class FlatMinMaxAltitudeConstraintConverter implements Function<HoldRvsmMi
   public Optional<FlatMinMaxAltitudeConstraint> apply(HoldRvsmMinimumMaximumAltitudeConstraint constraint) {
     return Optional.ofNullable(constraint)
         .map(c -> new FlatMinMaxAltitudeConstraint(
-            Optional.ofNullable(c.getMinimumAltitude()).map(a -> a.getAltitude()).orElse(null),
-            Optional.ofNullable(c.getMaximumAltitude()).map(a -> a.getAltitude()).orElse(null)));
+            Optional.ofNullable(c.getMinimumAltitude()).map(ConstraintAltitudeResolver::resolve).orElse(null),
+            Optional.ofNullable(c.getMaximumAltitude()).map(ConstraintAltitudeResolver::resolve).orElse(null)));
   }
+
 }

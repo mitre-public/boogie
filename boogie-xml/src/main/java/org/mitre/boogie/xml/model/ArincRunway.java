@@ -19,7 +19,7 @@ import org.mitre.boogie.xml.model.fields.TchValueIndicator;
 import org.mitre.boogie.xml.model.fields.TrueBearingSource;
 import org.mitre.caasd.commons.LatLong;
 
-public final class ArincRunway {
+public final class ArincRunway implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

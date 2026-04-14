@@ -14,7 +14,7 @@ import org.mitre.boogie.xml.model.fields.NdbNavaidCoverage;
 import org.mitre.boogie.xml.model.fields.NdbNavaidIfMarkerInfo;
 import org.mitre.boogie.xml.model.fields.NdbNavaidType;
 
-public final class ArincNdbNavaid {
+public final class ArincNdbNavaid implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

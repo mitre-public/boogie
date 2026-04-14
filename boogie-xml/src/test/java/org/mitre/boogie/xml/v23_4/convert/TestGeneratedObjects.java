@@ -557,4 +557,354 @@ final class TestGeneratedObjects {
     airway.getAirwayLeg().add(newValidAirwayLeg(20, "WYPT2"));
     return airway;
   }
+
+  static SidLeg newValidSidLeg(long seqNum) {
+    SidLeg leg = new SidLeg();
+    leg.setRecordType(RecordType.STANDARD);
+    leg.setCycleDate("2501");
+    leg.setSequenceNumber(seqNum);
+    leg.setPathAndTermination(PathAndTermination.TF);
+    return leg;
+  }
+
+  static StarLeg newValidStarLeg(long seqNum) {
+    StarLeg leg = new StarLeg();
+    leg.setRecordType(RecordType.STANDARD);
+    leg.setCycleDate("2501");
+    leg.setSequenceNumber(seqNum);
+    leg.setPathAndTermination(PathAndTermination.TF);
+    return leg;
+  }
+
+  static ApproachLeg newValidApproachLeg(long seqNum) {
+    ApproachLeg leg = new ApproachLeg();
+    leg.setRecordType(RecordType.STANDARD);
+    leg.setCycleDate("2501");
+    leg.setSequenceNumber(seqNum);
+    leg.setPathAndTermination(PathAndTermination.TF);
+    return leg;
+  }
+
+  static Constraint newConstraint(int altitude, boolean isFlightLevel) {
+    Constraint c = new Constraint();
+    c.setAltitude(altitude);
+    c.setIsFlightLevel(isFlightLevel);
+    return c;
+  }
+
+  static SpeedLimit newSpeedLimit(long at, long atOrAbove, long atOrBelow) {
+    SpeedLimit sl = new SpeedLimit();
+    sl.setAt(at);
+    sl.setAtOrAbove(atOrAbove);
+    sl.setAtOrBelow(atOrBelow);
+    return sl;
+  }
+
+  static AltitudeConstraint newAltitudeConstraint() {
+    AltitudeConstraint ac = new AltitudeConstraint();
+    ac.setAt(newConstraint(5000, false));
+    ac.setAtOrAbove(newConstraint(40, true));
+    ac.setAtOrBelow(newConstraint(80, true));
+    return ac;
+  }
+
+  static AltitudeTermination newAltitudeTermination() {
+    AltitudeTermination at = new AltitudeTermination();
+    at.setTerminationType(AltitudeTerminationType.LEG_TERMINATION);
+    at.setAltitude(newConstraint(60, true));
+    return at;
+  }
+
+  static ProcedureLeg.RaceTrackAltitude newRaceTrackAltitude() {
+    ProcedureLeg.RaceTrackAltitude rt = new ProcedureLeg.RaceTrackAltitude();
+    rt.setAtOrAbove(newConstraint(3000, false));
+    return rt;
+  }
+
+  static MagneticVariation newMagneticVariation() {
+    MagneticVariation mv = new MagneticVariation();
+    mv.setMagneticVariationEWT(MagneticVariationEWT.WEST);
+    mv.setMagneticVariationValue(BigDecimal.valueOf(3.5));
+    return mv;
+  }
+
+  static ProcedureWaypointDescription newProcedureWaypointDescription() {
+    ProcedureWaypointDescription wpd = new ProcedureWaypointDescription();
+    wpd.setIsEssential(true);
+    wpd.setIsFlyOver(false);
+    wpd.setIsHolding(true);
+    wpd.setIsNoProcedureTurn(false);
+    wpd.setIsPhantomFix(false);
+    wpd.setIsSourceProvidedEnrouteWaypoint(true);
+    wpd.setIsTaaProcedureTurn(false);
+    wpd.setIsAtcCompulsoryReportingPoint(true);
+    return wpd;
+  }
+
+  static ApproachWaypointDescription newApproachWaypointDescription() {
+    ApproachWaypointDescription awd = new ApproachWaypointDescription();
+    awd.setIsFacf(true);
+    awd.setIsMissedApproachPoint(false);
+    awd.setIsFaf(true);
+    awd.setIsFinalEndPoint(false);
+    awd.setIsFixTurningFinalApproach(true);
+    awd.setIsInitialApproachFix(false);
+    awd.setIsIntermediateApproachFix(true);
+    awd.setStepDownFix(StepDownFix.UNNAMED_IN_FINAL_APPROACH_SEGMENT);
+    return awd;
+  }
+
+  private static void populateProcedureLegFields(ProcedureLeg leg) {
+    leg.setFixIdent("WYPT1");
+    leg.setFixRef("FIX-WYPT1");
+    leg.setRecNavaidIdent("DCA");
+    leg.setRecNavaidRef("NAVAID-DCA");
+    leg.setTurnDirection(TurnDirection.LEFT);
+    leg.setIsTurnDirectionValid(true);
+    leg.setArcRadius(BigDecimal.valueOf(5.0));
+    leg.setAtcIndicator(AtcIndicator.MODIFIED_OR_ASSIGNED);
+    leg.setDistance(BigDecimal.valueOf(10.5));
+    leg.setLegDistance(BigDecimal.valueOf(12.3));
+    leg.setLegInboundIndicator("A");
+    leg.setLegInboundOutboundIndicator(LegInboundOutboundIndicator.INBOUND);
+    leg.setRho(BigDecimal.valueOf(50.0));
+    leg.setRnp(BigDecimal.valueOf(2.0));
+    leg.setTheta(BigDecimal.valueOf(180.0));
+    leg.setCourse(newCourse(90.5, true));
+    leg.setCenterFix("CTR01");
+    leg.setCenterFixRef("CTRFIX-01");
+    leg.setTransitionsAltitudeLevel(18000);
+    leg.setVerticalScaleFactor(100L);
+    leg.setHoldTime(DatatypeFactory.newDefaultInstance().newDuration("PT4M"));
+    leg.setProcedureDesignMagVar(newMagneticVariation());
+    leg.setSpeedLimit(newSpeedLimit(250L, 200L, 300L));
+    leg.setAltitudeConstraint(newAltitudeConstraint());
+    leg.setAltitudeTermination(newAltitudeTermination());
+    leg.setRaceTrackAltitude(newRaceTrackAltitude());
+    leg.setWaypointDescriptor(newProcedureWaypointDescription());
+  }
+
+  static SidLeg newFullSidLeg(long seqNum) {
+    SidLeg leg = new SidLeg();
+    leg.setRecordType(RecordType.STANDARD);
+    leg.setCycleDate("2501");
+    leg.setSequenceNumber(seqNum);
+    leg.setPathAndTermination(PathAndTermination.TF);
+    populateProcedureLegFields(leg);
+    leg.setIsEngineOutDisarmPoint(true);
+    leg.setIsInitialDepartureFix(false);
+    leg.setIsQuietClimbRestorePoint(true);
+    return leg;
+  }
+
+  static StarLeg newFullStarLeg(long seqNum) {
+    StarLeg leg = new StarLeg();
+    leg.setRecordType(RecordType.STANDARD);
+    leg.setCycleDate("2501");
+    leg.setSequenceNumber(seqNum);
+    leg.setPathAndTermination(PathAndTermination.TF);
+    populateProcedureLegFields(leg);
+    leg.setVerticalAngle(BigDecimal.valueOf(-3.0));
+    return leg;
+  }
+
+  static ApproachLeg newFullApproachLeg(long seqNum) {
+    ApproachLeg leg = new ApproachLeg();
+    leg.setRecordType(RecordType.STANDARD);
+    leg.setCycleDate("2501");
+    leg.setSequenceNumber(seqNum);
+    leg.setPathAndTermination(PathAndTermination.TF);
+    populateProcedureLegFields(leg);
+    leg.setVerticalAngle(BigDecimal.valueOf(-3.0));
+    leg.setGlideSlopeCrossingAltitude(200);
+    leg.setApproachWaypointDescription(newApproachWaypointDescription());
+    return leg;
+  }
+
+  static RouteQualifications newRouteQualifications() {
+    RouteQualifications rq = new RouteQualifications();
+    rq.setIsDmeReq(true);
+    rq.setIsGnssReq(false);
+    rq.setIsRadarReq(true);
+    rq.setIsFmsReq(false);
+    rq.setIsConventional(true);
+    return rq;
+  }
+
+  static SidRunwayTransition newValidSidRunwayTransition() {
+    SidRunwayTransition srt = new SidRunwayTransition();
+    srt.setIdentifier("RW09L");
+    srt.setRnavPbnNavSpec(RnavPbnNavSpec.RNAV_1);
+    srt.setRnpPbnNavSpec(RnpPbnNavSpec.RNP_1);
+    srt.setRouteQualifications(newRouteQualifications());
+    srt.setIsFromRunway(true);
+    srt.getProcedureLeg().add(newValidSidLeg(10));
+    srt.getProcedureLeg().add(newValidSidLeg(20));
+    return srt;
+  }
+
+  static SidEnrouteTransition newValidSidEnrouteTransition() {
+    SidEnrouteTransition set = new SidEnrouteTransition();
+    set.setIdentifier("GREKI");
+    set.setRnavPbnNavSpec(RnavPbnNavSpec.RNAV_1);
+    set.setRouteQualifications(newRouteQualifications());
+    set.getProcedureLeg().add(newValidSidLeg(30));
+    return set;
+  }
+
+  static StarRunwayTransition newValidStarRunwayTransition() {
+    StarRunwayTransition srt = new StarRunwayTransition();
+    srt.setIdentifier("RW01C");
+    srt.setRnavPbnNavSpec(RnavPbnNavSpec.RNAV_1);
+    srt.setRouteQualifications(newRouteQualifications());
+    srt.setIsToRunway(true);
+    srt.getProcedureLeg().add(newValidStarLeg(10));
+    return srt;
+  }
+
+  static StarEnrouteTransition newValidStarEnrouteTransition() {
+    StarEnrouteTransition set = new StarEnrouteTransition();
+    set.setIdentifier("FRDMM");
+    set.setRnavPbnNavSpec(RnavPbnNavSpec.RNAV_1);
+    set.setRouteQualifications(newRouteQualifications());
+    set.getProcedureLeg().add(newValidStarLeg(10));
+    return set;
+  }
+
+  static FinalApproach newValidFinalApproach() {
+    FinalApproach fa = new FinalApproach();
+    fa.setIdentifier("I01C");
+    fa.setQualifier1(ApproachQualifier1.DME_REQUIRED);
+    fa.setIsRemoteAltimeterRestricted(false);
+    fa.setBaroVnavNotAuthorized(true);
+    fa.setProcedureTch(50L);
+    fa.setGlideSlopeInterceptAltitude(2000);
+    fa.getProcedureLeg().add(newValidApproachLeg(10));
+    fa.getProcedureLeg().add(newValidApproachLeg(20));
+    return fa;
+  }
+
+  static ApproachTransition newValidApproachTransition() {
+    ApproachTransition at = new ApproachTransition();
+    at.setIdentifier("GNDLF");
+    at.setQualifier1(ApproachQualifier1.DME_REQUIRED);
+    at.setMultipleIndicator("A");
+    at.setIsTfOverlay(false);
+    at.getProcedureLeg().add(newValidApproachLeg(10));
+    return at;
+  }
+
+  static MissedApproach newValidMissedApproach() {
+    MissedApproach ma = new MissedApproach();
+    ma.setIdentifier("MA01C");
+    ma.setQualifier1(ApproachQualifier1.DME_REQUIRED);
+    ma.getProcedureLeg().add(newValidApproachLeg(10));
+    return ma;
+  }
+
+  static Sid newValidSid() {
+    Sid sid = new Sid();
+    sid.setIdentifier("RNAV1");
+    sid.setReferenceId("SID-RNAV1");
+    sid.setRecordType(RecordType.STANDARD);
+    sid.setIsRnav(true);
+    sid.setIsHelicopterOnlyProcedure(false);
+    sid.setIsMilitary(false);
+    sid.setIsSpecial(false);
+    sid.setIsVorDmeRnav(false);
+    sid.setRnavPbnNavSpec(RnavPbnNavSpec.RNAV_1);
+    sid.setIsEngineOut(false);
+    sid.setIsVector(true);
+    sid.setIsPInS(false);
+    sid.setIsPInSProceedVisually(false);
+    sid.setIsPInSProceedVfr(false);
+    sid.setProcedureName("RNAV ONE DEPARTURE");
+    sid.setLongIdent("RNAV1.DEP");
+    sid.getSidRunwayTransition().add(newValidSidRunwayTransition());
+    sid.getSidEnrouteTransition().add(newValidSidEnrouteTransition());
+    return sid;
+  }
+
+  static Star newValidStar() {
+    Star star = new Star();
+    star.setIdentifier("FRDMM3");
+    star.setReferenceId("STAR-FRDMM3");
+    star.setRecordType(RecordType.STANDARD);
+    star.setIsRnav(true);
+    star.setIsHelicopterOnlyProcedure(false);
+    star.setIsMilitary(false);
+    star.setIsSpecial(false);
+    star.setIsVorDmeRnav(false);
+    star.setRnavPbnNavSpec(RnavPbnNavSpec.RNAV_1);
+    star.setIsContinuousDescent(true);
+    star.setProcedureName("FREEDOM THREE ARRIVAL");
+    star.getStarEnrouteTransition().add(newValidStarEnrouteTransition());
+    star.getStarRunwayTransition().add(newValidStarRunwayTransition());
+    return star;
+  }
+
+  static Approach newValidApproach() {
+    Approach approach = new Approach();
+    approach.setIdentifier("I01C");
+    approach.setReferenceId("APR-I01C");
+    approach.setRecordType(RecordType.STANDARD);
+    approach.setIsRnav(false);
+    approach.setIsHelicopterOnlyProcedure(false);
+    approach.setIsMilitary(false);
+    approach.setIsSpecial(false);
+    approach.setApproachRouteType(ApproachRouteType.ILS);
+    approach.setGnssFmsIndicator(GnssFmsIndicator.FMS_OVERLAY_AUTHORIZED);
+    approach.setIsRnavVisual(false);
+    approach.setIsPInSProceedVisually(false);
+    approach.setIsPInSProceedVfr(false);
+    approach.setIsLocalizerBackcourse(false);
+    approach.setIsPreferredProcedure(true);
+    approach.setCategoryARadius(BigDecimal.valueOf(1.0));
+    approach.setCategoryBRadius(BigDecimal.valueOf(1.5));
+    approach.setCategoryCRadius(BigDecimal.valueOf(2.0));
+    approach.setCategoryDRadius(BigDecimal.valueOf(2.5));
+    approach.setProcedureName("ILS RWY 01C");
+    approach.getApproachTransition().add(newValidApproachTransition());
+    approach.setFinalApproach(newValidFinalApproach());
+    approach.getMissedApproach().add(newValidMissedApproach());
+    return approach;
+  }
+
+  static Airport newValidAirport() {
+    Airport airport = new Airport();
+    airport.setRecordType(RecordType.STANDARD);
+    airport.setCycleDate("2501");
+    airport.setIcaoCode("K6");
+    airport.setIdentifier("KDCA");
+    airport.setName("Ronald Reagan Washington National");
+    airport.setLocation(newLocation(38.852, -77.037));
+    airport.setElevation(15);
+    airport.setLongestRunway(6869L);
+    airport.setLongestRunwaySurfaceCode(RunwaySurfaceCode.HARD);
+    airport.setMagneticVariation(newMagneticVariation());
+    airport.getRunway().add(newValidRunway());
+    airport.getAirportGate().add(newValidAirportGate());
+    airport.getHelipad().add(newValidHelipad());
+    TerminalProcedures terminalProcedures = new TerminalProcedures();
+    terminalProcedures.getSid().add(newValidSid());
+    terminalProcedures.getStar().add(newValidStar());
+    terminalProcedures.getApproach().add(newValidApproach());
+    airport.setTerminalProcedures(terminalProcedures);
+    return airport;
+  }
+
+  static Heliport newValidHeliport() {
+    Heliport heliport = new Heliport();
+    heliport.setRecordType(RecordType.STANDARD);
+    heliport.setCycleDate("2501");
+    heliport.setIcaoCode("K6");
+    heliport.setIdentifier("6N5");
+    heliport.setName("Penn Yan Heliport");
+    heliport.setLocation(newLocation(40.748, -73.997));
+    heliport.setElevation(30);
+    heliport.setHeliportType(HeliportType.HOSPITAL);
+    heliport.setMagneticVariation(newMagneticVariation());
+    heliport.getHelipad().add(newValidHelipad());
+    return heliport;
+  }
 }

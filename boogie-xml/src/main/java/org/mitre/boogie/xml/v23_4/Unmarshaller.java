@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincAirway;
+import org.mitre.boogie.xml.model.ArincHeliport;
 import org.mitre.boogie.xml.model.ArincHoldingPattern;
 import org.mitre.boogie.xml.model.ArincNdbNavaid;
 import org.mitre.boogie.xml.model.ArincRecords;
@@ -16,6 +17,7 @@ import org.mitre.boogie.xml.model.ArincVhfNavaid;
 import org.mitre.boogie.xml.model.ArincWaypoint;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirwayConverter;
+import org.mitre.boogie.xml.v23_4.convert.ArincHeliportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincHoldingPatternConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincNdbNavaidConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincVhfNavaidConverter;
@@ -35,6 +37,7 @@ public final class Unmarshaller implements Function<InputStream, Optional<ArincR
   private static final ArincHoldingPatternConverter HOLDING_PATTERN_CONVERTER = ArincHoldingPatternConverter.INSTANCE;
   private static final ArincNdbNavaidConverter NDB_CONVERTER = ArincNdbNavaidConverter.INSTANCE;
   private static final ArincVhfNavaidConverter VHF_CONVERTER = ArincVhfNavaidConverter.INSTANCE;
+  private static final ArincHeliportConverter HELIPORT_CONVERTER = ArincHeliportConverter.INSTANCE;
 
   private final List<Class<?>> supportArincXmlClasses;
 
@@ -73,13 +76,18 @@ public final class Unmarshaller implements Function<InputStream, Optional<ArincR
           .map(HOLDING_PATTERN_CONVERTER)
           .flatMap(Optional::stream)
           .collect(Collectors.toSet());
+      Set<ArincHeliport> heliports = pubs.getHeliports().getHeliport().stream()
+          .map(HELIPORT_CONVERTER)
+          .flatMap(Optional::stream)
+          .collect(Collectors.toSet());
       ArincRecords records = ArincRecords.standard()
           .waypoints(enrts)
           .airports(arpts)
           .ndbNavaids(ndbs)
           .vhfNavaids(vhfs)
           .arincAirways(airways)
-          .holdingPatterns(holdingPatterns);
+          .holdingPatterns(holdingPatterns)
+          .heliports(heliports);
       return Optional.of(records);
     } catch (JAXBException e) {
       throw new RuntimeException("Could not unmarshall the xml file");

@@ -24,6 +24,8 @@ public interface ArincRecords {
 
   void addHoldingPattern(ArincHoldingPattern holdingPattern);
 
+  void addHeliport(ArincHeliport heliport);
+
   Set<ArincWaypoint> waypoints();
 
   ArincRecords waypoints(Set<ArincWaypoint> waypoints);
@@ -48,6 +50,9 @@ public interface ArincRecords {
 
   ArincRecords holdingPatterns(Set<ArincHoldingPattern> holdingPatterns);
 
+  Set<ArincHeliport> heliports();
+
+  ArincRecords heliports(Set<ArincHeliport> heliports);
 
   final class Standard implements ArincRecords {
     Set<ArincWaypoint> waypoints = new HashSet<>();
@@ -56,6 +61,7 @@ public interface ArincRecords {
     Set<ArincVhfNavaid> vhfNavaids = new HashSet<>();
     Set<ArincAirway> arincAirways = new HashSet<>();
     Set<ArincHoldingPattern> holdingPatterns = new HashSet<>();
+    Set<ArincHeliport> heliports = new HashSet<>();
 
     private Standard() {
     }
@@ -82,6 +88,10 @@ public interface ArincRecords {
 
     public void addHoldingPattern(ArincHoldingPattern holdingPattern) {
       holdingPatterns.add(holdingPattern);
+    }
+
+    public void addHeliport(ArincHeliport heliport) {
+      heliports.add(heliport);
     }
 
     public Set<ArincWaypoint> waypoints() {
@@ -135,6 +145,15 @@ public interface ArincRecords {
 
     public ArincRecords holdingPatterns(Set<ArincHoldingPattern> holdingPatterns) {
       this.holdingPatterns = holdingPatterns;
+      return this;
+    }
+
+    public Set<ArincHeliport> heliports() {
+      return heliports;
+    }
+
+    public ArincRecords heliports(Set<ArincHeliport> heliports) {
+      this.heliports = heliports;
       return this;
     }
   }

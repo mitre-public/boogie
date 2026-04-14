@@ -16,7 +16,7 @@ import org.mitre.boogie.xml.model.fields.VhfNavaidCoverage;
 import org.mitre.boogie.xml.model.fields.VorRangePower;
 import org.mitre.tdp.boogie.MagneticVariation;
 
-public final class ArincVhfNavaid {
+public final class ArincVhfNavaid implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

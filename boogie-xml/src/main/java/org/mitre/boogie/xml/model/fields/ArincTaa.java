@@ -81,6 +81,20 @@ public final class ArincTaa {
     return Objects.hash(baseInfo, recordInfo, approachTypeIdentifier, magneticTrueIndicator, taaFixPositionIndicator, taaIafWaypointRef, sectorBearingWaypointRef, sectorDetails);
   }
 
+  @Override
+  public String toString() {
+    return "ArincTaa{" +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", approachTypeIdentifier=" + approachTypeIdentifier +
+        ", magneticTrueIndicator='" + magneticTrueIndicator + '\'' +
+        ", taaFixPositionIndicator='" + taaFixPositionIndicator + '\'' +
+        ", taaIafWaypointRef='" + taaIafWaypointRef + '\'' +
+        ", sectorBearingWaypointRef='" + sectorBearingWaypointRef + '\'' +
+        ", sectorDetails=" + sectorDetails +
+        '}';
+  }
+
   public static final class Builder {
     private ArincBaseInfo baseInfo;
     private ArincRecordInfo recordInfo;

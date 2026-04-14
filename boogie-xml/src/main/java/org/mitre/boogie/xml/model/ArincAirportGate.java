@@ -6,7 +6,7 @@ import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincPointInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 
-public final class ArincAirportGate {
+public final class ArincAirportGate implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

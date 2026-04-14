@@ -20,7 +20,7 @@ import org.mitre.boogie.xml.model.fields.VhfNavaidCoverage;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.MagneticVariation;
 
-public final class ArincLocalizerGlideSlope {
+public final class ArincLocalizerGlideSlope implements ArincFixRecord {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

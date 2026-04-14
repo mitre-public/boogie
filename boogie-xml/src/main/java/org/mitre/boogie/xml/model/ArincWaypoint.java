@@ -12,7 +12,7 @@ import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.model.fields.ArincWaypointType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
 
-public final class ArincWaypoint implements Serializable {
+public final class ArincWaypoint implements ArincFixRecord, Serializable {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;

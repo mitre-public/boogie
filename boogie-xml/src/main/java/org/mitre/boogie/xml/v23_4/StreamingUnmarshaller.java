@@ -11,6 +11,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.mitre.boogie.xml.model.*;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirwayConverter;
+import org.mitre.boogie.xml.v23_4.convert.ArincHeliportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincHoldingPatternConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincNdbNavaidConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincVhfNavaidConverter;
@@ -35,6 +36,7 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
   private static final ArincHoldingPatternConverter HOLDING_PATTERN_CONVERTER = ArincHoldingPatternConverter.INSTANCE;
   private static final ArincNdbNavaidConverter NDB_CONVERTER = ArincNdbNavaidConverter.INSTANCE;
   private static final ArincVhfNavaidConverter VHF_CONVERTER = ArincVhfNavaidConverter.INSTANCE;
+  private static final ArincHeliportConverter HELIPORT_CONVERTER = ArincHeliportConverter.INSTANCE;
 
   private final List<Class<?>> supportArincXmlClasses;
 
@@ -85,6 +87,11 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
           if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("holdingPattern")) {
             HoldingPattern holdingPattern = unmarshaller.unmarshal(xmlEventReader, HoldingPattern.class).getValue();
             HOLDING_PATTERN_CONVERTER.apply(holdingPattern).ifPresent(records::addHoldingPattern);
+          }
+
+          if (event.isStartElement() && event.asStartElement().getName().getLocalPart().equals("heliport")) {
+            Heliport heliport = unmarshaller.unmarshal(xmlEventReader, Heliport.class).getValue();
+            HELIPORT_CONVERTER.apply(heliport).ifPresent(records::addHeliport);
           }
 
           xmlEventReader.nextEvent();
