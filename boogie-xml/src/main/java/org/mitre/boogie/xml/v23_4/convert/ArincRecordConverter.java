@@ -19,6 +19,7 @@ final class ArincRecordConverter implements Function<A424Record, ArincRecordInfo
         .recordType(Optional.of(a424Record.getRecordType()).map(Enum::name).map(ArincRecordType::valueOf).orElseThrow(() -> new IllegalStateException("Record Type was required: " + a424Record)))
         .areaCode(Optional.ofNullable(a424Record.getAreaCode()).map(Enum::name).orElse(null))
         .customerCode(a424Record.getCustomerCode())
+        .cycleDate(a424Record.getCycleDate())
         .notes(a424Record.getNotes())
         .build();
   }
