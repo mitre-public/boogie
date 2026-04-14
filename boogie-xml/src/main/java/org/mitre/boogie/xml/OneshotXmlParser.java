@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import org.mitre.boogie.xml.assemble.AirportAssembler;
 import org.mitre.boogie.xml.assemble.AirportAssemblyStrategy;
@@ -17,8 +16,6 @@ import org.mitre.boogie.xml.assemble.HeliportAssemblyStrategy;
 import org.mitre.boogie.xml.assemble.ProcedureAssembler;
 import org.mitre.boogie.xml.assemble.ProcedureAssemblyStrategy;
 import org.mitre.boogie.xml.database.FixDatabase;
-import org.mitre.boogie.xml.database.FixDatabaseFactory;
-import org.mitre.boogie.xml.model.ArincRecords;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
@@ -36,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * to a collection of client-defined records of the given types.
  *
  * <p>This class mirrors the ARINC {@code OneshotRecordParser} pattern but is tailored for XML input. It unmarshals the
- * XML into {@link ArincRecords}, builds a {@link FixDatabase} for cross-reference resolution, and then uses the configured
+ * XML into {@link org.mitre.boogie.xml.model.ArincRecords ArincRecords}, builds a {@link FixDatabase} for cross-reference resolution, and then uses the configured
  * assembly strategies to produce airports, fixes, airways, procedures, and heliports.
  *
  * <p>Usage with standard Boogie types:
@@ -97,57 +94,33 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
    * Assembles the collection of typed client records from an underlying ARINC 424 XML file represented as an
    * {@link InputStream}.
    *
+   * <p>Independent record types (fixes, airports, heliports) are assembled on-the-fly during streaming, and the
+   * {@link FixDatabase} is built incrementally. Only airways and procedures — which require the completed fix database
+   * for cross-reference resolution — are assembled after streaming completes.
+   *
    * @param inputStream an input stream containing the bytes of an ARINC 424 XML file
    */
   public ClientRecords<APT, FIX, AWY, PRC, HPT> assembleFrom(InputStream inputStream) {
     requireNonNull(inputStream);
 
-    ArincRecords arincRecords = new StreamingUnmarshaller(version.jaxbContextClasses(), version.handlers())
-        .apply(inputStream)
-        .orElseThrow(() -> new RuntimeException("Failed to unmarshal XML input."));
-    LOG.debug("Finished unmarshalling XML into ArincRecords.");
+    StreamAssemblyRecords<FIX, APT, HPT> context = new StreamAssemblyRecords<>(
+        FixAssembler.withStrategy(fixStrategy),
+        AirportAssembler.withStrategy(airportStrategy),
+        HeliportAssembler.withStrategy(heliportStrategy));
 
-    FixDatabase<FIX> fixDatabase = FixDatabaseFactory.create(arincRecords, fixStrategy);
+    StreamingUnmarshaller.fromVersion(version)
+        .apply(inputStream, context)
+        .orElseThrow(() -> new RuntimeException("Failed to unmarshal XML input."));
+    LOG.debug("Finished streaming XML — independent records assembled, FixDatabase indexed.");
+
+    FixDatabase<FIX> fixDatabase = context.fixDatabaseBuilder().build();
     LOG.debug("Finished building FixDatabase.");
 
-    Collection<APT> airports = assembleAirports(arincRecords);
-    Collection<FIX> fixes = assembleFixes(arincRecords);
-    Collection<AWY> airways = assembleAirways(arincRecords, fixDatabase);
-    Collection<PRC> procedures = assembleProcedures(arincRecords, fixDatabase);
-    Collection<HPT> heliports = assembleHeliports(arincRecords);
+    Collection<AWY> airways = AirwayAssembler.withStrategy(airwayStrategy, fixDatabase).assemble(context);
+    Collection<PRC> procedures = ProcedureAssembler.withStrategy(procedureStrategy, fixDatabase).assemble(context);
+    LOG.debug("Finished assembling airways and procedures.");
 
-    return new ClientRecords<>(airports, fixes, airways, procedures, heliports);
-  }
-
-  private Collection<APT> assembleAirports(ArincRecords records) {
-    AirportAssembler<APT> assembler = AirportAssembler.withStrategy(airportStrategy);
-    return assembler.assemble(records);
-  }
-
-  private Collection<FIX> assembleFixes(ArincRecords records) {
-    FixAssembler<FIX> assembler = FixAssembler.withStrategy(fixStrategy);
-    return Stream.of(
-            records.waypoints().stream(),
-            records.ndbNavaids().stream(),
-            records.vhfNavaids().stream())
-        .flatMap(s -> s)
-        .map(assembler::assemble)
-        .toList();
-  }
-
-  private Collection<AWY> assembleAirways(ArincRecords records, FixDatabase<FIX> fixDatabase) {
-    AirwayAssembler<AWY> assembler = AirwayAssembler.withStrategy(airwayStrategy, fixDatabase);
-    return assembler.assemble(records);
-  }
-
-  private Collection<PRC> assembleProcedures(ArincRecords records, FixDatabase<FIX> fixDatabase) {
-    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(procedureStrategy, fixDatabase);
-    return assembler.assemble(records);
-  }
-
-  private Collection<HPT> assembleHeliports(ArincRecords records) {
-    HeliportAssembler<HPT> assembler = HeliportAssembler.withStrategy(heliportStrategy);
-    return assembler.assemble(records);
+    return new ClientRecords<>(context.assembledAirports(), context.assembledFixes(), airways, procedures, context.assembledHeliports());
   }
 
   /**

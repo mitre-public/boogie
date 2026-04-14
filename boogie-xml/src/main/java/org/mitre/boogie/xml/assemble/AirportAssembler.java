@@ -37,6 +37,8 @@ public interface AirportAssembler<A> {
 
   Collection<A> assemble(ArincRecords records);
 
+  A assembleOne(ArincAirport airport);
+
   final class Standard<A, R, H> implements AirportAssembler<A> {
 
     private static final ReciprocalRunwayIdentifier RECIPROCAL_ID = ReciprocalRunwayIdentifier.INSTANCE;
@@ -54,7 +56,8 @@ public interface AirportAssembler<A> {
           .toList();
     }
 
-    private A assembleOne(ArincAirport airport) {
+    @Override
+    public A assembleOne(ArincAirport airport) {
       List<ArincRunway> arincRunways = airport.runways();
 
       Map<String, ArincRunway> runwayById = arincRunways.stream()

@@ -30,6 +30,8 @@ public interface HeliportAssembler<H> {
 
   Collection<H> assemble(ArincRecords records);
 
+  H assembleOne(ArincHeliport heliport);
+
   final class Standard<H, P> implements HeliportAssembler<H> {
 
     private final HeliportAssemblyStrategy<H, P> strategy;
@@ -45,7 +47,8 @@ public interface HeliportAssembler<H> {
           .toList();
     }
 
-    private H assembleOne(ArincHeliport heliport) {
+    @Override
+    public H assembleOne(ArincHeliport heliport) {
       List<P> helipads = heliport.portInfo().helipads()
           .orElse(List.of())
           .stream()

@@ -46,9 +46,22 @@ public final class StreamingUnmarshaller implements Function<InputStream, Option
         .collect(Collectors.toMap(XmlRecordHandler::elementName, Function.identity()));
   }
 
+  public static StreamingUnmarshaller fromVersion(ArincXmlVersion version) {
+    return new StreamingUnmarshaller(version.jaxbContextClasses(), version.handlers());
+  }
+
   @Override
   public Optional<ArincRecords> apply(InputStream inputStream) {
-    ArincRecords records = ArincRecords.standard();
+    return apply(inputStream, ArincRecords.standard());
+  }
+
+  /**
+   * Stream the given XML input into the provided {@link ArincRecords} instance.
+   *
+   * <p>This overload allows callers to inject a custom {@link ArincRecords} implementation, for example one that
+   * assembles records on-the-fly during streaming rather than buffering them.
+   */
+  public Optional<ArincRecords> apply(InputStream inputStream, ArincRecords records) {
     try {
       XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
       XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
