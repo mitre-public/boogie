@@ -1,22 +1,6 @@
+package org.mitre.boogie.xml.model;
+
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.model.ArincAirport;
-import org.mitre.boogie.xml.model.ArincAirportCommunications;
-import org.mitre.boogie.xml.model.ArincAirportGate;
-import org.mitre.boogie.xml.model.ArincAirway;
-import org.mitre.boogie.xml.model.ArincAirwayLeg;
-import org.mitre.boogie.xml.model.ArincGnssLandingSystem;
-import org.mitre.boogie.xml.model.ArincHelipad;
-import org.mitre.boogie.xml.model.ArincHoldingPattern;
-import org.mitre.boogie.xml.model.ArincLocalizerGlideSlope;
-import org.mitre.boogie.xml.model.ArincLocalizerGlideslopeMarker;
-import org.mitre.boogie.xml.model.ArincMsa;
-import org.mitre.boogie.xml.model.ArincNdbNavaid;
-import org.mitre.boogie.xml.model.ArincProcedure;
-import org.mitre.boogie.xml.model.ArincProcedureLeg;
-import org.mitre.boogie.xml.model.ArincRunway;
-import org.mitre.boogie.xml.model.ArincTransition;
-import org.mitre.boogie.xml.model.ArincVhfNavaid;
-import org.mitre.boogie.xml.model.ArincWaypoint;
 import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincFraInfo;
 import org.mitre.boogie.xml.model.fields.ArincMsaSector;

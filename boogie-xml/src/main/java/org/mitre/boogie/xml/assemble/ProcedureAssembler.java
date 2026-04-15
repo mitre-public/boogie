@@ -5,28 +5,29 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.mitre.boogie.xml.database.FixDatabase;
-import org.mitre.boogie.xml.database.FixDatabaseFactory;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincProcedure;
 import org.mitre.boogie.xml.model.ArincProcedureLeg;
-import org.mitre.boogie.xml.model.ArincRecords;
 import org.mitre.boogie.xml.model.ArincTransition;
 import org.mitre.boogie.xml.model.fields.ArincPortInfo;
 
 /**
- * Assembler class for converting {@link ArincProcedure} records into a client-defined output class representing a procedure.
+ * Assembler class for converting {@link ArincProcedure} records from a single {@link ArincAirport} into a client-defined
+ * output class representing a procedure.
  *
  * <p>Each XML procedure contains transitions which contain legs. Legs reference fixes by IDREF elements. The assembler
  * uses a {@link FixDatabase} to resolve those references into assembled fix objects.
  *
- * <p>Procedures are nested within {@link ArincPortInfo} (on airports and heliports), so the assembler iterates over all
- * airports and heliports in the provided {@link ArincRecords} to collect all procedures.
+ * <p>Procedures are nested within {@link ArincPortInfo} on the airport, so the assembler extracts and converts all
+ * procedures from the given airport's port info.
  *
- * <p>This class can be used with {@link ProcedureAssemblyStrategy#standard()} and
- * {@link FixDatabaseFactory#standard(ArincRecords)} to generate lightweight Boogie-defined {@link Procedure} implementations.
+ * <p>This class can be used with {@link ProcedureAssemblyStrategy#standard()} and a {@link FixDatabase} to generate
+ * lightweight Boogie-defined {@link Procedure} implementations.
  */
 public interface ProcedureAssembler<P> {
 
@@ -38,7 +39,7 @@ public interface ProcedureAssembler<P> {
     return new Standard<>(strategy, fixDatabase);
   }
 
-  Collection<P> assemble(ArincRecords records);
+  Stream<P> assemble(Collection<ArincAirport> airports);
 
   final class Standard<P, T, L, F> implements ProcedureAssembler<P> {
 
@@ -51,18 +52,16 @@ public interface ProcedureAssembler<P> {
     }
 
     @Override
-    public Collection<P> assemble(ArincRecords records) {
-      return records.airports().stream()
-          .flatMap(airport -> assembleForPort(airport.portInfo()).stream())
-          .collect(Collectors.toList());
+    public Stream<P> assemble(Collection<ArincAirport> airports) {
+      return airports.stream().flatMap(this::assembleForAirport);
     }
 
-    private List<P> assembleForPort(ArincPortInfo portInfo) {
+    private Stream<P> assembleForAirport(ArincAirport airport) {
+      ArincPortInfo portInfo = airport.portInfo();
       String airportIdentifier = portInfo.pointInfo().identifier();
 
       return portInfo.procedures().orElse(List.of()).stream()
-          .map(proc -> assembleOne(proc, airportIdentifier))
-          .collect(Collectors.toList());
+          .map(proc -> assembleOne(proc, airportIdentifier));
     }
 
     private P assembleOne(ArincProcedure procedure, String airportIdentifier) {

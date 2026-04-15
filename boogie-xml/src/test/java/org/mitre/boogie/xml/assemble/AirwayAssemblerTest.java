@@ -2,7 +2,6 @@ package org.mitre.boogie.xml.assemble;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -31,14 +30,17 @@ class AirwayAssemblerTest {
   private static final String CYCLE = "2504";
 
   @Test
-  void assemblesEmptyRecords() {
+  void assemblesAirwayWithNoLegs() {
     ArincRecords records = ArincRecords.standard();
     FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
-    Collection<Airway> airways = assembler.assemble(records);
+    ArincAirway airway = ArincAirway.builder().identifier("J60").airwayRouteType("J").legs(List.of()).build();
+    List<Airway> airways = assembler.assemble(List.of(airway)).toList();
 
-    assertTrue(airways.isEmpty());
+    assertEquals(1, airways.size());
+    assertEquals("J60", airways.get(0).airwayIdentifier());
+    assertTrue(airways.get(0).legs().isEmpty());
   }
 
   @Test
@@ -46,23 +48,20 @@ class AirwayAssemblerTest {
     ArincRecords records = ArincRecords.standard()
         .waypoints(Set.of(
             testWaypoint("JMACK", JMACK_POS),
-            testWaypoint("CHPPR", CHPPR_POS)))
-        .arincAirways(Set.of(
-            ArincAirway.builder()
-                .identifier("J60")
-                .airwayRouteType("J")
-                .legs(List.of(
-                    ArincAirwayLeg.builder().sequenceNumber(10).fixRef("JMACK").build(),
-                    ArincAirwayLeg.builder().sequenceNumber(20).fixRef("CHPPR").build()))
-                .build()));
+            testWaypoint("CHPPR", CHPPR_POS)));
+
+    ArincAirway airway = ArincAirway.builder()
+        .identifier("J60")
+        .airwayRouteType("J")
+        .legs(List.of(
+            ArincAirwayLeg.builder().sequenceNumber(10).fixRef("JMACK").build(),
+            ArincAirwayLeg.builder().sequenceNumber(20).fixRef("CHPPR").build()))
+        .build();
 
     FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
-    Collection<Airway> airways = assembler.assemble(records);
-
-    assertEquals(1, airways.size());
-    Airway awy = airways.iterator().next();
+    Airway awy = assembler.assemble(List.of(airway)).toList().get(0);
     assertAll(
         () -> assertEquals("J60", awy.airwayIdentifier()),
         () -> assertEquals(2, awy.legs().size()),
@@ -75,36 +74,30 @@ class AirwayAssemblerTest {
 
   @Test
   void assemblesAirwayWithUnresolvedFixes() {
-    ArincRecords records = ArincRecords.standard()
-        .arincAirways(Set.of(
-            ArincAirway.builder()
-                .identifier("V12")
-                .airwayRouteType("V")
-                .legs(List.of(
-                    ArincAirwayLeg.builder().sequenceNumber(10).fixRef("UNKNOWN").build()))
-                .build()));
+    ArincAirway airway = ArincAirway.builder()
+        .identifier("V12")
+        .airwayRouteType("V")
+        .legs(List.of(
+            ArincAirwayLeg.builder().sequenceNumber(10).fixRef("UNKNOWN").build()))
+        .build();
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
-    Collection<Airway> airways = assembler.assemble(records);
-
-    assertEquals(1, airways.size());
-    Airway awy = airways.iterator().next();
+    Airway awy = assembler.assemble(List.of(airway)).toList().get(0);
     assertTrue(awy.legs().get(0).associatedFix().isEmpty(), "Unresolved fix should be empty");
   }
 
   @Test
-  void assemblesMultipleAirways() {
-    ArincRecords records = ArincRecords.standard()
-        .arincAirways(Set.of(
-            ArincAirway.builder().identifier("J60").airwayRouteType("J").legs(List.of()).build(),
-            ArincAirway.builder().identifier("V12").airwayRouteType("V").legs(List.of()).build()));
-
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+  void assemblesMultipleAirwaysViaFlatMap() {
+    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
-    Collection<Airway> airways = assembler.assemble(records);
+    List<ArincAirway> arincAirways = List.of(
+        ArincAirway.builder().identifier("J60").airwayRouteType("J").legs(List.of()).build(),
+        ArincAirway.builder().identifier("V12").airwayRouteType("V").legs(List.of()).build());
+
+    List<Airway> airways = assembler.assemble(arincAirways).toList();
 
     assertEquals(2, airways.size());
   }

@@ -5,23 +5,22 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.mitre.boogie.xml.database.FixDatabase;
-import org.mitre.boogie.xml.database.FixDatabaseFactory;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.boogie.xml.model.ArincAirway;
 import org.mitre.boogie.xml.model.ArincAirwayLeg;
-import org.mitre.boogie.xml.model.ArincRecords;
 
 /**
- * Assembler class for converting {@link ArincAirway} records into a client-defined output class representing an airway.
+ * Assembler class for converting a single {@link ArincAirway} record into a client-defined output class representing an airway.
  *
  * <p>Each XML airway already contains its legs inline, but the legs reference fixes by identifier. The assembler uses a
  * {@link FixDatabase} to resolve those references into assembled fix objects.
  *
- * <p>This class can be used with {@link AirwayAssemblyStrategy#standard()} and {@link FixDatabaseFactory#standard(ArincRecords)}
- * to generate lightweight Boogie-defined {@link Airway} implementations.
+ * <p>This class can be used with {@link AirwayAssemblyStrategy#standard()} and a {@link FixDatabase} to generate
+ * lightweight Boogie-defined {@link Airway} implementations.
  */
 public interface AirwayAssembler<A> {
 
@@ -33,7 +32,7 @@ public interface AirwayAssembler<A> {
     return new Standard<>(strategy, fixDatabase);
   }
 
-  Collection<A> assemble(ArincRecords records);
+  Stream<A> assemble(Collection<ArincAirway> airways);
 
   final class Standard<A, F, L> implements AirwayAssembler<A> {
 
@@ -46,10 +45,8 @@ public interface AirwayAssembler<A> {
     }
 
     @Override
-    public Collection<A> assemble(ArincRecords records) {
-      return records.arincAirways().stream()
-          .map(this::assembleOne)
-          .toList();
+    public Stream<A> assemble(Collection<ArincAirway> airways) {
+      return airways.stream().map(this::assembleOne);
     }
 
     private A assembleOne(ArincAirway airway) {

@@ -3,7 +3,6 @@ package org.mitre.boogie.xml.assemble;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -23,25 +22,25 @@ import org.mitre.boogie.xml.model.ArincTransition;
 class ProcedureAssemblerTest {
 
   @Test
-  void assemblesEmptyRecords() {
+  void assemblesAirportWithNoProceduresReturnsEmptyStream() {
     ArincRecords records = ArincRecords.standard();
     FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
-    Collection<Procedure> procedures = assembler.assemble(records);
+    List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of()))).toList();
 
     assertTrue(procedures.isEmpty());
   }
 
   @Test
-  void assemblesAirportWithNoProcedures() {
+  void assemblesAirportWithEmptyProceduresList() {
     ArincRecords records = ArincRecords.standard()
         .airports(Set.of(testAirport("KDTW", List.of())));
 
     FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
-    Collection<Procedure> procedures = assembler.assemble(records);
+    List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of()))).toList();
 
     assertTrue(procedures.isEmpty());
   }
@@ -72,10 +71,10 @@ class ProcedureAssemblerTest {
     FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
-    Collection<Procedure> procedures = assembler.assemble(records);
+    List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of(sid)))).toList();
 
     assertEquals(1, procedures.size());
-    Procedure proc = procedures.iterator().next();
+    Procedure proc = procedures.get(0);
     assertAll(
         () -> assertEquals("GLAVN1", proc.procedureIdentifier()),
         () -> assertEquals("KDTW", proc.airportIdentifier()),
@@ -117,18 +116,15 @@ class ProcedureAssemblerTest {
                 .build()))
         .build();
 
-    ArincRecords records = ArincRecords.standard()
-        .airports(Set.of(testAirport("KJFK", List.of(star))));
-
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
-    Collection<Procedure> procedures = assembler.assemble(records);
+    List<Procedure> procedures = assembler.assemble(List.of(testAirport("KJFK", List.of(star)))).toList();
 
     assertAll(
         () -> assertEquals(1, procedures.size()),
         () -> assertTrue(
-            procedures.iterator().next().transitions().iterator().next().legs().get(0).associatedFix().isEmpty(),
+            procedures.get(0).transitions().iterator().next().legs().get(0).associatedFix().isEmpty(),
             "Unresolved fixRef should result in empty fix")
     );
   }
@@ -150,13 +146,10 @@ class ProcedureAssemblerTest {
         .procedureType("Approach")
         .build();
 
-    ArincRecords records = ArincRecords.standard()
-        .airports(Set.of(testAirport("KDTW", List.of(sid, star, approach))));
-
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
-    Collection<Procedure> procedures = assembler.assemble(records);
+    List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of(sid, star, approach)))).toList();
 
     assertEquals(3, procedures.size());
   }
@@ -173,15 +166,13 @@ class ProcedureAssemblerTest {
         .procedureType("Star")
         .build();
 
-    ArincRecords records = ArincRecords.standard()
-        .airports(Set.of(
-            testAirport("KDTW", List.of(sid)),
-            testAirport("KJFK", List.of(star))));
-
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
-    Collection<Procedure> procedures = assembler.assemble(records);
+    List<Procedure> procedures = assembler.assemble(List.of(
+            testAirport("KDTW", List.of(sid)),
+            testAirport("KJFK", List.of(star))))
+        .toList();
 
     assertEquals(2, procedures.size());
   }

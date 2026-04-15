@@ -2,6 +2,7 @@ package org.mitre.boogie.xml;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +35,9 @@ class OneshotXmlParserTest {
         () -> assertEquals(13, records.fixes().size(), "Fixes"),
         () -> assertEquals(5, records.airways().size(), "Airways"),
         () -> assertEquals(75, records.procedures().size(), "Procedures"),
-        () -> assertEquals(5, records.heliports().size(), "Heliports")
+        () -> assertEquals(5, records.heliports().size(), "Heliports"),
+        () -> assertNotNull(records.fixDatabase()),
+        () -> assertNotNull(records.terminalAreaDatabase())
     );
   }
 }

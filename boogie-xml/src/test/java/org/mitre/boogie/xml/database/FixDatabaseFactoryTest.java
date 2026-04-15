@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.boogie.xml.assemble.FixAssembler;
 import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincAirportGate;
 import org.mitre.boogie.xml.model.ArincGnssLandingSystem;
@@ -402,6 +403,146 @@ class FixDatabaseFactoryTest {
     FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertTrue(db.fix("SAME_ID").isPresent());
+  }
+
+  // ---------------------------------------------------------------------------
+  // Ident + ICAO code typed lookup tests
+  // ---------------------------------------------------------------------------
+
+  @Test
+  void standard_waypointLookupByIdentAndIcao() {
+    ArincRecords records = ArincRecords.standard();
+    records.addWaypoint(testWaypoint("JMACK", POSITION, MAG_VAR));
+
+    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+
+    assertAll(
+        () -> assertTrue(db.waypoint("JMACK", "K6").isPresent()),
+        () -> assertEquals("JMACK", db.waypoint("JMACK", "K6").orElseThrow().fixIdentifier()),
+        () -> assertTrue(db.waypoint("JMACK", "EG").isEmpty(), "wrong ICAO code"),
+        () -> assertTrue(db.waypoint("MISSING", "K6").isEmpty(), "wrong identifier")
+    );
+  }
+
+  @Test
+  void standard_ndbNavaidLookupByIdentAndIcao() {
+    ArincRecords records = ArincRecords.standard();
+    records.addNdbNavaid(testNdb("NDB1", POSITION, MAG_VAR));
+
+    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+
+    assertAll(
+        () -> assertTrue(db.ndbNavaid("NDB1", "K6").isPresent()),
+        () -> assertEquals("NDB1", db.ndbNavaid("NDB1", "K6").orElseThrow().fixIdentifier()),
+        () -> assertTrue(db.ndbNavaid("NDB1", "EG").isEmpty())
+    );
+  }
+
+  @Test
+  void standard_vhfNavaidLookupByIdentAndIcao() {
+    ArincRecords records = ArincRecords.standard();
+    records.addVhfNavaid(testVhf("DXO", POSITION, MAG_VAR));
+
+    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+
+    assertAll(
+        () -> assertTrue(db.vhfNavaid("DXO", "K6").isPresent()),
+        () -> assertEquals("DXO", db.vhfNavaid("DXO", "K6").orElseThrow().fixIdentifier()),
+        () -> assertTrue(db.vhfNavaid("DXO", "EG").isEmpty())
+    );
+  }
+
+  @Test
+  void standard_airportLookupByIdentAndIcao() {
+    ArincRecords records = ArincRecords.standard();
+    records.addAirport(testAirport("KATL", POSITION, MAG_VAR));
+
+    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+
+    assertAll(
+        () -> assertTrue(db.airport("KATL", "K6").isPresent()),
+        () -> assertEquals("KATL", db.airport("KATL", "K6").orElseThrow().fixIdentifier()),
+        () -> assertTrue(db.airport("KATL", "EG").isEmpty())
+    );
+  }
+
+  @Test
+  void standard_typedIndexesAreIndependent() {
+    ArincRecords records = ArincRecords.standard();
+    records.addWaypoint(testWaypoint("SAME", POSITION, MAG_VAR));
+    records.addNdbNavaid(testNdb("SAME", POSITION, MAG_VAR));
+
+    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+
+    assertAll(
+        () -> assertTrue(db.waypoint("SAME", "K6").isPresent()),
+        () -> assertTrue(db.ndbNavaid("SAME", "K6").isPresent()),
+        () -> assertTrue(db.vhfNavaid("SAME", "K6").isEmpty(), "no VHF with this ident"),
+        () -> assertTrue(db.airport("SAME", "K6").isEmpty(), "no airport with this ident")
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // indexAirport returns PortPage tests
+  // ---------------------------------------------------------------------------
+
+  @Test
+  void indexAirport_returnsPortPageWithTerminalFixes() {
+    ArincWaypoint termWp = testWaypoint("TWPT1", POSITION, MAG_VAR);
+    ArincRunway runway = ArincRunway.builder()
+        .pointInfo(testPointInfo("RW09L", POSITION, MAG_VAR))
+        .recordInfo(testRecordInfo())
+        .build();
+    ArincAirportGate gate = ArincAirportGate.builder()
+        .pointInfo(testPointInfo("GATE_A1", POSITION, MAG_VAR))
+        .recordInfo(testRecordInfo())
+        .build();
+
+    ArincAirport airport = ArincAirport.builder()
+        .portInfo(ArincPortInfo.builder()
+            .pointInfo(testPointInfo("KATL", POSITION, MAG_VAR))
+            .recordInfo(testRecordInfo())
+            .terminalWaypoints(List.of(termWp))
+            .build())
+        .runways(List.of(runway))
+        .airportGates(List.of(gate))
+        .build();
+
+    FixDatabase.Builder<Fix> builder = FixDatabase.builder();
+    PortPage<Fix> page = FixDatabaseFactory.indexAirport(builder, airport, FixAssembler.standard());
+
+    assertAll(
+        () -> assertEquals("KATL", page.identifier()),
+        () -> assertEquals("K6", page.icaoCode()),
+        () -> assertEquals("KATL", page.referencePoint().fixIdentifier()),
+        () -> assertTrue(page.terminalWaypoint("TWPT1").isPresent()),
+        () -> assertTrue(page.runway("RW09L").isPresent()),
+        () -> assertTrue(page.gate("GATE_A1").isPresent()),
+        () -> assertTrue(page.terminalWaypoint("MISSING").isEmpty())
+    );
+  }
+
+  @Test
+  void indexAirport_alsoIndexesIntoFixDatabase() {
+    ArincWaypoint termWp = testWaypoint("TWPT1", POSITION, MAG_VAR);
+
+    ArincAirport airport = ArincAirport.builder()
+        .portInfo(ArincPortInfo.builder()
+            .pointInfo(testPointInfo("KATL", POSITION, MAG_VAR))
+            .recordInfo(testRecordInfo())
+            .terminalWaypoints(List.of(termWp))
+            .build())
+        .build();
+
+    FixDatabase.Builder<Fix> builder = FixDatabase.builder();
+    FixDatabaseFactory.indexAirport(builder, airport, FixAssembler.standard());
+    FixDatabase<Fix> db = builder.build();
+
+    assertAll(
+        () -> assertTrue(db.fix("KATL").isPresent(), "airport by refId"),
+        () -> assertTrue(db.fix("TWPT1").isPresent(), "terminal waypoint by refId"),
+        () -> assertTrue(db.airport("KATL", "K6").isPresent(), "airport by ident+icao")
+    );
   }
 
   // -- test helpers --

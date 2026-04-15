@@ -4,16 +4,20 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.mitre.boogie.xml.assemble.AirportAssembler;
+import org.mitre.boogie.xml.assemble.AirwayAssembler;
 import org.mitre.boogie.xml.assemble.FixAssembler;
 import org.mitre.boogie.xml.assemble.HeliportAssembler;
+import org.mitre.boogie.xml.assemble.ProcedureAssembler;
 import org.mitre.boogie.xml.database.FixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
+import org.mitre.boogie.xml.database.PortPage;
+import org.mitre.boogie.xml.database.XmlTerminalAreaDatabase;
 import org.mitre.boogie.xml.model.ArincAirport;
+import org.mitre.boogie.xml.model.fields.ArincPointInfo;
 import org.mitre.boogie.xml.model.ArincAirway;
 import org.mitre.boogie.xml.model.ArincHeliport;
 import org.mitre.boogie.xml.model.ArincHoldingPattern;
@@ -23,53 +27,63 @@ import org.mitre.boogie.xml.model.ArincVhfNavaid;
 import org.mitre.boogie.xml.model.ArincWaypoint;
 
 /**
- * An {@link ArincRecords} implementation that assembles independent record types on-the-fly during streaming
- * unmarshalling, reducing peak memory by not buffering intermediate model objects for types that don't require
- * cross-reference resolution.
+ * An {@link ArincRecords} implementation that assembles <i>all</i> record types on-the-fly during streaming
+ * unmarshalling, eliminating buffering entirely. No intermediate model objects are retained after assembly.
+ *
+ * <p>This relies on the XML element ordering where waypoints, NDB navaids, VHF navaids, and airways appear
+ * before airports and heliports in the stream. The {@link FixDatabase} is created eagerly via
+ * {@link FixDatabase.Builder#build()} and shares its backing maps with the builder &mdash; so additions during
+ * streaming are immediately visible to the assemblers that hold a reference to the built database.
  *
  * <p>During streaming:
  * <ul>
  *   <li><b>Waypoints, NDB navaids, VHF navaids</b> &mdash; immediately assembled into fixes and indexed in the
- *       {@link FixDatabase.Builder}. The intermediate model objects are not retained.</li>
- *   <li><b>Airports</b> &mdash; immediately assembled into client airport objects, nested fixes indexed in the
- *       builder, and the raw {@link ArincAirport} buffered for procedure assembly.</li>
- *   <li><b>Heliports</b> &mdash; immediately assembled into client heliport objects, nested fixes indexed. The
- *       intermediate model objects are not retained.</li>
- *   <li><b>Airways</b> &mdash; buffered for post-stream assembly (legs need the completed {@link FixDatabase}).</li>
+ *       {@link FixDatabase.Builder}.</li>
+ *   <li><b>Airways</b> &mdash; immediately assembled using the live {@link FixDatabase} (enroute fixes already
+ *       indexed).</li>
+ *   <li><b>Airports</b> &mdash; terminal fixes indexed in the builder, a {@link PortPage} built and registered
+ *       in the {@link XmlTerminalAreaDatabase.Builder}, the client airport assembled, and all procedures assembled
+ *       inline using the live {@link FixDatabase}.</li>
+ *   <li><b>Heliports</b> &mdash; same as airports (minus procedures if none present).</li>
  *   <li><b>Holding patterns</b> &mdash; skipped (not used in assembly).</li>
  * </ul>
  *
- * <p>After streaming, the caller retrieves the assembled collections and builds the {@link FixDatabase} from the
- * builder, then uses the standard {@code AirwayAssembler} and {@code ProcedureAssembler} against the buffered
- * airports and airways exposed through the {@link ArincRecords} getters.
- *
  * @param <FIX> the client fix type
  * @param <APT> the client airport type
+ * @param <AWY> the client airway type
+ * @param <PRC> the client procedure type
  * @param <HPT> the client heliport type
  */
-final class StreamAssemblyRecords<FIX, APT, HPT> implements ArincRecords {
+final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecords {
 
   private final FixAssembler<FIX> fixAssembler;
   private final AirportAssembler<APT> airportAssembler;
+  private final AirwayAssembler<AWY> airwayAssembler;
+  private final ProcedureAssembler<PRC> procedureAssembler;
   private final HeliportAssembler<HPT> heliportAssembler;
   private final FixDatabase.Builder<FIX> fixDatabaseBuilder;
+  private final XmlTerminalAreaDatabase.Builder<FIX> terminalAreaDatabaseBuilder;
 
   private final List<FIX> assembledFixes = new ArrayList<>();
   private final List<APT> assembledAirports = new ArrayList<>();
+  private final List<AWY> assembledAirways = new ArrayList<>();
+  private final List<PRC> assembledProcedures = new ArrayList<>();
   private final List<HPT> assembledHeliports = new ArrayList<>();
-
-  // Buffered for post-stream assembly — these record types need the completed FixDatabase.
-  private final Set<ArincAirport> bufferedAirports = new HashSet<>();
-  private final Set<ArincAirway> bufferedAirways = new HashSet<>();
 
   StreamAssemblyRecords(
       FixAssembler<FIX> fixAssembler,
       AirportAssembler<APT> airportAssembler,
-      HeliportAssembler<HPT> heliportAssembler) {
+      AirwayAssembler<AWY> airwayAssembler,
+      ProcedureAssembler<PRC> procedureAssembler,
+      HeliportAssembler<HPT> heliportAssembler,
+      FixDatabase.Builder<FIX> fixDatabaseBuilder) {
     this.fixAssembler = requireNonNull(fixAssembler);
     this.airportAssembler = requireNonNull(airportAssembler);
+    this.airwayAssembler = requireNonNull(airwayAssembler);
+    this.procedureAssembler = requireNonNull(procedureAssembler);
     this.heliportAssembler = requireNonNull(heliportAssembler);
-    this.fixDatabaseBuilder = FixDatabase.builder();
+    this.fixDatabaseBuilder = requireNonNull(fixDatabaseBuilder);
+    this.terminalAreaDatabaseBuilder = XmlTerminalAreaDatabase.builder();
   }
 
   // ---------------------------------------------------------------------------
@@ -80,39 +94,47 @@ final class StreamAssemblyRecords<FIX, APT, HPT> implements ArincRecords {
   public void addWaypoint(ArincWaypoint waypoint) {
     FIX fix = fixAssembler.assemble(waypoint);
     assembledFixes.add(fix);
-    FixDatabaseFactory.indexRecord(fixDatabaseBuilder, waypoint, fixAssembler);
+    ArincPointInfo point = waypoint.pointInfo();
+    fixDatabaseBuilder.index(point.referenceId(), fix);
+    fixDatabaseBuilder.indexWaypoint(point.identifier(), point.icaoCode(), fix);
   }
 
   @Override
   public void addNdbNavaid(ArincNdbNavaid ndb) {
     FIX fix = fixAssembler.assemble(ndb);
     assembledFixes.add(fix);
-    FixDatabaseFactory.indexRecord(fixDatabaseBuilder, ndb, fixAssembler);
+    ArincPointInfo point = ndb.pointInfo();
+    fixDatabaseBuilder.index(point.referenceId(), fix);
+    fixDatabaseBuilder.indexNdbNavaid(point.identifier(), point.icaoCode(), fix);
   }
 
   @Override
   public void addVhfNavaid(ArincVhfNavaid vhf) {
     FIX fix = fixAssembler.assemble(vhf);
     assembledFixes.add(fix);
-    FixDatabaseFactory.indexRecord(fixDatabaseBuilder, vhf, fixAssembler);
+    ArincPointInfo point = vhf.pointInfo();
+    fixDatabaseBuilder.index(point.referenceId(), fix);
+    fixDatabaseBuilder.indexVhfNavaid(point.identifier(), point.icaoCode(), fix);
   }
 
   @Override
   public void addAirport(ArincAirport airport) {
     assembledAirports.add(airportAssembler.assembleOne(airport));
-    FixDatabaseFactory.indexAirport(fixDatabaseBuilder, airport, fixAssembler);
-    bufferedAirports.add(airport);
+    PortPage<FIX> page = FixDatabaseFactory.indexAirport(fixDatabaseBuilder, airport, fixAssembler);
+    terminalAreaDatabaseBuilder.withAirportPage(page);
+    procedureAssembler.assemble(List.of(airport)).forEach(assembledProcedures::add);
   }
 
   @Override
   public void addHeliport(ArincHeliport heliport) {
     assembledHeliports.add(heliportAssembler.assembleOne(heliport));
-    FixDatabaseFactory.indexHeliport(fixDatabaseBuilder, heliport, fixAssembler);
+    PortPage<FIX> page = FixDatabaseFactory.indexHeliport(fixDatabaseBuilder, heliport, fixAssembler);
+    terminalAreaDatabaseBuilder.withHeliportPage(page);
   }
 
   @Override
   public void addAirway(ArincAirway airway) {
-    bufferedAirways.add(airway);
+    airwayAssembler.assemble(List.of(airway)).forEach(assembledAirways::add);
   }
 
   @Override
@@ -121,17 +143,17 @@ final class StreamAssemblyRecords<FIX, APT, HPT> implements ArincRecords {
   }
 
   // ---------------------------------------------------------------------------
-  // Getters — called by post-stream assemblers (AirwayAssembler, ProcedureAssembler)
+  // ArincRecords getters — return empty sets; no buffering is done
   // ---------------------------------------------------------------------------
 
   @Override
   public Set<ArincAirport> airports() {
-    return bufferedAirports;
+    return Set.of();
   }
 
   @Override
   public Set<ArincAirway> arincAirways() {
-    return bufferedAirways;
+    return Set.of();
   }
 
   @Override
@@ -199,12 +221,8 @@ final class StreamAssemblyRecords<FIX, APT, HPT> implements ArincRecords {
   }
 
   // ---------------------------------------------------------------------------
-  // Accessors for OneshotXmlParser to retrieve assembled results
+  // Accessors for OneshotXmlParser to retrieve assembled results and databases
   // ---------------------------------------------------------------------------
-
-  FixDatabase.Builder<FIX> fixDatabaseBuilder() {
-    return fixDatabaseBuilder;
-  }
 
   Collection<FIX> assembledFixes() {
     return assembledFixes;
@@ -214,7 +232,19 @@ final class StreamAssemblyRecords<FIX, APT, HPT> implements ArincRecords {
     return assembledAirports;
   }
 
+  Collection<AWY> assembledAirways() {
+    return assembledAirways;
+  }
+
+  Collection<PRC> assembledProcedures() {
+    return assembledProcedures;
+  }
+
   Collection<HPT> assembledHeliports() {
     return assembledHeliports;
+  }
+
+  XmlTerminalAreaDatabase<FIX> buildTerminalAreaDatabase() {
+    return terminalAreaDatabaseBuilder.build();
   }
 }
