@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.boogie.xml.assemble.AirportAssemblyStrategy;
 import org.mitre.boogie.xml.assemble.FixAssembler;
 import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincAirportGate;
@@ -483,11 +484,11 @@ class XmlFixDatabaseFactoryTest {
   }
 
   // ---------------------------------------------------------------------------
-  // indexAirport returns PortPage tests
+  // indexAirportPage returns PortPage tests
   // ---------------------------------------------------------------------------
 
   @Test
-  void indexAirport_returnsPortPageWithTerminalFixes() {
+  void indexAirportPage_returnsPortPageWithTerminalFixes() {
     ArincWaypoint termWp = testWaypoint("TWPT1", POSITION, MAG_VAR);
     ArincRunway runway = ArincRunway.builder()
         .pointInfo(testPointInfo("RW09L", POSITION, MAG_VAR))
@@ -509,7 +510,7 @@ class XmlFixDatabaseFactoryTest {
         .build();
 
     XmlFixDatabase.Builder<Fix> builder = XmlFixDatabase.builder();
-    PortPage<Fix> page = FixDatabaseFactory.indexAirport(builder, airport, FixAssembler.standard());
+    PortPage<Fix, ?, ?> page = FixDatabaseFactory.indexAirportPage(builder, airport, FixAssembler.standard(), AirportAssemblyStrategy.standard());
 
     assertAll(
         () -> assertEquals("KATL", page.identifier()),
@@ -541,7 +542,83 @@ class XmlFixDatabaseFactoryTest {
     assertAll(
         () -> assertTrue(db.fix("KATL").isPresent(), "airport by refId"),
         () -> assertTrue(db.fix("TWPT1").isPresent(), "terminal waypoint by refId"),
-        () -> assertTrue(db.airport("KATL", "K6").isPresent(), "airport by ident+icao")
+        () -> assertTrue(db.airport("KATL", "K6").isPresent(), "airport by ident+icao"),
+        () -> assertTrue(db.terminalWaypoint("KATL", "K6", "TWPT1").isPresent(), "terminal waypoint by port+icao+ident"),
+        () -> assertTrue(db.terminalWaypoint("KJFK", "K6", "TWPT1").isEmpty(), "wrong port should be empty")
+    );
+  }
+
+  @Test
+  void indexAirport_terminalFixesScopedPerAirport() {
+    ArincWaypoint sameNamedWp1 = testWaypoint("TWPT1", POSITION, MAG_VAR);
+    ArincWaypoint sameNamedWp2 = testWaypoint("TWPT1", LatLong.of(40.6, -73.8), MAG_VAR);
+
+    ArincAirport katl = ArincAirport.builder()
+        .portInfo(ArincPortInfo.builder()
+            .pointInfo(testPointInfo("KATL", POSITION, MAG_VAR))
+            .recordInfo(testRecordInfo())
+            .terminalWaypoints(List.of(sameNamedWp1))
+            .build())
+        .build();
+
+    ArincAirport kjfk = ArincAirport.builder()
+        .portInfo(ArincPortInfo.builder()
+            .pointInfo(ArincPointInfo.builder()
+                .identifier("KJFK")
+                .icaoCode("K6")
+                .latLong(LatLong.of(40.6, -73.8))
+                .magneticVariation(MAG_VAR)
+                .referenceId("KJFK")
+                .build())
+            .recordInfo(testRecordInfo())
+            .terminalWaypoints(List.of(sameNamedWp2))
+            .build())
+        .build();
+
+    XmlFixDatabase.Builder<Fix> builder = XmlFixDatabase.builder();
+    FixDatabaseFactory.indexAirport(builder, katl, FixAssembler.standard());
+    FixDatabaseFactory.indexAirport(builder, kjfk, FixAssembler.standard());
+    XmlFixDatabase<Fix> db = builder.build();
+
+    assertAll(
+        () -> assertTrue(db.terminalWaypoint("KATL", "K6", "TWPT1").isPresent(), "KATL terminal wp"),
+        () -> assertTrue(db.terminalWaypoint("KJFK", "K6", "TWPT1").isPresent(), "KJFK terminal wp"),
+        () -> assertNotEquals(
+            db.terminalWaypoint("KATL", "K6", "TWPT1").orElseThrow().latLong(),
+            db.terminalWaypoint("KJFK", "K6", "TWPT1").orElseThrow().latLong(),
+            "same-named terminal wps at different airports should have different positions")
+    );
+  }
+
+  @Test
+  void indexAirport_runwaysAndGatesIndexedByTerminalKey() {
+    ArincRunway runway = ArincRunway.builder()
+        .pointInfo(testPointInfo("RW09L", POSITION, MAG_VAR))
+        .recordInfo(testRecordInfo())
+        .build();
+    ArincAirportGate gate = ArincAirportGate.builder()
+        .pointInfo(testPointInfo("GATE_A1", POSITION, MAG_VAR))
+        .recordInfo(testRecordInfo())
+        .build();
+
+    ArincAirport airport = ArincAirport.builder()
+        .portInfo(ArincPortInfo.builder()
+            .pointInfo(testPointInfo("KATL", POSITION, MAG_VAR))
+            .recordInfo(testRecordInfo())
+            .build())
+        .runways(List.of(runway))
+        .airportGates(List.of(gate))
+        .build();
+
+    XmlFixDatabase.Builder<Fix> builder = XmlFixDatabase.builder();
+    FixDatabaseFactory.indexAirport(builder, airport, FixAssembler.standard());
+    XmlFixDatabase<Fix> db = builder.build();
+
+    assertAll(
+        () -> assertTrue(db.runway("KATL", "K6", "RW09L").isPresent(), "runway by terminal key"),
+        () -> assertTrue(db.gate("KATL", "K6", "GATE_A1").isPresent(), "gate by terminal key"),
+        () -> assertTrue(db.runway("KJFK", "K6", "RW09L").isEmpty(), "wrong port should be empty"),
+        () -> assertTrue(db.gate("KJFK", "K6", "GATE_A1").isEmpty(), "wrong port should be empty")
     );
   }
 

@@ -34,18 +34,44 @@ public final class XmlFixDatabase<F> {
   private final Map<IdentKey, F> airports;
   private final Map<IdentKey, F> heliports;
 
+  // Terminal-scoped indexes — keyed by (portIdentifier, icaoCode, fixIdentifier)
+  private final Map<TerminalKey, F> terminalWaypoints;
+  private final Map<TerminalKey, F> terminalNdbNavaids;
+  private final Map<TerminalKey, F> runways;
+  private final Map<TerminalKey, F> gates;
+  private final Map<TerminalKey, F> terminalHelipads;
+  private final Map<TerminalKey, F> localizerGlideSlopes;
+  private final Map<TerminalKey, F> markers;
+  private final Map<TerminalKey, F> gnssLandingSystems;
+
   XmlFixDatabase(Map<String, F> fixesByReferenceId,
                  Map<IdentKey, F> waypoints,
                  Map<IdentKey, F> ndbNavaids,
                  Map<IdentKey, F> vhfNavaids,
                  Map<IdentKey, F> airports,
-                 Map<IdentKey, F> heliports) {
+                 Map<IdentKey, F> heliports,
+                 Map<TerminalKey, F> terminalWaypoints,
+                 Map<TerminalKey, F> terminalNdbNavaids,
+                 Map<TerminalKey, F> runways,
+                 Map<TerminalKey, F> gates,
+                 Map<TerminalKey, F> terminalHelipads,
+                 Map<TerminalKey, F> localizerGlideSlopes,
+                 Map<TerminalKey, F> markers,
+                 Map<TerminalKey, F> gnssLandingSystems) {
     this.fixesByReferenceId = requireNonNull(fixesByReferenceId);
     this.waypoints = requireNonNull(waypoints);
     this.ndbNavaids = requireNonNull(ndbNavaids);
     this.vhfNavaids = requireNonNull(vhfNavaids);
     this.airports = requireNonNull(airports);
     this.heliports = requireNonNull(heliports);
+    this.terminalWaypoints = requireNonNull(terminalWaypoints);
+    this.terminalNdbNavaids = requireNonNull(terminalNdbNavaids);
+    this.runways = requireNonNull(runways);
+    this.gates = requireNonNull(gates);
+    this.terminalHelipads = requireNonNull(terminalHelipads);
+    this.localizerGlideSlopes = requireNonNull(localizerGlideSlopes);
+    this.markers = requireNonNull(markers);
+    this.gnssLandingSystems = requireNonNull(gnssLandingSystems);
   }
 
   /**
@@ -97,7 +123,70 @@ public final class XmlFixDatabase<F> {
     return Optional.ofNullable(heliports.get(new IdentKey(identifier, icaoCode)));
   }
 
+  // ---------------------------------------------------------------------------
+  // Terminal-scoped lookups — keyed by (portIdentifier, icaoCode, fixIdentifier)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Look up a terminal waypoint by port identifier, ICAO code, and fix identifier.
+   */
+  public Optional<F> terminalWaypoint(String portIdentifier, String icaoCode, String fixIdentifier) {
+    return Optional.ofNullable(terminalWaypoints.get(new TerminalKey(portIdentifier, icaoCode, fixIdentifier)));
+  }
+
+  /**
+   * Look up a terminal NDB navaid by port identifier, ICAO code, and fix identifier.
+   */
+  public Optional<F> terminalNdbNavaid(String portIdentifier, String icaoCode, String fixIdentifier) {
+    return Optional.ofNullable(terminalNdbNavaids.get(new TerminalKey(portIdentifier, icaoCode, fixIdentifier)));
+  }
+
+  /**
+   * Look up a runway by port identifier, ICAO code, and runway identifier.
+   */
+  public Optional<F> runway(String portIdentifier, String icaoCode, String runwayIdentifier) {
+    return Optional.ofNullable(runways.get(new TerminalKey(portIdentifier, icaoCode, runwayIdentifier)));
+  }
+
+  /**
+   * Look up a gate by port identifier, ICAO code, and gate identifier.
+   */
+  public Optional<F> gate(String portIdentifier, String icaoCode, String gateIdentifier) {
+    return Optional.ofNullable(gates.get(new TerminalKey(portIdentifier, icaoCode, gateIdentifier)));
+  }
+
+  /**
+   * Look up a helipad by port identifier, ICAO code, and helipad identifier.
+   */
+  public Optional<F> terminalHelipad(String portIdentifier, String icaoCode, String helipadIdentifier) {
+    return Optional.ofNullable(terminalHelipads.get(new TerminalKey(portIdentifier, icaoCode, helipadIdentifier)));
+  }
+
+  /**
+   * Look up a localizer/glideslope by port identifier, ICAO code, and fix identifier.
+   */
+  public Optional<F> localizerGlideSlope(String portIdentifier, String icaoCode, String fixIdentifier) {
+    return Optional.ofNullable(localizerGlideSlopes.get(new TerminalKey(portIdentifier, icaoCode, fixIdentifier)));
+  }
+
+  /**
+   * Look up a marker by port identifier, ICAO code, and fix identifier.
+   */
+  public Optional<F> marker(String portIdentifier, String icaoCode, String fixIdentifier) {
+    return Optional.ofNullable(markers.get(new TerminalKey(portIdentifier, icaoCode, fixIdentifier)));
+  }
+
+  /**
+   * Look up a GNSS landing system by port identifier, ICAO code, and fix identifier.
+   */
+  public Optional<F> gnssLandingSystem(String portIdentifier, String icaoCode, String fixIdentifier) {
+    return Optional.ofNullable(gnssLandingSystems.get(new TerminalKey(portIdentifier, icaoCode, fixIdentifier)));
+  }
+
   record IdentKey(String identifier, String icaoCode) {
+  }
+
+  record TerminalKey(String portIdentifier, String icaoCode, String fixIdentifier) {
   }
 
   /**
@@ -116,6 +205,15 @@ public final class XmlFixDatabase<F> {
     private final Map<IdentKey, F> vhfNavaids = new HashMap<>();
     private final Map<IdentKey, F> airports = new HashMap<>();
     private final Map<IdentKey, F> heliports = new HashMap<>();
+
+    private final Map<TerminalKey, F> terminalWaypoints = new HashMap<>();
+    private final Map<TerminalKey, F> terminalNdbNavaids = new HashMap<>();
+    private final Map<TerminalKey, F> runways = new HashMap<>();
+    private final Map<TerminalKey, F> gates = new HashMap<>();
+    private final Map<TerminalKey, F> terminalHelipads = new HashMap<>();
+    private final Map<TerminalKey, F> localizerGlideSlopes = new HashMap<>();
+    private final Map<TerminalKey, F> markers = new HashMap<>();
+    private final Map<TerminalKey, F> gnssLandingSystems = new HashMap<>();
 
     private Builder() {
     }
@@ -147,8 +245,42 @@ public final class XmlFixDatabase<F> {
       heliports.put(new IdentKey(identifier, icaoCode), fix);
     }
 
+    public void indexTerminalWaypoint(String portIdentifier, String icaoCode, String fixIdentifier, F fix) {
+      terminalWaypoints.put(new TerminalKey(portIdentifier, icaoCode, fixIdentifier), fix);
+    }
+
+    public void indexTerminalNdbNavaid(String portIdentifier, String icaoCode, String fixIdentifier, F fix) {
+      terminalNdbNavaids.put(new TerminalKey(portIdentifier, icaoCode, fixIdentifier), fix);
+    }
+
+    public void indexRunway(String portIdentifier, String icaoCode, String runwayIdentifier, F fix) {
+      runways.put(new TerminalKey(portIdentifier, icaoCode, runwayIdentifier), fix);
+    }
+
+    public void indexGate(String portIdentifier, String icaoCode, String gateIdentifier, F fix) {
+      gates.put(new TerminalKey(portIdentifier, icaoCode, gateIdentifier), fix);
+    }
+
+    public void indexTerminalHelipad(String portIdentifier, String icaoCode, String helipadIdentifier, F fix) {
+      terminalHelipads.put(new TerminalKey(portIdentifier, icaoCode, helipadIdentifier), fix);
+    }
+
+    public void indexLocalizerGlideSlope(String portIdentifier, String icaoCode, String fixIdentifier, F fix) {
+      localizerGlideSlopes.put(new TerminalKey(portIdentifier, icaoCode, fixIdentifier), fix);
+    }
+
+    public void indexMarker(String portIdentifier, String icaoCode, String fixIdentifier, F fix) {
+      markers.put(new TerminalKey(portIdentifier, icaoCode, fixIdentifier), fix);
+    }
+
+    public void indexGnssLandingSystem(String portIdentifier, String icaoCode, String fixIdentifier, F fix) {
+      gnssLandingSystems.put(new TerminalKey(portIdentifier, icaoCode, fixIdentifier), fix);
+    }
+
     public XmlFixDatabase<F> build() {
-      return new XmlFixDatabase<>(index, waypoints, ndbNavaids, vhfNavaids, airports, heliports);
+      return new XmlFixDatabase<>(index, waypoints, ndbNavaids, vhfNavaids, airports, heliports,
+          terminalWaypoints, terminalNdbNavaids, runways, gates, terminalHelipads,
+          localizerGlideSlopes, markers, gnssLandingSystems);
     }
   }
 }

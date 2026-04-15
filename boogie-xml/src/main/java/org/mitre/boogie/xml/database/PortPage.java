@@ -9,31 +9,33 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A per-airport or per-heliport page of assembled terminal fix objects, providing identifier-based
+ * A per-airport or per-heliport page of assembled terminal objects, providing identifier-based
  * lookups scoped to a single port.
  *
- * <p>Terminal fixes include: terminal waypoints, NDB navaids, runways, gates, helipads,
+ * <p>Terminal records include: terminal waypoints, NDB navaids, runways, gates, helipads,
  * localizer/glideslopes, markers, and GNSS landing systems. Each is indexed by its
  * {@link org.mitre.boogie.xml.model.fields.ArincPointInfo#identifier() identifier} within the
  * parent port.
  *
  * @param <F> the client fix type
+ * @param <R> the client runway type
+ * @param <H> the client helipad type
  */
-public final class PortPage<F> {
+public final class PortPage<F, R, H> {
 
   private final F referencePoint;
   private final String identifier;
   private final String icaoCode;
   private final Map<String, F> terminalWaypoints;
   private final Map<String, F> ndbNavaids;
-  private final Map<String, F> runways;
+  private final Map<String, R> runways;
   private final Map<String, F> gates;
-  private final Map<String, F> helipads;
+  private final Map<String, H> helipads;
   private final Map<String, F> localizerGlideSlopes;
   private final Map<String, F> markers;
   private final Map<String, F> gnssLandingSystems;
 
-  private PortPage(Builder<F> builder) {
+  private PortPage(Builder<F, R, H> builder) {
     this.referencePoint = requireNonNull(builder.referencePoint);
     this.identifier = requireNonNull(builder.identifier);
     this.icaoCode = requireNonNull(builder.icaoCode);
@@ -47,7 +49,7 @@ public final class PortPage<F> {
     this.gnssLandingSystems = Map.copyOf(builder.gnssLandingSystems);
   }
 
-  public static <F> Builder<F> builder() {
+  public static <F, R, H> Builder<F, R, H> builder() {
     return new Builder<>();
   }
 
@@ -79,11 +81,11 @@ public final class PortPage<F> {
     return Collections.unmodifiableCollection(ndbNavaids.values());
   }
 
-  public Optional<F> runway(String identifier) {
+  public Optional<R> runway(String identifier) {
     return Optional.ofNullable(runways.get(identifier));
   }
 
-  public Collection<F> runways() {
+  public Collection<R> runways() {
     return Collections.unmodifiableCollection(runways.values());
   }
 
@@ -95,11 +97,11 @@ public final class PortPage<F> {
     return Collections.unmodifiableCollection(gates.values());
   }
 
-  public Optional<F> helipad(String identifier) {
+  public Optional<H> helipad(String identifier) {
     return Optional.ofNullable(helipads.get(identifier));
   }
 
-  public Collection<F> helipads() {
+  public Collection<H> helipads() {
     return Collections.unmodifiableCollection(helipads.values());
   }
 
@@ -127,16 +129,16 @@ public final class PortPage<F> {
     return Collections.unmodifiableCollection(gnssLandingSystems.values());
   }
 
-  public static final class Builder<F> {
+  public static final class Builder<F, R, H> {
 
     private F referencePoint;
     private String identifier;
     private String icaoCode;
     private final Map<String, F> terminalWaypoints = new HashMap<>();
     private final Map<String, F> ndbNavaids = new HashMap<>();
-    private final Map<String, F> runways = new HashMap<>();
+    private final Map<String, R> runways = new HashMap<>();
     private final Map<String, F> gates = new HashMap<>();
-    private final Map<String, F> helipads = new HashMap<>();
+    private final Map<String, H> helipads = new HashMap<>();
     private final Map<String, F> localizerGlideSlopes = new HashMap<>();
     private final Map<String, F> markers = new HashMap<>();
     private final Map<String, F> gnssLandingSystems = new HashMap<>();
@@ -144,62 +146,62 @@ public final class PortPage<F> {
     private Builder() {
     }
 
-    public Builder<F> referencePoint(F referencePoint) {
+    public Builder<F, R, H> referencePoint(F referencePoint) {
       this.referencePoint = referencePoint;
       return this;
     }
 
-    public Builder<F> identifier(String identifier) {
+    public Builder<F, R, H> identifier(String identifier) {
       this.identifier = identifier;
       return this;
     }
 
-    public Builder<F> icaoCode(String icaoCode) {
+    public Builder<F, R, H> icaoCode(String icaoCode) {
       this.icaoCode = icaoCode;
       return this;
     }
 
-    public Builder<F> addTerminalWaypoint(String identifier, F fix) {
+    public Builder<F, R, H> addTerminalWaypoint(String identifier, F fix) {
       this.terminalWaypoints.put(identifier, fix);
       return this;
     }
 
-    public Builder<F> addNdbNavaid(String identifier, F fix) {
+    public Builder<F, R, H> addNdbNavaid(String identifier, F fix) {
       this.ndbNavaids.put(identifier, fix);
       return this;
     }
 
-    public Builder<F> addRunway(String identifier, F fix) {
-      this.runways.put(identifier, fix);
+    public Builder<F, R, H> addRunway(String identifier, R runway) {
+      this.runways.put(identifier, runway);
       return this;
     }
 
-    public Builder<F> addGate(String identifier, F fix) {
+    public Builder<F, R, H> addGate(String identifier, F fix) {
       this.gates.put(identifier, fix);
       return this;
     }
 
-    public Builder<F> addHelipad(String identifier, F fix) {
-      this.helipads.put(identifier, fix);
+    public Builder<F, R, H> addHelipad(String identifier, H helipad) {
+      this.helipads.put(identifier, helipad);
       return this;
     }
 
-    public Builder<F> addLocalizerGlideSlope(String identifier, F fix) {
+    public Builder<F, R, H> addLocalizerGlideSlope(String identifier, F fix) {
       this.localizerGlideSlopes.put(identifier, fix);
       return this;
     }
 
-    public Builder<F> addMarker(String identifier, F fix) {
+    public Builder<F, R, H> addMarker(String identifier, F fix) {
       this.markers.put(identifier, fix);
       return this;
     }
 
-    public Builder<F> addGnssLandingSystem(String identifier, F fix) {
+    public Builder<F, R, H> addGnssLandingSystem(String identifier, F fix) {
       this.gnssLandingSystems.put(identifier, fix);
       return this;
     }
 
-    public PortPage<F> build() {
+    public PortPage<F, R, H> build() {
       return new PortPage<>(this);
     }
   }

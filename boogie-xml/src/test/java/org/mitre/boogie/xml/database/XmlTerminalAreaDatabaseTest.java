@@ -16,9 +16,9 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void airportPage_exactLookupByIdentifierAndIcaoCode() {
-    PortPage<Fix> page = testPage("KATL", "K6");
+    PortPage<Fix, Fix, Fix> page = testPage("KATL", "K6");
 
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withAirportPage(page)
         .build();
 
@@ -32,15 +32,15 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void airportPages_byIdentifierReturnsAllIcaoVariants() {
-    PortPage<Fix> pageK6 = testPage("KATL", "K6");
-    PortPage<Fix> pageK7 = testPage("KATL", "K7");
+    PortPage<Fix, Fix, Fix> pageK6 = testPage("KATL", "K6");
+    PortPage<Fix, Fix, Fix> pageK7 = testPage("KATL", "K7");
 
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withAirportPage(pageK6)
         .withAirportPage(pageK7)
         .build();
 
-    Collection<PortPage<Fix>> pages = db.airportPages("KATL");
+    Collection<PortPage<Fix, Fix, Fix>> pages = db.airportPages("KATL");
 
     assertAll(
         () -> assertEquals(2, pages.size()),
@@ -51,14 +51,14 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void airportPages_byIdentifierReturnsEmptyForMissing() {
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder().build();
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder().build();
 
     assertTrue(db.airportPages("KATL").isEmpty());
   }
 
   @Test
   void airportPages_allReturnsAllPages() {
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withAirportPage(testPage("KATL", "K6"))
         .withAirportPage(testPage("KJFK", "K6"))
         .build();
@@ -68,9 +68,9 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void heliportPage_exactLookupByIdentifierAndIcaoCode() {
-    PortPage<Fix> page = testPage("2FL7", "K6");
+    PortPage<Fix, Fix, Fix> page = testPage("2FL7", "K6");
 
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withHeliportPage(page)
         .build();
 
@@ -84,10 +84,10 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void heliportPages_byIdentifierReturnsAllIcaoVariants() {
-    PortPage<Fix> pageK6 = testPage("2FL7", "K6");
-    PortPage<Fix> pageK7 = testPage("2FL7", "K7");
+    PortPage<Fix, Fix, Fix> pageK6 = testPage("2FL7", "K6");
+    PortPage<Fix, Fix, Fix> pageK7 = testPage("2FL7", "K7");
 
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withHeliportPage(pageK6)
         .withHeliportPage(pageK7)
         .build();
@@ -97,7 +97,7 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void heliportPages_allReturnsAllPages() {
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withHeliportPage(testPage("2FL7", "K6"))
         .withHeliportPage(testPage("3FL8", "K6"))
         .build();
@@ -107,7 +107,7 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void emptyDatabaseReturnsEmptyCollections() {
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder().build();
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder().build();
 
     assertAll(
         () -> assertTrue(db.airportPages().isEmpty()),
@@ -119,10 +119,10 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void airportAndHeliportNamespacesAreIndependent() {
-    PortPage<Fix> airport = testPage("KATL", "K6");
-    PortPage<Fix> heliport = testPage("KATL", "K6");
+    PortPage<Fix, Fix, Fix> airport = testPage("KATL", "K6");
+    PortPage<Fix, Fix, Fix> heliport = testPage("KATL", "K6");
 
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withAirportPage(airport)
         .withHeliportPage(heliport)
         .build();
@@ -137,21 +137,21 @@ class XmlTerminalAreaDatabaseTest {
 
   @Test
   void sameIdentifierDifferentIcaoCodesAreDistinct() {
-    PortPage<Fix> page1 = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page1 = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("SAME"))
         .identifier("SAME")
         .icaoCode("K6")
         .addRunway("RW09L", testFix("RW09L"))
         .build();
 
-    PortPage<Fix> page2 = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page2 = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("SAME"))
         .identifier("SAME")
         .icaoCode("EG")
         .addRunway("RW27R", testFix("RW27R"))
         .build();
 
-    XmlTerminalAreaDatabase<Fix> db = XmlTerminalAreaDatabase.<Fix>builder()
+    XmlTerminalAreaDatabase<Fix, Fix, Fix> db = XmlTerminalAreaDatabase.<Fix, Fix, Fix>builder()
         .withAirportPage(page1)
         .withAirportPage(page2)
         .build();
@@ -165,8 +165,8 @@ class XmlTerminalAreaDatabaseTest {
     );
   }
 
-  private static PortPage<Fix> testPage(String identifier, String icaoCode) {
-    return PortPage.<Fix>builder()
+  private static PortPage<Fix, Fix, Fix> testPage(String identifier, String icaoCode) {
+    return PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix(identifier))
         .identifier(identifier)
         .icaoCode(icaoCode)

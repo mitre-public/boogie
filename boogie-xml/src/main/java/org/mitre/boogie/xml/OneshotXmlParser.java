@@ -100,18 +100,20 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
    *
    * @param inputStream an input stream containing the bytes of an ARINC 424 XML file
    */
-  public ClientRecords<APT, FIX, AWY, PRC, HPT> assembleFrom(InputStream inputStream) {
+  public ClientRecords<APT, RWY, FIX, AWY, PRC, HLPD, HPT> assembleFrom(InputStream inputStream) {
     requireNonNull(inputStream);
 
     XmlFixDatabase.Builder<FIX> fixDatabaseBuilder = XmlFixDatabase.builder();
     XmlFixDatabase<FIX> xmlFixDatabase = fixDatabaseBuilder.build();
 
-    StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> context = new StreamAssemblyRecords<>(
+    StreamAssemblyRecords<FIX, APT, RWY, AWY, PRC, HLPD, HPT> context = new StreamAssemblyRecords<>(
         FixAssembler.withStrategy(fixStrategy),
         AirportAssembler.withStrategy(airportStrategy),
+        airportStrategy,
         AirwayAssembler.withStrategy(airwayStrategy, xmlFixDatabase),
         ProcedureAssembler.withStrategy(procedureStrategy, xmlFixDatabase),
         HeliportAssembler.withStrategy(heliportStrategy),
+        heliportStrategy,
         fixDatabaseBuilder);
 
     StreamingUnmarshaller.fromVersion(version)
@@ -119,7 +121,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
         .orElseThrow(() -> new RuntimeException("Failed to unmarshal XML input."));
     LOG.debug("Finished streaming XML — all records assembled.");
 
-    XmlTerminalAreaDatabase<FIX> terminalAreaDatabase = context.buildTerminalAreaDatabase();
+    XmlTerminalAreaDatabase<FIX, RWY, HLPD> terminalAreaDatabase = context.buildTerminalAreaDatabase();
 
     return new ClientRecords<>(
         context.assembledAirports(),
@@ -201,7 +203,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
   /**
    * Wrapper class containing assembled client records and databases produced by the oneshot parser.
    */
-  public static final class ClientRecords<APT, FIX, AWY, PRC, HPT> {
+  public static final class ClientRecords<APT, RWY, FIX, AWY, PRC, HLPD, HPT> {
 
     private final Collection<APT> airports;
     private final Collection<FIX> fixes;
@@ -209,7 +211,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
     private final Collection<PRC> procedures;
     private final Collection<HPT> heliports;
     private final XmlFixDatabase<FIX> xmlFixDatabase;
-    private final XmlTerminalAreaDatabase<FIX> terminalAreaDatabase;
+    private final XmlTerminalAreaDatabase<FIX, RWY, HLPD> terminalAreaDatabase;
 
     private ClientRecords(
         Collection<APT> airports,
@@ -218,7 +220,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
         Collection<PRC> procedures,
         Collection<HPT> heliports,
         XmlFixDatabase<FIX> xmlFixDatabase,
-        XmlTerminalAreaDatabase<FIX> terminalAreaDatabase
+        XmlTerminalAreaDatabase<FIX, RWY, HLPD> terminalAreaDatabase
     ) {
       this.airports = airports;
       this.fixes = fixes;
@@ -253,7 +255,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
       return xmlFixDatabase;
     }
 
-    public XmlTerminalAreaDatabase<FIX> terminalAreaDatabase() {
+    public XmlTerminalAreaDatabase<FIX, RWY, HLPD> terminalAreaDatabase() {
       return terminalAreaDatabase;
     }
   }

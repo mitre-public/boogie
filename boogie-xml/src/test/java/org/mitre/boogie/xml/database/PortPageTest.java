@@ -16,7 +16,7 @@ class PortPageTest {
   void lookupTerminalWaypointByIdentifier() {
     Fix wp = testFix("TWPT1");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -34,7 +34,7 @@ class PortPageTest {
   void lookupNdbNavaidByIdentifier() {
     Fix ndb = testFix("NDB1");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -52,7 +52,7 @@ class PortPageTest {
   void lookupRunwayByIdentifier() {
     Fix rwy = testFix("RW09L");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -70,7 +70,7 @@ class PortPageTest {
   void lookupGateByIdentifier() {
     Fix gate = testFix("GATE_A1");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -88,7 +88,7 @@ class PortPageTest {
   void lookupHelipadByIdentifier() {
     Fix hp = testFix("HP01");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -106,7 +106,7 @@ class PortPageTest {
   void lookupLocalizerGlideSlopeByIdentifier() {
     Fix loc = testFix("ILS09L");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -124,7 +124,7 @@ class PortPageTest {
   void lookupMarkerByIdentifier() {
     Fix mkr = testFix("OM09L");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -142,7 +142,7 @@ class PortPageTest {
   void lookupGnssLandingSystemByIdentifier() {
     Fix gls = testFix("GLS09L");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -160,7 +160,7 @@ class PortPageTest {
   void referencePointAndMetadata() {
     Fix ref = testFix("KATL");
 
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(ref)
         .identifier("KATL")
         .icaoCode("K6")
@@ -175,7 +175,7 @@ class PortPageTest {
 
   @Test
   void collectionGettersReturnAllEntries() {
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")
@@ -201,7 +201,7 @@ class PortPageTest {
 
   @Test
   void emptyPageReturnsEmptyCollections() {
-    PortPage<Fix> page = PortPage.<Fix>builder()
+    PortPage<Fix, Fix, Fix> page = PortPage.<Fix, Fix, Fix>builder()
         .referencePoint(testFix("KATL"))
         .identifier("KATL")
         .icaoCode("K6")

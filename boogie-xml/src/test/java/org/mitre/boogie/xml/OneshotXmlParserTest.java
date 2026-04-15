@@ -13,8 +13,10 @@ import org.mitre.caasd.commons.util.DemotedException;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.Heliport;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.Runway;
 
 class OneshotXmlParserTest {
 
@@ -22,7 +24,7 @@ class OneshotXmlParserTest {
 
   @Test
   void testParse() {
-    OneshotXmlParser.ClientRecords<Airport, Fix, Airway, Procedure, Heliport> records;
+    OneshotXmlParser.ClientRecords<Airport, Runway, Fix, Airway, Procedure, Helipad, Heliport> records;
 
     try (FileInputStream fis = new FileInputStream(xmlTestFile)) {
       records = OneshotXmlParser.standard(ArincXmlVersion.V23_4).assembleFrom(fis);

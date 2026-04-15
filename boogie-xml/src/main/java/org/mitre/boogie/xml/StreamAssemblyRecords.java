@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.mitre.boogie.xml.assemble.AirportAssembler;
+import org.mitre.boogie.xml.assemble.AirportAssemblyStrategy;
 import org.mitre.boogie.xml.assemble.AirwayAssembler;
 import org.mitre.boogie.xml.assemble.FixAssembler;
 import org.mitre.boogie.xml.assemble.HeliportAssembler;
+import org.mitre.boogie.xml.assemble.HeliportAssemblyStrategy;
 import org.mitre.boogie.xml.assemble.ProcedureAssembler;
 import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
@@ -48,21 +50,25 @@ import org.mitre.boogie.xml.model.ArincWaypoint;
  *   <li><b>Holding patterns</b> &mdash; skipped (not used in assembly).</li>
  * </ul>
  *
- * @param <FIX> the client fix type
- * @param <APT> the client airport type
- * @param <AWY> the client airway type
- * @param <PRC> the client procedure type
- * @param <HPT> the client heliport type
+ * @param <FIX>  the client fix type
+ * @param <APT>  the client airport type
+ * @param <RWY>  the client runway type
+ * @param <AWY>  the client airway type
+ * @param <PRC>  the client procedure type
+ * @param <HLPD> the client helipad type
+ * @param <HPT>  the client heliport type
  */
-final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecords {
+final class StreamAssemblyRecords<FIX, APT, RWY, AWY, PRC, HLPD, HPT> implements ArincRecords {
 
   private final FixAssembler<FIX> fixAssembler;
   private final AirportAssembler<APT> airportAssembler;
+  private final AirportAssemblyStrategy<APT, RWY, HLPD> airportStrategy;
   private final AirwayAssembler<AWY> airwayAssembler;
   private final ProcedureAssembler<PRC> procedureAssembler;
   private final HeliportAssembler<HPT> heliportAssembler;
+  private final HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy;
   private final XmlFixDatabase.Builder<FIX> fixDatabaseBuilder;
-  private final XmlTerminalAreaDatabase.Builder<FIX> terminalAreaDatabaseBuilder;
+  private final XmlTerminalAreaDatabase.Builder<FIX, RWY, HLPD> terminalAreaDatabaseBuilder;
 
   private final List<FIX> assembledFixes = new ArrayList<>();
   private final List<APT> assembledAirports = new ArrayList<>();
@@ -73,15 +79,19 @@ final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecor
   StreamAssemblyRecords(
       FixAssembler<FIX> fixAssembler,
       AirportAssembler<APT> airportAssembler,
+      AirportAssemblyStrategy<APT, RWY, HLPD> airportStrategy,
       AirwayAssembler<AWY> airwayAssembler,
       ProcedureAssembler<PRC> procedureAssembler,
       HeliportAssembler<HPT> heliportAssembler,
+      HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy,
       XmlFixDatabase.Builder<FIX> fixDatabaseBuilder) {
     this.fixAssembler = requireNonNull(fixAssembler);
     this.airportAssembler = requireNonNull(airportAssembler);
+    this.airportStrategy = requireNonNull(airportStrategy);
     this.airwayAssembler = requireNonNull(airwayAssembler);
     this.procedureAssembler = requireNonNull(procedureAssembler);
     this.heliportAssembler = requireNonNull(heliportAssembler);
+    this.heliportStrategy = requireNonNull(heliportStrategy);
     this.fixDatabaseBuilder = requireNonNull(fixDatabaseBuilder);
     this.terminalAreaDatabaseBuilder = XmlTerminalAreaDatabase.builder();
   }
@@ -120,7 +130,7 @@ final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecor
   @Override
   public void addAirport(ArincAirport airport) {
     assembledAirports.add(airportAssembler.assembleOne(airport));
-    PortPage<FIX> page = FixDatabaseFactory.indexAirport(fixDatabaseBuilder, airport, fixAssembler);
+    PortPage<FIX, RWY, HLPD> page = FixDatabaseFactory.indexAirportPage(fixDatabaseBuilder, airport, fixAssembler, airportStrategy);
     terminalAreaDatabaseBuilder.withAirportPage(page);
     procedureAssembler.assemble(List.of(airport)).forEach(assembledProcedures::add);
   }
@@ -128,7 +138,7 @@ final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecor
   @Override
   public void addHeliport(ArincHeliport heliport) {
     assembledHeliports.add(heliportAssembler.assembleOne(heliport));
-    PortPage<FIX> page = FixDatabaseFactory.indexHeliport(fixDatabaseBuilder, heliport, fixAssembler);
+    PortPage<FIX, RWY, HLPD> page = FixDatabaseFactory.indexHeliportPage(fixDatabaseBuilder, heliport, fixAssembler, heliportStrategy);
     terminalAreaDatabaseBuilder.withHeliportPage(page);
   }
 
@@ -244,7 +254,7 @@ final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecor
     return assembledHeliports;
   }
 
-  XmlTerminalAreaDatabase<FIX> buildTerminalAreaDatabase() {
+  XmlTerminalAreaDatabase<FIX, RWY, HLPD> buildTerminalAreaDatabase() {
     return terminalAreaDatabaseBuilder.build();
   }
 }

@@ -1,13 +1,21 @@
 package org.mitre.boogie.xml.database;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.arinc.assemble.ReciprocalRunwayIdentifier;
+import org.mitre.boogie.xml.assemble.AirportAssemblyStrategy;
 import org.mitre.boogie.xml.assemble.FixAssembler;
 import org.mitre.boogie.xml.assemble.FixAssemblyStrategy;
+import org.mitre.boogie.xml.assemble.HeliportAssemblyStrategy;
 import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincHeliport;
+import org.mitre.boogie.xml.model.ArincLocalizerGlideSlope;
 import org.mitre.boogie.xml.model.ArincRecords;
+import org.mitre.boogie.xml.model.ArincRunway;
 import org.mitre.boogie.xml.model.ArincWaypoint;
 import org.mitre.boogie.xml.model.ArincNdbNavaid;
 import org.mitre.boogie.xml.model.ArincVhfNavaid;
@@ -26,6 +34,8 @@ import org.mitre.boogie.xml.model.fields.ArincPortInfo;
  * {@link XmlFixDatabase.Builder}.
  */
 public final class FixDatabaseFactory {
+
+  private static final ReciprocalRunwayIdentifier RECIPROCAL_ID = ReciprocalRunwayIdentifier.INSTANCE;
 
   private FixDatabaseFactory() {
   }
@@ -83,34 +93,112 @@ public final class FixDatabaseFactory {
     builder.indexVhfNavaid(point.identifier(), point.icaoCode(), fix);
   }
 
+  // ---------------------------------------------------------------------------
+  // Fix-only indexing — used by create() where no PortPage is needed
+  // ---------------------------------------------------------------------------
+
   /**
-   * Index an airport and all of its nested fix-like records into the builder. Returns a {@link PortPage} containing
-   * the assembled terminal fixes scoped to this airport.
+   * Index an airport and all of its nested records as fixes into the builder.
    */
-  public static <F> PortPage<F> indexAirport(XmlFixDatabase.Builder<F> builder, ArincAirport airport, FixAssembler<F> assembler) {
+  public static <F> void indexAirport(XmlFixDatabase.Builder<F> builder, ArincAirport airport, FixAssembler<F> assembler) {
     ArincPortInfo portInfo = airport.portInfo();
     ArincPointInfo point = portInfo.pointInfo();
+    String portId = point.identifier();
+    String icao = point.icaoCode();
 
     F airportFix = assembler.assemble(portInfo);
     builder.index(point.referenceId(), airportFix);
-    builder.indexAirport(point.identifier(), point.icaoCode(), airportFix);
+    builder.indexAirport(portId, icao, airportFix);
 
-    PortPage.Builder<F> pageBuilder = PortPage.<F>builder()
-        .referencePoint(airportFix)
-        .identifier(point.identifier())
-        .icaoCode(point.icaoCode());
-
-    indexPortChildren(builder, portInfo, assembler, pageBuilder);
+    indexPortChildrenFixes(builder, portInfo, portId, icao, assembler);
 
     airport.runways().forEach(rwy -> {
       F fix = assembler.assemble(rwy);
       builder.index(rwy.pointInfo().referenceId(), fix);
-      pageBuilder.addRunway(rwy.pointInfo().identifier(), fix);
+      builder.indexRunway(portId, icao, rwy.pointInfo().identifier(), fix);
     });
-
     airport.airportGates().forEach(gate -> {
       F fix = assembler.assemble(gate);
       builder.index(gate.pointInfo().referenceId(), fix);
+      builder.indexGate(portId, icao, gate.pointInfo().identifier(), fix);
+    });
+  }
+
+  /**
+   * Index a heliport and all of its nested records as fixes into the builder.
+   */
+  public static <F> void indexHeliport(XmlFixDatabase.Builder<F> builder, ArincHeliport heliport, FixAssembler<F> assembler) {
+    ArincPortInfo portInfo = heliport.portInfo();
+    ArincPointInfo point = portInfo.pointInfo();
+    String portId = point.identifier();
+    String icao = point.icaoCode();
+
+    F heliportFix = assembler.assemble(portInfo);
+    builder.index(point.referenceId(), heliportFix);
+    builder.indexHeliport(portId, icao, heliportFix);
+
+    indexPortChildrenFixes(builder, portInfo, portId, icao, assembler);
+  }
+
+  // ---------------------------------------------------------------------------
+  // PortPage-building — indexes fixes AND builds typed PortPage with R and H
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Index an airport's fixes into the builder and build a typed {@link PortPage} with assembled runways ({@code R})
+   * and helipads ({@code H}) from the given strategy.
+   */
+  public static <F, R, H> PortPage<F, R, H> indexAirportPage(
+      XmlFixDatabase.Builder<F> builder,
+      ArincAirport airport,
+      FixAssembler<F> fixAssembler,
+      AirportAssemblyStrategy<?, R, H> airportStrategy) {
+
+    ArincPortInfo portInfo = airport.portInfo();
+    ArincPointInfo point = portInfo.pointInfo();
+
+    F airportFix = fixAssembler.assemble(portInfo);
+    builder.index(point.referenceId(), airportFix);
+    builder.indexAirport(point.identifier(), point.icaoCode(), airportFix);
+
+    PortPage.Builder<F, R, H> pageBuilder = PortPage.<F, R, H>builder()
+        .referencePoint(airportFix)
+        .identifier(point.identifier())
+        .icaoCode(point.icaoCode());
+
+    String portId = point.identifier();
+    String icao = point.icaoCode();
+
+    indexPortChildrenPage(builder, portInfo, portId, icao, fixAssembler, airportStrategy, pageBuilder);
+
+    // Runways — pair origin/reciprocal and resolve ILS/GLS, same logic as AirportAssembler
+    List<ArincRunway> arincRunways = airport.runways();
+
+    Map<String, ArincRunway> runwayById = arincRunways.stream()
+        .collect(Collectors.toMap(r -> r.pointInfo().identifier(), Function.identity(), (a, b) -> a));
+
+    Map<String, ArincLocalizerGlideSlope> ilsByRunwayRef = portInfo.localizerGlideSlopes()
+        .orElse(List.of()).stream()
+        .filter(ils -> ils.runwayRef().isPresent())
+        .collect(Collectors.toMap(ils -> ils.runwayRef().get(), Function.identity(), (a, b) -> a));
+
+    for (ArincRunway origin : arincRunways) {
+      String originId = origin.pointInfo().identifier();
+      F rwyFix = fixAssembler.assemble(origin);
+      builder.index(origin.pointInfo().referenceId(), rwyFix);
+      builder.indexRunway(portId, icao, originId, rwyFix);
+
+      ArincRunway reciprocal = RECIPROCAL_ID.apply(originId).map(runwayById::get).orElse(null);
+      ArincLocalizerGlideSlope ilsGls1 = ilsByRunwayRef.get(originId);
+
+      pageBuilder.addRunway(originId, airportStrategy.convertRunway(airport, origin, reciprocal, ilsGls1, null));
+    }
+
+    // Gates — fix-only (no domain type)
+    airport.airportGates().forEach(gate -> {
+      F fix = fixAssembler.assemble(gate);
+      builder.index(gate.pointInfo().referenceId(), fix);
+      builder.indexGate(portId, icao, gate.pointInfo().identifier(), fix);
       pageBuilder.addGate(gate.pointInfo().identifier(), fix);
     });
 
@@ -118,57 +206,151 @@ public final class FixDatabaseFactory {
   }
 
   /**
-   * Index a heliport and all of its nested fix-like records into the builder. Returns a {@link PortPage} containing
-   * the assembled terminal fixes scoped to this heliport.
+   * Index a heliport's fixes into the builder and build a typed {@link PortPage} with assembled helipads ({@code H})
+   * from the given strategy.
    */
-  public static <F> PortPage<F> indexHeliport(XmlFixDatabase.Builder<F> builder, ArincHeliport heliport, FixAssembler<F> assembler) {
+  public static <F, R, H> PortPage<F, R, H> indexHeliportPage(
+      XmlFixDatabase.Builder<F> builder,
+      ArincHeliport heliport,
+      FixAssembler<F> fixAssembler,
+      HeliportAssemblyStrategy<?, H> heliportStrategy) {
+
     ArincPortInfo portInfo = heliport.portInfo();
     ArincPointInfo point = portInfo.pointInfo();
 
-    F heliportFix = assembler.assemble(portInfo);
+    F heliportFix = fixAssembler.assemble(portInfo);
     builder.index(point.referenceId(), heliportFix);
     builder.indexHeliport(point.identifier(), point.icaoCode(), heliportFix);
 
-    PortPage.Builder<F> pageBuilder = PortPage.<F>builder()
+    PortPage.Builder<F, R, H> pageBuilder = PortPage.<F, R, H>builder()
         .referencePoint(heliportFix)
         .identifier(point.identifier())
         .icaoCode(point.icaoCode());
 
-    indexPortChildren(builder, portInfo, assembler, pageBuilder);
+    String portId = point.identifier();
+    String icao = point.icaoCode();
+
+    indexPortChildrenPageHeliport(builder, portInfo, portId, icao, fixAssembler, heliportStrategy, pageBuilder);
 
     return pageBuilder.build();
   }
 
-  private static <F> void indexPortChildren(XmlFixDatabase.Builder<F> builder, ArincPortInfo portInfo,
-      FixAssembler<F> assembler, PortPage.Builder<F> pageBuilder) {
+  // ---------------------------------------------------------------------------
+  // Internal helpers
+  // ---------------------------------------------------------------------------
+
+  private static <F> void indexPortChildrenFixes(XmlFixDatabase.Builder<F> builder, ArincPortInfo portInfo,
+      String portId, String icao, FixAssembler<F> assembler) {
     portInfo.terminalWaypoints().orElse(List.of()).forEach(wp -> {
       F fix = assembler.assemble(wp);
       builder.index(wp.pointInfo().referenceId(), fix);
-      pageBuilder.addTerminalWaypoint(wp.pointInfo().identifier(), fix);
+      builder.indexTerminalWaypoint(portId, icao, wp.pointInfo().identifier(), fix);
     });
     portInfo.ndbNavaid().orElse(List.of()).forEach(ndb -> {
       F fix = assembler.assemble(ndb);
       builder.index(ndb.pointInfo().referenceId(), fix);
-      pageBuilder.addNdbNavaid(ndb.pointInfo().identifier(), fix);
+      builder.indexTerminalNdbNavaid(portId, icao, ndb.pointInfo().identifier(), fix);
     });
     portInfo.helipads().orElse(List.of()).forEach(hp -> {
       F fix = assembler.assemble(hp);
       builder.index(hp.pointInfo().referenceId(), fix);
-      pageBuilder.addHelipad(hp.pointInfo().identifier(), fix);
+      builder.indexTerminalHelipad(portId, icao, hp.pointInfo().identifier(), fix);
     });
     portInfo.localizerGlideSlopes().orElse(List.of()).forEach(loc -> {
       F fix = assembler.assemble(loc);
       builder.index(loc.pointInfo().referenceId(), fix);
-      pageBuilder.addLocalizerGlideSlope(loc.pointInfo().identifier(), fix);
+      builder.indexLocalizerGlideSlope(portId, icao, loc.pointInfo().identifier(), fix);
     });
     portInfo.markers().orElse(List.of()).forEach(mkr -> {
       F fix = assembler.assemble(mkr);
       builder.index(mkr.pointInfo().referenceId(), fix);
-      pageBuilder.addMarker(mkr.pointInfo().identifier(), fix);
+      builder.indexMarker(portId, icao, mkr.pointInfo().identifier(), fix);
     });
     portInfo.gnssLandingSystems().orElse(List.of()).forEach(gls -> {
       F fix = assembler.assemble(gls);
       builder.index(gls.pointInfo().referenceId(), fix);
+      builder.indexGnssLandingSystem(portId, icao, gls.pointInfo().identifier(), fix);
+    });
+  }
+
+  private static <F, R, H> void indexPortChildrenPage(XmlFixDatabase.Builder<F> builder, ArincPortInfo portInfo,
+      String portId, String icao, FixAssembler<F> fixAssembler, AirportAssemblyStrategy<?, R, H> airportStrategy,
+      PortPage.Builder<F, R, H> pageBuilder) {
+    portInfo.terminalWaypoints().orElse(List.of()).forEach(wp -> {
+      F fix = fixAssembler.assemble(wp);
+      builder.index(wp.pointInfo().referenceId(), fix);
+      builder.indexTerminalWaypoint(portId, icao, wp.pointInfo().identifier(), fix);
+      pageBuilder.addTerminalWaypoint(wp.pointInfo().identifier(), fix);
+    });
+    portInfo.ndbNavaid().orElse(List.of()).forEach(ndb -> {
+      F fix = fixAssembler.assemble(ndb);
+      builder.index(ndb.pointInfo().referenceId(), fix);
+      builder.indexTerminalNdbNavaid(portId, icao, ndb.pointInfo().identifier(), fix);
+      pageBuilder.addNdbNavaid(ndb.pointInfo().identifier(), fix);
+    });
+    portInfo.helipads().orElse(List.of()).forEach(hp -> {
+      F fix = fixAssembler.assemble(hp);
+      builder.index(hp.pointInfo().referenceId(), fix);
+      builder.indexTerminalHelipad(portId, icao, hp.pointInfo().identifier(), fix);
+      pageBuilder.addHelipad(hp.pointInfo().identifier(), airportStrategy.convertHelipad(hp));
+    });
+    portInfo.localizerGlideSlopes().orElse(List.of()).forEach(loc -> {
+      F fix = fixAssembler.assemble(loc);
+      builder.index(loc.pointInfo().referenceId(), fix);
+      builder.indexLocalizerGlideSlope(portId, icao, loc.pointInfo().identifier(), fix);
+      pageBuilder.addLocalizerGlideSlope(loc.pointInfo().identifier(), fix);
+    });
+    portInfo.markers().orElse(List.of()).forEach(mkr -> {
+      F fix = fixAssembler.assemble(mkr);
+      builder.index(mkr.pointInfo().referenceId(), fix);
+      builder.indexMarker(portId, icao, mkr.pointInfo().identifier(), fix);
+      pageBuilder.addMarker(mkr.pointInfo().identifier(), fix);
+    });
+    portInfo.gnssLandingSystems().orElse(List.of()).forEach(gls -> {
+      F fix = fixAssembler.assemble(gls);
+      builder.index(gls.pointInfo().referenceId(), fix);
+      builder.indexGnssLandingSystem(portId, icao, gls.pointInfo().identifier(), fix);
+      pageBuilder.addGnssLandingSystem(gls.pointInfo().identifier(), fix);
+    });
+  }
+
+  private static <F, R, H> void indexPortChildrenPageHeliport(XmlFixDatabase.Builder<F> builder, ArincPortInfo portInfo,
+      String portId, String icao, FixAssembler<F> fixAssembler, HeliportAssemblyStrategy<?, H> heliportStrategy,
+      PortPage.Builder<F, R, H> pageBuilder) {
+    portInfo.terminalWaypoints().orElse(List.of()).forEach(wp -> {
+      F fix = fixAssembler.assemble(wp);
+      builder.index(wp.pointInfo().referenceId(), fix);
+      builder.indexTerminalWaypoint(portId, icao, wp.pointInfo().identifier(), fix);
+      pageBuilder.addTerminalWaypoint(wp.pointInfo().identifier(), fix);
+    });
+    portInfo.ndbNavaid().orElse(List.of()).forEach(ndb -> {
+      F fix = fixAssembler.assemble(ndb);
+      builder.index(ndb.pointInfo().referenceId(), fix);
+      builder.indexTerminalNdbNavaid(portId, icao, ndb.pointInfo().identifier(), fix);
+      pageBuilder.addNdbNavaid(ndb.pointInfo().identifier(), fix);
+    });
+    portInfo.helipads().orElse(List.of()).forEach(hp -> {
+      F fix = fixAssembler.assemble(hp);
+      builder.index(hp.pointInfo().referenceId(), fix);
+      builder.indexTerminalHelipad(portId, icao, hp.pointInfo().identifier(), fix);
+      pageBuilder.addHelipad(hp.pointInfo().identifier(), heliportStrategy.convertHelipad(hp));
+    });
+    portInfo.localizerGlideSlopes().orElse(List.of()).forEach(loc -> {
+      F fix = fixAssembler.assemble(loc);
+      builder.index(loc.pointInfo().referenceId(), fix);
+      builder.indexLocalizerGlideSlope(portId, icao, loc.pointInfo().identifier(), fix);
+      pageBuilder.addLocalizerGlideSlope(loc.pointInfo().identifier(), fix);
+    });
+    portInfo.markers().orElse(List.of()).forEach(mkr -> {
+      F fix = fixAssembler.assemble(mkr);
+      builder.index(mkr.pointInfo().referenceId(), fix);
+      builder.indexMarker(portId, icao, mkr.pointInfo().identifier(), fix);
+      pageBuilder.addMarker(mkr.pointInfo().identifier(), fix);
+    });
+    portInfo.gnssLandingSystems().orElse(List.of()).forEach(gls -> {
+      F fix = fixAssembler.assemble(gls);
+      builder.index(gls.pointInfo().referenceId(), fix);
+      builder.indexGnssLandingSystem(portId, icao, gls.pointInfo().identifier(), fix);
       pageBuilder.addGnssLandingSystem(gls.pointInfo().identifier(), fix);
     });
   }
