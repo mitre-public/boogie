@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.database.FixDatabase;
+import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -24,7 +24,7 @@ class ProcedureAssemblerTest {
   @Test
   void assemblesAirportWithNoProceduresReturnsEmptyStream() {
     ArincRecords records = ArincRecords.standard();
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
     List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of()))).toList();
@@ -37,7 +37,7 @@ class ProcedureAssemblerTest {
     ArincRecords records = ArincRecords.standard()
         .airports(Set.of(testAirport("KDTW", List.of())));
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
     List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of()))).toList();
@@ -68,7 +68,7 @@ class ProcedureAssemblerTest {
         .airports(Set.of(testAirport("KDTW", List.of(sid))))
         .waypoints(Set.of(testWaypoint("JMACK", "ref-jmack")));
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
     List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of(sid)))).toList();
@@ -116,7 +116,7 @@ class ProcedureAssemblerTest {
                 .build()))
         .build();
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
     List<Procedure> procedures = assembler.assemble(List.of(testAirport("KJFK", List.of(star)))).toList();
@@ -146,7 +146,7 @@ class ProcedureAssemblerTest {
         .procedureType("Approach")
         .build();
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
     List<Procedure> procedures = assembler.assemble(List.of(testAirport("KDTW", List.of(sid, star, approach)))).toList();
@@ -166,7 +166,7 @@ class ProcedureAssemblerTest {
         .procedureType("Star")
         .build();
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(fixDb);
 
     List<Procedure> procedures = assembler.assemble(List.of(

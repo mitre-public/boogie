@@ -61,14 +61,14 @@ implementations to handle these cross-references:
 
 ```java
 // fix database - indexes waypoints and navaids for lookup by identifier + country
-DafifFixDatabase fixDatabase = DafifDatabaseFactory.newFixDatabase(
+DafifFixDatabase xmlFixDatabase = DafifDatabaseFactory.newFixDatabase(
     consumer.dafifWaypoints(),
     consumer.dafifNavaids()
 );
 
-Optional<DafifWaypoint> waypoint = fixDatabase.waypoint("JMACK", "US");
-Optional<DafifNavaid> navaid = fixDatabase.navaid("DCA", "US", 4, 0);
-Optional<DafifNavaid> navaidForWpt = fixDatabase.navaidFor(waypoint.get()); // WPT -> NAV resolution
+Optional<DafifWaypoint> waypoint = xmlFixDatabase.waypoint("JMACK", "US");
+Optional<DafifNavaid> navaid = xmlFixDatabase.navaid("DCA", "US", 4, 0);
+Optional<DafifNavaid> navaidForWpt = xmlFixDatabase.navaidFor(waypoint.get()); // WPT -> NAV resolution
 
 // terminal area database - airport-indexed view of runways, ILS, terminal segments
 DafifTerminalAreaDatabase terminalAreaDatabase = DafifDatabaseFactory.newTerminalAreaDatabase(
@@ -91,20 +91,20 @@ Boogie-core provides interfaces for common navigational objects (Airways, Proced
 assemblers that convert parsed DAFIF records into concrete implementations of these interfaces.
 
 ```java
-DafifFixDatabase fixDatabase;
+DafifFixDatabase xmlFixDatabase;
 DafifTerminalAreaDatabase terminalAreaDatabase;
 
-FixAssemblyStrategy<Fix> fixStrategy = FixAssemblyStrategy.standard(terminalAreaDatabase, fixDatabase);
+FixAssemblyStrategy<Fix> fixStrategy = FixAssemblyStrategy.standard(terminalAreaDatabase, xmlFixDatabase);
 
 // Procedure assembly - groups terminal segments by airport and procedure, builds transitions and legs
 ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> procedureStrategy = new ProcedureAssemblyStrategy.Standard();
 ProcedureAssembler<Procedure> procedureAssembler = ProcedureAssembler.standard(
-    terminalAreaDatabase, fixDatabase, procedureStrategy, fixStrategy);
+    terminalAreaDatabase, xmlFixDatabase, procedureStrategy, fixStrategy);
 
 List<Procedure> procedures = procedureAssembler.assemble(consumer.dafifTerminalParents()).toList();
 
 // Airway assembly - groups ATS segments by identifier + direction, produces N+1 leg chains per direction
-AirwayAssembler<Airway> airwayAssembler = AirwayAssembler.standard(fixDatabase, fixStrategy);
+AirwayAssembler<Airway> airwayAssembler = AirwayAssembler.standard(xmlFixDatabase, fixStrategy);
 
 List<Airway> airways = airwayAssembler.assemble(consumer.dafifAts()).toList();
 
@@ -114,7 +114,7 @@ AirportAssembler<Airport> airportAssembler = AirportAssembler.standard(terminalA
 List<Airport> airports = consumer.dafifAirports().stream().map(airportAssembler::assemble).toList();
 
 // Fix assembly - converts waypoints and navaids to Fix objects
-FixAssembler<Fix> fixAssembler = FixAssembler.standard(terminalAreaDatabase, fixDatabase);
+FixAssembler<Fix> fixAssembler = FixAssembler.standard(terminalAreaDatabase, xmlFixDatabase);
 
 List<Fix> fixes = Stream.concat(consumer.dafifWaypoints().stream(), consumer.dafifNavaids().stream())
     .flatMap(model -> fixAssembler.assemble(model).stream())
@@ -133,12 +133,12 @@ FixAssemblyStrategy<MyCustomFix> customFixStrategy = new MyCustomFixStrategy<>()
 // custom procedure strategy
 ProcedureAssemblyStrategy<MyProcedure, MyTransition, MyLeg, MyCustomFix> customProcedureStrategy = ...;
 ProcedureAssembler<MyProcedure> customAssembler = ProcedureAssembler.withStrategy(
-    terminalAreaDatabase, fixDatabase, customProcedureStrategy, customFixStrategy);
+    terminalAreaDatabase, xmlFixDatabase, customProcedureStrategy, customFixStrategy);
 
 // custom airway strategy
 AirwayAssemblyStrategy<MyAirway, MyCustomFix, MyLeg> customAirwayStrategy = ...;
 AirwayAssembler<MyAirway> customAirwayAssembler = AirwayAssembler.withStrategy(
-    fixDatabase, customFixStrategy, customAirwayStrategy);
+    xmlFixDatabase, customFixStrategy, customAirwayStrategy);
 
 // or via the oneshot parser builder
 OneshotDafifParser<MyAirport, MyRunway, MyFix, MyLeg, MyTransition, MyAirway, MyProcedure> parser =

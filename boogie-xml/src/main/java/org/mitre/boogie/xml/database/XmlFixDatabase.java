@@ -25,7 +25,7 @@ import java.util.Optional;
  *
  * @see FixDatabaseFactory
  */
-public final class FixDatabase<F> {
+public final class XmlFixDatabase<F> {
 
   private final Map<String, F> fixesByReferenceId;
   private final Map<IdentKey, F> waypoints;
@@ -34,12 +34,12 @@ public final class FixDatabase<F> {
   private final Map<IdentKey, F> airports;
   private final Map<IdentKey, F> heliports;
 
-  FixDatabase(Map<String, F> fixesByReferenceId,
-      Map<IdentKey, F> waypoints,
-      Map<IdentKey, F> ndbNavaids,
-      Map<IdentKey, F> vhfNavaids,
-      Map<IdentKey, F> airports,
-      Map<IdentKey, F> heliports) {
+  XmlFixDatabase(Map<String, F> fixesByReferenceId,
+                 Map<IdentKey, F> waypoints,
+                 Map<IdentKey, F> ndbNavaids,
+                 Map<IdentKey, F> vhfNavaids,
+                 Map<IdentKey, F> airports,
+                 Map<IdentKey, F> heliports) {
     this.fixesByReferenceId = requireNonNull(fixesByReferenceId);
     this.waypoints = requireNonNull(waypoints);
     this.ndbNavaids = requireNonNull(ndbNavaids);
@@ -49,7 +49,7 @@ public final class FixDatabase<F> {
   }
 
   /**
-   * Create a new builder for incremental construction of a {@link FixDatabase}.
+   * Create a new builder for incremental construction of a {@link XmlFixDatabase}.
    */
   public static <F> Builder<F> builder() {
     return new Builder<>();
@@ -101,7 +101,7 @@ public final class FixDatabase<F> {
   }
 
   /**
-   * Builder for incrementally constructing a {@link FixDatabase} during streaming unmarshalling.
+   * Builder for incrementally constructing a {@link XmlFixDatabase} during streaming unmarshalling.
    *
    * <p>The {@link #build()} method shares the backing maps with the built database rather than copying them.
    * This allows the builder to continue indexing records after build and have those additions visible through
@@ -147,8 +147,8 @@ public final class FixDatabase<F> {
       heliports.put(new IdentKey(identifier, icaoCode), fix);
     }
 
-    public FixDatabase<F> build() {
-      return new FixDatabase<>(index, waypoints, ndbNavaids, vhfNavaids, airports, heliports);
+    public XmlFixDatabase<F> build() {
+      return new XmlFixDatabase<>(index, waypoints, ndbNavaids, vhfNavaids, airports, heliports);
     }
   }
 }

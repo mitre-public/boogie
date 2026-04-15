@@ -15,7 +15,7 @@ import org.mitre.boogie.xml.model.fields.ArincPointInfo;
 import org.mitre.boogie.xml.model.fields.ArincPortInfo;
 
 /**
- * Factory for building a {@link FixDatabase} and {@link PortPage}s from parsed {@link ArincRecords}.
+ * Factory for building a {@link XmlFixDatabase} and {@link PortPage}s from parsed {@link ArincRecords}.
  *
  * <p>This factory walks all top-level records (waypoints, NDB navaids, VHF navaids) and all airport/heliport-nested
  * records (the port reference point, runways, gates, terminal waypoints, terminal NDBs, helipads,
@@ -23,7 +23,7 @@ import org.mitre.boogie.xml.model.fields.ArincPortInfo;
  * by identifier and ICAO code.
  *
  * <p>The individual index methods are public so they can be reused during streaming unmarshalling with a
- * {@link FixDatabase.Builder}.
+ * {@link XmlFixDatabase.Builder}.
  */
 public final class FixDatabaseFactory {
 
@@ -33,16 +33,16 @@ public final class FixDatabaseFactory {
   /**
    * Create a fix database from the given records using the standard assembly strategy.
    */
-  public static FixDatabase<Fix> standard(ArincRecords records) {
+  public static XmlFixDatabase<Fix> standard(ArincRecords records) {
     return create(records, FixAssemblyStrategy.standard());
   }
 
   /**
    * Create a fix database from the given records and assembly strategy.
    */
-  public static <F> FixDatabase<F> create(ArincRecords records, FixAssemblyStrategy<F> strategy) {
+  public static <F> XmlFixDatabase<F> create(ArincRecords records, FixAssemblyStrategy<F> strategy) {
     FixAssembler<F> assembler = FixAssembler.withStrategy(strategy);
-    FixDatabase.Builder<F> builder = FixDatabase.builder();
+    XmlFixDatabase.Builder<F> builder = XmlFixDatabase.builder();
 
     records.waypoints().forEach(wp -> indexWaypoint(builder, wp, assembler));
     records.ndbNavaids().forEach(ndb -> indexNdbNavaid(builder, ndb, assembler));
@@ -56,7 +56,7 @@ public final class FixDatabaseFactory {
   /**
    * Index a waypoint by reference ID and by identifier + ICAO code.
    */
-  public static <F> void indexWaypoint(FixDatabase.Builder<F> builder, ArincWaypoint wp, FixAssembler<F> assembler) {
+  public static <F> void indexWaypoint(XmlFixDatabase.Builder<F> builder, ArincWaypoint wp, FixAssembler<F> assembler) {
     ArincPointInfo point = wp.pointInfo();
     F fix = assembler.assemble(wp);
     builder.index(point.referenceId(), fix);
@@ -66,7 +66,7 @@ public final class FixDatabaseFactory {
   /**
    * Index an NDB navaid by reference ID and by identifier + ICAO code.
    */
-  public static <F> void indexNdbNavaid(FixDatabase.Builder<F> builder, ArincNdbNavaid ndb, FixAssembler<F> assembler) {
+  public static <F> void indexNdbNavaid(XmlFixDatabase.Builder<F> builder, ArincNdbNavaid ndb, FixAssembler<F> assembler) {
     ArincPointInfo point = ndb.pointInfo();
     F fix = assembler.assemble(ndb);
     builder.index(point.referenceId(), fix);
@@ -76,7 +76,7 @@ public final class FixDatabaseFactory {
   /**
    * Index a VHF navaid by reference ID and by identifier + ICAO code.
    */
-  public static <F> void indexVhfNavaid(FixDatabase.Builder<F> builder, ArincVhfNavaid vhf, FixAssembler<F> assembler) {
+  public static <F> void indexVhfNavaid(XmlFixDatabase.Builder<F> builder, ArincVhfNavaid vhf, FixAssembler<F> assembler) {
     ArincPointInfo point = vhf.pointInfo();
     F fix = assembler.assemble(vhf);
     builder.index(point.referenceId(), fix);
@@ -87,7 +87,7 @@ public final class FixDatabaseFactory {
    * Index an airport and all of its nested fix-like records into the builder. Returns a {@link PortPage} containing
    * the assembled terminal fixes scoped to this airport.
    */
-  public static <F> PortPage<F> indexAirport(FixDatabase.Builder<F> builder, ArincAirport airport, FixAssembler<F> assembler) {
+  public static <F> PortPage<F> indexAirport(XmlFixDatabase.Builder<F> builder, ArincAirport airport, FixAssembler<F> assembler) {
     ArincPortInfo portInfo = airport.portInfo();
     ArincPointInfo point = portInfo.pointInfo();
 
@@ -121,7 +121,7 @@ public final class FixDatabaseFactory {
    * Index a heliport and all of its nested fix-like records into the builder. Returns a {@link PortPage} containing
    * the assembled terminal fixes scoped to this heliport.
    */
-  public static <F> PortPage<F> indexHeliport(FixDatabase.Builder<F> builder, ArincHeliport heliport, FixAssembler<F> assembler) {
+  public static <F> PortPage<F> indexHeliport(XmlFixDatabase.Builder<F> builder, ArincHeliport heliport, FixAssembler<F> assembler) {
     ArincPortInfo portInfo = heliport.portInfo();
     ArincPointInfo point = portInfo.pointInfo();
 
@@ -139,7 +139,7 @@ public final class FixDatabaseFactory {
     return pageBuilder.build();
   }
 
-  private static <F> void indexPortChildren(FixDatabase.Builder<F> builder, ArincPortInfo portInfo,
+  private static <F> void indexPortChildren(XmlFixDatabase.Builder<F> builder, ArincPortInfo portInfo,
       FixAssembler<F> assembler, PortPage.Builder<F> pageBuilder) {
     portInfo.terminalWaypoints().orElse(List.of()).forEach(wp -> {
       F fix = assembler.assemble(wp);

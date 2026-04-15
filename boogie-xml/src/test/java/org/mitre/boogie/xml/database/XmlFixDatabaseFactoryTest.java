@@ -27,7 +27,7 @@ import org.mitre.boogie.xml.model.fields.ArincRecordType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
 
-class FixDatabaseFactoryTest {
+class XmlFixDatabaseFactoryTest {
 
   private static final LatLong POSITION = LatLong.of(42.2124, -83.3534);
   private static final MagneticVariation MAG_VAR = MagneticVariation.ofDegrees(-5.0);
@@ -38,7 +38,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addWaypoint(testWaypoint("WPT1", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("WPT1").isPresent()),
@@ -51,7 +51,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addNdbNavaid(testNdb("NDB1", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("NDB1").isPresent()),
@@ -64,7 +64,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addVhfNavaid(testVhf("VHF1", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("VHF1").isPresent()),
@@ -77,7 +77,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(testAirport("KATL", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("KATL").isPresent()),
@@ -99,7 +99,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("RW09L").isPresent()),
@@ -121,7 +121,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("GATE_A1").isPresent()),
@@ -143,7 +143,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("TWPT1").isPresent()),
@@ -165,7 +165,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("TNDB1").isPresent()),
@@ -190,7 +190,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("HP01").isPresent()),
@@ -215,7 +215,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("ILS09L").isPresent()),
@@ -240,7 +240,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("OM09L").isPresent()),
@@ -265,7 +265,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("GLS09L").isPresent()),
@@ -278,7 +278,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addWaypoint(testWaypoint("WPT1", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertTrue(db.fix("DOES_NOT_EXIST").isEmpty());
   }
@@ -287,7 +287,7 @@ class FixDatabaseFactoryTest {
   void standard_emptyRecordsProducesEmptyDatabase() {
     ArincRecords records = ArincRecords.standard();
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertTrue(db.fix("ANYTHING").isEmpty());
   }
@@ -300,7 +300,7 @@ class FixDatabaseFactoryTest {
     records.addVhfNavaid(testVhf("VHF1", POSITION, MAG_VAR));
     records.addAirport(testAirport("KATL", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("WPT1").isPresent()),
@@ -363,7 +363,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(airport);
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.fix("KJFK").isPresent(), "airport"),
@@ -383,7 +383,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addWaypoint(testWaypoint("WPT1", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     Fix fix = db.fix("WPT1").orElseThrow();
     assertAll(
@@ -400,7 +400,7 @@ class FixDatabaseFactoryTest {
     records.addWaypoint(testWaypoint("SAME_ID", POSITION, MAG_VAR));
     records.addNdbNavaid(testNdb("SAME_ID", position2, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertTrue(db.fix("SAME_ID").isPresent());
   }
@@ -414,7 +414,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addWaypoint(testWaypoint("JMACK", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.waypoint("JMACK", "K6").isPresent()),
@@ -429,7 +429,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addNdbNavaid(testNdb("NDB1", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.ndbNavaid("NDB1", "K6").isPresent()),
@@ -443,7 +443,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addVhfNavaid(testVhf("DXO", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.vhfNavaid("DXO", "K6").isPresent()),
@@ -457,7 +457,7 @@ class FixDatabaseFactoryTest {
     ArincRecords records = ArincRecords.standard();
     records.addAirport(testAirport("KATL", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.airport("KATL", "K6").isPresent()),
@@ -472,7 +472,7 @@ class FixDatabaseFactoryTest {
     records.addWaypoint(testWaypoint("SAME", POSITION, MAG_VAR));
     records.addNdbNavaid(testNdb("SAME", POSITION, MAG_VAR));
 
-    FixDatabase<Fix> db = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> db = FixDatabaseFactory.standard(records);
 
     assertAll(
         () -> assertTrue(db.waypoint("SAME", "K6").isPresent()),
@@ -508,7 +508,7 @@ class FixDatabaseFactoryTest {
         .airportGates(List.of(gate))
         .build();
 
-    FixDatabase.Builder<Fix> builder = FixDatabase.builder();
+    XmlFixDatabase.Builder<Fix> builder = XmlFixDatabase.builder();
     PortPage<Fix> page = FixDatabaseFactory.indexAirport(builder, airport, FixAssembler.standard());
 
     assertAll(
@@ -534,9 +534,9 @@ class FixDatabaseFactoryTest {
             .build())
         .build();
 
-    FixDatabase.Builder<Fix> builder = FixDatabase.builder();
+    XmlFixDatabase.Builder<Fix> builder = XmlFixDatabase.builder();
     FixDatabaseFactory.indexAirport(builder, airport, FixAssembler.standard());
-    FixDatabase<Fix> db = builder.build();
+    XmlFixDatabase<Fix> db = builder.build();
 
     assertAll(
         () -> assertTrue(db.fix("KATL").isPresent(), "airport by refId"),

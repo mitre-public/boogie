@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.boogie.xml.database.FixDatabase;
+import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.boogie.xml.model.ArincAirport;
@@ -21,22 +21,22 @@ import org.mitre.boogie.xml.model.fields.ArincPortInfo;
  * output class representing a procedure.
  *
  * <p>Each XML procedure contains transitions which contain legs. Legs reference fixes by IDREF elements. The assembler
- * uses a {@link FixDatabase} to resolve those references into assembled fix objects.
+ * uses a {@link XmlFixDatabase} to resolve those references into assembled fix objects.
  *
  * <p>Procedures are nested within {@link ArincPortInfo} on the airport, so the assembler extracts and converts all
  * procedures from the given airport's port info.
  *
- * <p>This class can be used with {@link ProcedureAssemblyStrategy#standard()} and a {@link FixDatabase} to generate
+ * <p>This class can be used with {@link ProcedureAssemblyStrategy#standard()} and a {@link XmlFixDatabase} to generate
  * lightweight Boogie-defined {@link Procedure} implementations.
  */
 public interface ProcedureAssembler<P> {
 
-  static ProcedureAssembler<Procedure> standard(FixDatabase<Fix> fixDatabase) {
-    return withStrategy(ProcedureAssemblyStrategy.standard(), fixDatabase);
+  static ProcedureAssembler<Procedure> standard(XmlFixDatabase<Fix> xmlFixDatabase) {
+    return withStrategy(ProcedureAssemblyStrategy.standard(), xmlFixDatabase);
   }
 
-  static <P, T, L, F> ProcedureAssembler<P> withStrategy(ProcedureAssemblyStrategy<P, T, L, F> strategy, FixDatabase<F> fixDatabase) {
-    return new Standard<>(strategy, fixDatabase);
+  static <P, T, L, F> ProcedureAssembler<P> withStrategy(ProcedureAssemblyStrategy<P, T, L, F> strategy, XmlFixDatabase<F> xmlFixDatabase) {
+    return new Standard<>(strategy, xmlFixDatabase);
   }
 
   Stream<P> assemble(Collection<ArincAirport> airports);
@@ -44,11 +44,11 @@ public interface ProcedureAssembler<P> {
   final class Standard<P, T, L, F> implements ProcedureAssembler<P> {
 
     private final ProcedureAssemblyStrategy<P, T, L, F> strategy;
-    private final FixDatabase<F> fixDatabase;
+    private final XmlFixDatabase<F> xmlFixDatabase;
 
-    private Standard(ProcedureAssemblyStrategy<P, T, L, F> strategy, FixDatabase<F> fixDatabase) {
+    private Standard(ProcedureAssemblyStrategy<P, T, L, F> strategy, XmlFixDatabase<F> xmlFixDatabase) {
       this.strategy = requireNonNull(strategy);
-      this.fixDatabase = requireNonNull(fixDatabase);
+      this.xmlFixDatabase = requireNonNull(xmlFixDatabase);
     }
 
     @Override
@@ -81,9 +81,9 @@ public interface ProcedureAssembler<P> {
     }
 
     private L convertLeg(ArincProcedureLeg leg) {
-      F associatedFix = leg.fixRef().flatMap(fixDatabase::fix).orElse(null);
-      F recommendedNavaid = leg.recNavaidRef().flatMap(fixDatabase::fix).orElse(null);
-      F centerFix = leg.centerFixRef().flatMap(fixDatabase::fix).orElse(null);
+      F associatedFix = leg.fixRef().flatMap(xmlFixDatabase::fix).orElse(null);
+      F recommendedNavaid = leg.recNavaidRef().flatMap(xmlFixDatabase::fix).orElse(null);
+      F centerFix = leg.centerFixRef().flatMap(xmlFixDatabase::fix).orElse(null);
       return strategy.convertLeg(leg, associatedFix, recommendedNavaid, centerFix);
     }
   }

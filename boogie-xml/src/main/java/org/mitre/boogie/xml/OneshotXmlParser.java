@@ -15,7 +15,7 @@ import org.mitre.boogie.xml.assemble.HeliportAssembler;
 import org.mitre.boogie.xml.assemble.HeliportAssemblyStrategy;
 import org.mitre.boogie.xml.assemble.ProcedureAssembler;
 import org.mitre.boogie.xml.assemble.ProcedureAssemblyStrategy;
-import org.mitre.boogie.xml.database.FixDatabase;
+import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.XmlTerminalAreaDatabase;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * to a collection of client-defined records of the given types.
  *
  * <p>This class mirrors the ARINC {@code OneshotRecordParser} pattern but is tailored for XML input. It unmarshals the
- * XML into {@link org.mitre.boogie.xml.model.ArincRecords ArincRecords}, builds a {@link FixDatabase} for cross-reference resolution, and then uses the configured
+ * XML into {@link org.mitre.boogie.xml.model.ArincRecords ArincRecords}, builds a {@link XmlFixDatabase} for cross-reference resolution, and then uses the configured
  * assembly strategies to produce airports, fixes, airways, procedures, and heliports.
  *
  * <p>Usage with standard Boogie types:
@@ -94,7 +94,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
    * Assembles the collection of typed client records from an underlying ARINC 424 XML file represented as an
    * {@link InputStream}.
    *
-   * <p>All record types are assembled on-the-fly during streaming. The {@link FixDatabase} is created eagerly
+   * <p>All record types are assembled on-the-fly during streaming. The {@link XmlFixDatabase} is created eagerly
    * (sharing its backing maps with the builder) so that airway and procedure assembly can resolve fix references
    * inline as each record arrives in the stream.
    *
@@ -103,14 +103,14 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
   public ClientRecords<APT, FIX, AWY, PRC, HPT> assembleFrom(InputStream inputStream) {
     requireNonNull(inputStream);
 
-    FixDatabase.Builder<FIX> fixDatabaseBuilder = FixDatabase.builder();
-    FixDatabase<FIX> fixDatabase = fixDatabaseBuilder.build();
+    XmlFixDatabase.Builder<FIX> fixDatabaseBuilder = XmlFixDatabase.builder();
+    XmlFixDatabase<FIX> xmlFixDatabase = fixDatabaseBuilder.build();
 
     StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> context = new StreamAssemblyRecords<>(
         FixAssembler.withStrategy(fixStrategy),
         AirportAssembler.withStrategy(airportStrategy),
-        AirwayAssembler.withStrategy(airwayStrategy, fixDatabase),
-        ProcedureAssembler.withStrategy(procedureStrategy, fixDatabase),
+        AirwayAssembler.withStrategy(airwayStrategy, xmlFixDatabase),
+        ProcedureAssembler.withStrategy(procedureStrategy, xmlFixDatabase),
         HeliportAssembler.withStrategy(heliportStrategy),
         fixDatabaseBuilder);
 
@@ -127,7 +127,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
         context.assembledAirways(),
         context.assembledProcedures(),
         context.assembledHeliports(),
-        fixDatabase,
+        xmlFixDatabase,
         terminalAreaDatabase);
   }
 
@@ -208,7 +208,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
     private final Collection<AWY> airways;
     private final Collection<PRC> procedures;
     private final Collection<HPT> heliports;
-    private final FixDatabase<FIX> fixDatabase;
+    private final XmlFixDatabase<FIX> xmlFixDatabase;
     private final XmlTerminalAreaDatabase<FIX> terminalAreaDatabase;
 
     private ClientRecords(
@@ -217,7 +217,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
         Collection<AWY> airways,
         Collection<PRC> procedures,
         Collection<HPT> heliports,
-        FixDatabase<FIX> fixDatabase,
+        XmlFixDatabase<FIX> xmlFixDatabase,
         XmlTerminalAreaDatabase<FIX> terminalAreaDatabase
     ) {
       this.airports = airports;
@@ -225,7 +225,7 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
       this.airways = airways;
       this.procedures = procedures;
       this.heliports = heliports;
-      this.fixDatabase = fixDatabase;
+      this.xmlFixDatabase = xmlFixDatabase;
       this.terminalAreaDatabase = terminalAreaDatabase;
     }
 
@@ -249,8 +249,8 @@ public final class OneshotXmlParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, HLPD, HPT
       return heliports;
     }
 
-    public FixDatabase<FIX> fixDatabase() {
-      return fixDatabase;
+    public XmlFixDatabase<FIX> fixDatabase() {
+      return xmlFixDatabase;
     }
 
     public XmlTerminalAreaDatabase<FIX> terminalAreaDatabase() {

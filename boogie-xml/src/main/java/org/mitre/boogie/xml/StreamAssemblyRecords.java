@@ -12,7 +12,7 @@ import org.mitre.boogie.xml.assemble.AirwayAssembler;
 import org.mitre.boogie.xml.assemble.FixAssembler;
 import org.mitre.boogie.xml.assemble.HeliportAssembler;
 import org.mitre.boogie.xml.assemble.ProcedureAssembler;
-import org.mitre.boogie.xml.database.FixDatabase;
+import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
 import org.mitre.boogie.xml.database.PortPage;
 import org.mitre.boogie.xml.database.XmlTerminalAreaDatabase;
@@ -31,19 +31,19 @@ import org.mitre.boogie.xml.model.ArincWaypoint;
  * unmarshalling, eliminating buffering entirely. No intermediate model objects are retained after assembly.
  *
  * <p>This relies on the XML element ordering where waypoints, NDB navaids, VHF navaids, and airways appear
- * before airports and heliports in the stream. The {@link FixDatabase} is created eagerly via
- * {@link FixDatabase.Builder#build()} and shares its backing maps with the builder &mdash; so additions during
+ * before airports and heliports in the stream. The {@link XmlFixDatabase} is created eagerly via
+ * {@link XmlFixDatabase.Builder#build()} and shares its backing maps with the builder &mdash; so additions during
  * streaming are immediately visible to the assemblers that hold a reference to the built database.
  *
  * <p>During streaming:
  * <ul>
  *   <li><b>Waypoints, NDB navaids, VHF navaids</b> &mdash; immediately assembled into fixes and indexed in the
- *       {@link FixDatabase.Builder}.</li>
- *   <li><b>Airways</b> &mdash; immediately assembled using the live {@link FixDatabase} (enroute fixes already
+ *       {@link XmlFixDatabase.Builder}.</li>
+ *   <li><b>Airways</b> &mdash; immediately assembled using the live {@link XmlFixDatabase} (enroute fixes already
  *       indexed).</li>
  *   <li><b>Airports</b> &mdash; terminal fixes indexed in the builder, a {@link PortPage} built and registered
  *       in the {@link XmlTerminalAreaDatabase.Builder}, the client airport assembled, and all procedures assembled
- *       inline using the live {@link FixDatabase}.</li>
+ *       inline using the live {@link XmlFixDatabase}.</li>
  *   <li><b>Heliports</b> &mdash; same as airports (minus procedures if none present).</li>
  *   <li><b>Holding patterns</b> &mdash; skipped (not used in assembly).</li>
  * </ul>
@@ -61,7 +61,7 @@ final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecor
   private final AirwayAssembler<AWY> airwayAssembler;
   private final ProcedureAssembler<PRC> procedureAssembler;
   private final HeliportAssembler<HPT> heliportAssembler;
-  private final FixDatabase.Builder<FIX> fixDatabaseBuilder;
+  private final XmlFixDatabase.Builder<FIX> fixDatabaseBuilder;
   private final XmlTerminalAreaDatabase.Builder<FIX> terminalAreaDatabaseBuilder;
 
   private final List<FIX> assembledFixes = new ArrayList<>();
@@ -76,7 +76,7 @@ final class StreamAssemblyRecords<FIX, APT, AWY, PRC, HPT> implements ArincRecor
       AirwayAssembler<AWY> airwayAssembler,
       ProcedureAssembler<PRC> procedureAssembler,
       HeliportAssembler<HPT> heliportAssembler,
-      FixDatabase.Builder<FIX> fixDatabaseBuilder) {
+      XmlFixDatabase.Builder<FIX> fixDatabaseBuilder) {
     this.fixAssembler = requireNonNull(fixAssembler);
     this.airportAssembler = requireNonNull(airportAssembler);
     this.airwayAssembler = requireNonNull(airwayAssembler);

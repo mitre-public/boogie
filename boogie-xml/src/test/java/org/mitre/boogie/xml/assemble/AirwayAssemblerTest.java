@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.database.FixDatabase;
+import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airway;
@@ -32,7 +32,7 @@ class AirwayAssemblerTest {
   @Test
   void assemblesAirwayWithNoLegs() {
     ArincRecords records = ArincRecords.standard();
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
     ArincAirway airway = ArincAirway.builder().identifier("J60").airwayRouteType("J").legs(List.of()).build();
@@ -58,7 +58,7 @@ class AirwayAssemblerTest {
             ArincAirwayLeg.builder().sequenceNumber(20).fixRef("CHPPR").build()))
         .build();
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(records);
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
     Airway awy = assembler.assemble(List.of(airway)).toList().get(0);
@@ -81,7 +81,7 @@ class AirwayAssemblerTest {
             ArincAirwayLeg.builder().sequenceNumber(10).fixRef("UNKNOWN").build()))
         .build();
 
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
     Airway awy = assembler.assemble(List.of(airway)).toList().get(0);
@@ -90,7 +90,7 @@ class AirwayAssemblerTest {
 
   @Test
   void assemblesMultipleAirwaysViaFlatMap() {
-    FixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
+    XmlFixDatabase<Fix> fixDb = FixDatabaseFactory.standard(ArincRecords.standard());
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fixDb);
 
     List<ArincAirway> arincAirways = List.of(
