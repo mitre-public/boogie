@@ -13,6 +13,9 @@ final class ConstraintAltitudeResolver {
   }
 
   static Integer resolve(AirspaceRouteHoldAltitude altitude) {
+    if (Boolean.TRUE.equals(altitude.isIsNotSpecified()) || Boolean.TRUE.equals(altitude.isIsUnknown()) || Boolean.TRUE.equals(altitude.isIsNotam())) {
+      return null;
+    }
     Integer value = altitude.getAltitude();
     if (value == null) {
       return null;
