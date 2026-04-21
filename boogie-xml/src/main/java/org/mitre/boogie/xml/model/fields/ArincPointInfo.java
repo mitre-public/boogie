@@ -1,6 +1,7 @@
 package org.mitre.boogie.xml.model.fields;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.mitre.caasd.commons.HasPosition;
@@ -71,6 +72,34 @@ public final class ArincPointInfo implements Serializable, HasPosition {
     return Optional.ofNullable(uir);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass())
+      return false;
+    ArincPointInfo that = (ArincPointInfo) o;
+    return Objects.equals(datumCode, that.datumCode) && Objects.equals(icaoCode, that.icaoCode) && Objects.equals(identifier, that.identifier) && Objects.equals(latLong, that.latLong) && Objects.equals(magneticVariation, that.magneticVariation) && Objects.equals(name, that.name) && Objects.equals(fir, that.fir) && Objects.equals(uir, that.uir) && Objects.equals(referenceId, that.referenceId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(datumCode, icaoCode, identifier, latLong, magneticVariation, name, fir, uir, referenceId);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincPointInfo{" +
+        "datumCode='" + datumCode + '\'' +
+        ", icaoCode='" + icaoCode + '\'' +
+        ", identifier='" + identifier + '\'' +
+        ", latLong=" + latLong +
+        ", magneticVariation=" + magneticVariation +
+        ", name='" + name + '\'' +
+        ", fir='" + fir + '\'' +
+        ", uir='" + uir + '\'' +
+        ", referenceId='" + referenceId + '\'' +
+        '}';
+  }
+
   public static class Builder {
     private String datumCode;
     private String icaoCode;
@@ -81,7 +110,9 @@ public final class ArincPointInfo implements Serializable, HasPosition {
     private String uir;
     private String fir;
     private String referenceId;
-    private Builder() {}
+
+    private Builder() {
+    }
 
     public Builder datumCode(String datumCode) {
       this.datumCode = datumCode;

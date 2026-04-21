@@ -1,17 +1,18 @@
 package org.mitre.boogie.xml.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincFraInfo;
 import org.mitre.boogie.xml.model.fields.ArincNameFormatIndicator;
-import org.mitre.boogie.xml.model.fields.ArincWaypointType;
-import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
-import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincPointInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
+import org.mitre.boogie.xml.model.fields.ArincWaypointType;
+import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
 
-public final class ArincWaypoint implements Serializable {
+public final class ArincWaypoint implements ArincFixRecord, Serializable {
   private final ArincBaseInfo baseInfo;
   private final ArincRecordInfo recordInfo;
   private final ArincPointInfo pointInfo;
@@ -34,6 +35,33 @@ public final class ArincWaypoint implements Serializable {
 
   public static Builder builder() {
     return new Builder();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass())
+      return false;
+    ArincWaypoint that = (ArincWaypoint) o;
+    return isVfrCheckPoint == that.isVfrCheckPoint && Objects.equals(baseInfo, that.baseInfo) && Objects.equals(recordInfo, that.recordInfo) && Objects.equals(pointInfo, that.pointInfo) && nameFormatIndicator == that.nameFormatIndicator && Objects.equals(waypointType, that.waypointType) && Objects.equals(waypointUsage, that.waypointUsage) && Objects.equals(fraInfo, that.fraInfo);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(baseInfo, recordInfo, pointInfo, nameFormatIndicator, waypointType, waypointUsage, fraInfo, isVfrCheckPoint);
+  }
+
+  @Override
+  public String toString() {
+    return "ArincWaypoint{" +
+        "baseInfo=" + baseInfo +
+        ", recordInfo=" + recordInfo +
+        ", pointInfo=" + pointInfo +
+        ", nameFormatIndicator=" + nameFormatIndicator +
+        ", waypointType=" + waypointType +
+        ", waypointUsage=" + waypointUsage +
+        ", fraInfo=" + fraInfo +
+        ", isVfrCheckPoint=" + isVfrCheckPoint +
+        '}';
   }
 
   public Builder toBuilder() {
@@ -89,7 +117,9 @@ public final class ArincWaypoint implements Serializable {
     private ArincWaypointUsage waypointUsage;
     private ArincFraInfo fraInfo;
     private boolean isVfrCheckPoint = false;
-    private Builder() {}
+
+    private Builder() {
+    }
 
     public Builder baseInfo(ArincBaseInfo baseInfo) {
       this.baseInfo = baseInfo;

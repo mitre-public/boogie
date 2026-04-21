@@ -1,7 +1,6 @@
 package org.mitre.boogie.xml.model;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -14,25 +13,46 @@ public interface ArincRecords {
   }
 
   void addWaypoint(ArincWaypoint waypoint);
+
   void addAirport(ArincAirport airport);
+
   void addNdbNavaid(ArincNdbNavaid ndb);
+
   void addVhfNavaid(ArincVhfNavaid vhf);
+
   void addAirway(ArincAirway arincAirway);
+
   void addHoldingPattern(ArincHoldingPattern holdingPattern);
 
+  void addHeliport(ArincHeliport heliport);
+
   Set<ArincWaypoint> waypoints();
+
   ArincRecords waypoints(Set<ArincWaypoint> waypoints);
+
   Set<ArincAirport> airports();
+
   ArincRecords airports(Set<ArincAirport> airports);
+
   Set<ArincNdbNavaid> ndbNavaids();
+
   ArincRecords ndbNavaids(Set<ArincNdbNavaid> ndbNavaids);
+
   Set<ArincVhfNavaid> vhfNavaids();
+
   ArincRecords vhfNavaids(Set<ArincVhfNavaid> vhfNavaids);
+
   Set<ArincAirway> arincAirways();
+
   ArincRecords arincAirways(Set<ArincAirway> arincAirways);
+
   Set<ArincHoldingPattern> holdingPatterns();
+
   ArincRecords holdingPatterns(Set<ArincHoldingPattern> holdingPatterns);
 
+  Set<ArincHeliport> heliports();
+
+  ArincRecords heliports(Set<ArincHeliport> heliports);
 
   final class Standard implements ArincRecords {
     Set<ArincWaypoint> waypoints = new HashSet<>();
@@ -41,26 +61,37 @@ public interface ArincRecords {
     Set<ArincVhfNavaid> vhfNavaids = new HashSet<>();
     Set<ArincAirway> arincAirways = new HashSet<>();
     Set<ArincHoldingPattern> holdingPatterns = new HashSet<>();
+    Set<ArincHeliport> heliports = new HashSet<>();
 
-    private Standard() {}
+    private Standard() {
+    }
 
-    public void addWaypoint(ArincWaypoint waypoint){
+    public void addWaypoint(ArincWaypoint waypoint) {
       waypoints.add(waypoint);
     }
-    public void addAirport(ArincAirport airport){
+
+    public void addAirport(ArincAirport airport) {
       airports.add(airport);
     }
-    public void addNdbNavaid(ArincNdbNavaid ndb){
+
+    public void addNdbNavaid(ArincNdbNavaid ndb) {
       ndbNavaids.add(ndb);
     }
-    public void addVhfNavaid(ArincVhfNavaid vhf){
+
+    public void addVhfNavaid(ArincVhfNavaid vhf) {
       vhfNavaids.add(vhf);
     }
-    public void addAirway(ArincAirway arincAirway){
+
+    public void addAirway(ArincAirway arincAirway) {
       arincAirways.add(arincAirway);
     }
-    public void addHoldingPattern(ArincHoldingPattern holdingPattern){
+
+    public void addHoldingPattern(ArincHoldingPattern holdingPattern) {
       holdingPatterns.add(holdingPattern);
+    }
+
+    public void addHeliport(ArincHeliport heliport) {
+      heliports.add(heliport);
     }
 
     public Set<ArincWaypoint> waypoints() {
@@ -114,6 +145,15 @@ public interface ArincRecords {
 
     public ArincRecords holdingPatterns(Set<ArincHoldingPattern> holdingPatterns) {
       this.holdingPatterns = holdingPatterns;
+      return this;
+    }
+
+    public Set<ArincHeliport> heliports() {
+      return heliports;
+    }
+
+    public ArincRecords heliports(Set<ArincHeliport> heliports) {
+      this.heliports = heliports;
       return this;
     }
   }

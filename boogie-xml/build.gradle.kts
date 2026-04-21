@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":boogie-core"))
+    implementation(project(":boogie-util"))
     implementation(project(":boogie-arinc"))
 
     implementation(rootProject.libs.bundles.jaxb)

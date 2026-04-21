@@ -6,8 +6,7 @@ import java.util.function.Function;
 
 import org.mitre.boogie.xml.model.fields.ArincDatumCode;
 import org.mitre.boogie.xml.model.fields.ArincPointInfo;
-import org.mitre.boogie.xml.util.Coordinate;
-import org.mitre.boogie.xml.util.DecimalDegrees;
+import org.mitre.boogie.xml.util.LocationConverter;
 import org.mitre.boogie.xml.util.MagVar;
 import org.mitre.boogie.xml.util.MagneticVariationConverter;
 import org.mitre.boogie.xml.v23_4.generated.A424Point;
@@ -17,26 +16,15 @@ import org.mitre.tdp.boogie.MagneticVariation;
 final class ArincPointConverter implements Function<A424Point, ArincPointInfo> {
   static final ArincPointConverter INSTANCE = new ArincPointConverter();
 
-  private static final DecimalDegrees DECIMAL_DEGREES = DecimalDegrees.INSTANCE;
+  private static final LocationConverter LOCATION_CONVERTER = LocationConverter.INSTANCE;
   private static final MagneticVariationConverter MAGNETIC_VARIATION_CONVERTER = MagneticVariationConverter.INSTANCE;
 
-  private ArincPointConverter() {}
+  private ArincPointConverter() {
+  }
 
   @Override
   public ArincPointInfo apply(A424Point waypoint) {
-    Double latitude = Optional.of(waypoint.getLocation().getLatitude())
-        .map(c -> Coordinate.from(c.getNorthSouth().name(), c.getDeg(), c.getMin(), c.getSec(), c.getHSec()))
-        .map(DECIMAL_DEGREES)
-        .or(() -> Optional.ofNullable(waypoint.getLocation().getLatitude().getDecimalDegreesLatitude()).map(BigDecimal::doubleValue))
-        .orElseThrow(() -> new IllegalStateException("Location's Latitude was required: " + waypoint.getLocation()));
-
-    Double longitude = Optional.of(waypoint.getLocation().getLongitude())
-        .map(c -> Coordinate.from(c.getEastWest().name(), c.getDeg(), c.getMin(), c.getSec(), c.getHSec()))
-        .map(DECIMAL_DEGREES)
-        .or(() -> Optional.ofNullable(waypoint.getLocation().getLongitude().getDecimalDegreesLongitude()).map(BigDecimal::doubleValue))
-        .orElseThrow(() -> new IllegalStateException("Location's Longitude was required: " + waypoint.getLocation()));
-
-    LatLong latLong = LatLong.of(latitude, longitude);
+    LatLong latLong = LOCATION_CONVERTER.apply(waypoint.getLocation()).orElse(null);
 
     MagneticVariation magvar = Optional.ofNullable(waypoint.getMagneticVariation())
         .map(m -> MagVar.from(m.getMagneticVariationEWT().name(), Optional.ofNullable(m.getMagneticVariationValue()).map(BigDecimal::doubleValue).orElse(0.0)))
@@ -44,8 +32,8 @@ final class ArincPointConverter implements Function<A424Point, ArincPointInfo> {
         .orElse(null);
 
     return ArincPointInfo.builder()
-        .fir(null) //todo get bindings working
-        .uir(null) //todo get bindings working
+        .fir(Optional.ofNullable(waypoint.getFirRef()).map(Object::toString).orElse(null))
+        .uir(Optional.ofNullable(waypoint.getUirRef()).map(Object::toString).orElse(null))
         .datumCode(Optional.ofNullable(waypoint.getDatumCode()).map(Enum::name).filter(ArincDatumCode.VALID::contains).orElse(null))
         .icaoCode(waypoint.getIcaoCode())
         .identifier(waypoint.getIdentifier())

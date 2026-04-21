@@ -7,7 +7,6 @@ import java.util.function.Function;
 import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincAirportGate;
 import org.mitre.boogie.xml.model.ArincRunway;
-import org.mitre.boogie.xml.model.ArincWaypoint;
 import org.mitre.boogie.xml.model.fields.ArincPortInfo;
 import org.mitre.boogie.xml.model.fields.RunwaySurfaceCode;
 import org.mitre.boogie.xml.v23_4.generated.Airport;
@@ -17,6 +16,8 @@ public final class ArincAirportConverter implements Function<Airport, Optional<A
 
   private static final ArincAirportValidator VALIDATOR = new ArincAirportValidator();
   private static final ArincPortConverter PORT_CONVERTER = ArincPortConverter.INSTANCE;
+  private static final ArincRunwayConverter RUNWAY_CONVERTER = ArincRunwayConverter.INSTANCE;
+  private static final ArincAirportGateConverter GATE_CONVERTER = ArincAirportGateConverter.INSTANCE;
 
   private ArincAirportConverter() {
   }
@@ -36,9 +37,15 @@ public final class ArincAirportConverter implements Function<Airport, Optional<A
         .map(RunwaySurfaceCode::valueOf)
         .map(Enum::name)
         .orElse(null);
-    //todo do this
-    List<ArincRunway> runways = List.of();
-    List<ArincAirportGate> gates = List.of();
+    List<ArincRunway> runways = airport.getRunway().stream()
+        .map(RUNWAY_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
+
+    List<ArincAirportGate> gates = airport.getAirportGate().stream()
+        .map(GATE_CONVERTER)
+        .flatMap(Optional::stream)
+        .toList();
 
     return ArincAirport.builder()
         .portInfo(portInfo)

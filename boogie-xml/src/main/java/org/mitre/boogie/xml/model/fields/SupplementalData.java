@@ -32,7 +32,9 @@ public interface SupplementalData extends Serializable {
 
     @Override
     public boolean equals(Object o) {
-      if (o == null || getClass() != o.getClass()) return false;
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       Record<?> record = (Record<?>) o;
       return Objects.equals(datum, record.datum);
     }

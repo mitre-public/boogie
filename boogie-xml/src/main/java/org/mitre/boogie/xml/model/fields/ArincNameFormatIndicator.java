@@ -20,7 +20,8 @@ public enum ArincNameFormatIndicator implements Serializable {
   PUBLISHED_MORE_THAN_FIVE_NAME,
   APT_RWY_RELATED,
   UIR,
-  OFFICIAL_FIVE_LETTER;
+  OFFICIAL_FIVE_LETTER,
+  NO_PUBLISHED_FIVE_LETTER;
 
   public static final Set<String> VALID = Arrays.stream(ArincNameFormatIndicator.values()).map(ArincNameFormatIndicator::name).collect(Collectors.toSet());
 }

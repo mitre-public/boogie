@@ -32,8 +32,12 @@ public final class ArincWaypointUsage implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     ArincWaypointUsage that = (ArincWaypointUsage) o;
     return isHi == that.isHi && isLo == that.isLo && isTerminal == that.isTerminal;
   }
