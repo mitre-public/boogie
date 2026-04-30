@@ -42,6 +42,15 @@ public interface RouteTokenizer {
   }
 
   /**
+   * Route tokenizer for TfmRestriction strings
+   * <p> e.g., {@code DRSDN/AFM or J121}
+   * @return The tfm restriction tokenizer
+   */
+  static RouteTokenizer tfmRestrictionFormat() {
+    return new TfmRestrictionTokenizer();
+  }
+
+  /**
    * Tokenize an input route of some (potentially undetermined format) and convert it to token identifiers which can be matched
    * against infrastructure using various {@link RouteTokenResolver} implementations.
    *
