@@ -24,7 +24,7 @@ class GraphExporterTest {
 
   private String createLatLongId(String latLong) {
 
-    ResolvedToken token = RouteTokenResolver.latlong(null)
+    ResolvedToken token = RouteTokenResolver.latlong()
         .resolve(null, RouteToken.standard(latLong, 0), null)
         .resolvedTokens()
         .iterator()

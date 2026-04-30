@@ -8,16 +8,13 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
-import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.alg.LookupService;
@@ -63,7 +60,7 @@ public interface RouteTokenResolver {
         .addResolver(airway(airwaysByName))
         .addResolver(fix(fixesByName))
         .addResolver(frd(fixesByName))
-        .addResolver(latlong(null))
+        .addResolver(latlong())
         .build();
   }
 
@@ -155,7 +152,7 @@ public interface RouteTokenResolver {
    *
    * <p>Supports both ICAO and FAA coordinate standards out-of-the-box.
    */
-  static RouteTokenResolver latlong(Function<LatLong, Leg> toLeg) {
+  static RouteTokenResolver latlong() {
     return new LatLongResolver();
   }
 
