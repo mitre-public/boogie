@@ -5,6 +5,7 @@ import static java.util.Optional.ofNullable;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 
@@ -75,6 +76,17 @@ public interface ResolvedTokenVisitor {
     GetFix visitor = new GetFix();
     token.accept(visitor);
     return ofNullable(visitor.fix);
+  }
+
+  /**
+   * Used to access an internal Airway instance of a {@link ResolvedToken} (if it has one).
+   *
+   * @param token any flavor of resolved token
+   */
+  static Optional<Airway> airway(ResolvedToken token) {
+    GetAirway visitor = new GetAirway();
+    token.accept(visitor);
+    return ofNullable(visitor.airway);
   }
 
   void visit(ResolvedToken.StandardAirport airport);
@@ -252,6 +264,71 @@ public interface ResolvedTokenVisitor {
           .latLong(frd.infrastructure().latLong())
           .magneticVariation(frd.infrastructure().magneticVariation().orElse(null))
           .build();
+    }
+  }
+
+  final class GetAirway implements ResolvedTokenVisitor {
+
+    private Airway airway;
+
+    private GetAirway() {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirport airport) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToAirport airport) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirway airway) {
+      this.airway = airway.infrastructure();
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardApproach approach) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFix fix) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFix fix) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardLatLong latLong) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToLatLong latLong) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidEnrouteCommon sid) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidRunway sid) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarEnrouteCommon star) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarRunway star) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFrd frd) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFrd frd) {
     }
   }
 
