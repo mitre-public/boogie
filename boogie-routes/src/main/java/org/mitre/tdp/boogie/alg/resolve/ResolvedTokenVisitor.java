@@ -5,6 +5,8 @@ import static java.util.Optional.ofNullable;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
 
 /**
@@ -65,6 +67,28 @@ public interface ResolvedTokenVisitor {
     return ofNullable(visitor.approach);
   }
 
+  /**
+   * Used to access an internal Fix instance of a {@link ResolvedToken} (if it has one).
+   *
+   * @param token any flavor of resolved token
+   */
+  static Optional<Fix> fix(ResolvedToken token) {
+    GetFix visitor = new GetFix();
+    token.accept(visitor);
+    return ofNullable(visitor.fix);
+  }
+
+  /**
+   * Used to access an internal Airway instance of a {@link ResolvedToken} (if it has one).
+   *
+   * @param token any flavor of resolved token
+   */
+  static Optional<Airway> airway(ResolvedToken token) {
+    GetAirway visitor = new GetAirway();
+    token.accept(visitor);
+    return ofNullable(visitor.airway);
+  }
+
   void visit(ResolvedToken.StandardAirport airport);
 
   void visit(ResolvedToken.DirectToAirport airport);
@@ -112,6 +136,155 @@ public interface ResolvedTokenVisitor {
 
     @Override
     public void visit(ResolvedToken.StandardAirway airway) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardApproach approach) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFix fix) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFix fix) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardLatLong latLong) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToLatLong latLong) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidEnrouteCommon sid) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidRunway sid) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarEnrouteCommon star) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarRunway star) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFrd frd) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFrd frd) {
+    }
+  }
+
+  final class GetFix implements ResolvedTokenVisitor {
+
+    private Fix fix;
+
+    private GetFix() {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirport airport) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToAirport airport) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirway airway) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardApproach approach) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFix fix) {
+      this.fix = fix.infrastructure();
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFix fix) {
+      this.fix = fix.infrastructure();
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardLatLong latLong) {
+      this.fix = Fix.builder()
+          .fixIdentifier(latLong.identifier())
+          .latLong(latLong.infrastructure())
+          .build();
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToLatLong latLong) {
+      this.fix = Fix.builder()
+          .fixIdentifier(latLong.identifier())
+          .latLong(latLong.infrastructure())
+          .build();
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidEnrouteCommon sid) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.SidRunway sid) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarEnrouteCommon star) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StarRunway star) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardFrd frd) {
+      fix = Fix.builder()
+          .fixIdentifier(frd.identifier())
+          .latLong(frd.infrastructure().latLong())
+          .magneticVariation(frd.infrastructure().magneticVariation().orElse(null))
+          .build();
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToFrd frd) {
+      fix = Fix.builder()
+          .fixIdentifier(frd.identifier())
+          .latLong(frd.infrastructure().latLong())
+          .magneticVariation(frd.infrastructure().magneticVariation().orElse(null))
+          .build();
+    }
+  }
+
+  final class GetAirway implements ResolvedTokenVisitor {
+
+    private Airway airway;
+
+    private GetAirway() {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirport airport) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.DirectToAirport airport) {
+    }
+
+    @Override
+    public void visit(ResolvedToken.StandardAirway airway) {
+      this.airway = airway.infrastructure();
     }
 
     @Override
