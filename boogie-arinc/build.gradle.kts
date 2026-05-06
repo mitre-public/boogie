@@ -8,8 +8,8 @@ dependencies {
     implementation(project(":boogie-util"))
     implementation(libs.bundles.commons)
 
-    testImplementation(platform(rootProject.libs.junit.bom))
-    testImplementation(rootProject.libs.bundles.test.tools)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.bundles.test.tools)
     testImplementation(libs.bundles.jgrapht)
 }
 
