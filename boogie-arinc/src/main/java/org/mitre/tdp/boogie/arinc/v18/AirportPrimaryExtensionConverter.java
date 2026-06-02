@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.checkerframework.checker.units.qual.A;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincAirportPrimaryExtension;
 

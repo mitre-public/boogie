@@ -12,14 +12,14 @@ import java.util.function.Supplier;
 /**
  * A delegating feature extractor wraps a collection of {@link ViterbiFeatureVectorExtractor}s alongside predicates for determining
  * when a stage/state combination should use that particular extractor.
- *
+ * <p>
  * This is convenient when you have a collection of models (e.g. one per leg type AF/RF/TF/CF/VA/etc.) and the one which should be
  * used for a given stage/state combination depends on features of that stage/state (e.g. when provided a point and a TF leg we
  * should probably be using the TF-based feature extractor and likelihood model to assign a likelihood instead of the RF/VA/etc.).
- *
+ * <p>
  * For one-size-fits all cases something like this isn't necessary and the {@link FeatureBasedViterbiScoringStrategy} can be built
  * with a single configured static feature extractor (regardless of the input stage/state combinations).
- *
+ * <p>
  * (think using this explicitly in) {@link FeatureBasedViterbiScoringStrategy#featureExtractor(Object, Object)}
  */
 public final class DelegatingFeatureVectorExtractor<STAGE, STATE> implements BiFunction<STAGE, STATE, ViterbiFeatureVectorExtractor<STAGE, STATE>> {
@@ -27,7 +27,7 @@ public final class DelegatingFeatureVectorExtractor<STAGE, STATE> implements BiF
   /**
    * The ordered list of feature extractors to apply to the underlying state/stages - the first extractor who's delegation method
    * returns "true" will be used to extract the feature vector from the stage/state combination.
-   *
+   * <p>
    * If there are no matches at the end an {@link IllegalStateException} will be thrown.
    */
   private final List<DelegatableFeatureExtractor<STAGE, STATE>> featureExtractors;
@@ -40,7 +40,9 @@ public final class DelegatingFeatureVectorExtractor<STAGE, STATE> implements BiF
   public ViterbiFeatureVectorExtractor<STAGE, STATE> apply(STAGE stage, STATE state) {
     return featureExtractors.stream()
         .filter(extractor -> extractor.test(stage, state))
-        .findFirst().orElseThrow(IllegalStateException::new).get();
+        .findFirst()
+        .orElseThrow(IllegalStateException::new)
+        .get();
   }
 
   public static <Stage, State> Builder<Stage, State> newBuilder() {

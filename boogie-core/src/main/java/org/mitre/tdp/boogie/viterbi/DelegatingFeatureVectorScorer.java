@@ -17,7 +17,7 @@ public final class DelegatingFeatureVectorScorer<STAGE, STATE> implements BiFunc
   /**
    * The ordered list of feature scorers to apply to the underlying state/stages - the first scorer who's delegation method
    * returns "true" will be used to score the feature vector given the stage/state combination.
-   *
+   * <p>
    * If there are no matches at the end an {@link IllegalStateException} will be thrown.
    */
   private final List<DelegateableFeatureVectorScorer<STAGE, STATE>> featureScorers;
@@ -30,7 +30,9 @@ public final class DelegatingFeatureVectorScorer<STAGE, STATE> implements BiFunc
   public ViterbiFeatureVectorScorer apply(STAGE stage, STATE state) {
     return featureScorers.stream()
         .filter(scorer -> scorer.test(stage, state))
-        .findFirst().orElseThrow(IllegalStateException::new).get();
+        .findFirst()
+        .orElseThrow(IllegalStateException::new)
+        .get();
   }
 
   public static <Stage, State> Builder<Stage, State> newBuilder() {
