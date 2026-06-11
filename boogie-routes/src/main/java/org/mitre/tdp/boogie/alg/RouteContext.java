@@ -186,6 +186,15 @@ public interface RouteContext {
     }
 
     /**
+     * Infers end-to-end airway segment continuations for multiply-resolved airway route tokens.
+     *
+     * @return the continuous airway inferrer
+     */
+    private SectionInferrer continuousAirway() {
+      return SectionInferrer.continuousAirway();
+    }
+
+    /**
      * A section inferrer for the departing airport
      * @return the inferrer for the default star
      */
@@ -241,7 +250,7 @@ public interface RouteContext {
       return new RouteContext() {
         @Override
         public List<SectionInferrer> inferrers() {
-          return List.of(defaultSid(), defaultStar(), sidRunwayTransition(), starRunwayTransition(), approach());
+          return List.of(continuousAirway(), defaultSid(), defaultStar(), sidRunwayTransition(), starRunwayTransition(), approach());
         }
 
         @Override

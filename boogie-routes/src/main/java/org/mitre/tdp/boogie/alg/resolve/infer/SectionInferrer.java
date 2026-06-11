@@ -115,6 +115,16 @@ public interface SectionInferrer {
   }
 
   /**
+   * Infers ordered airway-segment continuations when a route token resolves to multiple {@link org.mitre.tdp.boogie.Airway}
+   * candidates that connect end to end toward a downstream filed fix.
+   *
+   * @see ContinuousAirwayInferrer
+   */
+  static SectionInferrer continuousAirway() {
+    return new ContinuousAirwayInferrer();
+  }
+
+  /**
    * Generates a new <i>ordered</i> list of {@link ResolvedTokens}s based on the preceding and following provided sections.
    *
    * @param left  the preceding {@link ResolvedTokens} and its associated elements

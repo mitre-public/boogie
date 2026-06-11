@@ -1,10 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
@@ -42,7 +39,7 @@ public final class AirwayLegBuilder implements Function<ArincRecord, ArincAirway
 
     RouteHoldDistanceTime routeHoldDistanceTimeConverter = new RouteHoldDistanceTime();
 
-    return new ArincAirwayLeg.Builder()
+    return ArincAirwayLeg.builder()
         .recordType(arincRecord.requiredField("recordType"))
         .customerAreaCode(arincRecord.requiredField("customerAreaCode"))
         .sectionCode(arincRecord.requiredField("sectionCode"))

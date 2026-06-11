@@ -48,7 +48,6 @@ import org.mitre.tdp.boogie.arinc.v22.field.qualifiers.AirwayQualifier3;
  * class then mimics a single line of an ARINC airway record. These legs can then be sequenced to produce a full airway definition.
  */
 public final class ArincAirwayLeg implements ArincModel {
-
   /**
    * See {@link RecordType}.
    */
@@ -252,6 +251,10 @@ public final class ArincAirwayLeg implements ArincModel {
     this.routeTypeQualifier3 = builder.routeTypeQualifier3;
     this.fileRecordNumber = builder.fileRecordNumber;
     this.lastUpdateCycle = builder.lastUpdateCycle;
+  }
+
+  public static Builder builder() {
+    return new Builder();
   }
 
   public RecordType recordType() {
