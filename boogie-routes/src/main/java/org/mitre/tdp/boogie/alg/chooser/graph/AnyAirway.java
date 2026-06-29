@@ -31,6 +31,11 @@ final class AnyAirway implements LinkableToken {
   }
 
   @Override
+  public boolean supportsIntraLinks() {
+    return true;
+  }
+
+  @Override
   public void accept(LinkableTokenVisitor visitor) {
     visitor.visit(this);
   }
@@ -47,7 +52,8 @@ final class AnyAirway implements LinkableToken {
 
   @Override
   public Linker visit(AnyAirway airway) {
-    return multiLinker(airway);
+    return Linker.fixIdentMatch(airway, this)
+        .orElseTry(multiLinker(airway));
   }
 
   @Override

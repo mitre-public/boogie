@@ -90,6 +90,18 @@ public interface LinkableToken extends LinkingVisitor {
   Collection<LinkedLegs> graphRepresentation();
 
   /**
+   * Returns true if this token type supports intra-section self-linking — i.e. co-resolved tokens of this type within the
+   * same {@link org.mitre.tdp.boogie.alg.resolve.ResolvedTokens} should be linked to each other.
+   *
+   * <p>This is meaningful for airways, where the same route identifier may resolve to multiple {@link org.mitre.tdp.boogie.Airway}
+   * objects whose subgraphs share a fix. For all other token types (procedures, fixes, airports) co-resolved tokens are
+   * unrelated and must not be cross-linked.
+   */
+  default boolean supportsIntraLinks() {
+    return false;
+  }
+
+  /**
    * Generic implementation of the visitor pattern for single-dispatch allowing various downstream collaborators to collect token
    * specific information (such as associated infrastructure, etc.).
    *

@@ -10,9 +10,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.caasd.commons.Distance;
@@ -43,6 +45,17 @@ public interface Linker {
    */
   static Linker tweak(Linker linker, DoubleUnaryOperator tweaker) {
     return new Tweaker(linker, tweaker);
+  }
+
+  /**
+   * A linker which returns {@link LinkedLegs} between all leg pairs of the left and right {@link LinkableToken}s where the
+   * associated fixes have matching identifiers.
+   *
+   * @param left  the token to link from
+   * @param right the token to link to
+   */
+  static Linker fixIdentMatch(LinkableToken left, LinkableToken right) {
+    return new FixIdentMatch(left, right);
   }
 
   /**
@@ -226,6 +239,42 @@ public interface Linker {
     public Collection<LinkedLegs> links() {
       return linker.links().stream()
           .map(linked -> new LinkedLegs(linked.source(), linked.target(), tweaker.applyAsDouble(linked.linkWeight())))
+          .toList();
+    }
+  }
+
+  final class FixIdentMatch implements Linker {
+
+    private final LinkableToken left;
+
+    private final LinkableToken right;
+
+    private FixIdentMatch(LinkableToken left, LinkableToken right) {
+      this.left = requireNonNull(left);
+      this.right = requireNonNull(right);
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+
+      Map<String, List<Leg>> rightLegsByFixIdentifier = withLocation(right.graphRepresentation()).stream()
+          .collect(Collectors.groupingBy(FixIdentMatch::fixIdentifier));
+
+      return withLocation(left.graphRepresentation()).stream()
+          .flatMap(leftLeg -> rightLegsByFixIdentifier.getOrDefault(fixIdentifier(leftLeg), List.of()).stream()
+              .map(rightLeg -> new LinkedLegs(leftLeg, rightLeg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT)))
+          .toList();
+    }
+
+    private static String fixIdentifier(Leg leg) {
+      return leg.associatedFix().orElseThrow(IllegalStateException::new).fixIdentifier();
+    }
+
+    private static List<Leg> withLocation(Collection<LinkedLegs> linkedLegs) {
+      return linkedLegs.stream()
+          .flatMap(linked -> Stream.of(linked.source(), linked.target()))
+          .distinct()
+          .filter(leg -> leg.associatedFix().isPresent())
           .toList();
     }
   }

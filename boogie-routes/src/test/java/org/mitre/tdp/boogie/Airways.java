@@ -22,6 +22,16 @@ public final class Airways {
     Leg GGOLF = TF("GGOLF", 33.45582777777778, -84.33613333333332);
     return airway("J000", Arrays.asList(ZALLE, GGOLF));
   }
+  public static Airway J000B() {
+    Leg GGOLF = TF("GGOLF", 33.45582777777778, -84.33613333333332);
+    Leg NEXTT = TF("NEXTT", 33.46, -84.33613333333332);
+    return airway("J000", Arrays.asList(GGOLF, NEXTT));
+  }
+  public static Airway J000C() {
+    Leg UNRELATED = TF("UNRELATED", 50.0, 50.0);
+    Leg UNRELATED2 = TF("UNRELATED2", 51.0, 52.0);
+    return airway("J000", Arrays.asList(UNRELATED, UNRELATED2));
+  }
   public static Airway J121() {
     Leg CRG = TF("CRG", 30.338880555555555, -81.50992777777778);
     Leg MILIE = TF("MILIE", 31.328622222222222, -81.17371944444444);

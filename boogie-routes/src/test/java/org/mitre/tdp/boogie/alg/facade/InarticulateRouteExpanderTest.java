@@ -154,7 +154,7 @@ class InarticulateRouteExpanderTest {
 
     InarticulateRouteExpander expander = newExpander(
         asList(start, end),
-        singletonList(Airways.J000()),
+        List.of(Airways.J000(), Airways.J000B(), Airways.J000C()),
         asList(Airports.KATL(), Airports.KMCO()),
         singletonList(PLMMR2.INSTANCE)
     );
@@ -164,6 +164,35 @@ class InarticulateRouteExpanderTest {
     assertAll("We want the airway to be taken over the sid",
         () -> assertEquals("J000", expandedRoute.legs().get(2).section(), "This better not be the sid"),
         () -> assertEquals("J000", expandedRoute.legs().get(3).section(), "This better not be the sid")
+    );
+  }
+
+  @Test
+  void testCrossAirwayChainTraversal() {
+    Fix start = fix("START", 33.3336, -84.7909);
+    Fix end = fix("ENDDD", 33.5496, -84.1357);
+    Fix nextt = fix("NEXTT", 33.46, -84.33613333333332);
+
+    String route = "KATL..START..ZALLE.J000.NEXTT..ENDDD..KMCO";
+
+    InarticulateRouteExpander expander = newExpander(
+        asList(start, end, nextt),
+        List.of(Airways.J000(), Airways.J000B(), Airways.J000C()),
+        asList(Airports.KATL(), Airports.KMCO()),
+        asList(PLMMR2.INSTANCE, STAR_FAKE.INSTANCE)
+    );
+
+    ExpandedRoute expandedRoute = expander.apply(route).orElseThrow();
+
+    assertAll("J000->J000B chain via GGOLF bridge; STAR_FAKE co-resolves with PLMMR2 SID POSSIBLY disasterous if we derp it",
+        () -> assertTrue(
+            expandedRoute.legs().stream().anyMatch(l -> l.associatedFix().map(f -> "NEXTT".equals(f.fixIdentifier())).orElse(false)),
+            "NEXTT (only on J000B) must appear in the expanded route"
+        ),
+        () -> assertTrue(
+            expandedRoute.legs().stream().noneMatch(l -> l.associatedFix().map(f -> "UNRELATED".equals(f.fixIdentifier())).orElse(false)),
+            "UNRELATED (J000C) must not appear in the expanded route"
+        )
     );
   }
 
