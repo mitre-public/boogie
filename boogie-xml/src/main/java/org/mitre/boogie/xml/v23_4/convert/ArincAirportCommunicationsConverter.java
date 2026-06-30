@@ -14,7 +14,7 @@ import org.mitre.boogie.xml.model.fields.H24Indicator;
 import org.mitre.boogie.xml.model.fields.Modulation;
 import org.mitre.boogie.xml.model.fields.RadarService;
 import org.mitre.boogie.xml.model.fields.SignalEmission;
-import org.mitre.boogie.xml.util.LocationConverter;
+import org.mitre.boogie.xml.v23_4.util.LocationConverter;
 import org.mitre.boogie.xml.v23_4.generated.PortCommunication;
 import org.mitre.caasd.commons.LatLong;
 

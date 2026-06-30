@@ -1,11 +1,18 @@
 package org.mitre.boogie.xml.assemble;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.testFix;
+import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.testProcedure;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.boogie.xml.model.ArincProcedure;
+import org.mitre.boogie.xml.model.ArincProcedureLeg;
+import org.mitre.boogie.xml.model.ArincTransition;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -14,9 +21,6 @@ import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.boogie.xml.model.ArincProcedure;
-import org.mitre.boogie.xml.model.ArincProcedureLeg;
-import org.mitre.boogie.xml.model.ArincTransition;
 
 class ProcedureAssemblyStrategyTest {
 

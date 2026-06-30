@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.mitre.boogie.xml.model.fields.ArincDatumCode;
 import org.mitre.boogie.xml.model.fields.ArincPointInfo;
-import org.mitre.boogie.xml.util.LocationConverter;
+import org.mitre.boogie.xml.v23_4.util.LocationConverter;
 import org.mitre.boogie.xml.util.MagVar;
 import org.mitre.boogie.xml.util.MagneticVariationConverter;
 import org.mitre.boogie.xml.v23_4.generated.A424Point;

@@ -53,10 +53,27 @@ public enum ArincXmlVersion {
           XmlRecordHandler.of("holdingPattern", HoldingPattern.class, ArincHoldingPatternConverter.INSTANCE, ArincRecords::addHoldingPattern),
           XmlRecordHandler.of("heliport", Heliport.class, ArincHeliportConverter.INSTANCE, ArincRecords::addHeliport)
       )
+  ),
+
+  /**
+   * ARINC 424 XML schema version 23.5.
+   */
+  V23_5(
+      List.of(org.mitre.boogie.xml.v23_5.generated.AeroPublication.class),
+      List.of(
+          XmlRecordHandler.of("waypoint", org.mitre.boogie.xml.v23_5.generated.Waypoint.class, org.mitre.boogie.xml.v23_5.convert.ArincWaypointConverter.INSTANCE, ArincRecords::addWaypoint),
+          XmlRecordHandler.of("airport", org.mitre.boogie.xml.v23_5.generated.Airport.class, org.mitre.boogie.xml.v23_5.convert.ArincAirportConverter.INSTANCE, ArincRecords::addAirport),
+          XmlRecordHandler.of("ndb", org.mitre.boogie.xml.v23_5.generated.Ndb.class, org.mitre.boogie.xml.v23_5.convert.ArincNdbNavaidConverter.INSTANCE, ArincRecords::addNdbNavaid),
+          XmlRecordHandler.of("vhfNavaid", org.mitre.boogie.xml.v23_5.generated.Navaid.class, org.mitre.boogie.xml.v23_5.convert.ArincVhfNavaidConverter.INSTANCE, ArincRecords::addVhfNavaid),
+          XmlRecordHandler.of("airway", org.mitre.boogie.xml.v23_5.generated.Airway.class, org.mitre.boogie.xml.v23_5.convert.ArincAirwayConverter.INSTANCE, ArincRecords::addAirway),
+          XmlRecordHandler.of("holdingPattern", org.mitre.boogie.xml.v23_5.generated.HoldingPattern.class, org.mitre.boogie.xml.v23_5.convert.ArincHoldingPatternConverter.INSTANCE, ArincRecords::addHoldingPattern),
+          XmlRecordHandler.of("heliport", org.mitre.boogie.xml.v23_5.generated.Heliport.class, org.mitre.boogie.xml.v23_5.convert.ArincHeliportConverter.INSTANCE, ArincRecords::addHeliport)
+      )
   );
 
   private static final Map<String, ArincXmlVersion> LOOKUP = Map.ofEntries(
-      Map.entry(V23_4.name(), V23_4)
+      Map.entry(V23_4.name(), V23_4),
+      Map.entry(V23_5.name(), V23_5)
   );
 
   private final List<Class<?>> jaxbContextClasses;

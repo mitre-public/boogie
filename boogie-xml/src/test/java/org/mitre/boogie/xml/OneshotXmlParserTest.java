@@ -21,6 +21,7 @@ import org.mitre.tdp.boogie.Runway;
 class OneshotXmlParserTest {
 
   private static final File xmlTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_4/gibberish-sample.xml"));
+  private static final File xmlTestFileV23_5 = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_5/gibberish-sample.xml"));
 
   @Test
   void testParse() {
@@ -30,6 +31,27 @@ class OneshotXmlParserTest {
       records = OneshotXmlParser.standard(ArincXmlVersion.V23_4).assembleFrom(fis);
     } catch (IOException e) {
       throw DemotedException.demote("Exception opening and parsing XML file: " + xmlTestFile, e);
+    }
+
+    assertAll(
+        () -> assertEquals(5, records.airports().size(), "Airports"),
+        () -> assertEquals(13, records.fixes().size(), "Fixes"),
+        () -> assertEquals(5, records.airways().size(), "Airways"),
+        () -> assertEquals(75, records.procedures().size(), "Procedures"),
+        () -> assertEquals(5, records.heliports().size(), "Heliports"),
+        () -> assertNotNull(records.fixDatabase()),
+        () -> assertNotNull(records.terminalAreaDatabase())
+    );
+  }
+
+  @Test
+  void testParseV23_5() {
+    OneshotXmlParser.ClientRecords<Airport, Runway, Fix, Airway, Procedure, Helipad, Heliport> records;
+
+    try (FileInputStream fis = new FileInputStream(xmlTestFileV23_5)) {
+      records = OneshotXmlParser.standard(ArincXmlVersion.V23_5).assembleFrom(fis);
+    } catch (IOException e) {
+      throw DemotedException.demote("Exception opening and parsing XML file: " + xmlTestFileV23_5, e);
     }
 
     assertAll(

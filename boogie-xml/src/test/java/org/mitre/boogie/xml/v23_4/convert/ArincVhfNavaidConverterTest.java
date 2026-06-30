@@ -1,14 +1,17 @@
 package org.mitre.boogie.xml.v23_4.convert;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.ArincVhfNavaid;
-import org.mitre.boogie.xml.model.fields.IlsDmeLocation;
 import org.mitre.boogie.xml.model.fields.FigureOfMerit;
 import org.mitre.boogie.xml.model.fields.FreqUnitOfMeasure;
+import org.mitre.boogie.xml.model.fields.IlsDmeLocation;
 import org.mitre.boogie.xml.model.fields.NavaidSynchronization;
 import org.mitre.boogie.xml.model.fields.NavaidVoice;
 import org.mitre.boogie.xml.model.fields.NavaidWeatherInfo;

@@ -1,18 +1,20 @@
 package org.mitre.boogie.xml.assemble;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.boogie.xml.model.ArincAirway;
+import org.mitre.boogie.xml.model.ArincAirwayLeg;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.boogie.xml.model.ArincAirway;
-import org.mitre.boogie.xml.model.ArincAirwayLeg;
 
 class AirwayAssemblyStrategyTest {
 

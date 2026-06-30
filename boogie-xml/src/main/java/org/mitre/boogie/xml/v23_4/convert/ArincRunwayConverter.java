@@ -19,7 +19,7 @@ import org.mitre.boogie.xml.model.fields.RunwayUsageIndicator;
 import org.mitre.boogie.xml.model.fields.SurfaceType;
 import org.mitre.boogie.xml.model.fields.TchValueIndicator;
 import org.mitre.boogie.xml.model.fields.TrueBearingSource;
-import org.mitre.boogie.xml.util.LocationConverter;
+import org.mitre.boogie.xml.v23_4.util.LocationConverter;
 import org.mitre.boogie.xml.v23_4.generated.Bearing;
 import org.mitre.boogie.xml.v23_4.generated.Runway;
 import org.mitre.boogie.xml.v23_4.generated.RunwayIdentifier;

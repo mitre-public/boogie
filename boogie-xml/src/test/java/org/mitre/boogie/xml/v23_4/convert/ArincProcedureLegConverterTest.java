@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.ArincProcedureLeg;
 import org.mitre.boogie.xml.v23_4.generated.ApproachLeg;
 import org.mitre.boogie.xml.v23_4.generated.SidLeg;
-import org.mitre.boogie.xml.v23_4.generated.StarLeg;
 
 class ArincProcedureLegConverterTest {
 
