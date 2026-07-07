@@ -24,7 +24,7 @@ public final class DfFeatureScorer implements ViterbiFeatureVectorScorer {
   @Override
   public Double apply(ViterbiFeatureVector viterbiFeatureVector) {
     checkArgument(viterbiFeatureVector.containsFeature(DfFeatureExtractor.LEG_TYPE));
-    double distanceOffset = viterbiFeatureVector.featureValue(CfFeatureExtractor.PROJECTED_DISTANCE_OFFSET);
+    double distanceOffset = viterbiFeatureVector.featureValue(DfFeatureExtractor.PROJECTED_DISTANCE_OFFSET);
     return offTrackWeight.apply(distanceOffset);
   }
 }

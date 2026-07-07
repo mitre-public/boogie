@@ -43,8 +43,8 @@ public final class VaFeatureScorer implements ViterbiFeatureVectorScorer {
   public Double apply(ViterbiFeatureVector viterbiFeatureVector) {
     checkArgument(viterbiFeatureVector.containsFeature(VaFeatureExtractor.LEG_TYPE));
 
-    double degreesOffCourse = viterbiFeatureVector.featureValue(CaFeatureExtractor.DEGREES_OFF_COURSE);
-    double feetPastTargetAltitude = viterbiFeatureVector.featureValue(CaFeatureExtractor.FEET_PAST_TARGET_ALTITUDE);
+    double degreesOffCourse = viterbiFeatureVector.featureValue(VaFeatureExtractor.DEGREES_OFF_COURSE);
+    double feetPastTargetAltitude = viterbiFeatureVector.featureValue(VaFeatureExtractor.FEET_PAST_TARGET_ALTITUDE);
 
     return offCourseWeight.apply(degreesOffCourse) * pastTargetAltitudeWeight.apply(feetPastTargetAltitude);
   }

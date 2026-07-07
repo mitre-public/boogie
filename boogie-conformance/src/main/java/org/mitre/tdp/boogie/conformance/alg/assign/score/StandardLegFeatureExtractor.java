@@ -27,6 +27,8 @@ import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FdDelegator;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FdFeatureExtractor;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FmDelegator;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.FmFeatureExtractor;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.HoldingDelegator;
+import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.HoldingFeatureExtractor;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.IfDelegator;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.IfFeatureExtractor;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.legtype.RfDelegator;
@@ -92,6 +94,7 @@ public final class StandardLegFeatureExtractor implements BiFunction<Conformable
         .addFeatureExtractor(new FdDelegator(), FdFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new VrDelegator(), VrFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor(new CrDelegator(), CrFeatureExtractor.INSTANCE.get())
+        .addFeatureExtractor(new HoldingDelegator(), HoldingFeatureExtractor.INSTANCE.get())
         .addFeatureExtractor((point, flyableLeg) -> true, ViterbiFeatureVectorExtractor.<ConformablePoint, FlyableLeg>newBuilder().build())
         .build();
   }
