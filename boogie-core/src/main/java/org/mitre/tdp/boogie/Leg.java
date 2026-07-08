@@ -241,6 +241,14 @@ public interface Leg {
    */
   boolean isPublishedHoldingFix();
 
+  /**
+   * Indicates whether the terminal fix of the leg is an intermediate or initial approach fix (ARINC waypoint description
+   * column 4 = A, B, C, ).
+   * <br>
+   * Typically this can be inferred from the waypoint description information in the concrete leg definition (e.g. from ARINC).
+   */
+  boolean isIntermediateOrInitialApproachFix();
+
   void accept(Visitor visitor);
 
   /**
@@ -290,6 +298,8 @@ public interface Leg {
 
     private final boolean isPublishedHoldingFix;
 
+    private final boolean isIntermediateOrInitialApproachFix;
+
     private final Double arcRadius;
 
     private int hashCode;
@@ -312,6 +322,7 @@ public interface Leg {
       this.turnDirection = builder.turnDirection;
       this.isFlyOverFix = builder.isFlyOverFix;
       this.isPublishedHoldingFix = builder.isPublishedHoldingFix;
+      this.isIntermediateOrInitialApproachFix = builder.isIntermediateOrInitialApproachFix;
       this.arcRadius = builder.arcRadius;
     }
 
@@ -401,6 +412,11 @@ public interface Leg {
     }
 
     @Override
+    public boolean isIntermediateOrInitialApproachFix() {
+      return isIntermediateOrInitialApproachFix;
+    }
+
+    @Override
     public Optional<Double> arcRadius() {
       return Optional.ofNullable(arcRadius);
     }
@@ -423,6 +439,7 @@ public interface Leg {
           .turnDirection(turnDirection().orElse(null))
           .isFlyOverFix(isFlyOverFix())
           .isPublishedHoldingFix(isPublishedHoldingFix())
+          .isIntermediateOrInitialApproachFix(isIntermediateOrInitialApproachFix())
           .arcRadius(arcRadius().orElse(null));
     }
 
@@ -443,6 +460,7 @@ public interface Leg {
       return sequenceNumber == standard.sequenceNumber
           && isFlyOverFix == standard.isFlyOverFix
           && isPublishedHoldingFix == standard.isPublishedHoldingFix
+          && isIntermediateOrInitialApproachFix == standard.isIntermediateOrInitialApproachFix
           && Objects.equals(associatedFix, standard.associatedFix)
           && Objects.equals(recommendedNavaid, standard.recommendedNavaid)
           && Objects.equals(centerFix, standard.centerFix)
@@ -467,7 +485,7 @@ public interface Leg {
     }
 
     private int computeHashCode() {
-      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix, arcRadius);
+      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix, isIntermediateOrInitialApproachFix, arcRadius);
     }
 
     @Override
@@ -490,6 +508,7 @@ public interface Leg {
           ", turnDirection=" + turnDirection +
           ", isFlyOverFix=" + isFlyOverFix +
           ", isPublishedHoldingFix=" + isPublishedHoldingFix +
+          ", isIntermediateOrInitialApproachFix=" + isIntermediateOrInitialApproachFix +
           ", arcRadius=" + arcRadius +
           '}';
     }
@@ -512,6 +531,7 @@ public interface Leg {
       private TurnDirection turnDirection;
       private boolean isFlyOverFix;
       private boolean isPublishedHoldingFix;
+      private boolean isIntermediateOrInitialApproachFix;
       private Double arcRadius;
 
       private Builder(PathTerminator pathTerminator) {
@@ -595,6 +615,11 @@ public interface Leg {
 
       public Builder isPublishedHoldingFix(boolean isPublishedHoldingFix) {
         this.isPublishedHoldingFix = isPublishedHoldingFix;
+        return this;
+      }
+
+      public Builder isIntermediateOrInitialApproachFix(boolean isIntermediateOrInitialApproachFix) {
+        this.isIntermediateOrInitialApproachFix = isIntermediateOrInitialApproachFix;
         return this;
       }
 
@@ -712,6 +737,11 @@ public interface Leg {
     @Override
     public boolean isPublishedHoldingFix() {
       return delegate.isPublishedHoldingFix();
+    }
+
+    @Override
+    public boolean isIntermediateOrInitialApproachFix() {
+      return delegate.isIntermediateOrInitialApproachFix();
     }
 
     @Override

@@ -151,6 +151,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .turnDirection(turnDirection)
           .isPublishedHoldingFix(false) //fixme idk if supported.
           .isFlyOverFix(isFlyOverFix)
+          .isIntermediateOrInitialApproachFix(leg.terminalWaypointDescriptionCode4().map(c -> c.equals("A") || c.equals("B") || c.equals("C") || c.equals("D")).orElse(false))
           .build();
     }
     private static Double parseCourse(String course) {
