@@ -5,11 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLegAssembler;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
@@ -76,18 +80,27 @@ public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable 
         links.addAll(additional);
       });
 
-      // This links the last leg of each enroute section directly to all approach legs.
-      // Needed when STARs are present since the pairwise loop won't connect enroute -> approach directly.
-      List<FlyableLeg> lastEnrouteLegs = enroute.stream()
+      // Links the last leg of each enroute section directly to IAF/IF approach legs, but only
+      // when the enroute leg's fix identifier matches the approach procedure's airport identifier.
+      // This covers the direct-to-airport case and when a STAR is present and bypassed.
+      Map<String, List<FlyableLeg>> iafsByAirport = approach.stream()
+          .filter(r -> r.source() instanceof Procedure)
+          .collect(Collectors.groupingBy(
+              r -> ((Procedure) r.source()).airportIdentifier(),
+              Collectors.flatMapping(
+                  r -> FlyableLegAssembler.assemble(r).stream().filter(fl -> fl.current().isIntermediateOrInitialApproachFix()),
+                  Collectors.toList()
+              )
+          ));
+      enroute.stream()
           .map(FlyableLegAssembler::assemble)
-          .filter(legs -> !legs.isEmpty())
-          .map(legs -> legs.get(legs.size() - 1))
-          .toList();
-      List<FlyableLeg> ifIafLegs = approach.stream()
-          .flatMap(r -> FlyableLegAssembler.assemble(r).stream())
-          .filter(fl -> fl.current().isIntermediateOrInitialApproachFix())
-          .toList();
-      links.addAll(Combinatorics.cartesianProduct(lastEnrouteLegs, ifIafLegs));
+          .filter(assembled -> !assembled.isEmpty())
+          .map(assembled -> assembled.get(assembled.size() - 1))
+          .forEach(lastLeg -> lastLeg.current().associatedFix()
+              .map(Fix::fixIdentifier)
+              .map(iafsByAirport::get)
+              .ifPresent(iafLegs -> links.addAll(Combinatorics.cartesianProduct(List.of(lastLeg), iafLegs)))
+          );
     } else {
       LOG.warn("Insufficient routes from envelope portions to apply strategy, {}", keyed.size());
     }
