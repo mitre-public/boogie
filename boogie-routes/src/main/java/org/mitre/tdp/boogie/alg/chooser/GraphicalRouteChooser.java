@@ -458,6 +458,11 @@ final class GraphicalRouteChooser implements RouteChooser {
     }
 
     @Override
+    public boolean isIntermediateOrInitialApproachFix() {
+      return leg.isIntermediateOrInitialApproachFix();
+    }
+
+    @Override
     public Optional<Double> arcRadius() {
       return leg.arcRadius();
     }

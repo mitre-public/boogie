@@ -13,6 +13,7 @@ import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLegAssembler;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
+import org.mitre.tdp.boogie.util.Combinatorics;
 import org.mitre.tdp.boogie.util.Iterators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
 
-@Beta
 public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(PhaseOfFlightLinker.class);
@@ -70,23 +70,24 @@ public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable 
     if (keyed.size() > 1) {
       Iterators.pairwise(routes, (prev, next) -> {
         Collection<Pair<FlyableLeg, FlyableLeg>> additional = linker.apply(
-            FlyableLegAssembler.assembleWithLinks(prev).first(),
-            FlyableLegAssembler.assembleWithLinks(next).first()
+            prev.stream().flatMap(r -> FlyableLegAssembler.assemble(r).stream()).toList(),
+            next.stream().flatMap(r -> FlyableLegAssembler.assemble(r).stream()).toList()
         );
         links.addAll(additional);
       });
 
-      // This links direct route legs to the destination airport with approaches, which
-      // could otherwise be unlinked if STARs are present
-      if (!enroute.isEmpty() && !approach.isEmpty()) {
-        Collection<FlyableLeg> legs = FlyableLegAssembler.assembleWithLinks(enroute).first();
-        Collection<FlyableLeg> c =FlyableLegAssembler.assembleWithLinks(enroute).first().stream().reduce((f,s) -> s).stream().toList();
-
-        links.addAll(linker.apply(
-            FlyableLegAssembler.assembleWithLinks(enroute).first().stream().reduce((f,s) -> s).stream().toList(), //todo i guess we need a extraction function
-            FlyableLegAssembler.assembleWithLinks(approach).first()
-        ));
-      }
+      // This links the last leg of each enroute section directly to all approach legs.
+      // Needed when STARs are present since the pairwise loop won't connect enroute -> approach directly.
+      List<FlyableLeg> lastEnrouteLegs = enroute.stream()
+          .map(FlyableLegAssembler::assemble)
+          .filter(legs -> !legs.isEmpty())
+          .map(legs -> legs.get(legs.size() - 1))
+          .toList();
+      List<FlyableLeg> ifIafLegs = approach.stream()
+          .flatMap(r -> FlyableLegAssembler.assemble(r).stream())
+          .filter(fl -> fl.current().isIntermediateOrInitialApproachFix())
+          .toList();
+      links.addAll(Combinatorics.cartesianProduct(lastEnrouteLegs, ifIafLegs));
     } else {
       LOG.warn("Insufficient routes from envelope portions to apply strategy, {}", keyed.size());
     }

@@ -107,6 +107,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .turnDirection(leg.turnDirection().map(this::toTurnDirection).orElseGet(TurnDirection::either))
           .isPublishedHoldingFix(IsPublishedHoldingFix.INSTANCE.test(leg))
           .isFlyOverFix(IsFlyOverFix.INSTANCE.test(leg))
+          .isIntermediateOrInitialApproachFix(IsIntermediateOrInitialApproachFix.INSTANCE.test(leg))
           .build();
     }
 

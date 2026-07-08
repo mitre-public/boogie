@@ -9,7 +9,9 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
 import com.google.common.annotations.Beta;
 
-@Beta
+/**
+ * This interface creates links between the first and second collection of legs.
+ */
 @FunctionalInterface
 public interface LegsLinker extends BiFunction<Collection<FlyableLeg>, Collection<FlyableLeg>, Collection<Pair<FlyableLeg, FlyableLeg>>> {
 

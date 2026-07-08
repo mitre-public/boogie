@@ -152,6 +152,11 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
   }
 
   @Override
+  public boolean isIntermediateOrInitialApproachFix() {
+    return leg.isIntermediateOrInitialApproachFix();
+  }
+
+  @Override
   public Optional<Double> arcRadius() {
     return leg.arcRadius();
   }
