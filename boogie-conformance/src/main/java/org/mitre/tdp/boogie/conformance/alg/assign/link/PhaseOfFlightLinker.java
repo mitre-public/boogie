@@ -24,8 +24,6 @@ import org.mitre.tdp.boogie.util.Iterators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
-
 public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(PhaseOfFlightLinker.class);
@@ -73,7 +71,7 @@ public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable 
     keyed.put(EnvelopeSection.APPROACH, approach);
     LOG.info("Approach candidate route count {}", keyed.get(EnvelopeSection.APPROACH).size());
 
-    keyed = Maps.filterEntries(keyed, entry -> !entry.getValue().isEmpty());
+    keyed.entrySet().removeIf(entry -> entry.getValue().isEmpty());
     List<Collection<Route>> routes = new ArrayList<>(keyed.values());
 
     Set<Pair<FlyableLeg, FlyableLeg>> links = new HashSet<>();
