@@ -7,8 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.mitre.caasd.commons.Pair;
@@ -44,6 +46,17 @@ public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable 
       Collection<Route> enroute,
       Collection<Route> arrival,
       Collection<Route> approach
+  ) {
+    return newStrategyFor(departure, enroute, arrival, approach,
+        r -> r.source() instanceof Procedure p ? Optional.of(p.airportIdentifier()) : Optional.empty());
+  }
+
+  public static PhaseOfFlightLinker newStrategyFor(
+      Collection<Route> departure,
+      Collection<Route> enroute,
+      Collection<Route> arrival,
+      Collection<Route> approach,
+      Function<Route, Optional<String>> approachAirportIdentifier
   ) {
 
     NavigableMap<EnvelopeSection, Collection<Route>> keyed = new TreeMap<>();
@@ -83,9 +96,9 @@ public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable 
       // when the enroute leg's fix identifier matches the approach procedure's airport identifier.
       // This covers the direct-to-airport case and when a STAR is present and bypassed.
       Map<String, List<FlyableLeg>> iafsByAirport = approach.stream()
-          .filter(r -> r.source() instanceof Procedure)
+          .filter(r -> approachAirportIdentifier.apply(r).isPresent())
           .collect(Collectors.groupingBy(
-              r -> ((Procedure) r.source()).airportIdentifier(),
+              r -> approachAirportIdentifier.apply(r).orElseThrow(),
               Collectors.flatMapping(
                   r -> FlyableLegAssembler.assemble(r).stream().filter(fl -> fl.current().isIntermediateOrInitialApproachFix()),
                   Collectors.toList()
