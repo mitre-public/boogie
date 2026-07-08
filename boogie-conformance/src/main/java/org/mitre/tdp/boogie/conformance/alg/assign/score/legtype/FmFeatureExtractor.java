@@ -1,6 +1,5 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.score.legtype;
 
-import static org.apache.commons.math3.util.FastMath.abs;
 import static org.mitre.tdp.boogie.conformance.alg.assign.score.MissingRequiredFieldException.supplier;
 
 import java.util.function.Supplier;
@@ -10,6 +9,7 @@ import org.mitre.caasd.commons.HasPosition;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
@@ -40,6 +40,12 @@ public final class FmFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
    */
   public static final String DISTANCE_BEFORE_FIX = "DistanceBeforeFix";
 
+  /**
+   * Feature indicating whether the next leg has the same associated fix identifier as the FM's fix. When 1.0, the FM is
+   * effectively never flown (e.g. TF(FIX) -> FM(FIX) -> IF(FIX) is flown as TF(FIX) -> IF(FIX)).
+   */
+  public static final String NEXT_LEG_FIX_MATCHES_FM_FIX = "NextLegFixMatchesFmFix";
+
   private FmFeatureExtractor() {
   }
 
@@ -47,24 +53,23 @@ public final class FmFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
   public ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg> get() {
     return ViterbiFeatureVectorExtractor.<ConformablePoint, FlyableLeg>newBuilder()
         .addFeatureExtractor(LEG_TYPE, (c, l) -> 1.)
-        .addFeatureExtractor(DEGREES_OFF_COURSE, this::deriveDegreesOffCourseFeature)
+        .addFeatureExtractor(DEGREES_OFF_COURSE, LegDistance::deriveDegreesOffCourse)
         .addFeatureExtractor(DISTANCE_FROM_FIX, this::deriveDistanceToNextFixFeature)
         .addFeatureExtractor(DISTANCE_BEFORE_FIX, this::deriveBeforeTrackDistance)
+        .addFeatureExtractor(NEXT_LEG_FIX_MATCHES_FM_FIX, this::deriveNextLegFixMatchesFmFix)
         .build();
-  }
-
-  double deriveDegreesOffCourseFeature(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    double pointCourse = conformablePoint.trueCourse().orElseThrow(supplier("True Course"));
-    double expectedCourse = flyableLeg.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
-    MagneticVariation navMagVar = MagneticVariationResolver.getInstance().magneticVariation(conformablePoint, flyableLeg);
-
-    return abs(Spherical.angleDifference(navMagVar.magneticToTrue(expectedCourse), pointCourse));
   }
 
   double deriveDistanceToNextFixFeature(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
     return flyableLeg.current().associatedFix()
         .map(f -> conformablePoint.latLong().distanceInNM(f.latLong()))
         .orElseThrow(supplier("No Fix in current leg"));
+  }
+
+  double deriveNextLegFixMatchesFmFix(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
+    String fmFixId = flyableLeg.current().associatedFix().map(Fix::fixIdentifier).orElse(null);
+    String nextFixId = flyableLeg.next(Leg::associatedFix).map(Fix::fixIdentifier).orElse(null);
+    return fmFixId != null && fmFixId.equals(nextFixId) ? 1.0 : 0.0;
   }
 
   /**
@@ -87,6 +92,5 @@ public final class FmFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
     double atd = Spherical.alongTrackDistanceNM(current, projection, conformablePoint, ctd);
 
     return FastMath.min(atd, 0.0);
-
   }
 }
