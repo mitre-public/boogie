@@ -13,19 +13,22 @@ public final class FmFeatureScorer implements ViterbiFeatureVectorScorer {
   private final UnaryOperator<Double> offCourseWeight;
   private final UnaryOperator<Double> distanceFromFixWeight;
   private final UnaryOperator<Double> beforeFixWeight;
+  private final UnaryOperator<Double> nextLegMatchesFixWeight;
 
   public FmFeatureScorer() {
     this(
         simpleLogistic(15., 30.),
         simpleLogistic(15., 25.),
-        (d) -> d < 0.0 ? 0.0 : 1.0
+        (d) -> d < 0.0 ? 0.0 : 1.0,
+        (d) -> d > 0.5 ? 0.0 : 1.0
     );
   }
 
-  public FmFeatureScorer(UnaryOperator<Double> offCourseWeight, UnaryOperator<Double> distanceFromFixWeight, UnaryOperator<Double> beforeFixWeight) {
+  public FmFeatureScorer(UnaryOperator<Double> offCourseWeight, UnaryOperator<Double> distanceFromFixWeight, UnaryOperator<Double> beforeFixWeight, UnaryOperator<Double> nextLegMatchesFixWeight) {
     this.offCourseWeight = offCourseWeight;
     this.distanceFromFixWeight = distanceFromFixWeight;
     this.beforeFixWeight = beforeFixWeight;
+    this.nextLegMatchesFixWeight = nextLegMatchesFixWeight;
   }
 
   @Override
@@ -35,7 +38,8 @@ public final class FmFeatureScorer implements ViterbiFeatureVectorScorer {
     double degreesOffCourse = viterbiFeatureVector.featureValue(FmFeatureExtractor.DEGREES_OFF_COURSE);
     double distanceToNextFix = viterbiFeatureVector.featureValue(FmFeatureExtractor.DISTANCE_FROM_FIX);
     double distanceBefore = viterbiFeatureVector.featureValue(FmFeatureExtractor.DISTANCE_BEFORE_FIX);
+    double nextLegMatchesFix = viterbiFeatureVector.featureValue(FmFeatureExtractor.NEXT_LEG_FIX_MATCHES_FM_FIX);
 
-    return offCourseWeight.apply(degreesOffCourse) * distanceFromFixWeight.apply(distanceToNextFix) * beforeFixWeight.apply(distanceBefore);
+    return offCourseWeight.apply(degreesOffCourse) * distanceFromFixWeight.apply(distanceToNextFix) * beforeFixWeight.apply(distanceBefore) * nextLegMatchesFixWeight.apply(nextLegMatchesFix);
   }
 }

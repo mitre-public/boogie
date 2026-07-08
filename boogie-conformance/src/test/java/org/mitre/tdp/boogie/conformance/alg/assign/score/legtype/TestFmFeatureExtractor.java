@@ -136,4 +136,20 @@ public class TestFmFeatureExtractor {
         () -> assertEquals(.591, score, .001)
     );
   }
+
+  @Test
+  void nextLegMatchesFmFix_scoresZero() {
+    Leg ifLeg = Leg.builder(PathTerminator.IF, 31)
+        .associatedFix(sehag)
+        .build();
+    FlyableLeg legWithMatchingNext = new FlyableLeg(null, fmLeg, ifLeg);
+
+    ViterbiFeatureVector vector = extractor.get().apply(onPoint(), legWithMatchingNext);
+    Double score = scorer.apply(vector);
+
+    assertAll("FM with next leg at same fix scores zero",
+        () -> assertEquals(1.0, vector.asMap().get(FmFeatureExtractor.NEXT_LEG_FIX_MATCHES_FM_FIX), .0001),
+        () -> assertEquals(0.0, score, .0001)
+    );
+  }
 }

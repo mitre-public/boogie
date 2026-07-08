@@ -62,7 +62,7 @@ public class AllPhasesOfFlightLinker implements LinkingStrategy, Serializable {
 
     //we want to link to the next thing's Fx legs which are generally at the start of the route and can fly direct.
     //we then want a link because these nearest neighbors can probably be flown to directly so.
-    LegsLinker fixLinker = new NearestFxLinker().andThenApply(new UniqueNearestNeighborLinker());
+    LegsLinker fixLinker = new NearestFxLinker().andThenApply(new FmSkipLinker()).andThenApply(new UniqueNearestNeighborLinker());
     Collection<Pair<FlyableLeg, FlyableLeg>> fixLinks = fixLinker.apply(leftLegs, allDownStreamLegs);
 
     //we also want a link to the first thing there even if there is no fix.
