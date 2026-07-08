@@ -63,6 +63,7 @@ public final class PhaseOfFlightLinker implements LinkingStrategy, Serializable 
     Set<Pair<FlyableLeg, FlyableLeg>> links = new HashSet<>();
 
     LegsLinker linker = new NearestFxLinker()
+        .andThenApply(new FmSkipLinker())
         .andThenApply(new UniqueNearestNeighborLinker());
 
     // this covers the traversal order of flight
