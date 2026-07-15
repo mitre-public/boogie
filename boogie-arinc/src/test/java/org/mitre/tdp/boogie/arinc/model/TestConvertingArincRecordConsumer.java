@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.arinc.model;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.File;
 
@@ -35,6 +36,11 @@ class TestConvertingArincRecordConsumer {
         () -> assertEquals(6, testV18Consumer.arincVhfNavaids().size(), "VhfNavaid count"),
         () -> assertEquals(70, testV18Consumer.arincWaypoints().size(), "Waypoint count")
     );
+  }
+
+  @Test
+  void reusesImmutableRecordSnapshotBetweenWrites() {
+    assertSame(testV18Consumer.arincProcedureLegs(), testV18Consumer.arincProcedureLegs());
   }
 
   /**
