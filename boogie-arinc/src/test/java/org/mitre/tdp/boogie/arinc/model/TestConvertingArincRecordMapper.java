@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.arinc.model;
 
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
@@ -37,6 +38,11 @@ class TestConvertingArincRecordMapper {
         () -> assertEquals(6, recordsByType.getOrDefault(ArincVhfNavaid.class, emptyList()).size(), "VhfNavaid count"),
         () -> assertEquals(70, recordsByType.getOrDefault(ArincWaypoint.class, emptyList()).size(), "Waypoint count")
     );
+  }
+
+  @Test
+  void factoryBuildsCompleteV19Mapper() {
+    assertDoesNotThrow(() -> ArincRecordConverterFactory.mapperForVersion(ArincVersion.V19));
   }
 
   /**

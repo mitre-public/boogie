@@ -113,6 +113,7 @@ public final class ArincRecordConverterFactory {
         .headerOneConverter(new Header01Converter())
         .headerOneDelegator(new Header01Validator())
         .heliportConverter(new HeliportConverter())
+        .heliportDelegator(new HeliportValidator())
         .holdingPatternDelegator(new HoldingPatternValidator());
   }
 
