@@ -96,6 +96,16 @@ public interface Linker {
   }
 
   /**
+   * A linker which connects an approach procedure to its airport from the approach's
+   * final-transition exit (the runway/threshold end). Without this down-selection a
+   * closest-point link lets the airport tap the approach mid-transition — a feeder fix
+   * passing near the field exits the procedure there, truncating the final.
+   */
+  static Linker approachToAirport(AnyApproach approach, AnyAirport airport) {
+    return new ApproachToAirport(approach, airport);
+  }
+
+  /**
    * A linker which builds connections between any generic piece of infrastructure and an approach procedure. This linker is a
    * special case prioritizing linking to the start of the "initial" transitions in the approach procedure.
    *
@@ -449,6 +459,29 @@ public interface Linker {
 
       return cartesianProduct(star.star().exitLegs(hasPosition), approach.approach().entryLegs(hasPosition)).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
+          .toList();
+    }
+  }
+
+  final class ApproachToAirport implements Linker {
+
+    private final AnyApproach approach;
+
+    private final AnyAirport airport;
+
+    private ApproachToAirport(AnyApproach approach, AnyAirport airport) {
+      this.approach = requireNonNull(approach);
+      this.airport = requireNonNull(airport);
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+
+      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
+      LinkedLegs airportLegs = highlander(airport.graphRepresentation()).orElseThrow();
+
+      return approach.approach().exitLegs(hasPosition).stream()
+          .map(exit -> new LinkedLegs(exit, airportLegs.source(), distanceBetween(Pair.of(exit, airportLegs.source()))))
           .toList();
     }
   }
