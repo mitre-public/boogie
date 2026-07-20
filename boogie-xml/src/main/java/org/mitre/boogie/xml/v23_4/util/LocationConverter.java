@@ -1,9 +1,11 @@
-package org.mitre.boogie.xml.util;
+package org.mitre.boogie.xml.v23_4.util;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.mitre.boogie.xml.util.Coordinate;
+import org.mitre.boogie.xml.util.DecimalDegrees;
 import org.mitre.boogie.xml.v23_4.generated.Location;
 import org.mitre.caasd.commons.LatLong;
 

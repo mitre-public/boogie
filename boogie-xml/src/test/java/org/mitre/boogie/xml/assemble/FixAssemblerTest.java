@@ -1,11 +1,9 @@
 package org.mitre.boogie.xml.assemble;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.boogie.xml.model.ArincAirportGate;
 import org.mitre.boogie.xml.model.ArincNdbNavaid;
 import org.mitre.boogie.xml.model.ArincVhfNavaid;
@@ -15,6 +13,9 @@ import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
 
 class FixAssemblerTest {
 

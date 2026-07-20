@@ -2,9 +2,6 @@ package org.mitre.boogie.xml.assemble;
 
 import java.util.List;
 
-import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.ArincProcedure;
 import org.mitre.boogie.xml.model.ArincWaypoint;
@@ -14,6 +11,9 @@ import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
 
 /**
  * Shared test fixtures for procedure assembly tests.

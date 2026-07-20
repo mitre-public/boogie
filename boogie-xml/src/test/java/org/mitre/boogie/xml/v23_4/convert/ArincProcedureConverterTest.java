@@ -9,9 +9,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.ArincProcedure;
-import org.mitre.boogie.xml.v23_4.generated.Approach;
 import org.mitre.boogie.xml.v23_4.generated.Sid;
-import org.mitre.boogie.xml.v23_4.generated.Star;
 
 class ArincProcedureConverterTest {
 

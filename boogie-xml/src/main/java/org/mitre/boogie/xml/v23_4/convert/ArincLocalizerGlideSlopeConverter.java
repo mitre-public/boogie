@@ -15,7 +15,7 @@ import org.mitre.boogie.xml.model.fields.IlsDmeLocation;
 import org.mitre.boogie.xml.model.fields.LocalizerPositionReference;
 import org.mitre.boogie.xml.model.fields.PrecisionApproachCategory;
 import org.mitre.boogie.xml.model.fields.TrueBearingSource;
-import org.mitre.boogie.xml.util.LocationConverter;
+import org.mitre.boogie.xml.v23_4.util.LocationConverter;
 import org.mitre.boogie.xml.v23_4.generated.Bearing;
 import org.mitre.boogie.xml.v23_4.generated.LocalizerGlideslope;
 import org.mitre.caasd.commons.LatLong;

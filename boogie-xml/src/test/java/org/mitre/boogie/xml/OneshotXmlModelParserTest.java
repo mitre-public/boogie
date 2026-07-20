@@ -15,6 +15,7 @@ import org.mitre.caasd.commons.util.DemotedException;
 class OneshotXmlModelParserTest {
 
   private static final File xmlTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_4/gibberish-sample.xml"));
+  private static final File xmlTestFileV23_5 = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_5/gibberish-sample.xml"));
 
   @Test
   void testParse_returnsRawModelRecords() {
@@ -43,6 +44,45 @@ class OneshotXmlModelParserTest {
       records = OneshotXmlModelParser.standard(ArincXmlVersion.V23_4).parseFrom(fis);
     } catch (IOException e) {
       throw DemotedException.demote("Exception opening and parsing XML file: " + xmlTestFile, e);
+    }
+
+    long totalProcedures = records.airports().stream()
+        .mapToLong(a -> a.portInfo().procedures().orElse(java.util.List.of()).size())
+        .sum();
+
+    assertAll(
+        () -> assertEquals(75, totalProcedures, "Total procedures nested in airports"),
+        () -> assertEquals(5, records.arincAirways().size(), "Airways")
+    );
+  }
+
+  @Test
+  void testParseV23_5_returnsRawModelRecords() {
+    ArincRecords records;
+
+    try (FileInputStream fis = new FileInputStream(xmlTestFileV23_5)) {
+      records = OneshotXmlModelParser.standard(ArincXmlVersion.V23_5).parseFrom(fis);
+    } catch (IOException e) {
+      throw DemotedException.demote("Exception opening and parsing XML file: " + xmlTestFileV23_5, e);
+    }
+
+    assertAll(
+        () -> assertEquals(5, records.airports().size(), "Airports"),
+        () -> assertEquals(5, records.heliports().size(), "Heliports"),
+        () -> assertFalse(records.waypoints().isEmpty(), "Waypoints"),
+        () -> assertFalse(records.arincAirways().isEmpty(), "Airways"),
+        () -> assertFalse(records.ndbNavaids().isEmpty() && records.vhfNavaids().isEmpty(), "Navaids")
+    );
+  }
+
+  @Test
+  void testParseV23_5_airportsContainNestedProcedures() {
+    ArincRecords records;
+
+    try (FileInputStream fis = new FileInputStream(xmlTestFileV23_5)) {
+      records = OneshotXmlModelParser.standard(ArincXmlVersion.V23_5).parseFrom(fis);
+    } catch (IOException e) {
+      throw DemotedException.demote("Exception opening and parsing XML file: " + xmlTestFileV23_5, e);
     }
 
     long totalProcedures = records.airports().stream()

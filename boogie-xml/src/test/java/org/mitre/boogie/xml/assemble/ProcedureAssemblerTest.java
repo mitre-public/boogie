@@ -1,23 +1,26 @@
 package org.mitre.boogie.xml.assemble;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.testAirport;
+import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.testWaypoint;
 
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
+import org.mitre.boogie.xml.database.XmlFixDatabase;
+import org.mitre.boogie.xml.model.ArincProcedure;
+import org.mitre.boogie.xml.model.ArincProcedureLeg;
+import org.mitre.boogie.xml.model.ArincRecords;
+import org.mitre.boogie.xml.model.ArincTransition;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.boogie.xml.model.ArincProcedure;
-import org.mitre.boogie.xml.model.ArincProcedureLeg;
-import org.mitre.boogie.xml.model.ArincRecords;
-import org.mitre.boogie.xml.model.ArincTransition;
 
 class ProcedureAssemblerTest {
 

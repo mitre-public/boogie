@@ -16,6 +16,7 @@ import org.mitre.caasd.commons.util.DemotedException;
 class StreamingUnmarshallerTest {
 
   private static final File xmlTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_4/gibberish-sample.xml"));
+  private static final File xmlTestFileV23_5 = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_5/gibberish-sample.xml"));
 
   @Test
   void test() {
@@ -60,6 +61,33 @@ class StreamingUnmarshallerTest {
 
     assertTrue(result.isPresent());
     assertEquals(records, result.get(), "Should return the same ArincRecords instance");
+
+    assertAll(
+        () -> assertEquals(5, records.waypoints().size(), "Waypoints"),
+        () -> assertEquals(5, records.airports().size(), "Airports"),
+        () -> assertEquals(5, records.ndbNavaids().size(), "NDB Navaids"),
+        () -> assertEquals(3, records.vhfNavaids().size(), "VHF Navaids"),
+        () -> assertEquals(5, records.arincAirways().size(), "Airways"),
+        () -> assertEquals(5, records.holdingPatterns().size(), "Holding Patterns"),
+        () -> assertEquals(5, records.heliports().size(), "Heliports")
+    );
+  }
+
+  @Test
+  void testV23_5() {
+    StreamingUnmarshaller unmarshaller = new StreamingUnmarshaller(
+        ArincXmlVersion.V23_5.jaxbContextClasses(),
+        ArincXmlVersion.V23_5.handlers());
+
+    Optional<ArincRecords> result;
+    try (FileInputStream fis = new FileInputStream(xmlTestFileV23_5)) {
+      result = unmarshaller.apply(fis);
+    } catch (IOException e) {
+      throw DemotedException.demote("Exception opening and parsing XML file: " + xmlTestFileV23_5, e);
+    }
+
+    assertTrue(result.isPresent());
+    ArincRecords records = result.get();
 
     assertAll(
         () -> assertEquals(5, records.waypoints().size(), "Waypoints"),

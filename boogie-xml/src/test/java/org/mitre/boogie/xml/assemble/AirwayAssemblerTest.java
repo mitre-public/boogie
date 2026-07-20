@@ -1,17 +1,15 @@
 package org.mitre.boogie.xml.assemble;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
-import org.mitre.caasd.commons.LatLong;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.model.ArincAirway;
 import org.mitre.boogie.xml.model.ArincAirwayLeg;
 import org.mitre.boogie.xml.model.ArincRecords;
@@ -21,6 +19,10 @@ import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointType;
 import org.mitre.boogie.xml.model.fields.ArincWaypointUsage;
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
 
 class AirwayAssemblerTest {
 

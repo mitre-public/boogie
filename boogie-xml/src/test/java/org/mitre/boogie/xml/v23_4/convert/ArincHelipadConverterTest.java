@@ -1,6 +1,9 @@
 package org.mitre.boogie.xml.v23_4.convert;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +11,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.ArincHelipad;
 import org.mitre.boogie.xml.model.fields.ElevationType;
-import org.mitre.boogie.xml.model.fields.HelipadShape;
 import org.mitre.boogie.xml.model.fields.HelicopterPerformanceReq;
+import org.mitre.boogie.xml.model.fields.HelipadShape;
 import org.mitre.boogie.xml.model.fields.RunwaySurfaceCode;
 import org.mitre.boogie.xml.v23_4.generated.Helipad;
 

@@ -2,9 +2,7 @@ package org.mitre.boogie.xml.v23_4.convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.Duration;
 
 import org.mitre.boogie.xml.v23_4.generated.*;
 

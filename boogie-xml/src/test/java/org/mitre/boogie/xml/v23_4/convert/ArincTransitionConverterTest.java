@@ -8,9 +8,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.ArincTransition;
-import org.mitre.boogie.xml.v23_4.generated.FinalApproach;
 import org.mitre.boogie.xml.v23_4.generated.SidRunwayTransition;
-import org.mitre.boogie.xml.v23_4.generated.StarRunwayTransition;
 
 class ArincTransitionConverterTest {
 
