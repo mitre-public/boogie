@@ -7,7 +7,16 @@ import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 import static org.mitre.tdp.boogie.util.Iterators.openClose2;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,7 +29,11 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.mitre.caasd.commons.Pair;
-import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkedLegs;
@@ -93,11 +106,15 @@ final class GraphicalRouteChooser implements RouteChooser {
     linkableTokens.stream().flatMap(tokens -> tokens.graphRepresentation().stream())
         .forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs));
 
+    linkableTokens.stream()
+        .filter(LinkableTokens::supportsIntraLinks)
+        .forEach(tokens -> tokens.intraLinks().forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs)));
+
     openClose2(
         linkableTokens,
         LinkableTokens::nonEmpty,
         (l, h) -> h.nonEmpty(),
-        (previous, next, skip) -> previous.links(next).forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs))
+        (previous, next, skip) -> previous.interLinks(next).forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs))
     );
 
     return graph;
@@ -295,6 +312,10 @@ final class GraphicalRouteChooser implements RouteChooser {
       return !linkableLegs.isEmpty();
     }
 
+    boolean supportsIntraLinks() {
+      return tokens.stream().anyMatch(LinkableToken::supportsIntraLinks);
+    }
+
     /**
      * Some linkers will create new legs (e.g. Any->Approach), it's hard in here to decide what RouteToken/ResolvedToken should
      * be their parent, so we defer this until later on.
@@ -312,7 +333,31 @@ final class GraphicalRouteChooser implements RouteChooser {
           .collect(toList());
     }
 
-    Collection<LinkedLegs> links(LinkableTokens linkableTokens) {
+    /**
+     * Links co-resolved tokens within this section when both token types explicitly support intra-section linking.
+     */
+    Collection<LinkedLegs> intraLinks() {
+      return linkableTokens().stream()
+          .filter(LinkableToken::supportsIntraLinks)
+          .flatMap(source -> linkableTokens().stream()
+              .filter(target -> target != source)
+              .filter(LinkableToken::supportsIntraLinks)
+              .flatMap(target -> source.accept(target).links().stream()
+                  .map(linkedLegs -> new LinkedLegs(
+                      linkableLeg(linkedLegs.source()),
+                      linkableLeg(linkedLegs.target()),
+                      linkedLegs.linkWeight()
+                  ))))
+          .collect(toList());
+    }
+
+    /**
+     * Links co-resolved tokens between this section and another using visitors used for intersection
+     * linking.
+     * @param linkableTokens all the tokens.
+     * @return the links between the tokens.
+     */
+    Collection<LinkedLegs> interLinks(LinkableTokens linkableTokens) {
       return cartesianProduct(linkableTokens(), linkableTokens.linkableTokens()).stream()
           .flatMap(pair -> pair.first().accept(pair.second()).links().stream()
               .map(linkedLegs -> new LinkedLegs(

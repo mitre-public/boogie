@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.MockObjects.IF;
 import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mitre.tdp.boogie.MockObjects.airport;
+import static org.mitre.tdp.boogie.MockObjects.airway;
+import static org.mitre.tdp.boogie.MockObjects.fix;
 import static org.mitre.tdp.boogie.MockObjects.transition;
 
 import java.util.Arrays;
@@ -18,7 +20,9 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MockObjects;
@@ -29,6 +33,7 @@ import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.alg.LookupService;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.chooser.graph.TokenMapper;
+import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedTokens;
 import org.mitre.tdp.boogie.alg.resolve.RouteTokenResolver;
 import org.mitre.tdp.boogie.alg.split.RouteToken;
@@ -58,6 +63,40 @@ class GraphicalRouteChooserTest {
         () -> assertEquals(1, conn.connectedSets().size(), msg),
         () -> assertEquals(6, conn.connectedSets().get(0).size(), msg)
     );
+  }
+
+  @Test
+  void testMixedResolvedTokensStillAddAirwayIntraLinks() {
+
+    Leg leftEntry = TF("LEFT", 0., 0.);
+    Leg leftBridge = TF("BRIDGE", 0., 1.);
+    Leg rightBridge = TF("BRIDGE", 10., 10.);
+    Leg rightExit = TF("RIGHT", 10., 11.);
+
+    Airway leftAirway = airway("MIXED", List.of(leftEntry, leftBridge));
+    Airway rightAirway = airway("MIXED", List.of(rightBridge, rightExit));
+    Airport airport = airport("MIXED", 50., 50.);
+    Fix fix = fix("MIXED", 60., 60.);
+
+    ResolvedTokens resolvedTokens = new ResolvedTokens(
+        RouteToken.standard("MIXED", 0.),
+        List.of(
+            ResolvedToken.standardAirway(leftAirway),
+            ResolvedToken.standardAirway(rightAirway),
+            ResolvedToken.standardFix(fix),
+            ResolvedToken.standardAirport(airport)
+        )
+    );
+
+    SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph = routeChooser.constructRouteGraph(routeChooser.toLinkableTokens(List.of(resolvedTokens)));
+
+    boolean hasBridge = graph.edgeSet().stream()
+        .map(edge -> Pair.of(graph.getEdgeSource(edge), graph.getEdgeTarget(edge)))
+        .anyMatch(edge -> edge.first().associatedFix().map(Fix::fixIdentifier).filter("BRIDGE"::equals).isPresent()
+            && edge.second().associatedFix().map(Fix::fixIdentifier).filter("BRIDGE"::equals).isPresent()
+            && !edge.first().equals(edge.second()));
+
+    assertTrue(hasBridge, "Mixed co-resolved sections should still intra-link airway candidates sharing a fix identifier.");
   }
 
   @Test

@@ -34,6 +34,23 @@ class LinkerTest {
     assertEquals(expected, linkedLegs);
   }
 
+  @Test
+  void testFixIdentMatch() {
+
+    Leg l1 = newLeg("MATCH", LatLong.of(0., 0.));
+    Leg l2 = newLeg("OTHER", LatLong.of(0., 1.));
+    Leg l3 = newLeg("MATCH", LatLong.of(10., 10.));
+
+    LinkableToken r1 = newResolvedElement(l1, l2);
+    LinkableToken r2 = newResolvedElement(l3);
+
+    Collection<LinkedLegs> linkedLegs = Linker.fixIdentMatch(r1, r2).links();
+
+    List<LinkedLegs> expected = singletonList(new LinkedLegs(l1, l3, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT));
+
+    assertEquals(expected, linkedLegs);
+  }
+
   private LinkableToken newResolvedElement(Leg... legs) {
     List<LinkedLegs> linkedLegs = Stream.of(legs).map(leg -> new LinkedLegs(leg, leg, LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT)).collect(toList());
 
@@ -44,6 +61,10 @@ class LinkerTest {
   }
 
   private Leg newLeg(LatLong location) {
-    return Leg.dfBuilder(Fix.builder().fixIdentifier("MOCK").latLong(location).build(), 0).build();
+    return newLeg("MOCK", location);
+  }
+
+  private Leg newLeg(String fixIdentifier, LatLong location) {
+    return Leg.dfBuilder(Fix.builder().fixIdentifier(fixIdentifier).latLong(location).build(), 0).build();
   }
 }
