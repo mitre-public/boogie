@@ -197,6 +197,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     private final Function<ArincRecord, Optional<T>> converter;
 
     private final Collection<T> records;
+    private ImmutableCollection<T> snapshot;
 
     public DelegatableCollection(
         Predicate<ArincRecord> delegator,
@@ -208,13 +209,20 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     }
 
     public ImmutableCollection<T> records() {
-      return ImmutableList.copyOf(records);
+      if (snapshot == null) {
+        snapshot = ImmutableList.copyOf(records);
+      }
+      return snapshot;
     }
 
     @Override
     public void accept(ArincRecord arincRecord) {
       checkArgument(delegator.test(arincRecord));
-      converter.apply(arincRecord).ifPresent(records::add);
+      converter.apply(arincRecord).ifPresent(record -> {
+        if (records.add(record)) {
+          snapshot = null;
+        }
+      });
     }
 
     @Override
