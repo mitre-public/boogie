@@ -33,8 +33,8 @@ public final class VmFeatureScorer implements ViterbiFeatureVectorScorer {
   public Double apply(ViterbiFeatureVector viterbiFeatureVector) {
     checkArgument(viterbiFeatureVector.containsFeature(VmFeatureExtractor.LEG_TYPE));
 
-    double degreesOffCourse = viterbiFeatureVector.featureValue(ViFeatureExtractor.DEGREES_OFF_COURSE);
-    double distanceToNextFix = viterbiFeatureVector.featureValue(ViFeatureExtractor.DISTANCE_TO_NEXT_FIX);
+    double degreesOffCourse = viterbiFeatureVector.featureValue(VmFeatureExtractor.DEGREES_OFF_COURSE);
+    double distanceToNextFix = viterbiFeatureVector.featureValue(VmFeatureExtractor.DISTANCE_TO_NEXT_FIX);
 
     return offCourseWeight.apply(degreesOffCourse) * nextFixDistanceWeight.apply(distanceToNextFix);
   }
