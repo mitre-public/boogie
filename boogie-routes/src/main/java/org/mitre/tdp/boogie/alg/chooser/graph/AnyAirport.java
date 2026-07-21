@@ -48,7 +48,7 @@ final class AnyAirport implements LinkableToken {
 
   @Override
   public Linker visit(AnyApproach approach) {
-    return Linker.closestPointBetween(approach, this);
+    return Linker.approachToAirport(approach, this);
   }
 
   @Override

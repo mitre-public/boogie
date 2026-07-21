@@ -3,7 +3,10 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.*;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.distanceBetween;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.firstLegWithLocation;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.highlander;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.lastLegWithLocation;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
 import java.util.Collection;
@@ -106,6 +109,16 @@ public interface Linker {
    */
   static Linker starToAirport(AnyStar star, AnyAirport airport) {
     return new StarToAirport(star, airport);
+  }
+
+  /**
+   * A linker which connects an approach procedure to its airport from the approach's
+   * final-transition exit (the runway/threshold end). Without this down-selection a
+   * closest-point link lets the airport tap the approach mid-transition — a feeder fix
+   * passing near the field exits the procedure there, truncating the final.
+   */
+  static Linker approachToAirport(AnyApproach approach, AnyAirport airport) {
+    return new ApproachToAirport(approach, airport);
   }
 
   /**
@@ -499,6 +512,33 @@ public interface Linker {
       return cartesianProduct(star.star().exitLegs(hasPosition), approach.approach().entryLegs(hasPosition)).stream()
           .map(pair -> new LinkedLegs(pair.first(), pair.second(), distanceBetween(pair)))
           .toList();
+    }
+  }
+
+  final class ApproachToAirport implements Linker {
+
+    private final AnyApproach approach;
+
+    private final AnyAirport airport;
+
+    private ApproachToAirport(AnyApproach approach, AnyAirport airport) {
+      this.approach = requireNonNull(approach);
+      this.airport = requireNonNull(airport);
+    }
+
+    @Override
+    public Collection<LinkedLegs> links() {
+      LinkedLegs airportLegs = highlander(airport.graphRepresentation()).orElseThrow();
+
+      Transition finalApproach = approach.approach().transitions().stream()
+          .filter(t -> TransitionType.COMMON.equals(t.transitionType()))
+          .findFirst()
+          .orElseThrow(IllegalStateException::new);
+      Leg missedApproachPointOrFep = finalApproach.legs().stream()
+          .reduce((f,s) -> s)
+          .orElseThrow(IllegalStateException::new);
+
+      return List.of(new LinkedLegs(missedApproachPointOrFep, airportLegs.source(), distanceBetween(Pair.of(missedApproachPointOrFep, airportLegs.source()))));
     }
   }
 
