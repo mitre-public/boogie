@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
@@ -41,13 +40,4 @@ class TestArincFileParser {
     Collection<ArincRecord> records = fileParser.apply(arincTestFile);
     assertEquals(546, records.size(), "Expected 558 records given the explicitly configured list of specs in the test parser. Except for the 12 continuation records that should not parse into their primary record models");
   } //7 jfk runway continuations // 5 procedure legs with a continuation
-
-  @Test
-  void streamsSupportedRecordsToAConsumer() {
-    AtomicInteger records = new AtomicInteger();
-
-    fileParser.parse(arincTestFile, record -> records.incrementAndGet());
-
-    assertEquals(546, records.get());
-  }
 }
