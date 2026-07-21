@@ -170,8 +170,7 @@ public class ProcedureAssemblerIntegrationTest {
     }
 
     // Diagnostic: show transition boundary fixes for failing SID/STAR
-    String transitionDiag = allProcedures.stream()
-        .filter(p -> notGraphable(p, new java.util.ArrayList<>()))
+    String transitionDiag = notGraphable.stream()
         .limit(3)
         .map(p -> {
           StringBuilder sb = new StringBuilder();
@@ -186,8 +185,7 @@ public class ProcedureAssemblerIntegrationTest {
         })
         .collect(Collectors.joining("\n"));
 
-    Map<ProcedureType, Long> failsByType = allProcedures.stream()
-        .filter(p -> notGraphable(p, new java.util.ArrayList<>()))
+    Map<ProcedureType, Long> failsByType = notGraphable.stream()
         .collect(Collectors.groupingBy(Procedure::procedureType, Collectors.counting()));
 
     assertEquals(0, notGraphable.size(), "Expected 0 not graphable. By type: " + failsByType + "\nDiag:\n" + transitionDiag);

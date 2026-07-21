@@ -1,8 +1,8 @@
 package org.mitre.tdp.boogie.dafif;
 
-import org.mitre.caasd.commons.fileutil.FileLineIterator;
-import org.mitre.caasd.commons.util.DemotedException;
+import static java.util.Objects.requireNonNull;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,11 +10,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNull;
+import org.mitre.caasd.commons.fileutil.FileLineIterator;
+import org.mitre.caasd.commons.util.DemotedException;
 
 public class DafifFileParser implements Function<File, Collection<DafifRecord>> {
 
@@ -58,6 +59,16 @@ public class DafifFileParser implements Function<File, Collection<DafifRecord>> 
     } catch (Exception e) {
       throw new IllegalArgumentException("Error during parsing of DAFIF record stream.", e);
     }
+  }
+
+  public Stream<DafifRecord> stream(InputStream inputStream, String filename) {
+    requireNonNull(inputStream);
+    requireNonNull(filename);
+    DafifRecordType type = getRecordType(filename);
+    // skip the first line of txt file because it is column headers
+    return new BufferedReader(new InputStreamReader(inputStream)).lines().skip(1)
+        .map(line -> recordParser.parse(type, line))
+        .flatMap(Optional::stream);
   }
 
   private DafifRecordType getRecordType(String filename) {
