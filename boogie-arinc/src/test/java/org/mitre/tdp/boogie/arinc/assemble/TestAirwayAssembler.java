@@ -15,54 +15,15 @@ import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.arinc.ArincFileParser;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionValidator;
-import org.mitre.tdp.boogie.arinc.v18.AirportSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
-import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
-import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
-import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
-import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
-import org.mitre.tdp.boogie.arinc.v18.HeliportConverter;
-import org.mitre.tdp.boogie.arinc.v18.HeliportValidator;
-import org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter;
-import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
-import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
-import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
-import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
-import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
-import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
-import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
-import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
+import org.mitre.tdp.boogie.arinc.ArincVersion;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -81,7 +42,7 @@ class TestAirwayAssembler {
   @BeforeAll
   static void setup() {
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
-    fileParser.apply(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
+    recordParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
 
     ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         testV18Consumer.arincNdbNavaids(),
@@ -142,56 +103,7 @@ class TestAirwayAssembler {
     return legs.stream().map(Leg::recommendedNavaid).filter(Optional::isPresent).map(Optional::get).map(Fix::fixIdentifier).collect(Collectors.joining("|"));
   }
 
-  /**
-   * In implementation this could be done from {@link ArincVersion} - e.g. new ArincFileParser(ArincVersion.V19.parser());
-   */
-  private static final ArincFileParser fileParser = new ArincFileParser(
-      new AirportSpec(),
-      new AirwayLegSpec(),
-      new LocalizerGlideSlopeSpec(),
-      new NdbNavaidSpec(),
-      // the V19 leg spec - thanks CIFP
-      new ProcedureLegSpec(),
-      new RunwaySpec(),
-      new VhfNavaidSpec(),
-      new WaypointSpec()
-  );
+  private static final TestArincFileParser recordParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V19.specs()));
 
-  /**
-   * In implementation this could be done from the factory class {@link ArincRecordConverterFactory}.
-   */
-  private static final ConvertingArincRecordConsumer testV18Consumer = new ConvertingArincRecordConsumer.Builder()
-      .airportDelegator(new AirportValidator())
-      .airportConverter(new AirportConverter())
-      .airportContinuationConverter(new AirportPrimaryExtensionConverter())
-      .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
-      .airwayLegDelegator(new AirwayLegValidator())
-      .airwayLegConverter(new AirwayLegConverter())
-      .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
-      .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
-      .ndbNavaidDelegator(new NdbNavaidValidator())
-      .ndbNavaidConverter(new NdbNavaidConverter())
-      .procedureLegDelegator(new ProcedureLegValidator())
-      .procedureLegConverter(new ProcedureLegConverter())
-      .runwayDelegator(new RunwayValidator())
-      .runwayConverter(new RunwayConverter())
-      .vhfNavaidDelegator(new VhfNavaidValidator())
-      .vhfNavaidConverter(new VhfNavaidConverter())
-      .waypointDelegator(new WaypointValidator())
-      .waypointConverter(new WaypointConverter())
-      .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-      .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
-      .holdingPatternConverter(new HoldingPatternConverter())
-      .holdingPatternDelegator(new HoldingPatternValidator())
-      .firUirConverter(new FirUirLegConverter())
-      .firUirDelegator(new FirUirLegValidator())
-      .helipadDelegator(new HelipadValidator())
-      .helipadConverter(new HelipadConverter())
-      .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
-      .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
-      .headerDelegator(new Header01Validator())
-      .headerConverter(new Header01Converter())
-      .heliportConverter(new HeliportConverter())
-      .heliportDelegator(new HeliportValidator())
-      .build();
+  private static final ConvertingArincRecordConsumer testV18Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
 }

@@ -7,22 +7,47 @@
 
 ### Parsing a 424 file
 
-For users who don't really care to know that much about what goes into the 424 specs + versioning and other implementation details - here's to you:
+The simplest way to go from a raw 424 file to fully assembled Boogie model objects is `OneshotRecordParser`. It handles parsing, conversion, database construction, and assembly in a single call:
 ```java
-ArincFileParser parser = new ArincFileParser(ArincVersion.V19.parser());
+try (FileInputStream fis = new FileInputStream("myArinc424File.dat")) {
+    OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace, Heliport> records =
+        OneshotRecordParser.standard(ArincVersion.V19).assembleFrom(fis);
 
-ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
-    parser.apply(new File("myArinc424File.dat")).forEach(consumer);
-
-// the consumer then contains the collections of various parsed 424 records - the consumer isn't the safest of classes
-// but it gets the job done from a convenience perspective and its limitations are well-documented
-
-Collection<ArincAirport> airports = consumer.arincAirports();
-Collection<ArincProcedureLeg> procedureLegs = consumer.arincProcedureLegs(); // etc. etc.
+    Collection<Airport> airports = records.airports();
+    Collection<Fix> fixes = records.fixes();
+    Collection<Airway> airways = records.airways();
+    Collection<Procedure> procedures = records.procedures();
+    Collection<Airspace> firUirs = records.firUirs();
+    Collection<Heliport> heliports = records.heliports();
+}
 ```
-As defined and implemented in Boogie the ```ArincVersion.V19``` pre-canned set of parsers should work reasonably well on most of the in-house datasets you'll come across whether they're
-of an older version or of some of the more recent ```V21``` versions as Boogie is more focused on the <i>structure</i> of the record (with lightweight field-level validation) than on 
-the exact allowed content combinations therein.
+
+`OneshotRecordParser.standard(ArincVersion)` uses the default Boogie implementations of all interfaces. If you need custom assembly strategies you can use the builder:
+```java
+OneshotRecordParser.builder(ArincVersion.V19)
+    .airportStrategy(MyAirportAssemblyStrategy.INSTANCE)
+    .procedureStrategy(MyProcedureAssemblyStrategy.INSTANCE)
+    // ... other strategies
+    .build();
+```
+
+As defined and implemented in Boogie, `ArincVersion.V19` tends to work reasonably well on most datasets whether they're of an older version or a more recent `V21`/`V22` version, as Boogie is more focused on the <i>structure</i> of the record (with lightweight field-level validation) than on the exact allowed content combinations therein.
+
+#### Lower-level access
+
+If you need direct access to the intermediate `ArincRecord` or typed model objects (e.g. to test a specific converter or build a custom pipeline), you can use `ArincRecordParser` and `ConvertingArincRecordConsumer` directly. `ArincRecordParser` operates on individual record strings, so you wire it to a file via a standard `BufferedReader`:
+```java
+ArincRecordParser parser = ArincRecordParser.standard(ArincVersion.V19.specs());
+ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
+
+try (BufferedReader reader = new BufferedReader(new FileReader("myArinc424File.dat"))) {
+    reader.lines().map(parser::parse).flatMap(Optional::stream).forEach(consumer);
+}
+
+// consumer holds the intermediate typed collections before assembly
+Collection<ArincAirport> arincAirports = consumer.arincAirports();
+Collection<ArincProcedureLeg> procedureLegs = consumer.arincProcedureLegs(); // etc.
+```
 
 #### Quick notes on what <i>is</i> explicitly checked...
 
@@ -262,7 +287,7 @@ The high level abstraction for defining a record specification in Boogie is the 
 These specifications define an ordered sequence of (named) fields within a high level ARINC record along with a matcher which is used to decide whether the given specification should be applied
 to a given raw text input string (substring of the overall raw text record). 
 
-Parsers a la [ArincFileParser](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincFileParser.java) are configured with 
+[ArincRecordParser](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecordParser.java) implementations are configured with 
 a collection of record specifications (which don't need to cover all possible record types within a file). These specs are used to convert the raw record strings to semi-structured [ArincRecord](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecord.java) 
 objects. This approach tends to work well as people often don't care about every record type (see TDP) and only having to implement parsing for a subset of records of interest is convenient.
 

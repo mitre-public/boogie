@@ -1,13 +1,12 @@
 package org.mitre.tdp.boogie.arinc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
-
-import org.mitre.caasd.commons.fileutil.FileLineIterator;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
@@ -44,7 +43,15 @@ public final class EmbeddedCifpFile {
 
   private EmbeddedCifpFile() {
     this.records = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
-    loadRecords().forEach(records);
+    ArincRecordParser parser = ArincVersion.V19.parser();
+    IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
+    IsThisAHeader isThisAHeader = new IsThisAHeader();
+    LOG.info("Loading records from embedded CIFP file.");
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(getInputStream()))) {
+      reader.lines().map(parser::parse).flatMap(Optional::stream).filter(isThisAHeader.negate()).filter(isThisAPrimaryRecord).forEach(records);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Error opening embedded resource file.", e);
+    }
   }
 
   /**
@@ -127,34 +134,6 @@ public final class EmbeddedCifpFile {
         + arincHoldingPatterns().size()
         + arincFirUirLegs().size()
         + arincHeliports().size();
-  }
-
-  /**
-   * Loads all of the {@link ArincRecord}s from the embedded local CIFP file using the V19 record schemas.
-   */
-  private Collection<ArincRecord> loadRecords() {
-    ArincRecordParser parser = ArincVersion.V19.parser();
-    LOG.info("Loading records from embedded CIFP file.");
-
-    try (InputStreamReader reader = new InputStreamReader(getInputStream())) {
-      FileLineIterator iterator = new FileLineIterator(reader);
-
-      LinkedHashSet<ArincRecord> parsedRecords = new LinkedHashSet<>();
-
-      IsThisAHeader isThisAHeader = new IsThisAHeader();
-      IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
-      while (iterator.hasNext()) {
-        parser.parse(iterator.next())
-            .filter(isThisAHeader.negate())
-            .filter(isThisAPrimaryRecord)
-            .ifPresent(parsedRecords::add);
-      }
-
-      LOG.info("Finished loading {} records from embedded file.", parsedRecords.size());
-      return parsedRecords;
-    } catch (IOException e) {
-      throw new IllegalArgumentException("Error opening embedded resource file.", e);
-    }
   }
 
   /**

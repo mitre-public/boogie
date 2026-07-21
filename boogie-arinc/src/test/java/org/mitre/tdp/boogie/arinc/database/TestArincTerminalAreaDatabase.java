@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
@@ -33,10 +33,10 @@ class TestArincTerminalAreaDatabase {
 
   @BeforeAll
   static void setup() {
-    fileParser.apply(arincTestFile).forEach(testV18Consumer);
-    fileParser.apply(withHelipad).forEach(testV18Consumer); //this only works because the default consumer has a helipad implementation
-    fileParser.apply(withLoc).forEach(testV18Consumer);
-    fileParser2.apply(heliports).forEach(testV22Consumer);
+    fileParser.parseAll(arincTestFile).forEach(testV18Consumer);
+    fileParser.parseAll(withHelipad).forEach(testV18Consumer); //this only works because the default consumer has a helipad implementation
+    fileParser.parseAll(withLoc).forEach(testV18Consumer);
+    fileParser2.parseAll(heliports).forEach(testV22Consumer);
 
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         testV18Consumer.arincAirports(),
@@ -170,10 +170,7 @@ class TestArincTerminalAreaDatabase {
     );
   }
 
-  /**
-   * In implementation this could be done from {@link ArincVersion} - e.g. new ArincFileParser(ArincVersion.V19.parser());
-   */
-  private static final ArincFileParser fileParser = new ArincFileParser(
+  private static final TestArincFileParser fileParser = new TestArincFileParser(ArincRecordParser.standard(
       new AirportSpec(),
       new AirwayLegSpec(),
       new LocalizerGlideSlopeSpec(),
@@ -186,8 +183,8 @@ class TestArincTerminalAreaDatabase {
       new WaypointSpec(),
       new HelipadSpec(), //not really v18 but will be ok with the default consumer
       new HeliportSpec()
-  );
-  private static final ArincFileParser fileParser2 = new ArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
+  ));
+  private static final TestArincFileParser fileParser2 = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
 
   private static final ConvertingArincRecordConsumer testV22Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
   /**

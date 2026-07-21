@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincFileParser;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
@@ -25,7 +25,7 @@ class TestArincFixDatabase {
 
   @BeforeAll
   static void setup() {
-    fileParser.apply(arincTestFile).forEach(testV18Consumer);
+    fileParser.parseAll(arincTestFile).forEach(testV18Consumer);
 
     arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
         testV18Consumer.arincNdbNavaids(),
@@ -86,10 +86,7 @@ class TestArincFixDatabase {
     );
   }
 
-  /**
-   * In implementation this could be done from {@link ArincVersion} - e.g. new ArincFileParser(ArincVersion.V19.parser());
-   */
-  private static final ArincFileParser fileParser = new ArincFileParser(
+  private static final TestArincFileParser fileParser = new TestArincFileParser(ArincRecordParser.standard(
       new AirportSpec(),
       new AirwayLegSpec(),
       new LocalizerGlideSlopeSpec(),
@@ -101,7 +98,7 @@ class TestArincFixDatabase {
       new WaypointSpec(),
       new HoldingPatternSpec(),
       new HeliportSpec()
-  );
+  ));
 
   /**
    * In implementation this could be done from the factory class {@link ArincRecordConverterFactory}.

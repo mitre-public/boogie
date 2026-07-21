@@ -86,7 +86,7 @@ configure<JavaPluginExtension> {
 tasks.named<Test>("test") {
     useJUnitPlatform {}
 
-    maxHeapSize = "8G"
+    maxHeapSize = "4G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
@@ -154,7 +154,7 @@ tasks.register<Test>("lido-integration") {
         excludeTags("ASSIGNMENT")
     }
 
-    maxHeapSize = "8G"
+    maxHeapSize = "4G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
