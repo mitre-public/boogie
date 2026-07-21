@@ -9,8 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -46,10 +51,15 @@ import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHeaderOne;
+import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
+import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
@@ -131,10 +141,46 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
   public ClientRecords<APT, FIX, AWY, PRC, AIR, HPT> assembleFrom(InputStream inputStream) {
     requireNonNull(inputStream);
 
-    ClientRecords.Builder<APT, FIX, AWY, PRC, AIR, HPT> records = new ClientRecords.Builder<>();
-
-    ArincRecordParser parser = ArincRecordParser.standard(version.specs());
     ConvertingArincRecordConsumer consumer = consumerForVersion(version);
+    if (!consumeInto(inputStream, consumer)) {
+      return new ClientRecords.Builder<APT, FIX, AWY, PRC, AIR, HPT>().build();
+    }
+    return assemble(RecordSets.of(consumer));
+  }
+
+  /**
+   * Assembles one collection of typed client records from <em>multiple</em> prioritized 424 sources — e.g. a hand-built patch
+   * file layered over a full published cycle, or local overrides layered over a database-served subset of a cycle.
+   *
+   * <p>Sources <strong>earlier in the list take precedence</strong>: when the same record (by its ARINC identity — the spec key
+   * fields of its type, e.g. {@code (airport, region, runway)} for a runway or {@code (airport, region, subsection, procedure,
+   * route type, transition, sequence)} for a procedure leg) appears in more than one source, the earliest source's version is
+   * kept and later ones are dropped. Records unique to any source are all retained. Precedence is deterministic and by record
+   * identity — a later source cannot "half override" a record by differing in content only.
+   *
+   * <p>All sources are merged <em>before</em> assembly, so cross-source references resolve: a patch source's procedure legs may
+   * reference fixes, navaids, or runways defined only in the base source and still assemble complete. The
+   * {@link ClientRecords#headerOne() header} is the first one present in source order.
+   *
+   * @param orderedSources the 424 sources, highest-precedence first; an empty list yields empty {@link ClientRecords}
+   */
+  public ClientRecords<APT, FIX, AWY, PRC, AIR, HPT> assembleFrom(List<InputStream> orderedSources) {
+    requireNonNull(orderedSources);
+
+    List<ConvertingArincRecordConsumer> consumers = new ArrayList<>(orderedSources.size());
+    for (InputStream source : orderedSources) {
+      ConvertingArincRecordConsumer consumer = consumerForVersion(version);
+      if (!consumeInto(source, consumer)) {
+        return new ClientRecords.Builder<APT, FIX, AWY, PRC, AIR, HPT>().build();
+      }
+      consumers.add(consumer);
+    }
+    return assemble(RecordSets.merged(consumers));
+  }
+
+  /** Parse and convert one source into the consumer; false (after logging) when the source cannot be read. */
+  private boolean consumeInto(InputStream inputStream, ConvertingArincRecordConsumer consumer) {
+    ArincRecordParser parser = ArincRecordParser.standard(version.specs());
 
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
       reader.lines()
@@ -142,47 +188,233 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
           .flatMap(Optional::stream)
           .filter(keepRecord)
           .forEach(consumer);
+      return true;
     } catch (IOException e) {
       LOG.error("Could not parse the arinc text into memory", e);
-      return records.build();
+      return false;
     }
+  }
 
+  private ClientRecords<APT, FIX, AWY, PRC, AIR, HPT> assemble(RecordSets records) {
     LOG.debug("Finished parsing and converting supported record types.");
 
     ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
-        consumer.arincWaypoints(),
-        consumer.arincAirports(),
-        consumer.arincHoldingPatterns(),
-        consumer.arincHeliports()
+        records.ndbNavaids,
+        records.vhfNavaids,
+        records.waypoints,
+        records.airports,
+        records.holdingPatterns,
+        records.heliports
     );
     LOG.debug("Finished instantiation of FixDatabase.");
 
     ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
-        consumer.arincAirports(),
-        consumer.arincRunways(),
-        consumer.arincLocalizerGlideSlopes(),
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
-        consumer.arincWaypoints(),
-        consumer.arincProcedureLegs(),
-        consumer.arincGnssLandingSystems(),
-        consumer.arincHelipads(),
-        consumer.arincHeliports()
+        records.airports,
+        records.runways,
+        records.localizerGlideSlopes,
+        records.ndbNavaids,
+        records.vhfNavaids,
+        records.waypoints,
+        records.procedureLegs,
+        records.gnssLandingSystems,
+        records.helipads,
+        records.heliports
     );
     LOG.debug("Finished instantiation of TerminalAreaDatabase.");
 
-    return records
-        .addAirports(assembleAirports(arincTerminalAreaDatabase, consumer.arincAirports()))
-        .addFixes(assembleFixes(consumer.arincWaypoints(), consumer.arincNdbNavaids(), consumer.arincVhfNavaids()))
-        .addAirways(assembleAirways(arincFixDatabase, consumer.arincAirwayLegs()))
-        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, consumer.arincProcedureLegs()))
-        .addFirUirs(assembleFirUirs(consumer.arincFirUirLegs()))
-        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, consumer.arincControlledAirspaceLegs()))
-        .headerOne(consumer.arincHeaderOne().orElse(null))
-        .addHeliport(assembleHeliports(arincTerminalAreaDatabase, consumer.arincHeliports()))
+    return new ClientRecords.Builder<APT, FIX, AWY, PRC, AIR, HPT>()
+        .addAirports(assembleAirports(arincTerminalAreaDatabase, records.airports))
+        .addFixes(assembleFixes(records.waypoints, records.ndbNavaids, records.vhfNavaids))
+        .addAirways(assembleAirways(arincFixDatabase, records.airwayLegs))
+        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, records.procedureLegs))
+        .addFirUirs(assembleFirUirs(records.firUirLegs))
+        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, records.controlledAirspaceLegs))
+        .headerOne(records.headerOne.orElse(null))
+        .addHeliport(assembleHeliports(arincTerminalAreaDatabase, records.heliports))
         .build();
+  }
+
+  /**
+   * The converted-record collections assembly consumes, either passed straight through from one consumer or merged across
+   * several prioritized consumers with earliest-source-wins resolution per record identity.
+   */
+  private static final class RecordSets {
+
+    private final Collection<ArincAirport> airports;
+    private final Collection<ArincRunway> runways;
+    private final Collection<ArincLocalizerGlideSlope> localizerGlideSlopes;
+    private final Collection<ArincNdbNavaid> ndbNavaids;
+    private final Collection<ArincVhfNavaid> vhfNavaids;
+    private final Collection<ArincWaypoint> waypoints;
+    private final Collection<ArincAirwayLeg> airwayLegs;
+    private final Collection<ArincProcedureLeg> procedureLegs;
+    private final Collection<ArincGnssLandingSystem> gnssLandingSystems;
+    private final Collection<ArincHoldingPattern> holdingPatterns;
+    private final Collection<ArincFirUirLeg> firUirLegs;
+    private final Collection<ArincControlledAirspaceLeg> controlledAirspaceLegs;
+    private final Collection<ArincHelipad> helipads;
+    private final Collection<ArincHeliport> heliports;
+    private final Optional<ArincHeaderOne> headerOne;
+
+    private RecordSets(
+        Collection<ArincAirport> airports,
+        Collection<ArincRunway> runways,
+        Collection<ArincLocalizerGlideSlope> localizerGlideSlopes,
+        Collection<ArincNdbNavaid> ndbNavaids,
+        Collection<ArincVhfNavaid> vhfNavaids,
+        Collection<ArincWaypoint> waypoints,
+        Collection<ArincAirwayLeg> airwayLegs,
+        Collection<ArincProcedureLeg> procedureLegs,
+        Collection<ArincGnssLandingSystem> gnssLandingSystems,
+        Collection<ArincHoldingPattern> holdingPatterns,
+        Collection<ArincFirUirLeg> firUirLegs,
+        Collection<ArincControlledAirspaceLeg> controlledAirspaceLegs,
+        Collection<ArincHelipad> helipads,
+        Collection<ArincHeliport> heliports,
+        Optional<ArincHeaderOne> headerOne) {
+      this.airports = airports;
+      this.runways = runways;
+      this.localizerGlideSlopes = localizerGlideSlopes;
+      this.ndbNavaids = ndbNavaids;
+      this.vhfNavaids = vhfNavaids;
+      this.waypoints = waypoints;
+      this.airwayLegs = airwayLegs;
+      this.procedureLegs = procedureLegs;
+      this.gnssLandingSystems = gnssLandingSystems;
+      this.holdingPatterns = holdingPatterns;
+      this.firUirLegs = firUirLegs;
+      this.controlledAirspaceLegs = controlledAirspaceLegs;
+      this.helipads = helipads;
+      this.heliports = heliports;
+      this.headerOne = headerOne;
+    }
+
+    /** One source: the consumer's collections pass straight through, identical to historical single-stream behavior. */
+    static RecordSets of(ConvertingArincRecordConsumer consumer) {
+      return new RecordSets(
+          consumer.arincAirports(),
+          consumer.arincRunways(),
+          consumer.arincLocalizerGlideSlopes(),
+          consumer.arincNdbNavaids(),
+          consumer.arincVhfNavaids(),
+          consumer.arincWaypoints(),
+          consumer.arincAirwayLegs(),
+          consumer.arincProcedureLegs(),
+          consumer.arincGnssLandingSystems(),
+          consumer.arincHoldingPatterns(),
+          consumer.arincFirUirLegs(),
+          consumer.arincControlledAirspaceLegs(),
+          consumer.arincHelipads(),
+          consumer.arincHeliports(),
+          consumer.arincHeaderOne()
+      );
+    }
+
+    /** Several prioritized sources: earliest source wins per record identity; the header is the first one present. */
+    static RecordSets merged(List<ConvertingArincRecordConsumer> ordered) {
+      return new RecordSets(
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincAirports, RecordSets::airportIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincRunways, RecordSets::runwayIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincLocalizerGlideSlopes, RecordSets::localizerIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincNdbNavaids, RecordSets::ndbIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincVhfNavaids, RecordSets::vhfIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincWaypoints, RecordSets::waypointIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincAirwayLegs, RecordSets::airwayLegIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincProcedureLegs, RecordSets::procedureLegIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincGnssLandingSystems, RecordSets::glsIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincHoldingPatterns, RecordSets::holdingPatternIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincFirUirLegs, RecordSets::firUirLegIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincControlledAirspaceLegs, RecordSets::controlledAirspaceLegIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincHelipads, RecordSets::helipadIdentity),
+          mergeByIdentity(ordered, ConvertingArincRecordConsumer::arincHeliports, RecordSets::heliportIdentity),
+          ordered.stream().map(ConvertingArincRecordConsumer::arincHeaderOne).flatMap(Optional::stream).findFirst()
+      );
+    }
+
+    /**
+     * Union the sources' records of one type, keeping the first record seen for each identity — so earlier (higher-precedence)
+     * sources shadow later ones, and a duplicated identity within one source keeps its first occurrence.
+     */
+    private static <T> Collection<T> mergeByIdentity(List<ConvertingArincRecordConsumer> ordered,
+        Function<ConvertingArincRecordConsumer, Collection<T>> records, Function<T, Object> identity) {
+
+      Map<Object, T> merged = new LinkedHashMap<>();
+      for (ConvertingArincRecordConsumer source : ordered) {
+        for (T record : records.apply(source)) {
+          merged.putIfAbsent(identity.apply(record), record);
+        }
+      }
+      return List.copyOf(merged.values());
+    }
+
+    // Record identities: the ARINC spec key fields of each converted type. Two records with equal identity describe the same
+    // logical entity (possibly with different content) and are candidates for cross-source shadowing.
+
+    private static Object airportIdentity(ArincAirport airport) {
+      return Arrays.asList(airport.airportIdentifier(), airport.airportIcaoRegion());
+    }
+
+    private static Object runwayIdentity(ArincRunway runway) {
+      return Arrays.asList(runway.airportIdentifier(), runway.airportIcaoRegion(), runway.runwayIdentifier());
+    }
+
+    private static Object localizerIdentity(ArincLocalizerGlideSlope localizer) {
+      return Arrays.asList(localizer.airportIdentifier(), localizer.airportIcaoRegion(),
+          localizer.localizerIdentifier(), localizer.runwayIdentifier());
+    }
+
+    private static Object ndbIdentity(ArincNdbNavaid ndb) {
+      return Arrays.asList(ndb.sectionCode(), ndb.subSectionCode().orElse(null),
+          ndb.airportIdentifier().orElse(null), ndb.ndbIdentifier(), ndb.ndbIcaoRegion());
+    }
+
+    private static Object vhfIdentity(ArincVhfNavaid vhf) {
+      return Arrays.asList(vhf.airportIdentifier().orElse(null), vhf.vhfIdentifier(), vhf.vhfIcaoRegion());
+    }
+
+    private static Object waypointIdentity(ArincWaypoint waypoint) {
+      return Arrays.asList(waypoint.sectionCode(), waypoint.subSectionCode().orElse(null),
+          waypoint.airportIdentifier().orElse(null), waypoint.waypointIdentifier(), waypoint.waypointIcaoRegion());
+    }
+
+    private static Object airwayLegIdentity(ArincAirwayLeg leg) {
+      return Arrays.asList(leg.routeIdentifier(), leg.sequenceNumber(), leg.fixIdentifier(), leg.fixIcaoRegion());
+    }
+
+    private static Object procedureLegIdentity(ArincProcedureLeg leg) {
+      return Arrays.asList(leg.airportIdentifier(), leg.airportIcaoRegion(), leg.subSectionCode().orElse(null),
+          leg.sidStarIdentifier(), leg.routeType(), leg.transitionIdentifier().orElse(null), leg.sequenceNumber());
+    }
+
+    private static Object glsIdentity(ArincGnssLandingSystem gls) {
+      return Arrays.asList(gls.airportIdentifier(), gls.airportIcaoRegion(),
+          gls.glsRefPathIdentifier(), gls.runwayIdentifier());
+    }
+
+    private static Object holdingPatternIdentity(ArincHoldingPattern holdingPattern) {
+      return Arrays.asList(holdingPattern.regionCode().orElse(null), holdingPattern.icaoRegion().orElse(null),
+          holdingPattern.fixIdentifier(), holdingPattern.fixIcaoRegion(),
+          holdingPattern.duplicateIdentifier().orElse(null));
+    }
+
+    private static Object firUirLegIdentity(ArincFirUirLeg leg) {
+      return Arrays.asList(leg.firUirIdentifier(), leg.firUirAddress().orElse(null),
+          leg.firUirIndicator(), leg.sequenceNumber());
+    }
+
+    private static Object controlledAirspaceLegIdentity(ArincControlledAirspaceLeg leg) {
+      return Arrays.asList(leg.icaoRegion(), leg.airspaceType(), leg.airspaceCenter(),
+          leg.multipleCode().orElse(null), leg.sequenceNumber());
+    }
+
+    private static Object helipadIdentity(ArincHelipad helipad) {
+      return Arrays.asList(helipad.airportHeliportIdentifier(), helipad.icaoCode(), helipad.helipadIdentifier());
+    }
+
+    private static Object heliportIdentity(ArincHeliport heliport) {
+      return Arrays.asList(heliport.heliportIdentifier(), heliport.heliportIcaoRegion(),
+          heliport.padIdentifier().orElse(null));
+    }
   }
 
   private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase,
