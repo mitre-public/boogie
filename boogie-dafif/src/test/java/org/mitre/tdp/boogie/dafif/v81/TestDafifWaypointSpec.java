@@ -1,5 +1,11 @@
 package org.mitre.tdp.boogie.dafif.v81;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
@@ -8,12 +14,6 @@ import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifWaypointConverter;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifWaypointSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifWaypointValidator;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifWaypointSpec {
   private static final DafifRecordParser parser = DafifRecordParser.standard(new DafifWaypointSpec());

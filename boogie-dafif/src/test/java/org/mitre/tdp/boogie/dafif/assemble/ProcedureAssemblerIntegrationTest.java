@@ -16,17 +16,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.model.ProcedureFactory;
-import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.dafif.EmbeddedDafifFile;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
 import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
+import org.mitre.tdp.boogie.model.ProcedureFactory;
+import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +48,8 @@ public class ProcedureAssemblerIntegrationTest {
 
     DafifFixDatabase fdb = DafifDatabaseFactory.newFixDatabase(dafif.dafifWaypoints(), dafif.dafifNavaids());
 
-    FixAssemblyStrategy<Fix> fixStrategy = FixAssemblyStrategy.standard(tad, fdb);
-    ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> procedureStrategy = new ProcedureAssemblyStrategy.Standard();
-    ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(tad, fdb, procedureStrategy, fixStrategy);
+    ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> procedureStrategy = ProcedureAssemblyStrategy.standard();
+    ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(tad, fdb, procedureStrategy, FixAssemblyStrategy.standard());
 
     allParents = dafif.dafifTerminalParents();
     totalTerminalSegments = dafif.dafifTerminalSegments().size();

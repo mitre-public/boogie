@@ -33,13 +33,15 @@ public final class ConvertingLegDereferencer<F> {
           .flatMap(Stream::findFirst)
           .orElse(null);
       case "P", "E" -> fixDatabase.waypoint(waypointIdent, countryCode)
-          .map(i -> fixAssemblyStrategy.convertWaypoint(i).stream())
+          .map(i -> fixAssemblyStrategy.convertWaypoint(i, fixDatabase.navaidFor(i).orElse(null)).stream())
           .flatMap(Stream::findFirst)
           .orElse(null);
       case "G" -> terminalAreaDatabase.runwaysAt(airportIdentifier).stream()
           .filter(r -> waypointIdent.contains(r.lowEndIdentifier()) || waypointIdent.contains(r.highEndIdentifier()))
           .findFirst()
-          .map(r -> fixAssemblyStrategy.convertRunwayEnd(r, waypointIdent).stream())
+          .map(r -> fixAssemblyStrategy.convertRunwayEnd(r, waypointIdent,
+              terminalAreaDatabase.addRunwayFor(r).orElse(null),
+              terminalAreaDatabase.airport(r.airportIdentification()).orElse(null)).stream())
           .flatMap(Stream::findFirst)
           .orElse(null);
       case "N", "V" -> fixDatabase.waypoint(waypointIdent, countryCode).stream()
@@ -89,7 +91,7 @@ public final class ConvertingLegDereferencer<F> {
 
   public F arcCenter(String waypointIdent, String waypointCountry) {
     return fixDatabase.waypoint(waypointIdent, waypointCountry)
-        .map(i -> fixAssemblyStrategy.convertWaypoint(i).stream())
+        .map(i -> fixAssemblyStrategy.convertWaypoint(i, fixDatabase.navaidFor(i).orElse(null)).stream())
         .flatMap(Stream::findFirst)
         .orElse(null);
   }

@@ -5,10 +5,6 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-import org.mitre.tdp.boogie.util.StandardizedTransitionName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -22,6 +18,9 @@ import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.dafif.FlyOverIndicator;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
+import org.mitre.tdp.boogie.util.StandardizedTransitionName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Range;
 
@@ -69,9 +68,15 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    */
   L convertLeg(DafifTerminalSegment leg, @Nullable F associatedFix, @Nullable F recommendedNavaid, @Nullable F centerFix);
 
+  static ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix>  standard() {
+    return new Standard();
+  }
+
   final class Standard implements ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Standard.class);
+
+    Standard(){}
 
     @Override
     public Procedure convertProcedure(DafifTerminalParent parent, DafifTerminalSegment representative, List<Transition> transitions) {

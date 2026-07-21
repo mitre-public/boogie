@@ -1,5 +1,14 @@
 package org.mitre.tdp.boogie.dafif.v81;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
@@ -8,16 +17,6 @@ import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifRunwayConverter;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifRunwaySpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifRunwayValidator;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifRunwaySpec {
 

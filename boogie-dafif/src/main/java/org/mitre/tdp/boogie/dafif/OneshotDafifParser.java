@@ -24,6 +24,7 @@ import org.mitre.tdp.boogie.dafif.assemble.AirportAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.AirportAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.assemble.AirwayAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.AirwayAssemblyStrategy;
+import org.mitre.tdp.boogie.dafif.assemble.FixAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.FixAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.assemble.ProcedureAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.ProcedureAssemblyStrategy;
@@ -92,7 +93,8 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     return OneshotDafifParser.<Airport, Runway, Fix, Leg, Transition, Airway, Procedure>builder(version)
         .airportStrategy(AirportAssemblyStrategy.standard())
         .airwayStrategy(AirwayAssemblyStrategy.standard())
-        .procedureStrategy(new ProcedureAssemblyStrategy.Standard())
+        .procedureStrategy(ProcedureAssemblyStrategy.standard())
+        .fixStrategy(FixAssemblyStrategy.standard())
         .build();
   }
 
@@ -115,9 +117,9 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
 
     return new ClientRecords.Builder<APT, FIX, AWY, PRC>()
         .addAirports(assembleAirports(terminalAreaDatabase, consumer.dafifAirports()))
-        .addFixes(assembleFixes(fixStrategy, consumer.dafifWaypoints(), consumer.dafifNavaids()))
-        .addAirways(assembleAirways(fixDatabase, fixStrategy, consumer.dafifAts()))
-        .addProcedures(assembleProcedures(fixDatabase, terminalAreaDatabase, fixStrategy, consumer.dafifTerminalParents()))
+        .addFixes(assembleFixes(terminalAreaDatabase, fixDatabase, consumer.dafifWaypoints(), consumer.dafifNavaids()))
+        .addAirways(assembleAirways(fixDatabase, consumer.dafifAts()))
+        .addProcedures(assembleProcedures(fixDatabase, terminalAreaDatabase, consumer.dafifTerminalParents()))
         .build();
   }
 
@@ -148,23 +150,22 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     return airports.stream().map(assembler::assemble).toList();
   }
 
-  private Collection<FIX> assembleFixes(FixAssemblyStrategy<FIX> resolvedFixStrategy, Collection<DafifWaypoint> waypoints, Collection<DafifNavaid> navaids) {
-    org.mitre.tdp.boogie.dafif.assemble.FixAssembler<FIX> assembler = org.mitre.tdp.boogie.dafif.assemble.FixAssembler.withStrategy(resolvedFixStrategy);
+  private Collection<FIX> assembleFixes(DafifTerminalAreaDatabase tad, DafifFixDatabase fdb, Collection<DafifWaypoint> waypoints, Collection<DafifNavaid> navaids) {
+    FixAssembler<FIX> assembler = FixAssembler.withStrategy(tad, fdb, fixStrategy);
     return Stream.concat(waypoints.stream(), navaids.stream())
         .flatMap(model -> assembler.assemble(model).stream())
         .toList();
   }
 
-  private Collection<AWY> assembleAirways(DafifFixDatabase fixDatabase, FixAssemblyStrategy<FIX> resolvedFixStrategy,
+  private Collection<AWY> assembleAirways(DafifFixDatabase fixDatabase,
                                            Collection<org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment> atsSegments) {
-    AirwayAssembler<AWY> assembler = AirwayAssembler.withStrategy(fixDatabase, resolvedFixStrategy, airwayStrategy);
+    AirwayAssembler<AWY> assembler = AirwayAssembler.withStrategy(fixDatabase, fixStrategy, airwayStrategy);
     return assembler.assemble(atsSegments).toList();
   }
 
   private Collection<PRC> assembleProcedures(DafifFixDatabase fixDatabase, DafifTerminalAreaDatabase tad,
-                                              FixAssemblyStrategy<FIX> resolvedFixStrategy,
                                               Collection<org.mitre.tdp.boogie.dafif.model.DafifTerminalParent> parents) {
-    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(tad, fixDatabase, procedureStrategy, resolvedFixStrategy);
+    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(tad, fixDatabase, procedureStrategy, fixStrategy);
     return assembler.assemble(parents).toList();
   }
 
@@ -208,8 +209,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     }
 
     /**
-     * See the documentation on {@link FixAssemblyStrategy}. If not set, a standard instance will be created
-     * using the databases built from the parsed data.
+     * See the documentation on {@link FixAssemblyStrategy}.
      */
     public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> fixStrategy(FixAssemblyStrategy<FIX> fixStrategy) {
       this.fixStrategy = requireNonNull(fixStrategy);

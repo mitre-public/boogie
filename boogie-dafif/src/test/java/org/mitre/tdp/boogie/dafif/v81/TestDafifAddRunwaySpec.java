@@ -1,5 +1,10 @@
 package org.mitre.tdp.boogie.dafif.v81;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
@@ -8,11 +13,6 @@ import org.mitre.tdp.boogie.dafif.model.DafifAddRunway;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifAddRunwayConverter;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifAddRuwaySpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifAddRunwayValidator;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifAddRunwaySpec {
 
