@@ -24,6 +24,19 @@ class ArincRecordParserTest {
   }
 
   @Test
+  void testParserSkipsBlankAndTruncatedRecords() {
+
+    ArincRecordParser parser = ArincRecordParser.standard(
+        dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)))
+    );
+
+    // shorter than every spec's record length (e.g. a stray blank line in a 424 file): the record
+    // cannot be column-parsed, so it is skipped per the optional-return contract rather than thrown on
+    assertEquals(Optional.empty(), parser.parse(""));
+    assertEquals(Optional.empty(), parser.parse("TRUNCATED"));
+  }
+
+  @Test
   void testParserWithConfiguredSpec() {
 
     ArincRecordParser parser = ArincRecordParser.standard(

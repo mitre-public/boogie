@@ -62,7 +62,12 @@ public interface ArincRecordParser {
       requireNonNull(rawRecord, "Supplied ARINC-424 record should be non-null.");
 
       // at the expense of more operations... how strongly do we want to enforce none of our specs both match the same record...
-      Optional<RecordSpec> recordSpec = recordSpecs.stream().filter(rspec -> rspec.matchesRecord(rawRecord)).findFirst();
+      // records shorter than a spec (a stray blank or truncated line in a file) can't match it and would otherwise throw
+      // StringIndexOutOfBounds from the spec's column reads — skip them per this method's optional-return contract.
+      Optional<RecordSpec> recordSpec = recordSpecs.stream()
+          .filter(rspec -> rawRecord.length() >= rspec.recordLength())
+          .filter(rspec -> rspec.matchesRecord(rawRecord))
+          .findFirst();
 
       return recordSpec.map(spec -> createParsedRecord(rawRecord, spec));
     }
