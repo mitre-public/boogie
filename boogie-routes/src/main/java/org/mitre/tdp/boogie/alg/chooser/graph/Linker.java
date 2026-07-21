@@ -3,7 +3,10 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.*;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.distanceBetween;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.firstLegWithLocation;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.highlander;
+import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.lastLegWithLocation;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
 import java.util.Collection;
@@ -476,13 +479,17 @@ public interface Linker {
 
     @Override
     public Collection<LinkedLegs> links() {
-
-      Predicate<Leg> hasPosition = leg -> leg.associatedFix().isPresent();
       LinkedLegs airportLegs = highlander(airport.graphRepresentation()).orElseThrow();
 
-      return approach.approach().exitLegs(hasPosition).stream()
-          .map(exit -> new LinkedLegs(exit, airportLegs.source(), distanceBetween(Pair.of(exit, airportLegs.source()))))
-          .toList();
+      Transition finalApproach = approach.approach().transitions().stream()
+          .filter(t -> TransitionType.COMMON.equals(t.transitionType()))
+          .findFirst()
+          .orElseThrow(IllegalStateException::new);
+      Leg missedApproachPointOrFep = finalApproach.legs().stream()
+          .reduce((f,s) -> s)
+          .orElseThrow(IllegalStateException::new);
+
+      return List.of(new LinkedLegs(missedApproachPointOrFep, airportLegs.source(), distanceBetween(Pair.of(missedApproachPointOrFep, airportLegs.source()))));
     }
   }
 

@@ -48,8 +48,6 @@ final class AnyAirport implements LinkableToken {
 
   @Override
   public Linker visit(AnyApproach approach) {
-    // From the approach's final exit, never its closest leg: a feeder fix passing near
-    // the field must not become a mid-procedure exit that truncates the final.
     return Linker.approachToAirport(approach, this);
   }
 
