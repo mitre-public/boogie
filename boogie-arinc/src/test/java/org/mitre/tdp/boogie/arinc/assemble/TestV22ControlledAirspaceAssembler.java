@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.Geometry;
-import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
@@ -19,13 +19,13 @@ import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 
 public class TestV22ControlledAirspaceAssembler {
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/controlled.txt"));
-  private static final ArincFileParser fileParser22 = new ArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
+  private static final TestArincFileParser fileParser22 = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
   private static final ConvertingArincRecordConsumer consumer22 = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
   private static ControlledAirspaceAssembler<Airspace> assembler22;
 
   @BeforeAll
   public static void setUp() {
-    fileParser22.apply(arincTestFile).forEach(consumer22);
+    fileParser22.parseAll(arincTestFile).forEach(consumer22);
 
     ArincFixDatabase arincFixDatabase22 = ArincDatabaseFactory.newFixDatabase(
         consumer22.arincNdbNavaids(),

@@ -20,7 +20,6 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.dafif.TestObjects;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
-import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
@@ -37,11 +36,7 @@ public class AirwayAssemblerTest {
     Collection<DafifNavaid> navaids = Set.of(TestObjects.navTVOR);
     DafifFixDatabase fdb = DafifDatabaseFactory.newFixDatabase(waypoints, navaids);
 
-    DafifTerminalAreaDatabase tad = DafifDatabaseFactory.newTerminalAreaDatabase(
-        List.of(), List.of(), List.of(), List.of(), List.of());
-
-    FixAssemblyStrategy<Fix> fixStrategy = FixAssemblyStrategy.standard(tad, fdb);
-    assembler = AirwayAssembler.standard(fdb, fixStrategy);
+    assembler = AirwayAssembler.standard(fdb, FixAssemblyStrategy.standard());
   }
 
   @Test

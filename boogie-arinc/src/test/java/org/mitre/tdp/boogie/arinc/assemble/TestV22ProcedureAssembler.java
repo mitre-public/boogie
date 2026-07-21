@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
@@ -30,13 +30,13 @@ public class TestV22ProcedureAssembler {
   private static ProcedureAssembler<Procedure> assembler;
 
   private static final ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
-  private static final ArincFileParser fileParser = new ArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
+  private static final TestArincFileParser fileParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
 
   @BeforeAll
   static void setup() {
-    fileParser.apply(arincTestFile).forEach(consumer);
-    fileParser.apply(gqnoFile).forEach(consumer);
-    fileParser.apply(arincTestFile2).forEach(consumer);
+    fileParser.parseAll(arincTestFile).forEach(consumer);
+    fileParser.parseAll(gqnoFile).forEach(consumer);
+    fileParser.parseAll(arincTestFile2).forEach(consumer);
 
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
         consumer.arincAirports(),

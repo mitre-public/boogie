@@ -1,5 +1,11 @@
 package org.mitre.tdp.boogie.dafif.v81;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -10,12 +16,6 @@ import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifTerminalSegmentConverter;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifTerminalSegmentSpec;
 import org.mitre.tdp.boogie.dafif.v81.validator.DafifTerminalSegmentValidator;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestDafifTerminalSegmentSpec {
 

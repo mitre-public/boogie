@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -25,6 +24,7 @@ import org.mitre.tdp.boogie.dafif.assemble.AirportAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.AirportAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.assemble.AirwayAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.AirwayAssemblyStrategy;
+import org.mitre.tdp.boogie.dafif.assemble.FixAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.FixAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.assemble.ProcedureAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.ProcedureAssemblyStrategy;
@@ -73,7 +73,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
   private OneshotDafifParser(Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> builder) {
     this.version = requireNonNull(builder.version);
     this.airportStrategy = requireNonNull(builder.airportStrategy);
-    this.fixStrategy = builder.fixStrategy;
+    this.fixStrategy = requireNonNull(builder.fixStrategy);
     this.airwayStrategy = requireNonNull(builder.airwayStrategy);
     this.procedureStrategy = requireNonNull(builder.procedureStrategy);
   }
@@ -93,7 +93,8 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     return OneshotDafifParser.<Airport, Runway, Fix, Leg, Transition, Airway, Procedure>builder(version)
         .airportStrategy(AirportAssemblyStrategy.standard())
         .airwayStrategy(AirwayAssemblyStrategy.standard())
-        .procedureStrategy(new ProcedureAssemblyStrategy.Standard())
+        .procedureStrategy(ProcedureAssemblyStrategy.standard())
+        .fixStrategy(FixAssemblyStrategy.standard())
         .build();
   }
 
@@ -105,31 +106,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
   public ClientRecords<APT, FIX, AWY, PRC> assembleFrom(InputStream inputStream) {
     requireNonNull(inputStream);
 
-    ClientRecords.Builder<APT, FIX, AWY, PRC> records = new ClientRecords.Builder<>();
-
-    DafifFileParser parser = new DafifFileParser(version);
-    ConvertingDafifRecordConsumer consumer = consumerForVersion(version);
-
-    try (ZipInputStream zis = new ZipInputStream(inputStream)) {
-      ZipEntry entry;
-      while ((entry = zis.getNextEntry()) != null) {
-        String entryName = entry.getName();
-        String filename = entryName.contains("/") ? entryName.substring(entryName.lastIndexOf('/') + 1) : entryName;
-
-        if (!entry.isDirectory() && entryName.contains("DAFIFT/") && !entryName.contains("TRMH/") && !entryName.contains("SUPPH/") && PARSEABLE_FILES.contains(filename)) {
-          LOG.debug("Parsing zip entry: {}", entryName);
-          Collection<DafifRecord> parsed = parser.apply(new NonClosingInputStream(zis), filename);
-          parsed.forEach(consumer);
-          LOG.debug("Parsed {} records from {}", parsed.size(), filename);
-        }
-
-        zis.closeEntry();
-      }
-    } catch (IOException e) {
-      LOG.error("Could not parse the DAFIF zip into memory", e);
-      return records.build();
-    }
-
+    ConvertingDafifRecordConsumer consumer = parse(inputStream);
     LOG.debug("Finished parsing and converting supported record types.");
 
     DafifFixDatabase fixDatabase = DafifDatabaseFactory.newFixDatabase(consumer.dafifWaypoints(), consumer.dafifNavaids());
@@ -138,16 +115,34 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     DafifTerminalAreaDatabase terminalAreaDatabase = DafifDatabaseFactory.newTerminalAreaDatabase(consumer);
     LOG.debug("Finished instantiation of TerminalAreaDatabase.");
 
-    FixAssemblyStrategy<FIX> resolvedFixStrategy = fixStrategy != null
-        ? fixStrategy
-        : (FixAssemblyStrategy<FIX>) FixAssemblyStrategy.standard(terminalAreaDatabase, fixDatabase);
-
-    return records
+    return new ClientRecords.Builder<APT, FIX, AWY, PRC>()
         .addAirports(assembleAirports(terminalAreaDatabase, consumer.dafifAirports()))
-        .addFixes(assembleFixes(resolvedFixStrategy, consumer.dafifWaypoints(), consumer.dafifNavaids()))
-        .addAirways(assembleAirways(fixDatabase, resolvedFixStrategy, consumer.dafifAts()))
-        .addProcedures(assembleProcedures(fixDatabase, terminalAreaDatabase, resolvedFixStrategy, consumer.dafifTerminalParents()))
+        .addFixes(assembleFixes(terminalAreaDatabase, fixDatabase, consumer.dafifWaypoints(), consumer.dafifNavaids()))
+        .addAirways(assembleAirways(fixDatabase, consumer.dafifAts()))
+        .addProcedures(assembleProcedures(fixDatabase, terminalAreaDatabase, consumer.dafifTerminalParents()))
         .build();
+  }
+
+  private ConvertingDafifRecordConsumer parse(InputStream inputStream) {
+    DafifFileParser parser = new DafifFileParser(version);
+    ConvertingDafifRecordConsumer consumer = consumerForVersion(version);
+    try (ZipInputStream zis = new ZipInputStream(inputStream)) {
+      ZipEntry entry;
+      while ((entry = zis.getNextEntry()) != null) {
+        if (entry.isDirectory()) continue;
+        String name = entry.getName();
+        if (!name.contains("DAFIFT/") || name.contains("TRMH/") || name.contains("SUPPH/")) continue;
+        String file = filename(name);
+        if (!PARSEABLE_FILES.contains(file)) continue;
+        LOG.debug("Parsing zip entry: {}", name);
+        try (Stream<DafifRecord> records = parser.stream(new NonClosingInputStream(zis), file)) {
+          records.forEach(consumer);
+        }
+      }
+    } catch (IOException e) {
+      LOG.error("Could not parse the DAFIF zip into memory", e);
+    }
+    return consumer;
   }
 
   private Collection<APT> assembleAirports(DafifTerminalAreaDatabase tad, Collection<DafifAirport> airports) {
@@ -155,25 +150,27 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     return airports.stream().map(assembler::assemble).toList();
   }
 
-  @SuppressWarnings("unchecked")
-  private Collection<FIX> assembleFixes(FixAssemblyStrategy<FIX> resolvedFixStrategy, Collection<DafifWaypoint> waypoints, Collection<DafifNavaid> navaids) {
-    org.mitre.tdp.boogie.dafif.assemble.FixAssembler<FIX> assembler = org.mitre.tdp.boogie.dafif.assemble.FixAssembler.withStrategy(resolvedFixStrategy);
+  private Collection<FIX> assembleFixes(DafifTerminalAreaDatabase tad, DafifFixDatabase fdb, Collection<DafifWaypoint> waypoints, Collection<DafifNavaid> navaids) {
+    FixAssembler<FIX> assembler = FixAssembler.withStrategy(tad, fdb, fixStrategy);
     return Stream.concat(waypoints.stream(), navaids.stream())
         .flatMap(model -> assembler.assemble(model).stream())
         .toList();
   }
 
-  private Collection<AWY> assembleAirways(DafifFixDatabase fixDatabase, FixAssemblyStrategy<FIX> resolvedFixStrategy,
+  private Collection<AWY> assembleAirways(DafifFixDatabase fixDatabase,
                                            Collection<org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment> atsSegments) {
-    AirwayAssembler<AWY> assembler = AirwayAssembler.withStrategy(fixDatabase, resolvedFixStrategy, airwayStrategy);
+    AirwayAssembler<AWY> assembler = AirwayAssembler.withStrategy(fixDatabase, fixStrategy, airwayStrategy);
     return assembler.assemble(atsSegments).toList();
   }
 
   private Collection<PRC> assembleProcedures(DafifFixDatabase fixDatabase, DafifTerminalAreaDatabase tad,
-                                              FixAssemblyStrategy<FIX> resolvedFixStrategy,
                                               Collection<org.mitre.tdp.boogie.dafif.model.DafifTerminalParent> parents) {
-    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(tad, fixDatabase, procedureStrategy, resolvedFixStrategy);
+    ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(tad, fixDatabase, procedureStrategy, fixStrategy);
     return assembler.assemble(parents).toList();
+  }
+
+  private static String filename(String entryName) {
+    return entryName.contains("/") ? entryName.substring(entryName.lastIndexOf('/') + 1) : entryName;
   }
 
   /**
@@ -212,8 +209,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     }
 
     /**
-     * See the documentation on {@link FixAssemblyStrategy}. If not set, a standard instance will be created
-     * using the databases built from the parsed data.
+     * See the documentation on {@link FixAssemblyStrategy}.
      */
     public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> fixStrategy(FixAssemblyStrategy<FIX> fixStrategy) {
       this.fixStrategy = requireNonNull(fixStrategy);

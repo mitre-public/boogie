@@ -86,7 +86,7 @@ configure<JavaPluginExtension> {
 tasks.named<Test>("test") {
     useJUnitPlatform {}
 
-    maxHeapSize = "8G"
+    maxHeapSize = "3G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
@@ -137,7 +137,7 @@ tasks.register<Test>("assignment-integration") {
         excludeTags("LIDO")
     }
 
-    maxHeapSize = "4G"
+    maxHeapSize = "3G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
@@ -154,7 +154,7 @@ tasks.register<Test>("lido-integration") {
         excludeTags("ASSIGNMENT")
     }
 
-    maxHeapSize = "8G"
+    maxHeapSize = "3G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
@@ -171,7 +171,7 @@ tasks.register<Test>("dafif-integration") {
         excludeTags("ASSIGNMENT")
     }
 
-    maxHeapSize = "4G"
+    maxHeapSize = "3G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events

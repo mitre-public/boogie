@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -98,17 +99,15 @@ public final class EmbeddedDafifFile {
 
       ZipEntry entry;
       while ((entry = zis.getNextEntry()) != null) {
-        String entryName = entry.getName();
-        String filename = entryName.contains("/") ? entryName.substring(entryName.lastIndexOf('/') + 1) : entryName;
-
-        if (!entry.isDirectory() && entryName.contains("DAFIFT/") && !entryName.contains("TRMH/") && !entryName.contains("SUPPH/") && PARSEABLE_FILES.contains(filename)) {
-          LOG.info("Parsing zip entry: {}", entryName);
-          Collection<DafifRecord> parsed = parser.apply(new NonClosingInputStream(zis), filename);
-          parsed.forEach(records);
-          LOG.info("Parsed {} records from {}", parsed.size(), filename);
+        if (entry.isDirectory()) continue;
+        String name = entry.getName();
+        if (!name.contains("DAFIFT/") || name.contains("TRMH/") || name.contains("SUPPH/")) continue;
+        String file = filename(name);
+        if (!PARSEABLE_FILES.contains(file)) continue;
+        LOG.info("Parsing zip entry: {}", name);
+        try (Stream<DafifRecord> entryRecords = parser.stream(new NonClosingInputStream(zis), file)) {
+          entryRecords.forEach(records);
         }
-
-        zis.closeEntry();
       }
 
     } catch (IOException e) {
@@ -118,6 +117,10 @@ public final class EmbeddedDafifFile {
     LOG.info("Finished loading DAFIF data: {} airports, {} runways, {} navaids, {} waypoints, {} terminal parents, {} terminal segments",
         dafifAirports().size(), dafifRunways().size(), dafifNavaids().size(), dafifWaypoints().size(),
         dafifTerminalParents().size(), dafifTerminalSegments().size());
+  }
+
+  private static String filename(String entryName) {
+    return entryName.contains("/") ? entryName.substring(entryName.lastIndexOf('/') + 1) : entryName;
   }
 
   /**

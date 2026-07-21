@@ -16,17 +16,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.model.ProcedureFactory;
-import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.dafif.EmbeddedDafifFile;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
 import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
+import org.mitre.tdp.boogie.model.ProcedureFactory;
+import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +48,8 @@ public class ProcedureAssemblerIntegrationTest {
 
     DafifFixDatabase fdb = DafifDatabaseFactory.newFixDatabase(dafif.dafifWaypoints(), dafif.dafifNavaids());
 
-    FixAssemblyStrategy<Fix> fixStrategy = FixAssemblyStrategy.standard(tad, fdb);
-    ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> procedureStrategy = new ProcedureAssemblyStrategy.Standard();
-    ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(tad, fdb, procedureStrategy, fixStrategy);
+    ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> procedureStrategy = ProcedureAssemblyStrategy.standard();
+    ProcedureAssembler<Procedure> assembler = ProcedureAssembler.standard(tad, fdb, procedureStrategy, FixAssemblyStrategy.standard());
 
     allParents = dafif.dafifTerminalParents();
     totalTerminalSegments = dafif.dafifTerminalSegments().size();
@@ -170,8 +169,7 @@ public class ProcedureAssemblerIntegrationTest {
     }
 
     // Diagnostic: show transition boundary fixes for failing SID/STAR
-    String transitionDiag = allProcedures.stream()
-        .filter(p -> notGraphable(p, new java.util.ArrayList<>()))
+    String transitionDiag = notGraphable.stream()
         .limit(3)
         .map(p -> {
           StringBuilder sb = new StringBuilder();
@@ -186,8 +184,7 @@ public class ProcedureAssemblerIntegrationTest {
         })
         .collect(Collectors.joining("\n"));
 
-    Map<ProcedureType, Long> failsByType = allProcedures.stream()
-        .filter(p -> notGraphable(p, new java.util.ArrayList<>()))
+    Map<ProcedureType, Long> failsByType = notGraphable.stream()
         .collect(Collectors.groupingBy(Procedure::procedureType, Collectors.counting()));
 
     assertEquals(0, notGraphable.size(), "Expected 0 not graphable. By type: " + failsByType + "\nDiag:\n" + transitionDiag);

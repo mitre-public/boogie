@@ -5,11 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -20,11 +16,8 @@ import org.mitre.tdp.boogie.dafif.EmbeddedDafifFile;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
 import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
-import org.mitre.tdp.boogie.dafif.model.DafifAirport;
-import org.mitre.tdp.boogie.dafif.model.DafifIls;
-import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
-import org.mitre.tdp.boogie.dafif.model.DafifRunway;
-import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Tag("DAFIF")
 @Tag("INTEGRATION")

@@ -1,19 +1,17 @@
 package org.mitre.tdp.boogie.dafif.model;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.File;
+import java.util.Collection;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.dafif.DafifFileParser;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
-import org.mitre.tdp.boogie.dafif.DafifRecordParser;
-import org.mitre.tdp.boogie.dafif.DafifRecordSpec;
 import org.mitre.tdp.boogie.dafif.DafifVersion;
-
-import java.io.File;
-import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("DAFIF")
 @Tag("INTEGRATION")

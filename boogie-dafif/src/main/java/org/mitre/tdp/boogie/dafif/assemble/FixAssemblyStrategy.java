@@ -5,14 +5,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.AiracCycle;
 import org.mitre.tdp.boogie.Declinations;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.MagneticVariation;
-import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
-import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
+import org.mitre.tdp.boogie.dafif.model.DafifAddRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifAirport;
 import org.mitre.tdp.boogie.dafif.model.DafifIls;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
@@ -31,25 +31,21 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface FixAssemblyStrategy<F> {
 
-  static FixAssemblyStrategy<Fix> standard(DafifTerminalAreaDatabase terminalAreaDatabase, DafifFixDatabase fixDatabase) {
-    return new Standard(terminalAreaDatabase, fixDatabase);
+  static FixAssemblyStrategy<Fix> standard() {
+    return new Standard();
   }
 
   Collection<F> convertIls(DafifIls record);
-  Collection<F> convertRunway(DafifRunway record);
-  Collection<F> convertRunwayEnd(DafifRunway record, String waypointIdent);
-  Collection<F> convertWaypoint(DafifWaypoint record);
+  Collection<F> convertRunway(DafifRunway record, @Nullable DafifAddRunway addRunway, @Nullable DafifAirport airport);
+  Collection<F> convertRunwayEnd(DafifRunway record, String waypointIdent, @Nullable DafifAddRunway addRunway, @Nullable DafifAirport airport);
+  Collection<F> convertWaypoint(DafifWaypoint record, @Nullable DafifNavaid navaid);
   Collection<F> convertNavaid(DafifNavaid record);
   Collection<F> convertAirport(DafifAirport record);
 
   final class Standard implements FixAssemblyStrategy<Fix> {
     private static final Logger LOG = LoggerFactory.getLogger(Standard.class);
-    private final DafifTerminalAreaDatabase terminalAreaDatabase;
-    private final DafifFixDatabase fixDatabase;
 
-    private Standard(DafifTerminalAreaDatabase terminalAreaDatabase, DafifFixDatabase fixDatabase) {
-      this.terminalAreaDatabase = terminalAreaDatabase;
-      this.fixDatabase = fixDatabase;
+    private Standard() {
     }
 
     @Override
@@ -74,15 +70,15 @@ public interface FixAssemblyStrategy<F> {
     }
 
     @Override
-    public Collection<Fix> convertRunwayEnd(DafifRunway record, String waypointIdent) {
-      return convertRunway(record).stream()
-          .filter(r ->waypointIdent.contains(r.fixIdentifier()))
+    public Collection<Fix> convertRunwayEnd(DafifRunway record, String waypointIdent, @Nullable DafifAddRunway addRunway, @Nullable DafifAirport airport) {
+      return convertRunway(record, addRunway, airport).stream()
+          .filter(r -> waypointIdent.contains(r.fixIdentifier()))
           .toList();
     }
 
     @Override
-    public Collection<Fix> convertRunway(DafifRunway runway) {
-      LatLong lowLatLong = terminalAreaDatabase.addRunway(runway.airportIdentification(), runway.lowEndIdentifier())
+    public Collection<Fix> convertRunway(DafifRunway runway, @Nullable DafifAddRunway addRunway, @Nullable DafifAirport airport) {
+      LatLong lowLatLong = Optional.ofNullable(addRunway)
           .filter(a -> a.lowEndDisplacedThresholdDegreesLatitude().isPresent() && a.lowEndDisplacedThresholdDegreesLongitude().isPresent())
           .map(a -> LatLong.of(a.lowEndDisplacedThresholdDegreesLatitude().get(), a.lowEndDisplacedThresholdDegreesLongitude().get()))
           .orElseGet(() -> Optional.of(runway)
@@ -90,8 +86,8 @@ public interface FixAssemblyStrategy<F> {
               .map(r -> LatLong.of(r.lowEndDegreesLatitude().get(), r.lowEndDegreesLongitude().get()))
               .orElseThrow(() -> new IllegalArgumentException("Runway " + runway.lowEndIdentifier() + " has no low end latitude or longitude"))
           );
-      Supplier<Instant> cycleDate = () ->AiracCycle.startDate(runway.cycleDate().toString().substring(2));
-      MagneticVariation magvar = terminalAreaDatabase.airport(runway.airportIdentification())
+      Supplier<Instant> cycleDate = () -> AiracCycle.startDate(runway.cycleDate().toString().substring(2));
+      MagneticVariation magvar = Optional.ofNullable(airport)
           .flatMap(DafifAirport::magVarOfRecord)
           .map(DafifMagVars::fromRecord)
           .orElseGet(() -> MagneticVariation.from(lowLatLong.latitude(), lowLatLong.longitude(), cycleDate.get()));
@@ -102,7 +98,7 @@ public interface FixAssemblyStrategy<F> {
           .magneticVariation(magvar)
           .build();
 
-      LatLong highLatLong = terminalAreaDatabase.addRunway(runway.airportIdentification(), runway.highEndIdentifier())
+      LatLong highLatLong = Optional.ofNullable(addRunway)
           .filter(a -> a.highEndDisplacedThresholdDegreesLatitude().isPresent() && a.highEndDisplacedThresholdDegreesLongitude().isPresent())
           .map(a -> LatLong.of(a.highEndDisplacedThresholdDegreesLatitude().get(), a.highEndDisplacedThresholdDegreesLongitude().get()))
           .orElseGet(() -> Optional.of(runway)
@@ -121,8 +117,10 @@ public interface FixAssemblyStrategy<F> {
     }
 
     @Override
-    public Collection<Fix> convertWaypoint(DafifWaypoint waypoint) {
-      Optional<Collection<Fix>> fromNavaid = fixDatabase.navaidFor(waypoint).map(this::convertNavaid);
+    public Collection<Fix> convertWaypoint(DafifWaypoint waypoint, @Nullable DafifNavaid navaid) {
+      if (navaid != null) {
+        return convertNavaid(navaid);
+      }
 
       Supplier<LatLong> latLongSupplier = () -> Optional.of(waypoint)
           .filter(w -> w.degreesLatitude().isPresent() && w.degreesLongitude().isPresent())
@@ -142,11 +140,11 @@ public interface FixAssemblyStrategy<F> {
         }
       };
 
-      return fromNavaid.orElseGet(() -> List.of(Fix.builder()
+      return List.of(Fix.builder()
           .fixIdentifier(waypoint.waypointIdentifier())
           .latLong(latLongSupplier.get())
           .magneticVariation(magneticVariationSupplier.get())
-          .build()));
+          .build());
     }
 
     @Override

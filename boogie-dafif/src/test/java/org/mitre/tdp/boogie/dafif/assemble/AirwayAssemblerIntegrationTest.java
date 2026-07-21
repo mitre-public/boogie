@@ -15,12 +15,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.dafif.EmbeddedDafifFile;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
-import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 
 @Tag("DAFIF")
@@ -36,10 +33,7 @@ class AirwayAssemblerIntegrationTest {
     EmbeddedDafifFile dafif = EmbeddedDafifFile.instance();
 
     DafifFixDatabase fdb = DafifDatabaseFactory.newFixDatabase(dafif.dafifWaypoints(), dafif.dafifNavaids());
-    DafifTerminalAreaDatabase tad = DafifDatabaseFactory.newTerminalAreaDatabase(
-        List.of(), List.of(), List.of(), List.of(), List.of());
-    FixAssemblyStrategy<Fix> fixStrategy = FixAssemblyStrategy.standard(tad, fdb);
-    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fdb, fixStrategy);
+    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fdb, FixAssemblyStrategy.standard());
 
     atsSegments = dafif.dafifAts();
     uniqueAtsIdentifiers = atsSegments.stream()

@@ -49,15 +49,14 @@ public class ProcedureAssemblerTest {
     Collection<DafifNavaid> navaids = Set.of();
     DafifFixDatabase fdb = DafifDatabaseFactory.newFixDatabase(waypoints, navaids);
 
-    FixAssemblyStrategy<Fix> fixStrategy = FixAssemblyStrategy.standard(tad, fdb);
-    ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> procedureStrategy = new ProcedureAssemblyStrategy.Standard();
-    assembler = ProcedureAssembler.standard(tad, fdb, procedureStrategy, fixStrategy);
+    ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> procedureStrategy = ProcedureAssemblyStrategy.standard();
+    assembler = ProcedureAssembler.standard(tad, fdb, procedureStrategy, FixAssemblyStrategy.standard());
   }
 
   @Test
   void testAssembleAA30079() {
     List<Procedure> procedures = assembler.assemble(List.of(TestObjects.trmParAA30079Adri1C))
-        .collect(Collectors.toList());
+        .toList();
 
     assertFalse(procedures.isEmpty(), "Should assemble at least one procedure for AA30079");
     Procedure proc = procedures.get(0);
@@ -72,7 +71,7 @@ public class ProcedureAssemblerTest {
   @Test
   void testAssembleAS10286() {
     List<Procedure> procedures = assembler.assemble(List.of(TestObjects.trmParAS10286Codi8A))
-        .collect(Collectors.toList());
+        .toList();
 
     assertFalse(procedures.isEmpty(), "Should assemble at least one procedure for AS10286");
     Procedure proc = procedures.get(0);

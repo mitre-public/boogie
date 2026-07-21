@@ -7,13 +7,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 
@@ -91,17 +89,13 @@ public interface AirwayAssembler<A> {
 
     private F resolveFix(String waypointDescCode, String waypointIdent, String countryCode) {
       return switch (waypointDescCode) {
-        case "E", "R" -> fixDatabase.waypoint(waypointIdent, countryCode)
-            .map(w -> fixStrategy.convertWaypoint(w).stream())
-            .flatMap(Stream::findFirst)
-            .orElse(null);
         case "N", "V" -> fixDatabase.waypoint(waypointIdent, countryCode)
             .flatMap(fixDatabase::navaidFor)
             .map(n -> fixStrategy.convertNavaid(n).stream())
             .flatMap(Stream::findFirst)
             .orElse(null);
         default -> fixDatabase.waypoint(waypointIdent, countryCode)
-            .map(w -> fixStrategy.convertWaypoint(w).stream())
+            .map(w -> fixStrategy.convertWaypoint(w, fixDatabase.navaidFor(w).orElse(null)).stream())
             .flatMap(Stream::findFirst)
             .orElse(null);
       };

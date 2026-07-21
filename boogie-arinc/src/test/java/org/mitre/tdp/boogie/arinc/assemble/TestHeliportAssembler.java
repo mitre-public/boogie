@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.Heliport;
-import org.mitre.tdp.boogie.arinc.ArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
@@ -29,8 +29,8 @@ import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
 public class TestHeliportAssembler {
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
   private static final File arincTestFile2 = new File(System.getProperty("user.dir").concat("/src/test/resources/kjra_9vak5-and-friends"));
-  private static final ArincFileParser fileParser = new ArincFileParser(ArincRecordParser.standard(ArincVersion.V19_NAV.specs()));
-  private static final ArincFileParser v22Parser = new ArincFileParser(ArincRecordParser.standard(ArincVersion.V22_NAV.specs()));
+  private static final TestArincFileParser fileParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V19_NAV.specs()));
+  private static final TestArincFileParser v22Parser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V22_NAV.specs()));
   private static final ConvertingArincRecordConsumer testV22Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22_NAV);
   private static final ConvertingArincRecordConsumer testV18Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase19;
@@ -41,8 +41,8 @@ public class TestHeliportAssembler {
   @BeforeAll
   static void setup() {
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
-    fileParser.apply(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
-    v22Parser.apply(arincTestFile2).stream().filter(isThisAPrimaryRecord).forEach(testV22Consumer);
+    fileParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
+    v22Parser.parseAll(arincTestFile2).stream().filter(isThisAPrimaryRecord).forEach(testV22Consumer);
 
     arincTerminalAreaDatabase19 = ArincDatabaseFactory.newTerminalAreaDatabase(
         testV18Consumer.arincAirports(),
