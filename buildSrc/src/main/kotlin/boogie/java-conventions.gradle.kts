@@ -154,7 +154,7 @@ tasks.register<Test>("lido-integration") {
         excludeTags("ASSIGNMENT")
     }
 
-    maxHeapSize = "4G"
+    maxHeapSize = "3G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
@@ -171,7 +171,7 @@ tasks.register<Test>("dafif-integration") {
         excludeTags("ASSIGNMENT")
     }
 
-    maxHeapSize = "4G"
+    maxHeapSize = "3G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
