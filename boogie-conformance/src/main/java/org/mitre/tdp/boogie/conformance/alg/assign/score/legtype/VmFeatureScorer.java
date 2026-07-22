@@ -16,7 +16,7 @@ public final class VmFeatureScorer implements ViterbiFeatureVectorScorer {
 
   public VmFeatureScorer() {
     this(
-        simpleLogistic(15., 30.),
+        simpleLogistic(5., 10.),
         simpleLogistic(10., 20.)
     );
   }
