@@ -3,9 +3,7 @@ package org.mitre.boogie.xml.v23_4.convert;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.mitre.boogie.xml.model.ArincGbasPathPoint;
 import org.mitre.boogie.xml.model.ArincProcedure;
-import org.mitre.boogie.xml.model.ArincSbasPathPoint;
 import org.mitre.boogie.xml.model.ArincTransition;
 
 /**
@@ -35,8 +33,6 @@ record ProcedureSubtypeFields(
     String approachRouteType,
     String gnssFmsIndicator,
     String approachPointRef,
-    ArincGbasPathPoint gbasPathPoint,
-    ArincSbasPathPoint sbasPathPoint,
     BigDecimal categoryARadius,
     BigDecimal categoryBRadius,
     BigDecimal categoryCRadius,
@@ -61,8 +57,6 @@ record ProcedureSubtypeFields(
         .approachRouteType(approachRouteType)
         .gnssFmsIndicator(gnssFmsIndicator)
         .approachPointRef(approachPointRef)
-        .gbasPathPoint(gbasPathPoint)
-        .sbasPathPoint(sbasPathPoint)
         .categoryARadius(categoryARadius)
         .categoryBRadius(categoryBRadius)
         .categoryCRadius(categoryCRadius)
@@ -90,8 +84,6 @@ record ProcedureSubtypeFields(
     private String approachRouteType;
     private String gnssFmsIndicator;
     private String approachPointRef;
-    private ArincGbasPathPoint gbasPathPoint;
-    private ArincSbasPathPoint sbasPathPoint;
     private BigDecimal categoryARadius;
     private BigDecimal categoryBRadius;
     private BigDecimal categoryCRadius;
@@ -168,16 +160,6 @@ record ProcedureSubtypeFields(
       return this;
     }
 
-    Builder gbasPathPoint(ArincGbasPathPoint gbasPathPoint) {
-      this.gbasPathPoint = gbasPathPoint;
-      return this;
-    }
-
-    Builder sbasPathPoint(ArincSbasPathPoint sbasPathPoint) {
-      this.sbasPathPoint = sbasPathPoint;
-      return this;
-    }
-
     Builder categoryARadius(BigDecimal categoryARadius) {
       this.categoryARadius = categoryARadius;
       return this;
@@ -228,8 +210,6 @@ record ProcedureSubtypeFields(
           approachRouteType,
           gnssFmsIndicator,
           approachPointRef,
-          gbasPathPoint,
-          sbasPathPoint,
           categoryARadius,
           categoryBRadius,
           categoryCRadius,

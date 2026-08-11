@@ -7,11 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mitre.boogie.xml.model.ArincProcedure;
 import org.mitre.boogie.xml.model.ArincRecords;
 import org.mitre.caasd.commons.util.DemotedException;
 
@@ -34,9 +32,6 @@ class StreamingUnmarshallerTest {
 
     assertTrue(result.isPresent());
     ArincRecords records = result.get();
-    List<ArincProcedure> procedures = records.airports().stream()
-        .flatMap(airport -> airport.portInfo().procedures().orElse(List.of()).stream())
-        .toList();
 
     assertAll(
         () -> assertEquals(5, records.waypoints().size(), "Waypoints"),
@@ -45,9 +40,7 @@ class StreamingUnmarshallerTest {
         () -> assertEquals(3, records.vhfNavaids().size(), "VHF Navaids"),
         () -> assertEquals(5, records.arincAirways().size(), "Airways"),
         () -> assertEquals(5, records.holdingPatterns().size(), "Holding Patterns"),
-        () -> assertEquals(5, records.heliports().size(), "Heliports"),
-        () -> assertTrue(procedures.stream().anyMatch(procedure -> procedure.gbasPathPoint().isPresent()), "GBAS path points"),
-        () -> assertTrue(procedures.stream().anyMatch(procedure -> procedure.sbasPathPoint().isPresent()), "SBAS path points")
+        () -> assertEquals(5, records.heliports().size(), "Heliports")
     );
   }
 

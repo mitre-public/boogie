@@ -78,8 +78,6 @@ public final class ArincProcedure {
   private final String approachRouteType;
   private final String gnssFmsIndicator;
   private final String approachPointRef;
-  private final ArincGbasPathPoint gbasPathPoint;
-  private final ArincSbasPathPoint sbasPathPoint;
   private final BigDecimal categoryARadius;
   private final BigDecimal categoryBRadius;
   private final BigDecimal categoryCRadius;
@@ -129,8 +127,6 @@ public final class ArincProcedure {
     this.approachRouteType = builder.approachRouteType;
     this.gnssFmsIndicator = builder.gnssFmsIndicator;
     this.approachPointRef = builder.approachPointRef;
-    this.gbasPathPoint = builder.gbasPathPoint;
-    this.sbasPathPoint = builder.sbasPathPoint;
     this.categoryARadius = builder.categoryARadius;
     this.categoryBRadius = builder.categoryBRadius;
     this.categoryCRadius = builder.categoryCRadius;
@@ -304,14 +300,6 @@ public final class ArincProcedure {
     return Optional.ofNullable(approachPointRef);
   }
 
-  public Optional<ArincGbasPathPoint> gbasPathPoint() {
-    return Optional.ofNullable(gbasPathPoint);
-  }
-
-  public Optional<ArincSbasPathPoint> sbasPathPoint() {
-    return Optional.ofNullable(sbasPathPoint);
-  }
-
   public Optional<BigDecimal> categoryARadius() {
     return Optional.ofNullable(categoryARadius);
   }
@@ -389,8 +377,6 @@ public final class ArincProcedure {
         && Objects.equals(approachRouteType, that.approachRouteType)
         && Objects.equals(gnssFmsIndicator, that.gnssFmsIndicator)
         && Objects.equals(approachPointRef, that.approachPointRef)
-        && Objects.equals(gbasPathPoint, that.gbasPathPoint)
-        && Objects.equals(sbasPathPoint, that.sbasPathPoint)
         && Objects.equals(categoryARadius, that.categoryARadius)
         && Objects.equals(categoryBRadius, that.categoryBRadius)
         && Objects.equals(categoryCRadius, that.categoryCRadius)
@@ -410,7 +396,6 @@ public final class ArincProcedure {
         isTypeNotLimited, isTypeNonTurbojets, isVorDmeRnav, rnavPbnNavSpec, rnpPbnNavSpec,
         isEngineOut, isVector, isPInS, isPInSProceedVisually, isPInSProceedVfr,
         isContinuousDescent, approachRouteType, gnssFmsIndicator, approachPointRef,
-        gbasPathPoint, sbasPathPoint,
         categoryARadius, categoryBRadius, categoryCRadius, categoryDRadius, isRnavVisual,
         isLocalizerBackcourse, isPreferredProcedure);
   }
@@ -458,8 +443,6 @@ public final class ArincProcedure {
         ", approachRouteType='" + approachRouteType + '\'' +
         ", gnssFmsIndicator='" + gnssFmsIndicator + '\'' +
         ", approachPointRef='" + approachPointRef + '\'' +
-        ", gbasPathPoint=" + gbasPathPoint +
-        ", sbasPathPoint=" + sbasPathPoint +
         ", categoryARadius=" + categoryARadius +
         ", categoryBRadius=" + categoryBRadius +
         ", categoryCRadius=" + categoryCRadius +
@@ -511,8 +494,6 @@ public final class ArincProcedure {
     private String approachRouteType;
     private String gnssFmsIndicator;
     private String approachPointRef;
-    private ArincGbasPathPoint gbasPathPoint;
-    private ArincSbasPathPoint sbasPathPoint;
     private BigDecimal categoryARadius;
     private BigDecimal categoryBRadius;
     private BigDecimal categoryCRadius;
@@ -721,16 +702,6 @@ public final class ArincProcedure {
 
     public Builder approachPointRef(String approachPointRef) {
       this.approachPointRef = approachPointRef;
-      return this;
-    }
-
-    public Builder gbasPathPoint(ArincGbasPathPoint gbasPathPoint) {
-      this.gbasPathPoint = gbasPathPoint;
-      return this;
-    }
-
-    public Builder sbasPathPoint(ArincSbasPathPoint sbasPathPoint) {
-      this.sbasPathPoint = sbasPathPoint;
       return this;
     }
 

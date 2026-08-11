@@ -24,8 +24,6 @@ import org.mitre.boogie.xml.v23_4.generated.Star;
 final class ProcedureSubtypeFieldsConverter {
 
   private static final ArincTransitionConverter TRANSITION_CONVERTER = ArincTransitionConverter.INSTANCE;
-  private static final ArincGbasPathPointConverter GBAS_PATH_POINT_CONVERTER = ArincGbasPathPointConverter.INSTANCE;
-  private static final ArincSbasPathPointConverter SBAS_PATH_POINT_CONVERTER = ArincSbasPathPointConverter.INSTANCE;
 
   private ProcedureSubtypeFieldsConverter() {
   }
@@ -50,8 +48,6 @@ final class ProcedureSubtypeFieldsConverter {
           .approachRouteType(Optional.ofNullable(approach.getApproachRouteType()).map(Enum::name).orElse(null))
           .gnssFmsIndicator(Optional.ofNullable(approach.getGnssFmsIndicator()).map(Enum::name).orElse(null))
           .approachPointRef(Optional.ofNullable(approach.getApproachPointRef()).map(Object::toString).orElse(null))
-          .gbasPathPoint(Optional.ofNullable(approach.getGbasPathPoint()).map(GBAS_PATH_POINT_CONVERTER).orElse(null))
-          .sbasPathPoint(Optional.ofNullable(approach.getSbasPathPoint()).map(SBAS_PATH_POINT_CONVERTER).orElse(null))
           .categoryARadius(approach.getCategoryARadius())
           .categoryBRadius(approach.getCategoryBRadius())
           .categoryCRadius(approach.getCategoryCRadius())
