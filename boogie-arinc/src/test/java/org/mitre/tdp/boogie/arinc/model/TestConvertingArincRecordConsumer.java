@@ -31,7 +31,8 @@ class TestConvertingArincRecordConsumer {
         () -> assertEquals(454, testV18Consumer.arincProcedureLegs().size(), "ProcedureLeg count"),
         () -> assertEquals(8, testV18Consumer.arincRunways().size(), "Runway count"),
         () -> assertEquals(6, testV18Consumer.arincVhfNavaids().size(), "VhfNavaid count"),
-        () -> assertEquals(70, testV18Consumer.arincWaypoints().size(), "Waypoint count")
+        () -> assertEquals(70, testV18Consumer.arincWaypoints().size(), "Waypoint count"),
+        () -> assertEquals(0, testV18Consumer.arincRestrictiveAirspaceLegs().size(), "RestrictiveAirspaceLeg count")
     );
   }
 

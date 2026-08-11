@@ -39,10 +39,17 @@ public interface ControlledAirspaceAssemblyStrategy<A, F, AS> {
     public Airspace convertControlledAirspace(ArincControlledAirspaceLeg representative, @Nullable Fix fix, List<AirspaceSequence> sequences) {
 
       Range<Double> alts = AirwayAltitudeRange.INSTANCE.apply(representative.lowerLimit().orElse(null), null, representative.upperLimit().orElse(null));
-
       return Airspace.builder()
           .area(representative.customerAreaCode().name())
-          .identifier(representative.airspaceCenter().concat("-").concat(representative.airspaceType().name()).concat("-").concat(representative.controlledAirspaceName().orElse("")))
+          .identifier(representative.airspaceCenter()
+              .concat("-")
+              .concat(representative.airspaceType().name())
+              .concat("-")
+              .concat(representative.icaoRegion())
+              .concat("-")
+              .concat(representative.controlledAirspaceName().orElse(""))
+              .concat("-")
+              .concat(representative.multipleCode().orElse("")))
           .altitudeLimit(alts)
           .airspaceType(AirspaceType.CONTROLLED)
           .sequences(sequences)

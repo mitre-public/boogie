@@ -843,6 +843,56 @@ final class TestGeneratedObjects {
     return star;
   }
 
+  private static HighPrecisionLocation newHighPrecisionLocation(String latitude, String longitude) {
+    HighPrecisionLocation location = new HighPrecisionLocation();
+    location.setHighPrecisionLatitude(latitude);
+    location.setHighPrecisionLongitude(longitude);
+    return location;
+  }
+
+  private static <T extends PathPoint> T populatePathPoint(T pathPoint) {
+    pathPoint.setRecordType(RecordType.STANDARD);
+    pathPoint.setCycleDate("2501");
+    pathPoint.setRunwayNumber("01C");
+    pathPoint.setApproachPerformanceDesignator("0");
+    pathPoint.setApproachRouteIdentifier("I01C");
+    pathPoint.setApproachTypeIdentifier("ILS");
+    pathPoint.setCourseWidthAtThreshold(BigDecimal.valueOf(105.5));
+    pathPoint.setFasDataCrcRemainder("ABC12345");
+    pathPoint.setFlightPathAlignmentPoint(newHighPrecisionLocation("385100.00N", "0770200.00W"));
+    pathPoint.setFpapEllipsoidHeight(BigDecimal.valueOf(25.5));
+    pathPoint.setFpapOrthometricHeight(BigDecimal.valueOf(15.5));
+    pathPoint.setGlidePathAngle(BigDecimal.valueOf(3.0));
+    pathPoint.setGnssChannelNumber(40001L);
+    pathPoint.setHelicopterProcedureCourse(BigDecimal.valueOf(10.5));
+    pathPoint.setLandingThresholdPoint(newHighPrecisionLocation("385000.00N", "0770100.00W"));
+    pathPoint.setLengthOffset(100L);
+    pathPoint.setLtpEllipsoidHeight(BigDecimal.valueOf(20.5));
+    pathPoint.setLtpOrthometricHeight(BigDecimal.valueOf(10.5));
+    pathPoint.setPathPointTch(BigDecimal.valueOf(50.5));
+    pathPoint.setReferencePathDataSelector(12L);
+    pathPoint.setReferencePathIdentifier("I01C");
+    pathPoint.setRouteIndicator("A");
+    pathPoint.setTchUnitsIndicator(HeightUnitsIndicator.FEET);
+    return pathPoint;
+  }
+
+  static GbasPathPoint newValidGbasPathPoint() {
+    GbasPathPoint pathPoint = populatePathPoint(new GbasPathPoint());
+    pathPoint.setOperationType("0");
+    return pathPoint;
+  }
+
+  static SbasPathPoint newValidSbasPathPoint() {
+    SbasPathPoint pathPoint = populatePathPoint(new SbasPathPoint());
+    pathPoint.setHal(BigDecimal.valueOf(40));
+    pathPoint.setOperationType("0");
+    pathPoint.setSbasServiceProviderIdentifier("5");
+    pathPoint.setVal(BigDecimal.valueOf(35));
+    pathPoint.setFinalApproachCourse(newCourse(10.5, true));
+    return pathPoint;
+  }
+
   static Approach newValidApproach() {
     Approach approach = new Approach();
     approach.setIdentifier("I01C");
@@ -864,6 +914,8 @@ final class TestGeneratedObjects {
     approach.setCategoryCRadius(BigDecimal.valueOf(2.0));
     approach.setCategoryDRadius(BigDecimal.valueOf(2.5));
     approach.setProcedureName("ILS RWY 01C");
+    approach.setGbasPathPoint(newValidGbasPathPoint());
+    approach.setSbasPathPoint(newValidSbasPathPoint());
     approach.getApproachTransition().add(newValidApproachTransition());
     approach.setFinalApproach(newValidFinalApproach());
     approach.getMissedApproach().add(newValidMissedApproach());

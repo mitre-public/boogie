@@ -8,7 +8,9 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.boogie.xml.model.ArincGbasPathPoint;
 import org.mitre.boogie.xml.model.ArincProcedure;
+import org.mitre.boogie.xml.model.ArincSbasPathPoint;
 import org.mitre.boogie.xml.v23_4.generated.Approach;
 import org.mitre.boogie.xml.v23_4.generated.Sid;
 import org.mitre.boogie.xml.v23_4.generated.Star;
@@ -86,6 +88,8 @@ class ArincProcedureConverterTest {
     assertTrue(result.isPresent());
 
     ArincProcedure p = result.get();
+    ArincGbasPathPoint gbasPathPoint = p.gbasPathPoint().orElseThrow();
+    ArincSbasPathPoint sbasPathPoint = p.sbasPathPoint().orElseThrow();
     assertAll(
         () -> assertEquals("I01C", p.identifier()),
         () -> assertEquals("Approach", p.procedureType()),
@@ -98,6 +102,13 @@ class ArincProcedureConverterTest {
         () -> assertEquals(Optional.of(BigDecimal.valueOf(1.5)), p.categoryBRadius()),
         () -> assertEquals(Optional.of(BigDecimal.valueOf(2.0)), p.categoryCRadius()),
         () -> assertEquals(Optional.of(BigDecimal.valueOf(2.5)), p.categoryDRadius()),
+        () -> assertEquals("0", gbasPathPoint.operationType()),
+        () -> assertEquals("01C", gbasPathPoint.pathPoint().runwayNumber()),
+        () -> assertEquals("385100.00N", gbasPathPoint.pathPoint().flightPathAlignmentPoint().latitude()),
+        () -> assertEquals("5", sbasPathPoint.serviceProviderIdentifier()),
+        () -> assertEquals(BigDecimal.valueOf(40), sbasPathPoint.horizontalAlertLimit()),
+        () -> assertEquals(Optional.of(10.5), sbasPathPoint.finalApproachCourse()),
+        () -> assertEquals(Optional.of(true), sbasPathPoint.finalApproachCourseIsTrue()),
         () -> assertEquals(Optional.of("ILS RWY 01C"), p.procedureName()),
         // transitions: 1 approach transition + 1 final approach + 1 missed = 3
         () -> assertEquals(3, p.transitions().size()),

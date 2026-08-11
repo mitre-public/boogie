@@ -46,6 +46,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   private final DelegatableCollection<ArincFirUirLeg> arincFirUirLeg;
   private final DelegatableCollection<ArincHelipad> arincHelipads;
   private final DelegatableCollection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs;
+  private final DelegatableCollection<ArincRestrictiveAirspaceLeg> arincRestrictiveAirspaceLegs;
   private final DelegatableCollection<ArincHeaderOne> arincHeaderOnes;
   private final DelegatableCollection<ArincHeliport> arincHeliports;
 
@@ -66,6 +67,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincFirUirLeg = new DelegatableCollection<>(builder.firUirDelegator, builder.firUirConverter);
     this.arincHelipads = new DelegatableCollection<>(builder.helipadDelegator, builder.helipadConverter);
     this.arincControlledAirspaceLegs = new DelegatableCollection<>(builder.arincControlledAirspaceLegDelegator, builder.arincControlledAirspaceConverter);
+    this.arincRestrictiveAirspaceLegs = new DelegatableCollection<>(builder.restrictiveAirspaceLegDelegator, builder.restrictiveAirspaceConverter);
     this.arincHeaderOnes = new DelegatableCollection<>(builder.headerDelegator, builder.headerConverter);
     this.arincHeliports = new DelegatableCollection<>(builder.heliportDelegator, builder.heliportConverter);
 
@@ -84,6 +86,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         this.arincFirUirLeg,
         this.arincHelipads,
         this.arincControlledAirspaceLegs,
+        this.arincRestrictiveAirspaceLegs,
         this.arincHeaderOnes,
         this.arincHeliports
     );
@@ -143,6 +146,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
   public Collection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs() {
     return arincControlledAirspaceLegs.records();
+  }
+
+  public Collection<ArincRestrictiveAirspaceLeg> arincRestrictiveAirspaceLegs() {
+    return arincRestrictiveAirspaceLegs.records();
   }
 
   public Optional<ArincHeaderOne>  arincHeaderOne() {
@@ -260,6 +267,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     private Function<ArincRecord, Optional<ArincHelipad>> helipadConverter;
     private Predicate<ArincRecord> arincControlledAirspaceLegDelegator;
     private Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> arincControlledAirspaceConverter;
+    private Predicate<ArincRecord> restrictiveAirspaceLegDelegator;
+    private Function<ArincRecord, Optional<ArincRestrictiveAirspaceLeg>> restrictiveAirspaceConverter;
     private Predicate<ArincRecord> headerDelegator;
     private Function<ArincRecord, Optional<ArincHeaderOne>> headerConverter;
     private Predicate<ArincRecord> heliportDelegator;
@@ -402,6 +411,16 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     public Builder arincControlledAirspaceLegDelegator(Predicate<ArincRecord> arincControlledAirspaceLegDelegator) {
       this.arincControlledAirspaceLegDelegator = arincControlledAirspaceLegDelegator;
+      return this;
+    }
+
+    public Builder restrictiveAirspaceLegDelegator(Predicate<ArincRecord> restrictiveAirspaceLegDelegator) {
+      this.restrictiveAirspaceLegDelegator = restrictiveAirspaceLegDelegator;
+      return this;
+    }
+
+    public Builder restrictiveAirspaceConverter(Function<ArincRecord, Optional<ArincRestrictiveAirspaceLeg>> restrictiveAirspaceConverter) {
+      this.restrictiveAirspaceConverter = restrictiveAirspaceConverter;
       return this;
     }
 

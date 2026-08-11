@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.arinc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,7 @@ public class OneShotRecordParserLidoIntegrationTest {
         () -> assertEquals(101085, records.procedures().size(), "Procedures"),
         () -> assertEquals(357, records.firUirs().size(), "FIRs and UIRs"),
         () -> assertEquals(11761, records.conrolledAirspaces().size(), "Controlled Airspaces"),
+        () -> assertEquals(20503, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),
         () -> assertEquals("A424-22std.dat", records.headerOne().get().fileName().get()),
         () -> assertEquals(9646, records.heliports().size(), "heliports")
     );

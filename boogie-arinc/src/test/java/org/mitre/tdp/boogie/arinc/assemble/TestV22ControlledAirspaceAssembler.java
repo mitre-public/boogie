@@ -42,8 +42,8 @@ public class TestV22ControlledAirspaceAssembler {
   @Test
   void testAssemble22() {
     List<Airspace> airspaces = assembler22.assemble(consumer22.arincControlledAirspaceLegs()).toList();
-    Airspace circle = airspaces.stream().filter(i -> i.identifier().equals("KBOI-A-ANM ID C BOISE AIR TERMINAL (A")).findFirst().orElseThrow();
-    Airspace shape = airspaces.stream().filter(i -> i.identifier().equals("KBOI-A-ANM ID C BOISE AIR TERMINAL (B")).findFirst().orElseThrow();
+    Airspace circle = airspaces.stream().filter(i -> i.identifier().equals("KBOI-A-K1-ANM ID C BOISE AIR TERMINAL (A-A")).findFirst().orElseThrow();
+    Airspace shape = airspaces.stream().filter(i -> i.identifier().equals("KBOI-A-K1-ANM ID C BOISE AIR TERMINAL (B-B")).findFirst().orElseThrow();
     assertAll(
         () -> assertEquals(2, airspaces.size() , "Should only be two of them"),
         () -> assertEquals(1, circle.sequences().size(), "Just one leg"),
