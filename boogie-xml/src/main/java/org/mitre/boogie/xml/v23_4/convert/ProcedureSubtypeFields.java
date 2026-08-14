@@ -3,6 +3,7 @@ package org.mitre.boogie.xml.v23_4.convert;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.mitre.boogie.xml.model.ArincPathPoint;
 import org.mitre.boogie.xml.model.ArincProcedure;
 import org.mitre.boogie.xml.model.ArincTransition;
 
@@ -30,6 +31,7 @@ record ProcedureSubtypeFields(
     // Star fields
     Boolean isContinuousDescent,
     // Approach fields
+    List<ArincPathPoint> pathPoints,
     String approachRouteType,
     String gnssFmsIndicator,
     String approachPointRef,
@@ -54,6 +56,7 @@ record ProcedureSubtypeFields(
         .isPInSProceedVisually(isPInSProceedVisually)
         .isPInSProceedVfr(isPInSProceedVfr)
         .isContinuousDescent(isContinuousDescent)
+        .pathPoints(pathPoints)
         .approachRouteType(approachRouteType)
         .gnssFmsIndicator(gnssFmsIndicator)
         .approachPointRef(approachPointRef)
@@ -81,6 +84,7 @@ record ProcedureSubtypeFields(
     private Boolean isPInSProceedVisually;
     private Boolean isPInSProceedVfr;
     private Boolean isContinuousDescent;
+    private List<ArincPathPoint> pathPoints;
     private String approachRouteType;
     private String gnssFmsIndicator;
     private String approachPointRef;
@@ -142,6 +146,11 @@ record ProcedureSubtypeFields(
 
     Builder isContinuousDescent(Boolean isContinuousDescent) {
       this.isContinuousDescent = isContinuousDescent;
+      return this;
+    }
+
+    Builder pathPoints(List<ArincPathPoint> pathPoints) {
+      this.pathPoints = pathPoints;
       return this;
     }
 
@@ -207,6 +216,7 @@ record ProcedureSubtypeFields(
           isPInSProceedVisually,
           isPInSProceedVfr,
           isContinuousDescent,
+          pathPoints,
           approachRouteType,
           gnssFmsIndicator,
           approachPointRef,

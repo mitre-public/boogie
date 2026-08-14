@@ -34,6 +34,13 @@ final class TestGeneratedObjects {
     return location;
   }
 
+  static HighPrecisionLocation newHighPrecisionLocation(String latitude, String longitude) {
+    HighPrecisionLocation location = new HighPrecisionLocation();
+    location.setHighPrecisionLatitude(latitude);
+    location.setHighPrecisionLongitude(longitude);
+    return location;
+  }
+
   static Bearing newBearing(double value, boolean isTrueBearing) {
     Bearing bearing = new Bearing();
     bearing.setBearingValue(BigDecimal.valueOf(value));
@@ -470,6 +477,52 @@ final class TestGeneratedObjects {
     course.setCourseValue(BigDecimal.valueOf(value));
     course.setIsTrue(isTrue);
     return course;
+  }
+
+  private static <T extends PathPoint> T populateValidPathPoint(T pathPoint) {
+    pathPoint.setSupplementalData(new SupplementalData());
+    pathPoint.setRecordType(RecordType.STANDARD);
+    pathPoint.setCycleDate("2501");
+    pathPoint.setRunwayNumber("01C");
+    pathPoint.setApproachPerformanceDesignator("1");
+    pathPoint.setApproachRouteIdentifier("I01C");
+    pathPoint.setApproachTypeIdentifier("LPV");
+    pathPoint.setCourseWidthAtThreshold(new BigDecimal("105.50"));
+    pathPoint.setFasDataCrcRemainder("A1B2C3D4");
+    pathPoint.setFlightPathAlignmentPoint(
+        newHighPrecisionLocation("N385123.1234", "W0770215.5678"));
+    pathPoint.setFpapEllipsoidHeight(new BigDecimal("12.25"));
+    pathPoint.setFpapOrthometricHeight(new BigDecimal("10.75"));
+    pathPoint.setGlidePathAngle(new BigDecimal("3.00"));
+    pathPoint.setGnssChannelNumber(22001L);
+    pathPoint.setHelicopterProcedureCourse(new BigDecimal("90.50"));
+    pathPoint.setLandingThresholdPoint(
+        newHighPrecisionLocation("N385120.4321", "W0770210.8765"));
+    pathPoint.setLengthOffset(75L);
+    pathPoint.setLtpEllipsoidHeight(new BigDecimal("11.50"));
+    pathPoint.setLtpOrthometricHeight(new BigDecimal("10.00"));
+    pathPoint.setPathPointTch(new BigDecimal("50.25"));
+    pathPoint.setReferencePathDataSelector(1L);
+    pathPoint.setReferencePathIdentifier("I01C");
+    pathPoint.setRouteIndicator("A");
+    pathPoint.setTchUnitsIndicator(HeightUnitsIndicator.FEET);
+    return pathPoint;
+  }
+
+  static GbasPathPoint newValidGbasPathPoint() {
+    GbasPathPoint pathPoint = populateValidPathPoint(new GbasPathPoint());
+    pathPoint.setOperationType("0");
+    return pathPoint;
+  }
+
+  static SbasPathPoint newValidSbasPathPoint() {
+    SbasPathPoint pathPoint = populateValidPathPoint(new SbasPathPoint());
+    pathPoint.setHal(new BigDecimal("40.00"));
+    pathPoint.setOperationType("0");
+    pathPoint.setSbasServiceProviderIdentifier("5");
+    pathPoint.setVal(new BigDecimal("35.00"));
+    pathPoint.setFinalApproachCourse(newCourse(1.5, true));
+    return pathPoint;
   }
 
   static AirwayLeg newValidAirwayLeg(long seqNum, String fixIdent) {

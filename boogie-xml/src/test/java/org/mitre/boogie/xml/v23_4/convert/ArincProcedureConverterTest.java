@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.boogie.xml.model.ArincPathPoint;
 import org.mitre.boogie.xml.model.ArincProcedure;
 import org.mitre.boogie.xml.v23_4.generated.Approach;
 import org.mitre.boogie.xml.v23_4.generated.Sid;
@@ -82,10 +83,23 @@ class ArincProcedureConverterTest {
 
   @Test
   void convertsApproach() {
-    Optional<ArincProcedure> result = CONVERTER.apply(TestGeneratedObjects.newValidApproach());
+    Approach approach = TestGeneratedObjects.newValidApproach();
+    approach.setGbasPathPoint(TestGeneratedObjects.newValidGbasPathPoint());
+    approach.setSbasPathPoint(TestGeneratedObjects.newValidSbasPathPoint());
+
+    Optional<ArincProcedure> result = CONVERTER.apply(approach);
     assertTrue(result.isPresent());
 
     ArincProcedure p = result.get();
+    ArincPathPoint gbasPathPoint = p.pathPoints().stream()
+        .filter(pathPoint -> pathPoint.pathPointType() == ArincPathPoint.Type.GBAS)
+        .findFirst()
+        .orElseThrow();
+    ArincPathPoint sbasPathPoint = p.pathPoints().stream()
+        .filter(pathPoint -> pathPoint.pathPointType() == ArincPathPoint.Type.SBAS)
+        .findFirst()
+        .orElseThrow();
+
     assertAll(
         () -> assertEquals("I01C", p.identifier()),
         () -> assertEquals("Approach", p.procedureType()),
@@ -99,6 +113,9 @@ class ArincProcedureConverterTest {
         () -> assertEquals(Optional.of(BigDecimal.valueOf(2.0)), p.categoryCRadius()),
         () -> assertEquals(Optional.of(BigDecimal.valueOf(2.5)), p.categoryDRadius()),
         () -> assertEquals(Optional.of("ILS RWY 01C"), p.procedureName()),
+        () -> assertEquals(2, p.pathPoints().size()),
+        () -> assertEquals("0", gbasPathPoint.operationType()),
+        () -> assertEquals(Optional.of("5"), sbasPathPoint.sbasServiceProviderIdentifier()),
         // transitions: 1 approach transition + 1 final approach + 1 missed = 3
         () -> assertEquals(3, p.transitions().size()),
         () -> assertEquals("GNDLF", p.transitions().get(0).identifier().get()),

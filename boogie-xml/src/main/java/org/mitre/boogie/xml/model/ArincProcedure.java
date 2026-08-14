@@ -75,6 +75,7 @@ public final class ArincProcedure {
   private final Boolean isContinuousDescent;
 
   // Approach fields
+  private final List<ArincPathPoint> pathPoints;
   private final String approachRouteType;
   private final String gnssFmsIndicator;
   private final String approachPointRef;
@@ -124,6 +125,7 @@ public final class ArincProcedure {
     this.isPInSProceedVisually = builder.isPInSProceedVisually;
     this.isPInSProceedVfr = builder.isPInSProceedVfr;
     this.isContinuousDescent = builder.isContinuousDescent;
+    this.pathPoints = builder.pathPoints;
     this.approachRouteType = builder.approachRouteType;
     this.gnssFmsIndicator = builder.gnssFmsIndicator;
     this.approachPointRef = builder.approachPointRef;
@@ -288,6 +290,10 @@ public final class ArincProcedure {
     return Optional.ofNullable(isContinuousDescent);
   }
 
+  public List<ArincPathPoint> pathPoints() {
+    return pathPoints == null ? List.of() : pathPoints;
+  }
+
   public Optional<String> approachRouteType() {
     return Optional.ofNullable(approachRouteType);
   }
@@ -374,6 +380,7 @@ public final class ArincProcedure {
         && Objects.equals(isPInSProceedVisually, that.isPInSProceedVisually)
         && Objects.equals(isPInSProceedVfr, that.isPInSProceedVfr)
         && Objects.equals(isContinuousDescent, that.isContinuousDescent)
+        && Objects.equals(pathPoints, that.pathPoints)
         && Objects.equals(approachRouteType, that.approachRouteType)
         && Objects.equals(gnssFmsIndicator, that.gnssFmsIndicator)
         && Objects.equals(approachPointRef, that.approachPointRef)
@@ -395,7 +402,7 @@ public final class ArincProcedure {
         isTypeTurbojet, isTypeTurboprop, isTypeProp, isTypePiston, isTypeNonJets,
         isTypeNotLimited, isTypeNonTurbojets, isVorDmeRnav, rnavPbnNavSpec, rnpPbnNavSpec,
         isEngineOut, isVector, isPInS, isPInSProceedVisually, isPInSProceedVfr,
-        isContinuousDescent, approachRouteType, gnssFmsIndicator, approachPointRef,
+        isContinuousDescent, pathPoints, approachRouteType, gnssFmsIndicator, approachPointRef,
         categoryARadius, categoryBRadius, categoryCRadius, categoryDRadius, isRnavVisual,
         isLocalizerBackcourse, isPreferredProcedure);
   }
@@ -440,6 +447,7 @@ public final class ArincProcedure {
         ", isPInSProceedVisually=" + isPInSProceedVisually +
         ", isPInSProceedVfr=" + isPInSProceedVfr +
         ", isContinuousDescent=" + isContinuousDescent +
+        ", pathPoints=" + pathPoints +
         ", approachRouteType='" + approachRouteType + '\'' +
         ", gnssFmsIndicator='" + gnssFmsIndicator + '\'' +
         ", approachPointRef='" + approachPointRef + '\'' +
@@ -491,6 +499,7 @@ public final class ArincProcedure {
     private Boolean isPInSProceedVisually;
     private Boolean isPInSProceedVfr;
     private Boolean isContinuousDescent;
+    private List<ArincPathPoint> pathPoints;
     private String approachRouteType;
     private String gnssFmsIndicator;
     private String approachPointRef;
@@ -687,6 +696,11 @@ public final class ArincProcedure {
 
     public Builder isContinuousDescent(Boolean isContinuousDescent) {
       this.isContinuousDescent = isContinuousDescent;
+      return this;
+    }
+
+    public Builder pathPoints(List<ArincPathPoint> pathPoints) {
+      this.pathPoints = pathPoints;
       return this;
     }
 

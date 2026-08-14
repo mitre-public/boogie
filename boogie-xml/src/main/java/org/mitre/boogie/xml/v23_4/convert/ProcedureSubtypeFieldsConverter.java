@@ -7,8 +7,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.mitre.boogie.xml.model.ArincPathPoint;
 import org.mitre.boogie.xml.model.ArincTransition;
 import org.mitre.boogie.xml.v23_4.generated.Approach;
+import org.mitre.boogie.xml.v23_4.generated.PathPoint;
 import org.mitre.boogie.xml.v23_4.generated.Procedure;
 import org.mitre.boogie.xml.v23_4.generated.ProcedureRoute;
 import org.mitre.boogie.xml.v23_4.generated.Sid;
@@ -24,6 +26,7 @@ import org.mitre.boogie.xml.v23_4.generated.Star;
 final class ProcedureSubtypeFieldsConverter {
 
   private static final ArincTransitionConverter TRANSITION_CONVERTER = ArincTransitionConverter.INSTANCE;
+  private static final ArincPathPointConverter PATH_POINT_CONVERTER = ArincPathPointConverter.INSTANCE;
 
   private ProcedureSubtypeFieldsConverter() {
   }
@@ -45,6 +48,7 @@ final class ProcedureSubtypeFieldsConverter {
           .build();
     } else if (procedure instanceof Approach approach) {
       return ProcedureSubtypeFields.builder()
+          .pathPoints(convertPathPoints(approach))
           .approachRouteType(Optional.ofNullable(approach.getApproachRouteType()).map(Enum::name).orElse(null))
           .gnssFmsIndicator(Optional.ofNullable(approach.getGnssFmsIndicator()).map(Enum::name).orElse(null))
           .approachPointRef(Optional.ofNullable(approach.getApproachPointRef()).map(Object::toString).orElse(null))
@@ -97,6 +101,14 @@ final class ProcedureSubtypeFieldsConverter {
     return Stream.of(transitions, finalApproach, missed)
         .flatMap(Function.identity())
         .map(TRANSITION_CONVERTER)
+        .flatMap(Optional::stream)
+        .collect(Collectors.toList());
+  }
+
+  private static List<ArincPathPoint> convertPathPoints(Approach approach) {
+    return Stream.<PathPoint>of(approach.getGbasPathPoint(), approach.getSbasPathPoint())
+        .filter(pathPoint -> pathPoint != null)
+        .map(PATH_POINT_CONVERTER)
         .flatMap(Optional::stream)
         .collect(Collectors.toList());
   }

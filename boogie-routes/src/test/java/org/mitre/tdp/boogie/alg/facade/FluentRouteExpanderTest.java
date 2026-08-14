@@ -652,8 +652,6 @@ class FluentRouteExpanderTest {
   }
 
   @Test
-  @Disabled("Jury is out on how we want this to work - having FixTerminationLeg w/ a true hashCode means this just returns BARTL, "
-      + "we could rewrite and still capture the spirit of the test but do we want to write a new test that checks for identity mattering?")
   void testFTF() {
     String route = "BARTL..BARTL125045..BARTL";
 

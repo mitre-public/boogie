@@ -3,6 +3,7 @@ package org.mitre.boogie.xml.model;
 import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.fields.ArincBaseInfo;
 import org.mitre.boogie.xml.model.fields.ArincFraInfo;
+import org.mitre.boogie.xml.model.fields.ArincHighPrecisionLocation;
 import org.mitre.boogie.xml.model.fields.ArincMsaSector;
 import org.mitre.boogie.xml.model.fields.ArincPointInfo;
 import org.mitre.boogie.xml.model.fields.ArincPortInfo;
@@ -32,6 +33,9 @@ public class ModelTests {
     EqualsVerifier.forClass(ArincMsa.class).verify();
     EqualsVerifier.forClass(ArincMsaSector.class).verify();
     EqualsVerifier.forClass(ArincNdbNavaid.class).verify();
+    EqualsVerifier.forClass(ArincPathPoint.class)
+        .suppress(Warning.BIGDECIMAL_EQUALITY)
+        .verify();
     EqualsVerifier.forClass(ArincProcedure.class)
         .suppress(Warning.BIGDECIMAL_EQUALITY)
         .verify();
@@ -48,6 +52,7 @@ public class ModelTests {
   void testArincModelFields() {
     EqualsVerifier.forClass(ArincBaseInfo.class).verify();
     EqualsVerifier.forClass(ArincFraInfo.class).verify();
+    EqualsVerifier.forClass(ArincHighPrecisionLocation.class).verify();
     EqualsVerifier.forClass(ArincPointInfo.class).verify();
     EqualsVerifier.forClass(ArincPortInfo.class).verify();
     EqualsVerifier.forClass(ArincRecordInfo.class).verify();

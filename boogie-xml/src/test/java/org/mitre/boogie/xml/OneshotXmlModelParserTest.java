@@ -48,9 +48,14 @@ class OneshotXmlModelParserTest {
     long totalProcedures = records.airports().stream()
         .mapToLong(a -> a.portInfo().procedures().orElse(java.util.List.of()).size())
         .sum();
+    long totalPathPoints = records.airports().stream()
+        .flatMap(a -> a.portInfo().procedures().orElse(java.util.List.of()).stream())
+        .mapToLong(procedure -> procedure.pathPoints().size())
+        .sum();
 
     assertAll(
         () -> assertEquals(75, totalProcedures, "Total procedures nested in airports"),
+        () -> assertEquals(50, totalPathPoints, "Path points nested in airport approaches"),
         () -> assertEquals(5, records.arincAirways().size(), "Airways")
     );
   }
