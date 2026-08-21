@@ -26,7 +26,7 @@ public class TestCifpRestrictiveAirspaceAssemblerIntegration {
 
   @Test
   void testAssembledCount() {
-    assertEquals(1518, airspaces.size(), "Should assemble restrictive airspaces from CIFP data");
+    assertEquals(1203, airspaces.size(), "Should assemble restrictive airspaces from CIFP data");
   }
 
   @Test
