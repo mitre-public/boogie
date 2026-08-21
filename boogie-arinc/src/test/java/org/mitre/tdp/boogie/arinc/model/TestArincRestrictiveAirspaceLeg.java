@@ -45,7 +45,7 @@ public class TestArincRestrictiveAirspaceLeg {
         () -> assertEquals("N", restrictiveAirspace.restrictiveType()),
         () -> assertEquals("BOARDMAN", restrictiveAirspace.restrictiveAirspaceDesignation()),
         () -> assertEquals("A", restrictiveAirspace.multipleCode().get()),
-        () -> assertEquals(Integer.valueOf(10), restrictiveAirspace.sequenceNumber().get()),
+        () -> assertEquals(Integer.valueOf(10), restrictiveAirspace.sequenceNumber()),
         () -> assertEquals("1", restrictiveAirspace.continuationRecordNumber().get()),
         () -> assertEquals(Level.L, restrictiveAirspace.level().get()),
         () -> assertTrue(restrictiveAirspace.timeCode().isEmpty()),
