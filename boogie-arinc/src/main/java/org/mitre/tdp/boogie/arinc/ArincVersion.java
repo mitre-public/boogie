@@ -126,7 +126,6 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec(),
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
-      new ControlledAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HeliportSpec()
   ),

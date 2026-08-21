@@ -38,19 +38,10 @@ public interface RestrictiveAirspaceAssemblyStrategy<A, AS> {
     @Override
     public Airspace convertRestrictiveAirspace(ArincRestrictiveAirspaceLeg representative, List<AirspaceSequence> sequences) {
       Range<Double> alts = AirwayAltitudeRange.INSTANCE.apply(representative.lowerLimit().orElse(null), null, representative.upperLimit().orElse(null));
-      String ident = Optional.of(representative.restrictiveAirspaceDesignation()).filter(s -> !s.endsWith("*"))
-          .or(representative::restrictiveAirspaceName)
-          .orElseThrow(() -> new IllegalArgumentException("No valid airspace designation found"));
+      String ident = RestrictiveAirspaceName.INSTANCE.apply(representative);
       return Airspace.builder()
           .area(representative.customerAreaCode().name())
-          .identifier(ident
-              .concat("-")
-              .concat(representative.restrictiveType())
-              .concat("-")
-              .concat(representative.icaoRegion())
-              .concat("-")
-              .concat(representative.multipleCode().orElse(""))
-          )
+          .identifier(ident)
           .altitudeLimit(alts)
           .airspaceType(AirspaceType.RESTRICTIVE)
           .sequences(sequences)
@@ -70,7 +61,7 @@ public interface RestrictiveAirspaceAssemblyStrategy<A, AS> {
           .filter(lat -> leg.longitude().isPresent())
           .map(lat -> LatLong.of(lat, leg.longitude().orElseThrow()))
           .orElse(null);
-      return AirspaceSequence.builder(geometry, leg.sequenceNumber().orElse(0))
+      return AirspaceSequence.builder(geometry, leg.sequenceNumber())
           .centerFix(centerFix)
           .associatedFix(associatedFix)
           .build();

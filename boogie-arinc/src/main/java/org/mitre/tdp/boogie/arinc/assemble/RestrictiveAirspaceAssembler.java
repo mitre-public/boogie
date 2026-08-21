@@ -49,26 +49,18 @@ public interface RestrictiveAirspaceAssembler<AIRSPACE> {
     @Override
     public Stream<AIRSPACE> assemble(Collection<ArincRestrictiveAirspaceLeg> legs) {
       return legs.stream()
-          .collect(Collectors.groupingBy(this::restrictiveKey))
-          .values()
-          .stream()
+          .collect(Collectors.groupingBy(RestrictiveAirspaceName.INSTANCE))
+          .values().stream()
+          .map(list -> list.stream().sorted(Comparator.comparingInt(ArincRestrictiveAirspaceLeg::sequenceNumber)).toList())
           .map(this::toAirspace);
     }
 
     private AIRSPACE toAirspace(List<ArincRestrictiveAirspaceLeg> legs) {
       List<SEQUENCE> sequences = legs.stream()
-          .sorted(Comparator.comparingInt(l -> l.sequenceNumber().orElse(0)))
           .map(airspaceAssemblyStrategy::convertRestrictiveAirspaceSequence)
           .toList();
       ArincRestrictiveAirspaceLeg firstLeg = legs.get(0);
       return airspaceAssemblyStrategy.convertRestrictiveAirspace(firstLeg, sequences);
-    }
-
-    private String restrictiveKey(ArincRestrictiveAirspaceLeg leg) {
-      return leg.icaoRegion()
-          .concat(leg.restrictiveAirspaceDesignation())
-          .concat(leg.restrictiveType())
-          .concat(leg.multipleCode().orElse(""));
     }
   }
 }

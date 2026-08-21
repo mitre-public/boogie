@@ -48,7 +48,7 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
    */
   private final String icaoRegion;
   /**
-   * See {@link RestrictiveType} or {@link org.mitre.tdp.boogie.arinc.v19.field.RestrictiveType}
+   * See {@link org.mitre.tdp.boogie.arinc.v18.field.RestrictiveType} or {@link org.mitre.tdp.boogie.arinc.v19.field.RestrictiveType}
    */
   private final String restrictiveType;
   /**
@@ -248,8 +248,8 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
     return Optional.ofNullable(multipleCode);
   }
 
-  public Optional<Integer> sequenceNumber() {
-    return Optional.ofNullable(sequenceNumber);
+  public Integer sequenceNumber() {
+    return sequenceNumber;
   }
 
   public Optional<Level> level() {

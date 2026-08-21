@@ -32,14 +32,14 @@ public final class RestrictiveAirspaceValidator implements Predicate<ArincRecord
         && containsParsedField(arincRecord, "restrictiveType", missingFieldConsumer)
         && containsParsedField(arincRecord, "restrictiveAirspaceDesignation", missingFieldConsumer)
         && containsParsedField(arincRecord, "fileRecordNumber", missingFieldConsumer)
-        && containsParsedField(arincRecord, "cycle", missingFieldConsumer);
+        && containsParsedField(arincRecord, "cycle", missingFieldConsumer)
+        && containsParsedField(arincRecord, "sequenceNumber", missingFieldConsumer)
+        && containsParsedField(arincRecord, "boundaryVia", missingFieldConsumer);
   }
 
   boolean isCorrectSectionSubSection(ArincRecord arincRecord) {
     Optional<SectionCode> sectionCode = arincRecord.optionalField("sectionCode");
     Optional<String> subSectionCode = arincRecord.optionalField("subSectionCode");
-
-
     return sectionCode.filter(SectionCode.U::equals).isPresent() && subSectionCode.filter("R"::equals).isPresent();
   }
 }
