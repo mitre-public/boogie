@@ -241,7 +241,7 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
 
   @Override
   public Optional<String> continuationRecordNumber() {
-    return Optional.of(continuationRecordNumber);
+    return Optional.ofNullable(continuationRecordNumber);
   }
 
   public Optional<String> multipleCode() {
