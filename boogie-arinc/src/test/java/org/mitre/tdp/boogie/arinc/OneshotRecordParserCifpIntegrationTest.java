@@ -39,7 +39,7 @@ class OneshotRecordParserCifpIntegrationTest {
         () -> assertEquals(14262, records.procedures().size(), "Procedures"),
         () -> assertEquals(0, records.firUirs().size(), "FIR-UIRs"),
         () -> assertEquals(1350, records.conrolledAirspaces().size(), "Controlled Airspaces"),
-        () -> assertEquals(1518, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),
+        () -> assertEquals(2080, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),
         () -> assertEquals("FAACIFP18", records.headerOne().get().fileName().get()),
         () -> assertEquals(6466, records.heliports().size(), "Heliports")
     );
