@@ -49,9 +49,9 @@ public interface RestrictiveAirspaceAssembler<AIRSPACE> {
     @Override
     public Stream<AIRSPACE> assemble(Collection<ArincRestrictiveAirspaceLeg> legs) {
       return legs.stream()
-          .collect(Collectors.groupingBy(RestrictiveAirspaceName.INSTANCE))
+          .collect(Collectors.groupingBy(RestrictiveAirspaceKey.INSTANCE))
           .values().stream()
-          .map(list -> list.stream().sorted(Comparator.comparingInt(ArincRestrictiveAirspaceLeg::sequenceNumber)).toList())
+          .map(list -> list.stream().sorted(Comparator.comparingInt(ArincRestrictiveAirspaceLeg::sequenceNumber).thenComparing(leg -> leg.continuationRecordNumber().orElse("0"))).toList())
           .map(this::toAirspace);
     }
 

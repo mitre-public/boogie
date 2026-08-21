@@ -36,6 +36,6 @@ public class TestLidoControlledAirspaceIntegration {
 
   @Test
   void test() {
-    assertEquals(11761, map.size());
+    assertEquals(12356, map.size());
   }
 }

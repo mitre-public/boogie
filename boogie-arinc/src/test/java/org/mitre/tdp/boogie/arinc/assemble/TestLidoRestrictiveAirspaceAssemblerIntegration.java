@@ -26,7 +26,7 @@ public class TestLidoRestrictiveAirspaceAssemblerIntegration {
 
   @Test
   void testAssembledCount() {
-    assertEquals(20503, airspaces.size(), "Should assemble restrictive airspaces from LIDO data");
+    assertEquals(19281, airspaces.size(), "Should assemble restrictive airspaces from LIDO data");
   }
 
   @Test

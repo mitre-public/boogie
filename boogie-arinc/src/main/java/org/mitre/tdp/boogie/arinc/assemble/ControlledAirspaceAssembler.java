@@ -56,7 +56,7 @@ public interface ControlledAirspaceAssembler<AIRSPACE> {
       return legs.stream()
           .collect(Collectors.groupingBy(ControlledAirspaceName.INSTANCE))
           .values().stream()
-          .map(l -> l.stream().sorted(Comparator.comparing(ArincControlledAirspaceLeg::sequenceNumber)).toList())
+          .map(l -> l.stream().sorted(Comparator.comparing(ArincControlledAirspaceLeg::sequenceNumber).thenComparing(leg -> leg.continuationRecordNumber().orElse("0"))).toList())
           .map(this::toAirspace);
     }
 

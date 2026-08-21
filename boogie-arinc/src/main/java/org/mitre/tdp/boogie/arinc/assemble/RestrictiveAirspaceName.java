@@ -14,7 +14,7 @@ public final class RestrictiveAirspaceName implements Function<ArincRestrictiveA
     public String apply(ArincRestrictiveAirspaceLeg representative) {
         String ident = Optional.of(representative.restrictiveAirspaceDesignation()).filter(s -> !s.endsWith("*"))
                 .or(representative::restrictiveAirspaceName)
-                .orElseThrow(() -> new IllegalArgumentException("No valid airspace designation found"));
+                .orElseThrow(() -> new IllegalArgumentException("No valid airspace designation found: " + representative));
         return ident.concat("-")
                 .concat(representative.restrictiveType())
                 .concat("-")

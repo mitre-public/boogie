@@ -36,8 +36,8 @@ public class OneShotRecordParserLidoIntegrationTest {
         () -> assertEquals(14588, records.airways().size(), "Airways"),
         () -> assertEquals(101085, records.procedures().size(), "Procedures"),
         () -> assertEquals(357, records.firUirs().size(), "FIRs and UIRs"),
-        () -> assertEquals(11761, records.conrolledAirspaces().size(), "Controlled Airspaces"),
-        () -> assertEquals(20503, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),
+        () -> assertEquals(12356, records.conrolledAirspaces().size(), "Controlled Airspaces"),
+        () -> assertEquals(19281, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),
         () -> assertEquals("A424-22std.dat", records.headerOne().get().fileName().get()),
         () -> assertEquals(9646, records.heliports().size(), "heliports")
     );
