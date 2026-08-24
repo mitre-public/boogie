@@ -90,4 +90,20 @@ class AirwayAssemblyStrategyTest {
         () -> assertTrue(result.recommendedNavaid().isEmpty())
     );
   }
+
+  @Test
+  void convertLeg_preservesTrueCourseReference() {
+    ArincAirwayLeg leg = ArincAirwayLeg.builder()
+        .sequenceNumber(20)
+        .outboundCourseValue(125.)
+        .outboundCourseIsTrue(true)
+        .build();
+
+    Leg result = STRATEGY.convertLeg(leg, null, null);
+
+    assertAll(
+        () -> assertEquals(125., result.outboundTrueCourse().orElseThrow()),
+        () -> assertTrue(result.outboundMagneticCourse().isEmpty())
+    );
+  }
 }

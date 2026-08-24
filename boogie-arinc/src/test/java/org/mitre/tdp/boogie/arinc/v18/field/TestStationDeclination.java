@@ -21,8 +21,13 @@ class TestStationDeclination {
   }
 
   @Test
-  void testTrueVariationsAreSkipped() {
+  void testNonZeroTrueVariationsAreSkipped() {
     assertEquals(Optional.empty(), parser.apply("T0140"));
+  }
+
+  @Test
+  void testTrueNorthReferenceIsRetainedAsZero() {
+    assertEquals(Optional.of(0.0), parser.apply("T0000"));
   }
 
   @Test

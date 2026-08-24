@@ -70,10 +70,8 @@ public interface AirportAssemblyStrategy<A, R, P> {
     @Override
     public Runway.Standard convertRunway(ArincAirport airport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2) {
 
-      MagneticVariation magneticVariation = magneticVariation(airport);
-
-      Optional<Course> trueCourse = origin.runwayMagneticBearing()
-          .map(magneticVariation::magneticToTrue)
+      Optional<Course> trueCourse = origin.runwayBearing()
+          .map(bearing -> bearing.trueDegrees(() -> magneticVariation(airport)))
           .map(Course::ofDegrees)
           .or(() -> ofNullable(reciprocal).map(r -> courseBetween(origin, r)));
 

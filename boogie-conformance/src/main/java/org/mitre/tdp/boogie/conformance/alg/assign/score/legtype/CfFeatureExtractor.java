@@ -9,12 +9,13 @@ import java.util.function.Supplier;
 import org.mitre.caasd.commons.HasPosition;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
 
 public final class CfFeatureExtractor implements Supplier<ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {
+
+  private static final MagneticVariationResolver MAGNETIC_VARIATION_RESOLVER = MagneticVariationResolver.getInstance();
   /**
    * Singleton instance of the extractor for shared use.
    */
@@ -61,15 +62,11 @@ public final class CfFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
   }
 
   double deriveDegreesOffCourse(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    // both of these are bearings - magnetic
-    double courseToFix = flyableLeg.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
+    double courseToFixTrue = MAGNETIC_VARIATION_RESOLVER
+        .outboundTrueCourse(conformablePoint, flyableLeg)
+        .orElseThrow(supplier("Outbound Course"));
+    double pointCourseTrue = conformablePoint.trueCourse().orElseThrow(supplier("Point Course"));
 
-    // convert the true course to the point to a magnetic one for comparison against the boundary/fix radials
-    MagneticVariation localVariation = MagneticVariationResolver.getInstance().magneticVariation(conformablePoint, flyableLeg);
-
-    double trueCourse = conformablePoint.trueCourse().orElseThrow(supplier("Point Course"));
-    double magneticCourse = localVariation.trueToMagnetic(trueCourse);
-
-    return abs(angleDifference(magneticCourse, courseToFix));
+    return abs(angleDifference(pointCourseTrue, courseToFixTrue));
   }
 }

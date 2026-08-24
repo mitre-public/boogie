@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
@@ -19,6 +18,8 @@ import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
  * Class for returning an appropriate {@link ViterbiFeatureVector} for a {@link PathTerminator#AF} leg.
  */
 public final class AfFeatureExtractor implements Supplier<ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {
+
+  private static final MagneticVariationResolver MAGNETIC_VARIATION_RESOLVER = MagneticVariationResolver.getInstance();
 
   /**
    * Singleton instance of the extractor for shared use.
@@ -54,18 +55,17 @@ public final class AfFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
   /**
    * Derives a boolean feature based on the angle from the recommended navaid (used as the center point of the AF arc) to the
    * supplied {@link ConformablePoint} and whether or not it falls between the boundary radials (found in the theta and outbound
-   * magnetic course fields of the leg).
+   * course fields of the leg).
    */
   double deriveRadialAngleFeature(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    double fixRadial = flyableLeg.current().theta().orElseThrow(supplier("Theta"));
-    double boundaryRadial = flyableLeg.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
+    Fix navaid = flyableLeg.current().recommendedNavaid().orElseThrow(supplier("Recommended Navaid"));
+    double fixRadialTrue = MAGNETIC_VARIATION_RESOLVER.thetaTrueCourse(conformablePoint, flyableLeg).orElseThrow(supplier("Theta"));
+    double boundaryRadialTrue = MAGNETIC_VARIATION_RESOLVER.outboundTrueCourse(conformablePoint, flyableLeg).orElseThrow(supplier("Outbound Course"));
     TurnDirection turnDirection = flyableLeg.current().turnDirection().orElseThrow(supplier("Turn Direction"));
 
-    Fix navaid = flyableLeg.current().recommendedNavaid().orElseThrow(supplier("Recommended Navaid"));
-    MagneticVariation localVariation = MagneticVariationResolver.getInstance().magneticVariation(conformablePoint, flyableLeg);
-    double pointRadial = localVariation.trueToMagnetic(navaid.courseInDegrees(conformablePoint));
+    double pointRadialTrue = navaid.courseInDegrees(conformablePoint);
 
-    return new RadialAngle(boundaryRadial, fixRadial, turnDirection).contains(pointRadial) ? 1. : 0.;
+    return new RadialAngle(boundaryRadialTrue, fixRadialTrue, turnDirection).contains(pointRadialTrue) ? 1. : 0.;
   }
 
   /**

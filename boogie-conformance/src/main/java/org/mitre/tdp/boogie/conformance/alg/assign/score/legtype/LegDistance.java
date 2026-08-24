@@ -13,7 +13,6 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 
 /**
@@ -21,6 +20,7 @@ import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
  * All distances are calculated in nautical miles (NM) unless otherwise specified.
  */
 public final class LegDistance {
+    private static final MagneticVariationResolver MAGNETIC_VARIATION_RESOLVER = MagneticVariationResolver.getInstance();
     private static final double PROJECTION_DISTANCE = 150.0;
     private static final double PROJECTION_STEP = 0.1;
     private static final int MAX_PROJECTIONS = 1000;
@@ -37,9 +37,9 @@ public final class LegDistance {
     requireNonNull(conformablePoint, "conformablePoint cannot be null");
     requireNonNull(flyableLeg, "flyableLeg cannot be null");
     LatLong current = flyableLeg.current().associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
-    MagneticVariation navMagVar = MagneticVariationResolver.getInstance().magneticVariation(conformablePoint, flyableLeg);
-    Double magCrs = flyableLeg.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
-    Double trueCourse = navMagVar.magneticToTrue(magCrs);
+    double trueCourse = MAGNETIC_VARIATION_RESOLVER
+        .outboundTrueCourse(conformablePoint, flyableLeg)
+        .orElseThrow(supplier("Outbound Course"));
     LatLong projection = current.projectOut(trueCourse, PROJECTION_DISTANCE);
     LatLong planeHere = conformablePoint.latLong();
 
@@ -115,7 +115,9 @@ private static LatLong findFirstNearestPoint(List<LatLong> projections, LatLong 
    */
   public static double nearestToRadial(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
     LatLong navaid = flyableLeg.current().recommendedNavaid().orElseThrow(supplier("No rec nav?")).latLong();
-    double theta = flyableLeg.current().theta().orElseThrow(supplier("No theta?"));
+    double theta = MAGNETIC_VARIATION_RESOLVER
+        .thetaTrueCourse(conformablePoint, flyableLeg)
+        .orElseThrow(supplier("No theta?"));
     double aircraftTrueCrs = conformablePoint.trueCourse().orElseThrow(supplier("True Course"));
 
     LatLong radialEndPoint = navaid.projectOut(theta, PROJECTION_DISTANCE);
@@ -139,10 +141,11 @@ private static LatLong findFirstNearestPoint(List<LatLong> projections, LatLong 
    */
   public static double deriveDegreesOffCourse(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
     double pointCourse = conformablePoint.trueCourse().orElseThrow(supplier("True Course"));
-    double expectedCourse = flyableLeg.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
-    MagneticVariation navMagVar = MagneticVariationResolver.getInstance().magneticVariation(conformablePoint, flyableLeg);
+    double expectedCourse = MAGNETIC_VARIATION_RESOLVER
+        .outboundTrueCourse(conformablePoint, flyableLeg)
+        .orElseThrow(supplier("Outbound Course"));
 
-    return abs(Spherical.angleDifference(navMagVar.magneticToTrue(expectedCourse), pointCourse));
+    return abs(Spherical.angleDifference(expectedCourse, pointCourse));
   }
 
   /**
@@ -153,8 +156,9 @@ private static LatLong findFirstNearestPoint(List<LatLong> projections, LatLong 
    */
   public static double fixOriginatingCrossTrackDistance(ConformablePoint conformablePoint, FlyableLeg leg) {
     LatLong fix = leg.current().associatedFix().map(Fix::latLong).orElseThrow(IllegalStateException::new);
-    MagneticVariation navMagVar = MagneticVariationResolver.getInstance().magneticVariation(conformablePoint, leg);
-    double legTrueCourse = leg.current().outboundMagneticCourse().map(navMagVar::magneticToTrue).orElseThrow(supplier("Outbound Magnetic Course"));
+    double legTrueCourse = MAGNETIC_VARIATION_RESOLVER
+        .outboundTrueCourse(conformablePoint, leg)
+        .orElseThrow(supplier("Outbound Course"));
     LatLong projection = fix.projectOut(legTrueCourse, PROJECTION_DISTANCE);
     double ctd = Spherical.crossTrackDistanceNM(HasPosition.from(fix), HasPosition.from(projection), HasPosition.from(conformablePoint.latLong()));
     return FastMath.abs(ctd);

@@ -17,6 +17,7 @@ import org.mitre.caasd.commons.Distance;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.Runway;
 
 /**
@@ -74,15 +75,9 @@ public interface AirportAssemblyStrategy<A, R, H> {
 
     @Override
     public Runway convertRunway(ArincAirport airport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2) {
-      MagneticVariation magneticVariation = magneticVariation(airport.portInfo());
-
-      Optional<Course> trueCourse = origin.runwayTrueBearing()
+      Optional<Course> trueCourse = referencedRunwayBearing(origin)
+          .map(bearing -> bearing.trueDegrees(() -> magneticVariation(airport.portInfo())))
           .map(Course::ofDegrees)
-          .or(() -> origin.runwayBearing().flatMap(bearing ->
-              origin.runwayBearingIsTrueBearing()
-                  .filter(Boolean::booleanValue)
-                  .map(t -> Course.ofDegrees(bearing))
-                  .or(() -> Optional.of(Course.ofDegrees(magneticVariation.magneticToTrue(bearing))))))
           .or(() -> ofNullable(reciprocal).map(r -> courseBetween(origin, r)));
 
       return Runway.builder()
@@ -103,6 +98,15 @@ public interface AirportAssemblyStrategy<A, R, H> {
 
     private Course courseBetween(ArincRunway origin, ArincRunway reciprocal) {
       return origin.pointInfo().latLong().courseTo(reciprocal.pointInfo().latLong());
+    }
+
+    private Optional<ReferencedCourse> referencedRunwayBearing(ArincRunway runway) {
+      return runway.runwayTrueBearing()
+          .map(ReferencedCourse::trueCourse)
+          .or(() -> runway.runwayBearing().map(bearing ->
+              runway.runwayBearingIsTrueBearing().orElse(false)
+                  ? ReferencedCourse.trueCourse(bearing)
+                  : ReferencedCourse.magnetic(bearing)));
     }
 
     private MagneticVariation magneticVariation(ArincPortInfo portInfo) {

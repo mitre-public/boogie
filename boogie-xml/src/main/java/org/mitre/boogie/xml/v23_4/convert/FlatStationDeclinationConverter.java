@@ -9,6 +9,7 @@ import java.util.function.Function;
 import org.mitre.boogie.xml.util.MagVar;
 import org.mitre.boogie.xml.util.MagneticVariationConverter;
 import org.mitre.boogie.xml.v23_4.generated.StationDeclination;
+import org.mitre.boogie.xml.v23_4.generated.StationDeclinationEWT;
 import org.mitre.tdp.boogie.MagneticVariation;
 
 final class FlatStationDeclinationConverter implements Function<StationDeclination, MagneticVariation> {
@@ -23,6 +24,7 @@ final class FlatStationDeclinationConverter implements Function<StationDeclinati
   public MagneticVariation apply(StationDeclination sd) {
     return Optional.ofNullable(sd)
         .filter(s -> nonNull(s.getStationDeclinationEWT()) && nonNull(s.getStationDeclinationValue()))
+        .filter(s -> !StationDeclinationEWT.TRUE.equals(s.getStationDeclinationEWT()))
         .map(s -> MagVar.from(
             Optional.ofNullable(s.getStationDeclinationEWT()).map(Enum::name).orElseThrow(IllegalStateException::new),
             Optional.ofNullable(s.getStationDeclinationValue()).map(BigDecimal::doubleValue).orElseThrow(IllegalStateException::new)))

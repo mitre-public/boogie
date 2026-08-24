@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.ProcedureType;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
@@ -23,9 +24,11 @@ import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
 public class TestProcedureLegSpec {
 
   private static final ArincRecordParser V18 = ArincRecordParser.standard(new ProcedureLegSpec());
+  private static final ProcedureLegConverter CONVERTER = new ProcedureLegConverter();
 
   private static final String IF = "SUSAP KJFKK6FV13R  V      010ASALTK6EA1E  D    IF CRI K6      22480060        D     03000     18000                 3 DS   154932004";
   private static final String ENG_OUT = "SPACP VVTHVVDEO03  0RW03  010         1        VA                     0290        + 01600     09022                        720981902\n";
+  private static final String CYYH_PI = "SCANP CYYHCYFN15   AYYH  F010YYH  CYDB0N   L   PI YCB CY      07871999350T0100D   + 01700     18000                 U  S   113952605";
 
   @Test
   void testEngineOutParse() {
@@ -369,6 +372,21 @@ public class TestProcedureLegSpec {
         () -> assertFalse(record.optionalField("centerFixSubSectionCode").isPresent(), "centerFixSubSectionCode"),
         () -> assertEquals(Integer.valueOf(53348), record.requiredField("fileRecordNumber"), "fileRecordNumber"),
         () -> assertEquals("2014", record.requiredField("lastUpdateCycle"), "lastUpdateCycle")
+    );
+  }
+
+  @Test
+  void testCyyhTrueCourse() {
+    ArincRecord record = V18.parse(CYYH_PI).orElseThrow();
+    ArincProcedureLeg leg = CONVERTER.apply(record).orElseThrow();
+
+    assertAll(
+        () -> assertEquals("350T", record.rawField("outboundMagneticCourse")),
+        () -> assertEquals(350.0, record.<Double>requiredField("outboundMagneticCourse")),
+        () -> assertTrue(new ProcedureLegValidator().test(record)),
+        () -> assertEquals(ReferencedCourse.trueCourse(350.0), leg.outboundCourse().orElseThrow()),
+        () -> assertTrue(leg.outboundMagneticCourse().isEmpty()),
+        () -> assertEquals(350.0, leg.outboundTrueCourse().orElseThrow())
     );
   }
 }

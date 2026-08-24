@@ -33,6 +33,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.ResolvedLeg;
 import org.mitre.tdp.boogie.alg.chooser.graph.LinkableToken;
@@ -445,6 +446,16 @@ final class GraphicalRouteChooser implements RouteChooser {
     @Override
     public Optional<Double> outboundMagneticCourse() {
       return leg.outboundMagneticCourse();
+    }
+
+    @Override
+    public Optional<Double> outboundTrueCourse() {
+      return leg.outboundTrueCourse();
+    }
+
+    @Override
+    public Optional<ReferencedCourse> outboundCourse() {
+      return leg.outboundCourse();
     }
 
     @Override

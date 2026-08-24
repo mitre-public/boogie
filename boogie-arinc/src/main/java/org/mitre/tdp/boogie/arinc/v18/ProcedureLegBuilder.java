@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -35,6 +36,10 @@ public final class ProcedureLegBuilder implements Function<ArincRecord, ArincPro
     Optional<Double> theta = arincRecord.optionalField("theta");
     Optional<Double> rho = arincRecord.optionalField("rho");
     Optional<Double> outboundMagneticCourse = arincRecord.optionalField("outboundMagneticCourse");
+    Optional<ReferencedCourse> outboundCourse = outboundMagneticCourse.map(course ->
+        arincRecord.rawField("outboundMagneticCourse").trim().endsWith("T")
+            ? ReferencedCourse.trueCourse(course)
+            : ReferencedCourse.magnetic(course));
     Optional<String> routeHoldDistanceTime = arincRecord.optionalField("routeHoldDistanceTime");
 
     RouteHoldDistanceTime routeHoldDistanceTimeConverter = new RouteHoldDistanceTime();
@@ -83,7 +88,7 @@ public final class ProcedureLegBuilder implements Function<ArincRecord, ArincPro
         .arcRadius(arcRadius.orElse(null))
         .theta(theta.orElse(null))
         .rho(rho.orElse(null))
-        .outboundMagneticCourse(outboundMagneticCourse.orElse(null))
+        .outboundCourse(outboundCourse.orElse(null))
         .routeHoldDistanceTime(routeHoldDistanceTime.orElse(null))
         .holdTime(holdTime.orElse(null))
         .routeDistance(routeDistance.orElse(null))

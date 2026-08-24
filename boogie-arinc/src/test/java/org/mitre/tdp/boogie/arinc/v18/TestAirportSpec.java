@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -118,6 +119,19 @@ public class TestAirportSpec {
   }
 
   public static final String KJFK = "SUSAP KJFKK6AJFK     110000145Y N40382374W073464329W013000013250JFK K61800018000CR00Y NAR    NEW YORK/JOHN F KENNEDY INTL  145992003";
+  public static final String CYYH = "SCANP CYYHCYAYYH     110000040YSN69324794W093343728T000000090250      1800018000CT00YTWGE    TALOYOAK                      113812605";
+
+  @Test
+  void testParseCyyhTrueReference() {
+    ArincRecord record = PARSER.parse(CYYH).orElseThrow(AssertionError::new);
+
+    assertAll(
+        () -> assertEquals("T0000", record.rawField("magneticVariation")),
+        () -> assertEquals(0.0, record.<Double>requiredField("magneticVariation")),
+        () -> assertEquals(MagneticTrueIndicator.T, record.requiredField("magneticTrueIndicator")),
+        () -> assertTrue(new AirportValidator().test(record))
+    );
+  }
 
   @Test
   void testSpecMatches_KJFK() {

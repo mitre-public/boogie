@@ -200,6 +200,23 @@ class ProcedureAssemblyStrategyTest {
   }
 
   @Test
+  void convertLeg_preservesTrueCourseReference() {
+    ArincProcedureLeg leg = ArincProcedureLeg.builder()
+        .sequenceNumber(20)
+        .pathAndTermination("CA")
+        .courseValue(125.)
+        .courseIsTrue(true)
+        .build();
+
+    Leg result = STRATEGY.convertLeg(leg, null, null, null);
+
+    assertAll(
+        () -> assertEquals(125., result.outboundTrueCourse().orElseThrow()),
+        () -> assertTrue(result.outboundMagneticCourse().isEmpty())
+    );
+  }
+
+  @Test
   void convertLeg_unknownPathTerminator_defaultsToTF() {
     ArincProcedureLeg leg = ArincProcedureLeg.builder()
         .sequenceNumber(30)

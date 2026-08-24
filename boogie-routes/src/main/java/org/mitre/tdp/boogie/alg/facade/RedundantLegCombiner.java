@@ -16,6 +16,7 @@ import java.util.function.UnaryOperator;
 
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.fn.LeftMerger;
 
@@ -65,17 +66,17 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
    * @return a collapsed leg that keeps constraints from preferred leg and courses if needed.
    */
   private Leg merge(ExpandedRouteLeg previous, ExpandedRouteLeg preferred) {
-    Double course = Optional.of(previous)
+    ReferencedCourse course = Optional.of(previous)
         .filter(i -> i.pathTerminator() == PathTerminator.CI || i.pathTerminator() == PathTerminator.CF) //we need to keep the course from these if its these leg types
-        .map(i -> i.outboundMagneticCourse().orElseThrow(IllegalStateException::new))
-        .orElse(preferred.outboundMagneticCourse().orElse(null));
+        .map(i -> i.outboundCourse().orElseThrow(IllegalStateException::new))
+        .orElse(preferred.outboundCourse().orElse(null));
     return Leg.builder(previous.pathTerminator(), preferred.sequenceNumber())
         .associatedFix(preferred.associatedFix().orElse(null))
         .recommendedNavaid(preferred.recommendedNavaid().orElse(null))
         .sequenceNumber(preferred.sequenceNumber())
         .speedConstraint(preferred.speedConstraint())
         .altitudeConstraint(preferred.altitudeConstraint())
-        .outboundMagneticCourse(course)
+        .outboundCourse(course)
         .theta(preferred.theta().orElse(null))
         .rho(preferred.rho().orElse(null))
         .rnp(preferred.rnp().orElse(null))

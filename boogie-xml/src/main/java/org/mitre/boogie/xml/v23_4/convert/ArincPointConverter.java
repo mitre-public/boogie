@@ -43,4 +43,5 @@ final class ArincPointConverter implements Function<A424Point, ArincPointInfo> {
         .referenceId(waypoint.getReferenceId())
         .build();
   }
+
 }

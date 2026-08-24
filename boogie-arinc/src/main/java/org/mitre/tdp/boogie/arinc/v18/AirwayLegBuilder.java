@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -33,6 +34,10 @@ public final class AirwayLegBuilder implements Function<ArincRecord, ArincAirway
     Optional<Double> theta = arincRecord.optionalField("theta");
     Optional<Double> rho = arincRecord.optionalField("rho");
     Optional<Double> outboundMagneticCourse = arincRecord.optionalField("outboundMagneticCourse");
+    Optional<ReferencedCourse> outboundCourse = outboundMagneticCourse.map(course ->
+        arincRecord.rawField("outboundMagneticCourse").trim().endsWith("T")
+            ? ReferencedCourse.trueCourse(course)
+            : ReferencedCourse.magnetic(course));
     Optional<String> routeHoldDistanceTime = arincRecord.optionalField("routeHoldDistanceTime");
     Optional<Double> inboundMagneticCourse = arincRecord.optionalField("inboundMagneticCourse");
     Optional<Double> minAltitude1 = arincRecord.optionalField("minAltitude1");
@@ -67,7 +72,7 @@ public final class AirwayLegBuilder implements Function<ArincRecord, ArincAirway
         .rnp(rnp.orElse(null))
         .theta(theta.orElse(null))
         .rho(rho.orElse(null))
-        .outboundMagneticCourse(outboundMagneticCourse.orElse(null))
+        .outboundCourse(outboundCourse.orElse(null))
         .routeHoldDistanceTime(routeHoldDistanceTime.orElse(null))
         .routeDistance(routeHoldDistanceTime.flatMap(routeHoldDistanceTimeConverter::asDistanceInNm).orElse(null))
         .holdTime(routeHoldDistanceTime.flatMap(routeHoldDistanceTimeConverter::asDuration).orElse(null))

@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import org.mitre.tdp.boogie.alg.resolve.ResolvedToken;
@@ -94,6 +95,16 @@ public final class ExpandedRouteLeg implements Serializable, Leg {
   @Override
   public Optional<Double> outboundMagneticCourse() {
     return leg.outboundMagneticCourse();
+  }
+
+  @Override
+  public Optional<Double> outboundTrueCourse() {
+    return leg.outboundTrueCourse();
+  }
+
+  @Override
+  public Optional<ReferencedCourse> outboundCourse() {
+    return leg.outboundCourse();
   }
 
   @Override

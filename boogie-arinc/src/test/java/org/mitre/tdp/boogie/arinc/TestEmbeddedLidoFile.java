@@ -15,13 +15,13 @@ public class TestEmbeddedLidoFile {
     assertEquals(file, EmbeddedLidoFile.instance(), "Singleton instance should be the same.");
     assertAll(
         () -> assertEquals(26960, EmbeddedLidoFile.instance().arincAirports().size(), "Airports"),
-        () -> assertEquals(34124, EmbeddedLidoFile.instance().arincRunways().size(), "Runways"), //it went down now that we want headings
+        () -> assertEquals(34218, EmbeddedLidoFile.instance().arincRunways().size(), "Runways"),
         () -> assertEquals(4426, EmbeddedLidoFile.instance().arincLocalizerGlideSlopes().size(), "LocalizerGlideSlopes"),
         () -> assertEquals(258178, EmbeddedLidoFile.instance().arincWaypoints().size(), "Waypoints"),
         () -> assertEquals(3854, EmbeddedLidoFile.instance().arincNdbNavaids().size(), "NDB Navaids"),
         () -> assertEquals(8361, EmbeddedLidoFile.instance().arincVhfNavaids().size(), "VHF Navaids"),
         () -> assertEquals(109403, EmbeddedLidoFile.instance().arincAirwayLegs().size(), "Airway Legs"),
-        () -> assertEquals(861925, EmbeddedLidoFile.instance().arincProcedureLegs().size(), "Procedure Legs"),
+        () -> assertEquals(862176, EmbeddedLidoFile.instance().arincProcedureLegs().size(), "Procedure Legs"),
         () -> assertEquals(31656, EmbeddedLidoFile.instance().arincHoldingPatterns().size(), "Holding Patterns"),
         () -> assertEquals(315, EmbeddedLidoFile.instance().arincGnssLandingSystems().size(), "Gnss Landing Systems"),
         () -> assertEquals(308661, EmbeddedLidoFile.instance().arincFirUirLegs().size(), "FIR and UIR Legs"),

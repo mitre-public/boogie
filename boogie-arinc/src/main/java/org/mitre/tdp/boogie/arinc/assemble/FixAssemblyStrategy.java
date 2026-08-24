@@ -159,11 +159,14 @@ public interface FixAssemblyStrategy<F> {
     public Fix convertVhfNavaid(ArincVhfNavaid navaid) {
 
       Instant cycleDate = AiracCycle.startDate(navaid.lastUpdateCycle());
+      MagneticVariation magneticVariation = navaid.stationDeclination()
+          .map(MagneticVariation::ofDegrees)
+          .orElseGet(() -> MagneticVariation.from(navaid.latitude(), navaid.longitude(), cycleDate));
 
       return Fix.builder()
           .fixIdentifier(navaid.vhfIdentifier())
           .latLong(LatLong.of(navaid.latitude(), navaid.longitude()))
-          .magneticVariation(MagneticVariation.from(navaid.latitude(), navaid.longitude(), cycleDate))
+          .magneticVariation(magneticVariation)
           .build();
     }
 

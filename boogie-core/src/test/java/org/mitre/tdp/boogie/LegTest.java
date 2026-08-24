@@ -2,8 +2,15 @@ package org.mitre.tdp.boogie;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Answers.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
@@ -45,6 +52,66 @@ class LegTest {
         () -> assertEquals(Range.all(), leg.altitudeConstraint(), "Should be all by default."),
         () -> assertEquals(Range.all(), leg.speedConstraint(), "Should be all by default."),
         () -> assertEquals(29., leg.arcRadius().orElse(0.))
+    );
+  }
+
+  @Test
+  void testOutboundCourseReferenceAndToBuilder() {
+    Leg.Standard magnetic = Leg.builder(PathTerminator.CA, 1)
+        .outboundMagneticCourse(94.0)
+        .build();
+    Leg.Standard truth = Leg.builder(PathTerminator.CA, 1)
+        .outboundTrueCourse(94.0)
+        .build();
+
+    assertAll(
+        () -> assertEquals(94.0, magnetic.outboundMagneticCourse().orElseThrow()),
+        () -> assertFalse(magnetic.outboundTrueCourse().isPresent()),
+        () -> assertEquals(ReferencedCourse.magnetic(94.0), magnetic.outboundCourse().orElseThrow()),
+        () -> assertFalse(truth.outboundMagneticCourse().isPresent()),
+        () -> assertEquals(94.0, truth.outboundTrueCourse().orElseThrow()),
+        () -> assertEquals(ReferencedCourse.trueCourse(94.0), truth.outboundCourse().orElseThrow()),
+        () -> assertEquals(truth, truth.toBuilder().build()),
+        () -> assertNotEquals(magnetic, truth)
+    );
+  }
+
+  @Test
+  void testOutboundCourseBuilderSettersReplaceThePreviousReference() {
+    Leg leg = Leg.builder(PathTerminator.CA, 1)
+        .outboundTrueCourse(94.0)
+        .outboundMagneticCourse(95.0)
+        .build();
+
+    assertAll(
+        () -> assertEquals(ReferencedCourse.magnetic(95.0), leg.outboundCourse().orElseThrow()),
+        () -> assertEquals(95.0, leg.outboundMagneticCourse().orElseThrow()),
+        () -> assertTrue(leg.outboundTrueCourse().isEmpty())
+    );
+  }
+
+  @Test
+  void testRecordDelegatesTrueOutboundCourse() {
+    Leg.Standard delegate = Leg.builder(PathTerminator.CA, 1)
+        .outboundTrueCourse(94.0)
+        .build();
+    Leg.Record<String> record = Leg.record("source", delegate);
+
+    assertAll(
+        () -> assertEquals(delegate.outboundCourse(), record.outboundCourse()),
+        () -> assertEquals(delegate.outboundTrueCourse(), record.outboundTrueCourse()),
+        () -> assertTrue(record.outboundMagneticCourse().isEmpty())
+    );
+  }
+
+  @Test
+  void testLegacyImplementationGetsCanonicalMagneticCourseFromDefaultMethod() {
+    Leg legacy = mock(Leg.class, CALLS_REAL_METHODS);
+    when(legacy.outboundMagneticCourse()).thenReturn(Optional.of(94.0));
+
+    assertAll(
+        () -> assertTrue(legacy.outboundTrueCourse().isEmpty()),
+        () -> assertEquals(ReferencedCourse.magnetic(94.0), legacy.outboundCourse().orElseThrow())
     );
   }
 

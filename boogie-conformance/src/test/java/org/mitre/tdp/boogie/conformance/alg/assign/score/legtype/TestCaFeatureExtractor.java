@@ -12,6 +12,7 @@ import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 
@@ -29,6 +30,7 @@ class TestCaFeatureExtractor {
 
     Leg va = mock(Leg.class);
     when(va.outboundMagneticCourse()).thenReturn(Optional.of(100.));
+    when(va.outboundCourse()).thenReturn(Optional.of(ReferencedCourse.magnetic(100.)));
     when(va.altitudeConstraint()).thenReturn(Range.atLeast(8000.));
     when(va.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
 

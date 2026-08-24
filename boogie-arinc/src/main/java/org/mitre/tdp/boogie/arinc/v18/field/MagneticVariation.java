@@ -17,7 +17,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * <br>
  * e.g. E0140, E0000, T0000
  * <br>
- * As in {@link InboundMagneticCourse} this class filters out variations listed as true north. Use {@link org.mitre.tdp.boogie.Declinations} instead for your work.
+ * {@code T0000} is retained as an effective variation of zero degrees. Other true-reference values are not supported.
  */
 public final class MagneticVariation implements FieldSpec<Double> {
 
@@ -37,10 +37,25 @@ public final class MagneticVariation implements FieldSpec<Double> {
   public Optional<Double> apply(String fieldValue) {
     return Optional.of(fieldValue)
         .map(String::trim)
-        .filter(s -> !s.isEmpty())
-        .filter(s -> !s.startsWith("T"))
-        .filter(s -> isNumeric(s.substring(1)))
+        .filter(s -> s.length() == fieldLength())
+        .flatMap(MagneticVariation::parse);
+  }
+
+  private static Optional<Double> parse(String value) {
+    return parseTrueReference(value).or(() -> parseEastWestVariation(value));
+  }
+
+  private static Optional<Double> parseTrueReference(String value) {
+    return Optional.of(value)
+        .filter("T0000"::equals)
+        .map(ignored -> 0.0);
+  }
+
+  private static Optional<Double> parseEastWestVariation(String value) {
+    return Optional.of(value)
         .filter(s -> allowedDirections.contains(s.substring(0, 1)))
-        .flatMap(s -> ArincDecimalParser.INSTANCE.parseDoubleWithTenths(s.substring(1)).map(value -> sign(s.substring(0, 1)) * value));
+        .filter(s -> isNumeric(s.substring(1)))
+        .flatMap(s -> ArincDecimalParser.INSTANCE.parseDoubleWithTenths(s.substring(1))
+            .map(parsed -> sign(s.substring(0, 1)) * parsed));
   }
 }

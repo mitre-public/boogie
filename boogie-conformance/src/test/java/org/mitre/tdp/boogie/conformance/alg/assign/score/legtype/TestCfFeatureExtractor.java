@@ -16,6 +16,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
 import org.mitre.tdp.boogie.conformance.alg.assign.score.MissingRequiredFieldException;
@@ -27,6 +28,7 @@ class TestCfFeatureExtractor {
     Leg VI = VI();
     Leg CF = CF();
     when(CF.outboundMagneticCourse()).thenReturn(empty());
+    when(CF.outboundCourse()).thenReturn(empty());
 
     FlyableLeg flyableLeg = new FlyableLeg(VI, CF, null, dummyRoute());
 
@@ -66,6 +68,7 @@ class TestCfFeatureExtractor {
     when(CF.pathTerminator()).thenReturn(PathTerminator.CF);
     when(CF.recommendedNavaid()).thenReturn((Optional) Optional.of(navaid));
     when(CF.outboundMagneticCourse()).thenReturn(Optional.of(199.4));
+    when(CF.outboundCourse()).thenReturn(Optional.of(ReferencedCourse.magnetic(199.4)));
     when(CF.theta()).thenReturn(Optional.of(13.7));
     when(CF.rho()).thenReturn(Optional.of(137.2));
     when(CF.routeDistance()).thenReturn(Optional.of(2.7));

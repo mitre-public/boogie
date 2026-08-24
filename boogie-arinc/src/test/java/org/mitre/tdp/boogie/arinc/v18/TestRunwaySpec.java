@@ -9,8 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.CourseReference;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -19,8 +21,10 @@ import org.mitre.tdp.boogie.arinc.ArincRecord;
 public class TestRunwaySpec {
   
   private static final ArincRecordParser PARSER = ArincRecordParser.standard(new RunwaySpec());
+  private static final RunwayConverter CONVERTER = new RunwayConverter();
 
   public static final String runway1 = "SUSAP KJFKK6GRW04L   1120790440 N40372318W073470505+0000          00012046057200 IHIQ10000           CONC     090RBWT      155192003";
+  private static final String CYYH_RW15 = "SCANP CYYHCYGRW15    104009151T N69330518W093350470-0873          000900000  100R     0000     050                         114232605";
 
   @Test
   void testSpecMatchesRunwayRecord1() {
@@ -170,6 +174,22 @@ public class TestRunwaySpec {
         () -> assertEquals(Optional.empty(), record.optionalField("runwayDescription")),
         () -> assertEquals(Integer.valueOf(4957), record.requiredField("fileRecordNumber")),
         () -> assertEquals("1812", record.requiredField("lastUpdateCycle"))
+    );
+  }
+
+  @Test
+  void testParseCyyhTrueBearing() {
+    ArincRecord record = PARSER.parse(CYYH_RW15).orElseThrow();
+    ArincRunway runway = CONVERTER.apply(record).orElseThrow();
+
+    assertAll(
+        () -> assertEquals("151T", record.rawField("runwayMagneticBearing")),
+        () -> assertEquals(151.0, record.<Double>requiredField("runwayMagneticBearing")),
+        () -> assertTrue(new RunwayValidator().test(record)),
+        () -> assertEquals(151.0, runway.runwayBearing().orElseThrow().degrees()),
+        () -> assertEquals(CourseReference.TRUE, runway.runwayBearing().orElseThrow().reference()),
+        () -> assertEquals(151.0, runway.runwayTrueBearing().orElseThrow()),
+        () -> assertTrue(runway.runwayMagneticBearing().isEmpty())
     );
   }
 }

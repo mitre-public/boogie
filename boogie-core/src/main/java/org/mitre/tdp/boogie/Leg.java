@@ -22,11 +22,11 @@ public interface Leg {
   /**
    * Returns a builder for a standard leg implementation containing a settable superset of the fields for any given type of leg,
    * mirroring the field-level spec for legs outlined in ARINC-424.
-   *
-   * <p>The {@link Leg} interface provides factory/builder methods for the various specific types of legs with only the relevant
+   * <p>
+   * The {@link Leg} interface provides factory/builder methods for the various specific types of legs with only the relevant
    * field options settable - however the final built object is of the {@link Standard} type.
-   *
-   * <p>It is recommended that clients use the alternate {@link PathTerminator}-specific builders/factory methods instead this
+   * <p>
+   * It is recommended that clients use the alternate {@link PathTerminator}-specific builders/factory methods instead this
    * method where possible for clarity.
    *
    * @param pathTerminator all legs regardless of type must have a {@link PathTerminator} designator
@@ -75,6 +75,17 @@ public interface Leg {
   }
 
   /**
+   * Returns an AF leg builder initialized with an outbound course whose north reference is explicit.
+   */
+  static AfBuilder afBuilder(Fix associatedFix, Fix recommendedNavaid, int sequenceNumber, ReferencedCourse outboundCourse) {
+    return new AfBuilder()
+        .associatedFix(associatedFix)
+        .recommendedNavaid(recommendedNavaid)
+        .sequenceNumber(sequenceNumber)
+        .outboundCourse(outboundCourse);
+  }
+
+  /**
    * Returns a new constrained instance of a builder for {@link Leg.Standard} specific to {@link PathTerminator#IF} legs.
    *
    * <p>This builder contains a subset of the setters available on the {@link Standard.Builder} and will throw exceptions when
@@ -106,6 +117,13 @@ public interface Leg {
 
   static CfBuilder cfBuilder(Fix associatedFix, int sequenceNumber, double outboundMagneticCourse) {
     return new CfBuilder().associatedFix(associatedFix).sequenceNumber(sequenceNumber).outboundMagneticCourse(outboundMagneticCourse);
+  }
+
+  /**
+   * Returns a CF leg builder initialized with an outbound course whose north reference is explicit.
+   */
+  static CfBuilder cfBuilder(Fix associatedFix, int sequenceNumber, ReferencedCourse outboundCourse) {
+    return new CfBuilder().associatedFix(associatedFix).sequenceNumber(sequenceNumber).outboundCourse(outboundCourse);
   }
 
   /**
@@ -154,6 +172,34 @@ public interface Leg {
    * For non-airway legs the inbound magnetic course is taken to be the outbound magnetic course of the previous leg.
    */
   Optional<Double> outboundMagneticCourse();
+
+  /**
+   * The true course to fly on the current leg, when the course was supplied with reference to true north.
+   *
+   * <p>This default preserves compatibility with implementations created before true outbound courses were supported. A leg must
+   * not provide both a magnetic and true outbound course.
+   */
+  default Optional<Double> outboundTrueCourse() {
+    return Optional.empty();
+  }
+
+  /**
+   * The outbound course together with the north reference used to express it.
+   * <p>
+   * Existing implementations which provide only {@link #outboundMagneticCourse()} are represented as magnetic courses. A leg
+   * must not provide both a magnetic and true outbound course.
+   */
+  default Optional<ReferencedCourse> outboundCourse() {
+    Optional<Double> magnetic = requireNonNull(outboundMagneticCourse(), "Default implementation of outboundMagneticCourse() cannot be null.");
+    Optional<Double> truth = requireNonNull(outboundTrueCourse(), "Default implementation of outboundTrueCourse() cannot be null.");
+
+    if (magnetic.isPresent() && truth.isPresent()) {
+      throw new IllegalStateException("Default implementation of outboundCourse() cannot have both magnetic and true outbound courses.");
+    }
+
+    return magnetic.map(ReferencedCourse::magnetic)
+        .or(() -> truth.map(ReferencedCourse::trueCourse));
+  }
 
   /**
    * For legs with a recommended navaid this is the distance in nm to that navaid.
@@ -274,7 +320,7 @@ public interface Leg {
 
     private final int sequenceNumber;
 
-    private final Double outboundMagneticCourse;
+    private final ReferencedCourse outboundCourse;
 
     private final Double rho;
 
@@ -310,7 +356,7 @@ public interface Leg {
       this.centerFix = builder.centerFix;
       this.pathTerminator = requireNonNull(builder.pathTerminator);
       this.sequenceNumber = builder.sequenceNumber;
-      this.outboundMagneticCourse = builder.outboundMagneticCourse;
+      this.outboundCourse = builder.outboundCourse;
       this.rho = builder.rho;
       this.theta = builder.theta;
       this.rnp = builder.rnp;
@@ -353,7 +399,21 @@ public interface Leg {
 
     @Override
     public Optional<Double> outboundMagneticCourse() {
-      return Optional.ofNullable(outboundMagneticCourse);
+      return outboundCourse()
+          .filter(course -> CourseReference.MAGNETIC.equals(course.reference()))
+          .map(ReferencedCourse::degrees);
+    }
+
+    @Override
+    public Optional<Double> outboundTrueCourse() {
+      return outboundCourse()
+          .filter(course -> CourseReference.TRUE.equals(course.reference()))
+          .map(ReferencedCourse::degrees);
+    }
+
+    @Override
+    public Optional<ReferencedCourse> outboundCourse() {
+      return Optional.ofNullable(outboundCourse);
     }
 
     @Override
@@ -427,7 +487,7 @@ public interface Leg {
           .recommendedNavaid(recommendedNavaid().orElse(null))
           .centerFix(centerFix().orElse(null))
           .sequenceNumber(sequenceNumber())
-          .outboundMagneticCourse(outboundMagneticCourse().orElse(null))
+          .outboundCourse(outboundCourse().orElse(null))
           .rho(rho().orElse(null))
           .theta(theta().orElse(null))
           .rnp(rnp().orElse(null))
@@ -465,7 +525,7 @@ public interface Leg {
           && Objects.equals(recommendedNavaid, standard.recommendedNavaid)
           && Objects.equals(centerFix, standard.centerFix)
           && pathTerminator == standard.pathTerminator
-          && Objects.equals(outboundMagneticCourse, standard.outboundMagneticCourse)
+          && Objects.equals(outboundCourse, standard.outboundCourse)
           && Objects.equals(rho, standard.rho) && Objects.equals(theta, standard.theta)
           && Objects.equals(rnp, standard.rnp) && Objects.equals(routeDistance, standard.routeDistance)
           && Objects.equals(holdTime, standard.holdTime)
@@ -485,7 +545,7 @@ public interface Leg {
     }
 
     private int computeHashCode() {
-      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundMagneticCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix, isIntermediateOrInitialApproachFix, arcRadius);
+      return Objects.hash(associatedFix, recommendedNavaid, centerFix, pathTerminator, sequenceNumber, outboundCourse, rho, theta, rnp, routeDistance, holdTime, verticalAngle, speedConstraint, altitudeConstraint, turnDirection, isFlyOverFix, isPublishedHoldingFix, isIntermediateOrInitialApproachFix, arcRadius);
     }
 
     @Override
@@ -496,7 +556,7 @@ public interface Leg {
           ", centerFix=" + centerFix +
           ", pathTerminator=" + pathTerminator +
           ", sequenceNumber=" + sequenceNumber +
-          ", outboundMagneticCourse=" + outboundMagneticCourse +
+          ", outboundCourse=" + outboundCourse +
           ", rho=" + rho +
           ", theta=" + theta +
           ", rnp=" + rnp +
@@ -519,7 +579,7 @@ public interface Leg {
       private Fix centerFix;
       private final PathTerminator pathTerminator;
       private Integer sequenceNumber;
-      private Double outboundMagneticCourse;
+      private ReferencedCourse outboundCourse;
       private Double rho;
       private Double theta;
       private Double rnp;
@@ -559,7 +619,21 @@ public interface Leg {
       }
 
       public Builder outboundMagneticCourse(Double outboundMagneticCourse) {
-        this.outboundMagneticCourse = outboundMagneticCourse;
+        this.outboundCourse = Optional.ofNullable(outboundMagneticCourse)
+            .map(ReferencedCourse::magnetic)
+            .orElse(null);
+        return this; //don't love it, but its better than breaking everyone.
+      }
+
+      public Builder outboundTrueCourse(Double outboundTrueCourse) {
+        this.outboundCourse = Optional.ofNullable(outboundTrueCourse)
+            .map(ReferencedCourse::trueCourse)
+            .orElse(null);
+        return this; //for symmetry with outboundMagneticCourse
+      }
+
+      public Builder outboundCourse(ReferencedCourse outboundCourse) {
+        this.outboundCourse = outboundCourse;
         return this;
       }
 
@@ -682,6 +756,16 @@ public interface Leg {
     @Override
     public Optional<Double> outboundMagneticCourse() {
       return delegate.outboundMagneticCourse();
+    }
+
+    @Override
+    public Optional<Double> outboundTrueCourse() {
+      return delegate.outboundTrueCourse();
+    }
+
+    @Override
+    public Optional<ReferencedCourse> outboundCourse() {
+      return delegate.outboundCourse();
     }
 
     @Override
@@ -826,6 +910,16 @@ public interface Leg {
       return this;
     }
 
+    public AfBuilder outboundTrueCourse(double outboundTrueCourse) {
+      this.delegate.outboundTrueCourse(outboundTrueCourse);
+      return this;
+    }
+
+    public AfBuilder outboundCourse(ReferencedCourse outboundCourse) {
+      this.delegate.outboundCourse(requireNonNull(outboundCourse));
+      return this;
+    }
+
     public AfBuilder rho(double rho) {
       this.delegate.rho(rho);
       return this;
@@ -855,7 +949,7 @@ public interface Leg {
       requireNonNull(delegate.associatedFix, "Required: Associated Fix");
       requireNonNull(delegate.recommendedNavaid, "Required: Recommended Navaid");
       requireNonNull(delegate.sequenceNumber, "Required: Sequence Number");
-      requireNonNull(delegate.outboundMagneticCourse, "Required: Outbound Magnetic Course");
+      requireNonNull(delegate.outboundCourse, "Required: Outbound Course");
       requireNonNull(delegate.theta, "Required: Theta");
       requireNonNull(delegate.rho, "Required: Rho");
       requireNonNull(delegate.turnDirection, "Required: TurnDirection");
@@ -880,6 +974,16 @@ public interface Leg {
       return this;
     }
 
+    public CaBuilder outboundTrueCourse(double outboundTrueCourse) {
+      this.delegate.outboundTrueCourse(outboundTrueCourse);
+      return this;
+    }
+
+    public CaBuilder outboundCourse(ReferencedCourse outboundCourse) {
+      this.delegate.outboundCourse(requireNonNull(outboundCourse));
+      return this;
+    }
+
     public CaBuilder altitudeConstraint(Range<Double> altitudeConstraint) {
       this.delegate.altitudeConstraint(altitudeConstraint);
       return this;
@@ -897,7 +1001,7 @@ public interface Leg {
 
     public Standard build() {
       requireNonNull(delegate.sequenceNumber, "Required: Sequence Number");
-      requireNonNull(delegate.outboundMagneticCourse, "Required: Outbound Magnetic Course");
+      requireNonNull(delegate.outboundCourse, "Required: Outbound Course");
       requireNonNull(delegate.altitudeConstraint, "Required: Altitude Constraint");
       return delegate.build();
     }
@@ -925,6 +1029,16 @@ public interface Leg {
       return this;
     }
 
+    public CdBuilder outboundTrueCourse(double outboundTrueCourse) {
+      this.delegate.outboundTrueCourse(outboundTrueCourse);
+      return this;
+    }
+
+    public CdBuilder outboundCourse(ReferencedCourse outboundCourse) {
+      this.delegate.outboundCourse(requireNonNull(outboundCourse));
+      return this;
+    }
+
     public CdBuilder routeDistance(double routeDistance) {
       this.delegate.routeDistance(routeDistance);
       return this;
@@ -948,7 +1062,7 @@ public interface Leg {
     public Standard build() {
       requireNonNull(delegate.recommendedNavaid, "Required: Recommended Navaid");
       requireNonNull(delegate.sequenceNumber, "Required: Sequence Number");
-      requireNonNull(delegate.outboundMagneticCourse, "Required: Outbound Magnetic Course");
+      requireNonNull(delegate.outboundCourse, "Required: Outbound Course");
       requireNonNull(delegate.routeDistance, "Required: Route Distance");
       return delegate.build();
     }
@@ -979,6 +1093,16 @@ public interface Leg {
 
     public CfBuilder outboundMagneticCourse(Double outboundMagneticCourse) {
       this.delegate.outboundMagneticCourse(outboundMagneticCourse);
+      return this;
+    }
+
+    public CfBuilder outboundTrueCourse(Double outboundTrueCourse) {
+      this.delegate.outboundTrueCourse(outboundTrueCourse);
+      return this;
+    }
+
+    public CfBuilder outboundCourse(ReferencedCourse outboundCourse) {
+      this.delegate.outboundCourse(outboundCourse);
       return this;
     }
 
@@ -1040,7 +1164,7 @@ public interface Leg {
     public Standard build() {
       requireNonNull(delegate.associatedFix, "Required: Associated Fix");
       requireNonNull(delegate.sequenceNumber, "Required: Sequence Number");
-      requireNonNull(delegate.outboundMagneticCourse, "Required: Outbound Magnetic Course");
+      requireNonNull(delegate.outboundCourse, "Required: Outbound Course");
       return delegate.build();
     }
   }
@@ -1197,6 +1321,16 @@ public interface Leg {
 
     public TfBuilder outboundMagneticCourse(Double outboundMagneticCourse) {
       this.delegate.outboundMagneticCourse(outboundMagneticCourse);
+      return this;
+    }
+
+    public TfBuilder outboundTrueCourse(Double outboundTrueCourse) {
+      this.delegate.outboundTrueCourse(outboundTrueCourse);
+      return this;
+    }
+
+    public TfBuilder outboundCourse(ReferencedCourse outboundCourse) {
+      this.delegate.outboundCourse(outboundCourse);
       return this;
     }
 

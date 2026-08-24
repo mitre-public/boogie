@@ -39,6 +39,18 @@ public final class ArincDecimalParser implements BiFunction<String, Integer, Opt
     return apply(value, TENTHS);
   }
 
+  /**
+   * Parses a four-character course or bearing whose last character is either a suppressed tenths digit or the ARINC true-course
+   * indicator. A true value is published in whole degrees, for example {@code 350T -> 350.0}.
+   */
+  public Optional<Double> parseDoubleWithTenthsOrTrueIndicator(String value) {
+    requireNonNull(value);
+
+    return value.length() == 4 && value.endsWith("T")
+        ? apply(value.substring(0, 3), 0)
+        : parseDoubleWithTenths(value);
+  }
+
   public Optional<Double> parseDoubleWithHundredths(String value) {
     return apply(value, HUNDREDTHS);
   }

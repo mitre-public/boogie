@@ -52,7 +52,9 @@ public final class LegListDistanceEstimate implements Function<List<Leg>, Double
 
   private static Double afDistance(Leg leg) {
     MagneticVariation magvar = leg.recommendedNavaid().flatMap(Fix::magneticVariation).orElseThrow(IllegalStateException::new);
-    Double outboundTrue = leg.outboundMagneticCourse().map(magvar::magneticToTrue).orElseThrow(IllegalStateException::new);
+    Double outboundTrue = leg.outboundCourse()
+        .map(course -> course.trueDegrees(() -> magvar))
+        .orElseThrow(IllegalStateException::new);
     Double thetaTrue = leg.theta().map(magvar::magneticToTrue).orElseThrow(IllegalStateException::new);
     Double rho = leg.rho().orElseThrow(IllegalStateException::new);
     TurnDirection td = leg.turnDirection().orElseThrow();

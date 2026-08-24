@@ -138,6 +138,22 @@ public class AirwayAssemblerTest {
     );
   }
 
+  @Test
+  void testTrueOutboundCourseReferenceIsPreserved() {
+    DafifAirTrafficSegment segment = new DafifAirTrafficSegment.Builder()
+        .atsIdentifier("T1")
+        .atsRouteSequenceNumber(10)
+        .atsRouteOutboundMagneticCourse("125.T")
+        .build();
+
+    Leg leg = AirwayAssemblyStrategy.<Airway, Fix, Leg>standard().convertLeg(segment, null);
+
+    assertAll(
+        () -> assertEquals(125., leg.outboundTrueCourse().orElseThrow()),
+        () -> assertTrue(leg.outboundMagneticCourse().isEmpty())
+    );
+  }
+
   private String fixSequence(Airway airway) {
     return airway.legs().stream()
         .map(Leg::associatedFix)
