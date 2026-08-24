@@ -5,7 +5,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import java.util.function.Function;
 
 /**
- * Fully qualified name for a controlled airspace.
+ * Fully qualified name for a controlled airspace and classification layer.
  */
 public final class ControlledAirspaceName implements Function<ArincControlledAirspaceLeg, String> {
     public static final ControlledAirspaceName INSTANCE = new ControlledAirspaceName();
@@ -21,6 +21,8 @@ public final class ControlledAirspaceName implements Function<ArincControlledAir
                 .concat("-")
                 .concat(representative.controlledAirspaceName().orElse(""))
                 .concat("-")
-                .concat(representative.multipleCode().orElse(""));
+                .concat(representative.multipleCode().orElse(""))
+                .concat("-")
+                .concat(representative.airspaceClassification().orElse(""));
     }
 }
