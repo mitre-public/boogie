@@ -1,13 +1,11 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Optional;
+import java.util.regex.Matcher;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestReciprocalRunwayIdentifier {
 
@@ -62,6 +60,15 @@ class TestReciprocalRunwayIdentifier {
   }
 
   @Test
+  void testAssaultStripSuffix() {
+    Matcher matcher = ReciprocalRunwayIdentifier.RUNWAY_ID.matcher("RW164");
+    assertAll(
+        () -> assertTrue(matcher.find()),
+        () -> assertEquals("164", matcher.group())
+    );
+  }
+
+  @Test
   void testRunwayIdRegexExcludesBearingsOutside0_36() {
     assertFalse(ReciprocalRunwayIdentifier.RUNWAY_ID.asPredicate().test("RW45L"));
   }
@@ -87,8 +94,21 @@ class TestReciprocalRunwayIdentifier {
   }
 
   @Test
+  void testReciprocalIdPreservesSingleCharacterPostfixIfPresent() {
+    assertEquals(Optional.of("03R-"), ReciprocalRunwayIdentifier.INSTANCE.apply("21L-"));
+  }
+
+  @Test
   void testReciprocalIdPreservesPreAndPostFixWhenPresent() {
     assertEquals(Optional.of("RW03R-AB"), ReciprocalRunwayIdentifier.INSTANCE.apply("RW21L-AB"));
+  }
+
+  @Test
+  void testReciprocalIdPreservesNumericAssaultStripSuffix() {
+    assertAll(
+        () -> assertEquals(Optional.of("RW344"), ReciprocalRunwayIdentifier.INSTANCE.apply("RW164")),
+        () -> assertEquals(Optional.of("RW164"), ReciprocalRunwayIdentifier.INSTANCE.apply("RW344"))
+    );
   }
 
   @Test
