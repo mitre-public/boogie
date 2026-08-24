@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.model.ArincAirport;
 import org.mitre.boogie.xml.model.fields.RunwaySurfaceCode;
 import org.mitre.boogie.xml.v23_4.generated.Airport;
+import org.mitre.boogie.xml.v23_4.generated.MagneticVariationEWT;
+import org.mitre.tdp.boogie.MagneticVariation;
 
 class ArincAirportConverterTest {
   private final ArincAirportConverter converter = ArincAirportConverter.INSTANCE;
@@ -58,6 +60,17 @@ class ArincAirportConverterTest {
         () -> assertEquals(Optional.empty(), ap.longestRunway()),
         () -> assertEquals(Optional.empty(), ap.longestRunwaySurfaceCode())
     );
+  }
+
+  @Test
+  void trueReferenceConvertsToZeroVariation() {
+    Airport airport = TestGeneratedObjects.newValidAirport();
+    airport.getMagneticVariation().setMagneticVariationEWT(MagneticVariationEWT.TRUE);
+    airport.getMagneticVariation().setMagneticVariationValue(null);
+
+    ArincAirport result = converter.apply(airport).orElseThrow();
+
+    assertEquals(MagneticVariation.ZERO, result.portInfo().pointInfo().magneticVariation().orElseThrow());
   }
 
   @Test

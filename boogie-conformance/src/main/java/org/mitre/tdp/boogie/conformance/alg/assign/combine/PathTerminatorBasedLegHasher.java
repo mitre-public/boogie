@@ -110,14 +110,14 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
         .withRecommendedNavaid(flyableLeg.current())
         .append(flyableLeg.current().theta().orElse(null))
         .append(flyableLeg.current().rho().orElse(null))
-        .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null))
         .append(flyableLeg.current().routeDistance().orElse(null))
         .buildHash();
   }
 
   private int xaHash(FlyableLeg flyableLeg) {
     return newHasher(flyableLeg)
-        .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null))
         .append(flyableLeg.current().altitudeConstraint().lowerEndpoint())
         .buildHash();
   }
@@ -138,11 +138,12 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
         .append(flyableLeg.current().turnDirection())
         .append(flyableLeg.current().theta().orElse(null))
         .append(flyableLeg.current().rho().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null))
         .buildHash();
   }
 
   private int xiHash(FlyableLeg flyableLeg) {
-    return newHasher(flyableLeg).append(flyableLeg.current().outboundMagneticCourse().orElse(null)).buildHash();
+    return newHasher(flyableLeg).append(flyableLeg.current().outboundCourse().orElse(null)).buildHash();
   }
 
   private int fxHash(FlyableLeg flyableLeg) {
@@ -151,7 +152,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
         .withRecommendedNavaid(flyableLeg.current())
         .append(flyableLeg.current().theta().orElse(null))
         .append(flyableLeg.current().rho().orElse(null))
-        .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null))
         .buildHash();
   }
 
@@ -159,7 +160,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
     return newHasher(flyableLeg)
         .withRecommendedNavaid(flyableLeg.current())
         .append(flyableLeg.current().theta().orElse(null))
-        .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null))
         .buildHash();
   }
 
@@ -167,7 +168,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
     return newHasher(flyableLeg)
         .withRecommendedNavaid(flyableLeg.current())
         .append(flyableLeg.current().routeDistance().orElse(null))
-        .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null))
         .buildHash();
   }
 
@@ -177,7 +178,7 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
         .withRecommendedNavaid(flyableLeg.current())
         .append(flyableLeg.current().theta().orElse(null))
         .append(flyableLeg.current().rho().orElse(null))
-        .append(flyableLeg.current().outboundMagneticCourse().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null))
         .append(flyableLeg.current().turnDirection().orElse(null))
         .append(flyableLeg.current().routeDistance().orElse(null))
         .buildHash();
@@ -186,7 +187,8 @@ public final class PathTerminatorBasedLegHasher implements Function<FlyableLeg, 
   private int hxHash(FlyableLeg flyableLeg) {
     Hasher hasher = newHasher(flyableLeg)
         .withAssociatedFix(flyableLeg.current())
-        .append(flyableLeg.current().turnDirection().orElse(null));
+        .append(flyableLeg.current().turnDirection().orElse(null))
+        .append(flyableLeg.current().outboundCourse().orElse(null));
     flyableLeg.current().holdTime().ifPresent(hasher::append);
     flyableLeg.current().routeDistance().ifPresent(hasher::append);
     return hasher.buildHash();

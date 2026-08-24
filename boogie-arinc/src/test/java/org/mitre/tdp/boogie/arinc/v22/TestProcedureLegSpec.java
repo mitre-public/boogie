@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
@@ -60,14 +58,6 @@ public class TestProcedureLegSpec {
         () -> assertEquals("H", leg.routeTypeQualifier3().orElseThrow()),
         () -> assertEquals(leg, rebuilt)
     );
-  }
-
-  static String noCourse = "SSPAP YWKSYMFH09   Z     J040         0  M  010CA                     094T        + 03400                           B PAH  392642312";
-  @Test
-  void testNoCourse() {
-    Optional<ArincProcedureLeg> leg = parser.parse(noCourse).flatMap(converter);
-    assertTrue(leg.isEmpty(), "this is bad we dont' want to be dropping legs");
-    //assertFalse(record.containsParsedField("outboundMagneticCourse"), "we should implement true processing but this is expected for now");
   }
 
   @Test

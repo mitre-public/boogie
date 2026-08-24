@@ -1,6 +1,7 @@
 package org.mitre.boogie.xml.assemble;
 
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
@@ -9,6 +10,7 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.TurnDirection;
@@ -87,7 +89,9 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .associatedFix(associatedFix)
           .recommendedNavaid(recommendedNavaid)
           .centerFix(centerFix)
-          .outboundMagneticCourse(leg.courseValue().orElse(null))
+          .outboundCourse(leg.courseValue()
+              .map(value -> referencedCourse(value, leg.courseIsTrue()))
+              .orElse(null))
           .theta(leg.theta().orElse(null))
           .rho(leg.rho().orElse(null))
           .rnp(leg.rnp().orElse(null))
@@ -98,6 +102,12 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .isPublishedHoldingFix(leg.isHolding().orElse(false))
           .isIntermediateOrInitialApproachFix(leg.isInitialApproachFix().orElse(false) || leg.isIntermediateApproachFix().orElse(false))
           .build();
+    }
+
+    private static ReferencedCourse referencedCourse(double degrees, Optional<Boolean> isTrue) {
+      return isTrue.filter(Boolean::booleanValue)
+          .map(ignored -> ReferencedCourse.trueCourse(degrees))
+          .orElseGet(() -> ReferencedCourse.magnetic(degrees));
     }
 
     private static ProcedureType toProcedureType(String procedureType) {

@@ -1,10 +1,12 @@
 package org.mitre.tdp.boogie.conformance.alg.assign.combine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.Collections;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
@@ -14,6 +16,9 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
+import org.mitre.tdp.boogie.conformance.alg.assign.Route;
+
+import com.google.common.collect.Range;
 
 class TestPathTerminatorBasedLegHasher {
 
@@ -32,6 +37,25 @@ class TestPathTerminatorBasedLegHasher {
     Integer hash2 = hasher.apply(flyableLeg2);
 
     assertEquals(hash1, hash2, "Legs with similar path terminating fixes should hash together");
+  }
+
+  @Test
+  void testHashIncludesCourseReference() {
+    PathTerminatorBasedLegHasher hasher = PathTerminatorBasedLegHasher.newInstance();
+    Leg magnetic = Leg.builder(PathTerminator.CA, 0)
+        .outboundMagneticCourse(125.)
+        .altitudeConstraint(Range.atLeast(1000.))
+        .build();
+    Leg truth = Leg.builder(PathTerminator.CA, 0)
+        .outboundTrueCourse(125.)
+        .altitudeConstraint(Range.atLeast(1000.))
+        .build();
+
+    assertNotEquals(hasher.apply(flyable(magnetic)), hasher.apply(flyable(truth)));
+  }
+
+  private FlyableLeg flyable(Leg leg) {
+    return new FlyableLeg(null, leg, null, Route.newRoute(Collections.emptyList(), new Object()));
   }
 
   @Nonnull

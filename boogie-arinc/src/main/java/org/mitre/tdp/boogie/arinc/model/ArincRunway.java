@@ -3,6 +3,8 @@ package org.mitre.tdp.boogie.arinc.model;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.CourseReference;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.RunwayLength;
@@ -32,7 +34,7 @@ public final class ArincRunway implements ArincModel {
    * See {@link RunwayLength}
    */
   private final Integer runwayLength;
-  private final Double runwayMagneticBearing;
+  private final ReferencedCourse runwayBearing;
   private final double latitude;
   private final double longitude;
   private final Double runwayGradient;
@@ -71,7 +73,7 @@ public final class ArincRunway implements ArincModel {
     this.runwayIdentifier = builder.runwayIdentifier;
     this.continuationRecordNumber = builder.continuationRecordNumber;
     this.runwayLength = builder.runwayLength;
-    this.runwayMagneticBearing = builder.runwayMagneticBearing;
+    this.runwayBearing = builder.runwayBearing;
     this.latitude = builder.latitude;
     this.longitude = builder.longitude;
     this.runwayGradient = builder.runwayGradient;
@@ -129,8 +131,31 @@ public final class ArincRunway implements ArincModel {
     return Optional.ofNullable(runwayLength);
   }
 
+  /**
+   * The published runway bearing together with its magnetic or true north reference.
+   */
+  public Optional<ReferencedCourse> runwayBearing() {
+    return Optional.ofNullable(runwayBearing);
+  }
+
+  /**
+   * The published runway bearing when it is referenced to magnetic north.
+   *
+   * <p>Use {@link #runwayBearing()} when the reference must be retained.
+   */
   public Optional<Double> runwayMagneticBearing() {
-    return Optional.ofNullable(runwayMagneticBearing);
+    return runwayBearing()
+        .filter(bearing -> CourseReference.MAGNETIC.equals(bearing.reference()))
+        .map(ReferencedCourse::degrees);
+  }
+
+  /**
+   * The published runway bearing when it is referenced to true north.
+   */
+  public Optional<Double> runwayTrueBearing() {
+    return runwayBearing()
+        .filter(bearing -> CourseReference.TRUE.equals(bearing.reference()))
+        .map(ReferencedCourse::degrees);
   }
 
   public double latitude() {
@@ -212,7 +237,7 @@ public final class ArincRunway implements ArincModel {
         .runwayIdentifier(runwayIdentifier())
         .continuationRecordNumber(continuationRecordNumber().orElse(null))
         .runwayLength(runwayLength().orElse(null))
-        .runwayMagneticBearing(runwayMagneticBearing().orElse(null))
+        .runwayBearing(runwayBearing().orElse(null))
         .latitude(latitude())
         .longitude(longitude())
         .runwayGradient(runwayGradient().orElse(null))
@@ -250,7 +275,7 @@ public final class ArincRunway implements ArincModel {
         Objects.equals(runwayIdentifier, that.runwayIdentifier) &&
         Objects.equals(continuationRecordNumber, that.continuationRecordNumber) &&
         Objects.equals(runwayLength, that.runwayLength) &&
-        Objects.equals(runwayMagneticBearing, that.runwayMagneticBearing) &&
+        Objects.equals(runwayBearing, that.runwayBearing) &&
         Objects.equals(latitude, that.latitude) &&
         Objects.equals(longitude, that.longitude) &&
         Objects.equals(runwayGradient, that.runwayGradient) &&
@@ -272,7 +297,7 @@ public final class ArincRunway implements ArincModel {
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, runwayIdentifier, continuationRecordNumber, runwayLength, runwayMagneticBearing, latitude, longitude, runwayGradient, landingThresholdElevation, thresholdDisplacementDistance, thresholdCrossingHeight, runwayWidth, ilsMlsGlsIdentifier, ilsMlsGlsCategory, stopway, secondaryIlsMlsGlsIdentifier, secondaryIlsMlsGlsCategory, runwayAccuracyComplianceFlag, landingThresholdAccuracyComplianceFlag, runwayDescription, fileRecordNumber, lastUpdateCycle);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, airportIdentifier, airportIcaoRegion, subSectionCode, runwayIdentifier, continuationRecordNumber, runwayLength, runwayBearing, latitude, longitude, runwayGradient, landingThresholdElevation, thresholdDisplacementDistance, thresholdCrossingHeight, runwayWidth, ilsMlsGlsIdentifier, ilsMlsGlsCategory, stopway, secondaryIlsMlsGlsIdentifier, secondaryIlsMlsGlsCategory, runwayAccuracyComplianceFlag, landingThresholdAccuracyComplianceFlag, runwayDescription, fileRecordNumber, lastUpdateCycle);
   }
 
   @Override
@@ -287,7 +312,7 @@ public final class ArincRunway implements ArincModel {
         ", runwayIdentifier='" + runwayIdentifier + '\'' +
         ", continuationRecordNumber='" + continuationRecordNumber + '\'' +
         ", runwayLength=" + runwayLength +
-        ", runwayMagneticBearing=" + runwayMagneticBearing +
+        ", runwayBearing=" + runwayBearing +
         ", latitude=" + latitude +
         ", longitude=" + longitude +
         ", runwayGradient=" + runwayGradient +
@@ -318,7 +343,7 @@ public final class ArincRunway implements ArincModel {
     private String runwayIdentifier;
     private String continuationRecordNumber;
     private Integer runwayLength;
-    private Double runwayMagneticBearing;
+    private ReferencedCourse runwayBearing;
     private Double latitude;
     private Double longitude;
     private Double runwayGradient;
@@ -382,8 +407,19 @@ public final class ArincRunway implements ArincModel {
       return this;
     }
 
+    public Builder runwayBearing(ReferencedCourse runwayBearing) {
+      this.runwayBearing = runwayBearing;
+      return this;
+    }
+
+    /**
+     * Sets a runway bearing referenced to magnetic north.
+     *
+     * <p>This method is retained for source compatibility. New parsing code should use {@link #runwayBearing(ReferencedCourse)}
+     * so a true-north reference is not lost.
+     */
     public Builder runwayMagneticBearing(Double runwayMagneticBearing) {
-      this.runwayMagneticBearing = runwayMagneticBearing;
+      this.runwayBearing = Optional.ofNullable(runwayMagneticBearing).map(ReferencedCourse::magnetic).orElse(null);
       return this;
     }
 

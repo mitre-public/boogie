@@ -37,6 +37,11 @@ class TestMagneticVariation {
   }
 
   @Test
+  void testParserRetainsTrueNorthReferenceAsZero() {
+    assertEquals(Optional.of(0.0), parser.apply("T0000"));
+  }
+
+  @Test
   void testParserReturnsCorrectVariationValues() {
     assertAll(
         () -> assertEquals(Optional.of(14.), parser.apply("E0140")),

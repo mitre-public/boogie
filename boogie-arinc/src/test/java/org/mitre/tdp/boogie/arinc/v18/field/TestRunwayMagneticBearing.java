@@ -17,7 +17,7 @@ class TestRunwayMagneticBearing {
 
   @Test
   void testParseTrueBearing() {
-    assertEquals(Optional.empty(), parser.apply("123T"));
+    assertEquals(Optional.of(123.0), parser.apply("123T"));
   }
 
   @Test

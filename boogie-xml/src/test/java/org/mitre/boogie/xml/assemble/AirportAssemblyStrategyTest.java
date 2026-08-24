@@ -49,7 +49,7 @@ class AirportAssemblyStrategyTest {
   @Test
   void convertRunway_withTrueBearing() {
     ArincAirport airport = testAirport("KDTW", AIRPORT_POSITION);
-    ArincRunway origin = testRunway("RW09L", RWY09L_POSITION, 90.0, true, 90.0, 10000L);
+    ArincRunway origin = testRunway("RW09L", RWY09L_POSITION, 95.0, false, 91.0, 10000L);
     ArincRunway reciprocal = testRunway("RW27R", RWY27R_POSITION, 270.0, true, 270.0, 10000L);
 
     Runway result = STRATEGY.convertRunway(airport, origin, reciprocal, null, null);
@@ -58,9 +58,20 @@ class AirportAssemblyStrategyTest {
         () -> assertEquals("RW09L", result.runwayIdentifier()),
         () -> assertEquals(RWY09L_POSITION, result.origin()),
         () -> assertTrue(result.course().isPresent()),
-        () -> assertEquals(90.0, result.course().get().inDegrees(), 0.01),
+        () -> assertEquals(91.0, result.course().get().inDegrees(), 0.01,
+            "Dedicated true bearing should take precedence over the generic magnetic bearing"),
         () -> assertTrue(result.length().isPresent())
     );
+  }
+
+  @Test
+  void convertRunway_withBearingMarkedTrueDoesNotApplyAirportVariation() {
+    ArincAirport airport = testAirport("KDTW", AIRPORT_POSITION);
+    ArincRunway origin = testRunway("RW09L", RWY09L_POSITION, 95.0, true, null, 10000L);
+
+    Runway result = STRATEGY.convertRunway(airport, origin, null, null, null);
+
+    assertEquals(95.0, result.course().orElseThrow().inDegrees(), 0.01);
   }
 
   @Test
@@ -72,7 +83,8 @@ class AirportAssemblyStrategyTest {
 
     assertAll(
         () -> assertEquals("RW09L", result.runwayIdentifier()),
-        () -> assertTrue(result.course().isPresent(), "Should convert magnetic bearing to true")
+        () -> assertEquals(90.0, result.course().orElseThrow().inDegrees(), 0.01,
+            "Should convert magnetic bearing to true using the airport variation")
     );
   }
 
@@ -83,10 +95,12 @@ class AirportAssemblyStrategyTest {
     ArincRunway reciprocal = testRunway("RW27R", RWY27R_POSITION, null, null, null, 10000L);
 
     Runway result = STRATEGY.convertRunway(airport, origin, reciprocal, null, null);
+    double expected = RWY09L_POSITION.courseTo(RWY27R_POSITION).inDegrees();
 
     assertAll(
         () -> assertEquals("RW09L", result.runwayIdentifier()),
-        () -> assertTrue(result.course().isPresent(), "Should compute course from origin to reciprocal")
+        () -> assertEquals(expected, result.course().orElseThrow().inDegrees(), 0.01,
+            "Coordinate-derived bearing is already true")
     );
   }
 

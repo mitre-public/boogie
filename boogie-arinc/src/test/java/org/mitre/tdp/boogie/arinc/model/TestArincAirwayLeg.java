@@ -3,11 +3,13 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.AirwayLegSpec;
@@ -24,6 +26,8 @@ class TestArincAirwayLeg {
       .parse(s).flatMap(new AirwayLegConverter()).orElseThrow();
 
   private static final String airway3 = "SCANER       A590        0210PASROPAEA0E C  OHFRA                     059422850590 FL180     FL600                         233652006";
+
+  private static final String trueCourseAirway = airway3.replace("05942285", "059T2285");
 
   @Test
   void testEqualsHashCode() {
@@ -60,7 +64,9 @@ class TestArincAirwayLeg {
         () -> assertFalse(airway.rnp().isPresent()),
         () -> assertFalse(airway.theta().isPresent()),
         () -> assertFalse(airway.rho().isPresent()),
+        () -> assertEquals(ReferencedCourse.magnetic(59.4), airway.outboundCourse().orElseThrow()),
         () -> assertEquals(59.4d, airway.outboundMagneticCourse().orElseThrow(AssertionError::new)),
+        () -> assertTrue(airway.outboundTrueCourse().isEmpty()),
         () -> assertEquals("2285", airway.routeHoldDistanceTime().orElseThrow(AssertionError::new)),
         () -> assertEquals(228.5, airway.routeDistance().orElseThrow(AssertionError::new)),
         () -> assertEquals(59.0d, airway.inboundMagneticCourse().orElseThrow(AssertionError::new)),
@@ -70,6 +76,19 @@ class TestArincAirwayLeg {
         () -> assertFalse(airway.fixedRadiusTransitionIndicator().isPresent()),
         () -> assertEquals(Integer.valueOf(23365), airway.fileRecordNumber()),
         () -> assertEquals("2006", airway.lastUpdateCycle()),
+        () -> assertEquals(airway, rebuilt)
+    );
+  }
+
+  @Test
+  void testTrueCourseReferenceSurvivesRebuild() {
+    ArincAirwayLeg airway = PARSER.apply(trueCourseAirway);
+    ArincAirwayLeg rebuilt = airway.toBuilder().build();
+
+    assertAll(
+        () -> assertEquals(ReferencedCourse.trueCourse(59.0), airway.outboundCourse().orElseThrow()),
+        () -> assertTrue(airway.outboundMagneticCourse().isEmpty()),
+        () -> assertEquals(59.0, airway.outboundTrueCourse().orElseThrow()),
         () -> assertEquals(airway, rebuilt)
     );
   }

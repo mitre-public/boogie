@@ -22,16 +22,23 @@ public final class MagneticVariationConverter implements Function<MagVar, Option
     };
   }
 
-  @Override
-  public Optional<MagneticVariation> apply(MagVar magVar) {
-    return Optional.ofNullable(magVar)
-        .filter(i -> "EAST".equals(i.ew()) || "WEST".equals(i.ew()))
-        .map(this::from);
-  }
-
-  private MagneticVariation from(MagVar magVar) {
+  private static MagneticVariation fromEastWest(MagVar magVar) {
     double posNeg = ew(magVar.ew());
     double value = posNeg * magVar.value();
     return MagneticVariation.ofDegrees(value);
+  }
+
+  private static Optional<MagneticVariation> from(MagVar magVar) {
+    return Optional.of(magVar)
+        .filter(value -> "TRUE".equals(value.ew()))
+        .map(ignored -> MagneticVariation.ZERO)
+        .or(() -> Optional.of(magVar)
+            .filter(value -> "EAST".equals(value.ew()) || "WEST".equals(value.ew()))
+            .map(MagneticVariationConverter::fromEastWest));
+  }
+
+  @Override
+  public Optional<MagneticVariation> apply(MagVar magVar) {
+    return Optional.ofNullable(magVar).flatMap(MagneticVariationConverter::from);
   }
 }

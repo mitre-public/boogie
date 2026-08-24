@@ -29,22 +29,22 @@ public final class PathTerminatorBasedLegValidator implements Predicate<Leg> {
           && leg.recommendedNavaid().isPresent()
           && leg.theta().isPresent()
           && leg.rho().isPresent()
-          && leg.outboundMagneticCourse().isPresent()
+          && leg.outboundCourse().isPresent()
           && leg.routeDistance().isPresent();
       case FA, FC, FD, FM -> leg.associatedFix().isPresent()
           && leg.recommendedNavaid().isPresent()
           && leg.theta().isPresent()
           && leg.rho().isPresent()
-          && leg.outboundMagneticCourse().isPresent();
-      case CA, VA -> leg.outboundMagneticCourse().isPresent()
+          && leg.outboundCourse().isPresent();
+      case CA, VA -> leg.outboundCourse().isPresent()
           && leg.altitudeConstraint().hasLowerBound();
       case CR, VR -> leg.recommendedNavaid().isPresent()
           && leg.theta().isPresent()
-          && leg.outboundMagneticCourse().isPresent();
+          && leg.outboundCourse().isPresent();
       case CD, VD -> leg.recommendedNavaid().isPresent()
-          && leg.outboundMagneticCourse().isPresent()
+          && leg.outboundCourse().isPresent()
           && leg.routeDistance().isPresent();
-      case CI, VI, VM -> leg.outboundMagneticCourse().isPresent();
+      case CI, VI, VM -> leg.outboundCourse().isPresent();
       case RF -> leg.associatedFix().isPresent()
           && leg.turnDirection().isPresent()
           && leg.routeDistance().isPresent()
@@ -54,17 +54,17 @@ public final class PathTerminatorBasedLegValidator implements Predicate<Leg> {
           && leg.recommendedNavaid().isPresent()
           && leg.theta().isPresent()
           && leg.rho().isPresent()
-          && leg.outboundMagneticCourse().isPresent();
+          && leg.outboundCourse().isPresent();
       case PI -> leg.associatedFix().isPresent()
           && leg.turnDirection().isPresent()
           && leg.recommendedNavaid().isPresent()
           && leg.theta().isPresent()
           && leg.rho().isPresent()
-          && leg.outboundMagneticCourse().isPresent()
+          && leg.outboundCourse().isPresent()
           && leg.routeDistance().isPresent();
       case HA, HF, HM -> leg.associatedFix().isPresent()
           && leg.turnDirection().isPresent()
-          && leg.outboundMagneticCourse().isPresent()
+          && leg.outboundCourse().isPresent()
           // only one or the other must be present on the record
           && (leg.holdTime().isPresent() || leg.routeDistance().isPresent());
     };

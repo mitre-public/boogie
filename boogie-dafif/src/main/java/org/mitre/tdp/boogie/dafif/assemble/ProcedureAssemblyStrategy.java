@@ -12,6 +12,7 @@ import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.TurnDirection;
@@ -146,7 +147,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .centerFix(centerFix)
           .speedConstraint(speedConstraint)
           .altitudeConstraint(altitudeConstraint)
-          .outboundMagneticCourse(leg.terminalMagneticCourse().map(Standard::parseCourse).orElse(null))
+          .outboundCourse(leg.terminalMagneticCourse().map(Standard::parseCourse).orElse(null))
           .theta(leg.nav1Bearing().orElse(null))
           .rho(leg.nav1Distance().orElse(null))
           .rnp(leg.requiredNavPerformance().orElse(null))
@@ -159,14 +160,15 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .isIntermediateOrInitialApproachFix(leg.terminalWaypointDescriptionCode4().map(c -> c.equals("A") || c.equals("B") || c.equals("C") || c.equals("D")).orElse(false))
           .build();
     }
-    private static Double parseCourse(String course) {
+    private static ReferencedCourse parseCourse(String course) {
       String stripped = course.replaceAll("[^0-9.]", "");
       if (stripped.isEmpty()) {
         LOG.warn("Unable to parse course value: '{}'", course);
         return null;
       }
       try {
-        return Double.valueOf(stripped);
+        double degrees = Double.parseDouble(stripped);
+        return course.endsWith("T") ? ReferencedCourse.trueCourse(degrees) : ReferencedCourse.magnetic(degrees);
       } catch (NumberFormatException e) {
         LOG.warn("Unable to parse course value: '{}'", course);
         return null;

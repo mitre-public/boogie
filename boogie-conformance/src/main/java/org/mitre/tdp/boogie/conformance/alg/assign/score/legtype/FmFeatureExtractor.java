@@ -10,12 +10,13 @@ import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.ConformablePoint;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
 
 public final class FmFeatureExtractor implements Supplier<ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {
+
+  private static final MagneticVariationResolver MAGNETIC_VARIATION_RESOLVER = MagneticVariationResolver.getInstance();
 
   /**
    * Singleton instance of an extractor for shared use.
@@ -80,12 +81,9 @@ public final class FmFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
    */
   double deriveBeforeTrackDistance(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
     HasPosition current = flyableLeg.current().associatedFix().map(Fix::latLong).map(HasPosition::from).orElseThrow(supplier("No fix in FM"));
-    MagneticVariation navMagVar = flyableLeg.current().recommendedNavaid()
-        .orElseThrow(supplier("No Rec Nav in FM"))
-        .magneticVariation()
-        .orElseThrow(supplier("No magvar on navaid"));
-    Double magCrs = flyableLeg.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
-    Double trueCourse = navMagVar.magneticToTrue(magCrs);
+    double trueCourse = MAGNETIC_VARIATION_RESOLVER
+        .outboundTrueCourse(conformablePoint, flyableLeg)
+        .orElseThrow(supplier("Outbound Course"));
     HasPosition projection = current.projectOut(trueCourse, 25.0);
 
     double ctd = Spherical.crossTrackDistanceNM(current, projection, conformablePoint);

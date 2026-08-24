@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.dafif.assemble;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,5 +91,24 @@ public class ProcedureAssemblerTest {
     ).collect(Collectors.toList());
 
     assertEquals(2, procedures.size(), "Should assemble two procedures (one per airport/parent)");
+  }
+
+  @Test
+  void testTrueTerminalCourseReferenceIsPreserved() {
+    DafifTerminalSegment segment = DafifTerminalSegment.builder()
+        .airportIdentification("CYYH")
+        .terminalIdentifier("N15")
+        .terminalSequenceNumber(10)
+        .trackDescriptionCode("CA")
+        .terminalMagneticCourse("125.T")
+        .build();
+
+    Leg leg = ProcedureAssemblyStrategy.<Procedure, Transition, Leg, Fix>standard()
+        .convertLeg(segment, null, null, null);
+
+    assertAll(
+        () -> assertEquals(125., leg.outboundTrueCourse().orElseThrow()),
+        () -> assertTrue(leg.outboundMagneticCourse().isEmpty())
+    );
   }
 }

@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.mitre.tdp.boogie.CourseReference;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.v18.field.BoundaryCode;
 import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
 import org.mitre.tdp.boogie.arinc.v18.field.CruiseTableIndicator;
@@ -144,7 +146,7 @@ public final class ArincAirwayLeg implements ArincModel {
   /**
    * See {@link OutboundMagneticCourse}.
    */
-  private final Double outboundMagneticCourse;
+  private final ReferencedCourse outboundCourse;
   /**
    * See {@link RouteHoldDistanceTime}.
    */
@@ -235,7 +237,7 @@ public final class ArincAirwayLeg implements ArincModel {
     this.theta = builder.theta;
     this.rnp = builder.rnp;
     this.rho = builder.rho;
-    this.outboundMagneticCourse = builder.outboundMagneticCourse;
+    this.outboundCourse = builder.outboundCourse;
     this.routeHoldDistanceTime = builder.routeHoldDistanceTime;
     this.holdTime = builder.holdTime;
     this.routeDistance = builder.routeDistance;
@@ -352,8 +354,20 @@ public final class ArincAirwayLeg implements ArincModel {
     return Optional.ofNullable(rho);
   }
 
+  public Optional<ReferencedCourse> outboundCourse() {
+    return Optional.ofNullable(outboundCourse);
+  }
+
   public Optional<Double> outboundMagneticCourse() {
-    return Optional.ofNullable(outboundMagneticCourse);
+    return outboundCourse()
+        .filter(course -> CourseReference.MAGNETIC.equals(course.reference()))
+        .map(ReferencedCourse::degrees);
+  }
+
+  public Optional<Double> outboundTrueCourse() {
+    return outboundCourse()
+        .filter(course -> CourseReference.TRUE.equals(course.reference()))
+        .map(ReferencedCourse::degrees);
   }
 
   public Optional<String> routeHoldDistanceTime() {
@@ -446,7 +460,7 @@ public final class ArincAirwayLeg implements ArincModel {
         .theta(theta().orElse(null))
         .rnp(rnp().orElse(null))
         .rho(rho().orElse(null))
-        .outboundMagneticCourse(outboundMagneticCourse().orElse(null))
+        .outboundCourse(outboundCourse().orElse(null))
         .routeHoldDistanceTime(routeHoldDistanceTime().orElse(null))
         .holdTime(holdTime().orElse(null))
         .routeDistance(routeDistance().orElse(null))
@@ -498,7 +512,7 @@ public final class ArincAirwayLeg implements ArincModel {
         Objects.equals(theta, arincAir.theta) &&
         Objects.equals(rnp, arincAir.rnp) &&
         Objects.equals(rho, arincAir.rho) &&
-        Objects.equals(outboundMagneticCourse, arincAir.outboundMagneticCourse) &&
+        Objects.equals(outboundCourse, arincAir.outboundCourse) &&
         Objects.equals(routeHoldDistanceTime, arincAir.routeHoldDistanceTime) &&
         Objects.equals(holdTime, arincAir.holdTime) &&
         Objects.equals(routeDistance, arincAir.routeDistance) &&
@@ -519,7 +533,7 @@ public final class ArincAirwayLeg implements ArincModel {
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, routeIdentifier, sixthCharacter, sequenceNumber, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubSectionCode, continuationRecordNumber, waypointDescription, boundaryCode, routeType, level, directionRestriction, cruiseTableIndicator, euIndicator, recommendedNavaidIdentifier, recommendedNavaidIcaoRegion, theta, rnp, rho, outboundMagneticCourse, routeHoldDistanceTime, holdTime, routeDistance, inboundMagneticCourse, minAltitude1, minAltitude2, maxAltitude, fixedRadiusTransitionIndicator, verticalScaleFactor, rvsmMinLevel, rvsmMaxLevel, routeTypeQualifier1, routeTypeQualifier2, routeTypeQualifier3, fileRecordNumber, lastUpdateCycle);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, routeIdentifier, sixthCharacter, sequenceNumber, fixIdentifier, fixIcaoRegion, fixSectionCode, fixSubSectionCode, continuationRecordNumber, waypointDescription, boundaryCode, routeType, level, directionRestriction, cruiseTableIndicator, euIndicator, recommendedNavaidIdentifier, recommendedNavaidIcaoRegion, theta, rnp, rho, outboundCourse, routeHoldDistanceTime, holdTime, routeDistance, inboundMagneticCourse, minAltitude1, minAltitude2, maxAltitude, fixedRadiusTransitionIndicator, verticalScaleFactor, rvsmMinLevel, rvsmMaxLevel, routeTypeQualifier1, routeTypeQualifier2, routeTypeQualifier3, fileRecordNumber, lastUpdateCycle);
   }
 
   @Override
@@ -549,7 +563,7 @@ public final class ArincAirwayLeg implements ArincModel {
         ", theta=" + theta +
         ", rnp=" + rnp +
         ", rho=" + rho +
-        ", outboundMagneticCourse=" + outboundMagneticCourse +
+        ", outboundCourse=" + outboundCourse +
         ", routeHoldDistanceTime='" + routeHoldDistanceTime + '\'' +
         ", holdTime=" + holdTime +
         ", routeDistance=" + routeDistance +
@@ -594,7 +608,7 @@ public final class ArincAirwayLeg implements ArincModel {
     private Double theta;
     private Double rnp;
     private Double rho;
-    private Double outboundMagneticCourse;
+    private ReferencedCourse outboundCourse;
     private String routeHoldDistanceTime;
     private Duration holdTime;
     private Double routeDistance;
@@ -733,7 +747,12 @@ public final class ArincAirwayLeg implements ArincModel {
     }
 
     public Builder outboundMagneticCourse(Double outboundMagneticCourse) {
-      this.outboundMagneticCourse = outboundMagneticCourse;
+      this.outboundCourse = outboundMagneticCourse == null ? null : ReferencedCourse.magnetic(outboundMagneticCourse);
+      return this;
+    }
+
+    public Builder outboundCourse(ReferencedCourse outboundCourse) {
+      this.outboundCourse = outboundCourse;
       return this;
     }
 

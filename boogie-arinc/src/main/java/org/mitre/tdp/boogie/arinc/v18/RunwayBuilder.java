@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -20,6 +21,10 @@ public final class RunwayBuilder implements Function<ArincRecord, ArincRunway.Bu
     Optional<String> continuationRecordNumber = arincRecord.optionalField("continuationRecordNumber");
     Optional<Integer> runwayLength = arincRecord.optionalField("runwayLength");
     Optional<Double> runwayMagneticBearing = arincRecord.optionalField("runwayMagneticBearing");
+    Optional<ReferencedCourse> runwayBearing = runwayMagneticBearing.map(bearing ->
+        arincRecord.rawField("runwayMagneticBearing").trim().endsWith("T")
+            ? ReferencedCourse.trueCourse(bearing)
+            : ReferencedCourse.magnetic(bearing));
     Optional<Double> runwayGradient = arincRecord.optionalField("runwayGradient");
     Optional<Integer> landingThresholdElevation = arincRecord.optionalField("landingThresholdElevation");
     Optional<Integer> thresholdDisplacementDistance = arincRecord.optionalField("thresholdDisplacementDistance");
@@ -42,7 +47,7 @@ public final class RunwayBuilder implements Function<ArincRecord, ArincRunway.Bu
         .runwayIdentifier(arincRecord.requiredField("runwayIdentifier"))
         .continuationRecordNumber(continuationRecordNumber.orElse(null))
         .runwayLength(runwayLength.orElse(null))
-        .runwayMagneticBearing(runwayMagneticBearing.orElse(null))
+        .runwayBearing(runwayBearing.orElse(null))
         .latitude(arincRecord.requiredField("latitude"))
         .longitude(arincRecord.requiredField("longitude"))
         .runwayGradient(runwayGradient.orElse(null))

@@ -18,6 +18,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.conformance.alg.assign.Route;
@@ -53,6 +54,7 @@ class TestAfFeatureExtractor {
     Leg TF = TF();
     Leg AF = AF();
     when(AF.outboundMagneticCourse()).thenReturn(empty());
+    when(AF.outboundCourse()).thenReturn(empty());
 
     FlyableLeg flyableLeg = new FlyableLeg(TF, AF, null, dummyRoute());
 
@@ -198,6 +200,7 @@ class TestAfFeatureExtractor {
     when(AF.pathTerminator()).thenReturn(PathTerminator.AF);
     when(AF.recommendedNavaid()).thenReturn((Optional) of(navaid));
     when(AF.outboundMagneticCourse()).thenReturn(of(98.0));
+    when(AF.outboundCourse()).thenReturn(of(ReferencedCourse.magnetic(98.0)));
     when(AF.theta()).thenReturn(of(138.0));
     when(AF.rho()).thenReturn(of(15.0));
     when(AF.turnDirection()).thenReturn((Optional) otd);

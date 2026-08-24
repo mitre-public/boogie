@@ -7,7 +7,6 @@ import static org.mitre.tdp.boogie.conformance.alg.assign.score.MissingRequiredF
 import java.util.function.Supplier;
 
 import org.mitre.tdp.boogie.ConformablePoint;
-import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.conformance.alg.assign.FlyableLeg;
 import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVector;
@@ -17,6 +16,8 @@ import org.mitre.tdp.boogie.viterbi.ViterbiFeatureVectorExtractor;
  * Class for returning an appropriate {@link ViterbiFeatureVector} for a {@link PathTerminator#CA} leg.
  */
 public final class CaFeatureExtractor implements Supplier<ViterbiFeatureVectorExtractor<ConformablePoint, FlyableLeg>> {
+
+  private static final MagneticVariationResolver MAGNETIC_VARIATION_RESOLVER = MagneticVariationResolver.getInstance();
 
   /**
    * Singleton instance of the extractor for shared use.
@@ -62,13 +63,14 @@ public final class CaFeatureExtractor implements Supplier<ViterbiFeatureVectorEx
   }
 
   /**
-   * Returns the degrees off course the point is from the course specified in the CA legs outbound magnetic course.
+   * Returns the degrees off course the point is from the course specified in the CA leg.
    */
   double deriveDegreesOffCourseFeature(ConformablePoint conformablePoint, FlyableLeg flyableLeg) {
-    double outboundCourse = flyableLeg.current().outboundMagneticCourse().orElseThrow(supplier("Outbound Magnetic Course"));
-    MagneticVariation localVariation = MagneticVariationResolver.getInstance().magneticVariation(conformablePoint, flyableLeg);
+    double outboundCourseTrue = MAGNETIC_VARIATION_RESOLVER
+        .outboundTrueCourse(conformablePoint, flyableLeg)
+        .orElseThrow(supplier("Outbound Course"));
 
     double pointCourseTrue = conformablePoint.trueCourse().orElseThrow(supplier("True Course"));
-    return abs(angleDifference(localVariation.trueToMagnetic(pointCourseTrue), outboundCourse));
+    return abs(angleDifference(pointCourseTrue, outboundCourseTrue));
   }
 }

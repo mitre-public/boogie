@@ -70,7 +70,7 @@ public interface AirwayAssemblyStrategy<A, F, L> {
           .associatedFix(associatedFix)
           .recommendedNavaid(recommendedNavaid)
           .altitudeConstraint(altitudeConstraint)
-          .outboundMagneticCourse(leg.outboundMagneticCourse().orElse(null))
+          .outboundCourse(leg.outboundCourse().orElse(null))
           .theta(leg.theta().orElse(null))
           .rho(leg.rho().orElse(null))
           .rnp(leg.rnp().orElse(null))

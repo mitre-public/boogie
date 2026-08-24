@@ -26,12 +26,12 @@ public class TestOutboundMagneticCourse {
     assertEquals(Optional.empty(), parser.apply("ACB1"));
   }
 
-  /**
-   * We could add handling for these later.
-   */
   @Test
-  void testParserFiltersTrueCourseInputs() {
-    assertEquals(Optional.empty(), parser.apply("123T"));
+  void testParserReturnsTrueCourseInputsInWholeDegrees() {
+    assertAll(
+        () -> assertEquals(Optional.of(123.0), parser.apply("123T")),
+        () -> assertEquals(Optional.of(350.0), parser.apply("350T"))
+    );
   }
 
   @Test

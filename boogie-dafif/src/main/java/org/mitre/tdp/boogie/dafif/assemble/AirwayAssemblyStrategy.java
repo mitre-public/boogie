@@ -7,6 +7,7 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 
 /**
@@ -76,15 +77,16 @@ public interface AirwayAssemblyStrategy<A, F, L> {
     public Leg convertLeg(DafifAirTrafficSegment segment, @Nullable Fix associatedFix) {
       return Leg.builder(PathTerminator.TF, segment.atsRouteSequenceNumber())
           .associatedFix(associatedFix)
-          .outboundMagneticCourse(segment.atsRouteOutboundMagneticCourse().map(Standard::parseCourse).orElse(null))
+          .outboundCourse(segment.atsRouteOutboundMagneticCourse().map(Standard::parseCourse).orElse(null))
           .routeDistance(segment.atsRouteDistance().orElse(null))
           .rnp(segment.requiredNavPerformance().map(Double::valueOf).orElse(null))
           .build();
     }
 
-    private static Double parseCourse(String course) {
+    private static ReferencedCourse parseCourse(String course) {
       String stripped = course.endsWith("T") ? course.substring(0, course.length() - 1) : course;
-      return Double.valueOf(stripped);
+      double degrees = Double.parseDouble(stripped);
+      return course.endsWith("T") ? ReferencedCourse.trueCourse(degrees) : ReferencedCourse.magnetic(degrees);
     }
   }
 }

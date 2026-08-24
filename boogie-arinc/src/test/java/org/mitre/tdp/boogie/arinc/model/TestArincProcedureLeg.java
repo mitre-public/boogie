@@ -3,12 +3,14 @@ package org.mitre.tdp.boogie.arinc.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
 import org.mitre.tdp.boogie.arinc.v18.ProcedureLegSpec;
@@ -30,6 +32,8 @@ class TestArincProcedureLeg {
   private static final String HF = "SEEUP UITTUIFN12   ACI4   020CI   UIDB0EE AR   HF                     1210T053      04160                              S   785571907";
 
   private static final String AF = "SLAMP MKJSMKEOMAXI51ENARI 050SIA13MKPC0EE  L   AF SIA MK      252301303430    D                                            533482014";
+
+  private static final String TRUE_COURSE = "SCANP CYYHCYFN15   AYYH  F010YYH  CYDB0N   L   PI DAV CY      07871999350T0100D   + 01700     18000                 U  S   113852605";
 
   @Test
   void testEqualsHashCode() {
@@ -66,7 +70,9 @@ class TestArincProcedureLeg {
         () -> assertFalse(procedureLeg.arcRadius().isPresent()),
         () -> assertEquals(41.1d, procedureLeg.theta().orElseThrow(AssertionError::new), .0001, "Theta"),
         () -> assertEquals(6.6d, procedureLeg.rho().orElseThrow(AssertionError::new), .0001, "Rho"),
+        () -> assertEquals(ReferencedCourse.magnetic(221.3), procedureLeg.outboundCourse().orElseThrow()),
         () -> assertEquals(221.3d, procedureLeg.outboundMagneticCourse().orElseThrow(AssertionError::new), .0001, "Outbound Magnetic Course"),
+        () -> assertTrue(procedureLeg.outboundTrueCourse().isEmpty()),
         () -> assertEquals("0050", procedureLeg.routeHoldDistanceTime().orElseThrow(AssertionError::new)),
         () -> assertEquals("+", procedureLeg.altitudeDescription().orElseThrow(AssertionError::new)),
         () -> assertEquals(1900.0d, procedureLeg.minAltitude1().orElseThrow(AssertionError::new), .0001, "MinAltitude1"),
@@ -96,5 +102,18 @@ class TestArincProcedureLeg {
   void testFieldAccessAF() {
     ArincProcedureLeg procedureLeg = PARSER.parse(AF).flatMap(converter).orElseThrow(AssertionError::new);
     assertEquals(Optional.of(TurnDirection.L), procedureLeg.turnDirection(), "TurnDirection");
+  }
+
+  @Test
+  void testTrueCourseReferenceSurvivesRebuild() {
+    ArincProcedureLeg procedureLeg = PARSER.parse(TRUE_COURSE).flatMap(converter).orElseThrow(AssertionError::new);
+    ArincProcedureLeg rebuilt = procedureLeg.toBuilder().build();
+
+    assertAll(
+        () -> assertEquals(ReferencedCourse.trueCourse(350.0), procedureLeg.outboundCourse().orElseThrow()),
+        () -> assertTrue(procedureLeg.outboundMagneticCourse().isEmpty()),
+        () -> assertEquals(350.0, procedureLeg.outboundTrueCourse().orElseThrow()),
+        () -> assertEquals(procedureLeg, rebuilt)
+    );
   }
 }

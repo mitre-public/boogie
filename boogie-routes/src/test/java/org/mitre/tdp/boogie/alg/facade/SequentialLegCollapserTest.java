@@ -25,6 +25,7 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 
 import com.google.common.collect.ImmutableMap;
@@ -89,6 +90,15 @@ class SequentialLegCollapserTest {
   @Test
   void testCFCollapse() {
     assertEquals(100.0, COLLAPSER.safelyMergeLegs(CF, legsByType.get(APPROACH)).outboundMagneticCourse().get());
+  }
+
+  @Test
+  void testCFCollapsePreservesTrueCourseReference() {
+    Fix fix = Fix.builder().fixIdentifier("VAN").latLong(LatLong.of(0.0, 0.0)).build();
+    ReferencedCourse trueCourse = ReferencedCourse.trueCourse(100.);
+    ExpandedRouteLeg cf = new ExpandedRouteLeg("STAR", STAR, "", Leg.cfBuilder(fix, 10, trueCourse).build());
+
+    assertEquals(trueCourse, COLLAPSER.safelyMergeLegs(cf, legsByType.get(APPROACH)).outboundCourse().orElseThrow());
   }
 
   @Test

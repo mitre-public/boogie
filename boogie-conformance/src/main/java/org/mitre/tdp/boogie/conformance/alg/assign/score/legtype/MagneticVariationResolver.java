@@ -29,4 +29,23 @@ public final class MagneticVariationResolver {
         .or(() -> flyableLeg.next().flatMap(Leg::associatedFix).flatMap(Fix::magneticVariation))
         .orElseGet(() -> MagneticVariation.ofDegrees(Declinations.declination(point.latitude(), point.longitude(), point.pressureAltitude().orElse(null), point.time())));
   }
+
+  /**
+   * Resolves the current leg's published outbound course to true degrees.
+   *
+   * <p>The magnetic-variation lookup is lazy, so a true-referenced course does not require a recommended navaid, associated
+   * fix, or modeled variation.
+   */
+  public Optional<Double> outboundTrueCourse(ConformablePoint point, FlyableLeg flyableLeg) {
+    return flyableLeg.current().outboundCourse()
+        .map(course -> course.trueDegrees(() -> magneticVariation(point, flyableLeg)));
+  }
+
+  /**
+   * Resolves the current leg's theta to true degrees. Theta is always magnetic, independently of the outbound course reference.
+   */
+  public Optional<Double> thetaTrueCourse(ConformablePoint point, FlyableLeg flyableLeg) {
+    return flyableLeg.current().theta()
+        .map(theta -> magneticVariation(point, flyableLeg).magneticToTrue(theta));
+  }
 }
