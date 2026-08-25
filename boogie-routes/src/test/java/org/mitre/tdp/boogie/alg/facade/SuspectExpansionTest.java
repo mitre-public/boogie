@@ -26,15 +26,6 @@ class SuspectExpansionTest {
 
   @BeforeAll
   static void setup() throws IOException {
-//    try (InputStream inputStream = EmbeddedLidoFile.getInputStream()) {
-//      var records = OneshotRecordParser.standard(ArincVersion.V22).assembleFrom(inputStream);
-//      expander = FluentRouteExpander.inMemoryBuilder(
-//          records.airports(),
-//          records.procedures(),
-//          records.airways(),
-//          records.fixes()
-//      ).build();
-//    }
     expander = FluentRouteExpander.inMemoryBuilder(BznSuspectFixture.airports(), BznSuspectFixture.procedures(), BznSuspectFixture.airways(), BznSuspectFixture.fixes()).build();
   }
 
@@ -59,7 +50,7 @@ class SuspectExpansionTest {
         )
     );
 
-    mapExpandedRoute(expandedRoute, "KBZN_BZN6_V365_KHLN.png");
+    //mapExpandedRoute(expandedRoute, "KBZN_BZN6_V365_KHLN.png");
   }
 
   /**
