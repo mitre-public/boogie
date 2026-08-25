@@ -77,6 +77,28 @@ class TestReciprocalRunwayPairer {
     );
   }
 
+  @Test
+  void testNumericAssaultStripPairsSeparatelyFromStandardRunway() {
+    ArincRunway runway16 = newRunway("KDYS", "K4", "RW16");
+    ArincRunway runway34 = newRunway("KDYS", "K4", "RW34");
+    ArincRunway assaultStrip16 = newRunway("KDYS", "K4", "RW164");
+    ArincRunway assaultStrip34 = newRunway("KDYS", "K4", "RW344");
+
+    Collection<RunwayPair> allPairs = ReciprocalRunwayPairer.INSTANCE.apply(
+        newHashSet(runway16, runway34, assaultStrip16, assaultStrip34)
+    );
+
+    assertAll(
+        () -> assertEquals(2, allPairs.size()),
+        () -> assertTrue(
+            allPairs.contains(new RunwayPair(runway16, runway34)) || allPairs.contains(new RunwayPair(runway34, runway16))
+        ),
+        () -> assertTrue(
+            allPairs.contains(new RunwayPair(assaultStrip16, assaultStrip34)) || allPairs.contains(new RunwayPair(assaultStrip34, assaultStrip16))
+        )
+    );
+  }
+
   private ArincRunway newRunway(String airport, String region, String runwayId) {
     ArincRunway runway = mock(ArincRunway.class);
     when(runway.airportIdentifier()).thenReturn(airport);

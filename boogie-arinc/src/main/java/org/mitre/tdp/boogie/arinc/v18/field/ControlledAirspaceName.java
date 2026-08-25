@@ -4,7 +4,7 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
 
 /**
  * The Controlled Airspace Name field will contain the name of the controlled airspace when assigned.
- *
+ * <p>
  * Names will be derived from official government sources. The name, if assigned, will be entered in the
  * first record only. If source does not assign a name, the field may be blank.
  */

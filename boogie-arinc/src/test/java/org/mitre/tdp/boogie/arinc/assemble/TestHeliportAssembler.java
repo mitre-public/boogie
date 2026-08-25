@@ -103,8 +103,8 @@ public class TestHeliportAssembler {
     List<Heliport> ports = arincTerminalAreaDatabase19.heliports("50MS").stream()
         .map(assembler19::assemble)
         .toList();
-    Heliport heliport = ports.get(0);
-    Heliport heliport2 = ports.get(1);
+    Heliport heliport = ports.stream().filter(p -> p.helipads().stream().anyMatch(pad -> "H1".equals(pad.padIdentifier()))).findFirst().orElseThrow();
+    Heliport heliport2 = ports.stream().filter(p -> p.helipads().stream().anyMatch(pad -> "H2".equals(pad.padIdentifier()))).findFirst().orElseThrow();
     Map<String, Helipad> helipads = heliport.helipads().stream().collect(Collectors.toMap(Helipad::padIdentifier, Function.identity()));
     Map<String, Helipad> helipads2 = heliport2.helipads().stream().collect(Collectors.toMap(Helipad::padIdentifier, Function.identity()));
 

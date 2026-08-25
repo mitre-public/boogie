@@ -10,6 +10,7 @@ import java.util.zip.GZIPInputStream;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
@@ -115,6 +116,10 @@ public final class EmbeddedCifpFile {
 
   public Collection<ArincControlledAirspaceLeg> controlledAirspaces() {
     return records.arincControlledAirspaceLegs();
+  }
+
+  public Collection<ArincRestrictiveAirspaceLeg> restrictiveAirspaces() {
+    return records.arincRestrictiveAirspaceLegs();
   }
 
   public Collection<ArincHeliport> arincHeliports() {

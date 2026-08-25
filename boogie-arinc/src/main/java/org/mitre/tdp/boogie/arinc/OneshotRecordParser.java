@@ -31,6 +31,8 @@ import org.mitre.tdp.boogie.arinc.assemble.AirwayAssembler;
 import org.mitre.tdp.boogie.arinc.assemble.AirwayAssemblyStrategy;
 import org.mitre.tdp.boogie.arinc.assemble.ControlledAirspaceAssembler;
 import org.mitre.tdp.boogie.arinc.assemble.ControlledAirspaceAssemblyStrategy;
+import org.mitre.tdp.boogie.arinc.assemble.RestrictiveAirspaceAssembler;
+import org.mitre.tdp.boogie.arinc.assemble.RestrictiveAirspaceAssemblyStrategy;
 import org.mitre.tdp.boogie.arinc.assemble.FirUirAssembler;
 import org.mitre.tdp.boogie.arinc.assemble.FirUirAssemblyStrategy;
 import org.mitre.tdp.boogie.arinc.assemble.FixAssembler;
@@ -45,6 +47,7 @@ import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincHeaderOne;
 import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
@@ -84,6 +87,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
   private final ControlledAirspaceAssemblyStrategy<AIR, FIX, ASEQ> controlledAirspaceStrategy;
 
+  private final RestrictiveAirspaceAssemblyStrategy<AIR, ASEQ> restrictiveAirspaceStrategy;
+
   private final HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy;
 
   private OneshotRecordParser(Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> builder) {
@@ -95,6 +100,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     this.procedureStrategy = requireNonNull(builder.procedureStrategy);
     this.firUirStrategy = requireNonNull(builder.firUirStrategy);
     this.controlledAirspaceStrategy = requireNonNull(builder.controlledAirspaceStrategy);
+    this.restrictiveAirspaceStrategy = requireNonNull(builder.restrictiveAirspaceStrategy);
     this.heliportStrategy = requireNonNull(builder.heliportStrategy);
   }
 
@@ -118,6 +124,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
         .procedureStrategy(ProcedureAssemblyStrategy.standard())
         .firUirStrategy(FirUirAssemblyStrategy.standard())
         .controlledAirspaceStrategy(ControlledAirspaceAssemblyStrategy.standard())
+        .restrictiveAirspaceStrategy(RestrictiveAirspaceAssemblyStrategy.standard())
         .heliportAssemblyStrategy(HeliportAssemblyStrategy.standard())
         .build();
   }
@@ -180,6 +187,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
         .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, consumer.arincProcedureLegs()))
         .addFirUirs(assembleFirUirs(consumer.arincFirUirLegs()))
         .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, consumer.arincControlledAirspaceLegs()))
+        .addRestrictiveAirspaces(assembleRestrictiveAirspaces(consumer.arincRestrictiveAirspaceLegs()))
         .headerOne(consumer.arincHeaderOne().orElse(null))
         .addHeliport(assembleHeliports(arincTerminalAreaDatabase, consumer.arincHeliports()))
         .build();
@@ -229,6 +237,11 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     return assembler.assemble(legs).toList();
   }
 
+  private Collection<AIR> assembleRestrictiveAirspaces(Collection<ArincRestrictiveAirspaceLeg> legs) {
+    RestrictiveAirspaceAssembler<AIR> assembler = RestrictiveAirspaceAssembler.usingStrategy(restrictiveAirspaceStrategy);
+    return assembler.assemble(legs).toList();
+  }
+
   private Collection<HPT> assembleHeliports(ArincTerminalAreaDatabase arincTerminalAreaDatabase, Collection<ArincHeliport> heliports) {
     HeliportAssembler<HPT> assembler = HeliportAssembler.usingStrategy(arincTerminalAreaDatabase, heliportStrategy);
     return heliports.stream().map(assembler::assemble).toList();
@@ -251,6 +264,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     private FirUirAssemblyStrategy<AIR, ASEQ> firUirStrategy;
 
     private ControlledAirspaceAssemblyStrategy<AIR, FIX, ASEQ> controlledAirspaceStrategy;
+
+    private RestrictiveAirspaceAssemblyStrategy<AIR, ASEQ> restrictiveAirspaceStrategy;
 
     private HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy;
 
@@ -323,6 +338,16 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     }
 
     /**
+     * See docs on {@link RestrictiveAirspaceAssemblyStrategy}
+     * @param restrictiveAirspaceStrategy the one to use in this parser
+     * @return this builder
+     */
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> restrictiveAirspaceStrategy(RestrictiveAirspaceAssemblyStrategy<AIR, ASEQ> restrictiveAirspaceStrategy) {
+      this.restrictiveAirspaceStrategy = requireNonNull(restrictiveAirspaceStrategy);
+      return this;
+    }
+
+    /**
      * See docs on {@link HeliportAssemblyStrategy}
      * @param heliportAssemblyStrategy the one to use in this parser
      * @return this builder
@@ -355,6 +380,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final Collection<AIR> conrolledAirspaces;
 
+    private final Collection<AIR> restrictiveAirspaces;
+
     private final ArincHeaderOne headerOne;
 
     private final Collection<HPT> heliports;
@@ -366,6 +393,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       this.procedures = builder.procedures;
       this.firUirs = builder.firUirs;
       this.conrolledAirspaces = builder.conrolledAirspaces;
+      this.restrictiveAirspaces = builder.restrictiveAirspaces;
       this.headerOne = builder.headerOne;
       this.heliports = builder.heliports;
     }
@@ -394,6 +422,10 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       return conrolledAirspaces;
     }
 
+    public Collection<AIR> restrictiveAirspaces() {
+      return restrictiveAirspaces;
+    }
+
     public Optional<ArincHeaderOne> headerOne() {
       return Optional.ofNullable(headerOne);
     }
@@ -415,6 +447,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       private final Collection<AIR> firUirs = new ArrayList<>();
 
       private final Collection<AIR> conrolledAirspaces = new ArrayList<>();
+
+      private final Collection<AIR> restrictiveAirspaces = new ArrayList<>();
 
       private final Collection<HPT> heliports = new ArrayList<>();
 
@@ -450,6 +484,11 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
       public Builder<APT, FIX, AWY, PRC, AIR, HPT> addControlledAirspaces(Collection<AIR> conrolledAirspaces) {
         this.conrolledAirspaces.addAll(conrolledAirspaces);
+        return this;
+      }
+
+      public Builder<APT, FIX, AWY, PRC, AIR, HPT> addRestrictiveAirspaces(Collection<AIR> restrictiveAirspaces) {
+        this.restrictiveAirspaces.addAll(restrictiveAirspaces);
         return this;
       }
 

@@ -19,7 +19,7 @@ public final class ReciprocalRunwayIdentifier implements Function<String, Option
   public static final ReciprocalRunwayIdentifier INSTANCE = new ReciprocalRunwayIdentifier();
 
   /**
-   * Regex for common runway ids (00-36)(L,C,R).
+   * Regex for a two-digit runway number (01-36), optionally followed by a one-character designator.
    * <br>
    * This includes additional codes seen in the CIFP data:
    * <br>
@@ -27,10 +27,11 @@ public final class ReciprocalRunwayIdentifier implements Function<String, Option
    * 2. 'W' - water
    * 3. 'U' - ultralight
    * 4. 'G' - glider
+   * 5. '0-9' - numeric assault-strip suffix (not part of the runway number)
    * <br>
    * The above are consistently called out in the CIFP cycle release notes/readme.
    */
-  public static final Pattern RUNWAY_ID = Pattern.compile("(0[1-9]|[1-2]\\d|3[0-6])[LCRSWUG]?");
+  public static final Pattern RUNWAY_ID = Pattern.compile("(0[1-9]|[1-2]\\d|3[0-6])[LCRSWUG0-9]?");
 
   private ReciprocalRunwayIdentifier() {
   }
@@ -44,7 +45,7 @@ public final class ReciprocalRunwayIdentifier implements Function<String, Option
       String id = matcher.group();
 
       String prefix = matcher.start() == 0 ? "" : runwayId.substring(0, matcher.start());
-      String postfix = matcher.end() == runwayId.length() - 1 ? "" : runwayId.substring(matcher.end());
+      String postfix = runwayId.substring(matcher.end());
 
       return Optional.of(String.join("", prefix, invertIdentifier(id), postfix));
     } else {

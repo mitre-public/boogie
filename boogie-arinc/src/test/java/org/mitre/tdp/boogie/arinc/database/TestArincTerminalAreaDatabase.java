@@ -219,6 +219,8 @@ class TestArincTerminalAreaDatabase {
       .helipadConverter(new HelipadConverter()) //they need a consumer
       .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
       .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
+      .restrictiveAirspaceConverter(new RestrictiveAirspaceLegConverter())
+      .restrictiveAirspaceLegDelegator(new RestrictiveAirspaceValidator())
       .headerDelegator(new Header01Validator())
       .headerConverter(new Header01Converter())
       .heliportConverter(new HeliportConverter())

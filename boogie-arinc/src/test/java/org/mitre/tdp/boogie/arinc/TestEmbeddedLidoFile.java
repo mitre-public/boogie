@@ -27,6 +27,7 @@ public class TestEmbeddedLidoFile {
         () -> assertEquals(308661, EmbeddedLidoFile.instance().arincFirUirLegs().size(), "FIR and UIR Legs"),
         () -> assertEquals(11908, EmbeddedLidoFile.instance().arincHelipads().size(), "Helipads, lots now that we do the heliports also"),
         () -> assertEquals(585050, EmbeddedLidoFile.instance().arincControlledAirspaceLegs().size(), "Controlled Airspace Legs"),
+        () -> assertEquals(256650, EmbeddedLidoFile.instance().arincRestrictiveAirspaceLegs().size(), "Restrictive Airspace Legs"),
         () -> assertEquals(9646, EmbeddedLidoFile.instance().arincHeliports().size(), "Heliports")
     );
   }

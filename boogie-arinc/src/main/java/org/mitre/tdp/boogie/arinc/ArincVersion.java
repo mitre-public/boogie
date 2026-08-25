@@ -16,6 +16,7 @@ import org.mitre.tdp.boogie.arinc.v18.Header01Spec;
 import org.mitre.tdp.boogie.arinc.v18.HeliportSpec;
 import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeSpec;
 import org.mitre.tdp.boogie.arinc.v18.NdbNavaidSpec;
+import org.mitre.tdp.boogie.arinc.v18.RestrictiveAirspaceLegSpec;
 import org.mitre.tdp.boogie.arinc.v18.RunwaySpec;
 import org.mitre.tdp.boogie.arinc.v18.VhfNavaidSpec;
 import org.mitre.tdp.boogie.arinc.v18.WaypointSpec;
@@ -48,6 +49,7 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v18.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
+      new RestrictiveAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HeliportSpec()
   ),
@@ -80,6 +82,7 @@ public enum ArincVersion {
       new VhfNavaidSpec(),
       new WaypointSpec(),
       new ControlledAirspaceLegSpec(),
+      new RestrictiveAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HeliportSpec()
   ),
@@ -103,6 +106,7 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HeliportSpec()
   ),
@@ -122,7 +126,6 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec(),
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v19.HoldingPatternSpec(),
-      new ControlledAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HeliportSpec()
   ),
@@ -143,6 +146,7 @@ public enum ArincVersion {
       new GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HeliportSpec()
   ),
@@ -181,6 +185,7 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HelipadSpec(),
       new org.mitre.tdp.boogie.arinc.v21.HeliportSpec()
@@ -221,6 +226,7 @@ public enum ArincVersion {
       new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemSpec(),
       new org.mitre.tdp.boogie.arinc.v20.HoldingPatternSpec(),
       new ControlledAirspaceLegSpec(),
+      new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegSpec(),
       new FirUirLegSpec(),
       new HelipadSpec(),
       new org.mitre.tdp.boogie.arinc.v21.HeliportSpec()
