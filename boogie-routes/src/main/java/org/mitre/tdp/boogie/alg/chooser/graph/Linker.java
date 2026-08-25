@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.alg.chooser.graph;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.distanceBetween;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.firstLegWithLocation;
@@ -81,8 +80,8 @@ public interface Linker {
    * @param right the token to link to
    */
   static Linker closestPointBetween(LinkableToken left, LinkableToken right) {
-    return () -> pointsWithinRange(Distance.ofNauticalMiles(Double.MAX_VALUE), left, right)
-        .links().stream().findFirst().map(List::of).orElseGet(Collections::emptyList);
+    PointsWithinRange points = new PointsWithinRange(Distance.ofNauticalMiles(Double.MAX_VALUE), left, right);
+    return () -> points.closestLink().map(List::of).orElseGet(Collections::emptyList);
   }
 
   /**
@@ -308,31 +307,48 @@ public interface Linker {
 
     @Override
     public List<LinkedLegs> links() {
-
-      List<Leg> element1Legs = withLocation(left.graphRepresentation());
-      List<Leg> element2Legs = withLocation(right.graphRepresentation());
-
-      return cartesianProduct(element1Legs, element2Legs).stream()
-          .sorted(comparing(this::distanceBetween))
-          .map(this::createPair)
-          .filter(pair -> pair.linkWeight() < range.inNauticalMiles())
+      return candidates()
+          .filter(this::isWithinRange)
+          .sorted(Comparator.comparingDouble(LinkCandidate::distance))
+          .map(LinkCandidate::toLinkedLegs)
           .toList();
     }
 
-    private double distanceBetween(Pair<Leg, Leg> pair) {
-
-      Fix left = pair.first().associatedFix().orElseThrow(IllegalStateException::new);
-      Fix right = pair.second().associatedFix().orElseThrow(IllegalStateException::new);
-
-      return left.distanceInNmTo(right);
+    private Optional<LinkedLegs> closestLink() {
+      return candidates()
+          .filter(this::isWithinRange)
+          .min(Comparator.comparingDouble(LinkCandidate::distance))
+          .map(LinkCandidate::toLinkedLegs);
     }
 
-    private LinkedLegs createPair(Pair<Leg, Leg> pair) {
-      return new LinkedLegs(
-          pair.first(),
-          pair.second(),
-          Math.max(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT, distanceBetween(pair))
-      );
+    private Stream<LinkCandidate> candidates() {
+      List<Leg> leftLegs = withLocation(left.graphRepresentation());
+      List<Leg> rightLegs = withLocation(right.graphRepresentation());
+
+      return leftLegs.stream()
+          .flatMap(leftLeg -> rightLegs.stream().map(rightLeg -> createCandidate(leftLeg, rightLeg)));
+    }
+
+    private LinkCandidate createCandidate(Leg leftLeg, Leg rightLeg) {
+      Fix leftFix = leftLeg.associatedFix().orElseThrow(IllegalStateException::new);
+      Fix rightFix = rightLeg.associatedFix().orElseThrow(IllegalStateException::new);
+
+      return new LinkCandidate(leftLeg, rightLeg, leftFix.distanceInNmTo(rightFix));
+    }
+
+    private boolean isWithinRange(LinkCandidate candidate) {
+      return candidate.linkWeight() < range.inNauticalMiles();
+    }
+
+    private record LinkCandidate(Leg source, Leg target, double distance) {
+
+      private double linkWeight() {
+        return Math.max(LinkedLegs.SAME_ELEMENT_MATCH_WEIGHT, distance);
+      }
+
+      private LinkedLegs toLinkedLegs() {
+        return new LinkedLegs(source, target, linkWeight());
+      }
     }
 
     private List<Leg> withLocation(Collection<LinkedLegs> linkedLegs) {
