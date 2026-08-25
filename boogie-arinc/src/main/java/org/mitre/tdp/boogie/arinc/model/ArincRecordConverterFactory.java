@@ -159,6 +159,7 @@ public final class ArincRecordConverterFactory {
           .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
           .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
           .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
+          .helipadConverter(new org.mitre.tdp.boogie.arinc.v21.HelipadConverter())
           .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
           .build();
       case V22, V22_NAV -> standardConsumer()
@@ -168,6 +169,7 @@ public final class ArincRecordConverterFactory {
           .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v22.ProcedureLegConverter())
           .runwayConverter(new org.mitre.tdp.boogie.arinc.v22.RunwayConverter())
           .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
+          .helipadConverter(new org.mitre.tdp.boogie.arinc.v21.HelipadConverter())
           .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
           .build();
     };
@@ -209,14 +211,18 @@ public final class ArincRecordConverterFactory {
           .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
           .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
           .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
+          .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
+          .helipadConverter(new org.mitre.tdp.boogie.arinc.v21.HelipadConverter())
           .build();
       case V22, V22_NAV -> standardMapper()
           .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v22.AirwayLegConverter())
           .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
           .gnssLandingSystemConverter(new org.mitre.tdp.boogie.arinc.v21.GnssLandingSystemConverter())
-          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
+          .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v22.ProcedureLegConverter())
           .runwayConverter(new org.mitre.tdp.boogie.arinc.v22.RunwayConverter())
           .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
+          .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
+          .helipadConverter(new org.mitre.tdp.boogie.arinc.v21.HelipadConverter())
           .build();
     };
   }
