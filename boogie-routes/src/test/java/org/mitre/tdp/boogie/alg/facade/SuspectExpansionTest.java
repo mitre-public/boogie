@@ -1,16 +1,5 @@
 package org.mitre.tdp.boogie.alg.facade;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mitre.tdp.boogie.alg.resolve.ElementType.SID;
-
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Distance;
@@ -18,7 +7,17 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.maps.MapBuilder;
 import org.mitre.caasd.commons.maps.MapFeature;
 import org.mitre.caasd.commons.maps.MapFeatures;
-import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.Fix;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mitre.tdp.boogie.alg.resolve.ElementType.SID;
 
 class SuspectExpansionTest {
 
@@ -30,14 +29,18 @@ class SuspectExpansionTest {
   }
 
   @Test
-  void testExpandRoute_KBZN_BZN6_V365_KHLN() {
+  void testSusWithRunways() {
     String route = "KBZN.BZN6.BZN.V365.CUSRI..KHLN";
-    RouteDetails details = RouteDetails.builder().departureRunway("RW12").arrivalRunway("RW30").build();
+    RouteDetails details = RouteDetails.builder()
+        .departureRunway("RW12")
+        .arrivalRunway("RW30")
+        .build();
     Optional<ExpandedRoute> result = expander.expand(route, details);
     ExpandedRoute expandedRoute = result.orElseThrow(() -> new AssertionError("Expansion produced nothing - the route graph is disconnected."));
 
     assertAll(
-        () -> assertFalse(expandedRoute.legs().isEmpty(), "Expansion produced no legs."),
+        () -> assertFalse(expandedRoute.
+            legs().isEmpty(), "Expansion produced no legs."),
         () -> assertTrue(
             expandedRoute.legs().stream()
                 .flatMap(leg -> leg.associatedFix().stream())
@@ -51,6 +54,29 @@ class SuspectExpansionTest {
     );
 
     //mapExpandedRoute(expandedRoute, "KBZN_BZN6_V365_KHLN.png");
+  }
+
+  @Test
+  void testSusNoRunways() {
+    String route = "KBZN.BZN6.BZN.V365.CUSRI..KHLN";
+    Optional<ExpandedRoute> result = expander.apply(route);
+    ExpandedRoute expandedRoute = result.orElseThrow(() -> new AssertionError("Expansion produced nothing - the route graph is disconnected."));
+
+    assertAll(
+        () -> assertFalse(expandedRoute.legs().isEmpty(), "Expansion produced no legs."),
+        () -> assertTrue(
+            expandedRoute.legs().stream()
+                .flatMap(leg -> leg.associatedFix().stream())
+                .allMatch(fix -> fix.latLong().longitude() >= -115. && fix.latLong().longitude() <= -108.),
+            "The empty common/enroute SID should avoid the same-named BZN6 and BZN fixes in England."
+        ),
+        () -> assertTrue(
+            expandedRoute.legs().stream().noneMatch(leg -> "BZN6".equals(leg.section()) && SID.equals(leg.elementType())),
+            "The runway-only BZN6 SID must be omitted when no departure runway is provided."
+        )
+    );
+
+    //mapExpandedRoute(expandedRoute, "KBZN_NoRunways.png");
   }
 
   /**
