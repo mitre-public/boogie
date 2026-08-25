@@ -124,23 +124,20 @@ final class GraphicalRouteChooser implements RouteChooser {
 
   /**
    * Adds alternate links across sections containing a valid resolved SID/STAR candidate which contributes no legs.
-   *
-   * <p>Common/enroute transitions may all be masked away because a procedure is runway-only or because none survived filtering.
+   * <p>
+   * Common/enroute transitions may all be masked away because a procedure is runway-only or because none survived filtering.
    * If a graphable candidate with the same identifier also exists, the section remains non-empty and normal linking cannot skip
    * it. These links retain both the zero-leg procedure path and the ordinary paths through the graphable candidates.
    *
    * @param graph graph to add links to
    * @param linkableTokens tokens to check for no-leg alternatives
    */
-  private void addLinksBypassingNoLegAlternatives(
-      SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph,
-      List<LinkableTokens> linkableTokens
-  ) {
+  private void addLinksBypassingNoLegAlternatives(SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph, List<LinkableTokens> linkableTokens) {
     for (int sourceIndex = 0; sourceIndex < linkableTokens.size() - 2; sourceIndex++) {
       LinkableTokens source = linkableTokens.get(sourceIndex);
 
       for (int skippedIndex = sourceIndex + 1; skippedIndex < linkableTokens.size() - 1; skippedIndex++) {
-        if (!linkableTokens.get(skippedIndex).hasNoLegAlternative()) {
+        if (linkableTokens.get(skippedIndex).allPathsRequireLegs()) {
           break;
         }
 
@@ -207,7 +204,7 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     for (LinkableTokens tokens : linkableTokens) {
       tokens.graphRepresentation().stream().map(LinkedLegs::source).forEach(entryPoints::add);
-      if (!tokens.hasNoLegAlternative()) {
+      if (tokens.allPathsRequireLegs()) {
         break;
       }
     }
@@ -218,8 +215,8 @@ final class GraphicalRouteChooser implements RouteChooser {
   /**
    * Resolves the target exit points from the resolved set of sections to be the target legs of the linked legs in the last
    * resolved section of the route string.
-   *
-   * <p>Generally speaking the returned collection will be a singleton leg representing the arrival airport - but for cases where
+   * <p>
+   * Generally speaking the returned collection will be a singleton leg representing the arrival airport - but for cases where
    * we may have malformed route strings this formulation should remain robust.
    */
   private LinkedHashSet<Leg> resolveExitPoints(List<LinkableTokens> linkableTokens) {
@@ -228,7 +225,7 @@ final class GraphicalRouteChooser implements RouteChooser {
     for (int index = linkableTokens.size() - 1; index >= 0; index--) {
       LinkableTokens tokens = linkableTokens.get(index);
       tokens.graphRepresentation().stream().map(LinkedLegs::source).forEach(exitPoints::add);
-      if (!tokens.hasNoLegAlternative()) {
+      if (tokens.allPathsRequireLegs()) {
         break;
       }
     }
@@ -365,8 +362,8 @@ final class GraphicalRouteChooser implements RouteChooser {
       return tokens.stream().anyMatch(LinkableToken::supportsIntraLinks);
     }
 
-    boolean hasNoLegAlternative() {
-      return hasNoLegAlternative;
+    boolean allPathsRequireLegs() {
+      return !hasNoLegAlternative;
     }
 
     /**
