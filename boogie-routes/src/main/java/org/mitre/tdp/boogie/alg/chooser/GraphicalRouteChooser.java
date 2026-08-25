@@ -195,8 +195,8 @@ final class GraphicalRouteChooser implements RouteChooser {
   /**
    * Resolves the target entry points from the resolved set of sections to be the source legs of the linked legs in the first
    * resolved section of the route string.
-   *
-   * <p>Generally speaking the returned collection will be a singleton leg representing the departure airport - but for cases where
+   * <p>
+   * Generally speaking the returned collection will be a singleton leg representing the departure airport - but for cases where
    * we may have malformed route strings this formulation should remain robust.
    */
   private LinkedHashSet<Leg> resolveEntryPoints(List<LinkableTokens> linkableTokens) {
