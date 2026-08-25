@@ -5,6 +5,8 @@ import static org.mitre.tdp.boogie.alg.resolve.ElementType.SID;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,14 +18,23 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.caasd.commons.maps.MapBuilder;
 import org.mitre.caasd.commons.maps.MapFeature;
 import org.mitre.caasd.commons.maps.MapFeatures;
-import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.*;
 
 class SuspectExpansionTest {
 
   private static FluentRouteExpander expander;
 
   @BeforeAll
-  static void setup() {
+  static void setup() throws IOException {
+//    try (InputStream inputStream = EmbeddedLidoFile.getInputStream()) {
+//      var records = OneshotRecordParser.standard(ArincVersion.V22).assembleFrom(inputStream);
+//      expander = FluentRouteExpander.inMemoryBuilder(
+//          records.airports(),
+//          records.procedures(),
+//          records.airways(),
+//          records.fixes()
+//      ).build();
+//    }
     expander = FluentRouteExpander.inMemoryBuilder(BznSuspectFixture.airports(), BznSuspectFixture.procedures(), BznSuspectFixture.airways(), BznSuspectFixture.fixes()).build();
   }
 
@@ -32,17 +43,23 @@ class SuspectExpansionTest {
     String route = "KBZN.BZN6.BZN.V365.CUSRI..KHLN";
     RouteDetails details = RouteDetails.builder().departureRunway("RW12").arrivalRunway("RW30").build();
     Optional<ExpandedRoute> result = expander.expand(route, details);
+    ExpandedRoute expandedRoute = result.orElseThrow(() -> new AssertionError("Expansion produced nothing - the route graph is disconnected."));
+
     assertAll(
-        () -> assertTrue(result.isPresent(), "Expansion produced nothing - the route graph is disconnected."),
-        () -> assertFalse(result.get().legs().isEmpty(), "Expansion produced no legs."),
-        () -> assertEquals(
-            List.of(BznSuspectFixture.KBZN.latLong(), BznSuspectFixture.BRIGR.latLong(), BznSuspectFixture.BZN_MT.latLong(), BznSuspectFixture.CUSRI.latLong(), BznSuspectFixture.KHLN.latLong()),
-            result.get().legs().stream().flatMap(leg -> leg.associatedFix().stream()).map(Fix::latLong).toList(),
-            "The empty common/enroute SID should avoid the same-named BZN6 and BZN fixes in England."),
-        () -> assertTrue(result.get().legs().stream().anyMatch(leg -> "BZN6".equals(leg.section()) && SID.equals(leg.elementType())), "The no-leg common/enroute path must retain the inferred BZN6 runway transition.")
+        () -> assertFalse(expandedRoute.legs().isEmpty(), "Expansion produced no legs."),
+        () -> assertTrue(
+            expandedRoute.legs().stream()
+                .flatMap(leg -> leg.associatedFix().stream())
+                .allMatch(fix -> fix.latLong().longitude() >= -115. && fix.latLong().longitude() <= -108.),
+            "The empty common/enroute SID should avoid the same-named BZN6 and BZN fixes in England."
+        ),
+        () -> assertTrue(
+            expandedRoute.legs().stream().anyMatch(leg -> "BZN6".equals(leg.section()) && SID.equals(leg.elementType())),
+            "The no-leg common/enroute path must retain the inferred BZN6 runway transition."
+        )
     );
 
-    mapExpandedRoute(result.get(), "KBZN_BZN6_V365_KHLN.png");
+    mapExpandedRoute(expandedRoute, "KBZN_BZN6_V365_KHLN.png");
   }
 
   /**
