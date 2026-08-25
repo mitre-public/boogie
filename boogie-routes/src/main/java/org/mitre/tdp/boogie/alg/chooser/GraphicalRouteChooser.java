@@ -117,7 +117,37 @@ final class GraphicalRouteChooser implements RouteChooser {
         (previous, next, skip) -> previous.interLinks(next).forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs))
     );
 
+    addLinksBypassingNoLegAlternatives(graph, linkableTokens);
+
     return graph;
+  }
+
+  /**
+   * Adds alternate links across sections containing a valid resolved SID/STAR candidate which contributes no legs.
+   *
+   * <p>Common/enroute transitions may all be masked away because a procedure is runway-only or because none survived filtering.
+   * If a graphable candidate with the same identifier also exists, the section remains non-empty and normal linking cannot skip
+   * it. These links retain both the zero-leg procedure path and the ordinary paths through the graphable candidates.
+   *
+   * @param graph graph to add links to
+   * @param linkableTokens tokens to check for no-leg alternatives
+   */
+  private void addLinksBypassingNoLegAlternatives(
+      SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph,
+      List<LinkableTokens> linkableTokens
+  ) {
+    for (int sourceIndex = 0; sourceIndex < linkableTokens.size() - 2; sourceIndex++) {
+      LinkableTokens source = linkableTokens.get(sourceIndex);
+
+      for (int skippedIndex = sourceIndex + 1; skippedIndex < linkableTokens.size() - 1; skippedIndex++) {
+        if (!linkableTokens.get(skippedIndex).hasNoLegAlternative()) {
+          break;
+        }
+
+        LinkableTokens target = linkableTokens.get(skippedIndex + 1);
+        source.interLinks(target).forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs));
+      }
+    }
   }
 
   /**
@@ -173,14 +203,16 @@ final class GraphicalRouteChooser implements RouteChooser {
    * we may have malformed route strings this formulation should remain robust.
    */
   private LinkedHashSet<Leg> resolveEntryPoints(List<LinkableTokens> linkableTokens) {
-    return linkableTokens.stream()
-        // drop sections without expanded legs (or with no source elements to expand)
-        .filter(LinkableTokens::nonEmpty)
-        .findFirst()
-        .stream()
-        .flatMap(tokens -> tokens.graphRepresentation().stream())
-        .map(LinkedLegs::source)
-        .collect(Collectors.toCollection(LinkedHashSet::new));
+    LinkedHashSet<Leg> entryPoints = new LinkedHashSet<>();
+
+    for (LinkableTokens tokens : linkableTokens) {
+      tokens.graphRepresentation().stream().map(LinkedLegs::source).forEach(entryPoints::add);
+      if (!tokens.hasNoLegAlternative()) {
+        break;
+      }
+    }
+
+    return entryPoints;
   }
 
   /**
@@ -191,14 +223,17 @@ final class GraphicalRouteChooser implements RouteChooser {
    * we may have malformed route strings this formulation should remain robust.
    */
   private LinkedHashSet<Leg> resolveExitPoints(List<LinkableTokens> linkableTokens) {
-    return linkableTokens.stream()
-        // drop sections without expanded legs (or with no source elements to expand)
-        .filter(LinkableTokens::nonEmpty)
-        .reduce((l1, l2) -> l2)
-        .stream()
-        .flatMap(tokens -> tokens.graphRepresentation().stream())
-        .map(LinkedLegs::source)
-        .collect(Collectors.toCollection(LinkedHashSet::new));
+    LinkedHashSet<Leg> exitPoints = new LinkedHashSet<>();
+
+    for (int index = linkableTokens.size() - 1; index >= 0; index--) {
+      LinkableTokens tokens = linkableTokens.get(index);
+      tokens.graphRepresentation().stream().map(LinkedLegs::source).forEach(exitPoints::add);
+      if (!tokens.hasNoLegAlternative()) {
+        break;
+      }
+    }
+
+    return exitPoints;
   }
 
   /**
@@ -213,6 +248,9 @@ final class GraphicalRouteChooser implements RouteChooser {
    * </ol>
    */
   private LinkableTokens make(ResolvedTokens resolvedTokens) {
+
+    boolean hasNoLegAlternative = resolvedTokens.resolvedTokens().stream()
+        .anyMatch(GraphicalRouteChooser::isNoLegAlternative);
 
     LinkedHashMap<LinkableToken, ResolvedToken> tokenMap = resolvedTokens.resolvedTokens().stream()
         .filter(t -> {
@@ -238,10 +276,18 @@ final class GraphicalRouteChooser implements RouteChooser {
             ))
         .collect(toMap(Pair::first, Pair::second));
 
-    return new LinkableTokens(legMap, tokenMap.keySet());
+    return new LinkableTokens(legMap, tokenMap.keySet(), hasNoLegAlternative);
   }
 
   private static final Predicate<Procedure> PROC_WITH_TRANSITIONS = s -> !s.transitions().isEmpty();
+
+  private static boolean isNoLegAlternative(ResolvedToken token) {
+    boolean isEnrouteCommon = token instanceof ResolvedToken.SidEnrouteCommon
+        || token instanceof ResolvedToken.StarEnrouteCommon;
+
+    return isEnrouteCommon
+        && ResolvedTokenVisitor.sidStar(token).filter(PROC_WITH_TRANSITIONS.negate()).isPresent();
+  }
 
   /**
    * We are going to want deterministic ordering between runs here - enforce the use of a {@link LinkedHashMap}.
@@ -303,9 +349,12 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     private final Collection<LinkableToken> tokens;
 
-    private LinkableTokens(Map<Leg, LinkableLeg> linkableLegs, Collection<LinkableToken> tokens) {
+    private final boolean hasNoLegAlternative;
+
+    private LinkableTokens(Map<Leg, LinkableLeg> linkableLegs, Collection<LinkableToken> tokens, boolean hasNoLegAlternative) {
       this.linkableLegs = linkableLegs;
       this.tokens = tokens;
+      this.hasNoLegAlternative = hasNoLegAlternative;
     }
 
     boolean nonEmpty() {
@@ -314,6 +363,10 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     boolean supportsIntraLinks() {
       return tokens.stream().anyMatch(LinkableToken::supportsIntraLinks);
+    }
+
+    boolean hasNoLegAlternative() {
+      return hasNoLegAlternative;
     }
 
     /**

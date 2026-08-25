@@ -3,12 +3,14 @@ package org.mitre.tdp.boogie.alg.chooser;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.MockObjects.IF;
 import static org.mitre.tdp.boogie.MockObjects.TF;
 import static org.mitre.tdp.boogie.MockObjects.airport;
 import static org.mitre.tdp.boogie.MockObjects.airway;
 import static org.mitre.tdp.boogie.MockObjects.fix;
+import static org.mitre.tdp.boogie.MockObjects.newProcedure;
 import static org.mitre.tdp.boogie.MockObjects.transition;
 
 import java.util.Arrays;
@@ -27,6 +29,7 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.MockObjects;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -100,6 +103,124 @@ class GraphicalRouteChooserTest {
   }
 
   @Test
+  void testNoLegSidAlternativeBypassesSameNamedFix() {
+
+    Procedure runwayOnlySid = runwayOnlyProcedure(
+        "RW01", "SID1", "DEP", ProcedureType.SID,
+        IF("SID_START", 0., 0., 10), TF("SID_EXIT", 0., 1., 20)
+    );
+
+    List<ResolvedLeg> legs = routeChooser.chooseRoute(List.of(
+        resolvedTokens("DEP", 0., ResolvedToken.standardAirport(airport("DEP", 0., 0.))),
+        resolvedTokens("SID1", .5, ResolvedToken.sidRunway(runwayOnlySid)),
+        resolvedTokens(
+            "SID1",
+            1.,
+            ResolvedToken.sidEnrouteCommon(runwayOnlySid),
+            ResolvedToken.directToFix(fix("SID1", 50., 50.))
+        ),
+        resolvedTokens("LOCAL_EXIT", 2., ResolvedToken.directToFix(fix("LOCAL_EXIT", 0., 1.))),
+        resolvedTokens("ARR", 3., ResolvedToken.directToAirport(airport("ARR", 0., 2.)))
+    ));
+
+    List<String> fixIdentifiers = associatedFixIdentifiers(legs);
+
+    assertAll(
+        () -> assertTrue(legs.stream().anyMatch(leg -> leg.resolvedToken() instanceof ResolvedToken.SidRunway)),
+        () -> assertTrue(fixIdentifiers.contains("SID_EXIT")),
+        () -> assertTrue(fixIdentifiers.contains("LOCAL_EXIT")),
+        () -> assertFalse(fixIdentifiers.contains("SID1"), "The distant same-named fix must not replace the empty SID portion.")
+    );
+  }
+
+  @Test
+  void testNoLegStarAlternativeBypassesSameNamedFix() {
+
+    Procedure runwayOnlyStar = runwayOnlyProcedure(
+        "RW02", "STAR1", "ARR", ProcedureType.STAR,
+        IF("STAR_ENTRY", 0., 2., 10), TF("STAR_EXIT", 0., 3., 20)
+    );
+
+    List<ResolvedLeg> legs = routeChooser.chooseRoute(List.of(
+        resolvedTokens("DEP", 0., ResolvedToken.standardAirport(airport("DEP", 0., 0.))),
+        resolvedTokens("LOCAL_ENTRY", 1., ResolvedToken.directToFix(fix("LOCAL_ENTRY", 0., 2.))),
+        resolvedTokens(
+            "STAR1",
+            2.,
+            ResolvedToken.starEnrouteCommon(runwayOnlyStar),
+            ResolvedToken.directToFix(fix("STAR1", 50., 50.))
+        ),
+        resolvedTokens("STAR1", 2.5, ResolvedToken.starRunway(runwayOnlyStar)),
+        resolvedTokens("ARR", 3., ResolvedToken.directToAirport(airport("ARR", 0., 3.)))
+    ));
+
+    List<String> fixIdentifiers = associatedFixIdentifiers(legs);
+
+    assertAll(
+        () -> assertTrue(legs.stream().anyMatch(leg -> leg.resolvedToken() instanceof ResolvedToken.StarRunway)),
+        () -> assertTrue(fixIdentifiers.contains("LOCAL_ENTRY")),
+        () -> assertTrue(fixIdentifiers.contains("STAR_ENTRY")),
+        () -> assertFalse(fixIdentifiers.contains("STAR1"), "The distant same-named fix must not replace the empty STAR portion.")
+    );
+  }
+
+  @Test
+  void testLeadingNoLegAlternativeCanStartAtFollowingSection() {
+
+    Procedure runwayOnlySid = runwayOnlyProcedure(
+        "RW01", "SID1", "DEP", ProcedureType.SID,
+        IF("SID_START", 0., 0., 10), TF("SID_EXIT", 0., 1., 20)
+    );
+
+    List<ResolvedLeg> legs = routeChooser.chooseRoute(List.of(
+        resolvedTokens(
+            "SID1",
+            0.,
+            ResolvedToken.sidEnrouteCommon(runwayOnlySid),
+            ResolvedToken.directToFix(fix("SID1", 50., 50.))
+        ),
+        resolvedTokens("LOCAL_START", 1., ResolvedToken.directToFix(fix("LOCAL_START", 0., 1.))),
+        resolvedTokens("ARR", 2., ResolvedToken.directToAirport(airport("ARR", 0., 2.)))
+    ));
+
+    List<String> fixIdentifiers = associatedFixIdentifiers(legs);
+
+    assertAll(
+        () -> assertTrue(fixIdentifiers.contains("LOCAL_START")),
+        () -> assertTrue(fixIdentifiers.contains("ARR")),
+        () -> assertFalse(fixIdentifiers.contains("SID1"), "The leading no-leg SID alternative should skip its distant fix.")
+    );
+  }
+
+  @Test
+  void testTrailingNoLegAlternativeCanEndAtPreviousSection() {
+
+    Procedure runwayOnlyStar = runwayOnlyProcedure(
+        "RW02", "STAR1", "ARR", ProcedureType.STAR,
+        IF("STAR_ENTRY", 0., 2., 10), TF("STAR_EXIT", 0., 3., 20)
+    );
+
+    List<ResolvedLeg> legs = routeChooser.chooseRoute(List.of(
+        resolvedTokens("DEP", 0., ResolvedToken.standardAirport(airport("DEP", 0., 0.))),
+        resolvedTokens("LOCAL_END", 1., ResolvedToken.directToFix(fix("LOCAL_END", 0., 1.))),
+        resolvedTokens(
+            "STAR1",
+            2.,
+            ResolvedToken.starEnrouteCommon(runwayOnlyStar),
+            ResolvedToken.directToFix(fix("STAR1", 50., 50.))
+        )
+    ));
+
+    List<String> fixIdentifiers = associatedFixIdentifiers(legs);
+
+    assertAll(
+        () -> assertTrue(fixIdentifiers.contains("DEP")),
+        () -> assertTrue(fixIdentifiers.contains("LOCAL_END")),
+        () -> assertFalse(fixIdentifiers.contains("STAR1"), "The trailing no-leg STAR alternative should skip its distant fix.")
+    );
+  }
+
+  @Test
   void testShortestPath() {
     List<ResolvedLeg> legs = split().andThen(i -> apfResolver().applyTo(i, (t) -> true)).andThen(routeChooser::chooseRoute)
         .apply("KIND.BLSTR1.VNY");
@@ -136,6 +257,34 @@ class GraphicalRouteChooserTest {
   private SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> toGraph(String route) {
     List<ResolvedTokens> resolvedTokens = split().andThen(i -> apfResolver().applyTo(i, (t) -> true)).apply(route);
     return routeChooser.constructRouteGraph(routeChooser.toLinkableTokens(resolvedTokens));
+  }
+
+  private static ResolvedTokens resolvedTokens(String identifier, double index, ResolvedToken... tokens) {
+    return new ResolvedTokens(RouteToken.standard(identifier, index), Arrays.asList(tokens));
+  }
+
+  private static Procedure runwayOnlyProcedure(
+      String transitionIdentifier,
+      String procedureIdentifier,
+      String airportIdentifier,
+      ProcedureType procedureType,
+      Leg... legs
+  ) {
+    return newProcedure(List.of(transition(
+        transitionIdentifier,
+        procedureIdentifier,
+        airportIdentifier,
+        TransitionType.RUNWAY,
+        procedureType,
+        Arrays.asList(legs)
+    )));
+  }
+
+  private static List<String> associatedFixIdentifiers(List<ResolvedLeg> legs) {
+    return legs.stream()
+        .flatMap(leg -> leg.leg().associatedFix().stream())
+        .map(Fix::fixIdentifier)
+        .toList();
   }
 
   private static RouteTokenResolver apfResolver() {

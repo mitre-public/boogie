@@ -8,6 +8,7 @@ dependencies {
     implementation(libs.bundles.commons)
     implementation(libs.bundles.jgrapht)
 
+    testImplementation(project(":boogie-arinc"))
     testImplementation(project(":boogie-util"))
     testImplementation(platform(rootProject.libs.junit.bom))
     testImplementation(rootProject.libs.bundles.test.tools)
