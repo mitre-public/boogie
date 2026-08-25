@@ -3,7 +3,11 @@ package org.mitre.tdp.boogie.alg.chooser.graph;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Answers.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
@@ -32,6 +36,23 @@ class LinkerTest {
     List<LinkedLegs> expected = singletonList(new LinkedLegs(l2, l3, 42.42937759769261)); // eh decimal equals
 
     assertEquals(expected, linkedLegs);
+  }
+
+  @Test
+  void testClosestPointCalculatesEachCandidateDistanceOnce() {
+
+    Fix f1 = newMockFix(LatLong.of(0., 0.));
+    Fix f2 = newMockFix(LatLong.of(.5, .5));
+    Fix f3 = newMockFix(LatLong.of(1., 1.));
+    Fix f4 = newMockFix(LatLong.of(1.5, 1.5));
+
+    LinkableToken r1 = newResolvedElement(newLeg(f1), newLeg(f2));
+    LinkableToken r2 = newResolvedElement(newLeg(f3), newLeg(f4));
+    clearInvocations(f1, f2, f3, f4);
+
+    Linker.closestPointBetween(r1, r2).links();
+
+    Stream.of(f1, f2, f3, f4).forEach(fix -> verify(fix, times(2)).latLong());
   }
 
   @Test
@@ -64,7 +85,17 @@ class LinkerTest {
     return newLeg("MOCK", location);
   }
 
+  private Leg newLeg(Fix fix) {
+    return Leg.dfBuilder(fix, 0).build();
+  }
+
   private Leg newLeg(String fixIdentifier, LatLong location) {
     return Leg.dfBuilder(Fix.builder().fixIdentifier(fixIdentifier).latLong(location).build(), 0).build();
+  }
+
+  private Fix newMockFix(LatLong location) {
+    Fix fix = mock(Fix.class, CALLS_REAL_METHODS);
+    when(fix.latLong()).thenReturn(location);
+    return fix;
   }
 }

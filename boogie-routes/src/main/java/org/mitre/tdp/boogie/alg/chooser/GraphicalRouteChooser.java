@@ -128,7 +128,7 @@ final class GraphicalRouteChooser implements RouteChooser {
   /**
    * Returns alternate links across sections containing a valid resolved SID/STAR candidate which contributes no legs.
    * <p>
-   * Common/enroute transitions may all be masked away because a procedure is runway-only or because none survived filtering.
+   * Common/enroute transitions may all be masked because a procedure is runway-only or because none survived filtering.
    * If a graphable candidate with the same identifier also exists, the section remains non-empty and normal linking cannot skip
    * it. These links retain both the zero-leg procedure path and the ordinary paths through the graphable candidates.
    *
