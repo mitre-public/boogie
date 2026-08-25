@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.alg.chooser;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 import static org.mitre.tdp.boogie.util.Iterators.openClose2;
 
@@ -22,6 +21,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jgrapht.GraphPath;
@@ -95,7 +95,7 @@ final class GraphicalRouteChooser implements RouteChooser {
   List<LinkableTokens> toLinkableTokens(List<ResolvedTokens> resolvedTokens) {
     return resolvedTokens.stream()
         .map(this::make)
-        .filter(i -> !i.linkableLegs.isEmpty())
+        .filter(LinkableTokens::nonEmpty)
         .toList();
   }
 
@@ -103,48 +103,45 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
-    linkableTokens.stream().flatMap(tokens -> tokens.graphRepresentation().stream())
+    Stream.of(
+        linkableTokens.stream().flatMap(LinkableTokens::graphRepresentation),
+        linkableTokens.stream().filter(LinkableTokens::supportsIntraLinks).flatMap(LinkableTokens::intraLinks),
+        linksBetweenAdjacentSections(linkableTokens),
+        linksBypassingNoLegAlternatives(linkableTokens)
+    )
+        .flatMap(Function.identity())
         .forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs));
-
-    linkableTokens.stream()
-        .filter(LinkableTokens::supportsIntraLinks)
-        .forEach(tokens -> tokens.intraLinks().forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs)));
-
-    openClose2(
-        linkableTokens,
-        LinkableTokens::nonEmpty,
-        (l, h) -> h.nonEmpty(),
-        (previous, next, skip) -> previous.interLinks(next).forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs))
-    );
-
-    addLinksBypassingNoLegAlternatives(graph, linkableTokens);
 
     return graph;
   }
 
+  private Stream<LinkedLegs> linksBetweenAdjacentSections(List<LinkableTokens> linkableTokens) {
+    List<LinkableTokens> nonEmptyTokens = linkableTokens.stream()
+        .filter(LinkableTokens::nonEmpty)
+        .toList();
+
+    return IntStream.range(1, nonEmptyTokens.size())
+        .boxed()
+        .flatMap(index -> nonEmptyTokens.get(index - 1).interLinks(nonEmptyTokens.get(index)));
+  }
+
   /**
-   * Adds alternate links across sections containing a valid resolved SID/STAR candidate which contributes no legs.
+   * Returns alternate links across sections containing a valid resolved SID/STAR candidate which contributes no legs.
    * <p>
    * Common/enroute transitions may all be masked away because a procedure is runway-only or because none survived filtering.
    * If a graphable candidate with the same identifier also exists, the section remains non-empty and normal linking cannot skip
    * it. These links retain both the zero-leg procedure path and the ordinary paths through the graphable candidates.
    *
-   * @param graph graph to add links to
    * @param linkableTokens tokens to check for no-leg alternatives
+   * @return links bypassing consecutive sections which can contribute no legs
    */
-  private void addLinksBypassingNoLegAlternatives(SimpleDirectedWeightedGraph<Leg, DefaultWeightedEdge> graph, List<LinkableTokens> linkableTokens) {
-    for (int sourceIndex = 0; sourceIndex < linkableTokens.size() - 2; sourceIndex++) {
-      LinkableTokens source = linkableTokens.get(sourceIndex);
-
-      for (int skippedIndex = sourceIndex + 1; skippedIndex < linkableTokens.size() - 1; skippedIndex++) {
-        if (linkableTokens.get(skippedIndex).allPathsRequireLegs()) {
-          break;
-        }
-
-        LinkableTokens target = linkableTokens.get(skippedIndex + 1);
-        source.interLinks(target).forEach(linkedLegs -> addLinkedLegTo(graph, linkedLegs));
-      }
-    }
+  private Stream<LinkedLegs> linksBypassingNoLegAlternatives(List<LinkableTokens> linkableTokens) {
+    return IntStream.range(0, linkableTokens.size() - 2)
+        .boxed()
+        .flatMap(sourceIndex -> IntStream.range(sourceIndex + 1, linkableTokens.size() - 1)
+            .takeWhile(skippedIndex -> linkableTokens.get(skippedIndex).hasNoLegAlternative())
+            .boxed()
+            .flatMap(skippedIndex -> linkableTokens.get(sourceIndex).interLinks(linkableTokens.get(skippedIndex + 1))));
   }
 
   /**
@@ -200,16 +197,11 @@ final class GraphicalRouteChooser implements RouteChooser {
    * we may have malformed route strings this formulation should remain robust.
    */
   private LinkedHashSet<Leg> resolveEntryPoints(List<LinkableTokens> linkableTokens) {
-    LinkedHashSet<Leg> entryPoints = new LinkedHashSet<>();
+    Stream<LinkableTokens> candidates = IntStream.range(0, linkableTokens.size())
+        .takeWhile(index -> index == 0 || linkableTokens.get(index - 1).hasNoLegAlternative())
+        .mapToObj(linkableTokens::get);
 
-    for (LinkableTokens tokens : linkableTokens) {
-      tokens.graphRepresentation().stream().map(LinkedLegs::source).forEach(entryPoints::add);
-      if (tokens.allPathsRequireLegs()) {
-        break;
-      }
-    }
-
-    return entryPoints;
+    return resolvePoints(candidates);
   }
 
   /**
@@ -220,17 +212,19 @@ final class GraphicalRouteChooser implements RouteChooser {
    * we may have malformed route strings this formulation should remain robust.
    */
   private LinkedHashSet<Leg> resolveExitPoints(List<LinkableTokens> linkableTokens) {
-    LinkedHashSet<Leg> exitPoints = new LinkedHashSet<>();
+    int finalIndex = linkableTokens.size() - 1;
+    Stream<LinkableTokens> candidates = IntStream.iterate(finalIndex, index -> index >= 0, index -> index - 1)
+        .takeWhile(index -> index == finalIndex || linkableTokens.get(index + 1).hasNoLegAlternative())
+        .mapToObj(linkableTokens::get);
 
-    for (int index = linkableTokens.size() - 1; index >= 0; index--) {
-      LinkableTokens tokens = linkableTokens.get(index);
-      tokens.graphRepresentation().stream().map(LinkedLegs::source).forEach(exitPoints::add);
-      if (tokens.allPathsRequireLegs()) {
-        break;
-      }
-    }
+    return resolvePoints(candidates);
+  }
 
-    return exitPoints;
+  private LinkedHashSet<Leg> resolvePoints(Stream<LinkableTokens> candidates) {
+    return candidates
+        .flatMap(LinkableTokens::graphRepresentation)
+        .map(LinkedLegs::source)
+        .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   /**
@@ -250,13 +244,9 @@ final class GraphicalRouteChooser implements RouteChooser {
         .anyMatch(GraphicalRouteChooser::isNoLegAlternative);
 
     LinkedHashMap<LinkableToken, ResolvedToken> tokenMap = resolvedTokens.resolvedTokens().stream()
-        .filter(t -> {
-          Optional<Procedure> sidStar = ResolvedTokenVisitor.sidStar(t);
-          if (sidStar.isPresent()) {
-            return sidStar.filter(PROC_WITH_TRANSITIONS).isPresent();
-          }
-          return true;
-        })
+        .filter(token -> ResolvedTokenVisitor.sidStar(token)
+            .map(PROC_WITH_TRANSITIONS::test)
+            .orElse(true))
         .collect(toMap(mapper::map, Function.identity()));
 
     LinkedHashMap<Leg, LinkableLeg> legMap = tokenMap.keySet().stream()
@@ -362,8 +352,8 @@ final class GraphicalRouteChooser implements RouteChooser {
       return tokens.stream().anyMatch(LinkableToken::supportsIntraLinks);
     }
 
-    boolean allPathsRequireLegs() {
-      return !hasNoLegAlternative;
+    boolean hasNoLegAlternative() {
+      return hasNoLegAlternative;
     }
 
     /**
@@ -376,17 +366,16 @@ final class GraphicalRouteChooser implements RouteChooser {
       return ofNullable(linkableLegs.get(leg)).orElseGet(() -> LinkableLeg.builder().leg(leg).build());
     }
 
-    Collection<LinkedLegs> graphRepresentation() {
+    Stream<LinkedLegs> graphRepresentation() {
       return tokens.stream()
           .flatMap(token -> token.graphRepresentation().stream())
-          .map(this::rewrap)
-          .collect(toList());
+          .map(this::rewrap);
     }
 
     /**
      * Links co-resolved tokens within this section when both token types explicitly support intra-section linking.
      */
-    Collection<LinkedLegs> intraLinks() {
+    Stream<LinkedLegs> intraLinks() {
       return linkableTokens().stream()
           .filter(LinkableToken::supportsIntraLinks)
           .flatMap(source -> linkableTokens().stream()
@@ -397,8 +386,7 @@ final class GraphicalRouteChooser implements RouteChooser {
                       linkableLeg(linkedLegs.source()),
                       linkableLeg(linkedLegs.target()),
                       linkedLegs.linkWeight()
-                  ))))
-          .collect(toList());
+                  ))));
     }
 
     /**
@@ -407,15 +395,14 @@ final class GraphicalRouteChooser implements RouteChooser {
      * @param linkableTokens all the tokens.
      * @return the links between the tokens.
      */
-    Collection<LinkedLegs> interLinks(LinkableTokens linkableTokens) {
+    Stream<LinkedLegs> interLinks(LinkableTokens linkableTokens) {
       return cartesianProduct(linkableTokens(), linkableTokens.linkableTokens()).stream()
           .flatMap(pair -> pair.first().accept(pair.second()).links().stream()
               .map(linkedLegs -> new LinkedLegs(
                   linkableLeg(linkedLegs.source()),
                   linkableTokens.linkableLeg(linkedLegs.target()),
                   linkedLegs.linkWeight()
-              )))
-          .collect(toList());
+              )));
     }
 
     private Collection<LinkableToken> linkableTokens() {
