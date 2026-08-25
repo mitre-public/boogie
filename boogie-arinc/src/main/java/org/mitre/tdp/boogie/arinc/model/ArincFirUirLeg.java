@@ -109,11 +109,11 @@ public final class ArincFirUirLeg implements ArincModel {
   /**
    * See {@link ArcDistance}.
    */
-  private final Integer arcDistance;
+  private final Double arcDistance;
   /**
    * See {@link ArcBearing}.
    */
-  private final Integer arcBearing;
+  private final Double arcBearing;
   /**
    * See {@link Limit}.
    */
@@ -285,11 +285,11 @@ public final class ArincFirUirLeg implements ArincModel {
     return Optional.ofNullable(arcOriginLongitude);
   }
 
-  public Optional<Integer> arcDistance() {
+  public Optional<Double> arcDistance() {
     return Optional.ofNullable(arcDistance);
   }
 
-  public Optional<Integer> arcBearing() {
+  public Optional<Double> arcBearing() {
     return Optional.ofNullable(arcBearing);
   }
 
@@ -388,8 +388,8 @@ public final class ArincFirUirLeg implements ArincModel {
     private Double firUirLongitude;
     private Double arcOriginLatitude;
     private Double arcOriginLongitude;
-    private Integer arcDistance;
-    private Integer arcBearing;
+    private Double arcDistance;
+    private Double arcBearing;
     private Double firUpperLimit;
     private Double uirLowerLimit;
     private Double uirUpperLimit;
@@ -493,12 +493,12 @@ public final class ArincFirUirLeg implements ArincModel {
       return this;
     }
 
-    public Builder arcDistance(Integer arcDistance) {
+    public Builder arcDistance(Double arcDistance) {
       this.arcDistance = arcDistance;
       return this;
     }
 
-    public Builder arcBearing(Integer arcBearing) {
+    public Builder arcBearing(Double arcBearing) {
       this.arcBearing = arcBearing;
       return this;
     }

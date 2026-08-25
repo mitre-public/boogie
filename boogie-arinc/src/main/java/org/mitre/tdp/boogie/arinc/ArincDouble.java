@@ -8,6 +8,9 @@ public abstract class ArincDouble implements FieldSpec<Double> {
 
   @Override
   public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(Double::parseDouble);
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        .filter(ValidArincNumeric.INSTANCE)
+        .map(Double::parseDouble);
   }
 }

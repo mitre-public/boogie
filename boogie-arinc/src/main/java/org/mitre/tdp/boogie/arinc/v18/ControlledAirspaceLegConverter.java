@@ -35,8 +35,8 @@ public final class ControlledAirspaceLegConverter implements Function<ArincRecor
     Optional<Double> longitude = arincRecord.optionalField("longitude");
     Optional<Double> arcOriginLatitude = arincRecord.optionalField("arcOriginLatitude");
     Optional<Double> arcOriginLongitude = arincRecord.optionalField("arcOriginLongitude");
-    Optional<Integer> arcDistance = arincRecord.optionalField("arcDistance");
-    Optional<Integer> arcBearing = arincRecord.optionalField("arcBearing");
+    Optional<Double> arcDistance = arincRecord.optionalField("arcDistance");
+    Optional<Double> arcBearing = arincRecord.optionalField("arcBearing");
     Optional<Double> rnp = arincRecord.optionalField("rnp");
     Optional<Double> lowerLimit = arincRecord.optionalField("lowerLimit");
     Optional<String> lowerUnitIndicator = arincRecord.optionalField("lowerIndicator");
