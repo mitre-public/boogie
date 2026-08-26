@@ -29,6 +29,8 @@ public final class ArcDistance extends ArincDouble {
 
   @Override
   public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
   }
 }
