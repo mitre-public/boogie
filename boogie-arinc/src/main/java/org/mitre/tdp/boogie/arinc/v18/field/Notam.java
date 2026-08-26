@@ -5,7 +5,7 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
 /**
  * Restrictive Airspace areas may not have established active times and are activated by NOTAM or
  * may be active by NOTAM in addition to established times.
- *
+ * <p>
  * Active times by NOTAM will be derived from official government source. When used on primary records,
  * the area is active only by NOTAM and there will be no continuation record. When used on continuation
  * records, the area is active by NOTAM in addition to the established times. The field will contain

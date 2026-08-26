@@ -29,8 +29,8 @@ public final class FirUirLegConverter implements Function<ArincRecord, Optional<
     Optional<String> reportingUnitsAltitude = arincRecord.optionalField("reportingUnitsAltitude");
     Optional<Double> arcOriginLatitude = arincRecord.optionalField("arcOriginLatitude");
     Optional<Double> arcOriginLongitude = arincRecord.optionalField("arcOriginLongitude");
-    Optional<Integer> arcDistance = arincRecord.optionalField("arcDistance");
-    Optional<Integer> arcBearing = arincRecord.optionalField("arcBearing");
+    Optional<Double> arcDistance = arincRecord.optionalField("arcDistance");
+    Optional<Double> arcBearing = arincRecord.optionalField("arcBearing");
     Optional<Double> firUpperLimit = arincRecord.optionalField("firUpperLimit");
     Optional<Double> uirLowerLimit = arincRecord.optionalField("uirLowerLimit");
     Optional<Double> uirUpperLimit = arincRecord.optionalField("uirUpperLimit");

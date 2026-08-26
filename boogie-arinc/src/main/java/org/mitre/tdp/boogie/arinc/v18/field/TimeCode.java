@@ -10,22 +10,22 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
  * to indicate how to interpret Time of Operations Continuation Records. On Airway Restriction Primary
  * and Continuation Records, the Time Code indicated either a continuous or non-continuous operation,
  * the details of which are contained in the same record.
- *
+ * <p>
  * Active times are derived from official government source. The field will contain an alpha character for
  * which an associated description has been defined as indicated in the tables below.
- *
+ * <p>
  * Primary Records:
  * C - Active Continuously, including holidays
  * H - Active Continuously, excluding holidays
  * N - Active Non-Continuously, Refer to Continuation Record
  * P - Active times announced by NOTAM
  * U - Active times are not specified in source documentation
- *
+ * <p>
  * Continuation Records:
  * H - Active times are provided in Time of Operation format and exclude holidays
  * N - Activation Times are too complex for Time of Operation format and are provided in Note Form
  * T - Active times are provided in Time of Operation format and include holidays
- *
+ * <p>
  * Primary and Continuation Records:
  * C - Active Continuously, including holidays
  * H - Active Continuously, excluding holidays
@@ -33,7 +33,6 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
  * T - Active times are provided in Time of Operation format and include holidays
  *
  */
-
 public final class TimeCode extends TrimmableString {
   @Override
   public int fieldLength() {

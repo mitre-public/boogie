@@ -5,7 +5,7 @@ import org.mitre.tdp.boogie.arinc.TrimmableString;
 /**
  * The Multiple Code field will be used to indicate Restrictive Airspace Areas or MSA Centers having the
  * same designator but subdivided or differently divided by lateral and/or vertical detail.
- *
+ * <p>
  * This field will be used when official government publications for Restrictive Airspace divides an area with
  * the same designator into different areas of Activation, altitude or other defining characteristics. For
  * MSA Centers, this provides different sectorization and altitudes for the MSA published with the same
