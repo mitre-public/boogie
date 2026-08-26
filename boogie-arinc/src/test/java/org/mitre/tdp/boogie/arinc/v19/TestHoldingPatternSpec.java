@@ -51,7 +51,7 @@ class TestHoldingPatternSpec {
         () -> assertEquals("0", record.requiredField("continuationRecordNumber")),
         () -> assertEquals(54.0, record.requiredField("inboundHoldingCourse")),
         () -> assertEquals(TurnDirection.R, record.requiredField("turnDirection")),
-        () -> assertEquals(Double.valueOf(40), record.requiredField("legLength")),
+        () -> assertEquals(Double.valueOf(4.0), record.requiredField("legLength")),
         () -> assertTrue(record.optionalField("legTime").isEmpty()),
         () -> assertTrue(record.optionalField("minimumAltitude").isEmpty()),
         () -> assertTrue(record.optionalField("maxAltitude").isEmpty()),

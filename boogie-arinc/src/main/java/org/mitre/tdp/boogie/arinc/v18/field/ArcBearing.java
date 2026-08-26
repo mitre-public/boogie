@@ -1,6 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import java.util.Optional;
+
 import org.mitre.tdp.boogie.arinc.ArincDouble;
+import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 
 /**
  * The Arc Bearing field contains the true bearing from the Arc Origin position to the beginning of the arc.
@@ -21,5 +24,12 @@ public final class ArcBearing extends ArincDouble {
   @Override
   public String fieldCode() {
     return "5.120";
+  }
+
+  @Override
+  public Optional<Double> apply(String fieldValue) {
+    return Optional.of(fieldValue)
+        .map(String::trim)
+        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
   }
 }

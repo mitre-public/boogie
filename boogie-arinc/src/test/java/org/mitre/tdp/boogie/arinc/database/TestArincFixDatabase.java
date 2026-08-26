@@ -50,7 +50,7 @@ class TestArincFixDatabase {
     assertAll(
         () -> assertEquals("ABU", abu.fixIdentifier()),
         () -> assertEquals(90, abu.legTime().orElseThrow().getSeconds(), "Should be 90 seconds aka 1.5 min a normal hold"),
-        () -> assertEquals(43.0, vegers.get(0).legLength().orElseThrow(), "Should have a length"),
+        () -> assertEquals(4.3, vegers.get(0).legLength().orElseThrow(), "Should have a length"),
         () -> assertTrue(vegers.get(1).legLength().isEmpty(), "Both are not coded, so this should be empty"),
         () -> assertEquals(1, vegers.get(1).legTime().orElseThrow().toMinutes(), "Should have a time of 1 min")
     );

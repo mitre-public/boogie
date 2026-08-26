@@ -118,15 +118,38 @@ public class TestArincFirUirLeg {
 
   }
 
-  static String ARC = "SPACUFPGZUZRZXF00010        13N CE                   N13320480E14454306025000672UNLTD          RR GUAM CERAP               405972003";
+  private static final String FIR_UIR_ARC = "SAFRUFFQBEZRZXF16820FWLL        L S15512500E034042000S15402100E03454590005002570                                           935952605";
+
+  private static final String FIR_UIR_CIRCLE = "SPACUFPGZUZRZXF00010        13N CE                   N13320480E14454306025000672UNLTD          RR GUAM CERAP               405972003";
 
   @Test
-  void testArc() {
-    ArincRecord record = PARSER.parse(ARC).orElseThrow(AssertionError::new);
+  void testParseCircle() {
+    ArincRecord record = PARSER.parse(FIR_UIR_CIRCLE).orElseThrow(AssertionError::new);
     assertTrue(VALIDATOR.test(record));
     ArincFirUirLeg firUirLeg = CONVERTER.apply(record).orElseThrow(AssertionError::new);
     ArincFirUirLeg rebuilt = firUirLeg.toBuilder().build();
-    assertEquals("CE", firUirLeg.boundaryVia().name());
+
+    assertEquals(BoundaryVia.CE, firUirLeg.boundaryVia());
     assertEquals(firUirLeg, rebuilt);
+  }
+
+  @Test
+  void testParseArc() {
+    ArincRecord record = PARSER.parse(FIR_UIR_ARC).orElseThrow(AssertionError::new);
+    assertTrue(VALIDATOR.test(record));
+    ArincFirUirLeg firUirLeg = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+
+    assertAll(
+        () -> assertEquals(BoundaryVia.L, record.requiredField("boundaryVia")),
+        () -> assertEquals(-15.856944444444444, record.requiredField("firUirLatitude")),
+        () -> assertEquals(34.07222222222222, record.requiredField("firUirLongitude")),
+        () -> assertEquals(-15.6725, record.requiredField("arcOriginLatitude")),
+        () -> assertEquals(34.91638888888889, record.requiredField("arcOriginLongitude")),
+        () -> assertEquals(50.0, record.requiredField("arcDistance")),
+        () -> assertEquals(257.0, record.requiredField("arcBearing")),
+        () -> assertEquals(BoundaryVia.L, firUirLeg.boundaryVia()),
+        () -> assertEquals(Optional.of(50.0), firUirLeg.arcDistance()),
+        () -> assertEquals(Optional.of(257.0), firUirLeg.arcBearing())
+    );
   }
 }
