@@ -17,8 +17,8 @@ public final class FmFeatureScorer implements ViterbiFeatureVectorScorer {
 
   public FmFeatureScorer() {
     this(
-        simpleLogistic(15., 30.),
-        simpleLogistic(15., 25.),
+        simpleLogistic(5., 10.),
+        simpleLogistic(10., 20.),
         (d) -> d < 0.0 ? 0.0 : 1.0,
         (d) -> d > 0.5 ? 0.0 : 1.0
     );
