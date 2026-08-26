@@ -30,6 +30,8 @@ public class TestArincRestrictiveAirspaceLeg {
 
   private static final String RESTRICTIVE_AIRSPACE = "SUSAURK1NBOARDMAN  A00101L    G N45525900W119310400                              04000M17999MBOARDMAN MOA                  714171703";
 
+  private static final String RESTRICTIVE_AIRSPACE_ARC = "SAFRURDAD100A      A00020     R N35242020E004275131N35195300E00412160001350706                                             265382605";
+
   @Test
   void testParseRestrictiveAirspace() {
     ArincRecord record = PARSER.parse(RESTRICTIVE_AIRSPACE).orElseThrow(AssertionError::new);
@@ -65,6 +67,26 @@ public class TestArincRestrictiveAirspaceLeg {
         () -> assertEquals(71417, restrictiveAirspace.fileRecordNumber()),
         () -> assertEquals("1703", restrictiveAirspace.cycleDate()),
         () -> assertEquals(restrictiveAirspace, rebuilt)
+    );
+  }
+
+  @Test
+  void testParseArc() {
+    ArincRecord record = PARSER.parse(RESTRICTIVE_AIRSPACE_ARC).orElseThrow(AssertionError::new);
+    assertTrue(VALIDATOR.test(record));
+    ArincRestrictiveAirspaceLeg restrictiveAirspace = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+
+    assertAll(
+        () -> assertEquals(BoundaryVia.R, record.requiredField("boundaryVia")),
+        () -> assertEquals(35.40561111111111, record.requiredField("latitude")),
+        () -> assertEquals(4.464252777777778, record.requiredField("longitude")),
+        () -> assertEquals(35.331388888888895, record.requiredField("arcOriginLatitude")),
+        () -> assertEquals(4.204444444444444, record.requiredField("arcOriginLongitude")),
+        () -> assertEquals(13.5, record.requiredField("arcDistance")),
+        () -> assertEquals(70.6, record.requiredField("arcBearing")),
+        () -> assertEquals(Optional.of(BoundaryVia.R), restrictiveAirspace.boundaryVia()),
+        () -> assertEquals(Optional.of(13.5), restrictiveAirspace.arcDistance()),
+        () -> assertEquals(Optional.of(70.6), restrictiveAirspace.arcBearing())
     );
   }
 }

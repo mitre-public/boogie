@@ -32,6 +32,8 @@ public class TestArincControlledAirspaceLeg {
 
   private static final String CONTROLLED_AIRSPACE = "SSPAUCAGCAGGG UFA  A00010H    H S04500000E159000000                              FL245MFL660MHONIARA CTA                   794722210";
 
+  private static final String CONTROLLED_AIRSPACE_ARC = "SUSAUCK1AKBOI PAC  B00020LU   R N43322935W115594739N43335400W11613220001000980               ANM ID C BOISE AIR TERMINAL (B890782210";
+
   @Test
   void testParseControlledAirspace() {
     ArincRecord record = PARSER.parse(CONTROLLED_AIRSPACE).orElseThrow(AssertionError::new);
@@ -108,6 +110,26 @@ public class TestArincControlledAirspaceLeg {
         () -> assertEquals(79472, controlledAirspace.fileRecordNumber()),
         () -> assertEquals("2210", controlledAirspace.cycleDate()),
         () -> assertEquals(controlledAirspace, rebuilt)
+    );
+  }
+
+  @Test
+  void testParseArc() {
+    ArincRecord record = PARSER.parse(CONTROLLED_AIRSPACE_ARC).orElseThrow(AssertionError::new);
+    assertTrue(VALIDATOR.test(record));
+    ArincControlledAirspaceLeg controlledAirspace = CONVERTER.apply(record).orElseThrow(AssertionError::new);
+
+    assertAll(
+        () -> assertEquals(BoundaryVia.R, record.requiredField("boundaryVia")),
+        () -> assertEquals(43.54148611111111, record.requiredField("latitude")),
+        () -> assertEquals(-115.99649722222222, record.requiredField("longitude")),
+        () -> assertEquals(43.565, record.requiredField("arcOriginLatitude")),
+        () -> assertEquals(-116.22277777777778, record.requiredField("arcOriginLongitude")),
+        () -> assertEquals(10.0, record.requiredField("arcDistance")),
+        () -> assertEquals(98.0, record.requiredField("arcBearing")),
+        () -> assertEquals(BoundaryVia.R, controlledAirspace.boundaryVia()),
+        () -> assertEquals(Optional.of(10.0), controlledAirspace.arcDistance()),
+        () -> assertEquals(Optional.of(98.0), controlledAirspace.arcBearing())
     );
   }
 }
