@@ -64,6 +64,8 @@ public interface RestrictiveAirspaceAssemblyStrategy<A, AS> {
       return AirspaceSequence.builder(geometry, leg.sequenceNumber())
           .centerFix(centerFix)
           .associatedFix(associatedFix)
+          .arcRadius(leg.arcDistance().orElse(null))
+          .arcBearing(leg.arcBearing().orElse(null))
           .build();
     }
   }
