@@ -77,10 +77,13 @@ public interface AirportAssemblyStrategy<A, R, P> {
           .map(Course::ofDegrees)
           .or(() -> ofNullable(reciprocal).map(r -> courseBetween(origin, r)));
 
+      Optional<Distance> lengthFromCoords = origin.runwayLength().map(l -> l - origin.thresholdDisplacementDistance().orElse(0)).map(Distance::ofFeet)
+          .or(() -> Optional.ofNullable(reciprocal).map(r -> LatLong.of(r.latitude(), r.longitude()).distanceTo(LatLong.of(origin.latitude(), origin.longitude()))));
+
       return Runway.builder()
           .runwayIdentifier(origin.runwayIdentifier())
           .origin(LatLong.of(origin.latitude(), origin.longitude()))
-          .length(origin.runwayLength().map(Integer::doubleValue).map(Distance::ofFeet).orElse(null))
+          .length(lengthFromCoords.orElse(null))
           .course(trueCourse.orElse(null))
           .originElevation(origin.landingThresholdElevation().map(Distance::ofFeet).orElse(null))
           .build();
