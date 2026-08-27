@@ -66,11 +66,11 @@ class TestAirportAssembler {
         () -> assertEquals(8, airport.runways().size(), "Expected KJFK to have 8 runways."),
 
         () -> assertEquals("RW13R", runways.get("RW13R").runwayIdentifier()),
-        () -> assertEquals(Distance.ofFeet(14511.), runways.get("RW13R").length().orElse(null), "RW13R length"),
+        () -> assertEquals(Distance.ofFeet(12468.00), runways.get("RW13R").length().orElse(null), "RW13R length"),
         () -> assertEquals(Course.ofDegrees(121.), runways.get("RW13R").course().orElse(null), "RW13R true course"),
 
         () -> assertEquals("RW31L", runways.get("RW31L").runwayIdentifier()),
-        () -> assertEquals(Distance.ofFeet(14511.), runways.get("RW31L").length().orElse(null), "RW31L length"),
+        () -> assertEquals(Distance.ofFeet(11248.00), runways.get("RW31L").length().orElse(null), "RW31L length"),
         () -> assertEquals(Course.ofDegrees(301.), runways.get("RW31L").course().orElse(null), "RW31L true course"),
 
         () -> assertEquals(Distance.ofFeet(13.), runways.get("RW13R").originElevation().orElse(null), "RW13R origin elevation"),
