@@ -73,6 +73,22 @@ public final class ArincTerminalAreaDatabase {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).map(AirportPage::runways).orElse(Collections.emptySet());
   }
 
+  public Optional<ArincRunway> heliportsRunwayAt(String heliport, String runwayId) {
+    return highlander(heliportLookup.get(Pair.of(heliport, null))).flatMap(page -> page.runway(runwayId));
+  }
+
+  public Optional<ArincRunway> heliportsRunwayAt(String heliport, String icaoRegion, String runwayId) {
+    return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).flatMap(page -> page.runway(runwayId));
+  }
+
+  public Collection<ArincRunway> heliportsRunwaysAt(String heliport) {
+    return highlander(heliportLookup.get(Pair.of(heliport, null))).map(HeliportPage::runways).orElse(Collections.emptySet());
+  }
+
+  public Collection<ArincRunway> heliportsRunwaysAt(String heliport, String icaoRegion) {
+    return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).map(HeliportPage::runways).orElse(Collections.emptySet());
+  }
+
   public Optional<ArincHelipad> helipadAt(String airport, String helipadID) {
     return highlander(airportLookup.get(Pair.of(airport, null))).flatMap(page -> page.helipad(helipadID));
   }
@@ -143,6 +159,22 @@ public final class ArincTerminalAreaDatabase {
 
   public Optional<ArincLocalizerGlideSlope> secondaryLocalizerGlideSlopeOf(String airport, String icaoRegion, String runway) {
     return highlander(airportLookup.get(Pair.of(airport, icaoRegion))).flatMap(page -> page.secondaryLocalizerGlideSlopeForRunway(runway));
+  }
+
+  public Optional<ArincLocalizerGlideSlope> heliportsPrimaryLocalizerGlideSlopeOf(String heliport, String runway) {
+    return highlander(heliportLookup.get(Pair.of(heliport, null))).flatMap(page -> page.primaryLocalizerGlideSlopeForRunway(runway));
+  }
+
+  public Optional<ArincLocalizerGlideSlope> heliportsPrimaryLocalizerGlideSlopeOf(String heliport, String icaoRegion, String runway) {
+    return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).flatMap(page -> page.primaryLocalizerGlideSlopeForRunway(runway));
+  }
+
+  public Optional<ArincLocalizerGlideSlope> heliportsSecondaryLocalizerGlideSlopeOf(String heliport, String runway) {
+    return highlander(heliportLookup.get(Pair.of(heliport, null))).flatMap(page -> page.secondaryLocalizerGlideSlopeForRunway(runway));
+  }
+
+  public Optional<ArincLocalizerGlideSlope> heliportsSecondaryLocalizerGlideSlopeOf(String heliport, String icaoRegion, String runway) {
+    return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).flatMap(page -> page.secondaryLocalizerGlideSlopeForRunway(runway));
   }
 
   public Optional<ArincWaypoint> waypointAt(String airport, String waypoint) {

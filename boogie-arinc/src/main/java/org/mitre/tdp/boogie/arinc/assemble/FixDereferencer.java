@@ -55,7 +55,9 @@ public final class FixDereferencer<F> {
       case "EA" -> arincFixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
       case "PC" -> arincTerminalAreaDatabase.waypointAt(airport, icaoRegion, identifier).map(fixAssembler::assemble);
       case "HC" -> arincTerminalAreaDatabase.heliportsWaypoint(airport, icaoRegion, identifier).map(fixAssembler::assemble);
-      case "PG" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.runwayAt(a, identifier).map(fixAssembler::assemble));
+      case "PG" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.runwayAt(a, identifier)
+          .or(() -> arincTerminalAreaDatabase.heliportsRunwayAt(a, identifier))
+          .map(fixAssembler::assemble));
       case "PI" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.localizerGlideSlopeAt(a, identifier).map(fixAssembler::assemble));
       case "HI" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsGlideSlopeAt(a, identifier).map(fixAssembler::assemble));
       case "PT" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.gnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));

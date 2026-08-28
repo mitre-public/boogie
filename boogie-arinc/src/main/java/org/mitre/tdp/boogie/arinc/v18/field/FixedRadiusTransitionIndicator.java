@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * Indicates that a specific turn radius from the inbound course to the outbound course is required by the airspace controlling
@@ -13,7 +10,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * to 1 decimal place (tenths, decimal point suppressed) in nautical miles. A blank entry in this field indicates that no fixed
  * radius transition is required.
  */
-public final class FixedRadiusTransitionIndicator implements FieldSpec<Double> {
+public final class FixedRadiusTransitionIndicator extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -26,7 +23,7 @@ public final class FixedRadiusTransitionIndicator implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

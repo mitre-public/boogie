@@ -2,10 +2,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static java.lang.Math.abs;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * The “Vertical Angle” field defines the vertical navigation path prescribed for the procedure. The vertical angle should cause
@@ -13,7 +10,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * for that fix at which the angle is coded. Vertical Angle information is provided only for descending vertical navigation. The
  * angle is preceded by a “–” (minus sign) to indicate the descending flight.
  */
-public final class VerticalAngle implements FieldSpec<Double> {
+public final class VerticalAngle extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -26,8 +23,12 @@ public final class VerticalAngle implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim)
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithHundredths).filter(d -> abs(d) < 10.);
+  protected int suppressedDecimalPlaces() {
+    return 2;
+  }
+
+  @Override
+  protected boolean isValidValue(double value) {
+    return abs(value) < 10.;
   }
 }

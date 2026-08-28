@@ -10,30 +10,46 @@ import org.mitre.tdp.boogie.Declinations;
 import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.Heliport;
 import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
+import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
 /**
  * This class defines how to convert an arinc heliport into an {@link Heliport.Standard} and {@link Helipad.Standard} from Arinc 424 record.
  * @param <H> the heliport class.
+ * @param <R> the runway class.
  * @param <P> the helipad class.
  */
-public interface HeliportAssemblyStrategy<H, P> {
+public interface HeliportAssemblyStrategy<H, R, P> {
   /**
    * This strategy will build the standard records with simple defs in boogie.
    * @return the strategy.
    */
-  static HeliportAssemblyStrategy<Heliport, Helipad> standard() {
+  static HeliportAssemblyStrategy<Heliport, Runway, Helipad> standard() {
     return new Standard();
   }
 
   /**
    * This is to convert the 424 records to the user defined records for later use.
    * @param port the 424 heliport.
+   * @param convertedRunways the already converted runways.
    * @param convertedHelipads the already converted helipads.
    * @return the user defined heliport.
    */
-  H convertHeliport(ArincHeliport port, List<P> convertedHelipads);
+  H convertHeliport(ArincHeliport port, List<R> convertedRunways, List<P> convertedHelipads);
+
+  /**
+   * Convert a runway end associated with a heliport.
+   */
+  R convertRunway(
+      ArincHeliport heliport,
+      ArincRunway origin,
+      ArincRunway reciprocal,
+      ArincLocalizerGlideSlope ilsGls1,
+      ArincLocalizerGlideSlope ilsGls2
+  );
 
   /**
    * This is to convert the arinc 424 helipads defined by the user.
@@ -49,13 +65,13 @@ public interface HeliportAssemblyStrategy<H, P> {
    */
   Optional<P> convertToHelipad(ArincHeliport port);
 
-  final class Standard implements HeliportAssemblyStrategy<Heliport, Helipad> {
+  final class Standard implements HeliportAssemblyStrategy<Heliport, Runway, Helipad> {
 
     private Standard() {
     }
 
     @Override
-    public Heliport convertHeliport(ArincHeliport port, List<Helipad> convertedHelipads) {
+    public Heliport convertHeliport(ArincHeliport port, List<Runway> convertedRunways, List<Helipad> convertedHelipads) {
       LatLong place = LatLong.of(port.latitude(), port.longitude());
       List<Helipad> padsOrFromPort = Optional.ofNullable(convertedHelipads).filter(l -> !l.isEmpty())
           .or(() -> convertToHelipad(port).map(List::of))
@@ -63,9 +79,15 @@ public interface HeliportAssemblyStrategy<H, P> {
       return Heliport.builder()
           .heliportIdentifier(port.heliportIdentifier())
           .magneticVariation(magneticVariation(port))
+          .runways(convertedRunways)
           .helipads(padsOrFromPort)
           .latLong(place)
           .build();
+    }
+
+    @Override
+    public Runway convertRunway(ArincHeliport heliport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2) {
+      return RunwayAssembly.standardRunway(origin, reciprocal, magneticVariation(heliport));
     }
 
     @Override
@@ -98,4 +120,3 @@ public interface HeliportAssemblyStrategy<H, P> {
     }
   }
 }
-

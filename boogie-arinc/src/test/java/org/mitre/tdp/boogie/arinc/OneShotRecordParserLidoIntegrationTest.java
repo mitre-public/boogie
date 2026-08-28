@@ -1,21 +1,15 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.util.DemotedException;
+import org.mitre.tdp.boogie.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.mitre.caasd.commons.util.DemotedException;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airspace;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Heliport;
-import org.mitre.tdp.boogie.Procedure;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("LIDO")
 @Tag("INTEGRATION")
@@ -30,8 +24,18 @@ public class OneShotRecordParserLidoIntegrationTest {
       throw DemotedException.demote("Exception parsing embedded LIDO file.", e);
     }
 
+    int airportRunwayCount = records.airports().stream()
+        .mapToInt(airport -> airport.runways().size())
+        .sum();
+    int heliportRunwayCount = records.heliports().stream()
+        .mapToInt(heliport -> heliport.runways().size())
+        .sum();
+
     assertAll(
         () -> assertEquals(26960, records.airports().size(), "Airports"),
+        () -> assertEquals(34092, airportRunwayCount, "Airport Runways"),
+        () -> assertEquals(32, heliportRunwayCount, "Heliport Runways"),
+        () -> assertEquals(34124, airportRunwayCount + heliportRunwayCount, "Runways"),
         () -> assertEquals(270393, records.fixes().size(), "Fixes"),
         () -> assertEquals(14588, records.airways().size(), "Airways"),
         () -> assertEquals(101085, records.procedures().size(), "Procedures"),

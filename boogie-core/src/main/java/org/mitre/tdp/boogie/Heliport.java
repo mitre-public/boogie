@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +43,15 @@ public interface Heliport extends HasPosition {
    */
   Optional<MagneticVariation> magneticVariation();
 
+  /**
+   * The runways associated with this heliport.
+   *
+   * <p>The default empty collection preserves compatibility with implementations created before heliports supported runways.
+   */
+  default Collection<? extends Runway> runways() {
+    return List.of();
+  }
+
   Collection<? extends Helipad> helipads();
 
   void accept(Visitor visitor);
@@ -55,6 +65,7 @@ public interface Heliport extends HasPosition {
     private final String heliportIdentifier;
     private final LatLong latLong;
     private final MagneticVariation magneticVariation;
+    private final Collection<Runway> runways;
     private final Collection<Helipad> helipads;
 
     private int hashCode;
@@ -63,6 +74,7 @@ public interface Heliport extends HasPosition {
       this.heliportIdentifier = builder.heliportIdentifier;
       this.latLong = builder.latLong;
       this.magneticVariation = builder.magneticVariation;
+      this.runways = builder.runways;
       this.helipads = builder.helipads;
     }
 
@@ -82,6 +94,11 @@ public interface Heliport extends HasPosition {
     }
 
     @Override
+    public Collection<? extends Runway> runways() {
+      return Optional.ofNullable(runways).orElse(List.of());
+    }
+
+    @Override
     public Collection<? extends Helipad> helipads() {
       return Optional.ofNullable(helipads).orElse(List.of());
     }
@@ -96,6 +113,7 @@ public interface Heliport extends HasPosition {
           .heliportIdentifier(heliportIdentifier)
           .latLong(latLong)
           .magneticVariation(magneticVariation)
+          .runways(runways)
           .helipads(helipads);
     }
 
@@ -104,7 +122,7 @@ public interface Heliport extends HasPosition {
       if (o == null || getClass() != o.getClass())
         return false;
       Standard standard = (Standard) o;
-      return Objects.equals(heliportIdentifier, standard.heliportIdentifier) && Objects.equals(latLong, standard.latLong) && Objects.equals(magneticVariation, standard.magneticVariation) && Objects.equals(helipads, standard.helipads);
+      return Objects.equals(heliportIdentifier, standard.heliportIdentifier) && Objects.equals(latLong, standard.latLong) && Objects.equals(magneticVariation, standard.magneticVariation) && Objects.equals(runways, standard.runways) && Objects.equals(helipads, standard.helipads);
     }
 
     @Override
@@ -116,7 +134,7 @@ public interface Heliport extends HasPosition {
     }
 
     private int computeHashCode() {
-      return Objects.hash(heliportIdentifier, latLong, magneticVariation, helipads);
+      return Objects.hash(heliportIdentifier, latLong, magneticVariation, runways, helipads);
     }
 
     @Override
@@ -125,6 +143,7 @@ public interface Heliport extends HasPosition {
           "heliportIdentifier='" + heliportIdentifier + '\'' +
           ", latLong=" + latLong +
           ", magneticVariation=" + magneticVariation +
+          ", runways=" + runways +
           ", helipads=" + helipads +
           ", hashCode=" + hashCode +
           '}';
@@ -134,6 +153,7 @@ public interface Heliport extends HasPosition {
       private String heliportIdentifier;
       private LatLong latLong;
       private MagneticVariation magneticVariation;
+      private Collection<Runway> runways;
       private Collection<Helipad> helipads;
 
       private Builder() {}
@@ -153,8 +173,13 @@ public interface Heliport extends HasPosition {
         return this;
       }
 
-      public Builder helipads(Collection<Helipad> helipads) {
-        this.helipads = helipads;
+      public Builder runways(Collection<? extends Runway> runways) {
+        this.runways = runways == null || runways.isEmpty() ? null : new ArrayList<>(runways);
+        return this;
+      }
+
+      public Builder helipads(Collection<? extends Helipad> helipads) {
+        this.helipads = helipads == null ? null : new ArrayList<>(helipads);
         return this;
       }
 
@@ -196,6 +221,11 @@ public interface Heliport extends HasPosition {
     @Override
     public Optional<MagneticVariation> magneticVariation() {
       return delegate.magneticVariation();
+    }
+
+    @Override
+    public Collection<? extends Runway> runways() {
+      return delegate.runways();
     }
 
     @Override

@@ -33,6 +33,17 @@ public class TestNuevoTerminalDatabaseIntegration {
   }
 
   @Test
+  void testHeliportRunwayQueries() {
+    assertAll(
+        () -> assertEquals(4, arincTerminalAreaDatabase.heliportsRunwaysAt("KNZX").size()),
+        () -> assertEquals(4, arincTerminalAreaDatabase.heliportsRunwaysAt("KNZX", "K7").size()),
+        () -> assertEquals("RW09", arincTerminalAreaDatabase.heliportsRunwayAt("KNZX", "RW09").map(ArincRunway::runwayIdentifier).orElseThrow()),
+        () -> assertEquals("RW09", arincTerminalAreaDatabase.heliportsRunwayAt("KNZX", "K7", "RW09").map(ArincRunway::runwayIdentifier).orElseThrow()),
+        () -> assertEquals(2, arincTerminalAreaDatabase.heliportsRunwaysAt("KEDG").size())
+    );
+  }
+
+  @Test
   void testLocalizersExistForRunwayReferences() {
 
     List<ArincRunway> runwaysWithPrimaryIlsMlsGlsReference = EmbeddedLidoFile.instance().arincRunways().stream()

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.Heliport;
+import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
@@ -21,7 +22,12 @@ import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 /**
  * This data is different enough between versions to warrant two test inputs.
@@ -142,6 +148,64 @@ public class TestHeliportAssembler {
         () -> assertEquals(40.7549, heliport.latitude()),
         () -> assertEquals(-74.0070638888889, heliport.longitude())
     );
+  }
+
+  @Test
+  void testRunwaysAssociatedWithAHeliport() {
+    ArincHeliport arincHeliport = ArincHeliport.builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.H)
+        .heliportIdentifier("HPT1")
+        .heliportIcaoRegion("K1")
+        .latitude(40.)
+        .longitude(-75.)
+        .magneticVariation(0.)
+        .build();
+    ArincRunway runway09 = runway("RW09", 90., 40., -75.);
+    ArincRunway runway27 = runway("RW27", 270., 40.01, -75.);
+
+    ArincTerminalAreaDatabase database = ArincDatabaseFactory.newTerminalAreaDatabase(
+        List.of(),
+        List.of(runway09, runway27),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(arincHeliport)
+    );
+    Heliport heliport = HeliportAssembler.standard(database).assemble(arincHeliport);
+    Map<String, ? extends Runway> runways = heliport.runways().stream()
+        .collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
+
+    assertAll(
+        () -> assertEquals(2, database.heliportsRunwaysAt("HPT1", "K1").size()),
+        () -> assertEquals(runway09, database.heliportsRunwayAt("HPT1", "K1", "RW09").orElseThrow()),
+        () -> assertEquals(2, runways.size()),
+        () -> assertEquals("RW09", runways.get("RW09").runwayIdentifier()),
+        () -> assertEquals("RW27", runways.get("RW27").runwayIdentifier())
+    );
+  }
+
+  private ArincRunway runway(String identifier, double bearing, double latitude, double longitude) {
+    return new ArincRunway.Builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.P)
+        .airportIdentifier("HPT1")
+        .airportIcaoRegion("K1")
+        .subSectionCode("G")
+        .runwayIdentifier(identifier)
+        .runwayMagneticBearing(bearing)
+        .runwayLength(5000)
+        .latitude(latitude)
+        .longitude(longitude)
+        .fileRecordNumber(1)
+        .lastUpdateCycle("2501")
+        .build();
   }
 
 }

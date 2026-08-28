@@ -91,7 +91,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
   private final RestrictiveAirspaceAssemblyStrategy<AIR, ASEQ> restrictiveAirspaceStrategy;
 
-  private final HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy;
+  private final HeliportAssemblyStrategy<HPT, RWY, HLPD> heliportStrategy;
 
   private OneshotRecordParser(Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> builder) {
     this.version = requireNonNull(builder.version);
@@ -273,7 +273,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private RestrictiveAirspaceAssemblyStrategy<AIR, ASEQ> restrictiveAirspaceStrategy;
 
-    private HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy;
+    private HeliportAssemblyStrategy<HPT, RWY, HLPD> heliportStrategy;
 
     private Builder(ArincVersion version) {
       this.version = requireNonNull(version);
@@ -358,7 +358,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
      * @param heliportAssemblyStrategy the one to use in this parser
      * @return this builder
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> heliportAssemblyStrategy(HeliportAssemblyStrategy<HPT, HLPD> heliportAssemblyStrategy) {
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> heliportAssemblyStrategy(HeliportAssemblyStrategy<HPT, RWY, HLPD> heliportAssemblyStrategy) {
       this.heliportStrategy = requireNonNull(heliportAssemblyStrategy);
       return this;
     }

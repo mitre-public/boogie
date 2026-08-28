@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * The "Localizer Width" field specifies the localizer course width of the ILS facility defined in the record.
@@ -13,7 +10,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * <br>
  * e.g. 0500, 0400, 0350
  */
-public final class LocalizerWidth implements FieldSpec<Double> {
+public final class LocalizerWidth extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -26,7 +23,7 @@ public final class LocalizerWidth implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithHundredths);
+  protected int suppressedDecimalPlaces() {
+    return 2;
   }
 }

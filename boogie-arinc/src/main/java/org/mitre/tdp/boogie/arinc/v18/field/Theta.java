@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * “Theta” is defined as the magnetic bearing to the waypoint identified in the record’s “FIX Ident” field from the Navaid in
@@ -17,7 +14,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * <br>
  * This parser will return the values as parsed doubles.
  */
-public final class Theta implements FieldSpec<Double> {
+public final class Theta extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -30,7 +27,7 @@ public final class Theta implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

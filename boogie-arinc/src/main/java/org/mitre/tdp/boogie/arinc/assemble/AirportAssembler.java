@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
@@ -72,27 +72,21 @@ public interface AirportAssembler<A> {
           arincAirport.airportIcaoRegion()
       );
 
-      List<R> runways = new ArrayList<>();
-
-      if (!arincRunways.isEmpty()) {
-        ReciprocalRunwayPairer.INSTANCE.apply(arincRunways).stream()
-            // add in the otherEnd direction for the reciprocal pairing (a,b) -> (a,b),(b,a)
-            .flatMap(pair -> pair.otherEnd() != null ? Stream.of(pair, new RunwayPair(pair.otherEnd(), pair.thisRunway())) : Stream.of(pair))
-            .map(pair -> strategy.convertRunway(
-                arincAirport,
-                pair.thisRunway(),
-                pair.otherEnd(),
-                arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf(
-                    arincAirport.airportIdentifier(),
-                    arincAirport.airportIcaoRegion(),
-                    pair.thisRunway().runwayIdentifier()).orElse(null),
-                arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf(
-                    arincAirport.airportIdentifier(),
-                    arincAirport.airportIcaoRegion(),
-                    pair.thisRunway().runwayIdentifier()).orElse(null)
-            ))
-            .forEach(runways::add);
-      }
+      List<R> runways = RunwayAssembly.directedPairs(arincRunways)
+          .map(pair -> strategy.convertRunway(
+              arincAirport,
+              pair.thisRunway(),
+              pair.otherEnd(),
+              arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf(
+                  arincAirport.airportIdentifier(),
+                  arincAirport.airportIcaoRegion(),
+                  pair.thisRunway().runwayIdentifier()).orElse(null),
+              arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf(
+                  arincAirport.airportIdentifier(),
+                  arincAirport.airportIcaoRegion(),
+                  pair.thisRunway().runwayIdentifier()).orElse(null)
+          ))
+          .collect(Collectors.toCollection(ArrayList::new));
 
       Collection<ArincHelipad> arincHelipads = arincTerminalAreaDatabase.helipadsAt(arincAirport.airportIdentifier(), arincAirport.airportIcaoRegion());
       List<H> helipads = arincHelipads.stream().map(strategy::convertHelipad).toList();

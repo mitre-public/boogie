@@ -1,10 +1,11 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseDouble;
+
 import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.TrimmableString;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 import org.mitre.tdp.boogie.arinc.utils.LegTimeFromString;
 
 /**
@@ -42,6 +43,6 @@ public final class RouteHoldDistanceTime extends TrimmableString {
   public Optional<Double> asDistanceInNm(String fieldString) {
     return Optional.of(fieldString)
         .filter(fs -> !fs.startsWith("T"))
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+        .flatMap(value -> parseDouble(value, 1));
   }
 }

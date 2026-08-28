@@ -15,15 +15,28 @@ import org.slf4j.LoggerFactory;
 public final class RunwayValidator implements Predicate<ArincRecord> {
 
   private static final Logger LOG = LoggerFactory.getLogger(RunwayValidator.class);
+  private static final BiConsumer<ArincRecord, String> DEBUG_MISSING_FIELD =
+      (arincRecord, field) -> LOG.debug("Missing required field {} in record {}.", field, arincRecord.rawRecord());
+  private static final BiConsumer<ArincRecord, String> TRACE_MISSING_COORDINATE =
+      (arincRecord, field) -> LOG.trace("Missing required field {} in record {}.", field, arincRecord.rawRecord());
 
   private final BiConsumer<ArincRecord, String> missingFieldConsumer;
+  /**
+   * Missing runways is a 'feature' from our providers so lets not clog logs with it.
+   */
+  private final BiConsumer<ArincRecord, String> missingCoordinateConsumer;
 
   public RunwayValidator() {
-    this((arincRecord, field) -> LOG.debug("Missing required field {} in record {}.", field, arincRecord.rawRecord()));
+    this(DEBUG_MISSING_FIELD, TRACE_MISSING_COORDINATE);
   }
 
   public RunwayValidator(BiConsumer<ArincRecord, String> missingFieldConsumer) {
+    this(missingFieldConsumer, missingFieldConsumer);
+  }
+
+  private RunwayValidator(BiConsumer<ArincRecord, String> missingFieldConsumer, BiConsumer<ArincRecord, String> missingCoordinateConsumer) {
     this.missingFieldConsumer = requireNonNull(missingFieldConsumer);
+    this.missingCoordinateConsumer = requireNonNull(missingCoordinateConsumer);
   }
 
   @Override
@@ -33,8 +46,8 @@ public final class RunwayValidator implements Predicate<ArincRecord> {
         && containsParsedField(arincRecord, "airportIdentifier", missingFieldConsumer)
         && containsParsedField(arincRecord, "airportIcaoRegion", missingFieldConsumer)
         && containsParsedField(arincRecord, "runwayIdentifier", missingFieldConsumer)
-        && containsParsedField(arincRecord, "latitude", missingFieldConsumer)
-        && containsParsedField(arincRecord, "longitude", missingFieldConsumer)
+        && containsParsedField(arincRecord, "latitude", missingCoordinateConsumer)
+        && containsParsedField(arincRecord, "longitude", missingCoordinateConsumer)
         && containsParsedField(arincRecord, "runwayMagneticBearing", missingFieldConsumer)
         && containsParsedField(arincRecord, "fileRecordNumber", missingFieldConsumer)
         && containsParsedField(arincRecord, "lastUpdateCycle", missingFieldConsumer);

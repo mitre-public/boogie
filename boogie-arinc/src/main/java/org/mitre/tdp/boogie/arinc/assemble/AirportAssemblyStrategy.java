@@ -1,13 +1,8 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static java.util.Optional.ofNullable;
-
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
-import org.mitre.caasd.commons.Course;
-import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.arinc.model.ArincAirport;
@@ -69,24 +64,7 @@ public interface AirportAssemblyStrategy<A, R, P> {
 
     @Override
     public Runway.Standard convertRunway(ArincAirport airport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2) {
-
-      MagneticVariation magneticVariation = magneticVariation(airport);
-
-      Optional<Course> trueCourse = origin.runwayMagneticBearing()
-          .map(magneticVariation::magneticToTrue)
-          .map(Course::ofDegrees)
-          .or(() -> ofNullable(reciprocal).map(r -> courseBetween(origin, r)));
-
-      Optional<Distance> lengthFromCoords = origin.runwayLength().map(l -> l - origin.thresholdDisplacementDistance().orElse(0)).map(Distance::ofFeet)
-          .or(() -> Optional.ofNullable(reciprocal).map(r -> LatLong.of(r.latitude(), r.longitude()).distanceTo(LatLong.of(origin.latitude(), origin.longitude()))));
-
-      return Runway.builder()
-          .runwayIdentifier(origin.runwayIdentifier())
-          .origin(LatLong.of(origin.latitude(), origin.longitude()))
-          .length(lengthFromCoords.orElse(null))
-          .course(trueCourse.orElse(null))
-          .originElevation(origin.landingThresholdElevation().map(Distance::ofFeet).orElse(null))
-          .build();
+      return RunwayAssembly.standardRunway(origin, reciprocal, magneticVariation(airport));
     }
 
     @Override
@@ -95,10 +73,6 @@ public interface AirportAssemblyStrategy<A, R, P> {
           .padIdentifier(pad.helipadIdentifier())
           .origin(LatLong.of(pad.latitude(), pad.longitude()))
           .build();
-    }
-
-    private Course courseBetween(ArincRunway origin, ArincRunway reciprocal) {
-      return LatLong.of(origin.latitude(), origin.longitude()).courseTo(LatLong.of(reciprocal.latitude(), reciprocal.longitude()));
     }
 
     private MagneticVariation magneticVariation(ArincAirport airport) {

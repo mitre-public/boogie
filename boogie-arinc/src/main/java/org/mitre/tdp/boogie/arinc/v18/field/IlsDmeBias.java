@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * This field is used to specify the DME offset.
@@ -11,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * The field contains a 2-digit bias term in nautical miles and tenths of a nautical mile with the decimal point suppressed.
  * Field is blank for unbiased DME’s.
  */
-public final class IlsDmeBias implements FieldSpec<Double> {
+public final class IlsDmeBias extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -24,7 +21,7 @@ public final class IlsDmeBias implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

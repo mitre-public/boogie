@@ -1,14 +1,10 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.util.CoordinateParser.sign;
+import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseEastWestDouble;
 
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
-import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * For VHF NAVAIDS, the “Station Declination” field contains the angular difference between true north and the zero degree radial of
@@ -38,17 +34,13 @@ public final class StationDeclination implements FieldSpec<Double> {
     return "5.66";
   }
 
-  private static final ImmutableSet<String> allowedModifiers = ImmutableSet.of("E", "W", "T", "G");
-
   @Override
   public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        .filter(s -> s.length() == 5)
-        .filter(s -> allowedModifiers.contains(s.substring(0, 1)))
-        .filter(s -> ValidArincNumeric.INSTANCE.test(s.substring(1)))
-        // drop T/G because they're annoying and uncommon
-        .filter(s -> s.substring(0, 1).matches("E|W"))
-        .flatMap(s -> ArincDecimalParser.INSTANCE.parseDoubleWithTenths(s.substring(1)).map(value -> sign(s.substring(0, 1)) * value));
+    return apply(fieldValue, 0, fieldValue.length());
+  }
+
+  @Override
+  public Optional<Double> apply(String source, int startOffset, int endOffset) {
+    return parseEastWestDouble(source, startOffset, endOffset, 1, fieldLength());
   }
 }

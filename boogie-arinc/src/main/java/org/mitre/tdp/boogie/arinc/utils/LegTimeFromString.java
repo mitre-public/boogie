@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
+import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseDouble;
+
 import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Function;
@@ -18,7 +20,7 @@ public class LegTimeFromString implements Function<String, Duration> {
   @Override
   public Duration apply(String mins) {
     return Optional.ofNullable(mins)
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths)
+        .flatMap(value -> parseDouble(value, 1))
         .map(m -> Duration.ofSeconds((int) (m * 60)))
         .orElseThrow(() -> new IllegalArgumentException("Time string does not translate correctly: " + mins));
   }

@@ -13,7 +13,8 @@ public abstract class ArincDouble implements FieldSpec<Double> {
 
   @Override
   public final Optional<Double> apply(String source, int startOffset, int endOffset) {
-    return parseDouble(source, startOffset, endOffset, suppressedDecimalPlaces());
+    Optional<Double> parsed = parseDouble(source, startOffset, endOffset, suppressedDecimalPlaces());
+    return parsed.isEmpty() || isValidValue(parsed.get()) ? parsed : Optional.empty();
   }
 
   /**
@@ -21,5 +22,12 @@ public abstract class ArincDouble implements FieldSpec<Double> {
    */
   protected int suppressedDecimalPlaces() {
     return 0;
+  }
+
+  /**
+   * Additional validation for a parsed value.
+   */
+  protected boolean isValidValue(double value) {
+    return true;
   }
 }

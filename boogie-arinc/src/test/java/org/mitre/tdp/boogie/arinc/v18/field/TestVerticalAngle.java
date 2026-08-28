@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
@@ -28,5 +29,15 @@ class TestVerticalAngle {
   @Test
   void testParseExceptionBadAngle() {
     assertEquals(Optional.empty(), parser.apply("-12A"));
+  }
+
+  @Test
+  void appliesStrictAngleLimit() {
+    assertAll(
+        () -> assertEquals(Optional.of(9.99), parser.apply("0999")),
+        () -> assertEquals(Optional.of(-9.99), parser.apply("-999")),
+        () -> assertEquals(Optional.empty(), parser.apply("1000")),
+        () -> assertEquals(Optional.empty(), parser.apply("-1000"))
+    );
   }
 }
