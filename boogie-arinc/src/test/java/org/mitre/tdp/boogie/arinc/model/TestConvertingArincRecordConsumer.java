@@ -2,23 +2,34 @@ package org.mitre.tdp.boogie.arinc.model;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
+import org.mitre.tdp.boogie.arinc.v18.FirUirLegSpec;
+import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
 
 class TestConvertingArincRecordConsumer {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/arinc-kjfk-v18.txt"));
+  private static final File duplicateFirFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
   @BeforeAll
   static void setup() {
-    recordParser.parseAll(arincTestFile).forEach(testV18Consumer);
+    parsedRecords = recordParser.parseAll(arincTestFile);
+    parsedRecords.forEach(testV18Consumer);
+    recordParser.parseAll(arincTestFile).forEach(testV18OneShotConsumer);
   }
 
   @Test
@@ -41,7 +52,90 @@ class TestConvertingArincRecordConsumer {
     assertSame(testV18Consumer.arincProcedureLegs(), testV18Consumer.arincProcedureLegs());
   }
 
+  @Test
+  void oneShotConsumerPreservesConvertedRecordCountsAndOrder() {
+    assertAll(
+        () -> assertIterableEquals(testV18Consumer.arincAirports(), testV18OneShotConsumer.arincAirports()),
+        () -> assertIterableEquals(testV18Consumer.arincAirportExtensions(), testV18OneShotConsumer.arincAirportExtensions()),
+        () -> assertIterableEquals(testV18Consumer.arincRunways(), testV18OneShotConsumer.arincRunways()),
+        () -> assertIterableEquals(testV18Consumer.arincLocalizerGlideSlopes(), testV18OneShotConsumer.arincLocalizerGlideSlopes()),
+        () -> assertIterableEquals(testV18Consumer.arincNdbNavaids(), testV18OneShotConsumer.arincNdbNavaids()),
+        () -> assertIterableEquals(testV18Consumer.arincVhfNavaids(), testV18OneShotConsumer.arincVhfNavaids()),
+        () -> assertIterableEquals(testV18Consumer.arincWaypoints(), testV18OneShotConsumer.arincWaypoints()),
+        () -> assertIterableEquals(testV18Consumer.arincAirwayLegs(), testV18OneShotConsumer.arincAirwayLegs()),
+        () -> assertIterableEquals(testV18Consumer.arincProcedureLegs(), testV18OneShotConsumer.arincProcedureLegs()),
+        () -> assertIterableEquals(testV18Consumer.arincGnssLandingSystems(), testV18OneShotConsumer.arincGnssLandingSystems()),
+        () -> assertIterableEquals(testV18Consumer.arincHoldingPatterns(), testV18OneShotConsumer.arincHoldingPatterns()),
+        () -> assertIterableEquals(testV18Consumer.arincFirUirLegs(), testV18OneShotConsumer.arincFirUirLegs()),
+        () -> assertIterableEquals(testV18Consumer.arincHelipads(), testV18OneShotConsumer.arincHelipads()),
+        () -> assertIterableEquals(testV18Consumer.arincControlledAirspaceLegs(), testV18OneShotConsumer.arincControlledAirspaceLegs()),
+        () -> assertIterableEquals(testV18Consumer.arincRestrictiveAirspaceLegs(), testV18OneShotConsumer.arincRestrictiveAirspaceLegs()),
+        () -> assertEquals(testV18Consumer.arincHeaderOne(), testV18OneShotConsumer.arincHeaderOne()),
+        () -> assertIterableEquals(testV18Consumer.arincHeliports(), testV18OneShotConsumer.arincHeliports())
+    );
+  }
+
+  @Test
+  void standardConsumerStillDeduplicatesRecords() {
+    ArincRecord airportRecord = parsedRecords.stream()
+        .filter(new AirportValidator())
+        .findFirst()
+        .orElseThrow();
+    ConvertingArincRecordConsumer standardConsumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V18);
+
+    standardConsumer.accept(airportRecord);
+    standardConsumer.accept(airportRecord);
+
+    Collection<ArincAirport> airports = standardConsumer.arincAirports();
+    assertAll(
+        () -> assertEquals(1, airports.size()),
+        () -> assertSame(airports, standardConsumer.arincAirports()),
+        () -> assertThrows(UnsupportedOperationException.class, airports::clear)
+    );
+  }
+
+  @Test
+  void oneShotConsumerUsesAnUnmodifiableAppendOnlyProcedureList() {
+    ArincRecord procedureRecord = parsedRecords.stream()
+        .filter(new ProcedureLegValidator())
+        .findFirst()
+        .orElseThrow();
+    ConvertingArincRecordConsumer oneShotConsumer = ArincRecordConverterFactory.oneShotConsumerForVersion(ArincVersion.V18);
+    Collection<ArincProcedureLeg> oneShotProcedureLegs = oneShotConsumer.arincProcedureLegs();
+
+    oneShotConsumer.accept(procedureRecord);
+    oneShotConsumer.accept(procedureRecord);
+
+    List<ArincProcedureLeg> retainedProcedureLegs = List.copyOf(oneShotProcedureLegs);
+    assertAll(
+        () -> assertEquals(2, retainedProcedureLegs.size()),
+        () -> assertEquals(retainedProcedureLegs.get(0), retainedProcedureLegs.get(1)),
+        () -> assertSame(oneShotProcedureLegs, oneShotConsumer.arincProcedureLegs()),
+        () -> assertThrows(UnsupportedOperationException.class, oneShotProcedureLegs::clear)
+    );
+  }
+
+  @Test
+  void oneShotConsumerStillDeduplicatesFirUirRecords() {
+    TestArincFileParser firParser = new TestArincFileParser(ArincRecordParser.standard(new FirUirLegSpec()));
+    Collection<ArincRecord> firRecords = firParser.parseAll(duplicateFirFile);
+    ConvertingArincRecordConsumer standardConsumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
+    ConvertingArincRecordConsumer oneShotConsumer = ArincRecordConverterFactory.oneShotConsumerForVersion(ArincVersion.V19);
+
+    firRecords.forEach(standardConsumer);
+    firRecords.forEach(oneShotConsumer);
+
+    assertAll(
+        () -> assertEquals(6, firRecords.size(), "Fixture contains three duplicated FIR/UIR rows"),
+        () -> assertEquals(3, standardConsumer.arincFirUirLegs().size()),
+        () -> assertEquals(3, oneShotConsumer.arincFirUirLegs().size()),
+        () -> assertIterableEquals(standardConsumer.arincFirUirLegs(), oneShotConsumer.arincFirUirLegs())
+    );
+  }
+
   private static final TestArincFileParser recordParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V18.specs()));
 
+  private static Collection<ArincRecord> parsedRecords;
   private static final ConvertingArincRecordConsumer testV18Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V18);
+  private static final ConvertingArincRecordConsumer testV18OneShotConsumer = ArincRecordConverterFactory.oneShotConsumerForVersion(ArincVersion.V18);
 }

@@ -3,10 +3,8 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.TransitionType;
@@ -62,13 +60,39 @@ class TestArincTransitionTypeClassifier {
     );
   }
 
+  @Test
+  void testAlreadySortedClassificationMatchesPublicClassification() {
+    ArincProcedureLeg first = newProcedureLeg("F", "R", "ALL", "  M ", 10);
+    ArincProcedureLeg second = newProcedureLeg("F", "R", "ALL", null, 20);
+
+    TransitionType sortedClassification = classifier.applySorted(List.of(first, second));
+
+    assertAll(
+        () -> assertEquals(TransitionType.MISSED, sortedClassification),
+        () -> assertEquals(classifier.apply(List.of(second, first)), sortedClassification)
+    );
+  }
+
+  @Test
+  void testRouteTypeZIsMissedWithoutWaypointDescriptionMarker() {
+    ArincProcedureLeg additionalMissed = newProcedureLeg("F", "Z", "ALTERNATE", null);
+
+    assertAll(
+        () -> assertEquals(TransitionType.MISSED, classifier.apply(List.of(additionalMissed)))
+    );
+  }
+
   private ArincProcedureLeg newProcedureLeg(String subSection, String routeType) {
     return newProcedureLeg(subSection, routeType, null, null);
   }
 
   private ArincProcedureLeg newProcedureLeg(String subSection, String routeType, String transitionIdentifier, String waypointDescription) {
+    return newProcedureLeg(subSection, routeType, transitionIdentifier, waypointDescription, 10);
+  }
+
+  private ArincProcedureLeg newProcedureLeg(String subSection, String routeType, String transitionIdentifier, String waypointDescription, int sequenceNumber) {
     return new ArincProcedureLeg.Builder()
-        .sequenceNumber(10)
+        .sequenceNumber(sequenceNumber)
         .fileRecordNumber(20)
         .sidStarIdentifier("MOCK")
         .airportIdentifier("MOCK")

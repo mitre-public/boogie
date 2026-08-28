@@ -88,6 +88,6 @@ public final class RunwaySpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'G' && PrimaryRecord.INSTANCE.test(arincRecord.substring(22, 23));
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'G' && PrimaryRecord.INSTANCE.test(arincRecord.charAt(22));
   }
 }

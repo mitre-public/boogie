@@ -138,21 +138,36 @@ public final class ArincRecordConverterFactory {
    * The V21 needed new fields processed for holding, gnss, and procedureLegs.
    */
   public static ConvertingArincRecordConsumer consumerForVersion(ArincVersion version) {
+    return consumerBuilderForVersion(version).build();
+  }
+
+  /**
+   * Returns the consumer optimized for one-shot assembly. Each configured converter is applied once per attempted match, so its
+   * built-in validation is not repeated by a separate delegator. Procedure legs use an append-only list and an unmodifiable live
+   * view, avoiding the hash and immutable snapshot copy for the largest and most expensive model. All other record types retain
+   * the standard consumer's duplicate suppression and immutable snapshot behavior.
+   *
+   * <p>This variant is intended for parsing a file once and reading the collections only after ingestion is complete. Callers that
+   * need duplicate suppression or immutable point-in-time snapshots for procedure legs should use
+   * {@link #consumerForVersion(ArincVersion)}.
+   */
+  public static ConvertingArincRecordConsumer oneShotConsumerForVersion(ArincVersion version) {
+    return consumerBuilderForVersion(version).buildOneShot();
+  }
+
+  private static ConvertingArincRecordConsumer.Builder consumerBuilderForVersion(ArincVersion version) {
     return switch (version) {
       case V18, V18_NAV, V18_AIRSPACE -> standardConsumer()
-          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter())
-          .build();
+          .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v18.HoldingPatternConverter());
       case V19, V19_NAV -> standardConsumer()
           .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
           .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v19.HoldingPatternConverter())
-          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
-          .build();
+          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter());
       case V20, V20_NAV -> standardConsumer()
           .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
           .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
           .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v20.ProcedureLegConverter())
-          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
-          .build();
+          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter());
       case V21, V21_NAV -> standardConsumer()
           .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v19.AirwayLegConverter())
           .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
@@ -160,8 +175,7 @@ public final class ArincRecordConverterFactory {
           .procedureLegConverter(new org.mitre.tdp.boogie.arinc.v21.ProcedureLegConverter())
           .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
           .helipadConverter(new org.mitre.tdp.boogie.arinc.v21.HelipadConverter())
-          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
-          .build();
+          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter());
       case V22, V22_NAV -> standardConsumer()
           .airwayLegConverter(new org.mitre.tdp.boogie.arinc.v22.AirwayLegConverter())
           .holdingPatternConverter(new org.mitre.tdp.boogie.arinc.v20.HoldingPatternConverter())
@@ -170,8 +184,7 @@ public final class ArincRecordConverterFactory {
           .runwayConverter(new org.mitre.tdp.boogie.arinc.v22.RunwayConverter())
           .heliportConverter(new org.mitre.tdp.boogie.arinc.v21.HeliportConverter())
           .helipadConverter(new org.mitre.tdp.boogie.arinc.v21.HelipadConverter())
-          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter())
-          .build();
+          .restrictiveAirspaceConverter(new org.mitre.tdp.boogie.arinc.v19.RestrictiveAirspaceLegConverter());
     };
   }
 

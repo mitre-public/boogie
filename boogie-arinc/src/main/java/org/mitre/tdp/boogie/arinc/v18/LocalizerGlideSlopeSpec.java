@@ -90,6 +90,6 @@ public final class LocalizerGlideSlopeSpec implements RecordSpec {
   public boolean matchesRecord(String arincRecord) {
     return (arincRecord.charAt(4) == 'P' || arincRecord.charAt(4) == 'H')
         && arincRecord.charAt(12) == 'I'
-        && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
+        && PrimaryRecord.INSTANCE.test(arincRecord.charAt(21));
   }
 }

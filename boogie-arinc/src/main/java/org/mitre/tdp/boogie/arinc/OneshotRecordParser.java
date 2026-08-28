@@ -1,7 +1,7 @@
 package org.mitre.tdp.boogie.arinc;
 
 import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory.consumerForVersion;
+import static org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory.oneShotConsumerForVersion;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -143,7 +144,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     ClientRecords.Builder<APT, FIX, AWY, PRC, AIR, HPT> records = new ClientRecords.Builder<>();
 
     ArincRecordParser parser = ArincRecordParser.standard(version.specs());
-    ConvertingArincRecordConsumer consumer = consumerForVersion(version);
+    ConvertingArincRecordConsumer consumer = oneShotConsumerForVersion(version);
 
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII), READER_BUFFER_SIZE)) {
       String rawRecord;
@@ -167,7 +168,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
         consumer.arincVhfNavaids(),
         consumer.arincWaypoints(),
         consumer.arincAirports(),
-        consumer.arincHoldingPatterns(),
+        // Holding records are not dereferenced while assembling the OneShot outputs.
+        List.of(),
         consumer.arincHeliports()
     );
     LOG.debug("Finished instantiation of FixDatabase.");
@@ -179,7 +181,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
         consumer.arincNdbNavaids(),
         consumer.arincVhfNavaids(),
         consumer.arincWaypoints(),
-        consumer.arincProcedureLegs(),
+        // OneShot assembles procedure legs directly; retaining a second terminal-area index only duplicates that collection.
+        List.of(),
         consumer.arincGnssLandingSystems(),
         consumer.arincHelipads(),
         consumer.arincHeliports()

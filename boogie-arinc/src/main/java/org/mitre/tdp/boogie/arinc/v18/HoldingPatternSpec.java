@@ -57,6 +57,6 @@ public final class HoldingPatternSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.regionMatches(4, "EP", 0, 2) && PrimaryRecord.INSTANCE.test(arincRecord.substring(38, 39));
+    return arincRecord.regionMatches(4, "EP", 0, 2) && PrimaryRecord.INSTANCE.test(arincRecord.charAt(38));
   }
 }

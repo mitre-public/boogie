@@ -30,6 +30,16 @@ public class OneShotRecordParserLidoIntegrationTest {
     int heliportRunwayCount = records.heliports().stream()
         .mapToInt(heliport -> heliport.runways().size())
         .sum();
+    int procedureLegCount = records.procedures().stream()
+        .flatMap(procedure -> procedure.transitions().stream())
+        .mapToInt(transition -> transition.legs().size())
+        .sum();
+    long oibbN13lMissedApproaches = records.procedures().stream()
+        .filter(procedure -> "OIBB".equals(procedure.airportIdentifier()))
+        .filter(procedure -> "N13L".equals(procedure.procedureIdentifier()))
+        .flatMap(procedure -> procedure.transitions().stream())
+        .filter(transition -> TransitionType.MISSED.equals(transition.transitionType()))
+        .count();
 
     assertAll(
         () -> assertEquals(26960, records.airports().size(), "Airports"),
@@ -39,6 +49,8 @@ public class OneShotRecordParserLidoIntegrationTest {
         () -> assertEquals(270393, records.fixes().size(), "Fixes"),
         () -> assertEquals(14588, records.airways().size(), "Airways"),
         () -> assertEquals(101085, records.procedures().size(), "Procedures"),
+        () -> assertEquals(861925, procedureLegCount, "Procedure Legs"),
+        () -> assertEquals(2, oibbN13lMissedApproaches, "Multiple missed approaches"),
         () -> assertEquals(357, records.firUirs().size(), "FIRs and UIRs"),
         () -> assertEquals(13232, records.conrolledAirspaces().size(), "Controlled Airspaces"),
         () -> assertEquals(20503, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),

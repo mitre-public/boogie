@@ -92,6 +92,6 @@ public final class AirportSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A' && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A' && PrimaryRecord.INSTANCE.test(arincRecord.charAt(21));
   }
 }

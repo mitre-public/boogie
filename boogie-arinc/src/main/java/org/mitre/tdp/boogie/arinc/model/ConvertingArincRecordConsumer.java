@@ -2,7 +2,9 @@ package org.mitre.tdp.boogie.arinc.model;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -47,9 +49,13 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   private final DelegatableCollection<ArincHeaderOne> arincHeaderOnes;
   private final DelegatableCollection<ArincHeliport> arincHeliports;
 
-  private final MostRecentlyUsedConsumer<ArincRecord, DelegatableCollection<?>> consumer;
+  private final Consumer<ArincRecord> consumer;
 
   private ConvertingArincRecordConsumer(Builder builder) {
+    this(builder, false);
+  }
+
+  private ConvertingArincRecordConsumer(Builder builder, boolean oneShot) {
     this.arincAirports = new DelegatableCollection<>(builder.airportDelegator, builder.airportConverter);
     this.arincAirportExtensions = new DelegatableCollection<>(builder.airportContinuationDelegator, builder.airportContinuationConverter);
     this.arincRunways = new DelegatableCollection<>(builder.runwayDelegator, builder.runwayConverter);
@@ -58,7 +64,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincVhfNavaids = new DelegatableCollection<>(builder.vhfNavaidDelegator, builder.vhfNavaidConverter);
     this.arincWaypoints = new DelegatableCollection<>(builder.waypointDelegator, builder.waypointConverter);
     this.arincAirwayLegs = new DelegatableCollection<>(builder.airwayDelegator, builder.airwayConverter);
-    this.arincProcedureLegs = new DelegatableCollection<>(builder.procedureDelegator, builder.procedureConverter);
+    this.arincProcedureLegs = new DelegatableCollection<>(builder.procedureDelegator, builder.procedureConverter, oneShot);
     this.gnssLandingSystems = new DelegatableCollection<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
     this.arincHoldingPatterns = new DelegatableCollection<>(builder.holdingPatternDelegator, builder.holdingPatternConverter);
     this.arincFirUirLeg = new DelegatableCollection<>(builder.firUirDelegator, builder.firUirConverter);
@@ -68,7 +74,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincHeaderOnes = new DelegatableCollection<>(builder.headerDelegator, builder.headerConverter);
     this.arincHeliports = new DelegatableCollection<>(builder.heliportDelegator, builder.heliportConverter);
 
-    this.consumer = new MostRecentlyUsedConsumer<>(
+    DelegatableCollection<?>[] collections = {
         this.arincAirports,
         this.arincAirportExtensions,
         this.arincRunways,
@@ -86,7 +92,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         this.arincRestrictiveAirspaceLegs,
         this.arincHeaderOnes,
         this.arincHeliports
-    );
+    };
+    this.consumer = oneShot
+        ? new MostRecentlyUsedConvertingConsumer(collections)
+        : new MostRecentlyUsedConsumer<>(collections);
   }
 
   public Collection<ArincAirport> arincAirports() {
@@ -197,28 +206,85 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     }
   }
 
+  /**
+   * The converters already validate records before converting them. The one-shot path can therefore use the conversion result
+   * itself for delegation and avoid applying a separate validator to every accepted record.
+   */
+  private static final class MostRecentlyUsedConvertingConsumer implements Consumer<ArincRecord> {
+
+    private final DelegatableCollection<?>[] collections;
+
+    private MostRecentlyUsedConvertingConsumer(DelegatableCollection<?>[] collections) {
+      this.collections = collections.clone();
+    }
+
+    @Override
+    public void accept(ArincRecord arincRecord) {
+      for (int i = 0; i < collections.length; i++) {
+        DelegatableCollection<?> match = collections[i];
+        if (match.convertAndAdd(arincRecord)) {
+          if (i > 0) {
+            System.arraycopy(collections, 0, collections, 1, i);
+            collections[0] = match;
+          }
+          return;
+        }
+      }
+    }
+  }
+
   private static final class DelegatableCollection<T> implements Consumer<ArincRecord>, Predicate<ArincRecord> {
 
     private final Predicate<ArincRecord> delegator;
     private final Function<ArincRecord, Optional<T>> converter;
 
     private final Collection<T> records;
+    private final Collection<T> listView;
     private ImmutableCollection<T> snapshot;
 
     public DelegatableCollection(
         Predicate<ArincRecord> delegator,
         Function<ArincRecord, Optional<T>> converter
     ) {
-      this.delegator = requireNonNull(delegator);
-      this.converter = requireNonNull(converter);
-      this.records = new LinkedHashSet<>();
+      this(delegator, converter, false);
     }
 
-    public ImmutableCollection<T> records() {
+    public DelegatableCollection(
+        Predicate<ArincRecord> delegator,
+        Function<ArincRecord, Optional<T>> converter,
+        boolean listBacked
+    ) {
+      this.delegator = requireNonNull(delegator);
+      this.converter = requireNonNull(converter);
+      if (listBacked) {
+        ArrayList<T> list = new ArrayList<>();
+        this.records = list;
+        this.listView = Collections.unmodifiableList(list);
+      } else {
+        this.records = new LinkedHashSet<>();
+        this.listView = null;
+      }
+    }
+
+    public Collection<T> records() {
+      if (listView != null) {
+        return listView;
+      }
       if (snapshot == null) {
         snapshot = ImmutableList.copyOf(records);
       }
       return snapshot;
+    }
+
+    private boolean convertAndAdd(ArincRecord arincRecord) {
+      Optional<T> converted = converter.apply(arincRecord);
+      if (converted.isEmpty()) {
+        return false;
+      }
+      if (records.add(converted.get())) {
+        snapshot = null;
+      }
+      return true;
     }
 
     @Override
@@ -444,6 +510,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     public ConvertingArincRecordConsumer build() {
       return new ConvertingArincRecordConsumer(this);
+    }
+
+    ConvertingArincRecordConsumer buildOneShot() {
+      return new ConvertingArincRecordConsumer(this, true);
     }
   }
 }

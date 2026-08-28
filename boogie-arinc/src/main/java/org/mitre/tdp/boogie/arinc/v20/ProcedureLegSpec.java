@@ -1,8 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v20;
 
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
@@ -47,9 +45,6 @@ import org.mitre.tdp.boogie.arinc.v20.field.ProcedureDesignAircraftCategoryOrTyp
 import com.google.common.collect.ImmutableList;
 
 public final class ProcedureLegSpec implements RecordSpec {
-
-  private static final Predicate<String> airportRecords = arincRecord -> (Stream.of("PD", "PE", "PF").anyMatch(ss -> arincRecord.regionMatches(4, ss, 0, 1) && arincRecord.regionMatches(12, ss, 1, 1)));
-  private static final Predicate<String> heliportRecords = arincRecord -> (Stream.of("HD", "HE", "HF").anyMatch(ss -> arincRecord.regionMatches(4, ss, 0, 1) && arincRecord.regionMatches(12, ss, 1, 1)));
 
   private final List<RecordField<?>> recordFields;
 
@@ -122,6 +117,14 @@ public final class ProcedureLegSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return airportRecords.or(heliportRecords).test(arincRecord) && PrimaryRecord.INSTANCE.test(arincRecord.substring(38, 39));
+    if (arincRecord.length() <= 12) {
+      return false;
+    }
+
+    char sectionCode = arincRecord.charAt(4);
+    char subSectionCode = arincRecord.charAt(12);
+    return (sectionCode == 'P' || sectionCode == 'H')
+        && (subSectionCode == 'D' || subSectionCode == 'E' || subSectionCode == 'F')
+        && PrimaryRecord.INSTANCE.test(arincRecord.charAt(38));
   }
 }

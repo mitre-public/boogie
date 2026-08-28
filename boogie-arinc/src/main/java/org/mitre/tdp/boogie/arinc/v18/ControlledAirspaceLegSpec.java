@@ -88,6 +88,6 @@ public final class ControlledAirspaceLegSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'U' && arincRecord.charAt(5) == 'C' && PrimaryRecord.INSTANCE.test(arincRecord.substring(24, 25));
+    return arincRecord.charAt(4) == 'U' && arincRecord.charAt(5) == 'C' && PrimaryRecord.INSTANCE.test(arincRecord.charAt(24));
   }
 }

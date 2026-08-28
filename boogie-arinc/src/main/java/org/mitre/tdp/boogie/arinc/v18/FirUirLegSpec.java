@@ -82,6 +82,6 @@ public final class FirUirLegSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'U' && arincRecord.charAt(5) == 'F' && PrimaryRecord.INSTANCE.test(arincRecord.substring(19, 20));
+    return arincRecord.charAt(4) == 'U' && arincRecord.charAt(5) == 'F' && PrimaryRecord.INSTANCE.test(arincRecord.charAt(19));
   }
 }

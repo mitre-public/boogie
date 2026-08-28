@@ -44,6 +44,6 @@ public final class AirportPrimaryExtensionSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A' && PrimaryRecord.INSTANCE.negate().test(arincRecord.substring(21, 22)) && arincRecord.charAt(22) == 'E';
+    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A' && !PrimaryRecord.INSTANCE.test(arincRecord.charAt(21)) && arincRecord.charAt(22) == 'E';
   }
 }
