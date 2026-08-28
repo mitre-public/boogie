@@ -6,8 +6,8 @@ import static java.util.Objects.checkFromToIndex;
 
 /**
  * Allocation-conscious parsers for fields stored within a fixed-width record.
- *
- * <p>The source offsets are trimmed and parsed in place so callers do not need to create an intermediate substring.
+ * <p>
+ * The source offsets are trimmed and parsed in place so callers do not need to create an intermediate substring.
  */
 public final class FieldSliceParser {
 
