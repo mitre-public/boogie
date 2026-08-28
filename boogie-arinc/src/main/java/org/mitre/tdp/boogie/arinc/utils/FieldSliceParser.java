@@ -14,6 +14,13 @@ public final class FieldSliceParser {
   private FieldSliceParser() {
   }
 
+  /**
+   * Parses a trimmed string from a fixed-width record.
+   * @param source string to parse.
+   * @param startOffset starting.
+   * @param endOffset (exclusive) ending.
+   * @return an empty optional if the trimmed string is empty, otherwise the trimmed string.
+   */
   public static Optional<String> parseTrimmedString(String source, int startOffset, int endOffset) {
     long bounds = trimmedBounds(source, startOffset, endOffset);
     int start = start(bounds);
@@ -22,6 +29,13 @@ public final class FieldSliceParser {
     return start == end ? Optional.empty() : Optional.of(source.substring(start, end).intern());
   }
 
+  /**
+   * Parses a trimmed integer from a fixed-width record.
+   * @param source the string to parse
+   * @param startOffset start offset
+   * @param endOffset end offset (exclusive)
+   * @return an empty optional if the trimmed string is empty or not a valid integer, otherwise the trimmed integer.
+   */
   public static Optional<Integer> parseInteger(String source, int startOffset, int endOffset) {
     long bounds = trimmedBounds(source, startOffset, endOffset);
     int start = start(bounds);
@@ -35,6 +49,14 @@ public final class FieldSliceParser {
     return Optional.of(Integer.parseInt(source, start, end, 10));
   }
 
+  /**
+   * parse a double from text with suppressed decimal places.
+   * @param source the string to parse
+   * @param startOffset the starting offset
+   * @param endOffset the ending offset (exclusive)
+   * @param suppressedDecimalPlaces the number of decimals hidden in the data
+   * @return an empty optional if the trimmed string is empty or not a valid double, otherwise the trimmed double.
+   */
   public static Optional<Double> parseDouble(String source, int startOffset, int endOffset, int suppressedDecimalPlaces) {
 
     long bounds = trimmedBounds(source, startOffset, endOffset);
@@ -60,14 +82,37 @@ public final class FieldSliceParser {
     return Optional.of(source.charAt(start) == '-' ? -value : value);
   }
 
+  /**
+   * Parse a double with suppressed decimal places.
+   * @param source the string to parse.
+   * @param suppressedDecimalPlaces the number of them.
+   * @return an empty optional if the trimmed string is empty or not a valid double, otherwise the trimmed double.
+   */
   public static Optional<Double> parseDouble(String source, int suppressedDecimalPlaces) {
     return parseDouble(source, 0, source.length(), suppressedDecimalPlaces);
   }
 
+  /**
+   * The "East/West" variant of parseDouble.
+   * @param source the string to parse.
+   * @param startOffset the starting point of the parse
+   * @param endOffset the end (exclusive)
+   * @param suppressedDecimalPlaces how many decimal places.
+   * @return an empty optional if the trimmed string is empty or not a valid double, otherwise the trimmed double.
+   */
   public static Optional<Double> parseEastWestDouble(String source, int startOffset, int endOffset, int suppressedDecimalPlaces) {
     return parseEastWestDouble(source, startOffset, endOffset, suppressedDecimalPlaces, -1);
   }
 
+  /**
+   * The east west version of the double parser.
+   * @param source the source to parse.
+   * @param startOffset the start of the parse
+   * @param endOffset the end (exclusive)
+   * @param suppressedDecimalPlaces the number of decimal paces
+   * @param requiredLength the length of the field.
+   * @return an empty optional if the trimmed string is empty or not a valid double, otherwise the trimmed double.
+   */
   public static Optional<Double> parseEastWestDouble(String source, int startOffset, int endOffset, int suppressedDecimalPlaces, int requiredLength) {
     long bounds = trimmedBounds(source, startOffset, endOffset);
     int start = start(bounds);
@@ -86,6 +131,13 @@ public final class FieldSliceParser {
     return direction == 'W' && magnitude.isPresent() ? Optional.of(-magnitude.get()) : magnitude;
   }
 
+  /**
+   * Parses out the continuation record 'number'
+   * @param source the string
+   * @param startOffset start position
+   * @param endOffset end position (exclusive)
+   * @return the continuation number if it is valid, otherwise an empty optional.
+   */
   public static Optional<String> parseContinuationNumber(String source, int startOffset, int endOffset) {
     long bounds = trimmedBounds(source, startOffset, endOffset);
     int start = start(bounds);
