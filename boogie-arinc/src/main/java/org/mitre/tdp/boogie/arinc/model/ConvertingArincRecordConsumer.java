@@ -1,10 +1,7 @@
 package org.mitre.tdp.boogie.arinc.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -50,7 +47,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   private final DelegatableCollection<ArincHeaderOne> arincHeaderOnes;
   private final DelegatableCollection<ArincHeliport> arincHeliports;
 
-  private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;
+  private final MostRecentlyUsedConsumer<ArincRecord, DelegatableCollection<?>> consumer;
 
   private ConvertingArincRecordConsumer(Builder builder) {
     this.arincAirports = new DelegatableCollection<>(builder.airportDelegator, builder.airportConverter);
@@ -71,7 +68,7 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
     this.arincHeaderOnes = new DelegatableCollection<>(builder.headerDelegator, builder.headerConverter);
     this.arincHeliports = new DelegatableCollection<>(builder.heliportDelegator, builder.heliportConverter);
 
-    this.consumer = new MRUDequeConsumer<>(
+    this.consumer = new MostRecentlyUsedConsumer<>(
         this.arincAirports,
         this.arincAirportExtensions,
         this.arincRunways,
@@ -175,26 +172,28 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
    * <br>
    * Plus the implementation is pretty lightweight.
    */
-  private static final class MRUDequeConsumer<T, V extends Predicate<T> & Consumer<T>> implements Consumer<T> {
+  private static final class MostRecentlyUsedConsumer<T, V extends Predicate<T> & Consumer<T>> implements Consumer<T> {
 
-    private final ArrayDeque<V> predicateDeque;
+    private final V[] predicates;
 
     @SafeVarargs
-    private MRUDequeConsumer(V... predicates) {
-      this.predicateDeque = new ArrayDeque<>();
-      predicateDeque.addAll(Arrays.asList(predicates));
+    private MostRecentlyUsedConsumer(V... predicates) {
+      this.predicates = predicates.clone();
     }
 
     @Override
     public void accept(T t) {
-      Optional<V> match = predicateDeque.stream().filter(p -> p.test(t)).findFirst();
-      match.ifPresent(m -> {
-        m.accept(t);
-        if (!predicateDeque.getFirst().equals(m)) {
-          predicateDeque.remove(m);
-          predicateDeque.addFirst(m);
+      for (int i = 0; i < predicates.length; i++) {
+        V match = predicates[i];
+        if (match.test(t)) {
+          match.accept(t);
+          if (i > 0) {
+            System.arraycopy(predicates, 0, predicates, 1, i);
+            predicates[0] = match;
+          }
+          return;
         }
-      });
+      }
     }
   }
 
@@ -224,7 +223,6 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
 
     @Override
     public void accept(ArincRecord arincRecord) {
-      checkArgument(delegator.test(arincRecord));
       converter.apply(arincRecord).ifPresent(record -> {
         if (records.add(record)) {
           snapshot = null;

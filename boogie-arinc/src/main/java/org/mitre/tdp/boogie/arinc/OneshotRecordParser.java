@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -70,6 +71,8 @@ import org.slf4j.LoggerFactory;
 public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> {
 
   private static final Logger LOG = LoggerFactory.getLogger(OneshotRecordParser.class);
+
+  private static final int READER_BUFFER_SIZE = 64 * 1024;
 
   private final ArincVersion version;
 
@@ -143,12 +146,16 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     ArincRecordParser parser = ArincRecordParser.standard(version.specs());
     ConvertingArincRecordConsumer consumer = consumerForVersion(version);
 
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-      reader.lines()
-          .map(parser::parse)
-          .flatMap(Optional::stream)
-          .filter(keepRecord)
-          .forEach(consumer);
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII), READER_BUFFER_SIZE)) {
+      String rawRecord;
+      //switched to while for performance optimization
+      while ((rawRecord = reader.readLine()) != null) {
+        Optional<ArincRecord> parsedRecord = parser.parse(rawRecord);
+        ArincRecord record = parsedRecord.orElse(null);
+        if (record != null && keepRecord.test(record)) {
+          consumer.accept(record);
+        }
+      }
     } catch (IOException e) {
       LOG.error("Could not parse the arinc text into memory", e);
       return records.build();

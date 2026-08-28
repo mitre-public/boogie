@@ -2,14 +2,13 @@ package org.mitre.tdp.boogie.arinc;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
 
 /**
- * Interface for 424 parser implementations which return generic {@link ArincRecord} objects (essentially maps of named features
- * per 424 record type).
+ * Interface for 424 parser implementations which return generic {@link ArincRecord} objects providing named access to the fields
+ * of each supported 424 record type.
  *
  * <p>Parsers are allowed to optionally return when given a record. Parsers should not be required to support all record types and
  * clients should be able to pick and choose what record types they want to extract.
@@ -50,49 +49,55 @@ public interface ArincRecordParser {
 
   final class Standard implements ArincRecordParser {
 
-    private final List<RecordSpec> recordSpecs;
+    private final List<CompiledRecordSpec> recordSpecs;
 
     private Standard(List<RecordSpec> recordSpecs) {
-      this.recordSpecs = List.copyOf(recordSpecs);
-      this.recordSpecs.forEach(RecordSpecValidator.INSTANCE);
+      List<RecordSpec> specs = List.copyOf(recordSpecs);
+      specs.forEach(RecordSpecValidator.INSTANCE);
+      this.recordSpecs = specs.stream().map(CompiledRecordSpec::new).toList();
     }
 
     @Override
     public Optional<ArincRecord> parse(String rawRecord) {
       requireNonNull(rawRecord, "Supplied ARINC-424 record should be non-null.");
+      //performance optimized loop
+      for (int i = 0; i < recordSpecs.size(); i++) {
+        CompiledRecordSpec recordSpec = recordSpecs.get(i);
+        if (recordSpec.matchesRecord(rawRecord)) {
+          return Optional.of(new ArincRecord(rawRecord, recordSpec.fieldLayout()));
+        }
+      }
 
-      // at the expense of more operations... how strongly do we want to enforce none of our specs both match the same record...
-      Optional<RecordSpec> recordSpec = recordSpecs.stream().filter(rspec -> rspec.matchesRecord(rawRecord)).findFirst();
-
-      return recordSpec.map(spec -> createParsedRecord(rawRecord, spec));
+      return Optional.empty();
     }
 
     /**
-     * Creates a new fully parsed {@link ArincRecord} based on the provided {@link RecordSpec}.
+     * Creates a new lazily decoded {@link ArincRecord} based on the provided {@link RecordSpec}.
      *
-     * <p>This method leverages the ordering of the declared fields within the record spec and the length of those fields to extract
-     * substrings from the input raw record string which will be associated with those field names in the final {@link ArincRecord}.
+     * <p>This method leverages the ordering and length of the declared fields to create an indexed layout. Substrings are extracted
+     * only when the corresponding field is requested from the final {@link ArincRecord}.
      */
     ArincRecord createParsedRecord(String rawRecord, RecordSpec recordSpec) {
-      int capacity = recordSpec.recordFields().size();
+      return new ArincRecord(rawRecord, ArincRecord.FieldLayout.from(recordSpec.recordFields()));
+    }
 
-      LinkedHashMap<String, ArincField> namedData = new LinkedHashMap<>(capacity);
+    private static final class CompiledRecordSpec {
 
-      int i = 0;
-      int offset = 0;
+      private final RecordSpec recordSpec;
+      private final ArincRecord.FieldLayout fieldLayout;
 
-      while (i < recordSpec.recordFields().size()) {
-
-        RecordField<?> field = recordSpec.recordFields().get(i);
-
-        String value = rawRecord.substring(offset, offset + field.fieldSpec().fieldLength()).intern();
-        namedData.put(field.fieldName(), new ArincField(field.fieldSpec(), value));
-
-        i++;
-        offset += field.fieldSpec().fieldLength();
+      private CompiledRecordSpec(RecordSpec recordSpec) {
+        this.recordSpec = recordSpec;
+        this.fieldLayout = ArincRecord.FieldLayout.from(recordSpec.recordFields());
       }
 
-      return new ArincRecord(namedData);
+      private boolean matchesRecord(String rawRecord) {
+        return recordSpec.matchesRecord(rawRecord);
+      }
+
+      private ArincRecord.FieldLayout fieldLayout() {
+        return fieldLayout;
+      }
     }
   }
 }

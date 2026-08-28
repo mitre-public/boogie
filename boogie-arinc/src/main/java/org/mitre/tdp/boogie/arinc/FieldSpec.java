@@ -5,11 +5,14 @@ import java.util.function.Function;
 
 /**
  * Interface representing the specification for a logical field type from the ARINC specification.
- * <br>
+ * <p>
  * Fields are explicitly tied to their ARINC field code and multiple fields within a record may match the same spec.
- * <br>
+ * <p>
  * e.g. latitude is stored the same within a navaid regardless of whether it's the latitude of the navaid itself or it's non
  * collocated DME.
+ * <p>
+ * Implementations must be deterministic and side effect free, and returned values must be immutable or otherwise safe to share.
+ * {@link ArincRecord} may cache and return the same result for repeated applications to a particular field value.
  */
 public interface FieldSpec<T> extends Function<String, Optional<T>> {
 
