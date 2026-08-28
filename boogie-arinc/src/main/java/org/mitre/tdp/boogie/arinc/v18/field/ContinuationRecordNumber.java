@@ -1,8 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseContinuationNumber;
+
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
@@ -13,8 +13,6 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * e.g. [0-9][A-Z]
  */
 public final class ContinuationRecordNumber implements FieldSpec<String> {
-
-  private static final Predicate<String> numberRegex = Pattern.compile("[0-9A-Z]").asPredicate();
 
   @Override
   public int fieldLength() {
@@ -28,6 +26,11 @@ public final class ContinuationRecordNumber implements FieldSpec<String> {
 
   @Override
   public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(numberRegex);
+    return apply(fieldValue, 0, fieldValue.length());
+  }
+
+  @Override
+  public Optional<String> apply(String source, int startOffset, int endOffset) {
+    return parseContinuationNumber(source, startOffset, endOffset);
   }
 }

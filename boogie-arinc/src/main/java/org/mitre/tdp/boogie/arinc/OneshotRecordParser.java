@@ -57,7 +57,6 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.Header01Spec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,7 +257,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final ArincVersion version;
 
-    private Predicate<ArincRecord> keepRecord = new IsThisAHeader().or(new IsThisAPrimaryRecord());
+    private Predicate<ArincRecord> keepRecord = new IsThisAPrimaryRecord().or(new IsThisAHeader());
 
     private AirportAssemblyStrategy<APT, RWY, HLPD> airportStrategy;
 
@@ -281,14 +280,14 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     }
 
     /**
-     * Configure a filter which sits between the initial {@link ArincRecord} extraction and the converter implementation which
-     * maps those generic records to concrete Java models like {@link ArincProcedureLeg}.
-     *
-     * @param dropRecord indicates the given record should be dropped prior to conversion, typically used to drop continuation
-     *                   records which aren't otherwise being handled
+     * A predicate used to decide what records are kept for processing.
+     * <p>
+     * The default implementation will keep all primary records and headers.
+     * @param keepRecord the predicate
+     * @return this builder.
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> dropRecord(Predicate<ArincRecord> dropRecord) {
-      this.keepRecord = requireNonNull(dropRecord);
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> keepRecord(Predicate<ArincRecord> keepRecord) {
+      this.keepRecord = requireNonNull(keepRecord);
       return this;
     }
 

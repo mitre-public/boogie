@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
 import org.mitre.tdp.boogie.arinc.ArincDouble;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
 
 /**
  * The Arc Distance field is used to define the distance in nautical miles from the Arc Origin position to the arc
@@ -28,9 +25,7 @@ public final class ArcDistance extends ArincDouble {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

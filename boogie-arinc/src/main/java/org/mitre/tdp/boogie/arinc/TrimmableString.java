@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc;
 
+import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseTrimmedString;
+
 import java.util.Optional;
 
 /**
@@ -8,7 +10,13 @@ import java.util.Optional;
  */
 public abstract class TrimmableString implements FieldSpec<String> {
 
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).map(String::intern);
+  @Override
+  public final Optional<String> apply(String fieldValue) {
+    return apply(fieldValue, 0, fieldValue.length());
+  }
+
+  @Override
+  public final Optional<String> apply(String source, int startOffset, int endOffset) {
+    return parseTrimmedString(source, startOffset, endOffset);
   }
 }

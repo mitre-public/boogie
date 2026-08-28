@@ -52,6 +52,21 @@ class ArincRecordParserTest {
     assertEquals(Optional.of("ARINCRECORD"), actual.optionalField("field1"));
     assertEquals(Optional.of("ARINCRECORD"), actual.optionalField("field1"));
     assertEquals(1, fieldSpec.applyCount());
+    assertEquals(1, fieldSpec.rangeApplyCount());
+  }
+
+  @Test
+  void testParserCachesEmptyParsedValues() {
+    CountingFieldSpec fieldSpec = new CountingFieldSpec(11, true);
+    ArincRecordParser parser = ArincRecordParser.standard(
+        dummySpec(11, x -> true, new RecordField<>("field1", fieldSpec))
+    );
+
+    ArincRecord actual = parser.parse("ARINCRECORD").orElseThrow();
+    assertEquals(Optional.empty(), actual.optionalField("field1"));
+    assertEquals(Optional.empty(), actual.optionalField("field1"));
+    assertEquals(1, fieldSpec.applyCount());
+    assertEquals(1, fieldSpec.rangeApplyCount());
   }
 
   @Test
@@ -130,10 +145,17 @@ class ArincRecordParserTest {
   private static final class CountingFieldSpec implements FieldSpec<String> {
 
     private final int fieldLength;
+    private final boolean returnsEmpty;
     private final AtomicInteger applyCount = new AtomicInteger();
+    private final AtomicInteger rangeApplyCount = new AtomicInteger();
 
     private CountingFieldSpec(int fieldLength) {
+      this(fieldLength, false);
+    }
+
+    private CountingFieldSpec(int fieldLength, boolean returnsEmpty) {
       this.fieldLength = fieldLength;
+      this.returnsEmpty = returnsEmpty;
     }
 
     @Override
@@ -149,11 +171,21 @@ class ArincRecordParserTest {
     @Override
     public Optional<String> apply(String value) {
       applyCount.incrementAndGet();
-      return Optional.of(value);
+      return returnsEmpty ? Optional.empty() : Optional.of(value);
+    }
+
+    @Override
+    public Optional<String> apply(String source, int startOffset, int endOffset) {
+      rangeApplyCount.incrementAndGet();
+      return FieldSpec.super.apply(source, startOffset, endOffset);
     }
 
     private int applyCount() {
       return applyCount.get();
+    }
+
+    private int rangeApplyCount() {
+      return rangeApplyCount.get();
     }
   }
 }

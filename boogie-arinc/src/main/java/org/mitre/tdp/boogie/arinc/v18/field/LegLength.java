@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import org.mitre.tdp.boogie.arinc.ArincDouble;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
-
-import java.util.Optional;
 
 /**
  * The Leg Length field specifies the distance of either the
@@ -27,9 +24,7 @@ public final class LegLength extends ArincDouble {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

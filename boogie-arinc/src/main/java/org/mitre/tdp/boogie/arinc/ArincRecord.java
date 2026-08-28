@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
  * This class represents the most basic semi-structured view of an ARINC record. At this point the parser has associated the
@@ -18,6 +17,9 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  * <br>
  * This class also provides the ability to access the values of fields directly by applying the {@link FieldSpec} as outlined by
  * the {@link RecordSpec} inline with querying them for explicit values.
+ *
+ * <p>Instances are intended to be consumed by a single thread. Different records can be processed independently in parallel,
+ * but the same record should not be shared between threads while fields are being decoded.
  */
 public final class ArincRecord {
 
@@ -32,15 +34,16 @@ public final class ArincRecord {
   private final FieldLayout fieldLayout;
 
   /**
-   * Thread-safe cache of parsed field values. A null slot is unparsed; every populated slot contains an {@link Optional} so absent
-   * values do not need to be decoded repeatedly.
+   * Cache of parsed field values. A null slot is unparsed; every populated slot contains an {@link Optional} so absent values do
+   * not need to be decoded repeatedly. Records are decoded by the parser's single-threaded consumption path, so synchronization
+   * here would only add per-field overhead.
    */
-  private final AtomicReferenceArray<Object> parsedFields;
+  private final Object[] parsedFields;
 
   ArincRecord(String rawRecord, FieldLayout fieldLayout) {
     this.fieldLayout = requireNonNull(fieldLayout);
     this.rawRecord = requireNonNull(rawRecord).substring(0, fieldLayout.recordLength());
-    this.parsedFields = new AtomicReferenceArray<>(fieldLayout.fieldCount());
+    this.parsedFields = new Object[fieldLayout.fieldCount()];
   }
 
   public String rawRecord() {
@@ -99,15 +102,10 @@ public final class ArincRecord {
       return Optional.empty();
     }
 
-    Object parsed = parsedFields.get(field.index());
+    Object parsed = parsedFields[field.index()];
     if (parsed == null) {
-      String rawField = rawRecord.substring(field.startOffset(), field.endOffset());
-      Optional<?> decoded = requireNonNull(field.spec().apply(rawField));
-      if (parsedFields.compareAndSet(field.index(), null, decoded)) {
-        parsed = decoded;
-      } else {
-        parsed = requireNonNull(parsedFields.get(field.index()));
-      }
+      parsed = requireNonNull(field.spec().apply(rawRecord, field.startOffset(), field.endOffset()));
+      parsedFields[field.index()] = parsed;
     }
 
     return (Optional<T>) parsed;

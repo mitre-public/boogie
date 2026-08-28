@@ -28,5 +28,6 @@ class TestAirportHeliportIdentifier {
   @Test
   void testParserReturnsTrimmedInput() {
     assertEquals(Optional.of("HI"), parser.apply("   HI   "));
+    assertEquals(Optional.of("HI"), parser.apply("xx  HI  yy", 2, 8));
   }
 }

@@ -17,6 +17,17 @@ import java.util.function.Function;
 public interface FieldSpec<T> extends Function<String, Optional<T>> {
 
   /**
+   * Parses this field directly from a range in the source record.
+   * <p>
+   * The default implementation preserves the simple {@link Function} contract by extracting the field first. Implementations
+   * used on high-volume parsing paths can override this method to decode directly from the source range without allocating an
+   * intermediate {@link String}.
+   */
+  default Optional<T> apply(String source, int startOffset, int endOffset) {
+    return apply(source.substring(startOffset, endOffset));
+  }
+
+  /**
    * The length of the field in characters.
    */
   int fieldLength();
