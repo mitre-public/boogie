@@ -22,6 +22,7 @@ class TestArincFixDatabase {
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
   private static ArincFixDatabase arincFixDatabase;
+  private static ArincFixDatabase oneShotFixDatabase;
 
   @BeforeAll
   static void setup() {
@@ -34,6 +35,31 @@ class TestArincFixDatabase {
         testV18Consumer.arincAirports(),
         testV18Consumer.arincHoldingPatterns(),
         testV18Consumer.arincHeliports()
+    );
+
+    oneShotFixDatabase = ArincDatabaseFactory.newOneShotFixDatabase(
+        testV18Consumer.arincNdbNavaids(),
+        testV18Consumer.arincVhfNavaids(),
+        testV18Consumer.arincWaypoints(),
+        testV18Consumer.arincAirports(),
+        testV18Consumer.arincHeliports()
+    );
+  }
+
+  @Test
+  void testOneShotDatabaseKeepsOnlyRegionQualifiedAssemblyIndices() {
+    assertAll(
+        () -> assertTrue(oneShotFixDatabase.airport("KJFK", "K6").isPresent(), "Airports remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.heliport("00NJ", "K6").isPresent(), "Heliports remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.vhfNavaid("LGA", "K6").isPresent(), "VHF navaids remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.enrouteNdbNavaid("ACE", "PA").isPresent(), "NDB navaids remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.enrouteWaypoint("ATENE", "CY").isPresent(), "Enroute waypoints remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.airport("KJFK").isEmpty(), "OneShot does not retain the identifier-only airport alias."),
+        () -> assertTrue(oneShotFixDatabase.vhfNavaid("LGA").isEmpty(), "OneShot does not retain the identifier-only VHF alias."),
+        () -> assertTrue(oneShotFixDatabase.enrouteWaypoint("ATENE").isEmpty(), "OneShot does not retain the identifier-only waypoint alias."),
+        () -> assertTrue(oneShotFixDatabase.terminalWaypoint("AROKE", "K6").isEmpty(), "Terminal waypoints live only in OneShot's terminal-area database."),
+        () -> assertTrue(arincFixDatabase.airport("KJFK").isPresent(), "The standard factory still creates identifier-only aliases."),
+        () -> assertTrue(arincFixDatabase.terminalWaypoint("AROKE", "K6").isPresent(), "The standard factory still indexes terminal waypoints.")
     );
   }
 

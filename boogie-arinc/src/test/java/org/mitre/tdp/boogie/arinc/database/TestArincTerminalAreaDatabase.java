@@ -30,6 +30,8 @@ class TestArincTerminalAreaDatabase {
 
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase2;
+  private static ArincTerminalAreaDatabase oneShotTerminalAreaDatabase;
+  private static ArincTerminalAreaDatabase oneShotTerminalAreaDatabase2;
 
   @BeforeAll
   static void setup() {
@@ -62,6 +64,47 @@ class TestArincTerminalAreaDatabase {
         testV22Consumer.arincGnssLandingSystems(),
         testV22Consumer.arincHelipads(),
         testV22Consumer.arincHeliports()
+    );
+
+    oneShotTerminalAreaDatabase = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
+        testV18Consumer.arincAirports(),
+        testV18Consumer.arincRunways(),
+        testV18Consumer.arincLocalizerGlideSlopes(),
+        testV18Consumer.arincWaypoints(),
+        testV18Consumer.arincGnssLandingSystems(),
+        testV18Consumer.arincHelipads(),
+        testV18Consumer.arincHeliports()
+    );
+
+    oneShotTerminalAreaDatabase2 = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
+        testV22Consumer.arincAirports(),
+        testV22Consumer.arincRunways(),
+        testV22Consumer.arincLocalizerGlideSlopes(),
+        testV22Consumer.arincWaypoints(),
+        testV22Consumer.arincGnssLandingSystems(),
+        testV22Consumer.arincHelipads(),
+        testV22Consumer.arincHeliports()
+    );
+  }
+
+  @Test
+  void oneShotDatabaseKeepsAssemblyLookupsWithoutProcedureSupportingIndices() {
+    ArincHeliport heliport = oneShotTerminalAreaDatabase2.heliport("KJRA").orElseThrow();
+
+    assertAll(
+        () -> assertTrue(oneShotTerminalAreaDatabase.airport("KJFK", "K6").isPresent()),
+        () -> assertTrue(oneShotTerminalAreaDatabase.runwayAt("KJFK", "RW22L").isPresent(), "Procedure dereferencing uses the identifier-only runway lookup."),
+        () -> assertTrue(oneShotTerminalAreaDatabase.primaryLocalizerGlideSlopeOf("KJFK", "K6", "RW22L").isPresent()),
+        () -> assertTrue(oneShotTerminalAreaDatabase.localizerGlideSlopeAt("KJFK", "IIWY").isPresent()),
+        () -> assertTrue(oneShotTerminalAreaDatabase.waypointAt("KJFK", "K6", "AROKE").isPresent()),
+        () -> assertTrue(oneShotTerminalAreaDatabase.gnssLandingSystemAt("YSSY", "G25A").isPresent()),
+        () -> assertTrue(oneShotTerminalAreaDatabase.helipadAt("02NH", "H1").isPresent()),
+        () -> assertEquals(2, oneShotTerminalAreaDatabase2.heliportsWaypointsAt("KJRA").size()),
+        () -> assertFalse(oneShotTerminalAreaDatabase2.heliportsHelipadsAt(heliport.heliportIdentifier(), heliport.heliportIcaoRegion()).isEmpty()),
+        () -> assertTrue(oneShotTerminalAreaDatabase.allProcedureLegsAt("KJFK").isEmpty(), "OneShot assembles its procedure-leg collection directly."),
+        () -> assertTrue(oneShotTerminalAreaDatabase.legsForProcedure("KJFK", "ROBER2").isEmpty()),
+        () -> assertTrue(oneShotTerminalAreaDatabase.ndbNavaidsAt("KJFK", "K6").isEmpty(), "OneShot resolves NDBs through its fix database."),
+        () -> assertEquals(454, arincTerminalAreaDatabase.allProcedureLegsAt("KJFK").size(), "The standard factory still indexes procedure legs.")
     );
   }
 

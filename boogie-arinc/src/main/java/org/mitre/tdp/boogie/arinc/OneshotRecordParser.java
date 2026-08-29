@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -98,7 +97,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     this.version = requireNonNull(builder.version);
     this.keepRecord = requireNonNull(builder.keepRecord);
     this.airportStrategy = requireNonNull(builder.airportStrategy);
-    this.fixStrategy = FixAssemblyStrategy.caching(builder.fixStrategy);
+    this.fixStrategy = requireNonNull(builder.fixStrategy);
     this.airwayStrategy = requireNonNull(builder.airwayStrategy);
     this.procedureStrategy = requireNonNull(builder.procedureStrategy);
     this.firUirStrategy = requireNonNull(builder.firUirStrategy);
@@ -163,39 +162,35 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     LOG.debug("Finished parsing and converting supported record types.");
 
-    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newOneShotFixDatabase(
         consumer.arincNdbNavaids(),
         consumer.arincVhfNavaids(),
         consumer.arincWaypoints(),
         consumer.arincAirports(),
-        // Holding records are not dereferenced while assembling the OneShot outputs.
-        List.of(),
         consumer.arincHeliports()
     );
     LOG.debug("Finished instantiation of FixDatabase.");
 
-    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
         consumer.arincAirports(),
         consumer.arincRunways(),
         consumer.arincLocalizerGlideSlopes(),
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
         consumer.arincWaypoints(),
-        // OneShot assembles procedure legs directly; retaining a second terminal-area index only duplicates that collection.
-        List.of(),
         consumer.arincGnssLandingSystems(),
         consumer.arincHelipads(),
         consumer.arincHeliports()
     );
     LOG.debug("Finished instantiation of TerminalAreaDatabase.");
 
+    FixAssemblyStrategy<FIX> identityFixStrategy = FixAssemblyStrategy.identityCaching(fixStrategy);
+
     return records
         .addAirports(assembleAirports(arincTerminalAreaDatabase, consumer.arincAirports()))
-        .addFixes(assembleFixes(consumer.arincWaypoints(), consumer.arincNdbNavaids(), consumer.arincVhfNavaids()))
-        .addAirways(assembleAirways(arincFixDatabase, consumer.arincAirwayLegs()))
-        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, consumer.arincProcedureLegs()))
+        .addFixes(assembleFixes(identityFixStrategy, consumer.arincWaypoints(), consumer.arincNdbNavaids(), consumer.arincVhfNavaids()))
+        .addAirways(assembleAirways(arincFixDatabase, identityFixStrategy, consumer.arincAirwayLegs()))
+        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, identityFixStrategy, consumer.arincProcedureLegs()))
         .addFirUirs(assembleFirUirs(consumer.arincFirUirLegs()))
-        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, consumer.arincControlledAirspaceLegs()))
+        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, identityFixStrategy, consumer.arincControlledAirspaceLegs()))
         .addRestrictiveAirspaces(assembleRestrictiveAirspaces(consumer.arincRestrictiveAirspaceLegs()))
         .headerOne(consumer.arincHeaderOne().orElse(null))
         .addHeliport(assembleHeliports(arincTerminalAreaDatabase, consumer.arincHeliports()))
@@ -203,27 +198,30 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
   }
 
   private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase,
+                                             FixAssemblyStrategy<FIX> identityFixStrategy,
                                              Collection<ArincProcedureLeg> procedureLegs) {
 
     ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(
         arincTerminalAreaDatabase,
         arincFixDatabase,
-        fixStrategy,
+        identityFixStrategy,
         procedureStrategy
     );
 
     return assembler.assemble(procedureLegs).toList();
   }
 
-  private Collection<AWY> assembleAirways(ArincFixDatabase arincFixDatabase, Collection<ArincAirwayLeg> airwayLeg) {
-    AirwayAssembler<AWY> assembler = AirwayAssembler.usingStrategy(arincFixDatabase, fixStrategy, airwayStrategy);
+  private Collection<AWY> assembleAirways(ArincFixDatabase arincFixDatabase, FixAssemblyStrategy<FIX> identityFixStrategy,
+                                          Collection<ArincAirwayLeg> airwayLeg) {
+    AirwayAssembler<AWY> assembler = AirwayAssembler.usingStrategy(arincFixDatabase, identityFixStrategy, airwayStrategy);
     return assembler.assemble(airwayLeg).toList();
   }
 
-  private Collection<FIX> assembleFixes(Collection<ArincWaypoint> waypoints, Collection<ArincNdbNavaid> ndbs,
+  private Collection<FIX> assembleFixes(FixAssemblyStrategy<FIX> identityFixStrategy, Collection<ArincWaypoint> waypoints,
+      Collection<ArincNdbNavaid> ndbs,
       Collection<ArincVhfNavaid> vhfs) {
 
-    FixAssembler<FIX> assembler = FixAssembler.withStrategy(fixStrategy);
+    FixAssembler<FIX> assembler = FixAssembler.withStrategy(identityFixStrategy);
 
     return Stream.of(waypoints.stream(), ndbs.stream(), vhfs.stream())
         .flatMap(stream -> stream)
@@ -241,8 +239,14 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     return assembler.assemble(legs).toList();
   }
 
-  private Collection<AIR> assembleControlledAirspaces(ArincFixDatabase fixDatabase, Collection<ArincControlledAirspaceLeg> legs) {
-    ControlledAirspaceAssembler<AIR> assembler = ControlledAirspaceAssembler.usingStrategy(fixDatabase, fixStrategy, controlledAirspaceStrategy);
+  private Collection<AIR> assembleControlledAirspaces(ArincFixDatabase fixDatabase,
+                                                       FixAssemblyStrategy<FIX> identityFixStrategy,
+                                                       Collection<ArincControlledAirspaceLeg> legs) {
+    ControlledAirspaceAssembler<AIR> assembler = ControlledAirspaceAssembler.usingStrategy(
+        fixDatabase,
+        identityFixStrategy,
+        controlledAirspaceStrategy
+    );
     return assembler.assemble(legs).toList();
   }
 

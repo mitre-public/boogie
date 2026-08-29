@@ -49,8 +49,14 @@ public final class ArincFixDatabase {
   private final LinkedHashMultimap<ArincKey, Object> fixLookup;
 
   ArincFixDatabase(LinkedHashMultimap<ArincKey, Object> fixLookup) {
+    this(fixLookup, true);
+  }
+
+  ArincFixDatabase(LinkedHashMultimap<ArincKey, Object> fixLookup, boolean addIdentifierOnlyIndices) {
     this.fixLookup = requireNonNull(fixLookup);
-    this.addIdentifierOnlyIndices();
+    if (addIdentifierOnlyIndices) {
+      this.addIdentifierOnlyIndices();
+    }
   }
 
   public Optional<ArincWaypoint> waypoint(String identifier) {
