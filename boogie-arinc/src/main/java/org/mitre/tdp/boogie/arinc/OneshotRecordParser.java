@@ -57,6 +57,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,7 +142,52 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     requireNonNull(inputStream);
 
     ClientRecords.Builder<APT, FIX, AWY, PRC, AIR, HPT> records = new ClientRecords.Builder<>();
+    ConvertedArincRecords convertedRecords;
+    try {
+      convertedRecords = convertRecords(inputStream);
+    } catch (IOException e) {
+      LOG.error("Could not parse the arinc text into memory", e);
+      return records.build();
+    }
 
+    LOG.debug("Finished parsing and converting supported record types.");
+
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newOneShotFixDatabase(
+        convertedRecords.arincNdbNavaids(),
+        convertedRecords.arincVhfNavaids(),
+        convertedRecords.arincWaypoints(),
+        convertedRecords.arincAirports(),
+        convertedRecords.arincHeliports()
+    );
+    LOG.debug("Finished instantiation of FixDatabase.");
+
+    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
+        convertedRecords.arincAirports(),
+        convertedRecords.arincRunways(),
+        convertedRecords.arincLocalizerGlideSlopes(),
+        convertedRecords.arincWaypoints(),
+        convertedRecords.arincGnssLandingSystems(),
+        convertedRecords.arincHelipads(),
+        convertedRecords.arincHeliports()
+    );
+    LOG.debug("Finished instantiation of TerminalAreaDatabase.");
+
+    FixAssemblyStrategy<FIX> identityFixStrategy = FixAssemblyStrategy.identityCaching(fixStrategy);
+
+    return records
+        .addAirports(assembleAirports(arincTerminalAreaDatabase, convertedRecords.arincAirports()))
+        .addFixes(assembleFixes(identityFixStrategy, convertedRecords.arincWaypoints(), convertedRecords.arincNdbNavaids(), convertedRecords.arincVhfNavaids()))
+        .addAirways(assembleAirways(arincFixDatabase, identityFixStrategy, convertedRecords.arincAirwayLegs()))
+        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, identityFixStrategy, convertedRecords.arincProcedureLegs()))
+        .addFirUirs(assembleFirUirs(convertedRecords.arincFirUirLegs()))
+        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, identityFixStrategy, convertedRecords.arincControlledAirspaceLegs()))
+        .addRestrictiveAirspaces(assembleRestrictiveAirspaces(convertedRecords.arincRestrictiveAirspaceLegs()))
+        .headerOne(convertedRecords.arincHeaderOne().orElse(null))
+        .addHeliport(assembleHeliports(arincTerminalAreaDatabase, convertedRecords.arincHeliports()))
+        .build();
+  }
+
+  private ConvertedArincRecords convertRecords(InputStream inputStream) throws IOException {
     ArincRecordParser parser = ArincRecordParser.standard(version.specs());
     ConvertingArincRecordConsumer consumer = oneShotConsumerForVersion(version);
 
@@ -155,46 +201,9 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
           consumer.accept(record);
         }
       }
-    } catch (IOException e) {
-      LOG.error("Could not parse the arinc text into memory", e);
-      return records.build();
     }
 
-    LOG.debug("Finished parsing and converting supported record types.");
-
-    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newOneShotFixDatabase(
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
-        consumer.arincWaypoints(),
-        consumer.arincAirports(),
-        consumer.arincHeliports()
-    );
-    LOG.debug("Finished instantiation of FixDatabase.");
-
-    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
-        consumer.arincAirports(),
-        consumer.arincRunways(),
-        consumer.arincLocalizerGlideSlopes(),
-        consumer.arincWaypoints(),
-        consumer.arincGnssLandingSystems(),
-        consumer.arincHelipads(),
-        consumer.arincHeliports()
-    );
-    LOG.debug("Finished instantiation of TerminalAreaDatabase.");
-
-    FixAssemblyStrategy<FIX> identityFixStrategy = FixAssemblyStrategy.identityCaching(fixStrategy);
-
-    return records
-        .addAirports(assembleAirports(arincTerminalAreaDatabase, consumer.arincAirports()))
-        .addFixes(assembleFixes(identityFixStrategy, consumer.arincWaypoints(), consumer.arincNdbNavaids(), consumer.arincVhfNavaids()))
-        .addAirways(assembleAirways(arincFixDatabase, identityFixStrategy, consumer.arincAirwayLegs()))
-        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, identityFixStrategy, consumer.arincProcedureLegs()))
-        .addFirUirs(assembleFirUirs(consumer.arincFirUirLegs()))
-        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, identityFixStrategy, consumer.arincControlledAirspaceLegs()))
-        .addRestrictiveAirspaces(assembleRestrictiveAirspaces(consumer.arincRestrictiveAirspaceLegs()))
-        .headerOne(consumer.arincHeaderOne().orElse(null))
-        .addHeliport(assembleHeliports(arincTerminalAreaDatabase, consumer.arincHeliports()))
-        .build();
+    return consumer.snapshot();
   }
 
   private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase,

@@ -147,9 +147,9 @@ public final class ArincRecordConverterFactory {
    * view, avoiding the hash and immutable snapshot copy for the largest and most expensive model. All other record types retain
    * the standard consumer's duplicate suppression and immutable snapshot behavior.
    *
-   * <p>This variant is intended for parsing a file once and reading the collections only after ingestion is complete. Callers that
-   * need duplicate suppression or immutable point-in-time snapshots for procedure legs should use
-   * {@link #consumerForVersion(ArincVersion)}.
+   * <p>This variant is intended for parsing a file once and reading the collections only after ingestion is complete. Call
+   * {@link ConvertingArincRecordConsumer#snapshot()} after ingestion and retain the returned immutable result instead of the
+   * consumer. Callers that need duplicate suppression for procedure legs should use {@link #consumerForVersion(ArincVersion)}.
    */
   public static ConvertingArincRecordConsumer oneShotConsumerForVersion(ArincVersion version) {
     return consumerBuilderForVersion(version).buildOneShot();

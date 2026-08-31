@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -173,6 +174,36 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   }
 
   /**
+   * Returns a separate, immutable snapshot of all converted records. This method does not change the consumer's state: it can
+   * continue accepting records, and a later call returns a new snapshot containing those additions.
+   *
+   * <p>A one-shot caller should retain this result and release the consumer after ingestion. That makes the consumer's temporary
+   * duplicate-suppression sets eligible for reclamation while preserving encounter order and procedure-leg duplicates in the
+   * compact result lists.
+   */
+  public ConvertedArincRecords snapshot() {
+    return new ConvertedArincRecords(
+        arincAirports.snapshot(),
+        arincAirportExtensions.snapshot(),
+        arincRunways.snapshot(),
+        arincLocalizerGlideSlopes.snapshot(),
+        arincNdbNavaids.snapshot(),
+        arincVhfNavaids.snapshot(),
+        arincWaypoints.snapshot(),
+        arincAirwayLegs.snapshot(),
+        arincProcedureLegs.snapshot(),
+        gnssLandingSystems.snapshot(),
+        arincHoldingPatterns.snapshot(),
+        arincFirUirLeg.snapshot(),
+        arincHelipads.snapshot(),
+        arincControlledAirspaceLegs.snapshot(),
+        arincRestrictiveAirspaceLegs.snapshot(),
+        arincHeaderOnes.snapshot().stream().findFirst(),
+        arincHeliports.snapshot()
+    );
+  }
+
+  /**
    * If run on hundreds of thousands of records making the collector apply each delegation predicate can start to take some time
    * (especially if any of those delegators require partial parses).
    * <br>
@@ -274,6 +305,10 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         snapshot = ImmutableList.copyOf(records);
       }
       return snapshot;
+    }
+
+    private List<T> snapshot() {
+      return List.copyOf(records);
     }
 
     private boolean convertAndAdd(ArincRecord arincRecord) {
