@@ -6,6 +6,7 @@ import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -43,6 +44,10 @@ public interface ControlledAirspaceAssembler<AIRSPACE> {
   }
 
   final class Standard<AIRSPACE, FIX, SEQUENCE> implements ControlledAirspaceAssembler<AIRSPACE> {
+    private static final Comparator<ArincControlledAirspaceLeg> LEG_ORDER = Comparator
+        .comparingInt(ArincControlledAirspaceLeg::sequenceNumber)
+        .thenComparing(leg -> leg.continuationRecordNumber().orElse("0"));
+
     private final FixDereferencer<FIX> inflator;
     private final ControlledAirspaceAssemblyStrategy<AIRSPACE, FIX, SEQUENCE> airspaceAssemblyStrategy;
 
@@ -54,10 +59,18 @@ public interface ControlledAirspaceAssembler<AIRSPACE> {
     @Override
     public Stream<AIRSPACE> assemble(Collection<ArincControlledAirspaceLeg> legs) {
       return legs.stream()
-          .collect(Collectors.groupingBy(ControlledAirspaceKey.INSTANCE))
+          .collect(Collectors.groupingBy(
+              ControlledAirspaceKey::from,
+              Collectors.toCollection(ArrayList::new)
+          ))
           .values().stream()
-          .map(l -> l.stream().sorted(Comparator.comparing(ArincControlledAirspaceLeg::sequenceNumber).thenComparing(leg -> leg.continuationRecordNumber().orElse("0"))).toList())
+          .map(Standard::sortInPlace)
           .map(this::toAirspace);
+    }
+
+    private static List<ArincControlledAirspaceLeg> sortInPlace(List<ArincControlledAirspaceLeg> legs) {
+      legs.sort(LEG_ORDER);
+      return legs;
     }
 
     private AIRSPACE toAirspace(List<ArincControlledAirspaceLeg> legs) {

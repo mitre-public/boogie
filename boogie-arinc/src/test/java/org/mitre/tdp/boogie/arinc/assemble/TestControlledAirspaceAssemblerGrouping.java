@@ -47,8 +47,8 @@ class TestControlledAirspaceAssemblerGrouping {
         () -> assertEquals(2000.0, classA.altitudeLimit().upperEndpoint()),
         () -> assertEquals(2000.0, classC.altitudeLimit().lowerEndpoint()),
         () -> assertEquals(3000.0, classC.altitudeLimit().upperEndpoint()),
-        () -> assertEquals(ControlledAirspaceKey.INSTANCE.apply(classAFirst), ControlledAirspaceKey.INSTANCE.apply(classASecond)),
-        () -> assertNotEquals(ControlledAirspaceKey.INSTANCE.apply(classAFirst), ControlledAirspaceKey.INSTANCE.apply(classCFirst))
+        () -> assertEquals(ControlledAirspaceKey.from(classAFirst), ControlledAirspaceKey.from(classASecond)),
+        () -> assertNotEquals(ControlledAirspaceKey.from(classAFirst), ControlledAirspaceKey.from(classCFirst))
     );
   }
 
