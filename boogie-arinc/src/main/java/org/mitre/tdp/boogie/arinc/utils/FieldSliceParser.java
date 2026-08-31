@@ -132,6 +132,30 @@ public final class FieldSliceParser {
   }
 
   /**
+   * Parses an ARINC latitude directly from a fixed-width record.
+   * @param source the string to parse
+   * @param startOffset the starting offset
+   * @param endOffset the ending offset (exclusive)
+   * @return the latitude in decimal degrees, or an empty optional when the slice is blank or contains an invalid digit
+   * @throws StringIndexOutOfBoundsException when a non-empty slice ends before all latitude digits are present
+   */
+  public static Optional<Double> parseLatitude(String source, int startOffset, int endOffset) {
+    return parseCoordinate(source, startOffset, endOffset, 2, 'N');
+  }
+
+  /**
+   * Parses an ARINC longitude directly from a fixed-width record.
+   * @param source the string to parse
+   * @param startOffset the starting offset
+   * @param endOffset the ending offset (exclusive)
+   * @return the longitude in decimal degrees, or an empty optional when the slice is blank or contains an invalid digit
+   * @throws StringIndexOutOfBoundsException when a non-empty slice ends before all longitude digits are present
+   */
+  public static Optional<Double> parseLongitude(String source, int startOffset, int endOffset) {
+    return parseCoordinate(source, startOffset, endOffset, 3, 'E');
+  }
+
+  /**
    * Parses out the continuation record 'number'
    * @param source the string
    * @param startOffset start position
@@ -191,6 +215,57 @@ public final class FieldSliceParser {
       }
     }
     return true;
+  }
+
+  private static Optional<Double> parseCoordinate(
+      String source,
+      int startOffset,
+      int endOffset,
+      int degreeDigits,
+      char positiveDirection) {
+
+    long bounds = trimmedBounds(source, startOffset, endOffset);
+    int start = start(bounds);
+    int end = end(bounds);
+    int coordinateEnd = start + degreeDigits + 7;
+
+    if (start == end) {
+      return Optional.empty();
+    }
+
+    for (int index = start + 1; index < coordinateEnd; index++) {
+      if (index >= end) {
+        throw new StringIndexOutOfBoundsException(index - start);
+      }
+      if (!Character.isDigit(source.charAt(index))) {
+        return Optional.empty();
+      }
+    }
+
+    int degreeEnd = start + degreeDigits + 1;
+    int minuteEnd = degreeEnd + 2;
+    int secondEnd = minuteEnd + 2;
+
+    double degrees = coordinateNumber(source, start + 1, degreeEnd);
+    double minutes = coordinateNumber(source, degreeEnd, minuteEnd) / 60.0;
+    double seconds = coordinateNumber(source, minuteEnd, secondEnd) / 3600.0;
+    double decimals = coordinateDigit(source, secondEnd) / 36000.0
+        + coordinateDigit(source, secondEnd + 1) / 360000.0;
+    double coordinate = degrees + minutes + seconds + decimals;
+
+    return Optional.of(source.charAt(start) == positiveDirection ? coordinate : -coordinate);
+  }
+
+  private static int coordinateNumber(String source, int startOffset, int endOffset) {
+    int value = 0;
+    for (int index = startOffset; index < endOffset; index++) {
+      value = value * 10 + coordinateDigit(source, index);
+    }
+    return value;
+  }
+
+  private static int coordinateDigit(String source, int offset) {
+    return Character.getNumericValue(source.charAt(offset));
   }
 
   private static boolean isDigit(char character) {

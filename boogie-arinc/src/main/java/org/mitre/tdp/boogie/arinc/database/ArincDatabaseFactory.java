@@ -1,13 +1,10 @@
 package org.mitre.tdp.boogie.arinc.database;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -32,7 +29,7 @@ import com.google.common.collect.LinkedHashMultimap;
 
 /**
  * Factory class for generating a variety of multi-index databases over ARINC information.
- * <br>
+ * <p>
  * These database instantiations rely on the format of the converted ARINC POJO data models and do <i>not</i> explicitly stitch
  * records together (e.g. marrying the appropriate fix to a procedure leg). However these databases can be used to aid in those
  * lookups.
@@ -40,6 +37,90 @@ import com.google.common.collect.LinkedHashMultimap;
 public final class ArincDatabaseFactory {
 
   private static final Logger LOG = LoggerFactory.getLogger(ArincDatabaseFactory.class);
+  /**
+   * Simple sort function so the legs of procedures are returned in approximately the transition-declared order.
+   */
+  private static final Comparator<ArincProcedureLeg> procedureLegComparator = Comparator.comparing(ArincProcedureLeg::sidStarIdentifier)
+      .thenComparing(leg -> leg.transitionIdentifier().orElse(""))
+      .thenComparing(ArincProcedureLeg::sequenceNumber);
+  private static final Function<ArincAirport, Pair<String, String>> airportToAirportIndex = arincAirport -> Pair.of(
+      arincAirport.airportIdentifier(),
+      arincAirport.airportIcaoRegion()
+  );
+  private static final Function<ArincHeliport, Pair<String, String>> heliportToHeliportIndex = arincHeliport -> Pair.of(
+      arincHeliport.heliportIdentifier(),
+      arincHeliport.heliportIcaoRegion()
+  );
+  private static final Function<ArincRunway, Pair<String, String>> runwayToAirportIndex = arincRunway -> Pair.of(
+      arincRunway.airportIdentifier(),
+      arincRunway.airportIcaoRegion()
+  );
+  private static final Function<ArincHelipad, Pair<String, String>> helipadToAirportIndex = helipad -> Pair.of(
+      helipad.airportHeliportIdentifier(),
+      helipad.icaoCode()
+  );
+  private static final Function<ArincLocalizerGlideSlope, Pair<String, String>> localizerGlideSlopeToAirportIndex = arincLocalizerGlideSlope -> Pair.of(
+      arincLocalizerGlideSlope.airportIdentifier(),
+      arincLocalizerGlideSlope.airportIcaoRegion()
+  );
+  private static final Function<ArincGnssLandingSystem, Pair<String, String>> gnssLandingSystemToAirportIndex = arincGnssLandingSystem -> Pair.of(
+      arincGnssLandingSystem.airportIdentifier(),
+      arincGnssLandingSystem.airportIcaoRegion()
+  );
+  private static final Function<ArincNdbNavaid, Pair<String, String>> ndbNavaidToAirportIndex = arincNdbNavaid -> Pair.of(
+      arincNdbNavaid.airportIdentifier().orElse(null),
+      arincNdbNavaid.airportIcaoRegion().orElse(null)
+  );
+  private static final Function<ArincVhfNavaid, Pair<String, String>> vhfNavaidToAirportIndex = arincVhfNavaid -> Pair.of(
+      arincVhfNavaid.airportIdentifier().orElse(null),
+      arincVhfNavaid.airportIcaoRegion().orElse(null)
+  );
+  private static final Function<ArincWaypoint, Pair<String, String>> waypointToAirportIndex = arincWaypoint -> Pair.of(
+      arincWaypoint.airportIdentifier().orElse(null),
+      arincWaypoint.airportIcaoRegion().orElse(null)
+  );
+  private static final Function<ArincProcedureLeg, Pair<String, String>> procedureLegToAirportIndex = arincProcedureLeg -> Pair.of(
+      arincProcedureLeg.airportIdentifier(),
+      arincProcedureLeg.airportIcaoRegion()
+  );
+  private static final Function<ArincNdbNavaid, ArincKey> ndbNavaidToFixIndex = arincNdbNavaid -> new ArincKey(
+      arincNdbNavaid.ndbIdentifier(),
+      arincNdbNavaid.ndbIcaoRegion(),
+      arincNdbNavaid.sectionCode(),
+      arincNdbNavaid.subSectionCode().orElse(null)
+  );
+  private static final Function<ArincVhfNavaid, ArincKey> vhfNavaidToFixIndex = arincVhfNavaid -> new ArincKey(
+      arincVhfNavaid.vhfIdentifier(),
+      arincVhfNavaid.vhfIcaoRegion(),
+      arincVhfNavaid.sectionCode(),
+      arincVhfNavaid.subSectionCode().orElse(null)
+  );
+  private static final Function<ArincWaypoint, ArincKey> waypointToFixIndex = arincWaypoint -> new ArincKey(
+      arincWaypoint.waypointIdentifier(),
+      arincWaypoint.waypointIcaoRegion(),
+      arincWaypoint.sectionCode(),
+      arincWaypoint.terminalSubSectionCode().orElse(arincWaypoint.enrouteSubSectionCode().orElse(null))
+  );
+  private static final Predicate<ArincWaypoint> allWaypoints = waypoint -> true;
+  private static final Predicate<ArincWaypoint> enrouteWaypoints = waypoint -> SectionCode.E.equals(waypoint.sectionCode());
+  private static final Function<ArincAirport, ArincKey> airportToFixIndex = arincAirport -> new ArincKey(
+      arincAirport.airportIdentifier(),
+      arincAirport.airportIcaoRegion(),
+      arincAirport.sectionCode(),
+      arincAirport.subSectionCode().orElse(null)
+  );
+  private static final Function<ArincHeliport, ArincKey> heliportToFixIndex = arincHeliport -> new ArincKey(
+      arincHeliport.heliportIdentifier(),
+      arincHeliport.heliportIcaoRegion(),
+      arincHeliport.sectionCode(),
+      arincHeliport.subSectionCode().orElse(null)
+  );
+  private static final Function<ArincHoldingPattern, ArincKey> holdingToHoldingIndex = arincHoldingPattern -> new ArincKey(
+      arincHoldingPattern.fixIdentifier(),
+      arincHoldingPattern.fixIcaoRegion(),
+      arincHoldingPattern.sectionCode(),
+      arincHoldingPattern.subSectionCode()
+  );
 
   private ArincDatabaseFactory() {
     throw new IllegalStateException("Cannot instantiate static factory class.");
@@ -151,10 +232,7 @@ public final class ArincDatabaseFactory {
     LOG.debug("Indexing {} VHF Navaids in the ArincTerminalAreaDatabase.", vhfNavaids.size());
     Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap = groupedBy(vhfNavaids, vhfNavaidToAirportIndex);
     LOG.debug("Indexing {} Waypoints in the ArincTerminalAreaDatabase.", waypoints.size());
-    Map<Pair<String, String>, List<ArincWaypoint>> waypointMap = waypoints.isEmpty() ? Map.of()
-        : waypoints.stream()
-            .filter(w -> SectionCode.P.equals(w.sectionCode()) || SectionCode.H.equals(w.sectionCode()))
-            .collect(Collectors.groupingBy(waypointToAirportIndex));
+    Map<Pair<String, String>, List<ArincWaypoint>> waypointMap = mapTerminalWaypoints(waypoints);
     LOG.debug("Indexing {} Procedure Legs in the ArincTerminalAreaDatabase.", procedureLegs.size());
     Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap = groupedBy(procedureLegs, procedureLegToAirportIndex);
     LOG.debug("Indexing {} Gnss Landing Systems in the ArincTerminalAreaDatabase.", gnssLandingSystems.size());
@@ -168,6 +246,15 @@ public final class ArincDatabaseFactory {
     heliports.forEach(heliport -> heliportPage(runwayMap, localizerMap, ndbNavaidMap, vhfNavaidMap, waypointMap, procedureLegMap, gnssLandingSystemMap, helipadMap, heliport, heliportLookup));
 
     return new ArincTerminalAreaDatabase(airportLookup, heliportLookup);
+  }
+
+  private static Map<Pair<String, String>, List<ArincWaypoint>> mapTerminalWaypoints(Collection<ArincWaypoint> waypoints) {
+    if (isNull(waypoints) || waypoints.isEmpty()) {
+      return Map.of();
+    }
+    return waypoints.stream()
+        .filter(w -> SectionCode.P.equals(w.sectionCode()) || SectionCode.H.equals(w.sectionCode()))
+        .collect(Collectors.groupingBy(waypointToAirportIndex));
   }
 
   /**
@@ -200,7 +287,8 @@ public final class ArincDatabaseFactory {
     );
   }
 
-  private static void airportPage(Map<Pair<String, String>, List<ArincRunway>> runwayMap,
+  private static void airportPage(
+      Map<Pair<String, String>, List<ArincRunway>> runwayMap,
       Map<Pair<String, String>, List<ArincLocalizerGlideSlope>> localizerMap,
       Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap,
       Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap,
@@ -319,10 +407,10 @@ public final class ArincDatabaseFactory {
   }
 
   private static SupportingPage supportingPage(Map<Pair<String, String>, List<ArincNdbNavaid>> ndbNavaidMap,
-      Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap,
-      Map<Pair<String, String>, List<ArincWaypoint>> waypointMap,
-      Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap,
-      Pair<String, String> index) {
+                                               Map<Pair<String, String>, List<ArincVhfNavaid>> vhfNavaidMap,
+                                               Map<Pair<String, String>, List<ArincWaypoint>> waypointMap,
+                                               Map<Pair<String, String>, List<ArincProcedureLeg>> procedureLegMap,
+                                               Pair<String, String> index) {
 
     List<ArincProcedureLeg> procedureLegs = procedureLegMap.getOrDefault(index, emptyList());
     List<ArincWaypoint> waypoints = waypointMap.getOrDefault(index, emptyList());
@@ -354,107 +442,4 @@ public final class ArincDatabaseFactory {
   private static <T, K> Map<K, List<T>> groupedBy(Collection<T> values, Function<T, K> indexer) {
     return values.isEmpty() ? Map.of() : values.stream().collect(Collectors.groupingBy(indexer));
   }
-
-  /**
-   * Simple sort function so the legs of procedures are returned in approximately the transition-declared order.
-   */
-  private static final Comparator<ArincProcedureLeg> procedureLegComparator = Comparator.comparing(ArincProcedureLeg::sidStarIdentifier)
-      .thenComparing(leg -> leg.transitionIdentifier().orElse(""))
-      .thenComparing(ArincProcedureLeg::sequenceNumber);
-
-  private static final Function<ArincAirport, Pair<String, String>> airportToAirportIndex = arincAirport -> Pair.of(
-      arincAirport.airportIdentifier(),
-      arincAirport.airportIcaoRegion()
-  );
-
-  private static final Function<ArincHeliport, Pair<String, String>> heliportToHeliportIndex = arincHeliport -> Pair.of(
-      arincHeliport.heliportIdentifier(),
-      arincHeliport.heliportIcaoRegion()
-  );
-
-  private static final Function<ArincRunway, Pair<String, String>> runwayToAirportIndex = arincRunway -> Pair.of(
-      arincRunway.airportIdentifier(),
-      arincRunway.airportIcaoRegion()
-  );
-
-  private static final Function<ArincHelipad, Pair<String, String>> helipadToAirportIndex = helipad -> Pair.of(
-      helipad.airportHeliportIdentifier(),
-      helipad.icaoCode()
-  );
-
-  private static final Function<ArincLocalizerGlideSlope, Pair<String, String>> localizerGlideSlopeToAirportIndex = arincLocalizerGlideSlope -> Pair.of(
-      arincLocalizerGlideSlope.airportIdentifier(),
-      arincLocalizerGlideSlope.airportIcaoRegion()
-  );
-
-  private static final Function<ArincGnssLandingSystem, Pair<String, String>> gnssLandingSystemToAirportIndex = arincGnssLandingSystem -> Pair.of(
-      arincGnssLandingSystem.airportIdentifier(),
-      arincGnssLandingSystem.airportIcaoRegion()
-  );
-
-  private static final Function<ArincNdbNavaid, Pair<String, String>> ndbNavaidToAirportIndex = arincNdbNavaid -> Pair.of(
-      arincNdbNavaid.airportIdentifier().orElse(null),
-      arincNdbNavaid.airportIcaoRegion().orElse(null)
-  );
-
-  private static final Function<ArincVhfNavaid, Pair<String, String>> vhfNavaidToAirportIndex = arincVhfNavaid -> Pair.of(
-      arincVhfNavaid.airportIdentifier().orElse(null),
-      arincVhfNavaid.airportIcaoRegion().orElse(null)
-  );
-
-  private static final Function<ArincWaypoint, Pair<String, String>> waypointToAirportIndex = arincWaypoint -> Pair.of(
-      arincWaypoint.airportIdentifier().orElse(null),
-      arincWaypoint.airportIcaoRegion().orElse(null)
-  );
-
-  private static final Function<ArincProcedureLeg, Pair<String, String>> procedureLegToAirportIndex = arincProcedureLeg -> Pair.of(
-      arincProcedureLeg.airportIdentifier(),
-      arincProcedureLeg.airportIcaoRegion()
-  );
-
-  private static final Function<ArincNdbNavaid, ArincKey> ndbNavaidToFixIndex = arincNdbNavaid -> new ArincKey(
-      arincNdbNavaid.ndbIdentifier(),
-      arincNdbNavaid.ndbIcaoRegion(),
-      arincNdbNavaid.sectionCode(),
-      arincNdbNavaid.subSectionCode().orElse(null)
-  );
-
-  private static final Function<ArincVhfNavaid, ArincKey> vhfNavaidToFixIndex = arincVhfNavaid -> new ArincKey(
-      arincVhfNavaid.vhfIdentifier(),
-      arincVhfNavaid.vhfIcaoRegion(),
-      arincVhfNavaid.sectionCode(),
-      arincVhfNavaid.subSectionCode().orElse(null)
-  );
-
-  private static final Function<ArincWaypoint, ArincKey> waypointToFixIndex = arincWaypoint -> new ArincKey(
-      arincWaypoint.waypointIdentifier(),
-      arincWaypoint.waypointIcaoRegion(),
-      arincWaypoint.sectionCode(),
-      arincWaypoint.terminalSubSectionCode().orElse(arincWaypoint.enrouteSubSectionCode().orElse(null))
-  );
-
-  private static final Predicate<ArincWaypoint> allWaypoints = waypoint -> true;
-
-  private static final Predicate<ArincWaypoint> enrouteWaypoints = waypoint -> SectionCode.E.equals(waypoint.sectionCode());
-
-  private static final Function<ArincAirport, ArincKey> airportToFixIndex = arincAirport -> new ArincKey(
-      arincAirport.airportIdentifier(),
-      arincAirport.airportIcaoRegion(),
-      arincAirport.sectionCode(),
-      arincAirport.subSectionCode().orElse(null)
-  );
-
-  private static final Function<ArincHeliport, ArincKey> heliportToFixIndex = arincHeliport -> new ArincKey(
-      arincHeliport.heliportIdentifier(),
-      arincHeliport.heliportIcaoRegion(),
-      arincHeliport.sectionCode(),
-      arincHeliport.subSectionCode().orElse(null)
-  );
-
-  private static final Function<ArincHoldingPattern, ArincKey> holdingToHoldingIndex = arincHoldingPattern -> new ArincKey(
-      arincHoldingPattern.fixIdentifier(),
-      arincHoldingPattern.fixIcaoRegion(),
-      arincHoldingPattern.sectionCode(),
-      arincHoldingPattern.subSectionCode()
-  );
 }
