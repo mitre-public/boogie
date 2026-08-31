@@ -249,8 +249,7 @@ public final class FieldSliceParser {
     double degrees = coordinateNumber(source, start + 1, degreeEnd);
     double minutes = coordinateNumber(source, degreeEnd, minuteEnd) / 60.0;
     double seconds = coordinateNumber(source, minuteEnd, secondEnd) / 3600.0;
-    double decimals = coordinateDigit(source, secondEnd) / 36000.0
-        + coordinateDigit(source, secondEnd + 1) / 360000.0;
+    double decimals = coordinateDigit(source, secondEnd) / 36000.0 + coordinateDigit(source, secondEnd + 1) / 360000.0;
     double coordinate = degrees + minutes + seconds + decimals;
 
     return Optional.of(source.charAt(start) == positiveDirection ? coordinate : -coordinate);

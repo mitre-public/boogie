@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v21;
 
 import java.util.List;
-import java.util.Set;
 
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
@@ -73,9 +72,8 @@ public final class HelipadSpec implements RecordSpec {
 
   @Override
   public boolean matchesRecord(String arincRecord) {
-    String sectionSubsection = arincRecord.substring(4, 5).concat(arincRecord.substring(12, 13));
-    return sectionSubSections.contains(sectionSubsection);
+    char section = arincRecord.charAt(4);
+    char subsection = arincRecord.charAt(12);
+    return (section == 'P' || section == 'H') && subsection == 'H';
   }
-
-  private static final Set<String> sectionSubSections = Set.of("PH", "HH");
 }
