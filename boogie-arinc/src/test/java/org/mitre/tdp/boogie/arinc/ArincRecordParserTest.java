@@ -80,12 +80,14 @@ class ArincRecordParserTest {
   }
 
   @Test
-  void testParserRequiresTheConfiguredRecordLength() {
+  void testParserNormalizesTrailingSpacePadding() {
     ArincRecordParser parser = ArincRecordParser.standard(
         dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)))
     );
 
+    assertEquals("ARINCRECORD", parser.parse("ARINCRECORD  ").orElseThrow().rawRecord());
     assertThrows(IllegalArgumentException.class, () -> parser.parse("ARINCRECORD-plus-more"));
+    assertThrows(IllegalArgumentException.class, () -> parser.parse("ARINCRECORD\t"));
     assertThrows(IllegalArgumentException.class, () -> parser.parse("SHORT"));
   }
 

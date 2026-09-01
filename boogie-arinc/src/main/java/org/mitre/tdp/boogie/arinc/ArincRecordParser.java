@@ -26,8 +26,9 @@ public interface ArincRecordParser {
    * if multiple of the provided specs potentially match to the same record type (which could happen if you want to delegate to
    * different specs based on some feature other than section/subsection).
    * <p>
-   * All configured specs must declare the same fixed record length. A parser supports between 1 and 64 specs, and inputs whose
-   * length differs from the configured length are rejected.
+   * All configured specs must declare the same fixed record length. A parser supports between 1 and 64 specs. Inputs shorter
+   * than the configured length are rejected; longer inputs are accepted only when the remaining characters are ASCII spaces and
+   * are normalized to the configured length.
    * @param recordSpecs the collection of {@link RecordSpec}s to support for parsing, standard collections of specs tied to 424
    *                    versions can be found in {@link ArincVersion}
    */
@@ -71,8 +72,29 @@ public interface ArincRecordParser {
     @Override
     public Optional<ArincRecord> parse(String rawRecord) {
       requireNonNull(rawRecord, "Supplied ARINC-424 record should be non-null.");
-      checkArgument(rawRecord.length() == recordLength, "Expected an ARINC-424 record of length %s but received %s", recordLength, rawRecord.length());
-      return parseCandidates(rawRecord, dispatch.candidates(rawRecord));
+      String normalizedRecord = normalizeRecordLength(rawRecord);
+      return parseCandidates(normalizedRecord, dispatch.candidates(normalizedRecord));
+    }
+
+    private String normalizeRecordLength(String rawRecord) {
+      int actualLength = rawRecord.length();
+      if (actualLength == recordLength) {
+        return rawRecord;
+      }
+
+      boolean containsOnlyTrailingSpaces = actualLength > recordLength;
+      for (int index = recordLength; containsOnlyTrailingSpaces && index < actualLength; index++) {
+        containsOnlyTrailingSpaces = rawRecord.charAt(index) == ' ';
+      }
+
+      checkArgument(
+          containsOnlyTrailingSpaces,
+          "Expected an ARINC-424 record of length %s, optionally followed by ASCII spaces, but received %s record: %s",
+          recordLength,
+          actualLength,
+          rawRecord
+      );
+      return rawRecord.substring(0, recordLength);
     }
 
     private Optional<ArincRecord> parseCandidates(String rawRecord, long candidates) {
