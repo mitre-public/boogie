@@ -206,7 +206,7 @@ public class OneshotRecordParserBenchmark {
     } catch (NoSuchMethodException correctedNameMissing) {
       try {
         // The base revision predates the spelling correction. Keeping one benchmark source for both revisions makes the
-        // base-versus-candidate CI comparison measure production changes rather than different benchmark harnesses.
+        // base-versus-current CI comparison measure production changes rather than different benchmark harnesses.
         return OneshotRecordParser.ClientRecords.class.getMethod("conrolledAirspaces");
       } catch (NoSuchMethodException legacyNameMissing) {
         legacyNameMissing.addSuppressed(correctedNameMissing);

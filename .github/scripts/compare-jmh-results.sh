@@ -3,7 +3,7 @@
 set -euo pipefail
 
 if [[ $# -ne 4 ]]; then
-  echo "Usage: $0 BASE_FULL.json BASE_NAV.json CANDIDATE_FULL.json CANDIDATE_NAV.json" >&2
+  echo "Usage: $0 BASE_FULL.json BASE_NAV.json CURRENT_FULL.json CURRENT_NAV.json" >&2
   exit 2
 fi
 
@@ -23,8 +23,8 @@ checks=$(
     --argjson allocationLimit "${allocation_regression_limit}" \
     --slurpfile baseFull "$1" \
     --slurpfile baseNav "$2" \
-    --slurpfile candidateFull "$3" \
-    --slurpfile candidateNav "$4" '
+    --slurpfile currentFull "$3" \
+    --slurpfile currentNav "$4" '
       def benchmark($documents; $label):
         if ($documents | length) != 1
             or ($documents[0] | type) != "array"
@@ -36,34 +36,50 @@ checks=$(
       def identity($result):
         $result.params.dataset + "/" + $result.params.specSet;
 
-      def metric_check($identity; $name; $unit; $limit; $base; $candidate):
-        if $base.scoreUnit != $unit or $candidate.scoreUnit != $unit
+      def configuration($result):
+        $result
+        | {
+            benchmark,
+            mode,
+            threads,
+            forks,
+            warmupIterations,
+            warmupTime,
+            warmupBatchSize,
+            measurementIterations,
+            measurementTime,
+            measurementBatchSize,
+            jmhVersion
+          };
+
+      def metric_check($identity; $name; $unit; $limit; $base; $current):
+        if $base.scoreUnit != $unit or $current.scoreUnit != $unit
         then error($identity + "/" + $name + " expected " + $unit)
         elif ($base.score | type) != "number"
             or ($base.scoreError | type) != "number"
-            or ($candidate.score | type) != "number"
-            or ($candidate.scoreError | type) != "number"
+            or ($current.score | type) != "number"
+            or ($current.scoreError | type) != "number"
             or $base.score <= 0
-            or $candidate.score <= 0
+            or $current.score <= 0
             or $base.scoreError < 0
-            or $candidate.scoreError < 0
+            or $current.scoreError < 0
         then error($identity + "/" + $name + " contains an invalid score")
         else
-          ($candidate.score / $base.score) as $pointRatio
-          | (($candidate.score - $candidate.scoreError) / ($base.score + $base.scoreError)) as $confidenceRatio
+          ($current.score / $base.score) as $pointRatio
+          | (($current.score - $current.scoreError) / ($base.score + $base.scoreError)) as $confidenceRatio
           | {
               identity: $identity,
               metric: $name,
               unit: $unit,
               baseScore: $base.score,
               baseError: $base.scoreError,
-              candidateScore: $candidate.score,
-              candidateError: $candidate.scoreError,
+              currentScore: $current.score,
+              currentError: $current.scoreError,
               pointRatio: $pointRatio,
               confidenceRatio: $confidenceRatio,
               limit: $limit,
               status: (
-                if $confidenceRatio > (1 + $limit) then "FAIL"
+                if $confidenceRatio > (1 + $limit) then "REGRESSION"
                 elif $pointRatio > (1 + $limit) then "WARN"
                 else "PASS"
                 end
@@ -71,9 +87,11 @@ checks=$(
             }
         end;
 
-      def compare($base; $candidate):
-        if identity($base) != identity($candidate)
-        then error("Cannot compare " + identity($base) + " with " + identity($candidate))
+      def compare($base; $current):
+        if identity($base) != identity($current)
+        then error("Cannot compare " + identity($base) + " with " + identity($current))
+        elif configuration($base) != configuration($current)
+        then error("Cannot compare different JMH configurations for " + identity($base))
         else
           [
             metric_check(
@@ -82,7 +100,7 @@ checks=$(
               "s/op";
               $timeLimit;
               $base.primaryMetric;
-              $candidate.primaryMetric
+              $current.primaryMetric
             ),
             metric_check(
               identity($base);
@@ -90,18 +108,18 @@ checks=$(
               "B/op";
               $allocationLimit;
               $base.secondaryMetrics["gc.alloc.rate.norm"];
-              $candidate.secondaryMetrics["gc.alloc.rate.norm"]
+              $current.secondaryMetrics["gc.alloc.rate.norm"]
             )
           ]
         end;
 
       compare(
         benchmark($baseFull; "base full");
-        benchmark($candidateFull; "candidate full")
+        benchmark($currentFull; "current full")
       )
       + compare(
         benchmark($baseNav; "base navigation");
-        benchmark($candidateNav; "candidate navigation")
+        benchmark($currentNav; "current navigation")
       )
     '
 )
@@ -119,14 +137,15 @@ report=$(
       else ($value | round)
       end;
 
-    "### ARINC performance regression gate",
+    "### Weekly ARINC performance comparison",
     "",
-    "A result fails only when the lower bound of the candidate is more than the budget above the upper bound of the base.",
+    "REGRESSION means the lower bound of the current result is more than the threshold above the upper bound of the base.",
+    "Performance findings are advisory and do not fail the workflow.",
     "",
-    "| Benchmark | Metric | Base | Candidate | Point change | Confirmed lower change | Budget | Result |",
+    "| Benchmark | Metric | Base | Current | Point change | Confirmed lower change | Threshold | Result |",
     "|---|---|---:|---:|---:|---:|---:|---|",
     (.[] |
-      "| \(.identity) | \(.metric) | \(score(.baseScore; .unit)) ± \(score(.baseError; .unit)) \(.unit) | \(score(.candidateScore; .unit)) ± \(score(.candidateError; .unit)) \(.unit) | \(signed_percent(.pointRatio)) | \(signed_percent(.confidenceRatio)) | \(.limit * 100)% | \(.status) |"
+      "| \(.identity) | \(.metric) | \(score(.baseScore; .unit)) ± \(score(.baseError; .unit)) \(.unit) | \(score(.currentScore; .unit)) ± \(score(.currentError; .unit)) \(.unit) | \(signed_percent(.pointRatio)) | \(signed_percent(.confidenceRatio)) | \(.limit * 100)% | \(.status) |"
     )
   ' <<< "${checks}"
 )
@@ -141,12 +160,6 @@ if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
     def percent_change($ratio): ((($ratio - 1) * 10000 | round) / 100);
     .[]
     | select(.status != "PASS")
-    | (if .status == "FAIL" then "error" else "warning" end) as $level
-    | "::\($level) title=JMH \(.status) - \(.identity) \(.metric)::Point change \(percent_change(.pointRatio))%; confidence-bound change \(percent_change(.confidenceRatio))%; budget \(.limit * 100)%"
+    | "::warning title=JMH \(.status) - \(.identity) \(.metric)::Point change \(percent_change(.pointRatio))%; confidence-bound change \(percent_change(.confidenceRatio))%; threshold \(.limit * 100)%"
   ' <<< "${checks}"
-fi
-
-if ! jq --exit-status 'all(.[]; .status != "FAIL")' <<< "${checks}" > /dev/null; then
-  echo "A confirmed JMH performance regression exceeded its budget." >&2
-  exit 1
 fi

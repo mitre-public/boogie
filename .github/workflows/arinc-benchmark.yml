@@ -1,7 +1,9 @@
 name: arinc-benchmark
 
 on:
-  pull_request:
+  schedule:
+    - cron: "0 0 * * 1"
+      timezone: America/New_York
 
 permissions:
   contents: read
@@ -15,8 +17,59 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Check for weekly main changes
+    runs-on: ubuntu-24.04
+    outputs:
+      has_changes: ${{ steps.window.outputs.has_changes }}
+      baseline_sha: ${{ steps.window.outputs.baseline_sha }}
+      current_sha: ${{ steps.window.outputs.current_sha }}
+
+    steps:
+      - name: Checkout Main History
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Find Weekly Comparison Window
+        id: window
+        run: |
+          current_sha=$(git rev-parse HEAD)
+          baseline_sha=$(git rev-list --first-parent -1 --before='7 days ago' "${current_sha}")
+
+          if [[ -z "${baseline_sha}" ]]; then
+            echo "No main revision exists before the weekly window; skipping benchmarks."
+            echo "has_changes=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          commit_count=$(git rev-list --first-parent --count "${baseline_sha}..${current_sha}")
+          if [[ "${commit_count}" -gt 0 ]]; then
+            has_changes=true
+          else
+            has_changes=false
+          fi
+
+          {
+            echo "has_changes=${has_changes}"
+            echo "baseline_sha=${baseline_sha}"
+            echo "current_sha=${current_sha}"
+          } >> "${GITHUB_OUTPUT}"
+
+          {
+            echo "### Weekly ARINC benchmark window"
+            echo
+            echo "- Changes on main: ${commit_count}"
+            echo "- Baseline: ${baseline_sha}"
+            echo "- Current: ${current_sha}"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
   cifp:
     name: CIFP JMH
+    needs: changes
+    if: needs.changes.outputs.has_changes == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
@@ -26,13 +79,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.changes.outputs.current_sha }}
           lfs: true
           persist-credentials: false
 
       - name: Checkout Base Revision
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ needs.changes.outputs.baseline_sha }}
           path: benchmark-base
           persist-credentials: false
 
@@ -68,17 +122,17 @@ jobs:
         working-directory: benchmark-base
         run: ./gradlew :boogie-arinc:jmhCifp
 
-      - name: Run CIFP Candidate Full Benchmark
+      - name: Run CIFP Current Full Benchmark
         run: ./gradlew :boogie-arinc:jmhCifp
 
-      - name: Run CIFP Candidate Navigation Benchmark
+      - name: Run CIFP Current Navigation Benchmark
         run: ./gradlew :boogie-arinc:jmhCifpNav
 
       - name: Run CIFP Base Navigation Benchmark
         working-directory: benchmark-base
         run: ./gradlew :boogie-arinc:jmhCifpNav
 
-      - name: Enforce CIFP Performance Budget
+      - name: Report CIFP Performance Comparison
         run: |
           bash .github/scripts/compare-jmh-results.sh \
             benchmark-base/boogie-arinc/build/reports/jmh/cifp.json \
@@ -92,8 +146,8 @@ jobs:
           report_dir=boogie-arinc/build/reports/jmh
           mkdir -p "${report_dir}"
           {
-            echo "base_commit=${{ github.event.pull_request.base.sha }}"
-            echo "candidate_commit=${GITHUB_SHA}"
+            echo "base_commit=${{ needs.changes.outputs.baseline_sha }}"
+            echo "current_commit=${{ needs.changes.outputs.current_sha }}"
             echo "runner_image=${ImageOS:-unknown}-${ImageVersion:-unknown}"
             java -version
             uname -a
@@ -116,8 +170,8 @@ jobs:
 
   lido:
     name: LIDO JMH
-    # Fork and Dependabot PRs cannot access the private LIDO fixture.
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
+    needs: changes
+    if: needs.changes.outputs.has_changes == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -127,12 +181,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.changes.outputs.current_sha }}
           persist-credentials: false
 
       - name: Checkout Base Revision
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ needs.changes.outputs.baseline_sha }}
           path: benchmark-base
           persist-credentials: false
 
@@ -177,17 +232,17 @@ jobs:
         working-directory: benchmark-base
         run: ./gradlew :boogie-arinc:jmhLido
 
-      - name: Run LIDO Candidate Full Benchmark
+      - name: Run LIDO Current Full Benchmark
         run: ./gradlew :boogie-arinc:jmhLido
 
-      - name: Run LIDO Candidate Navigation Benchmark
+      - name: Run LIDO Current Navigation Benchmark
         run: ./gradlew :boogie-arinc:jmhLidoNav
 
       - name: Run LIDO Base Navigation Benchmark
         working-directory: benchmark-base
         run: ./gradlew :boogie-arinc:jmhLidoNav
 
-      - name: Enforce LIDO Performance Budget
+      - name: Report LIDO Performance Comparison
         run: |
           bash .github/scripts/compare-jmh-results.sh \
             benchmark-base/boogie-arinc/build/reports/jmh/lido.json \
@@ -201,8 +256,8 @@ jobs:
           report_dir=boogie-arinc/build/reports/jmh
           mkdir -p "${report_dir}"
           {
-            echo "base_commit=${{ github.event.pull_request.base.sha }}"
-            echo "candidate_commit=${GITHUB_SHA}"
+            echo "base_commit=${{ needs.changes.outputs.baseline_sha }}"
+            echo "current_commit=${{ needs.changes.outputs.current_sha }}"
             echo "runner_image=${ImageOS:-unknown}-${ImageVersion:-unknown}"
             java -version
             uname -a
