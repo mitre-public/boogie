@@ -1,18 +1,31 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseInteger;
-
 import java.util.Optional;
 
-public abstract class ArincInteger implements FieldSpec<Integer> {
+public abstract class ArincInteger extends TrimmableField<Integer> {
 
   @Override
-  public final Optional<Integer> apply(String fieldValue) {
-    return apply(fieldValue, 0, fieldValue.length());
+  protected final Optional<Integer> parseTrimmed(String source, int startOffset, int endOffset) {
+    int digitsStart = digitsStart(source, startOffset);
+    if (digitsStart == endOffset || !containsOnlyDigits(source, digitsStart, endOffset)) {
+      return Optional.empty();
+    }
+
+    return Optional.of(Integer.parseInt(source, startOffset, endOffset, 10));
   }
 
-  @Override
-  public final Optional<Integer> apply(String source, int startOffset, int endOffset) {
-    return parseInteger(source, startOffset, endOffset);
+  private static boolean containsOnlyDigits(String source, int startOffset, int endOffset) {
+    for (int index = startOffset; index < endOffset; index++) {
+      char character = source.charAt(index);
+      if (character < '0' || character > '9') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static int digitsStart(String source, int startOffset) {
+    char first = source.charAt(startOffset);
+    return first == '+' || first == '-' ? startOffset + 1 : startOffset;
   }
 }

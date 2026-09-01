@@ -74,7 +74,9 @@ public enum ApplicationType implements FieldSpec<ApplicationType> {
   }
 
   @Override
-  public Optional<ApplicationType> apply(String s) {
-    return Optional.of(s).filter(validNames::contains).map(ApplicationType::valueOf);
+  public Optional<ApplicationType> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(validNames::contains)
+        .map(ApplicationType::valueOf);
   }
 }

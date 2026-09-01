@@ -34,7 +34,7 @@ public final class PadDimensions implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> apply(String s) {
-    return Optional.ofNullable(s);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset));
   }
 }

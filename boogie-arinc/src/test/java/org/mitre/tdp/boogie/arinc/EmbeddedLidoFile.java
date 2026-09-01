@@ -1,5 +1,10 @@
 package org.mitre.tdp.boogie.arinc;
 
+import com.google.common.io.Resources;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,27 +12,6 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincGnssLandingSystem;
-import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
-import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
-import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
-import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
-import org.mitre.tdp.boogie.arinc.model.ArincRunway;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Resources;
 
 /**
  * This class represents the parsed output of CIFP cycle 2101 as statically loaded from the application resources. This class is
@@ -40,19 +24,20 @@ public final class EmbeddedLidoFile {
 
   private static final String EMBEDDED_FILE_NAME = "A424-22std.dat.gz";
 
-  private final ConvertingArincRecordConsumer records;
+  private final ConvertedArincRecords records;
 
   private EmbeddedLidoFile() {
-    this.records = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
-    ArincRecordParser parser = ArincVersion.V22.parser();
+    ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
+    ArincRecordParser parser = ArincRecordParser.standard(ArincVersion.V22.specs());
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
     IsThisAHeader isThisAHeader = new IsThisAHeader();
     LOG.info("Loading records from embedded LIDO file.");
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(getInputStream()))) {
-      reader.lines().map(parser::parse).flatMap(Optional::stream).filter(isThisAHeader.negate()).filter(isThisAPrimaryRecord).forEach(records);
+      reader.lines().map(parser::parse).flatMap(Optional::stream).filter(isThisAHeader.negate()).filter(isThisAPrimaryRecord).forEach(consumer);
     } catch (IOException e) {
       throw new IllegalArgumentException("Error opening embedded resource file.", e);
     }
+    this.records = consumer.snapshot();
   }
 
   /**
@@ -145,9 +130,10 @@ public final class EmbeddedLidoFile {
   }
 
   /**
-   * "Initialization on demand idiom" -- lazy & threadsafe; only referenced once @link #instance()} is called.
+   * “Initialization-on-demand holder idiom” — lazy and thread-safe; referenced only when
+   * {@link EmbeddedLidoFile#instance()} is called.
    * <br>
-   * See https://sourcemaking.com/design_patterns/singleton/java/1 for details.
+   * See <a href="https://sourcemaking.com/design_patterns/singleton/java/1">...</a> for details.
    */
   private static final class SingletonHolder {
     private static final EmbeddedLidoFile INSTANCE = new EmbeddedLidoFile();

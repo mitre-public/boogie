@@ -33,7 +33,7 @@ class TestFigureOfMerit {
         () -> assertEquals(Optional.of(-150), parser.apply("-150")),
         () -> assertEquals(Optional.of(150), parser.apply(" 150")),
         () -> assertEquals(Optional.of(150), parser.apply("+150")),
-        () -> assertEquals(Optional.of(-150), parser.apply("xx -150 yy", 2, 7))
+        () -> assertEquals(Optional.of(-150), parser.parse("xx -150 yy", 2, 7))
     );
   }
 
@@ -41,6 +41,6 @@ class TestFigureOfMerit {
   void testRangeAndOverflowEdgeCases() {
     assertEquals(Optional.empty(), parser.apply("-"));
     assertThrows(NumberFormatException.class, () -> parser.apply("2147483648"));
-    assertThrows(IndexOutOfBoundsException.class, () -> parser.apply("123", 2, 1));
+    assertThrows(IndexOutOfBoundsException.class, () -> parser.parse("123", 2, 1));
   }
 }

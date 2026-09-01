@@ -1,20 +1,27 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseDouble;
-
 import java.util.Optional;
 
-public abstract class ArincDouble implements FieldSpec<Double> {
+import org.mitre.tdp.boogie.arinc.utils.AsciiDigits;
+
+public abstract class ArincDouble extends TrimmableField<Double> {
 
   @Override
-  public final Optional<Double> apply(String fieldValue) {
-    return apply(fieldValue, 0, fieldValue.length());
-  }
+  protected final Optional<Double> parseTrimmed(String source, int startOffset, int endOffset) {
+    int digitsStart = digitsStart(source, startOffset);
+    if (digitsStart == endOffset) {
+      return Optional.empty();
+    }
 
-  @Override
-  public final Optional<Double> apply(String source, int startOffset, int endOffset) {
-    Optional<Double> parsed = parseDouble(source, startOffset, endOffset, suppressedDecimalPlaces());
-    return parsed.isEmpty() || isValidValue(parsed.get()) ? parsed : Optional.empty();
+    double value = AsciiDigits.parseDoubleOrNaN(source, digitsStart, endOffset);
+    if (Double.isNaN(value)) {
+      return Optional.empty();
+    }
+
+    value /= decimalScale();
+    value = source.charAt(startOffset) == '-' ? -value : value;
+
+    return isValidValue(value) ? Optional.of(value) : Optional.empty();
   }
 
   /**
@@ -29,5 +36,21 @@ public abstract class ArincDouble implements FieldSpec<Double> {
    */
   protected boolean isValidValue(double value) {
     return true;
+  }
+
+  private static int digitsStart(String source, int startOffset) {
+    char first = source.charAt(startOffset);
+    return first == '+' || first == '-' ? startOffset + 1 : startOffset;
+  }
+
+  private double decimalScale() {
+    int places = suppressedDecimalPlaces();
+    return switch (places) {
+      case 0 -> 1.0;
+      case 1 -> 10.0;
+      case 2 -> 100.0;
+      case 3 -> 1000.0;
+      default -> Math.pow(10.0, places);
+    };
   }
 }

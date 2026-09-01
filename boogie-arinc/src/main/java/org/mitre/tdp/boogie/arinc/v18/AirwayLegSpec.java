@@ -1,47 +1,21 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.BoundaryCode;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CruiseTableIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.DirectionRestriction;
-import org.mitre.tdp.boogie.arinc.v18.field.EnrouteRouteIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.EuIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.FixIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.FixedRadiusTransitionIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.InboundMagneticCourse;
-import org.mitre.tdp.boogie.arinc.v18.field.Level;
-import org.mitre.tdp.boogie.arinc.v18.field.MaxAltitude;
-import org.mitre.tdp.boogie.arinc.v18.field.MinimumAltitude;
-import org.mitre.tdp.boogie.arinc.v18.field.OutboundMagneticCourse;
-import org.mitre.tdp.boogie.arinc.v18.field.RecommendedNavaid;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.Rho;
-import org.mitre.tdp.boogie.arinc.v18.field.Rnp;
-import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
-import org.mitre.tdp.boogie.arinc.v18.field.RouteType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.SixthCharacter;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Theta;
-import org.mitre.tdp.boogie.arinc.v18.field.WaypointDescription;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
 
 /**
  * The specification for an ARINC enroute airway record V18.
  */
 public final class AirwayLegSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column6('E', 'R'));
 
   private final List<RecordField<?>> recordFields;
 
@@ -96,6 +70,11 @@ public final class AirwayLegSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

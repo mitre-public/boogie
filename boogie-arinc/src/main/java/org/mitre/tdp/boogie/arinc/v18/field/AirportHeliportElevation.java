@@ -23,7 +23,10 @@ public final class AirportHeliportElevation implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(ValidArincNumeric.INSTANCE).map(String::trim).map(Double::parseDouble);
+  public Optional<Double> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(ValidArincNumeric.INSTANCE)
+        .map(String::trim)
+        .map(Double::parseDouble);
   }
 }

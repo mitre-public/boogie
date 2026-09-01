@@ -52,9 +52,9 @@ public class OneShotRecordParserLidoIntegrationTest {
         () -> assertEquals(861925, procedureLegCount, "Procedure Legs"),
         () -> assertEquals(2, oibbN13lMissedApproaches, "Multiple missed approaches"),
         () -> assertEquals(357, records.firUirs().size(), "FIRs and UIRs"),
-        () -> assertEquals(13232, records.conrolledAirspaces().size(), "Controlled Airspaces"),
+        () -> assertEquals(13232, records.controlledAirspaces().size(), "Controlled Airspaces"),
         () -> assertEquals(20503, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),
-        () -> assertEquals("A424-22std.dat", records.headerOne().get().fileName().get()),
+        () -> assertEquals("A424-22std.dat", records.headerOne().orElseThrow().fileName().orElseThrow()),
         () -> assertEquals(9646, records.heliports().size(), "heliports")
     );
   }

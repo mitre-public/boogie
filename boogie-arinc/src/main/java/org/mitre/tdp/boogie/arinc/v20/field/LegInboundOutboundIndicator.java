@@ -2,7 +2,6 @@ package org.mitre.tdp.boogie.arinc.v20.field;
 
 import static com.google.common.collect.Sets.newHashSet;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,8 +27,10 @@ public final class LegInboundOutboundIndicator implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(allowedCodes::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(allowedCodes::contains);
   }
 
   private static final Set<String> allowedCodes = newHashSet("I", "O");

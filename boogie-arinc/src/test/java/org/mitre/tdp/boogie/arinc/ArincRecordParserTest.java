@@ -44,15 +44,14 @@ class ArincRecordParserTest {
     );
 
     ArincRecord actual = parser.parse("ARINCRECORD").orElseThrow();
-    assertEquals(0, fieldSpec.applyCount());
+    assertEquals(0, fieldSpec.parseCount());
     assertEquals("ARINCRECORD", actual.rawRecord());
     assertEquals("ARINCRECORD", actual.rawField("field1"));
-    assertEquals(0, fieldSpec.applyCount());
+    assertEquals(0, fieldSpec.parseCount());
 
     assertEquals(Optional.of("ARINCRECORD"), actual.optionalField("field1"));
     assertEquals(Optional.of("ARINCRECORD"), actual.optionalField("field1"));
-    assertEquals(1, fieldSpec.applyCount());
-    assertEquals(1, fieldSpec.rangeApplyCount());
+    assertEquals(1, fieldSpec.parseCount());
   }
 
   @Test
@@ -65,8 +64,7 @@ class ArincRecordParserTest {
     ArincRecord actual = parser.parse("ARINCRECORD").orElseThrow();
     assertEquals(Optional.empty(), actual.optionalField("field1"));
     assertEquals(Optional.empty(), actual.optionalField("field1"));
-    assertEquals(1, fieldSpec.applyCount());
-    assertEquals(1, fieldSpec.rangeApplyCount());
+    assertEquals(1, fieldSpec.parseCount());
   }
 
   @Test
@@ -82,13 +80,13 @@ class ArincRecordParserTest {
   }
 
   @Test
-  void testParserPreservesRecordLengthBehavior() {
+  void testParserRequiresTheConfiguredRecordLength() {
     ArincRecordParser parser = ArincRecordParser.standard(
         dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)))
     );
 
-    assertEquals("ARINCRECORD", parser.parse("ARINCRECORD-plus-more").orElseThrow().rawRecord());
-    assertThrows(StringIndexOutOfBoundsException.class, () -> parser.parse("SHORT"));
+    assertThrows(IllegalArgumentException.class, () -> parser.parse("ARINCRECORD-plus-more"));
+    assertThrows(IllegalArgumentException.class, () -> parser.parse("SHORT"));
   }
 
   @Test
@@ -105,7 +103,7 @@ class ArincRecordParserTest {
   void testParserBreaksIfInputSpecsDontMatchExpectedSizes() {
 
     RecordSpec goodSpec = dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)));
-    RecordSpec badSpec = dummySpec(12, x -> true, new RecordField<>("field1", new BlankSpec(11)));
+    RecordSpec badSpec = dummySpec(12, x -> true, new RecordField<>("field1", new BlankSpec(12)));
 
     assertThrows(IllegalArgumentException.class, () -> ArincRecordParser.standard(goodSpec, badSpec));
   }
@@ -123,7 +121,7 @@ class ArincRecordParserTest {
     assertThrows(IllegalArgumentException.class, () -> ArincRecordParser.standard(badSpec));
   }
 
-  private RecordSpec dummySpec(int size, Predicate<String> matcher, RecordField<?>... fields) {
+  private static RecordSpec dummySpec(int size, Predicate<String> matcher, RecordField<?>... fields) {
     return new RecordSpec() {
       @Override
       public int recordLength() {
@@ -133,6 +131,11 @@ class ArincRecordParserTest {
       @Override
       public List<RecordField<?>> recordFields() {
         return Arrays.asList(fields);
+      }
+
+      @Override
+      public List<RecordDiscriminator> recordDiscriminators() {
+        return List.of(RecordDiscriminator.prefix("ARINCRECORD"));
       }
 
       @Override
@@ -146,8 +149,7 @@ class ArincRecordParserTest {
 
     private final int fieldLength;
     private final boolean returnsEmpty;
-    private final AtomicInteger applyCount = new AtomicInteger();
-    private final AtomicInteger rangeApplyCount = new AtomicInteger();
+    private final AtomicInteger parseCount = new AtomicInteger();
 
     private CountingFieldSpec(int fieldLength) {
       this(fieldLength, false);
@@ -169,23 +171,13 @@ class ArincRecordParserTest {
     }
 
     @Override
-    public Optional<String> apply(String value) {
-      applyCount.incrementAndGet();
-      return returnsEmpty ? Optional.empty() : Optional.of(value);
+    public Optional<String> parse(String source, int startOffset, int endOffset) {
+      parseCount.incrementAndGet();
+      return returnsEmpty ? Optional.empty() : Optional.of(source.substring(startOffset, endOffset));
     }
 
-    @Override
-    public Optional<String> apply(String source, int startOffset, int endOffset) {
-      rangeApplyCount.incrementAndGet();
-      return FieldSpec.super.apply(source, startOffset, endOffset);
-    }
-
-    private int applyCount() {
-      return applyCount.get();
-    }
-
-    private int rangeApplyCount() {
-      return rangeApplyCount.get();
+    private int parseCount() {
+      return parseCount.get();
     }
   }
 }

@@ -74,7 +74,9 @@ public enum StarQualifier3 implements FieldSpec<StarQualifier3> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<StarQualifier3> apply(String s) {
-    return Optional.of(s).filter(VALID::contains).map(StarQualifier3::valueOf);
+  public Optional<StarQualifier3> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(StarQualifier3::valueOf);
   }
 }

@@ -1,36 +1,19 @@
 package org.mitre.tdp.boogie.arinc.v19;
 
-import java.util.List;
-
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.ArcBearing;
-import org.mitre.tdp.boogie.arinc.v18.field.ArcDistance;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.BoundaryVia;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.Level;
-import org.mitre.tdp.boogie.arinc.v18.field.Limit;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.MultipleCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Notam;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.RestrictiveAirspaceDesignation;
-import org.mitre.tdp.boogie.arinc.v18.field.RestrictiveAirspaceName;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v19.field.RestrictiveType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.TimeCode;
-import org.mitre.tdp.boogie.arinc.v18.field.UnitIndicator;
+
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
 
 public final class RestrictiveAirspaceLegSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column6('U', 'R'));
+
   private final List<RecordField<?>> recordFields;
 
   public RestrictiveAirspaceLegSpec() {
@@ -75,6 +58,11 @@ public final class RestrictiveAirspaceLegSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

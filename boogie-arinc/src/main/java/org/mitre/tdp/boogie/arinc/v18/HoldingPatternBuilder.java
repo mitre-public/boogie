@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincHoldingPattern;
-import org.mitre.tdp.boogie.arinc.utils.LegTimeFromString;
 
 /**
  * Because the holding pattern only changed by ARINC version by adding fields, this class creates the baseline
@@ -27,7 +26,7 @@ public final class HoldingPatternBuilder implements Function<ArincRecord, ArincH
     Optional<String> duplicateIdentifier = arincRecord.optionalField("duplicateIdentifier");
     Optional<String> continuationRecordNumber = arincRecord.optionalField("continuationRecordNumber");
     Optional<Integer> legTime = arincRecord.optionalField("legTime");
-    Optional<Duration> legDuration = legTime.map(Object::toString).map(LegTimeFromString.INSTANCE); //same as leg but separate field in holds
+    Optional<Duration> legDuration = legTime.map(value -> Duration.ofSeconds(value * 6L));
     Optional<Double> legLength = arincRecord.optionalField("legLength");
     Optional<Double> min = arincRecord.optionalField("minimumAltitude");
     Optional<Double> maximum = arincRecord.optionalField("maxAltitude");

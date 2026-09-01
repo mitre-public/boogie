@@ -1,6 +1,15 @@
 package org.mitre.tdp.boogie.arinc.database;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.ArincRecordParser;
+import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.v18.*;
+import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
+import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
+import org.mitre.tdp.boogie.arinc.v21.HelipadSpec;
 
 import java.io.File;
 import java.util.Collection;
@@ -8,17 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.TestArincFileParser;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.model.*;
-import org.mitre.tdp.boogie.arinc.v18.*;
-import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
-import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
-import org.mitre.tdp.boogie.arinc.v21.HelipadSpec;
-import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestArincTerminalAreaDatabase {
 
@@ -35,55 +34,60 @@ class TestArincTerminalAreaDatabase {
 
   @BeforeAll
   static void setup() {
-    fileParser.parseAll(arincTestFile).forEach(testV18Consumer);
-    fileParser.parseAll(withHelipad).forEach(testV18Consumer); //this only works because the default consumer has a helipad implementation
-    fileParser.parseAll(withLoc).forEach(testV18Consumer);
-    fileParser2.parseAll(heliports).forEach(testV22Consumer);
+    ConvertingArincRecordConsumer v18Consumer = newV18Consumer();
+    fileParser.parseAll(arincTestFile).forEach(v18Consumer);
+    fileParser.parseAll(withHelipad).forEach(v18Consumer); //this only works because the default consumer has a helipad implementation
+    fileParser.parseAll(withLoc).forEach(v18Consumer);
+    ConvertedArincRecords testV18Records = v18Consumer.snapshot();
+
+    ConvertingArincRecordConsumer v22Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
+    fileParser2.parseAll(heliports).forEach(v22Consumer);
+    ConvertedArincRecords testV22Records = v22Consumer.snapshot();
 
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
-        testV18Consumer.arincAirports(),
-        testV18Consumer.arincRunways(),
-        testV18Consumer.arincLocalizerGlideSlopes(),
-        testV18Consumer.arincNdbNavaids(),
-        testV18Consumer.arincVhfNavaids(),
-        testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincProcedureLegs(),
-        testV18Consumer.arincGnssLandingSystems(),
-        testV18Consumer.arincHelipads(),
-        testV18Consumer.arincHeliports()
+        testV18Records.arincAirports(),
+        testV18Records.arincRunways(),
+        testV18Records.arincLocalizerGlideSlopes(),
+        testV18Records.arincNdbNavaids(),
+        testV18Records.arincVhfNavaids(),
+        testV18Records.arincWaypoints(),
+        testV18Records.arincProcedureLegs(),
+        testV18Records.arincGnssLandingSystems(),
+        testV18Records.arincHelipads(),
+        testV18Records.arincHeliports()
     );
 
     arincTerminalAreaDatabase2 = ArincDatabaseFactory.newTerminalAreaDatabase(
-        testV22Consumer.arincAirports(),
-        testV22Consumer.arincRunways(),
-        testV22Consumer.arincLocalizerGlideSlopes(),
-        testV22Consumer.arincNdbNavaids(),
-        testV22Consumer.arincVhfNavaids(),
-        testV22Consumer.arincWaypoints(),
-        testV22Consumer.arincProcedureLegs(),
-        testV22Consumer.arincGnssLandingSystems(),
-        testV22Consumer.arincHelipads(),
-        testV22Consumer.arincHeliports()
+        testV22Records.arincAirports(),
+        testV22Records.arincRunways(),
+        testV22Records.arincLocalizerGlideSlopes(),
+        testV22Records.arincNdbNavaids(),
+        testV22Records.arincVhfNavaids(),
+        testV22Records.arincWaypoints(),
+        testV22Records.arincProcedureLegs(),
+        testV22Records.arincGnssLandingSystems(),
+        testV22Records.arincHelipads(),
+        testV22Records.arincHeliports()
     );
 
     oneShotTerminalAreaDatabase = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
-        testV18Consumer.arincAirports(),
-        testV18Consumer.arincRunways(),
-        testV18Consumer.arincLocalizerGlideSlopes(),
-        testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincGnssLandingSystems(),
-        testV18Consumer.arincHelipads(),
-        testV18Consumer.arincHeliports()
+        testV18Records.arincAirports(),
+        testV18Records.arincRunways(),
+        testV18Records.arincLocalizerGlideSlopes(),
+        testV18Records.arincWaypoints(),
+        testV18Records.arincGnssLandingSystems(),
+        testV18Records.arincHelipads(),
+        testV18Records.arincHeliports()
     );
 
     oneShotTerminalAreaDatabase2 = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
-        testV22Consumer.arincAirports(),
-        testV22Consumer.arincRunways(),
-        testV22Consumer.arincLocalizerGlideSlopes(),
-        testV22Consumer.arincWaypoints(),
-        testV22Consumer.arincGnssLandingSystems(),
-        testV22Consumer.arincHelipads(),
-        testV22Consumer.arincHeliports()
+        testV22Records.arincAirports(),
+        testV22Records.arincRunways(),
+        testV22Records.arincLocalizerGlideSlopes(),
+        testV22Records.arincWaypoints(),
+        testV22Records.arincGnssLandingSystems(),
+        testV22Records.arincHelipads(),
+        testV22Records.arincHeliports()
     );
   }
 
@@ -129,7 +133,7 @@ class TestArincTerminalAreaDatabase {
   void ruwwaysNoLocs() {
     Map<String, ArincLocalizerGlideSlope> theTwo = arincTerminalAreaDatabase.allLocalizerGlideSlopeAt("KLYH", "K6");
     assertAll("need to make sure that rec navs work out even if the runway did not tag it",
-        () -> assertEquals(2, theTwo.entrySet().size(), "both made it"),
+        () -> assertEquals(2, theTwo.size(), "both made it"),
         () -> assertTrue(arincTerminalAreaDatabase.secondaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").isPresent(), "did both"),
         () -> assertTrue(arincTerminalAreaDatabase.primaryLocalizerGlideSlopeOf("KLYH", "K6", "RW04").isPresent(), "did both"),
         () -> assertNotNull(theTwo.get("ILYH")),
@@ -200,8 +204,8 @@ class TestArincTerminalAreaDatabase {
         () -> assertEquals(Optional.of("AROKE"), arincTerminalAreaDatabase.waypointAt("KJFK", "K6", "AROKE").map(ArincWaypoint::waypointIdentifier)),
         () -> assertEquals(Optional.empty(), arincTerminalAreaDatabase.waypointAt("KJFK", "K4", "AROKE")),
         () -> assertEquals(Optional.empty(), arincTerminalAreaDatabase.waypointAt("KJFK", "AROME")),
-        () -> assertEquals("K6", arincTerminalAreaDatabase.waypointAt("KJFK", "K6", "AROKE").get().waypointIcaoRegion()),
-        () -> assertEquals("YM", arincTerminalAreaDatabase.waypointAt("YSSY", "YM", "AROKE").get().waypointIcaoRegion())
+        () -> assertEquals("K6", arincTerminalAreaDatabase.waypointAt("KJFK", "K6", "AROKE").orElseThrow().waypointIcaoRegion()),
+        () -> assertEquals("YM", arincTerminalAreaDatabase.waypointAt("YSSY", "YM", "AROKE").orElseThrow().waypointIcaoRegion())
     );
   }
 
@@ -229,44 +233,28 @@ class TestArincTerminalAreaDatabase {
   ));
   private static final TestArincFileParser fileParser2 = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
 
-  private static final ConvertingArincRecordConsumer testV22Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
   /**
    * In implementation this could be done from the factory class {@link ArincRecordConverterFactory}.
    */
-  private static final ConvertingArincRecordConsumer testV18Consumer = new ConvertingArincRecordConsumer.Builder()
-      .airportDelegator(new AirportValidator())
-      .airportConverter(new AirportConverter())
-      .airportContinuationConverter(new AirportPrimaryExtensionConverter())
-      .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
-      .airwayLegDelegator(new AirwayLegValidator())
-      .airwayLegConverter(new AirwayLegConverter())
-      .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
-      .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
-      .ndbNavaidDelegator(new NdbNavaidValidator())
-      .ndbNavaidConverter(new NdbNavaidConverter())
-      .procedureLegDelegator(new ProcedureLegValidator())
-      .procedureLegConverter(new ProcedureLegConverter())
-      .runwayDelegator(new RunwayValidator())
-      .runwayConverter(new RunwayConverter())
-      .vhfNavaidDelegator(new VhfNavaidValidator())
-      .vhfNavaidConverter(new VhfNavaidConverter())
-      .waypointDelegator(new WaypointValidator())
-      .waypointConverter(new WaypointConverter())
-      .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-      .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
-      .holdingPatternConverter(new HoldingPatternConverter())
-      .holdingPatternDelegator(new HoldingPatternValidator())
-      .firUirConverter(new FirUirLegConverter())
-      .firUirDelegator(new FirUirLegValidator())
-      .helipadDelegator(new HelipadValidator())
-      .helipadConverter(new HelipadConverter()) //they need a consumer
-      .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
-      .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
-      .restrictiveAirspaceConverter(new RestrictiveAirspaceLegConverter())
-      .restrictiveAirspaceLegDelegator(new RestrictiveAirspaceValidator())
-      .headerDelegator(new Header01Validator())
-      .headerConverter(new Header01Converter())
-      .heliportConverter(new HeliportConverter())
-      .heliportDelegator(new HeliportValidator())
-      .build();
+  private static ConvertingArincRecordConsumer newV18Consumer() {
+    return new ConvertingArincRecordConsumer.Builder()
+        .airportConverter(new AirportConverter())
+        .airportContinuationConverter(new AirportPrimaryExtensionConverter())
+        .airwayLegConverter(new AirwayLegConverter())
+        .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
+        .ndbNavaidConverter(new NdbNavaidConverter())
+        .procedureLegConverter(new ProcedureLegConverter())
+        .runwayConverter(new RunwayConverter())
+        .vhfNavaidConverter(new VhfNavaidConverter())
+        .waypointConverter(new WaypointConverter())
+        .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+        .holdingPatternConverter(new HoldingPatternConverter())
+        .firUirConverter(new FirUirLegConverter())
+        .helipadConverter(new HelipadConverter()) //they need a consumer
+        .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
+        .restrictiveAirspaceConverter(new RestrictiveAirspaceLegConverter())
+        .headerConverter(new Header01Converter())
+        .heliportConverter(new HeliportConverter())
+        .build();
+  }
 }

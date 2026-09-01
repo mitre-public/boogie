@@ -1,17 +1,17 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.mitre.tdp.boogie.arinc.FieldSpec;
+
+import java.util.Optional;
+
+import static java.util.Objects.checkFromToIndex;
 
 /**
  * Definition/Description: The “Record Type” field content indicates whether the record data are “standard,” i.e., suitable for
  * universal application, or “tailored,” i.e. included  on  the  master  file  for  a  single  user’s  specific  purpose (Section
  * 1.2 of this Specification refers).
  */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public enum RecordType implements FieldSpec<RecordType> {
   SPEC,
   /**
@@ -33,13 +33,20 @@ public enum RecordType implements FieldSpec<RecordType> {
     return "5.2";
   }
 
-  private static final Set<String> validNames = Arrays.stream(RecordType.values())
-      .filter(d -> !SPEC.equals(d))
-      .map(RecordType::name)
-      .collect(Collectors.toSet());
+  private static final Optional<RecordType> STANDARD = Optional.of(S);
+  private static final Optional<RecordType> TAILORED = Optional.of(T);
 
   @Override
-  public Optional<RecordType> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(validNames::contains).map(RecordType::valueOf);
+  public Optional<RecordType> parse(String source, int startOffset, int endOffset) {
+    checkFromToIndex(startOffset, endOffset, source.length());
+    return endOffset - startOffset == 1 ? fromCharacter(source.charAt(startOffset)) : Optional.empty();
+  }
+
+  private static Optional<RecordType> fromCharacter(char character) {
+    return switch (character) {
+      case 'S' -> STANDARD;
+      case 'T' -> TAILORED;
+      default -> Optional.empty();
+    };
   }
 }

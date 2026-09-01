@@ -51,7 +51,7 @@ public final class ArincRecord {
   }
 
   /**
-   * Allows users to check if the data class contains a parse-able version of the queried ARINC field within the record.
+   * Allows users to check if the data class contains a parsable version of the queried ARINC field within the record.
    * <br>
    * If the queried field doesn't exist in the record this class will log at the DEBUG level the missing field and offending
    * record. This is generally useful to have baked into the record class so consumers don't have to replicate this logic in
@@ -85,11 +85,10 @@ public final class ArincRecord {
   }
 
   /**
-   * Returns the result of applying {@link FieldSpec#apply(Object)} for the provided field to the raw field value as extracted
-   * from the underlying ARINC record.
+   * Parses the provided field directly from its range in the underlying ARINC record.
    * <br>
    * The {@link FieldSpec}s themselves should be responsible for rejecting bad input values which they don't know how to parse
-   * and should return {@link Optional#empty()} in those cases. If those contracts are kept than this method should never throw
+   * and should return {@link Optional#empty()} in those cases. If those contracts are kept then this method should never throw
    * any hard exceptions due to bad input record content (e.g. NumberFormatException, etc.).
    * <p>
    * Because fields are selected by string name, callers are responsible for requesting the value type declared for that field
@@ -104,7 +103,7 @@ public final class ArincRecord {
 
     Object parsed = parsedFields[field.index()];
     if (parsed == null) {
-      parsed = requireNonNull(field.spec().apply(rawRecord, field.startOffset(), field.endOffset()));
+      parsed = requireNonNull(field.spec().parse(rawRecord, field.startOffset(), field.endOffset()));
       parsedFields[field.index()] = parsed;
     }
 
@@ -121,7 +120,7 @@ public final class ArincRecord {
   }
 
   /**
-   * Essentially a compiled FieldSpec<FieldLocation> which is used to look up the location of a field in the record.
+   * Essentially a compiled {@code FieldSpec<FieldLocation>} which is used to look up the location of a field in the record.
    */
   static final class FieldLayout {
 

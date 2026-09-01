@@ -17,14 +17,20 @@ import java.util.function.Function;
 public interface FieldSpec<T> extends Function<String, Optional<T>> {
 
   /**
-   * Parses this field directly from a range in the source record.
-   * <p>
-   * The default implementation preserves the simple {@link Function} contract by extracting the field first. Implementations
-   * used on high-volume parsing paths can override this method to decode directly from the source range without allocating an
-   * intermediate {@link String}.
+   * Parses this field directly from its range in the source record.
+   *
+   * @param source source record containing the field
+   * @param startOffset start of the field (inclusive)
+   * @param endOffset end of the field (exclusive)
    */
-  default Optional<T> apply(String source, int startOffset, int endOffset) {
-    return apply(source.substring(startOffset, endOffset));
+  Optional<T> parse(String source, int startOffset, int endOffset);
+
+  /**
+   * Parses a standalone field value through the same range-based implementation used for complete records.
+   */
+  @Override
+  default Optional<T> apply(String fieldValue) {
+    return parse(fieldValue, 0, fieldValue.length());
   }
 
   /**
@@ -39,9 +45,9 @@ public interface FieldSpec<T> extends Function<String, Optional<T>> {
 
   /**
    * The default field name for the spec field in a {@link ArincRecord}.
-   * <br>
+   * <p>
    * The field name to use in accordance with {@link RecordField} when no explicit field name is otherwise provided in the {@link RecordSpec}.
-   * <br>
+   * <p>
    * Default value for this is camelCase version of the implementing class's simple name. Note that within a {@link RecordSpec}
    * these can be cross-checked to prevent mismatches with the {@link RecordSpecValidator}.
    */

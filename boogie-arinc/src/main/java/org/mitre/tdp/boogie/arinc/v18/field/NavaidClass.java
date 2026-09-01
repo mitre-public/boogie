@@ -66,8 +66,8 @@ public final class NavaidClass implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue)
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
         .filter(s -> s.length() == 5)
         .map(s -> ""
             .concat(inSetOrBlank(s.substring(0, 1), allowedType1))

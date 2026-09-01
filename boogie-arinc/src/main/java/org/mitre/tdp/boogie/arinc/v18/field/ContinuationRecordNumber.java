@@ -1,10 +1,11 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseContinuationNumber;
+import org.mitre.tdp.boogie.arinc.FieldSpec;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import static java.util.Objects.checkFromToIndex;
 
 /**
  * When it is not possible to store all the information needed on a record within the 132 columns of the record itself, the
@@ -13,6 +14,11 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * e.g. [0-9][A-Z]
  */
 public final class ContinuationRecordNumber implements FieldSpec<String> {
+
+  private static final String VALID_VALUES = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  private static final List<Optional<String>> PARSED_VALUES = VALID_VALUES.chars()
+      .mapToObj(character -> Optional.of(Character.toString(character)))
+      .toList();
 
   @Override
   public int fieldLength() {
@@ -25,12 +31,20 @@ public final class ContinuationRecordNumber implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return apply(fieldValue, 0, fieldValue.length());
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    checkFromToIndex(startOffset, endOffset, source.length());
+    if (endOffset - startOffset != fieldLength()) {
+      return Optional.empty();
+    }
+
+    int index = continuationIndex(source.charAt(startOffset));
+    return index < 0 ? Optional.empty() : PARSED_VALUES.get(index);
   }
 
-  @Override
-  public Optional<String> apply(String source, int startOffset, int endOffset) {
-    return parseContinuationNumber(source, startOffset, endOffset);
+  private static int continuationIndex(char character) {
+    if (character >= '0' && character <= '9') {
+      return character - '0';
+    }
+    return character >= 'A' && character <= 'Z' ? character - 'A' + 10 : -1;
   }
 }

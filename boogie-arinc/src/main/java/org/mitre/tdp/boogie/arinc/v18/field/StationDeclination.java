@@ -1,10 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseEastWestDouble;
-
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.EastWestVariation;
 
 /**
  * For VHF NAVAIDS, the “Station Declination” field contains the angular difference between true north and the zero degree radial of
@@ -22,7 +18,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * <br>
  * e.g. E0072, E0000, T0000, G0000
  */
-public final class StationDeclination implements FieldSpec<Double> {
+public final class StationDeclination extends EastWestVariation {
 
   @Override
   public int fieldLength() {
@@ -34,13 +30,4 @@ public final class StationDeclination implements FieldSpec<Double> {
     return "5.66";
   }
 
-  @Override
-  public Optional<Double> apply(String fieldValue) {
-    return apply(fieldValue, 0, fieldValue.length());
-  }
-
-  @Override
-  public Optional<Double> apply(String source, int startOffset, int endOffset) {
-    return parseEastWestDouble(source, startOffset, endOffset, 1, fieldLength());
-  }
 }

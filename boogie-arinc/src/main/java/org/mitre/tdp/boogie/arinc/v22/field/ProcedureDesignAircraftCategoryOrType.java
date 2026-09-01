@@ -126,7 +126,9 @@ public enum ProcedureDesignAircraftCategoryOrType implements FieldSpec<Procedure
   }
 
   @Override
-  public Optional<ProcedureDesignAircraftCategoryOrType> apply(String string) {
-    return Optional.of(string).filter(VALID::contains).map(ProcedureDesignAircraftCategoryOrType::valueOf);
+  public Optional<ProcedureDesignAircraftCategoryOrType> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(ProcedureDesignAircraftCategoryOrType::valueOf);
   }
 }

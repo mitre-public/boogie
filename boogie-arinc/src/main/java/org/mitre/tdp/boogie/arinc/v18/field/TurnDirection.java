@@ -38,7 +38,9 @@ public enum TurnDirection implements FieldSpec<TurnDirection> {
   }
 
   @Override
-  public Optional<TurnDirection> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(validNames::contains).map(TurnDirection::valueOf);
+  public Optional<TurnDirection> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(validNames::contains)
+        .map(TurnDirection::valueOf);
   }
 }

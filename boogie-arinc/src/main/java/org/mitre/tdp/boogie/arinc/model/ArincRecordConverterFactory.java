@@ -2,37 +2,7 @@ package org.mitre.tdp.boogie.arinc.model;
 
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
-import org.mitre.tdp.boogie.arinc.v18.AirportConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirportPrimaryExtensionValidator;
-import org.mitre.tdp.boogie.arinc.v18.AirportValidator;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.AirwayLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ControlledAirspaceValidator;
-import org.mitre.tdp.boogie.arinc.v18.RestrictiveAirspaceLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.RestrictiveAirspaceValidator;
-import org.mitre.tdp.boogie.arinc.v18.FirUirLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.FirUirLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemConverter;
-import org.mitre.tdp.boogie.arinc.v18.GnssLandingSystemValidator;
-import org.mitre.tdp.boogie.arinc.v18.Header01Converter;
-import org.mitre.tdp.boogie.arinc.v18.Header01Validator;
-import org.mitre.tdp.boogie.arinc.v18.HeliportConverter;
-import org.mitre.tdp.boogie.arinc.v18.HeliportValidator;
-import org.mitre.tdp.boogie.arinc.v18.HoldingPatternValidator;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeConverter;
-import org.mitre.tdp.boogie.arinc.v18.LocalizerGlideSlopeValidator;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.NdbNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegConverter;
-import org.mitre.tdp.boogie.arinc.v18.ProcedureLegValidator;
-import org.mitre.tdp.boogie.arinc.v18.RunwayConverter;
-import org.mitre.tdp.boogie.arinc.v18.RunwayValidator;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidConverter;
-import org.mitre.tdp.boogie.arinc.v18.VhfNavaidValidator;
-import org.mitre.tdp.boogie.arinc.v18.WaypointConverter;
-import org.mitre.tdp.boogie.arinc.v18.WaypointValidator;
+import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
 import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
 
@@ -50,38 +20,21 @@ public final class ArincRecordConverterFactory {
 
   private static ConvertingArincRecordConsumer.Builder standardConsumer() {
     return new ConvertingArincRecordConsumer.Builder()
-        .airportDelegator(new AirportValidator())
         .airportConverter(new AirportConverter())
         .airportContinuationConverter(new AirportPrimaryExtensionConverter())
-        .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
-        .airwayLegDelegator(new AirwayLegValidator())
         .airwayLegConverter(new AirwayLegConverter())
-        .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
         .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
-        .ndbNavaidDelegator(new NdbNavaidValidator())
         .ndbNavaidConverter(new NdbNavaidConverter())
-        .procedureLegDelegator(new ProcedureLegValidator())
         .procedureLegConverter(new ProcedureLegConverter())
-        .runwayDelegator(new RunwayValidator())
         .runwayConverter(new RunwayConverter())
-        .vhfNavaidDelegator(new VhfNavaidValidator())
         .vhfNavaidConverter(new VhfNavaidConverter())
-        .waypointDelegator(new WaypointValidator())
         .waypointConverter(new WaypointConverter())
-        .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
         .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-        .holdingPatternDelegator(new HoldingPatternValidator())
-        .firUirDelegator(new FirUirLegValidator())
         .firUirConverter(new FirUirLegConverter())
-        .helipadDelegator(new HelipadValidator())
         .helipadConverter(new HelipadConverter())
-        .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
         .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
-        .restrictiveAirspaceLegDelegator(new RestrictiveAirspaceValidator())
         .restrictiveAirspaceConverter(new RestrictiveAirspaceLegConverter())
         .headerConverter(new Header01Converter())
-        .headerDelegator(new Header01Validator())
-        .heliportDelegator(new HeliportValidator())
         .heliportConverter(new HeliportConverter());
   }
 
@@ -128,31 +81,17 @@ public final class ArincRecordConverterFactory {
    * for the {@link ArincRecord} to boogie.arinc.model data classes.
    * <br>
    * The V18 converters work perfectly fine with the V19 record specifications in {@link ArincVersion#V19} (as they share the same
-   * fieldsets and overall structure - albeit with slightly different contents and holding patterns). However, because
-   * the newer holding pattern has new fields, a new consumer bust me bade for 18 vs 19. However, the same validator works
+   * field sets and overall structure - albeit with slightly different contents and holding patterns). However, because
+   * the newer holding pattern has new fields, a new consumer must be made for 18 vs 19. However, the same validator works
    * for both 19/18 holds as only optional fields were added.
    * <br>
-   * The V20 runway converters are ok, because the arinc record just moved the field to a place it fits at full res.
+   * The V20 runway converters are ok, because the ARINC record just moved the field to a place it fits at full resolution.
    * The procedure leg needs more processing for new data.
    * <br>
-   * The V21 needed new fields processed for holding, gnss, and procedureLegs.
+   * The V21 needed new fields processed for holding, GNSS, and procedure legs.
    */
   public static ConvertingArincRecordConsumer consumerForVersion(ArincVersion version) {
     return consumerBuilderForVersion(version).build();
-  }
-
-  /**
-   * Returns the consumer optimized for one-shot assembly. Each configured converter is applied once per attempted match, so its
-   * built-in validation is not repeated by a separate delegator. Procedure legs use an append-only list and an unmodifiable live
-   * view, avoiding the hash and immutable snapshot copy for the largest and most expensive model. All other record types retain
-   * the standard consumer's duplicate suppression and immutable snapshot behavior.
-   *
-   * <p>This variant is intended for parsing a file once and reading the collections only after ingestion is complete. Call
-   * {@link ConvertingArincRecordConsumer#snapshot()} after ingestion and retain the returned immutable result instead of the
-   * consumer. Callers that need duplicate suppression for procedure legs should use {@link #consumerForVersion(ArincVersion)}.
-   */
-  public static ConvertingArincRecordConsumer oneShotConsumerForVersion(ArincVersion version) {
-    return consumerBuilderForVersion(version).buildOneShot();
   }
 
   private static ConvertingArincRecordConsumer.Builder consumerBuilderForVersion(ArincVersion version) {

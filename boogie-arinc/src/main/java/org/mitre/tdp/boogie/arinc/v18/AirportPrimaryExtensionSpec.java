@@ -1,15 +1,19 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+
 public final class AirportPrimaryExtensionSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column13('P', 'A'));
+
   private final List<RecordField<?>> recordFields;
 
   public AirportPrimaryExtensionSpec() {
@@ -40,6 +44,11 @@ public final class AirportPrimaryExtensionSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

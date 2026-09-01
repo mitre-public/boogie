@@ -1,31 +1,25 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Optional;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.PathTerminator;
-import org.mitre.tdp.boogie.ProcedureType;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
 import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestProcedureLegSpec {
 
   private static final ArincRecordParser V18 = ArincRecordParser.standard(new ProcedureLegSpec());
 
   private static final String IF = "SUSAP KJFKK6FV13R  V      010ASALTK6EA1E  D    IF CRI K6      22480060        D     03000     18000                 3 DS   154932004";
-  private static final String ENG_OUT = "SPACP VVTHVVDEO03  0RW03  010         1        VA                     0290        + 01600     09022                        720981902\n";
+  private static final String ENG_OUT = "SPACP VVTHVVDEO03  0RW03  010         1        VA                     0290        + 01600     09022                        720981902";
 
   @Test
   void testEngineOutParse() {
@@ -90,8 +84,8 @@ public class TestProcedureLegSpec {
         () -> assertFalse(record.optionalField("centerFixIcaoRegion").isPresent()),
         () -> assertFalse(record.optionalField("centerFixSectionCode").isPresent()),
         () -> assertFalse(record.optionalField("centerFixSubSectionCode").isPresent()),
-        () -> assertEquals("D", record.optionalField("routeTypeQualifier1").get()),
-        () -> assertEquals("S", record.optionalField("routeTypeQualifier2").get()),
+        () -> assertEquals("D", record.optionalField("routeTypeQualifier1").orElseThrow()),
+        () -> assertEquals("S", record.optionalField("routeTypeQualifier2").orElseThrow()),
         () -> assertEquals(Integer.valueOf(15493), record.requiredField("fileRecordNumber")),
         () -> assertEquals("2004", record.requiredField("lastUpdateCycle"))
     );
@@ -151,8 +145,8 @@ public class TestProcedureLegSpec {
         () -> assertFalse(record.optionalField("centerFixIcaoRegion").isPresent()),
         () -> assertFalse(record.optionalField("centerFixSectionCode").isPresent()),
         () -> assertFalse(record.optionalField("centerFixSubSectionCode").isPresent()),
-        () -> assertEquals("N", record.optionalField("routeTypeQualifier1").get()),
-        () -> assertEquals("S", record.optionalField("routeTypeQualifier2").get()),
+        () -> assertEquals("N", record.optionalField("routeTypeQualifier1").orElseThrow()),
+        () -> assertEquals("S", record.optionalField("routeTypeQualifier2").orElseThrow()),
         () -> assertEquals(Integer.valueOf(15338), record.requiredField("fileRecordNumber")),
         () -> assertEquals("2004", record.requiredField("lastUpdateCycle"))
     );

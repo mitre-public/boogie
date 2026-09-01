@@ -39,7 +39,9 @@ public enum HelicopterPerformanceRequirement implements FieldSpec<HelicopterPerf
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<HelicopterPerformanceRequirement> apply(String s) {
-    return Optional.ofNullable(s).filter(VALID::contains).map(HelicopterPerformanceRequirement::valueOf);
+  public Optional<HelicopterPerformanceRequirement> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(HelicopterPerformanceRequirement::valueOf);
   }
 }

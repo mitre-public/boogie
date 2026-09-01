@@ -25,7 +25,9 @@ public final class TurnDirectionValid implements FieldSpec<Boolean> {
   }
 
   @Override
-  public Optional<Boolean> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).map(BooleanStringParser.INSTANCE::test);
+  public Optional<Boolean> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .map(BooleanStringParser.INSTANCE::test);
   }
 }

@@ -1,34 +1,22 @@
 package org.mitre.tdp.boogie.arinc.v21;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ComponentElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.LandingThresholdElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v21.field.HelicopterPerformanceRequirement;
-import org.mitre.tdp.boogie.arinc.v21.field.MaximumAllowableHelicopterWeight;
-import org.mitre.tdp.boogie.arinc.v21.field.PadShape;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
+import org.mitre.tdp.boogie.arinc.v21.field.*;
 import org.mitre.tdp.boogie.arinc.v21.field.PadDimensions;
 import org.mitre.tdp.boogie.arinc.v21.field.PadIdentifier;
-import org.mitre.tdp.boogie.arinc.v21.field.SurfaceType;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
 
 public final class HelipadSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
+      column13('P', 'H'), column13('H', 'H'));
+
   private final List<RecordField<?>> recordFields;
 
   public HelipadSpec() {
@@ -68,6 +56,11 @@ public final class HelipadSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

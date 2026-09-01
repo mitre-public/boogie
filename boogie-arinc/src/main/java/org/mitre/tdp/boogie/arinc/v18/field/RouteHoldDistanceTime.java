@@ -1,12 +1,11 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseDouble;
+import static java.util.Objects.requireNonNull;
 
 import java.time.Duration;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.TrimmableString;
-import org.mitre.tdp.boogie.arinc.utils.LegTimeFromString;
 
 /**
  * In Enroute Airways, “Route Distance From” is the distance in nautical miles from the waypoint identified in the records “Fix Ident”
@@ -27,22 +26,46 @@ public final class RouteHoldDistanceTime extends TrimmableString {
   }
 
   /**
-   * Utility method for parsing the given {@link RouteHoldDistanceTime} field as a {@link Duration} when the given string is the time
-   * version of the field (preceded by a 'T').
+   * Interprets a time-form {@link RouteHoldDistanceTime} value, identified by its {@code T} prefix.
    */
   public Optional<Duration> asDuration(String fieldString) {
-    return Optional.of(fieldString)
-        .filter(fs -> fs.startsWith("T"))
-        .map(fs -> fs.substring(1))
-        .map(LegTimeFromString.INSTANCE);
+    requireNonNull(fieldString);
+    if (!fieldString.startsWith("T")) {
+      return Optional.empty();
+    }
+
+    int tenthsOfAMinute = parseTenths(fieldString, 1);
+    return tenthsOfAMinute < 0 ? Optional.empty() : Optional.of(Duration.ofSeconds(tenthsOfAMinute * 6L));
   }
 
   /**
-   * Utility method for parsing the given field string as a double distance in nm.
+   * Interprets a distance-form value as nautical miles.
    */
   public Optional<Double> asDistanceInNm(String fieldString) {
-    return Optional.of(fieldString)
-        .filter(fs -> !fs.startsWith("T"))
-        .flatMap(value -> parseDouble(value, 1));
+    requireNonNull(fieldString);
+    if (fieldString.startsWith("T")) {
+      return Optional.empty();
+    }
+
+    int tenthsOfANauticalMile = parseTenths(fieldString, 0);
+    return tenthsOfANauticalMile < 0
+        ? Optional.empty()
+        : Optional.of(tenthsOfANauticalMile / 10.0);
+  }
+
+  private static int parseTenths(String fieldString, int startOffset) {
+    if (startOffset == fieldString.length()) {
+      return -1;
+    }
+
+    int value = 0;
+    for (int index = startOffset; index < fieldString.length(); index++) {
+      char character = fieldString.charAt(index);
+      if (character < '0' || character > '9') {
+        return -1;
+      }
+      value = value * 10 + character - '0';
+    }
+    return value;
   }
 }

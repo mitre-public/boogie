@@ -1,15 +1,18 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
 
 public final class HoldingPatternSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column6('E', 'P'));
 
   private final List<RecordField<?>> recordFields;
 
@@ -53,6 +56,11 @@ public final class HoldingPatternSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

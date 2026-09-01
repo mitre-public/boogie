@@ -1,13 +1,15 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory.oneShotConsumerForVersion;
+import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.arinc.assemble.*;
+import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,57 +17,14 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airspace;
-import org.mitre.tdp.boogie.AirspaceSequence;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Helipad;
-import org.mitre.tdp.boogie.Heliport;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.Runway;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.arinc.assemble.AirportAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.AirportAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.AirwayAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.AirwayAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.ControlledAirspaceAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.ControlledAirspaceAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.RestrictiveAirspaceAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.RestrictiveAirspaceAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.FirUirAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.FirUirAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.FixAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.FixAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.HeliportAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.HeliportAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
-import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincHeaderOne;
-import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Objects.requireNonNull;
+import static org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory.consumerForVersion;
 
 /**
  * Oneshot implementation of a parser going from an {@link InputStream} (typically sourced from a file) to a collection of client
  * defined records of the given types.
  *
- * <p>I heard you like generics. All jokes aside - don't assign this class to a variable in your application unless you linewidth
+ * <p>I heard you like generics. All jokes aside - don't assign this class to a variable in your application unless your line-width
  * limit is {@code >300} characters. Please use this in an inline call if you value your eyesight.
  */
 public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> {
@@ -189,7 +148,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
   private ConvertedArincRecords convertRecords(InputStream inputStream) throws IOException {
     ArincRecordParser parser = ArincRecordParser.standard(version.specs());
-    ConvertingArincRecordConsumer consumer = oneShotConsumerForVersion(version);
+    ConvertingArincRecordConsumer consumer = consumerForVersion(version);
 
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII), READER_BUFFER_SIZE)) {
       String rawRecord;
@@ -206,10 +165,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     return consumer.snapshot();
   }
 
-  private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase,
-                                             FixAssemblyStrategy<FIX> identityFixStrategy,
-                                             Collection<ArincProcedureLeg> procedureLegs) {
-
+  private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase, FixAssemblyStrategy<FIX> identityFixStrategy, Collection<ArincProcedureLeg> procedureLegs) {
     ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(
         arincTerminalAreaDatabase,
         arincFixDatabase,
@@ -400,7 +356,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final Collection<AIR> firUirs;
 
-    private final Collection<AIR> conrolledAirspaces;
+    private final Collection<AIR> controlledAirspaces;
 
     private final Collection<AIR> restrictiveAirspaces;
 
@@ -414,7 +370,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       this.airways = builder.airways;
       this.procedures = builder.procedures;
       this.firUirs = builder.firUirs;
-      this.conrolledAirspaces = builder.conrolledAirspaces;
+      this.controlledAirspaces = builder.conrolledAirspaces;
       this.restrictiveAirspaces = builder.restrictiveAirspaces;
       this.headerOne = builder.headerOne;
       this.heliports = builder.heliports;
@@ -440,8 +396,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       return firUirs;
     }
 
-    public Collection<AIR> conrolledAirspaces() {
-      return conrolledAirspaces;
+    public Collection<AIR> controlledAirspaces() {
+      return controlledAirspaces;
     }
 
     public Collection<AIR> restrictiveAirspaces() {

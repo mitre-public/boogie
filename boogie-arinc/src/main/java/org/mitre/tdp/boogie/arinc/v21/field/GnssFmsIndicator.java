@@ -25,7 +25,8 @@ public final class GnssFmsIndicator implements FieldSpec<String> {
   private static final Set<String> VALID = Set.of("0", "1", "2", "3", "4", "A", "B", "C", "D", "P", "G", "L", "U");
 
   @Override
-  public Optional<String> apply(String s) {
-    return Optional.of(s).filter(VALID::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains);
   }
 }

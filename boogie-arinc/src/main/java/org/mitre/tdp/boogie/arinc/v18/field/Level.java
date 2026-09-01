@@ -38,7 +38,10 @@ public enum Level implements FieldSpec<Level> {
   }
 
   @Override
-  public Optional<Level> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(enumValues::contains).map(Level::valueOf);
+  public Optional<Level> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(enumValues::contains)
+        .map(Level::valueOf);
   }
 }

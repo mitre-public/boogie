@@ -1,40 +1,18 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ComponentElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.GlideSlopeAngle;
-import org.mitre.tdp.boogie.arinc.v18.field.GlideSlopePosition;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsCategory;
-import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.LocalizerAzimuthPositionReference;
-import org.mitre.tdp.boogie.arinc.v18.field.LocalizerBearing;
-import org.mitre.tdp.boogie.arinc.v18.field.LocalizerFrequency;
-import org.mitre.tdp.boogie.arinc.v18.field.LocalizerPosition;
-import org.mitre.tdp.boogie.arinc.v18.field.LocalizerWidth;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.StationDeclination;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.ThresholdCrossingHeight;
-import org.mitre.tdp.boogie.arinc.v18.field.VorNdbIdentifier;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
 
 public final class LocalizerGlideSlopeSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column13('P', 'I'), column13('H', 'I'));
 
   private final List<RecordField<?>> recordFields;
 
@@ -84,6 +62,11 @@ public final class LocalizerGlideSlopeSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

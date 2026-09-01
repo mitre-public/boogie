@@ -46,7 +46,9 @@ public enum PadShape implements FieldSpec<PadShape> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<PadShape> apply(String s) {
-    return Optional.ofNullable(s).filter(VALID::contains).map(PadShape::valueOf);
+  public Optional<PadShape> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(PadShape::valueOf);
   }
 }

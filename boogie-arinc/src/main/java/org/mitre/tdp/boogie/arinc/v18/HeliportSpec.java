@@ -1,16 +1,20 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.List;
-
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+
 /**
  * Record Specification for ARINC heliport records in V18.
  */
 public final class HeliportSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column13('H', 'A'));
 
   private final List<RecordField<?>> recordFields;
 
@@ -59,6 +63,11 @@ public final class HeliportSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

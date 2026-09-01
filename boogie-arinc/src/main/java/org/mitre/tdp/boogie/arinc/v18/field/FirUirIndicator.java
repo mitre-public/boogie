@@ -1,17 +1,11 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import java.util.Optional;
-import java.util.Set;
-
 import org.mitre.tdp.boogie.arinc.FieldSpec;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Definition/Description: The “FIR/UIR Identifier” field may contain the identifier of a FIR, UIR or combined FIR/UIR.
  * This field indicates which one of these records is an element.
- *
- *
  */
 public enum FirUirIndicator implements FieldSpec<FirUirIndicator> {
   SPEC,
@@ -28,7 +22,14 @@ public enum FirUirIndicator implements FieldSpec<FirUirIndicator> {
    */
   B;
 
-  private static final Set<String> VALUES = ImmutableSet.of("F", "U", "B");
+  private static FirUirIndicator parse(String source) {
+    return switch (source) {
+      case "F" -> F;
+      case "U" -> U;
+      case "B" -> B;
+      default -> null;
+    };
+  }
 
   @Override
   public int fieldLength() {
@@ -41,7 +42,7 @@ public enum FirUirIndicator implements FieldSpec<FirUirIndicator> {
   }
 
   @Override
-  public Optional<FirUirIndicator> apply(String string) {
-    return Optional.ofNullable(string).filter(VALUES::contains).map(FirUirIndicator::valueOf);
+  public Optional<FirUirIndicator> parse(String source, int startOffset, int endOffset) {
+    return Optional.ofNullable(parse(source.substring(startOffset, endOffset)));
   }
 }

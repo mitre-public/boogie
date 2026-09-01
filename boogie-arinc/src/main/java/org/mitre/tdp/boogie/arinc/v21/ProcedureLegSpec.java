@@ -1,19 +1,30 @@
 package org.mitre.tdp.boogie.arinc.v21;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v20.field.LegInboundOutboundIndicator;
+import org.mitre.tdp.boogie.arinc.v21.field.*;
 import org.mitre.tdp.boogie.arinc.v21.field.AltitudeDescription;
 import org.mitre.tdp.boogie.arinc.v21.field.RouteTypeQualifier;
-import org.mitre.tdp.boogie.arinc.v21.field.*;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
 
 public final class ProcedureLegSpec implements RecordSpec {
+
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
+      column13('P', 'D'),
+      column13('P', 'E'),
+      column13('P', 'F'),
+      column13('H', 'D'),
+      column13('H', 'E'),
+      column13('H', 'F')
+  );
 
   private final List<RecordField<?>> recordFields;
 
@@ -84,6 +95,11 @@ public final class ProcedureLegSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

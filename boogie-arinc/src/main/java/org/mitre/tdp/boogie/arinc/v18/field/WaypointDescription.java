@@ -1,8 +1,12 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import org.mitre.tdp.boogie.arinc.FieldSpec;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import static java.util.Objects.checkFromToIndex;
 
 /**
  * 4-Character string designating the type, function, and attributes of a specific fix in enroute airway or terminal procedure
@@ -56,6 +60,13 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  */
 public final class WaypointDescription implements FieldSpec<String> {
 
+  private static final String COLUMN_1_VALUES = " AEFGHNPRTV";
+  private static final String COLUMN_2_VALUES = " BEUY";
+  private static final String COLUMN_3_VALUES = " ABCGMPRS";
+  private static final String COLUMN_4_VALUES = " ABCDEFGHIMN";
+  private static final int DESCRIPTION_COUNT = COLUMN_1_VALUES.length() * COLUMN_2_VALUES.length() * COLUMN_3_VALUES.length() * COLUMN_4_VALUES.length();
+  private static final List<Optional<String>> DESCRIPTIONS = descriptions();
+
   @Override
   public int fieldLength() {
     return 4;
@@ -67,58 +78,45 @@ public final class WaypointDescription implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(s -> new StringBuilder()
-            .append(allowedColumn1(s.charAt(0)) ? s.charAt(0) : ' ')
-            .append(allowedColumn2(s.charAt(1)) ? s.charAt(1) : ' ')
-            .append(allowedColumn3(s.charAt(2)) ? s.charAt(2) : ' ')
-            .append(allowedColumn4(s.charAt(3)) ? s.charAt(3) : ' ')
-            .toString());
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    checkFromToIndex(startOffset, endOffset, source.length());
+    if (endOffset - startOffset < fieldLength()) {
+      // All four fixed-width positions are required.
+      throw new StringIndexOutOfBoundsException(endOffset - startOffset);
+    }
+    return filteredDescription(source, startOffset);
   }
 
-  private boolean allowedColumn1(char c) {
-    return 'A' == c
-        || 'E' == c
-        || 'F' == c
-        || 'G' == c
-        || 'H' == c
-        || 'N' == c
-        || 'P' == c
-        || 'R' == c
-        || 'T' == c
-        || 'V' == c;
+  private static Optional<String> filteredDescription(String source, int startOffset) {
+    int column1 = normalizedIndex(COLUMN_1_VALUES, source.charAt(startOffset));
+    int column2 = normalizedIndex(COLUMN_2_VALUES, source.charAt(startOffset + 1));
+    int column3 = normalizedIndex(COLUMN_3_VALUES, source.charAt(startOffset + 2));
+    int column4 = normalizedIndex(COLUMN_4_VALUES, source.charAt(startOffset + 3));
+    int descriptionIndex = ((column1 * COLUMN_2_VALUES.length() + column2) * COLUMN_3_VALUES.length() + column3)
+        * COLUMN_4_VALUES.length() + column4;
+    return DESCRIPTIONS.get(descriptionIndex);
   }
 
-  private boolean allowedColumn2(char c) {
-    return 'B' == c
-        || 'E' == c
-        || 'U' == c
-        || 'Y' == c;
+  private static List<Optional<String>> descriptions() {
+    List<Optional<String>> descriptions = new ArrayList<>(DESCRIPTION_COUNT);
+    for (int column1 = 0; column1 < COLUMN_1_VALUES.length(); column1++) {
+      for (int column2 = 0; column2 < COLUMN_2_VALUES.length(); column2++) {
+        for (int column3 = 0; column3 < COLUMN_3_VALUES.length(); column3++) {
+          for (int column4 = 0; column4 < COLUMN_4_VALUES.length(); column4++) {
+            descriptions.add(Optional.of(new String(new char[] {
+                COLUMN_1_VALUES.charAt(column1),
+                COLUMN_2_VALUES.charAt(column2),
+                COLUMN_3_VALUES.charAt(column3),
+                COLUMN_4_VALUES.charAt(column4)
+            })));
+          }
+        }
+      }
+    }
+    return List.copyOf(descriptions);
   }
 
-  private boolean allowedColumn3(char c) {
-    return 'A' == c
-        || 'B' == c
-        || 'C' == c
-        || 'G' == c
-        || 'M' == c
-        || 'P' == c
-        || 'R' == c
-        || 'S' == c;
-  }
-
-  private boolean allowedColumn4(char c) {
-    return 'A' == c
-        || 'B' == c
-        || 'C' == c
-        || 'D' == c
-        || 'E' == c
-        || 'F' == c
-        || 'G' == c
-        || 'H' == c
-        || 'I' == c
-        || 'M' == c
-        || 'N' == c;
+  private static int normalizedIndex(String allowedValues, char value) {
+    return Math.max(allowedValues.indexOf(value), 0);
   }
 }

@@ -33,7 +33,7 @@ class TestDmeElevation {
         () -> assertEquals(Optional.of(-150.0), parser.apply("-150")),
         () -> assertEquals(Optional.of(150.0), parser.apply(" 150")),
         () -> assertEquals(Optional.of(150.0), parser.apply("+150")),
-        () -> assertEquals(Optional.of(-150.0), parser.apply("xx -150 yy", 2, 7))
+        () -> assertEquals(Optional.of(-150.0), parser.parse("xx -150 yy", 2, 7))
     );
   }
 
@@ -41,6 +41,6 @@ class TestDmeElevation {
   void testRangeAndSignEdgeCases() {
     assertEquals(Optional.of(-0.0), parser.apply("-0"));
     assertEquals(Optional.empty(), parser.apply("+"));
-    assertThrows(IndexOutOfBoundsException.class, () -> parser.apply("123", 2, 1));
+    assertThrows(IndexOutOfBoundsException.class, () -> parser.parse("123", 2, 1));
   }
 }

@@ -1,15 +1,16 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
-import com.google.common.collect.ImmutableBiMap;
+import java.util.Optional;
+
+import static java.util.Objects.checkFromToIndex;
 
 /**
  * Definition/Description: The “Section Code” field defines the major section of the navigation system data in which the
  * record resides.
  */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public enum SectionCode implements FieldSpec<SectionCode> {
   SPEC,
   /**
@@ -45,16 +46,14 @@ public enum SectionCode implements FieldSpec<SectionCode> {
    */
   U;
 
-  private static final ImmutableBiMap<String, SectionCode> lookup = new ImmutableBiMap.Builder<String, SectionCode>()
-      .put(SectionCode.A.name(), SectionCode.A)
-      .put(SectionCode.D.name(), SectionCode.D)
-      .put(SectionCode.E.name(), SectionCode.E)
-      .put(SectionCode.H.name(), SectionCode.H)
-      .put(SectionCode.T.name(), SectionCode.T)
-      .put(SectionCode.R.name(), SectionCode.R)
-      .put(SectionCode.P.name(), SectionCode.P)
-      .put(SectionCode.U.name(), SectionCode.U)
-      .build();
+  private static final Optional<SectionCode> A_VALUE = Optional.of(A);
+  private static final Optional<SectionCode> D_VALUE = Optional.of(D);
+  private static final Optional<SectionCode> E_VALUE = Optional.of(E);
+  private static final Optional<SectionCode> H_VALUE = Optional.of(H);
+  private static final Optional<SectionCode> T_VALUE = Optional.of(T);
+  private static final Optional<SectionCode> R_VALUE = Optional.of(R);
+  private static final Optional<SectionCode> P_VALUE = Optional.of(P);
+  private static final Optional<SectionCode> U_VALUE = Optional.of(U);
 
   @Override
   public int fieldLength() {
@@ -67,7 +66,22 @@ public enum SectionCode implements FieldSpec<SectionCode> {
   }
 
   @Override
-  public Optional<SectionCode> apply(String fieldValue) {
-    return Optional.ofNullable(lookup.get(fieldValue));
+  public Optional<SectionCode> parse(String source, int startOffset, int endOffset) {
+    checkFromToIndex(startOffset, endOffset, source.length());
+    return endOffset - startOffset == 1 ? fromCharacter(source.charAt(startOffset)) : Optional.empty();
+  }
+
+  private static Optional<SectionCode> fromCharacter(char character) {
+    return switch (character) {
+      case 'A' -> A_VALUE;
+      case 'D' -> D_VALUE;
+      case 'E' -> E_VALUE;
+      case 'H' -> H_VALUE;
+      case 'T' -> T_VALUE;
+      case 'R' -> R_VALUE;
+      case 'P' -> P_VALUE;
+      case 'U' -> U_VALUE;
+      default -> Optional.empty();
+    };
   }
 }

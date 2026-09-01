@@ -1,44 +1,21 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.DatumCode;
-import org.mitre.tdp.boogie.arinc.v18.field.DaylightTimeIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IataDesignator;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.IfrCapability;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.LongestRunway;
-import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.MagneticVariation;
-import org.mitre.tdp.boogie.arinc.v18.field.NameField;
-import org.mitre.tdp.boogie.arinc.v18.field.PublicMilitaryIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.RecommendedNavaid;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitAltitude;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.TransitionAltitude;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
 
 /**
  * Record specification for ARINC airport records V18.
  */
 public final class AirportSpec implements RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column13('P', 'A'));
 
   private final List<RecordField<?>> recordFields;
 
@@ -88,6 +65,11 @@ public final class AirportSpec implements RecordSpec {
   @Override
   public List<RecordField<?>> recordFields() {
     return recordFields;
+  }
+
+  @Override
+  public List<RecordDiscriminator> recordDiscriminators() {
+    return DISCRIMINATORS;
   }
 
   @Override

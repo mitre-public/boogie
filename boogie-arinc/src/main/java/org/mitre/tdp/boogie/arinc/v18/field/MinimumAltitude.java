@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.AltitudeFlightLevelParser;
+import org.mitre.tdp.boogie.arinc.AltitudeField;
 
 /**
  * The “Altitude/Minimum Altitude” field indicates the reference altitude associated with.
@@ -16,7 +13,7 @@ import org.mitre.tdp.boogie.arinc.utils.AltitudeFlightLevelParser;
  * <br>
  * e.g. 05000, FL050, 18000, FL180 00600, -0012, 29000, FL290, UNKNN or NESTB (the last two on Enroute Airways only)
  */
-public final class MinimumAltitude implements FieldSpec<Double> {
+public final class MinimumAltitude extends AltitudeField {
 
   @Override
   public int fieldLength() {
@@ -26,16 +23,5 @@ public final class MinimumAltitude implements FieldSpec<Double> {
   @Override
   public String fieldCode() {
     return "5.30";
-  }
-
-  @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        // min altitude unknown
-        .filter(s -> !"UNKNN".equalsIgnoreCase(s))
-        // min altitude weird
-        .filter(s -> !"NESTB".equalsIgnoreCase(s))
-        .flatMap(AltitudeFlightLevelParser.INSTANCE);
   }
 }

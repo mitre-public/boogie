@@ -155,8 +155,8 @@ public enum SurfaceType implements FieldSpec<SurfaceType> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<SurfaceType> apply(String s) {
-    return Optional.ofNullable(s)
+  public Optional<SurfaceType> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
         .map(String::trim)
         .filter(VALID::contains)
         .map(SurfaceType::valueOf);

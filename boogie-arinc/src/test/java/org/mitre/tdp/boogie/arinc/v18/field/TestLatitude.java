@@ -33,7 +33,7 @@ class TestLatitude {
         () -> assertEquals(-39.86078055, parseRange("S39513881").orElseThrow(), 0.000001),
         () -> assertEquals(Optional.empty(), parseRange("         ")),
         () -> assertEquals(Optional.empty(), parseRange("SA9513881")),
-        () -> assertEquals(-39.86078055, parseRange("X39513881").orElseThrow(), 0.000001),
+        () -> assertEquals(Optional.empty(), parseRange("X39513881")),
         () -> assertEquals(
             Double.doubleToRawLongBits(-0.0),
             Double.doubleToRawLongBits(parseRange("S00000000").orElseThrow()),
@@ -45,6 +45,6 @@ class TestLatitude {
   private static Optional<Double> parseRange(String fieldValue) {
     String source = "prefix" + fieldValue + "suffix";
     int startOffset = "prefix".length();
-    return parser.apply(source, startOffset, startOffset + fieldValue.length());
+    return parser.parse(source, startOffset, startOffset + fieldValue.length());
   }
 }

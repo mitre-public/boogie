@@ -46,7 +46,9 @@ public enum PublicMilitaryIndicator implements FieldSpec<PublicMilitaryIndicator
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<PublicMilitaryIndicator> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(allowedPubMil::contains).map(PublicMilitaryIndicator::valueOf);
+  public Optional<PublicMilitaryIndicator> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(allowedPubMil::contains)
+        .map(PublicMilitaryIndicator::valueOf);
   }
 }

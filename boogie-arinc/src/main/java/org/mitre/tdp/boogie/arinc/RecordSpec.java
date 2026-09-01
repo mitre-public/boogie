@@ -18,6 +18,13 @@ public interface RecordSpec {
   List<RecordField<?>> recordFields();
 
   /**
+   * Returns the coarse fixed-width addresses at which this record type can occur. Multiple discriminators are alternatives, and
+   * together they must cover every input for which {@link #matchesRecord(String)} can return {@code true}. A discriminator may
+   * admit records which the matcher later rejects.
+   */
+  List<RecordDiscriminator> recordDiscriminators();
+
+  /**
    * Returns whether the given record matches the record specification and should be parsed as such.
    */
   boolean matchesRecord(String arincRecord);

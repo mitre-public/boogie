@@ -24,7 +24,8 @@ public final class EuIndicator implements FieldSpec<Boolean> {
   }
 
   @Override
-  public Optional<Boolean> apply(String fieldValue) {
-    return Optional.of(fieldValue).map("Y"::equalsIgnoreCase);
+  public Optional<Boolean> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map("Y"::equalsIgnoreCase);
   }
 }

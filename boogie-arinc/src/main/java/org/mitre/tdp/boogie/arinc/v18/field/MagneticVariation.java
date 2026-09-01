@@ -1,10 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseEastWestDouble;
-
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.EastWestVariation;
 
 /**
  * The “Magnetic Variation” field specifies the angular difference between True North and Magnetic North at the location defined in the record.
@@ -15,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * <br>
  * As in {@link InboundMagneticCourse} this class filters out variations listed as true north. Use {@link org.mitre.tdp.boogie.Declinations} instead for your work.
  */
-public final class MagneticVariation implements FieldSpec<Double> {
+public final class MagneticVariation extends EastWestVariation {
 
   @Override
   public int fieldLength() {
@@ -27,13 +23,4 @@ public final class MagneticVariation implements FieldSpec<Double> {
     return "5.39";
   }
 
-  @Override
-  public Optional<Double> apply(String fieldValue) {
-    return apply(fieldValue, 0, fieldValue.length());
-  }
-
-  @Override
-  public Optional<Double> apply(String source, int startOffset, int endOffset) {
-    return parseEastWestDouble(source, startOffset, endOffset, 1);
-  }
 }

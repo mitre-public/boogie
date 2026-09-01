@@ -1,12 +1,13 @@
 package org.mitre.tdp.boogie.arinc.model;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
+
 /**
- * An immutable, point-in-time result produced by a {@link ConvertingArincRecordConsumer}.
+ * An immutable, point-in-time result produced by a {@link ConvertingArincRecordConsumer}. Non-procedure collections contain
+ * distinct records in encounter order; procedure legs preserve every converted record in encounter order.
  */
 public record ConvertedArincRecords(
     List<ArincAirport> arincAirports,
@@ -44,7 +45,7 @@ public record ConvertedArincRecords(
     arincHelipads = List.copyOf(arincHelipads);
     arincControlledAirspaceLegs = List.copyOf(arincControlledAirspaceLegs);
     arincRestrictiveAirspaceLegs = List.copyOf(arincRestrictiveAirspaceLegs);
-    arincHeaderOne = requireNonNull(arincHeaderOne);
+    requireNonNull(arincHeaderOne);
     arincHeliports = List.copyOf(arincHeliports);
   }
 }

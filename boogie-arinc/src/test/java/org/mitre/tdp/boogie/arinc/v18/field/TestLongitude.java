@@ -38,7 +38,7 @@ class TestLongitude {
         () -> assertEquals(-104.7522055, parseRange("W104450794").orElseThrow(), 0.000001),
         () -> assertEquals(Optional.empty(), parseRange("          ")),
         () -> assertEquals(Optional.empty(), parseRange("WA04450794")),
-        () -> assertEquals(-104.7522055, parseRange("X104450794").orElseThrow(), 0.000001),
+        () -> assertEquals(Optional.empty(), parseRange("X104450794")),
         () -> assertEquals(
             Double.doubleToRawLongBits(-0.0),
             Double.doubleToRawLongBits(parseRange("W000000000").orElseThrow()),
@@ -50,6 +50,6 @@ class TestLongitude {
   private static Optional<Double> parseRange(String fieldValue) {
     String source = "prefix" + fieldValue + "suffix";
     int startOffset = "prefix".length();
-    return parser.apply(source, startOffset, startOffset + fieldValue.length());
+    return parser.parse(source, startOffset, startOffset + fieldValue.length());
   }
 }

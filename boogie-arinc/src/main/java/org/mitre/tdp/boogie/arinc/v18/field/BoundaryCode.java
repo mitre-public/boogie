@@ -21,7 +21,11 @@ public final class BoundaryCode implements FieldSpec<CustomerAreaCode> {
   }
 
   @Override
-  public Optional<CustomerAreaCode> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(s -> !s.isEmpty()).map(CustomerAreaCode.lookup::get).map(CustomerAreaCode::valueOf);
+  public Optional<CustomerAreaCode> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(s -> !s.isEmpty())
+        .map(CustomerAreaCode.lookup::get)
+        .map(CustomerAreaCode::valueOf);
   }
 }

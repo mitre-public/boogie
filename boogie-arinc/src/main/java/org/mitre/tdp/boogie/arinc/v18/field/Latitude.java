@@ -1,10 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.arinc.utils.FieldSliceParser.parseLatitude;
-
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.ArincCoordinate;
 
 /**
  * The “Latitude” field contains the latitude of the navigational feature identified in the record.
@@ -17,7 +13,11 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * <br>
  * e.g. N39513881
  */
-public final class Latitude implements FieldSpec<Double> {
+public final class Latitude extends ArincCoordinate {
+
+  public Latitude() {
+    super(2, 'N', 'S');
+  }
 
   @Override
   public int fieldLength() {
@@ -29,13 +29,4 @@ public final class Latitude implements FieldSpec<Double> {
     return "5.36";
   }
 
-  @Override
-  public Optional<Double> apply(String fieldValue) {
-    return apply(fieldValue, 0, fieldValue.length());
-  }
-
-  @Override
-  public Optional<Double> apply(String source, int startOffset, int endOffset) {
-    return parseLatitude(source, startOffset, endOffset);
-  }
 }

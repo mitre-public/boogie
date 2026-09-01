@@ -1,14 +1,5 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Course;
@@ -17,13 +8,23 @@ import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.TestArincFileParser;
+import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
+import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestAirportAssembler {
 
@@ -36,19 +37,21 @@ class TestAirportAssembler {
   @BeforeAll
   static void setup() {
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
-    recordParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
+    ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
+    recordParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(consumer);
+    ConvertedArincRecords testV18Records = consumer.snapshot();
 
     arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
-        testV18Consumer.arincAirports(),
-        testV18Consumer.arincRunways(),
-        testV18Consumer.arincLocalizerGlideSlopes(),
-        testV18Consumer.arincNdbNavaids(),
-        testV18Consumer.arincVhfNavaids(),
-        testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincProcedureLegs(),
-        testV18Consumer.arincGnssLandingSystems(),
+        testV18Records.arincAirports(),
+        testV18Records.arincRunways(),
+        testV18Records.arincLocalizerGlideSlopes(),
+        testV18Records.arincNdbNavaids(),
+        testV18Records.arincVhfNavaids(),
+        testV18Records.arincWaypoints(),
+        testV18Records.arincProcedureLegs(),
+        testV18Records.arincGnssLandingSystems(),
         Collections.emptySet(),
-        testV18Consumer.arincHeliports()
+        testV18Records.arincHeliports()
     );
 
     assembler = AirportAssembler.standard(arincTerminalAreaDatabase);
@@ -79,6 +82,4 @@ class TestAirportAssembler {
   }
 
   private static final TestArincFileParser recordParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V19.specs()));
-
-  private static final ConvertingArincRecordConsumer testV18Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
 }

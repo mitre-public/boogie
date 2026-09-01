@@ -9,16 +9,16 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
  * The Controlled Airspace Type field is used to indicate the type of controlled airspace, using codes from the table below.
- *
+ * <p>
  * The airspace type should be derived from official government publications. The table below shows the indicators
  * used for the various types. For the USA, the previous applied designations such as TCA are supplied for ease of
- * reference, they are longer officially published.
- *
+ * reference; they are no longer officially published.
+ * <p>
  * A - Class C Airspace (was ARSA within the USA)
  * C - Control Area, ICAO Designation (CTA)
  * M - Terminal Control Area, ICAO Designation (TMA or TCA)
  * R - Radar Zone or Radar Area (was TRSA within the USA)
- * T - Class B Airspace (Was TCA with the USA)
+ * T - Class B Airspace (Was TCA within the USA)
  * Z - Class D Airspace within the USA, Control Zone, ICAO Designation (CTR)
  */
 
@@ -68,7 +68,9 @@ public enum AirspaceType implements FieldSpec<AirspaceType> {
   }
 
   @Override
-  public Optional<AirspaceType> apply(String string) {
-    return Optional.of(string).filter(validNames::contains).map(AirspaceType::valueOf);
+  public Optional<AirspaceType> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(validNames::contains)
+        .map(AirspaceType::valueOf);
   }
 }

@@ -46,7 +46,7 @@ class TestRecordField {
     }
 
     @Override
-    public Optional<Void> apply(String fieldValue) {
+    public Optional<Void> parse(String source, int startOffset, int endOffset) {
       return Optional.empty();
     }
   }
@@ -65,7 +65,7 @@ class TestRecordField {
     }
 
     @Override
-    public Optional<Void> apply(String fieldValue) {
+    public Optional<Void> parse(String source, int startOffset, int endOffset) {
       return Optional.empty();
     }
   }

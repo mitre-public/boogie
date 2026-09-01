@@ -30,7 +30,8 @@ public final class LocalizerAzimuthPositionReference implements FieldSpec<String
   }
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(s -> s.length() == 1);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(s -> s.length() == 1);
   }
 }

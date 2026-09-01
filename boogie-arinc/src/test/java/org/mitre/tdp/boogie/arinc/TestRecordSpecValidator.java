@@ -1,13 +1,14 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
+import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.junit.jupiter.api.Test;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TestRecordSpecValidator {
 
@@ -41,7 +42,45 @@ class TestRecordSpecValidator {
     assertThrows(IllegalArgumentException.class, () -> RecordSpecValidator.INSTANCE.accept(badSpec));
   }
 
-  private RecordSpec dummySpec(int size, Predicate<String> matcher, RecordField<?>... fields) {
+  @Test
+  void testFailsSpecWithoutUsableDiscriminators() {
+    RecordField<?> field = new RecordField<>("field1", new BlankSpec(10));
+
+    assertAll(
+        () -> assertThrows(IllegalArgumentException.class,
+            () -> RecordSpecValidator.INSTANCE.accept(dummySpec(10, x -> true, List.of(), field))),
+        () -> assertThrows(IllegalArgumentException.class,
+            () -> RecordSpecValidator.INSTANCE.accept(
+                dummySpec(10, x -> true, (List<RecordDiscriminator>) null, field))),
+        () -> assertThrows(IllegalArgumentException.class,
+            () -> RecordSpecValidator.INSTANCE.accept(dummySpec(10, x -> true, Arrays.asList(RecordDiscriminator.prefix("X"), null), field)))
+    );
+  }
+
+  @Test
+  void testFailsSpecWithDiscriminatorOutsideRecordWidth() {
+    RecordField<?> field = new RecordField<>("field1", new BlankSpec(5));
+
+    assertAll(
+        () -> assertThrows(IllegalArgumentException.class,
+            () -> RecordSpecValidator.INSTANCE.accept(dummySpec(5, x -> true, List.of(RecordDiscriminator.column6('E', 'R')), field))),
+        () -> assertThrows(IllegalArgumentException.class,
+            () -> RecordSpecValidator.INSTANCE.accept(dummySpec(5, x -> true, List.of(RecordDiscriminator.column13('P', 'C')), field))),
+        () -> assertThrows(IllegalArgumentException.class,
+            () -> RecordSpecValidator.INSTANCE.accept(dummySpec(5, x -> true, List.of(RecordDiscriminator.prefix("TOO-LONG")), field)))
+    );
+  }
+
+  private static RecordSpec dummySpec(int size, Predicate<String> matcher, RecordField<?>... fields) {
+    return dummySpec(size, matcher, List.of(RecordDiscriminator.prefix("X")), fields);
+  }
+
+  private static RecordSpec dummySpec(
+      int size,
+      Predicate<String> matcher,
+      List<RecordDiscriminator> discriminators,
+      RecordField<?>... fields
+  ) {
     return new RecordSpec() {
       @Override
       public int recordLength() {
@@ -51,6 +90,11 @@ class TestRecordSpecValidator {
       @Override
       public List<RecordField<?>> recordFields() {
         return Arrays.asList(fields);
+      }
+
+      @Override
+      public List<RecordDiscriminator> recordDiscriminators() {
+        return discriminators;
       }
 
       @Override
