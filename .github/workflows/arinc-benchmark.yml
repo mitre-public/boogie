@@ -6,15 +6,21 @@ on:
 permissions:
   contents: read
 
+env:
+  JMH_TIME_REGRESSION_LIMIT: "0.10"
+  JMH_ALLOCATION_REGRESSION_LIMIT: "0.01"
+
 concurrency:
   group: arinc-benchmark-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   cifp:
     name: CIFP JMH
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    env:
+      BOOGIE_CIFP_BENCHMARK_FILE: ${{ github.workspace }}/boogie-arinc/src/test/resources/cifp-2101.dat.gz
 
     steps:
       - name: Checkout Code
@@ -22,6 +28,24 @@ jobs:
         with:
           lfs: true
           persist-credentials: false
+
+      - name: Checkout Base Revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: benchmark-base
+          persist-credentials: false
+
+      - name: Bootstrap Missing Benchmark Harness in Base Revision
+        run: |
+          benchmark_source=boogie-arinc/src/jmh/java/org/mitre/tdp/boogie/arinc/OneshotRecordParserBenchmark.java
+          base_benchmark_source=benchmark-base/${benchmark_source}
+          if [[ ! -f "${base_benchmark_source}" ]] \
+              || ! grep -Fq 'registerJmhTask("jmhCifpNav"' benchmark-base/boogie-arinc/build.gradle.kts; then
+            mkdir -p "$(dirname "${base_benchmark_source}")"
+            cp boogie-arinc/build.gradle.kts benchmark-base/boogie-arinc/build.gradle.kts
+            cp "${benchmark_source}" "${base_benchmark_source}"
+          fi
 
       - name: Set up JDK 17
         uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
@@ -40,35 +64,44 @@ jobs:
             "${fixture}" | sha256sum --check -
           gzip -t "${fixture}"
 
-      - name: Run CIFP Full Benchmark
+      - name: Run CIFP Base Full Benchmark
+        working-directory: benchmark-base
         run: ./gradlew :boogie-arinc:jmhCifp
 
-      - name: Run CIFP Navigation Benchmark
+      - name: Run CIFP Candidate Full Benchmark
+        run: ./gradlew :boogie-arinc:jmhCifp
+
+      - name: Run CIFP Candidate Navigation Benchmark
         run: ./gradlew :boogie-arinc:jmhCifpNav
 
+      - name: Run CIFP Base Navigation Benchmark
+        working-directory: benchmark-base
+        run: ./gradlew :boogie-arinc:jmhCifpNav
+
+      - name: Enforce CIFP Performance Budget
+        run: |
+          bash .github/scripts/compare-jmh-results.sh \
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp.json \
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp-nav.json \
+            boogie-arinc/build/reports/jmh/cifp.json \
+            boogie-arinc/build/reports/jmh/cifp-nav.json
+
       - name: Record Environment
+        if: always()
         run: |
           report_dir=boogie-arinc/build/reports/jmh
           mkdir -p "${report_dir}"
           {
-            echo "commit=${GITHUB_SHA}"
+            echo "base_commit=${{ github.event.pull_request.base.sha }}"
+            echo "candidate_commit=${GITHUB_SHA}"
             echo "runner_image=${ImageOS:-unknown}-${ImageVersion:-unknown}"
             java -version
             uname -a
             lscpu
           } > "${report_dir}/cifp-environment.txt" 2>&1
 
-      - name: Add Benchmark Summary
-        run: |
-          {
-            echo "### CIFP JMH"
-            echo
-            jq -r '.[] | .secondaryMetrics["gc.alloc.rate.norm"] as $allocation | "#### \(.params.specSet)\n\n- Time: \(.primaryMetric.score) ± \(.primaryMetric.scoreError) \(.primaryMetric.scoreUnit)\n- Allocation: \($allocation.score) ± \($allocation.scoreError) \($allocation.scoreUnit)"' \
-              boogie-arinc/build/reports/jmh/cifp.json \
-              boogie-arinc/build/reports/jmh/cifp-nav.json
-          } >> "${GITHUB_STEP_SUMMARY}"
-
       - name: Upload CIFP Results
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: arinc-jmh-cifp-${{ github.run_id }}-${{ github.run_attempt }}
@@ -76,6 +109,8 @@ jobs:
             boogie-arinc/build/reports/jmh/cifp.json
             boogie-arinc/build/reports/jmh/cifp-nav.json
             boogie-arinc/build/reports/jmh/cifp-environment.txt
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp.json
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp-nav.json
           if-no-files-found: error
           retention-days: 90
 
@@ -93,6 +128,24 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      - name: Checkout Base Revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: benchmark-base
+          persist-credentials: false
+
+      - name: Bootstrap Missing Benchmark Harness in Base Revision
+        run: |
+          benchmark_source=boogie-arinc/src/jmh/java/org/mitre/tdp/boogie/arinc/OneshotRecordParserBenchmark.java
+          base_benchmark_source=benchmark-base/${benchmark_source}
+          if [[ ! -f "${base_benchmark_source}" ]] \
+              || ! grep -Fq 'registerJmhTask("jmhLidoNav"' benchmark-base/boogie-arinc/build.gradle.kts; then
+            mkdir -p "$(dirname "${base_benchmark_source}")"
+            cp boogie-arinc/build.gradle.kts benchmark-base/boogie-arinc/build.gradle.kts
+            cp "${benchmark_source}" "${base_benchmark_source}"
+          fi
 
       - name: Checkout LIDO Fixture
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -120,35 +173,44 @@ jobs:
             "${BOOGIE_LIDO_BENCHMARK_FILE}" | sha256sum --check -
           gzip -t "${BOOGIE_LIDO_BENCHMARK_FILE}"
 
-      - name: Run LIDO Full Benchmark
+      - name: Run LIDO Base Full Benchmark
+        working-directory: benchmark-base
         run: ./gradlew :boogie-arinc:jmhLido
 
-      - name: Run LIDO Navigation Benchmark
+      - name: Run LIDO Candidate Full Benchmark
+        run: ./gradlew :boogie-arinc:jmhLido
+
+      - name: Run LIDO Candidate Navigation Benchmark
         run: ./gradlew :boogie-arinc:jmhLidoNav
 
+      - name: Run LIDO Base Navigation Benchmark
+        working-directory: benchmark-base
+        run: ./gradlew :boogie-arinc:jmhLidoNav
+
+      - name: Enforce LIDO Performance Budget
+        run: |
+          bash .github/scripts/compare-jmh-results.sh \
+            benchmark-base/boogie-arinc/build/reports/jmh/lido.json \
+            benchmark-base/boogie-arinc/build/reports/jmh/lido-nav.json \
+            boogie-arinc/build/reports/jmh/lido.json \
+            boogie-arinc/build/reports/jmh/lido-nav.json
+
       - name: Record Environment
+        if: always()
         run: |
           report_dir=boogie-arinc/build/reports/jmh
           mkdir -p "${report_dir}"
           {
-            echo "commit=${GITHUB_SHA}"
+            echo "base_commit=${{ github.event.pull_request.base.sha }}"
+            echo "candidate_commit=${GITHUB_SHA}"
             echo "runner_image=${ImageOS:-unknown}-${ImageVersion:-unknown}"
             java -version
             uname -a
             lscpu
           } > "${report_dir}/lido-environment.txt" 2>&1
 
-      - name: Add Benchmark Summary
-        run: |
-          {
-            echo "### LIDO JMH"
-            echo
-            jq -r '.[] | .secondaryMetrics["gc.alloc.rate.norm"] as $allocation | "#### \(.params.specSet)\n\n- Time: \(.primaryMetric.score) ± \(.primaryMetric.scoreError) \(.primaryMetric.scoreUnit)\n- Allocation: \($allocation.score) ± \($allocation.scoreError) \($allocation.scoreUnit)"' \
-              boogie-arinc/build/reports/jmh/lido.json \
-              boogie-arinc/build/reports/jmh/lido-nav.json
-          } >> "${GITHUB_STEP_SUMMARY}"
-
       - name: Upload LIDO Results
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: arinc-jmh-lido-${{ github.run_id }}-${{ github.run_attempt }}
@@ -156,5 +218,7 @@ jobs:
             boogie-arinc/build/reports/jmh/lido.json
             boogie-arinc/build/reports/jmh/lido-nav.json
             boogie-arinc/build/reports/jmh/lido-environment.txt
+            benchmark-base/boogie-arinc/build/reports/jmh/lido.json
+            benchmark-base/boogie-arinc/build/reports/jmh/lido-nav.json
           if-no-files-found: error
           retention-days: 90

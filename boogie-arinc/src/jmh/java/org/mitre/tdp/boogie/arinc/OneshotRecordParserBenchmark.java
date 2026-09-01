@@ -2,8 +2,11 @@ package org.mitre.tdp.boogie.arinc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
@@ -44,6 +47,8 @@ import org.openjdk.jmh.annotations.Warmup;
 @Threads(1)
 @State(Scope.Benchmark)
 public class OneshotRecordParserBenchmark {
+
+  private static final Method CONTROLLED_AIRSPACES_METHOD = controlledAirspacesMethod();
 
   @Param({"CIFP", "LIDO"})
   public Dataset dataset;
@@ -174,7 +179,7 @@ public class OneshotRecordParserBenchmark {
           && airways == records.airways().size()
           && procedures == records.procedures().size()
           && expectedAirspaces.firUirs() == records.firUirs().size()
-          && expectedAirspaces.controlled() == records.controlledAirspaces().size()
+          && expectedAirspaces.controlled() == controlledAirspaceCount(records)
           && expectedAirspaces.restrictive() == records.restrictiveAirspaces().size()
           && heliports == records.heliports().size()
           && headerFileName.equals(actualHeader);
@@ -186,12 +191,36 @@ public class OneshotRecordParserBenchmark {
                 + ", airways=" + records.airways().size()
                 + ", procedures=" + records.procedures().size()
                 + ", FIR/UIRs=" + records.firUirs().size()
-                + ", controlled=" + records.controlledAirspaces().size()
+                + ", controlled=" + controlledAirspaceCount(records)
                 + ", restrictive=" + records.restrictiveAirspaces().size()
                 + ", heliports=" + records.heliports().size()
                 + ", header=" + actualHeader
         );
       }
+    }
+  }
+
+  private static Method controlledAirspacesMethod() {
+    try {
+      return OneshotRecordParser.ClientRecords.class.getMethod("controlledAirspaces");
+    } catch (NoSuchMethodException correctedNameMissing) {
+      try {
+        // The base revision predates the spelling correction. Keeping one benchmark source for both revisions makes the
+        // base-versus-candidate CI comparison measure production changes rather than different benchmark harnesses.
+        return OneshotRecordParser.ClientRecords.class.getMethod("conrolledAirspaces");
+      } catch (NoSuchMethodException legacyNameMissing) {
+        legacyNameMissing.addSuppressed(correctedNameMissing);
+        throw new IllegalStateException("ClientRecords exposes no controlled-airspace collection", legacyNameMissing);
+      }
+    }
+  }
+
+  private static int controlledAirspaceCount(
+      OneshotRecordParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace, Heliport> records) {
+    try {
+      return ((Collection<?>) CONTROLLED_AIRSPACES_METHOD.invoke(records)).size();
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw new IllegalStateException("Could not read the controlled-airspace collection", e);
     }
   }
 
