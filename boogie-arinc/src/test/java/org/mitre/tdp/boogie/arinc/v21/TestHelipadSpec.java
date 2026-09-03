@@ -23,12 +23,14 @@ public class TestHelipadSpec {
   static String PAD_2 = "SCANP CYAWCYH34H     0R03500112 N44380091W063295190HASPH   U     00144                                                     194752409";
 
   @Test
-  void matchesOnlyHelipadSectionAndSubsectionPairs() {
+  void matchesOnlyPrimaryHelipadSectionAndSubsectionPairs() {
     HelipadSpec spec = new HelipadSpec();
 
     assertAll(
         () -> assertTrue(spec.matchesRecord(recordWithSectionAndSubsection('P', 'H'))),
         () -> assertTrue(spec.matchesRecord(recordWithSectionAndSubsection('H', 'H'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionSubsectionAndContinuation('P', 'H', '2'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionSubsectionAndContinuation('H', 'H', 'A'))),
         () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('P', 'A'))),
         () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('H', 'A'))),
         () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('A', 'H'))),
@@ -43,8 +45,8 @@ public class TestHelipadSpec {
 
     assertAll(
         () -> assertThrows(NullPointerException.class, () -> spec.matchesRecord(null)),
-        () -> assertThrows(StringIndexOutOfBoundsException.class, () -> spec.matchesRecord("")),
-        () -> assertThrows(StringIndexOutOfBoundsException.class, () -> spec.matchesRecord(" ".repeat(12)))
+        () -> assertFalse(spec.matchesRecord("")),
+        () -> assertFalse(spec.matchesRecord(" ".repeat(12)))
     );
   }
 
@@ -103,9 +105,18 @@ public class TestHelipadSpec {
   }
 
   private static String recordWithSectionAndSubsection(char section, char subsection) {
+    return recordWithSectionSubsectionAndContinuation(section, subsection, '0');
+  }
+
+  private static String recordWithSectionSubsectionAndContinuation(
+      char section,
+      char subsection,
+      char continuationRecordNumber
+  ) {
     StringBuilder record = new StringBuilder(PAD_1);
     record.setCharAt(4, section);
     record.setCharAt(12, subsection);
+    record.setCharAt(21, continuationRecordNumber);
     return record.toString();
   }
 }

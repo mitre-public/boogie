@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -59,6 +60,31 @@ class HeliportTest {
 
     assertEquals(1, heliport.runways().size());
     assertEquals(1, heliport.helipads().size());
+  }
+
+  @Test
+  void testBuilderCanonicalizesEmptyLandingSurfaceCollections() {
+    Heliport.Standard omitted = Heliport.builder()
+        .heliportIdentifier("HPT")
+        .latLong(LatLong.of(0., 0.))
+        .build();
+    Heliport.Standard explicitEmpty = omitted.toBuilder()
+        .runways(List.of())
+        .helipads(List.of())
+        .build();
+    Heliport.Standard explicitNull = omitted.toBuilder()
+        .runways(null)
+        .helipads(null)
+        .build();
+
+    assertAll(
+        () -> assertEquals(omitted, explicitEmpty),
+        () -> assertEquals(omitted, explicitNull),
+        () -> assertEquals(omitted.hashCode(), explicitEmpty.hashCode()),
+        () -> assertEquals(omitted.hashCode(), explicitNull.hashCode()),
+        () -> assertTrue(explicitEmpty.runways().isEmpty()),
+        () -> assertTrue(explicitEmpty.helipads().isEmpty())
+    );
   }
 
   @Test

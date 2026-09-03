@@ -91,15 +91,7 @@ jobs:
           persist-credentials: false
 
       - name: Bootstrap Missing Benchmark Harness in Base Revision
-        run: |
-          benchmark_source=boogie-arinc/src/jmh/java/org/mitre/tdp/boogie/arinc/OneshotRecordParserBenchmark.java
-          base_benchmark_source=benchmark-base/${benchmark_source}
-          if [[ ! -f "${base_benchmark_source}" ]] \
-              || ! grep -Fq 'registerJmhTask("jmhCifpNav"' benchmark-base/boogie-arinc/build.gradle.kts; then
-            mkdir -p "$(dirname "${base_benchmark_source}")"
-            cp boogie-arinc/build.gradle.kts benchmark-base/boogie-arinc/build.gradle.kts
-            cp "${benchmark_source}" "${base_benchmark_source}"
-          fi
+        run: bash .github/scripts/bootstrap-arinc-benchmark.sh benchmark-base
 
       - name: Set up JDK 17
         uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
@@ -192,15 +184,7 @@ jobs:
           persist-credentials: false
 
       - name: Bootstrap Missing Benchmark Harness in Base Revision
-        run: |
-          benchmark_source=boogie-arinc/src/jmh/java/org/mitre/tdp/boogie/arinc/OneshotRecordParserBenchmark.java
-          base_benchmark_source=benchmark-base/${benchmark_source}
-          if [[ ! -f "${base_benchmark_source}" ]] \
-              || ! grep -Fq 'registerJmhTask("jmhLidoNav"' benchmark-base/boogie-arinc/build.gradle.kts; then
-            mkdir -p "$(dirname "${base_benchmark_source}")"
-            cp boogie-arinc/build.gradle.kts benchmark-base/boogie-arinc/build.gradle.kts
-            cp "${benchmark_source}" "${base_benchmark_source}"
-          fi
+        run: bash .github/scripts/bootstrap-arinc-benchmark.sh benchmark-base
 
       - name: Checkout LIDO Fixture
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

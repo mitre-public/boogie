@@ -3,12 +3,20 @@ package org.mitre.tdp.boogie.arinc;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.continuationColumn6;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.continuationColumn13;
 import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.prefix;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn6;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -29,24 +35,16 @@ class TestArincRecordDispatch {
 
   @Test
   void declaredCandidatesPreserveFirstMatchAcrossBothSubsectionColumns() {
-    AtomicInteger impossibleMatcherCalls = new AtomicInteger();
-    RecordSpec impossible = spec(
-        "impossible",
-        List.of(column6('E', 'R')),
-        rawRecord -> {
-          impossibleMatcherCalls.incrementAndGet();
-          return true;
-        }
-    );
-    RecordSpec ndb = spec("ndb", List.of(column6('P', 'N')), rawRecord -> true);
-    RecordSpec waypoint = spec("waypoint", List.of(column13('P', 'C')), rawRecord -> true);
+    RecordSpec impossible = spy(spec("impossible", List.of(primaryColumn6('E', 'R', 21))));
+    RecordSpec ndb = spec("ndb", List.of(primaryColumn6('P', 'N', 21)));
+    RecordSpec waypoint = spec("waypoint", List.of(primaryColumn13('P', 'C', 21)));
     String overlappingRecord = record('P', 'N', 'C');
 
     ArincRecord ndbFirst = ArincRecordParser.standard(impossible, ndb, waypoint).parse(overlappingRecord).orElseThrow();
     ArincRecord waypointFirst = ArincRecordParser.standard(impossible, waypoint, ndb).parse(overlappingRecord).orElseThrow();
 
     assertAll(
-        () -> assertEquals(0, impossibleMatcherCalls.get()),
+        () -> verify(impossible, never()).matchesRecord(anyString()),
         () -> assertTrue(ndbFirst.specForField("ndb").isPresent()),
         () -> assertTrue(waypointFirst.specForField("waypoint").isPresent())
     );
@@ -54,25 +52,24 @@ class TestArincRecordDispatch {
 
   @Test
   void aSpecSelectedByMultipleDiscriminatorsIsTestedOnce() {
-    AtomicInteger matcherCalls = new AtomicInteger();
-    RecordSpec overlapping = spec(
+    RecordSpec overlapping = spy(spec(
         "overlapping",
-        List.of(column6('P', 'N'), column13('P', 'C')),
-        rawRecord -> {
-          matcherCalls.incrementAndGet();
-          return true;
-        }
+        List.of(primaryColumn6('P', 'N', 21), primaryColumn13('P', 'C', 21))
+    ));
+    String rawRecord = record('P', 'N', 'C');
+
+    ArincRecord parsed = ArincRecordParser.standard(overlapping).parse(rawRecord).orElseThrow();
+
+    assertAll(
+        () -> verify(overlapping, times(1)).matchesRecord(rawRecord),
+        () -> assertTrue(parsed.specForField("overlapping").isPresent())
     );
-
-    ArincRecordParser.standard(overlapping).parse(record('P', 'N', 'C')).orElseThrow();
-
-    assertEquals(1, matcherCalls.get());
   }
 
   @Test
   void candidatesSharingADiscriminatorParticipateInOriginalSpecOrder() {
-    RecordSpec firstCandidate = spec("first", List.of(column13('P', 'C')), rawRecord -> true);
-    RecordSpec waypoint = spec("waypoint", List.of(column13('P', 'C')), rawRecord -> true);
+    RecordSpec firstCandidate = spec("first", List.of(primaryColumn13('P', 'C', 21)));
+    RecordSpec waypoint = spec("waypoint", List.of(primaryColumn13('P', 'C', 21)));
     String waypointRecord = record('P', ' ', 'C');
 
     ArincRecord firstCandidateFirst = ArincRecordParser.standard(firstCandidate, waypoint).parse(waypointRecord).orElseThrow();
@@ -86,17 +83,9 @@ class TestArincRecordDispatch {
 
   @Test
   void prefixAndSectionCandidatesParticipateInOriginalSpecOrder() {
-    AtomicInteger irrelevantMatcherCalls = new AtomicInteger();
-    RecordSpec irrelevant = spec(
-        "irrelevant",
-        List.of(prefix("OTHER")),
-        rawRecord -> {
-          irrelevantMatcherCalls.incrementAndGet();
-          return true;
-        }
-    );
-    RecordSpec prefixed = spec("prefixed", List.of(prefix("S"), prefix("SCAN")), rawRecord -> true);
-    RecordSpec waypoint = spec("waypoint", List.of(column13('P', 'C')), rawRecord -> true);
+    RecordSpec irrelevant = spy(spec("irrelevant", List.of(prefix("OTHER"))));
+    RecordSpec prefixed = spec("prefixed", List.of(prefix("S"), prefix("SCAN")));
+    RecordSpec waypoint = spec("waypoint", List.of(primaryColumn13('P', 'C', 21)));
     String addressedRecord = withPrefix(record('P', ' ', 'C'), "SCAN");
     String two = withPrefix(record('P', ' ', 'C'), "SUSA");
 
@@ -111,7 +100,7 @@ class TestArincRecordDispatch {
         .orElseThrow();
 
     assertAll(
-        () -> assertEquals(0, irrelevantMatcherCalls.get()),
+        () -> verify(irrelevant, never()).matchesRecord(anyString()),
         () -> assertTrue(prefixFirst.specForField("prefixed").isPresent()),
         () -> assertTrue(twoRecord.specForField("prefixed").isPresent()),
         () -> assertTrue(waypointFirst.specForField("waypoint").isPresent())
@@ -120,7 +109,7 @@ class TestArincRecordDispatch {
 
   @Test
   void supportsShortFixedWidthPrefixRecords() {
-    RecordSpec prefixed = spec("prefixed", 5, List.of(prefix("SH")), rawRecord -> true);
+    RecordSpec prefixed = spec("prefixed", 5, List.of(prefix("SH")));
 
     assertAll(
         () -> assertEquals("SHORT", ArincRecordParser.standard(prefixed).parse("SHORT").orElseThrow().rawRecord()),
@@ -131,8 +120,8 @@ class TestArincRecordDispatch {
 
   @Test
   void supportsBit63AndRejectsMoreSpecsThanFitInTheDispatchMask() {
-    RecordSpec miss = spec("miss", List.of(column6('X', 'X')), rawRecord -> false);
-    RecordSpec winner = spec("winner", List.of(column6('X', 'X')), rawRecord -> true);
+    RecordSpec miss = spec("miss", List.of(primaryColumn6('Y', 'Y', 21)));
+    RecordSpec winner = spec("winner", List.of(primaryColumn6('X', 'X', 21)));
     List<RecordSpec> sixtyFourSpecs = Stream.concat(
         IntStream.range(0, 63).mapToObj(index -> miss),
         Stream.of(winner)
@@ -150,6 +139,37 @@ class TestArincRecordDispatch {
   }
 
   @Test
+  void aRecordSpecSnapshotsAndExposesImmutableDiscriminators() {
+    List<RecordDiscriminator> discriminators = new ArrayList<>();
+    discriminators.add(prefix("ONE"));
+    RecordSpec recordSpec = spec("prefixed", 5, discriminators);
+
+    discriminators.set(0, prefix("TWO"));
+
+    assertAll(
+        () -> assertTrue(recordSpec.matchesRecord("ONE  ")),
+        () -> assertFalse(recordSpec.matchesRecord("TWO  ")),
+        () -> assertThrows(UnsupportedOperationException.class, () -> recordSpec.recordDiscriminators().clear())
+    );
+  }
+
+  @Test
+  void aColumn6ContinuationDiscriminatorChecksNumberAndApplicationType() {
+    RecordSpec continuation = spec(
+        "continuation",
+        List.of(continuationColumn6('E', 'R', 21, 'E'))
+    );
+
+    assertAll(
+        () -> assertTrue(continuation.matchesRecord(continuationRecord('E', 'R', '2', 'E'))),
+        () -> assertFalse(continuation.matchesRecord(continuationRecord('E', 'R', '1', 'E'))),
+        () -> assertFalse(continuation.matchesRecord(continuationRecord('E', 'R', '2', 'X'))),
+        () -> assertTrue(ArincRecordParser.standard(continuation)
+            .parse(continuationRecord('E', 'R', '2', 'E')).isPresent())
+    );
+  }
+
+  @Test
   void builtInDispatchMatchesLinearSelectionAcrossEveryVersion() throws IOException {
     List<String> records = new ArrayList<>(fixtureRecords());
     records.addAll(syntheticRecords());
@@ -158,10 +178,24 @@ class TestArincRecordDispatch {
   }
 
   @Test
+  void builtInRecordSpecsAreMutuallyExclusiveAcrossEveryVersion() throws IOException {
+    List<String> records = new ArrayList<>(fixtureRecords());
+    List<String> syntheticRecords = syntheticRecords();
+    // The final synthetic record intentionally overlaps column-6 and column-13 specs for dispatch-order testing.
+    records.addAll(syntheticRecords.subList(0, syntheticRecords.size() - 1));
+
+    assertAll(Arrays.stream(ArincVersion.values()).map(version -> () ->
+        assertBuiltInSpecsAreMutuallyExclusive(version, records)));
+  }
+
+  @Test
   void rejectsInvalidDiscriminatorValues() {
     assertAll(
-        () -> assertThrows(IllegalArgumentException.class, () -> column6('\u0080', 'A')),
-        () -> assertThrows(IllegalArgumentException.class, () -> column13('P', '\u0080')),
+        () -> assertThrows(IllegalArgumentException.class, () -> primaryColumn6('\u0080', 'A', 21)),
+        () -> assertThrows(IllegalArgumentException.class, () -> primaryColumn13('P', '\u0080', 21)),
+        () -> assertThrows(IllegalArgumentException.class, () -> primaryColumn13('P', 'A', -1)),
+        () -> assertThrows(IllegalArgumentException.class, () -> continuationColumn13('P', 'A', 21, '\0')),
+        () -> assertThrows(IllegalArgumentException.class, () -> continuationColumn13('P', 'A', 21, '\u0080')),
         () -> assertThrows(IllegalArgumentException.class, () -> RecordDiscriminator.prefix("")),
         () -> assertThrows(IllegalArgumentException.class, () -> RecordDiscriminator.prefix("HDR\u0080"))
     );
@@ -186,6 +220,28 @@ class TestArincRecordDispatch {
             assertSame(field.fieldSpec(), parsedRecord.specForField(field.fieldName()).orElseThrow(), context + " field " + field.fieldName()));
       });
     }
+  }
+
+  private static void assertBuiltInSpecsAreMutuallyExclusive(ArincVersion version, List<String> records) {
+    for (int lineNumber = 0; lineNumber < records.size(); lineNumber++) {
+      String rawRecord = records.get(lineNumber);
+      List<RecordSpec> matchingSpecs = version.specs().stream()
+          .filter(spec -> spec.matchesRecord(rawRecord))
+          .toList();
+
+      assertTrue(
+          matchingSpecs.size() <= 1,
+          version + " record " + lineNumber + " matched multiple specs: "
+              + matchingSpecs.stream().map(spec -> spec.getClass().getSimpleName()).toList()
+      );
+    }
+
+    assertAll(version.specs().stream().map(spec -> () ->
+        assertTrue(
+            records.stream().anyMatch(spec::matchesRecord),
+            version + " has no representative record for " + spec.getClass().getSimpleName()
+        )
+    ));
   }
 
   private static List<String> syntheticRecords() {
@@ -250,6 +306,18 @@ class TestArincRecordDispatch {
     return new String(record);
   }
 
+  private static String continuationRecord(
+      char section,
+      char subsection,
+      char continuationNumber,
+      char applicationType
+  ) {
+    char[] record = record(section, subsection, ' ').toCharArray();
+    record[21] = continuationNumber;
+    record[22] = applicationType;
+    return new String(record);
+  }
+
   private static String withPrefix(String record, String prefix) {
     char[] characters = record.toCharArray();
     prefix.getChars(0, prefix.length(), characters, 0);
@@ -258,19 +326,17 @@ class TestArincRecordDispatch {
 
   private static RecordSpec spec(
       String fieldName,
-      List<RecordDiscriminator> discriminators,
-      Predicate<String> matcher
+      List<RecordDiscriminator> discriminators
   ) {
-    return spec(fieldName, 132, discriminators, matcher);
+    return spec(fieldName, 132, discriminators);
   }
 
   private static RecordSpec spec(
       String fieldName,
       int recordLength,
-      List<RecordDiscriminator> discriminators,
-      Predicate<String> matcher
+      List<RecordDiscriminator> discriminators
   ) {
-    return new RecordSpec() {
+    return new RecordSpec(discriminators) {
       @Override
       public int recordLength() {
         return recordLength;
@@ -279,16 +345,6 @@ class TestArincRecordDispatch {
       @Override
       public List<RecordField<?>> recordFields() {
         return List.of(new RecordField<>(fieldName, new BlankSpec(recordLength)));
-      }
-
-      @Override
-      public List<RecordDiscriminator> recordDiscriminators() {
-        return discriminators;
-      }
-
-      @Override
-      public boolean matchesRecord(String arincRecord) {
-        return matcher.test(arincRecord);
       }
     };
   }

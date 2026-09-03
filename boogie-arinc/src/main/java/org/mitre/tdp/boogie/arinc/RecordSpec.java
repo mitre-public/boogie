@@ -1,31 +1,67 @@
 package org.mitre.tdp.boogie.arinc;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 
 /**
- * Interface representing a logical record in the ARINC specification.
+ * A logical record in the ARINC specification. Its immutable discriminators are the sole source of truth for matching and
+ * parser dispatch.
  */
-public interface RecordSpec {
+public abstract class RecordSpec {
+
+  private final List<RecordDiscriminator> recordDiscriminators;
+
+  /**
+   * Creates a record specification identified exclusively by the supplied discriminator alternatives.
+   *
+   * @param recordDiscriminators the non-empty, non-null discriminator alternatives for this specification
+   */
+  protected RecordSpec(List<RecordDiscriminator> recordDiscriminators) {
+    List<RecordDiscriminator> discriminators =
+        List.copyOf(requireNonNull(recordDiscriminators, "Record discriminators cannot be null."));
+    if (discriminators.isEmpty()) {
+      throw new IllegalArgumentException("Record specifications require at least one discriminator.");
+    }
+    this.recordDiscriminators = discriminators;
+  }
 
   /**
    * The expected length of the record.
+   *
+   * @return the fixed record length
    */
-  int recordLength();
+  public abstract int recordLength();
 
   /**
    * The ordered list of field specs associated with the given record type.
+   *
+   * @return the ordered fields spanning the record
    */
-  List<RecordField<?>> recordFields();
+  public abstract List<RecordField<?>> recordFields();
 
   /**
-   * Returns the coarse fixed-width addresses at which this record type can occur. Multiple discriminators are alternatives, and
-   * together they must cover every input for which {@link #matchesRecord(String)} can return {@code true}. A discriminator may
-   * admit records which the matcher later rejects.
+   * Returns the immutable fixed-width matchers identifying this record type. Multiple discriminators are alternatives.
+   *
+   * @return the discriminator alternatives
    */
-  List<RecordDiscriminator> recordDiscriminators();
+  public final List<RecordDiscriminator> recordDiscriminators() {
+    return recordDiscriminators;
+  }
 
   /**
-   * Returns whether the given record matches the record specification and should be parsed as such.
+   * Returns whether any discriminator identifies the given record as this specification.
+   *
+   * @param arincRecord the raw record to test
+   * @return {@code true} when at least one discriminator matches
    */
-  boolean matchesRecord(String arincRecord);
+  public final boolean matchesRecord(String arincRecord) {
+    requireNonNull(arincRecord);
+    for (int index = 0; index < recordDiscriminators.size(); index++) {
+      if (recordDiscriminators.get(index).matches(arincRecord)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

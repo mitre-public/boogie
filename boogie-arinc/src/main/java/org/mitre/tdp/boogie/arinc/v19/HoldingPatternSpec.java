@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMaximumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMinimumLevel;
@@ -12,15 +11,16 @@ import org.mitre.tdp.boogie.arinc.v19.field.VerticalScaleFactor;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn6;
 
-public final class HoldingPatternSpec implements RecordSpec {
+public final class HoldingPatternSpec extends RecordSpec {
 
-  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column6('E', 'P'));
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn6('E', 'P', 38));
 
   private final List<RecordField<?>> recordFields;
 
   public HoldingPatternSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -64,13 +64,4 @@ public final class HoldingPatternSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.regionMatches(4, "EP", 0, 2) && PrimaryRecord.INSTANCE.test(arincRecord.charAt(38));
-  }
 }

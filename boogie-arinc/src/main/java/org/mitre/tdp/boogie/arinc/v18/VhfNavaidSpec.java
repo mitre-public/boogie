@@ -4,22 +4,22 @@ import com.google.common.collect.ImmutableList;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn6;
 
 /**
  * Specification for a VHF navaid V18.
  */
-public final class VhfNavaidSpec implements RecordSpec {
-  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column6('D', ' '));
+public final class VhfNavaidSpec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn6('D', ' ', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public VhfNavaidSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -61,13 +61,4 @@ public final class VhfNavaidSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.regionMatches(4, "D ", 0, 2)  && PrimaryRecord.INSTANCE.test(arincRecord.charAt(21));
-  }
 }

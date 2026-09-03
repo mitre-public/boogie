@@ -4,22 +4,22 @@ import com.google.common.collect.ImmutableList;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
 
 /**
  * Runway specification from ARINC V18.
  */
-public final class RunwaySpec implements RecordSpec {
-  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column13('P', 'G'));
+public final class RunwaySpec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn13('P', 'G', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public RunwaySpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -66,13 +66,4 @@ public final class RunwaySpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'G' && PrimaryRecord.INSTANCE.test(arincRecord.charAt(22));
-  }
 }

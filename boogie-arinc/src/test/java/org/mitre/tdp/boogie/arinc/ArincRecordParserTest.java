@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
@@ -19,7 +18,8 @@ class ArincRecordParserTest {
   void testParserBreaksOnNullInputString() {
 
     ArincRecordParser parser = ArincRecordParser.standard(
-        dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)))
+        dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+            new RecordField<>("field1", new BlankSpec(11)))
     );
 
     assertThrows(NullPointerException.class, () -> parser.parse(null));
@@ -29,7 +29,8 @@ class ArincRecordParserTest {
   void testParserWithConfiguredSpec() {
 
     ArincRecordParser parser = ArincRecordParser.standard(
-        dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)))
+        dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+            new RecordField<>("field1", new BlankSpec(11)))
     );
 
     ArincRecord actual = parser.parse("ARINCRECORD").orElseThrow();
@@ -40,7 +41,8 @@ class ArincRecordParserTest {
   void testParserDecodesFieldsLazilyAndCachesParsedValues() {
     CountingFieldSpec fieldSpec = new CountingFieldSpec(11);
     ArincRecordParser parser = ArincRecordParser.standard(
-        dummySpec(11, x -> true, new RecordField<>("field1", fieldSpec))
+        dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+            new RecordField<>("field1", fieldSpec))
     );
 
     ArincRecord actual = parser.parse("ARINCRECORD").orElseThrow();
@@ -58,7 +60,8 @@ class ArincRecordParserTest {
   void testParserCachesEmptyParsedValues() {
     CountingFieldSpec fieldSpec = new CountingFieldSpec(11, true);
     ArincRecordParser parser = ArincRecordParser.standard(
-        dummySpec(11, x -> true, new RecordField<>("field1", fieldSpec))
+        dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+            new RecordField<>("field1", fieldSpec))
     );
 
     ArincRecord actual = parser.parse("ARINCRECORD").orElseThrow();
@@ -70,8 +73,10 @@ class ArincRecordParserTest {
   @Test
   void testParserPreservesFirstMatchingSpec() {
     ArincRecordParser parser = ArincRecordParser.standard(
-        dummySpec(11, x -> true, new RecordField<>("first", new BlankSpec(11))),
-        dummySpec(11, x -> true, new RecordField<>("second", new BlankSpec(11)))
+        dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+            new RecordField<>("first", new BlankSpec(11))),
+        dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+            new RecordField<>("second", new BlankSpec(11)))
     );
 
     ArincRecord actual = parser.parse("ARINCRECORD").orElseThrow();
@@ -82,7 +87,8 @@ class ArincRecordParserTest {
   @Test
   void testParserNormalizesTrailingSpacePadding() {
     ArincRecordParser parser = ArincRecordParser.standard(
-        dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)))
+        dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+            new RecordField<>("field1", new BlankSpec(11)))
     );
 
     assertEquals("ARINCRECORD", parser.parse("ARINCRECORD  ").orElseThrow().rawRecord());
@@ -95,7 +101,8 @@ class ArincRecordParserTest {
   void testParserReturnsEmptyWithNoMatchingSpecs() {
 
     ArincRecordParser parser = ArincRecordParser.standard(
-        dummySpec(11, x -> false, new RecordField<>("field1", new BlankSpec(11)))
+        dummySpec(11, List.of(RecordDiscriminator.prefix("OTHER")),
+            new RecordField<>("field1", new BlankSpec(11)))
     );
 
     assertEquals(Optional.empty(), parser.parse("ARINCRECORD"));
@@ -104,8 +111,10 @@ class ArincRecordParserTest {
   @Test
   void testParserBreaksIfInputSpecsDontMatchExpectedSizes() {
 
-    RecordSpec goodSpec = dummySpec(11, x -> true, new RecordField<>("field1", new BlankSpec(11)));
-    RecordSpec badSpec = dummySpec(12, x -> true, new RecordField<>("field1", new BlankSpec(12)));
+    RecordSpec goodSpec = dummySpec(11, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+        new RecordField<>("field1", new BlankSpec(11)));
+    RecordSpec badSpec = dummySpec(12, List.of(RecordDiscriminator.prefix("ARINCRECORD")),
+        new RecordField<>("field1", new BlankSpec(12)));
 
     assertThrows(IllegalArgumentException.class, () -> ArincRecordParser.standard(goodSpec, badSpec));
   }
@@ -115,7 +124,7 @@ class ArincRecordParserTest {
 
     RecordSpec badSpec = dummySpec(
         11,
-        x -> true,
+        List.of(RecordDiscriminator.prefix("ARINCRECORD")),
         new RecordField<>("field1", new BlankSpec(5)),
         new RecordField<>("field1", new BlankSpec(6))
     );
@@ -123,8 +132,12 @@ class ArincRecordParserTest {
     assertThrows(IllegalArgumentException.class, () -> ArincRecordParser.standard(badSpec));
   }
 
-  private static RecordSpec dummySpec(int size, Predicate<String> matcher, RecordField<?>... fields) {
-    return new RecordSpec() {
+  private static RecordSpec dummySpec(
+      int size,
+      List<RecordDiscriminator> discriminators,
+      RecordField<?>... fields
+  ) {
+    return new RecordSpec(discriminators) {
       @Override
       public int recordLength() {
         return size;
@@ -133,16 +146,6 @@ class ArincRecordParserTest {
       @Override
       public List<RecordField<?>> recordFields() {
         return Arrays.asList(fields);
-      }
-
-      @Override
-      public List<RecordDiscriminator> recordDiscriminators() {
-        return List.of(RecordDiscriminator.prefix("ARINCRECORD"));
-      }
-
-      @Override
-      public boolean matchesRecord(String arincRecord) {
-        return matcher.test(arincRecord);
       }
     };
   }

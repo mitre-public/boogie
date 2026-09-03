@@ -12,12 +12,13 @@ import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.prefix;
 /**
  * The header records contain information to uniquely identify each data file.
  */
-public final class Header01Spec implements RecordSpec {
+public final class Header01Spec extends RecordSpec {
   private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(prefix("HDR01"));
 
   private final List<RecordField<?>> recordFields;
 
   public Header01Spec() {
+    super(DISCRIMINATORS);
     this.recordFields = List.of(
         new RecordField<>(HeaderIdent.SPEC),
         new RecordField<>(new HeaderNumber()),
@@ -49,13 +50,4 @@ public final class Header01Spec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.startsWith("HDR01");
-  }
 }

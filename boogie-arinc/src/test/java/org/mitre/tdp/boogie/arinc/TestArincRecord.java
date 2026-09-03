@@ -67,7 +67,7 @@ class TestArincRecord {
 
   private static ArincRecord record(String rawRecord, RecordField<?>... recordFields) {
     List<RecordField<?>> fields = List.of(recordFields);
-    RecordSpec recordSpec = new RecordSpec() {
+    RecordSpec recordSpec = new RecordSpec(List.of(RecordDiscriminator.prefix(rawRecord))) {
       @Override
       public int recordLength() {
         return fields.stream().map(RecordField::fieldSpec).mapToInt(FieldSpec::fieldLength).sum();
@@ -76,16 +76,6 @@ class TestArincRecord {
       @Override
       public List<RecordField<?>> recordFields() {
         return fields;
-      }
-
-      @Override
-      public List<RecordDiscriminator> recordDiscriminators() {
-        return List.of(RecordDiscriminator.prefix(rawRecord));
-      }
-
-      @Override
-      public boolean matchesRecord(String arincRecord) {
-        return true;
       }
     };
 

@@ -3,24 +3,24 @@ package org.mitre.tdp.boogie.arinc.v21;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v21.field.HeliportType;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
 
 /**
  * Record Specification for ARINC heliport records in V21.
  */
-public final class HeliportSpec implements RecordSpec {
+public final class HeliportSpec extends RecordSpec {
 
-  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column13('H', 'A'));
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn13('H', 'A', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public HeliportSpec() {
+    super(DISCRIMINATORS);
     recordFields = List.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -67,13 +67,4 @@ public final class HeliportSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'H' && arincRecord.charAt(12) == 'A' && PrimaryRecord.INSTANCE.test(arincRecord.charAt(21));
-  }
 }

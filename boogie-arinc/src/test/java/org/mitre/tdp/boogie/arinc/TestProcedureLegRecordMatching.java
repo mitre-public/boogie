@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.arinc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
@@ -22,24 +23,16 @@ class TestProcedureLegRecordMatching {
   }
 
   @Test
-  void versionsPreserveLegacyMalformedRecordBehavior() {
+  void versionsSafelyRejectMalformedRecords() {
     String matchingButTruncated = truncatedRecord('P', 'D');
     String nonMatchingTruncated = truncatedRecord('P', 'A');
 
-    assertAll(Stream.concat(
-        Stream.of(
-            () -> assertThrows(StringIndexOutOfBoundsException.class, () -> legacyMatches(matchingButTruncated)),
-            () -> assertThrows(NullPointerException.class, () -> legacyMatches(null))
-        ),
-        specs().flatMap(spec -> Stream.of(
-            (Executable) () -> assertEquals(legacyMatches(""), spec.matchesRecord("")),
-            (Executable) () -> assertEquals(legacyMatches(nonMatchingTruncated),
-                spec.matchesRecord(nonMatchingTruncated)),
-            (Executable) () -> assertThrows(StringIndexOutOfBoundsException.class,
-                () -> spec.matchesRecord(matchingButTruncated)),
-            (Executable) () -> assertThrows(NullPointerException.class, () -> spec.matchesRecord(null))
-        ))
-    ));
+    assertAll(specs().flatMap(spec -> Stream.of(
+        (Executable) () -> assertFalse(spec.matchesRecord("")),
+        (Executable) () -> assertFalse(spec.matchesRecord(nonMatchingTruncated)),
+        (Executable) () -> assertFalse(spec.matchesRecord(matchingButTruncated)),
+        (Executable) () -> assertThrows(NullPointerException.class, () -> spec.matchesRecord(null))
+    )));
   }
 
   private static Stream<RecordSpec> specs() {

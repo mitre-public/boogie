@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMaximumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.RvsmMinimumLevel;
@@ -13,18 +12,19 @@ import org.mitre.tdp.boogie.arinc.v22.field.RouteTypeQualifier;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn6;
 
 /**
  * The specification for an ARINC enroute airway record V18.
  */
-public final class AirwayLegSpec implements RecordSpec {
+public final class AirwayLegSpec extends RecordSpec {
 
-  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column6('E', 'R'));
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn6('E', 'R', 38));
 
   private final List<RecordField<?>> recordFields;
 
   public AirwayLegSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -83,13 +83,4 @@ public final class AirwayLegSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.regionMatches(4, "ER", 0, 2) && PrimaryRecord.INSTANCE.test(arincRecord.charAt(38));
-  }
 }

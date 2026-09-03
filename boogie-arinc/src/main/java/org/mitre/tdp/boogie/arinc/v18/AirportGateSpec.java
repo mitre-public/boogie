@@ -8,14 +8,15 @@ import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
 
-public final class AirportGateSpec implements RecordSpec {
-  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column13('P', 'B'));
+public final class AirportGateSpec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn13('P', 'B', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public AirportGateSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -47,13 +48,4 @@ public final class AirportGateSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'B';
-  }
 }

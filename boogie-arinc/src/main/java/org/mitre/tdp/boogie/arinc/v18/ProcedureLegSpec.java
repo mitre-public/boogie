@@ -4,29 +4,29 @@ import com.google.common.collect.ImmutableList;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
 
 /**
  * Record specification for an ARINC SID/STAR/APPROACH V18.
  */
-public final class ProcedureLegSpec implements RecordSpec {
+public final class ProcedureLegSpec extends RecordSpec {
   private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
-      column13('P', 'D'),
-      column13('P', 'E'),
-      column13('P', 'F'),
-      column13('H', 'D'),
-      column13('H', 'E'),
-      column13('H', 'F')
+      primaryColumn13('P', 'D', 38),
+      primaryColumn13('P', 'E', 38),
+      primaryColumn13('P', 'F', 38),
+      primaryColumn13('H', 'D', 38),
+      primaryColumn13('H', 'E', 38),
+      primaryColumn13('H', 'F', 38)
   );
 
   private final List<RecordField<?>> recordFields;
 
   public ProcedureLegSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(new RecordField<>(RecordType.SPEC), new RecordField<>(CustomerAreaCode.SPEC), new RecordField<>(SectionCode.SPEC), new RecordField<>("blank1", new BlankSpec(1)), new RecordField<>("airportIdentifier", new AirportHeliportIdentifier()), new RecordField<>("airportIcaoRegion", new IcaoRegion()), new RecordField<>(new SubSectionCode()), new RecordField<>(new SidStarIdentifier()), new RecordField<>(new RouteType()), new RecordField<>(new TransitionIdentifier()), new RecordField<>("blank2", new BlankSpec(1)), new RecordField<>(new SequenceNumber(3)), new RecordField<>(new FixIdentifier()), new RecordField<>("fixIcaoRegion", new IcaoRegion()), new RecordField<>("fixSectionCode", SectionCode.SPEC), new RecordField<>("fixSubSectionCode", new SubSectionCode()), new RecordField<>(new ContinuationRecordNumber()), new RecordField<>(new WaypointDescription()), new RecordField<>(TurnDirection.SPEC), new RecordField<>(new Rnp()), new RecordField<>(new PathTerm()), new RecordField<>(new TurnDirectionValid()), new RecordField<>("recommendedNavaidIdentifier", new RecommendedNavaid()), new RecordField<>("recommendedNavaidIcaoRegion", new IcaoRegion()), new RecordField<>(new ArcRadius()), new RecordField<>(new Theta()), new RecordField<>(new Rho()), new RecordField<>(new OutboundMagneticCourse()), new RecordField<>(new RouteHoldDistanceTime()), new RecordField<>("recommendedNavaidSectionCode", SectionCode.SPEC), new RecordField<>("recommendedNavaidSubSectionCode", new SubSectionCode()), new RecordField<>("blank3", new BlankSpec(2)), new RecordField<>(new AltitudeDescription()), new RecordField<>("atc", new BlankSpec(1)), // 5.81
         new RecordField<>("minAltitude1", new MinimumAltitude()), new RecordField<>("minAltitude2", new MinimumAltitude()), new RecordField<>(new TransitionAltitude()), new RecordField<>(new SpeedLimit()), new RecordField<>(new VerticalAngle()), new RecordField<>("centerFixIdentifier", new CenterFix()), new RecordField<>("multiCd", new BlankSpec(1)), // 5.130 or 5.272
         new RecordField<>("centerFixIcaoRegion", new IcaoRegion()), new RecordField<>("centerFixSectionCode", SectionCode.SPEC), new RecordField<>("centerFixSubSectionCode", new SubSectionCode()), new RecordField<>("unk", new BlankSpec(1)), // 5.222
@@ -43,21 +43,4 @@ public final class ProcedureLegSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    if (arincRecord.length() <= 12) {
-      return false;
-    }
-
-    char sectionCode = arincRecord.charAt(4);
-    char subSectionCode = arincRecord.charAt(12);
-    return (sectionCode == 'P' || sectionCode == 'H')
-        && (subSectionCode == 'D' || subSectionCode == 'E' || subSectionCode == 'F')
-        && PrimaryRecord.INSTANCE.test(arincRecord.charAt(38));
-  }
 }

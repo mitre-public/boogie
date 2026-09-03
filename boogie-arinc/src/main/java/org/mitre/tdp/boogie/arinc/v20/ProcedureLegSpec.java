@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
 import org.mitre.tdp.boogie.arinc.v20.field.AltitudeDescription;
@@ -13,22 +12,23 @@ import org.mitre.tdp.boogie.arinc.v20.field.ProcedureDesignAircraftCategoryOrTyp
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
 
-public final class ProcedureLegSpec implements RecordSpec {
+public final class ProcedureLegSpec extends RecordSpec {
 
   private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
-      column13('P', 'D'),
-      column13('P', 'E'),
-      column13('P', 'F'),
-      column13('H', 'D'),
-      column13('H', 'E'),
-      column13('H', 'F')
+      primaryColumn13('P', 'D', 38),
+      primaryColumn13('P', 'E', 38),
+      primaryColumn13('P', 'F', 38),
+      primaryColumn13('H', 'D', 38),
+      primaryColumn13('H', 'E', 38),
+      primaryColumn13('H', 'F', 38)
   );
 
   private final List<RecordField<?>> recordFields;
 
   public ProcedureLegSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -95,21 +95,4 @@ public final class ProcedureLegSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    if (arincRecord.length() <= 12) {
-      return false;
-    }
-
-    char sectionCode = arincRecord.charAt(4);
-    char subSectionCode = arincRecord.charAt(12);
-    return (sectionCode == 'P' || sectionCode == 'H')
-        && (subSectionCode == 'D' || subSectionCode == 'E' || subSectionCode == 'F')
-        && PrimaryRecord.INSTANCE.test(arincRecord.charAt(38));
-  }
 }

@@ -15,8 +15,22 @@ public class TestAirportPrimaryExtensionSpec {
 
   @Test
   void testSpecMatches() {
-    assertFalse(new AirportSpec().matchesRecord(RAW));
-    assertTrue(new AirportPrimaryExtensionSpec().matchesRecord(RAW));
+    AirportSpec airportSpec = new AirportSpec();
+    AirportPrimaryExtensionSpec extensionSpec = new AirportPrimaryExtensionSpec();
+
+    assertAll(
+        () -> assertFalse(airportSpec.matchesRecord(RAW)),
+        () -> assertTrue(extensionSpec.matchesRecord(RAW)),
+        () -> assertFalse(extensionSpec.matchesRecord(withContinuationAndApplicationType('1', 'E'))),
+        () -> assertFalse(extensionSpec.matchesRecord(withContinuationAndApplicationType('3', 'X')))
+    );
+  }
+
+  private static String withContinuationAndApplicationType(char continuationRecordNumber, char applicationType) {
+    char[] record = RAW.toCharArray();
+    record[21] = continuationRecordNumber;
+    record[22] = applicationType;
+    return new String(record);
   }
 
   @Test

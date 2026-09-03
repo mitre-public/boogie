@@ -11,15 +11,16 @@ import org.mitre.tdp.boogie.arinc.v21.field.PadIdentifier;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
 
-public final class HelipadSpec implements RecordSpec {
+public final class HelipadSpec extends RecordSpec {
   private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
-      column13('P', 'H'), column13('H', 'H'));
+      primaryColumn13('P', 'H', 21), primaryColumn13('H', 'H', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public HelipadSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -58,15 +59,4 @@ public final class HelipadSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    char section = arincRecord.charAt(4);
-    char subsection = arincRecord.charAt(12);
-    return (section == 'P' || section == 'H') && subsection == 'H';
-  }
 }

@@ -22,9 +22,8 @@ public interface ArincRecordParser {
    * Standard parser implementation for 424 records. The parser is configured with a collection of provided {@link RecordSpec}s
    * that together define the collection of record types that will be extracted in the parsing.
    * <p>
-   * Additionally this implementation (by design) doesn't care whether the same spec is applied across multiple record types or
-   * if multiple of the provided specs potentially match to the same record type (which could happen if you want to delegate to
-   * different specs based on some feature other than section/subsection).
+   * Additionally this implementation (by design) allows multiple provided specs to match the same record. In that case, the
+   * first matching spec in the supplied order is applied.
    * <p>
    * All configured specs must declare the same fixed record length. A parser supports between 1 and 64 specs. Inputs shorter
    * than the configured length are rejected; longer inputs are accepted only when the remaining characters are ASCII spaces and
@@ -161,9 +160,10 @@ public interface ArincRecordParser {
             if (discriminator instanceof RecordDiscriminator.SectionSubsection sectionSubsection) {
               long[][] candidates = sectionSubsection.subsectionColumn() == RecordDiscriminator.SubsectionColumn.COLUMN_6 ? column6Candidates : column13Candidates;
               addCandidate(candidates, sectionSubsection.sectionCode(), sectionSubsection.subsectionCode(), candidate);
-            } else {
-              RecordDiscriminator.Prefix prefix = (RecordDiscriminator.Prefix) discriminator;
+            } else if (discriminator instanceof RecordDiscriminator.Prefix prefix) {
               candidatesByPrefix.merge(prefix.value(), candidate, (left, right) -> left | right);
+            } else {
+              throw new IllegalStateException("Unsupported record discriminator: " + discriminator.getClass().getName());
             }
           }
         }

@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.RecordSpec;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
@@ -25,6 +26,32 @@ public class TestRunwaySpec {
   @Test
   void testSpecMatchesRunwayRecord1() {
     assertTrue(new RunwaySpec().matchesRecord(runway1));
+  }
+
+  @Test
+  void allVersionsUseJavaIndex21ForTheContinuationRecordNumber() {
+    String primary = withContinuationAndFirstRunwayLengthDigit('1', '7');
+    String continuation = withContinuationAndFirstRunwayLengthDigit('2', '1');
+
+    assertAll(
+        () -> assertContinuationMatching(new RunwaySpec(), primary, continuation),
+        () -> assertContinuationMatching(new org.mitre.tdp.boogie.arinc.v20.RunwaySpec(), primary, continuation),
+        () -> assertContinuationMatching(new org.mitre.tdp.boogie.arinc.v22.RunwaySpec(), primary, continuation)
+    );
+  }
+
+  private static void assertContinuationMatching(RecordSpec spec, String primary, String continuation) {
+    assertAll(
+        () -> assertTrue(spec.matchesRecord(primary), spec.getClass().getName()),
+        () -> assertFalse(spec.matchesRecord(continuation), spec.getClass().getName())
+    );
+  }
+
+  private static String withContinuationAndFirstRunwayLengthDigit(char continuationRecordNumber, char firstRunwayLengthDigit) {
+    char[] record = runway1.toCharArray();
+    record[21] = continuationRecordNumber;
+    record[22] = firstRunwayLengthDigit;
+    return new String(record);
   }
 
   @Test

@@ -10,6 +10,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestAirportGateSpec {
 
@@ -36,5 +37,23 @@ public class TestAirportGateSpec {
         () -> assertEquals("0", record.requiredField("continuationRecordNumber")),
         () -> assertEquals("2003", record.requiredField("lastUpdatedCycle"))
     );
+  }
+
+  @Test
+  void matchesOnlyPrimaryGateRecords() {
+    AirportGateSpec spec = new AirportGateSpec();
+
+    assertAll(
+        () -> assertTrue(spec.matchesRecord(withContinuationRecordNumber('0'))),
+        () -> assertTrue(spec.matchesRecord(withContinuationRecordNumber('1'))),
+        () -> assertFalse(spec.matchesRecord(withContinuationRecordNumber('2'))),
+        () -> assertFalse(spec.matchesRecord(withContinuationRecordNumber('A')))
+    );
+  }
+
+  private static String withContinuationRecordNumber(char continuationRecordNumber) {
+    char[] record = RAW_RECORD.toCharArray();
+    record[21] = continuationRecordNumber;
+    return new String(record);
   }
 }

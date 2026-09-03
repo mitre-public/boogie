@@ -179,7 +179,7 @@ public interface Heliport extends HasPosition {
       }
 
       public Builder helipads(Collection<? extends Helipad> helipads) {
-        this.helipads = helipads == null ? null : new ArrayList<>(helipads);
+        this.helipads = helipads == null || helipads.isEmpty() ? null : new ArrayList<>(helipads);
         return this;
       }
 

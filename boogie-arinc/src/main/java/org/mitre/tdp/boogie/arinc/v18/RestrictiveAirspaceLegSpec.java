@@ -3,19 +3,19 @@ package org.mitre.tdp.boogie.arinc.v18;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn6;
 
-public final class RestrictiveAirspaceLegSpec implements RecordSpec {
-  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(column6('U', 'R'));
+public final class RestrictiveAirspaceLegSpec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn6('U', 'R', 24));
 
   private final List<RecordField<?>> recordFields;
 
   public RestrictiveAirspaceLegSpec() {
+    super(DISCRIMINATORS);
     recordFields = List.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -59,13 +59,4 @@ public final class RestrictiveAirspaceLegSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'U' && arincRecord.charAt(5) == 'R' && PrimaryRecord.INSTANCE.test(arincRecord.charAt(24));
-  }
 }

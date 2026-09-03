@@ -34,6 +34,9 @@ public class OneShotRecordParserLidoIntegrationTest {
         .flatMap(procedure -> procedure.transitions().stream())
         .mapToInt(transition -> transition.legs().size())
         .sum();
+    long procedureTransitionCount = records.procedures().stream()
+        .mapToLong(procedure -> procedure.transitions().size())
+        .sum();
     long oibbN13lMissedApproaches = records.procedures().stream()
         .filter(procedure -> "OIBB".equals(procedure.airportIdentifier()))
         .filter(procedure -> "N13L".equals(procedure.procedureIdentifier()))
@@ -49,6 +52,7 @@ public class OneShotRecordParserLidoIntegrationTest {
         () -> assertEquals(270393, records.fixes().size(), "Fixes"),
         () -> assertEquals(14588, records.airways().size(), "Airways"),
         () -> assertEquals(101085, records.procedures().size(), "Procedures"),
+        () -> assertEquals(245853, procedureTransitionCount, "Procedure Transitions"),
         () -> assertEquals(861925, procedureLegCount, "Procedure Legs"),
         () -> assertEquals(2, oibbN13lMissedApproaches, "Multiple missed approaches"),
         () -> assertEquals(357, records.firUirs().size(), "FIRs and UIRs"),

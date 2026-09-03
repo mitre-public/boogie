@@ -4,24 +4,24 @@ import com.google.common.collect.ImmutableList;
 import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 import java.util.List;
 
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column13;
-import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.column6;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn6;
 
 /**
  * Specification for Terminal/Enroute waypoint records in ARINC V18.
  */
-public final class WaypointSpec implements RecordSpec {
+public final class WaypointSpec extends RecordSpec {
   private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
-      column6('E', 'A'), column13('P', 'C'), column13('H', 'C'));
+      primaryColumn6('E', 'A', 21), primaryColumn13('P', 'C', 21), primaryColumn13('H', 'C', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public WaypointSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -62,14 +62,4 @@ public final class WaypointSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public List<RecordDiscriminator> recordDiscriminators() {
-    return DISCRIMINATORS;
-  }
-
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return (arincRecord.regionMatches(4, "EA", 0, 2) || (arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'C') || (arincRecord.charAt(4) == 'H' && arincRecord.charAt(12) == 'C'))
-        && PrimaryRecord.INSTANCE.test(arincRecord.charAt(21));
-  }
 }
