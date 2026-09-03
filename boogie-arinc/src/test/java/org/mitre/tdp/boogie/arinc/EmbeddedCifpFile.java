@@ -111,21 +111,6 @@ public final class EmbeddedCifpFile {
     return records.arincHeliports();
   }
 
-  public int totalRecords() {
-    return arincAirports().size()
-        + arincRunways().size()
-        + arincLocalizerGlideSlopes().size()
-        + arincNdbNavaids().size()
-        + arincVhfNavaids().size()
-        + arincWaypoints().size()
-        + arincAirwayLegs().size()
-        + arincProcedureLegs().size()
-        + arincGnssLandingSystems().size()
-        + arincHoldingPatterns().size()
-        + arincFirUirLegs().size()
-        + arincHeliports().size();
-  }
-
   /**
    * “Initialization-on-demand holder idiom” — lazy and thread-safe; referenced only when
    * {@link EmbeddedCifpFile#instance()} is called.

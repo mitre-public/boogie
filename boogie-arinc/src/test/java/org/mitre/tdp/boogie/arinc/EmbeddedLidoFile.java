@@ -111,24 +111,6 @@ public final class EmbeddedLidoFile {
     return records.arincHeliports();
   }
 
-  public int totalRecords() {
-    return arincAirports().size()
-        + arincRunways().size()
-        + arincLocalizerGlideSlopes().size()
-        + arincNdbNavaids().size()
-        + arincVhfNavaids().size()
-        + arincWaypoints().size()
-        + arincAirwayLegs().size()
-        + arincProcedureLegs().size()
-        + arincGnssLandingSystems().size()
-        + arincHoldingPatterns().size()
-        + arincFirUirLegs().size()
-        + arincControlledAirspaceLegs().size()
-        + arincRestrictiveAirspaceLegs().size()
-        + arincHeliports().size()
-        + arincHelipads().size();
-  }
-
   /**
    * “Initialization-on-demand holder idiom” — lazy and thread-safe; referenced only when
    * {@link EmbeddedLidoFile#instance()} is called.
