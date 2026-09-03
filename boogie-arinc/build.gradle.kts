@@ -3,6 +3,8 @@ plugins {
     id("com.vanniktech.maven.publish.base") version "0.34.0"
 }
 
+apply(from = "jmh.gradle.kts")
+
 dependencies {
     implementation(project(":boogie-core"))
     implementation(project(":boogie-util"))

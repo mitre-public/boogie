@@ -9,6 +9,7 @@ import org.mitre.tdp.boogie.Heliport;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
+import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
 /**
  * Assembler class for converting {@link ArincHeliport} records into client-defined outputs.
@@ -33,9 +34,10 @@ public interface HeliportAssembler<H> {
    * @param heliportAssemblyStrategy the strategy to assemble the ports/pads into one.
    * @return the Assembler that will convert and assemble.
    * @param <H> the heliport class.
+   * @param <R> the runway class.
    * @param <P> the helipad class.
    */
-  static<H,P> HeliportAssembler<H> usingStrategy(ArincTerminalAreaDatabase arincTerminalAreaDatabase, HeliportAssemblyStrategy<H, P> heliportAssemblyStrategy) {
+  static <H, R, P> HeliportAssembler<H> usingStrategy(ArincTerminalAreaDatabase arincTerminalAreaDatabase, HeliportAssemblyStrategy<H, R, P> heliportAssemblyStrategy) {
     return new Standard<>(arincTerminalAreaDatabase, heliportAssemblyStrategy);
   }
 
@@ -46,23 +48,43 @@ public interface HeliportAssembler<H> {
    */
   H assemble(ArincHeliport arincHeliport);
 
-  final class Standard<H, P> implements HeliportAssembler<H> {
+  final class Standard<H, R, P> implements HeliportAssembler<H> {
     private final ArincTerminalAreaDatabase arincTerminalAreaDatabase;
-    private final HeliportAssemblyStrategy<H, P> strategy;
+    private final HeliportAssemblyStrategy<H, R, P> strategy;
 
-    public Standard(ArincTerminalAreaDatabase arincTerminalAreaDatabase, HeliportAssemblyStrategy<H, P> strategy) {
-      this.arincTerminalAreaDatabase = arincTerminalAreaDatabase;
-      this.strategy = strategy;
+    public Standard(ArincTerminalAreaDatabase arincTerminalAreaDatabase, HeliportAssemblyStrategy<H, R, P> strategy) {
+      this.arincTerminalAreaDatabase = requireNonNull(arincTerminalAreaDatabase);
+      this.strategy = requireNonNull(strategy);
     }
 
     @Override
     public H assemble(ArincHeliport arincHeliport) {
       requireNonNull(arincHeliport);
 
+      Collection<ArincRunway> arincRunways = arincTerminalAreaDatabase.heliportsRunwaysAt(
+          arincHeliport.heliportIdentifier(),
+          arincHeliport.heliportIcaoRegion()
+      );
+      List<R> runways = RunwayAssembly.directedPairs(arincRunways)
+          .map(pair -> strategy.convertRunway(
+              arincHeliport,
+              pair.thisRunway(),
+              pair.otherEnd(),
+              arincTerminalAreaDatabase.heliportsPrimaryLocalizerGlideSlopeOf(
+                  arincHeliport.heliportIdentifier(),
+                  arincHeliport.heliportIcaoRegion(),
+                  pair.thisRunway().runwayIdentifier()).orElse(null),
+              arincTerminalAreaDatabase.heliportsSecondaryLocalizerGlideSlopeOf(
+                  arincHeliport.heliportIdentifier(),
+                  arincHeliport.heliportIcaoRegion(),
+                  pair.thisRunway().runwayIdentifier()).orElse(null)
+          ))
+          .toList();
+
       Collection<ArincHelipad> arincHelipads = arincTerminalAreaDatabase.heliportsHelipadsAt(arincHeliport.heliportIdentifier(), arincHeliport.heliportIcaoRegion());
       List<P> helipads = arincHelipads.stream().map(strategy::convertHelipad).toList();
 
-      return strategy.convertHeliport(arincHeliport, helipads);
+      return strategy.convertHeliport(arincHeliport, runways, helipads);
     }
   }
 }

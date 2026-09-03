@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,8 +34,8 @@ public enum ProductionTestFlag implements FieldSpec<ProductionTestFlag> {
   }
 
   @Override
-  public Optional<ProductionTestFlag> apply(String s) {
-    return Optional.ofNullable(s)
+  public Optional<ProductionTestFlag> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
         .filter(VALID::contains)
         .map(ProductionTestFlag::valueOf);
   }

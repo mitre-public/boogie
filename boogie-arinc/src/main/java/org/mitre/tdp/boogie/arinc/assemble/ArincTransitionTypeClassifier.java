@@ -68,10 +68,18 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
         .sorted(comparing(ArincProcedureLeg::sequenceNumber))
         .collect(Collectors.toList());
 
-    if ("F".equals(sorted.get(0).subSectionCode().orElseThrow(IllegalStateException::new))) {
-      return approachClassifier.apply(sorted);
+    return applySorted(sorted);
+  }
+
+  /**
+   * Classifies legs already ordered by sequence number. Procedure assembly establishes transition membership first, then sorts
+   * each transition before missed-approach partitioning and classification.
+   */
+  TransitionType applySorted(List<ArincProcedureLeg> sortedArincProcedureLegs) {
+    if ("F".equals(sortedArincProcedureLegs.get(0).subSectionCode().orElseThrow(IllegalStateException::new))) {
+      return approachClassifier.apply(sortedArincProcedureLegs);
     } else {
-      return sidStarClassifier.apply(sorted);
+      return sidStarClassifier.apply(sortedArincProcedureLegs);
     }
   }
 

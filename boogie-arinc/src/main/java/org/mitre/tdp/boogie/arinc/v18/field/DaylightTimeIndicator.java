@@ -28,7 +28,8 @@ public final class DaylightTimeIndicator implements FieldSpec<Boolean> {
   }
 
   @Override
-  public Optional<Boolean> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(BooleanStringParser.INSTANCE::test);
+  public Optional<Boolean> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(BooleanStringParser.INSTANCE::test);
   }
 }

@@ -1,16 +1,16 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.FirUirIndicator;
 
 public interface FirUirAssembler<AIRSPACE> {
   static FirUirAssembler<Airspace> standard() {
@@ -24,6 +24,8 @@ public interface FirUirAssembler<AIRSPACE> {
   }
 
   final class Standard<AIRSPACE, SEQUENCE> implements FirUirAssembler<AIRSPACE> {
+    private static final Comparator<ArincFirUirLeg> LEG_ORDER = Comparator.comparingInt(ArincFirUirLeg::sequenceNumber);
+
     private final FirUirAssemblyStrategy<AIRSPACE, SEQUENCE> assemblyStrategy;
     private Standard(FirUirAssemblyStrategy<AIRSPACE, SEQUENCE> assemblyStrategy) {
       this.assemblyStrategy = assemblyStrategy;
@@ -32,7 +34,7 @@ public interface FirUirAssembler<AIRSPACE> {
     @Override
     public Stream<AIRSPACE> assemble(Collection<ArincFirUirLeg> legs) {
       return legs.stream()
-          .collect(Collectors.groupingBy(this::firUirKey))
+          .collect(Collectors.groupingBy(FirUirKey::from, Collectors.toCollection(ArrayList::new)))
           .values()
           .stream()
           .flatMap(this::toAirspace);
@@ -40,18 +42,27 @@ public interface FirUirAssembler<AIRSPACE> {
 
     private Stream<AIRSPACE> toAirspace(List<ArincFirUirLeg> legs) {
       ArincFirUirLeg representative = legs.get(0);
+      legs.sort(LEG_ORDER);
       List<SEQUENCE> sequences = legs.stream()
-          .sorted(Comparator.comparing(ArincFirUirLeg::sequenceNumber))
           .map(assemblyStrategy::convertFirUirLeg)
           .toList();
       return assemblyStrategy.convertFirUir(representative, sequences);
     }
 
-    private String firUirKey(ArincFirUirLeg leg) {
-      return leg.customerAreaCode().name()
-          .concat(leg.firUirIdentifier())
-          .concat(leg.firUirAddress().orElse(""))
-          .concat(leg.firUirIndicator().name());
+    private record FirUirKey(
+        CustomerAreaCode customerAreaCode,
+        String identifier,
+        String address,
+        FirUirIndicator indicator
+    ) {
+      private static FirUirKey from(ArincFirUirLeg leg) {
+        return new FirUirKey(
+            leg.customerAreaCode(),
+            leg.firUirIdentifier(),
+            leg.firUirAddress().orElse(""),
+            leg.firUirIndicator()
+        );
+      }
     }
   }
 }

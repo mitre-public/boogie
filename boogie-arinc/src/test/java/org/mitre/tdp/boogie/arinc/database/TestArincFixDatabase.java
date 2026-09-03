@@ -1,12 +1,5 @@
 package org.mitre.tdp.boogie.arinc.database;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
@@ -15,25 +8,59 @@ import org.mitre.tdp.boogie.arinc.model.*;
 import org.mitre.tdp.boogie.arinc.v18.*;
 import org.mitre.tdp.boogie.arinc.v19.ProcedureLegSpec;
 import org.mitre.tdp.boogie.arinc.v21.HelipadConverter;
-import org.mitre.tdp.boogie.arinc.v21.HelipadValidator;
+
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestArincFixDatabase {
 
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kjfk-and-friends.txt"));
 
   private static ArincFixDatabase arincFixDatabase;
+  private static ArincFixDatabase oneShotFixDatabase;
 
   @BeforeAll
   static void setup() {
-    fileParser.parseAll(arincTestFile).forEach(testV18Consumer);
+    ConvertingArincRecordConsumer consumer = newV18Consumer();
+    fileParser.parseAll(arincTestFile).forEach(consumer);
+    ConvertedArincRecords testV18Records = consumer.snapshot();
 
     arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
-        testV18Consumer.arincNdbNavaids(),
-        testV18Consumer.arincVhfNavaids(),
-        testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincAirports(),
-        testV18Consumer.arincHoldingPatterns(),
-        testV18Consumer.arincHeliports()
+        testV18Records.arincNdbNavaids(),
+        testV18Records.arincVhfNavaids(),
+        testV18Records.arincWaypoints(),
+        testV18Records.arincAirports(),
+        testV18Records.arincHoldingPatterns(),
+        testV18Records.arincHeliports()
+    );
+
+    oneShotFixDatabase = ArincDatabaseFactory.newOneShotFixDatabase(
+        testV18Records.arincNdbNavaids(),
+        testV18Records.arincVhfNavaids(),
+        testV18Records.arincWaypoints(),
+        testV18Records.arincAirports(),
+        testV18Records.arincHeliports()
+    );
+  }
+
+  @Test
+  void testOneShotDatabaseKeepsOnlyRegionQualifiedAssemblyIndices() {
+    assertAll(
+        () -> assertTrue(oneShotFixDatabase.airport("KJFK", "K6").isPresent(), "Airports remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.heliport("00NJ", "K6").isPresent(), "Heliports remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.vhfNavaid("LGA", "K6").isPresent(), "VHF navaids remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.enrouteNdbNavaid("ACE", "PA").isPresent(), "NDB navaids remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.enrouteWaypoint("ATENE", "CY").isPresent(), "Enroute waypoints remain available by region."),
+        () -> assertTrue(oneShotFixDatabase.airport("KJFK").isEmpty(), "OneShot does not retain the identifier-only airport alias."),
+        () -> assertTrue(oneShotFixDatabase.vhfNavaid("LGA").isEmpty(), "OneShot does not retain the identifier-only VHF alias."),
+        () -> assertTrue(oneShotFixDatabase.enrouteWaypoint("ATENE").isEmpty(), "OneShot does not retain the identifier-only waypoint alias."),
+        () -> assertTrue(oneShotFixDatabase.terminalWaypoint("AROKE", "K6").isEmpty(), "Terminal waypoints live only in OneShot's terminal-area database."),
+        () -> assertTrue(arincFixDatabase.airport("KJFK").isPresent(), "The standard factory still creates identifier-only aliases."),
+        () -> assertTrue(arincFixDatabase.terminalWaypoint("AROKE", "K6").isPresent(), "The standard factory still indexes terminal waypoints.")
     );
   }
 
@@ -46,7 +73,7 @@ class TestArincFixDatabase {
   @Test
   void testHoldingFunctionality() {
     ArincHoldingPattern abu = arincFixDatabase.enrouteHolds("ABU", "HL").stream().findFirst().orElseThrow();
-    List<ArincHoldingPattern> vegers = arincFixDatabase.enrouteHolds("VEGER", "EE").stream().sorted().collect(Collectors.toList());
+    List<ArincHoldingPattern> vegers = arincFixDatabase.enrouteHolds("VEGER", "EE").stream().sorted().toList();
     assertAll(
         () -> assertEquals("ABU", abu.fixIdentifier()),
         () -> assertEquals(90, abu.legTime().orElseThrow().getSeconds(), "Should be 90 seconds aka 1.5 min a normal hold"),
@@ -103,40 +130,25 @@ class TestArincFixDatabase {
   /**
    * In implementation this could be done from the factory class {@link ArincRecordConverterFactory}.
    */
-  private static final ConvertingArincRecordConsumer testV18Consumer = new ConvertingArincRecordConsumer.Builder()
-      .airportDelegator(new AirportValidator())
-      .airportConverter(new AirportConverter())
-      .airportContinuationConverter(new AirportPrimaryExtensionConverter())
-      .airportContinuationDelegator(new AirportPrimaryExtensionValidator())
-      .airwayLegDelegator(new AirwayLegValidator())
-      .airwayLegConverter(new AirwayLegConverter())
-      .localizerGlideSlopeDelegator(new LocalizerGlideSlopeValidator())
-      .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
-      .ndbNavaidDelegator(new NdbNavaidValidator())
-      .ndbNavaidConverter(new NdbNavaidConverter())
-      .procedureLegDelegator(new ProcedureLegValidator())
-      .procedureLegConverter(new ProcedureLegConverter())
-      .runwayDelegator(new RunwayValidator())
-      .runwayConverter(new RunwayConverter())
-      .vhfNavaidDelegator(new VhfNavaidValidator())
-      .vhfNavaidConverter(new VhfNavaidConverter())
-      .waypointDelegator(new WaypointValidator())
-      .waypointConverter(new WaypointConverter())
-      .holdingPatternConverter(new HoldingPatternConverter())
-      .holdingPatternDelegator(new HoldingPatternValidator())
-      .gnssLandingSystemConverter(new GnssLandingSystemConverter())
-      .gnssLandingSystemDelegator(new GnssLandingSystemValidator())
-      .firUirConverter(new FirUirLegConverter())
-      .firUirDelegator(new AirwayLegValidator())
-      .helipadDelegator(new HelipadValidator())
-      .helipadConverter(new HelipadConverter())
-      .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
-      .arincControlledAirspaceLegDelegator(new ControlledAirspaceValidator())
-      .restrictiveAirspaceConverter(new RestrictiveAirspaceLegConverter())
-      .restrictiveAirspaceLegDelegator(new RestrictiveAirspaceValidator())
-      .headerDelegator(new Header01Validator())
-      .headerConverter(new Header01Converter())
-      .heliportConverter(new HeliportConverter())
-      .heliportDelegator(new HeliportValidator())
-      .build();
+  private static ConvertingArincRecordConsumer newV18Consumer() {
+    return new ConvertingArincRecordConsumer.Builder()
+        .airportConverter(new AirportConverter())
+        .airportContinuationConverter(new AirportPrimaryExtensionConverter())
+        .airwayLegConverter(new AirwayLegConverter())
+        .localizerGlideSlopeConverter(new LocalizerGlideSlopeConverter())
+        .ndbNavaidConverter(new NdbNavaidConverter())
+        .procedureLegConverter(new ProcedureLegConverter())
+        .runwayConverter(new RunwayConverter())
+        .vhfNavaidConverter(new VhfNavaidConverter())
+        .waypointConverter(new WaypointConverter())
+        .holdingPatternConverter(new HoldingPatternConverter())
+        .gnssLandingSystemConverter(new GnssLandingSystemConverter())
+        .firUirConverter(new FirUirLegConverter())
+        .helipadConverter(new HelipadConverter())
+        .arincControlledAirspaceConverter(new ControlledAirspaceLegConverter())
+        .restrictiveAirspaceConverter(new RestrictiveAirspaceLegConverter())
+        .headerConverter(new Header01Converter())
+        .heliportConverter(new HeliportConverter())
+        .build();
+  }
 }

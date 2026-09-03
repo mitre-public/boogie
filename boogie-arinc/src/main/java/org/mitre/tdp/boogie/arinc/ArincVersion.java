@@ -25,11 +25,11 @@ import org.mitre.tdp.boogie.arinc.v21.HelipadSpec;
 
 /**
  * Pre-configured set of parsers for various well-known ARINC spec types and record formats.
- *
- * <p>This class explicitly <i>does not</i> return pre-configured parsers for all the potential record types that a user might
+ * <p>
+ * This class explicitly <i>does not</i> return pre-configured parsers for all the potential record types that a user might
  * care about within a version nor does it provide pre-configured parsers for all version of 424 data.
- *
- * <p>However it is relatively simple to add new specs/parsers as need if we want to increase the pre-configured support.
+ * <p>
+ * However it is relatively simple to add new specs/parsers as need if we want to increase the pre-configured support.
  */
 public enum ArincVersion {
 

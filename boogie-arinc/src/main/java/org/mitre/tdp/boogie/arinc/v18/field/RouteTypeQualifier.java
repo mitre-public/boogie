@@ -31,7 +31,9 @@ public final class RouteTypeQualifier implements FieldSpec<String> {
   static final HashSet<String> allowedCodes = newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "P", "R", "T", "U", "V", "W");
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(allowedCodes::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(allowedCodes::contains);
   }
 }

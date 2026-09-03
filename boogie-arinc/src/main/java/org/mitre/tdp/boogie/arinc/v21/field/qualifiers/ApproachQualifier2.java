@@ -16,6 +16,7 @@ public enum ApproachQualifier2 implements FieldSpec<ApproachQualifier2> {
   /**
    * Secondary Missed Approach
    */
+  B,
   /**
    * Engine Out Missed Approach
    */
@@ -69,7 +70,9 @@ public enum ApproachQualifier2 implements FieldSpec<ApproachQualifier2> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<ApproachQualifier2> apply(String s) {
-    return Optional.of(s).filter(VALID::contains).map(ApproachQualifier2::valueOf);
+  public Optional<ApproachQualifier2> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(ApproachQualifier2::valueOf);
   }
 }

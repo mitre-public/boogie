@@ -283,9 +283,8 @@ Hopefully the Quick start was able to get you up and running relatively easily -
 If you find that the currently supported set of record parsers doesn't meet your needs this section will cover how to extend the API for new record types.
 
 #### The RecordSpec
-The high level abstraction for defining a record specification in Boogie is the [RecordSpec](hhttps://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/RecordSpec.java).
-These specifications define an ordered sequence of (named) fields within a high level ARINC record along with a matcher which is used to decide whether the given specification should be applied
-to a given raw text input string (substring of the overall raw text record). 
+The high level abstraction for defining a record specification in Boogie is the [RecordSpec](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/RecordSpec.java).
+These specifications define an ordered sequence of named fields within a high-level ARINC record. Each specification supplies its immutable list of record discriminators to the `RecordSpec` constructor; those discriminators are the sole source of truth for deciding whether the specification applies to a raw record.
 
 [ArincRecordParser](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecordParser.java) implementations are configured with 
 a collection of record specifications (which don't need to cover all possible record types within a file). These specs are used to convert the raw record strings to semi-structured [ArincRecord](https://github.com/mitre-tdp/boogie/blob/main/boogie-arinc/src/main/java/org/mitre/tdp/boogie/arinc/ArincRecord.java) 

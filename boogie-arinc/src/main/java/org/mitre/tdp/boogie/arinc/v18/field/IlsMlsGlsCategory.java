@@ -32,7 +32,9 @@ public final class IlsMlsGlsCategory implements FieldSpec<String> {
   static final ImmutableSet<String> allowedCategories = ImmutableSet.of("0", "1", "2", "3", "I", "L", "A", "S", "F");
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(allowedCategories::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(allowedCategories::contains);
   }
 }

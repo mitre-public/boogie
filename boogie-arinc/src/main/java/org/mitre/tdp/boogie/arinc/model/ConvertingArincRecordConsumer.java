@@ -1,77 +1,66 @@
 package org.mitre.tdp.boogie.arinc.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
-
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A non-thread-safe version of a {@link Consumer} class which can eat {@link ArincRecord}s from a collection or stream and saves
  * them as internal state within itself.
- * <br>
- * This class is built with a pre-configured set of record-to-Java POJO delegators and a set of record-to-POJO converters for a
- * pre-configured set of data types. {@link ArincRecordConverterFactory} provides some default implementations for a subset of
- * {@link ArincRecord} versions.
- * <br>
- * This class is provided for convenience, but it's limitations (especially the thread-safety) should be taken into account before
+ * <p>
+ * This class is built with a pre-configured set of record-to-Java POJO converters. Each converter must return
+ * {@link Optional#empty()} for records it does not own, and exactly one configured converter should accept any given record.
+ * {@link ArincRecordConverterFactory} provides implementations for the supported ARINC versions.
+ * <p>
+ * This class is provided for convenience, but its limitations (especially the thread-safety) should be taken into account before
  * use.
- * <br>
- * If additional convertible record types are added this class can be extended relatively straightforwardly.
  */
 public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord> {
 
-  private final DelegatableCollection<ArincAirport> arincAirports;
-  private final DelegatableCollection<ArincAirportPrimaryExtension> arincAirportExtensions;
-  private final DelegatableCollection<ArincRunway> arincRunways;
-  private final DelegatableCollection<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes;
-  private final DelegatableCollection<ArincNdbNavaid> arincNdbNavaids;
-  private final DelegatableCollection<ArincVhfNavaid> arincVhfNavaids;
-  private final DelegatableCollection<ArincWaypoint> arincWaypoints;
-  private final DelegatableCollection<ArincAirwayLeg> arincAirwayLegs;
-  private final DelegatableCollection<ArincProcedureLeg> arincProcedureLegs;
-  private final DelegatableCollection<ArincGnssLandingSystem> gnssLandingSystems;
-  private final DelegatableCollection<ArincHoldingPattern> arincHoldingPatterns;
-  private final DelegatableCollection<ArincFirUirLeg> arincFirUirLeg;
-  private final DelegatableCollection<ArincHelipad> arincHelipads;
-  private final DelegatableCollection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs;
-  private final DelegatableCollection<ArincRestrictiveAirspaceLeg> arincRestrictiveAirspaceLegs;
-  private final DelegatableCollection<ArincHeaderOne> arincHeaderOnes;
-  private final DelegatableCollection<ArincHeliport> arincHeliports;
+  private final RecordAccumulator<ArincAirport> arincAirports;
+  private final RecordAccumulator<ArincAirportPrimaryExtension> arincAirportExtensions;
+  private final RecordAccumulator<ArincRunway> arincRunways;
+  private final RecordAccumulator<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes;
+  private final RecordAccumulator<ArincNdbNavaid> arincNdbNavaids;
+  private final RecordAccumulator<ArincVhfNavaid> arincVhfNavaids;
+  private final RecordAccumulator<ArincWaypoint> arincWaypoints;
+  private final RecordAccumulator<ArincAirwayLeg> arincAirwayLegs;
+  private final RecordAccumulator<ArincProcedureLeg> arincProcedureLegs;
+  private final RecordAccumulator<ArincGnssLandingSystem> gnssLandingSystems;
+  private final RecordAccumulator<ArincHoldingPattern> arincHoldingPatterns;
+  private final RecordAccumulator<ArincFirUirLeg> arincFirUirLeg;
+  private final RecordAccumulator<ArincHelipad> arincHelipads;
+  private final RecordAccumulator<ArincControlledAirspaceLeg> arincControlledAirspaceLegs;
+  private final RecordAccumulator<ArincRestrictiveAirspaceLeg> arincRestrictiveAirspaceLegs;
+  private final RecordAccumulator<ArincHeaderOne> arincHeaderOnes;
+  private final RecordAccumulator<ArincHeliport> arincHeliports;
 
-  private final MRUDequeConsumer<ArincRecord, DelegatableCollection<?>> consumer;
+  private final Consumer<ArincRecord> consumer;
 
   private ConvertingArincRecordConsumer(Builder builder) {
-    this.arincAirports = new DelegatableCollection<>(builder.airportDelegator, builder.airportConverter);
-    this.arincAirportExtensions = new DelegatableCollection<>(builder.airportContinuationDelegator, builder.airportContinuationConverter);
-    this.arincRunways = new DelegatableCollection<>(builder.runwayDelegator, builder.runwayConverter);
-    this.arincLocalizerGlideSlopes = new DelegatableCollection<>(builder.localizerGlideSlopeDelegator, builder.localizerGlideSlopeConverter);
-    this.arincNdbNavaids = new DelegatableCollection<>(builder.ndbNavaidDelegator, builder.ndbNavaidConverter);
-    this.arincVhfNavaids = new DelegatableCollection<>(builder.vhfNavaidDelegator, builder.vhfNavaidConverter);
-    this.arincWaypoints = new DelegatableCollection<>(builder.waypointDelegator, builder.waypointConverter);
-    this.arincAirwayLegs = new DelegatableCollection<>(builder.airwayDelegator, builder.airwayConverter);
-    this.arincProcedureLegs = new DelegatableCollection<>(builder.procedureDelegator, builder.procedureConverter);
-    this.gnssLandingSystems = new DelegatableCollection<>(builder.gnssLandingSystemDelegator, builder.gnssLandingSystemConverter);
-    this.arincHoldingPatterns = new DelegatableCollection<>(builder.holdingPatternDelegator, builder.holdingPatternConverter);
-    this.arincFirUirLeg = new DelegatableCollection<>(builder.firUirDelegator, builder.firUirConverter);
-    this.arincHelipads = new DelegatableCollection<>(builder.helipadDelegator, builder.helipadConverter);
-    this.arincControlledAirspaceLegs = new DelegatableCollection<>(builder.arincControlledAirspaceLegDelegator, builder.arincControlledAirspaceConverter);
-    this.arincRestrictiveAirspaceLegs = new DelegatableCollection<>(builder.restrictiveAirspaceLegDelegator, builder.restrictiveAirspaceConverter);
-    this.arincHeaderOnes = new DelegatableCollection<>(builder.headerDelegator, builder.headerConverter);
-    this.arincHeliports = new DelegatableCollection<>(builder.heliportDelegator, builder.heliportConverter);
+    this.arincAirports = RecordAccumulator.deduplicating(builder.airportConverter);
+    this.arincAirportExtensions = RecordAccumulator.deduplicating(builder.airportContinuationConverter);
+    this.arincRunways = RecordAccumulator.deduplicating(builder.runwayConverter);
+    this.arincLocalizerGlideSlopes = RecordAccumulator.deduplicating(builder.localizerGlideSlopeConverter);
+    this.arincNdbNavaids = RecordAccumulator.deduplicating(builder.ndbNavaidConverter);
+    this.arincVhfNavaids = RecordAccumulator.deduplicating(builder.vhfNavaidConverter);
+    this.arincWaypoints = RecordAccumulator.deduplicating(builder.waypointConverter);
+    this.arincAirwayLegs = RecordAccumulator.deduplicating(builder.airwayConverter);
+    this.arincProcedureLegs = RecordAccumulator.appendOnly(builder.procedureConverter);
+    this.gnssLandingSystems = RecordAccumulator.deduplicating(builder.gnssLandingSystemConverter);
+    this.arincHoldingPatterns = RecordAccumulator.deduplicating(builder.holdingPatternConverter);
+    this.arincFirUirLeg = RecordAccumulator.deduplicating(builder.firUirConverter);
+    this.arincHelipads = RecordAccumulator.deduplicating(builder.helipadConverter);
+    this.arincControlledAirspaceLegs = RecordAccumulator.deduplicating(builder.arincControlledAirspaceConverter);
+    this.arincRestrictiveAirspaceLegs = RecordAccumulator.deduplicating(builder.restrictiveAirspaceConverter);
+    this.arincHeaderOnes = RecordAccumulator.deduplicating(builder.headerConverter);
+    this.arincHeliports = RecordAccumulator.deduplicating(builder.heliportConverter);
 
-    this.consumer = new MRUDequeConsumer<>(
+    RecordAccumulator<?>[] accumulators = {
         this.arincAirports,
         this.arincAirportExtensions,
         this.arincRunways,
@@ -89,75 +78,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
         this.arincRestrictiveAirspaceLegs,
         this.arincHeaderOnes,
         this.arincHeliports
-    );
-  }
-
-  public Collection<ArincAirport> arincAirports() {
-    return arincAirports.records();
-  }
-
-  public Collection<ArincAirportPrimaryExtension> arincAirportExtensions() {
-    return arincAirportExtensions.records();
-  }
-
-  public Collection<ArincRunway> arincRunways() {
-    return arincRunways.records();
-  }
-
-  public Collection<ArincLocalizerGlideSlope> arincLocalizerGlideSlopes() {
-    return arincLocalizerGlideSlopes.records();
-  }
-
-  public Collection<ArincNdbNavaid> arincNdbNavaids() {
-    return arincNdbNavaids.records();
-  }
-
-  public Collection<ArincVhfNavaid> arincVhfNavaids() {
-    return arincVhfNavaids.records();
-  }
-
-  public Collection<ArincWaypoint> arincWaypoints() {
-    return arincWaypoints.records();
-  }
-
-  public Collection<ArincAirwayLeg> arincAirwayLegs() {
-    return arincAirwayLegs.records();
-  }
-
-  public Collection<ArincProcedureLeg> arincProcedureLegs() {
-    return arincProcedureLegs.records();
-  }
-
-  public Collection<ArincGnssLandingSystem> arincGnssLandingSystems() {
-    return gnssLandingSystems.records();
-  }
-
-  public Collection<ArincHoldingPattern> arincHoldingPatterns() {
-    return arincHoldingPatterns.records();
-  }
-
-  public Collection<ArincFirUirLeg> arincFirUirLegs() {
-    return arincFirUirLeg.records();
-  }
-
-  public Collection<ArincHelipad> arincHelipads() {
-    return arincHelipads.records();
-  }
-
-  public Collection<ArincControlledAirspaceLeg> arincControlledAirspaceLegs() {
-    return arincControlledAirspaceLegs.records();
-  }
-
-  public Collection<ArincRestrictiveAirspaceLeg> arincRestrictiveAirspaceLegs() {
-    return arincRestrictiveAirspaceLegs.records();
-  }
-
-  public Optional<ArincHeaderOne>  arincHeaderOne() {
-    return arincHeaderOnes.records().stream().findFirst();
-  }
-
-  public Collection<ArincHeliport> arincHeliports() {
-    return arincHeliports.records();
+    };
+    this.consumer = new MostRecentlyUsedConverter(accumulators);
   }
 
   @Override
@@ -167,125 +89,118 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
   }
 
   /**
-   * If run on hundreds of thousands of records making the collector apply each delegation predicate can start to take some time
-   * (especially if any of those delegators require partial parses).
-   * <br>
-   * Since the 424 records are <i>typically</i> fairly well sorted by record type, some time can be saved by first checking with
-   * the delegator which matched the previous record.
-   * <br>
-   * Plus the implementation is pretty lightweight.
+   * Returns a separate, immutable snapshot of all converted records. This method does not change the consumer's state: it can
+   * continue accepting records, and a later call returns a new snapshot containing those additions.
+   *
+   * <p>Callers should retain this result and release the consumer after ingestion. That makes the consumer's temporary duplicate
+   * suppression sets eligible for reclamation while preserving encounter order and procedure-leg duplicates in compact lists.
    */
-  private static final class MRUDequeConsumer<T, V extends Predicate<T> & Consumer<T>> implements Consumer<T> {
-
-    private final ArrayDeque<V> predicateDeque;
-
-    @SafeVarargs
-    private MRUDequeConsumer(V... predicates) {
-      this.predicateDeque = new ArrayDeque<>();
-      predicateDeque.addAll(Arrays.asList(predicates));
-    }
-
-    @Override
-    public void accept(T t) {
-      Optional<V> match = predicateDeque.stream().filter(p -> p.test(t)).findFirst();
-      match.ifPresent(m -> {
-        m.accept(t);
-        if (!predicateDeque.getFirst().equals(m)) {
-          predicateDeque.remove(m);
-          predicateDeque.addFirst(m);
-        }
-      });
-    }
+  public ConvertedArincRecords snapshot() {
+    return new ConvertedArincRecords(
+        arincAirports.snapshot(),
+        arincAirportExtensions.snapshot(),
+        arincRunways.snapshot(),
+        arincLocalizerGlideSlopes.snapshot(),
+        arincNdbNavaids.snapshot(),
+        arincVhfNavaids.snapshot(),
+        arincWaypoints.snapshot(),
+        arincAirwayLegs.snapshot(),
+        arincProcedureLegs.snapshot(),
+        gnssLandingSystems.snapshot(),
+        arincHoldingPatterns.snapshot(),
+        arincFirUirLeg.snapshot(),
+        arincHelipads.snapshot(),
+        arincControlledAirspaceLegs.snapshot(),
+        arincRestrictiveAirspaceLegs.snapshot(),
+        arincHeaderOnes.first(),
+        arincHeliports.snapshot()
+    );
   }
 
-  private static final class DelegatableCollection<T> implements Consumer<ArincRecord>, Predicate<ArincRecord> {
+  /**
+   * ARINC records are typically grouped by type, so trying the converter which most recently succeeded avoids scanning all
+   * configured converters for most records.
+   */
+  private static final class MostRecentlyUsedConverter implements Consumer<ArincRecord> {
 
-    private final Predicate<ArincRecord> delegator;
-    private final Function<ArincRecord, Optional<T>> converter;
+    private final RecordAccumulator<?>[] accumulators;
 
-    private final Collection<T> records;
-    private ImmutableCollection<T> snapshot;
-
-    public DelegatableCollection(
-        Predicate<ArincRecord> delegator,
-        Function<ArincRecord, Optional<T>> converter
-    ) {
-      this.delegator = requireNonNull(delegator);
-      this.converter = requireNonNull(converter);
-      this.records = new LinkedHashSet<>();
-    }
-
-    public ImmutableCollection<T> records() {
-      if (snapshot == null) {
-        snapshot = ImmutableList.copyOf(records);
-      }
-      return snapshot;
+    private MostRecentlyUsedConverter(RecordAccumulator<?>[] accumulators) {
+      this.accumulators = accumulators.clone();
     }
 
     @Override
     public void accept(ArincRecord arincRecord) {
-      checkArgument(delegator.test(arincRecord));
-      converter.apply(arincRecord).ifPresent(record -> {
-        if (records.add(record)) {
-          snapshot = null;
+      for (int i = 0; i < accumulators.length; i++) {
+        RecordAccumulator<?> match = accumulators[i];
+        if (match.convertAndAdd(arincRecord)) {
+          if (i > 0) {
+            System.arraycopy(accumulators, 0, accumulators, 1, i);
+            accumulators[0] = match;
+          }
+          return;
         }
-      });
-    }
-
-    @Override
-    public boolean test(ArincRecord arincRecord) {
-      return delegator.test(arincRecord);
+      }
     }
   }
 
-  public static class Builder {
-    private Predicate<ArincRecord> airportDelegator;
+  private static final class RecordAccumulator<T> {
+
+    private final Function<ArincRecord, Optional<T>> converter;
+    private final Collection<T> records;
+
+    private RecordAccumulator(Function<ArincRecord, Optional<T>> converter, Collection<T> records) {
+      this.converter = requireNonNull(converter);
+      this.records = requireNonNull(records);
+    }
+
+    private static <T> RecordAccumulator<T> deduplicating(Function<ArincRecord, Optional<T>> converter) {
+      return new RecordAccumulator<>(converter, new LinkedHashSet<>());
+    }
+
+    private static <T> RecordAccumulator<T> appendOnly(Function<ArincRecord, Optional<T>> converter) {
+      return new RecordAccumulator<>(converter, new ArrayList<>());
+    }
+
+    private List<T> snapshot() {
+      return List.copyOf(records);
+    }
+
+    private Optional<T> first() {
+      return records.isEmpty() ? Optional.empty() : Optional.of(records.iterator().next());
+    }
+
+    private boolean convertAndAdd(ArincRecord arincRecord) {
+      Optional<T> converted = converter.apply(arincRecord);
+      if (converted.isEmpty()) {
+        return false;
+      }
+      records.add(converted.get());
+      return true;
+    }
+  }
+
+  public static final class Builder {
     private Function<ArincRecord, Optional<ArincAirport>> airportConverter;
-    private Predicate<ArincRecord> airportContinuationDelegator;
     private Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> airportContinuationConverter;
-    private Predicate<ArincRecord> airwayDelegator;
     private Function<ArincRecord, Optional<ArincAirwayLeg>> airwayConverter;
-    private Predicate<ArincRecord> localizerGlideSlopeDelegator;
     private Function<ArincRecord, Optional<ArincLocalizerGlideSlope>> localizerGlideSlopeConverter;
-    private Predicate<ArincRecord> ndbNavaidDelegator;
     private Function<ArincRecord, Optional<ArincNdbNavaid>> ndbNavaidConverter;
-    private Predicate<ArincRecord> procedureDelegator;
     private Function<ArincRecord, Optional<ArincProcedureLeg>> procedureConverter;
-    private Predicate<ArincRecord> runwayDelegator;
     private Function<ArincRecord, Optional<ArincRunway>> runwayConverter;
-    private Predicate<ArincRecord> vhfNavaidDelegator;
     private Function<ArincRecord, Optional<ArincVhfNavaid>> vhfNavaidConverter;
-    private Predicate<ArincRecord> waypointDelegator;
     private Function<ArincRecord, Optional<ArincWaypoint>> waypointConverter;
-    private Predicate<ArincRecord> gnssLandingSystemDelegator;
     private Function<ArincRecord, Optional<ArincGnssLandingSystem>> gnssLandingSystemConverter;
-    private Predicate<ArincRecord> holdingPatternDelegator;
     private Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter;
-    private Predicate<ArincRecord> firUirDelegator;
     private Function<ArincRecord, Optional<ArincFirUirLeg>> firUirConverter;
-    private Predicate<ArincRecord> helipadDelegator;
     private Function<ArincRecord, Optional<ArincHelipad>> helipadConverter;
-    private Predicate<ArincRecord> arincControlledAirspaceLegDelegator;
     private Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> arincControlledAirspaceConverter;
-    private Predicate<ArincRecord> restrictiveAirspaceLegDelegator;
     private Function<ArincRecord, Optional<ArincRestrictiveAirspaceLeg>> restrictiveAirspaceConverter;
-    private Predicate<ArincRecord> headerDelegator;
     private Function<ArincRecord, Optional<ArincHeaderOne>> headerConverter;
-    private Predicate<ArincRecord> heliportDelegator;
     private Function<ArincRecord, Optional<ArincHeliport>> heliportConverter;
 
-    public Builder airportContinuationDelegator(Predicate<ArincRecord> airportContinuationDelegator) {
-      this.airportContinuationDelegator = airportContinuationDelegator;
-      return this;
-    }
-
     public Builder airportContinuationConverter(Function<ArincRecord, Optional<ArincAirportPrimaryExtension>> airportContinuationConverter) {
-      this.airportContinuationConverter = airportContinuationConverter;
-      return this;
-    }
-
-    public Builder airportDelegator(Predicate<ArincRecord> airportDelegator) {
-      this.airportDelegator = requireNonNull(airportDelegator);
+      this.airportContinuationConverter = requireNonNull(airportContinuationConverter);
       return this;
     }
 
@@ -294,18 +209,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
       return this;
     }
 
-    public Builder airwayLegDelegator(Predicate<ArincRecord> airwayDelegator) {
-      this.airwayDelegator = requireNonNull(airwayDelegator);
-      return this;
-    }
-
     public Builder airwayLegConverter(Function<ArincRecord, Optional<ArincAirwayLeg>> airwayConverter) {
       this.airwayConverter = requireNonNull(airwayConverter);
-      return this;
-    }
-
-    public Builder localizerGlideSlopeDelegator(Predicate<ArincRecord> localizerGlideSlopeDelegator) {
-      this.localizerGlideSlopeDelegator = requireNonNull(localizerGlideSlopeDelegator);
       return this;
     }
 
@@ -314,18 +219,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
       return this;
     }
 
-    public Builder ndbNavaidDelegator(Predicate<ArincRecord> ndbNavaidDelegator) {
-      this.ndbNavaidDelegator = requireNonNull(ndbNavaidDelegator);
-      return this;
-    }
-
     public Builder ndbNavaidConverter(Function<ArincRecord, Optional<ArincNdbNavaid>> ndbNavaidConverter) {
       this.ndbNavaidConverter = requireNonNull(ndbNavaidConverter);
-      return this;
-    }
-
-    public Builder procedureLegDelegator(Predicate<ArincRecord> procedureDelegator) {
-      this.procedureDelegator = requireNonNull(procedureDelegator);
       return this;
     }
 
@@ -334,18 +229,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
       return this;
     }
 
-    public Builder runwayDelegator(Predicate<ArincRecord> runwayDelegator) {
-      this.runwayDelegator = requireNonNull(runwayDelegator);
-      return this;
-    }
-
     public Builder runwayConverter(Function<ArincRecord, Optional<ArincRunway>> runwayConverter) {
       this.runwayConverter = requireNonNull(runwayConverter);
-      return this;
-    }
-
-    public Builder vhfNavaidDelegator(Predicate<ArincRecord> vhfNavaidDelegator) {
-      this.vhfNavaidDelegator = requireNonNull(vhfNavaidDelegator);
       return this;
     }
 
@@ -354,18 +239,8 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
       return this;
     }
 
-    public Builder waypointDelegator(Predicate<ArincRecord> waypointDelegator) {
-      this.waypointDelegator = requireNonNull(waypointDelegator);
-      return this;
-    }
-
     public Builder waypointConverter(Function<ArincRecord, Optional<ArincWaypoint>> waypointConverter) {
       this.waypointConverter = requireNonNull(waypointConverter);
-      return this;
-    }
-
-    public Builder gnssLandingSystemDelegator(Predicate<ArincRecord> gnssLandingSystemDelegator) {
-      this.gnssLandingSystemDelegator = requireNonNull(gnssLandingSystemDelegator);
       return this;
     }
 
@@ -374,78 +249,44 @@ public final class ConvertingArincRecordConsumer implements Consumer<ArincRecord
       return this;
     }
 
-    public Builder holdingPatternDelegator(Predicate<ArincRecord> holdingPatternDelegator) {
-      this.holdingPatternDelegator = holdingPatternDelegator;
-      return this;
-    }
-
     public Builder holdingPatternConverter(Function<ArincRecord, Optional<ArincHoldingPattern>> holdingPatternConverter) {
-      this.holdingPatternConverter = holdingPatternConverter;
-      return this;
-    }
-
-    public Builder firUirDelegator(Predicate<ArincRecord> firUirDelegator) {
-      this.firUirDelegator = firUirDelegator;
+      this.holdingPatternConverter = requireNonNull(holdingPatternConverter);
       return this;
     }
 
     public Builder firUirConverter(Function<ArincRecord, Optional<ArincFirUirLeg>> firUirConverter) {
-      this.firUirConverter = firUirConverter;
-      return this;
-    }
-
-    public Builder helipadDelegator(Predicate<ArincRecord> helipadDelegator) {
-      this.helipadDelegator = helipadDelegator;
+      this.firUirConverter = requireNonNull(firUirConverter);
       return this;
     }
 
     public Builder helipadConverter(Function<ArincRecord, Optional<ArincHelipad>> helipadConverter) {
-      this.helipadConverter = helipadConverter;
+      this.helipadConverter = requireNonNull(helipadConverter);
       return this;
     }
 
     public Builder arincControlledAirspaceConverter(Function<ArincRecord, Optional<ArincControlledAirspaceLeg>> arincControlledAirspaceConverter) {
-      this.arincControlledAirspaceConverter = arincControlledAirspaceConverter;
-      return this;
-    }
-
-    public Builder arincControlledAirspaceLegDelegator(Predicate<ArincRecord> arincControlledAirspaceLegDelegator) {
-      this.arincControlledAirspaceLegDelegator = arincControlledAirspaceLegDelegator;
-      return this;
-    }
-
-    public Builder restrictiveAirspaceLegDelegator(Predicate<ArincRecord> restrictiveAirspaceLegDelegator) {
-      this.restrictiveAirspaceLegDelegator = restrictiveAirspaceLegDelegator;
+      this.arincControlledAirspaceConverter = requireNonNull(arincControlledAirspaceConverter);
       return this;
     }
 
     public Builder restrictiveAirspaceConverter(Function<ArincRecord, Optional<ArincRestrictiveAirspaceLeg>> restrictiveAirspaceConverter) {
-      this.restrictiveAirspaceConverter = restrictiveAirspaceConverter;
+      this.restrictiveAirspaceConverter = requireNonNull(restrictiveAirspaceConverter);
       return this;
     }
 
     public Builder headerConverter(Function<ArincRecord, Optional<ArincHeaderOne>> headerConverter) {
-      this.headerConverter = headerConverter;
-      return this;
-    }
-
-    public Builder headerDelegator(Predicate<ArincRecord> headerDelegator) {
-      this.headerDelegator = headerDelegator;
-      return this;
-    }
-
-    public Builder heliportDelegator(Predicate<ArincRecord> heliportDelegator) {
-      this.heliportDelegator = heliportDelegator;
+      this.headerConverter = requireNonNull(headerConverter);
       return this;
     }
 
     public Builder heliportConverter(Function<ArincRecord, Optional<ArincHeliport>> heliportConverter) {
-      this.heliportConverter = heliportConverter;
+      this.heliportConverter = requireNonNull(heliportConverter);
       return this;
     }
 
     public ConvertingArincRecordConsumer build() {
       return new ConvertingArincRecordConsumer(this);
     }
+
   }
 }

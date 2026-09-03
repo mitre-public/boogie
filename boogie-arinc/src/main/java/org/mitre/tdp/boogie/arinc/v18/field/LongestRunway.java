@@ -25,7 +25,11 @@ public final class LongestRunway implements FieldSpec<Integer> {
   }
 
   @Override
-  public Optional<Integer> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(ValidArincNumeric.INSTANCE).map(Integer::parseInt).map(i -> i * 100);
+  public Optional<Integer> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(ValidArincNumeric.INSTANCE)
+        .map(Integer::parseInt)
+        .map(i -> i * 100);
   }
 }

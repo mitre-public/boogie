@@ -72,7 +72,9 @@ public enum RestrictiveType implements FieldSpec<RestrictiveType> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<RestrictiveType> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(VALID::contains).map(RestrictiveType::valueOf);
+  public Optional<RestrictiveType> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(RestrictiveType::valueOf);
   }
 }

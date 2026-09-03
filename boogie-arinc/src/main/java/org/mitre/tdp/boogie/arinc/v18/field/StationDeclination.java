@@ -1,14 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static org.mitre.tdp.boogie.util.CoordinateParser.sign;
-
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
-import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
-
-import com.google.common.collect.ImmutableSet;
+import org.mitre.tdp.boogie.arinc.EastWestVariation;
 
 /**
  * For VHF NAVAIDS, the “Station Declination” field contains the angular difference between true north and the zero degree radial of
@@ -26,7 +18,7 @@ import com.google.common.collect.ImmutableSet;
  * <br>
  * e.g. E0072, E0000, T0000, G0000
  */
-public final class StationDeclination implements FieldSpec<Double> {
+public final class StationDeclination extends EastWestVariation {
 
   @Override
   public int fieldLength() {
@@ -38,17 +30,4 @@ public final class StationDeclination implements FieldSpec<Double> {
     return "5.66";
   }
 
-  private static final ImmutableSet<String> allowedModifiers = ImmutableSet.of("E", "W", "T", "G");
-
-  @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        .filter(s -> s.length() == 5)
-        .filter(s -> allowedModifiers.contains(s.substring(0, 1)))
-        .filter(s -> ValidArincNumeric.INSTANCE.test(s.substring(1)))
-        // drop T/G because they're annoying and uncommon
-        .filter(s -> s.substring(0, 1).matches("E|W"))
-        .flatMap(s -> ArincDecimalParser.INSTANCE.parseDoubleWithTenths(s.substring(1)).map(value -> sign(s.substring(0, 1)) * value));
-  }
 }

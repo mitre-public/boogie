@@ -1,14 +1,7 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.util.Partitioners;
@@ -16,20 +9,27 @@ import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.TestArincFileParser;
+import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
+import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.ArincVersion;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestAirwayAssembler {
-  private static ShouldSplitAirway shouldSplit = ShouldSplitAirway.INSTANCE;
+  private static final ShouldSplitAirway shouldSplit = ShouldSplitAirway.INSTANCE;
 
   /**
    * This file contains all the airway legs for J121 + T222 plus any record which mentions any of the associated fixes or recommended
@@ -42,20 +42,22 @@ class TestAirwayAssembler {
   @BeforeAll
   static void setup() {
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
-    recordParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
+    ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
+    recordParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(consumer);
+    ConvertedArincRecords testV18Records = consumer.snapshot();
 
     ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
-        testV18Consumer.arincNdbNavaids(),
-        testV18Consumer.arincVhfNavaids(),
-        testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincAirports(),
-        testV18Consumer.arincHoldingPatterns(),
-        testV18Consumer.arincHeliports()
+        testV18Records.arincNdbNavaids(),
+        testV18Records.arincVhfNavaids(),
+        testV18Records.arincWaypoints(),
+        testV18Records.arincAirports(),
+        testV18Records.arincHoldingPatterns(),
+        testV18Records.arincHeliports()
     );
 
     AirwayAssembler<Airway> assembler = AirwayAssembler.standard(arincFixDatabase);
 
-    airwayMap = assembler.assemble(testV18Consumer.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
+    airwayMap = assembler.assemble(testV18Records.arincAirwayLegs()).collect(ArrayListMultimap::create, (m, i) -> m.put(i.airwayIdentifier(), i), Multimap::putAll);
   }
 
   @Test
@@ -82,7 +84,7 @@ class TestAirwayAssembler {
 
   @Test
   void testSorting() {
-    List<ArincAirwayLeg> sorted = AirwayMocks.legs().stream().sorted(new ArincAirwayLegComparator()).collect(Collectors.toList());
+    List<ArincAirwayLeg> sorted = AirwayMocks.legs().stream().sorted(new ArincAirwayLegComparator()).toList();
     assertEquals("first|second|third|fourth|fifth|sixth|seventh", sorted.stream().map(ArincAirwayLeg::fixIdentifier).collect(Collectors.joining("|")));
   }
 
@@ -104,6 +106,4 @@ class TestAirwayAssembler {
   }
 
   private static final TestArincFileParser recordParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V19.specs()));
-
-  private static final ConvertingArincRecordConsumer testV18Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
 }

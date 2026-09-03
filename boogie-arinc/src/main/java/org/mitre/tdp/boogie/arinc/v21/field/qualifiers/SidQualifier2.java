@@ -69,7 +69,9 @@ public enum SidQualifier2 implements FieldSpec<SidQualifier2> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<SidQualifier2> apply(String s) {
-    return Optional.of(s).filter(VALID::contains).map(SidQualifier2::valueOf);
+  public Optional<SidQualifier2> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(SidQualifier2::valueOf);
   }
 }

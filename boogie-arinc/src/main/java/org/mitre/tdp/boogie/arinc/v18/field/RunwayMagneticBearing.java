@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * The magnetic bearing of the runway identified in the “runway identifier” field of the record is specified in the “Runway Magnetic Bearing” field.
@@ -15,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * <br>
  * e.g. 1800, 2302, 0605, 347T
  */
-public final class RunwayMagneticBearing implements FieldSpec<Double> {
+public final class RunwayMagneticBearing extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -28,10 +25,7 @@ public final class RunwayMagneticBearing implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        .filter(s -> !s.endsWith("T"))
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

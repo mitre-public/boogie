@@ -1,7 +1,5 @@
 package org.mitre.tdp.boogie.arinc.utils;
 
-import static java.util.Objects.isNull;
-
 import java.util.function.Predicate;
 
 /**
@@ -10,7 +8,7 @@ import java.util.function.Predicate;
  * primary record.
  * Primary records have either a "0" or a "1" for this value.
  */
-public class PrimaryRecord implements Predicate<String> {
+public final class PrimaryRecord implements Predicate<String> {
   public static final PrimaryRecord INSTANCE = new PrimaryRecord();
 
   private PrimaryRecord() {
@@ -26,5 +24,15 @@ public class PrimaryRecord implements Predicate<String> {
   @Override
   public boolean test(String continuationNumber) {
     return "0".equals(continuationNumber) || "1".equals(continuationNumber);
+  }
+
+  /**
+   * Tests a continuation number directly from a record without allocating a one-character string.
+   *
+   * @param continuationNumber the character found in the record's continuation number field
+   * @return true if it identifies a primary record
+   */
+  public boolean test(char continuationNumber) {
+    return continuationNumber == '0' || continuationNumber == '1';
   }
 }

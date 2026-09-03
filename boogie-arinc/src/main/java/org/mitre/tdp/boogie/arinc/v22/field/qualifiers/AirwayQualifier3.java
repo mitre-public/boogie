@@ -86,7 +86,9 @@ public enum AirwayQualifier3 implements FieldSpec<AirwayQualifier3> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<AirwayQualifier3> apply(String s) {
-    return Optional.of(s).filter(VALID::contains).map(AirwayQualifier3::valueOf);
+  public Optional<AirwayQualifier3> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains)
+        .map(AirwayQualifier3::valueOf);
   }
 }

@@ -28,7 +28,9 @@ public final class PathTerm implements FieldSpec<PathTerminator> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<PathTerminator> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(allowedPathTerms::contains).map(PathTerminator::valueOf);
+  public Optional<PathTerminator> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(allowedPathTerms::contains)
+        .map(PathTerminator::valueOf);
   }
 }

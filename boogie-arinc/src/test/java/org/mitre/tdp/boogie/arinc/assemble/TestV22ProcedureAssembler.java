@@ -1,63 +1,63 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.File;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
+import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+
+import java.io.File;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestV22ProcedureAssembler {
   private static final File arincTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/kbos-supp22.txt"));
   private static final File gqnoFile = new File(System.getProperty("user.dir").concat("/src/test/resources/gqno-and-friends.txt"));
   private static final File arincTestFile2 = new File(System.getProperty("user.dir").concat("/src/test/resources/kjra_9vak5-and-friends"));
 
-  private static ArincTerminalAreaDatabase arincTerminalAreaDatabase;
-  private static ArincFixDatabase arincFixDatabase;
-
   private static ProcedureAssembler<Procedure> assembler;
 
-  private static final ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
+  private static ConvertedArincRecords records;
   private static final TestArincFileParser fileParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V22.specs()));
 
   @BeforeAll
   static void setup() {
+    ConvertingArincRecordConsumer consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22);
     fileParser.parseAll(arincTestFile).forEach(consumer);
     fileParser.parseAll(gqnoFile).forEach(consumer);
     fileParser.parseAll(arincTestFile2).forEach(consumer);
+    records = consumer.snapshot();
 
-    arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
-        consumer.arincAirports(),
-        consumer.arincRunways(),
-        consumer.arincLocalizerGlideSlopes(),
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
-        consumer.arincWaypoints(),
-        consumer.arincProcedureLegs(),
-        consumer.arincGnssLandingSystems(),
-        consumer.arincHelipads(),
-        consumer.arincHeliports()
+    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
+        records.arincAirports(),
+        records.arincRunways(),
+        records.arincLocalizerGlideSlopes(),
+        records.arincNdbNavaids(),
+        records.arincVhfNavaids(),
+        records.arincWaypoints(),
+        records.arincProcedureLegs(),
+        records.arincGnssLandingSystems(),
+        records.arincHelipads(),
+        records.arincHeliports()
     );
 
-    arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
-        consumer.arincWaypoints(),
-        consumer.arincAirports(),
-        consumer.arincHoldingPatterns(),
-        consumer.arincHeliports()
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
+        records.arincNdbNavaids(),
+        records.arincVhfNavaids(),
+        records.arincWaypoints(),
+        records.arincAirports(),
+        records.arincHoldingPatterns(),
+        records.arincHeliports()
     );
 
     assembler = ProcedureAssembler.standard(arincTerminalAreaDatabase, arincFixDatabase);
@@ -65,7 +65,7 @@ public class TestV22ProcedureAssembler {
 
   @Test
   void testSidStarApproach() {
-    List<Procedure> procedures = assembler.assemble(consumer.arincProcedureLegs()).toList();
+    List<Procedure> procedures = assembler.assemble(records.arincProcedureLegs()).toList();
     Procedure blzzr6 = procedures.stream().filter(i -> i.procedureIdentifier().equals("BLZZR6")).findFirst().orElseThrow();
     Procedure jfund2 = procedures.stream().filter(i -> i.procedureIdentifier().equals("JFUND2")).findFirst().orElseThrow();
     Procedure r32 = procedures.stream().filter(i -> i.procedureIdentifier().equals("R32")).findFirst().orElseThrow();
@@ -86,8 +86,9 @@ public class TestV22ProcedureAssembler {
         () -> assertEquals(RequiredNavigationEquipage.RNP, r210.requiredNavigationEquipage()),
         () -> assertEquals(4, r210.transitions().size()),
         () -> assertEquals(6, r33lx.transitions().size()),
-        () -> assertEquals(5, r33lx.transitions().stream().filter(i -> i.transitionIdentifier().get().equals("ALL")).findFirst().get().legs().size()),
+        () -> assertEquals(5, r33lx.transitions().stream().filter(i -> i.transitionIdentifier().orElseThrow().equals("ALL")).findFirst().orElseThrow().legs().size()),
         () -> assertEquals(2L, d34y.transitions().stream().filter(i -> i.transitionIdentifier().filter(t -> t.equals("OT")).isPresent()).count(), "yeah there are now 1000's of cases where the transition ident is not unique now")
     );
   }
+
 }

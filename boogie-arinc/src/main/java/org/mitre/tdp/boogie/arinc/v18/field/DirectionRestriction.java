@@ -33,7 +33,8 @@ public final class DirectionRestriction implements FieldSpec<String> {
   private static final HashSet<String> allowedValues = newHashSet(" ", "F", "B");
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(allowedValues::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(allowedValues::contains);
   }
 }

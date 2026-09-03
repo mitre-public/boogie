@@ -19,7 +19,10 @@ public enum HeaderIdent implements FieldSpec<HeaderIdent> {
   }
 
   @Override
-  public Optional<HeaderIdent> apply(String s) {
-    return Optional.of(s).filter(i -> i.equals("HDR")).map(HeaderIdent::valueOf);
+  public Optional<HeaderIdent> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source)
+        .map(s -> s.substring(startOffset, endOffset))
+        .filter(i -> i.equals("HDR"))
+        .map(HeaderIdent::valueOf);
   }
 }

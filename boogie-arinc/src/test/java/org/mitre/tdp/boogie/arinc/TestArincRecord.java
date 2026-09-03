@@ -1,25 +1,24 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.arinc.v18.field.AltitudeLimit;
 import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestArincRecord {
 
   @Test
   void testSpecRetrievalForField() {
     AltitudeLimit altitudeLimit = new AltitudeLimit();
-
-    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", new ArincField(altitudeLimit, "")));
+    ArincRecord record = record(
+        " ".repeat(altitudeLimit.fieldLength()),
+        new RecordField<>("altitudeLimit", altitudeLimit)
+    );
 
     Optional<AltitudeLimit> limitSpec = record.specForField("altitudeLimit");
     AltitudeLimit actual = limitSpec.orElseThrow(AssertionError::new);
@@ -30,19 +29,15 @@ class TestArincRecord {
   @Test
   void testRawFieldValueRetrieval() {
     AltitudeLimit altitudeLimit = new AltitudeLimit();
-
-    ArincRecord record = new ArincRecord(ImmutableMap.of("altitudeLimit", new ArincField(altitudeLimit, "ALTITUDELIMIT")));
+    ArincRecord record = record("180600", new RecordField<>("altitudeLimit", altitudeLimit));
 
     String actual = record.rawField("altitudeLimit");
-    assertEquals("ALTITUDELIMIT", actual, "Raw field should be the inserted value.");
+    assertEquals("180600", actual, "Raw field should be the inserted value.");
   }
 
   @Test
   void testOptionalFieldValueRetrieval() {
-    ArincRecord record = new ArincRecord(ImmutableMap.of(
-        "altitudeLimit", new ArincField(new AltitudeLimit(), "180600"),
-        "speedLimit", new ArincField(new SpeedLimit(), ""))
-    );
+    ArincRecord record = recordWithAltitudeAndSpeedLimit();
 
     assertAll(
         () -> assertEquals(Optional.of(Pair.of(18000., 60000.)), record.optionalField("altitudeLimit")),
@@ -52,14 +47,38 @@ class TestArincRecord {
 
   @Test
   void testRequiredFieldValueRetrieval() {
-    ArincRecord record = new ArincRecord(ImmutableMap.of(
-        "altitudeLimit", new ArincField(new AltitudeLimit(), "180600"),
-        "speedLimit", new ArincField(new SpeedLimit(), ""))
-    );
+    ArincRecord record = recordWithAltitudeAndSpeedLimit();
 
     assertAll(
         () -> assertEquals(Pair.of(18000., 60000.), record.requiredField("altitudeLimit")),
         () -> assertThrows(MissingRequiredFieldException.class, () -> record.requiredField("speedLimit"))
     );
+  }
+
+  private static ArincRecord recordWithAltitudeAndSpeedLimit() {
+    AltitudeLimit altitudeLimit = new AltitudeLimit();
+    SpeedLimit speedLimit = new SpeedLimit();
+    return record(
+        "180600".concat(" ".repeat(speedLimit.fieldLength())),
+        new RecordField<>("altitudeLimit", altitudeLimit),
+        new RecordField<>("speedLimit", speedLimit)
+    );
+  }
+
+  private static ArincRecord record(String rawRecord, RecordField<?>... recordFields) {
+    List<RecordField<?>> fields = List.of(recordFields);
+    RecordSpec recordSpec = new RecordSpec(List.of(RecordDiscriminator.prefix(rawRecord))) {
+      @Override
+      public int recordLength() {
+        return fields.stream().map(RecordField::fieldSpec).mapToInt(FieldSpec::fieldLength).sum();
+      }
+
+      @Override
+      public List<RecordField<?>> recordFields() {
+        return fields;
+      }
+    };
+
+    return ArincRecordParser.standard(recordSpec).parse(rawRecord).orElseThrow();
   }
 }

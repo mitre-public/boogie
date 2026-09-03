@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.v21;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,34 @@ public class TestHelipadSpec {
   static HelipadConverter converter = new HelipadConverter();
   static String PAD_1 = "SCANP CYAWCYH16H     0R03500112 N44382665W063302420HASPH   U     00144                                                     194742409";
   static String PAD_2 = "SCANP CYAWCYH34H     0R03500112 N44380091W063295190HASPH   U     00144                                                     194752409";
+
+  @Test
+  void matchesOnlyPrimaryHelipadSectionAndSubsectionPairs() {
+    HelipadSpec spec = new HelipadSpec();
+
+    assertAll(
+        () -> assertTrue(spec.matchesRecord(recordWithSectionAndSubsection('P', 'H'))),
+        () -> assertTrue(spec.matchesRecord(recordWithSectionAndSubsection('H', 'H'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionSubsectionAndContinuation('P', 'H', '2'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionSubsectionAndContinuation('H', 'H', 'A'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('P', 'A'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('H', 'A'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('A', 'H'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('p', 'H'))),
+        () -> assertFalse(spec.matchesRecord(recordWithSectionAndSubsection('P', 'h')))
+    );
+  }
+
+  @Test
+  void matcherRejectsMalformedInputsConsistently() {
+    HelipadSpec spec = new HelipadSpec();
+
+    assertAll(
+        () -> assertThrows(NullPointerException.class, () -> spec.matchesRecord(null)),
+        () -> assertFalse(spec.matchesRecord("")),
+        () -> assertFalse(spec.matchesRecord(" ".repeat(12)))
+    );
+  }
 
   @Test
   public void testParse() {
@@ -73,5 +102,21 @@ public class TestHelipadSpec {
         () -> assertEquals("2409", helipad.cycle()),
         () -> assertEquals(helipad, rebuilt)
     );
+  }
+
+  private static String recordWithSectionAndSubsection(char section, char subsection) {
+    return recordWithSectionSubsectionAndContinuation(section, subsection, '0');
+  }
+
+  private static String recordWithSectionSubsectionAndContinuation(
+      char section,
+      char subsection,
+      char continuationRecordNumber
+  ) {
+    StringBuilder record = new StringBuilder(PAD_1);
+    record.setCharAt(4, section);
+    record.setCharAt(12, subsection);
+    record.setCharAt(21, continuationRecordNumber);
+    return record.toString();
   }
 }

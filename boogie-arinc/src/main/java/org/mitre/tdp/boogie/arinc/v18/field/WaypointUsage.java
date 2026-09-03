@@ -33,8 +33,8 @@ public final class WaypointUsage implements FieldSpec<String> {
   private static final ImmutableSet<String> allowedColumn2 = ImmutableSet.of("B", "H", "L", " ");
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue)
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
         .filter(s -> s.length() == 2)
         .filter(s -> s.startsWith("R") || s.startsWith(" "))
         .filter(s -> allowedColumn2.contains(s.substring(1)));

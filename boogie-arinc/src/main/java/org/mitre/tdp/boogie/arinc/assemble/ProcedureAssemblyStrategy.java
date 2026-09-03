@@ -18,6 +18,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
+import org.mitre.tdp.boogie.util.StandardizedTransitionName;
 
 /**
  * Strategy class for generating used-defined records from 424 procedure information. Used with {@link ProcedureAssembler}.
@@ -118,7 +119,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
       String identifier = TransitionType.MISSED.equals(transitionType)
           ? "MISSED"
-          : org.mitre.tdp.boogie.util.StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null));
+          : StandardizedTransitionName.INSTANCE.apply(representative.transitionIdentifier().orElse(null));
 
       Set<CategoryOrType> categoryOrType = representative.categoryOrType().map(CategoryOrTypeClassifier.INSTANCE).orElse(DEFAULT);
 

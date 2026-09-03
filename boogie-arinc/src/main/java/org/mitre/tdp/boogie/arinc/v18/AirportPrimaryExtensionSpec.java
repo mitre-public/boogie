@@ -1,18 +1,22 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
-public final class AirportPrimaryExtensionSpec implements RecordSpec {
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.continuationColumn13;
+
+public final class AirportPrimaryExtensionSpec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(continuationColumn13('P', 'A', 21, 'E'));
+
   private final List<RecordField<?>> recordFields;
 
   public AirportPrimaryExtensionSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = Arrays.asList(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -42,8 +46,4 @@ public final class AirportPrimaryExtensionSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'A' && PrimaryRecord.INSTANCE.negate().test(arincRecord.substring(21, 22)) && arincRecord.charAt(22) == 'E';
-  }
 }

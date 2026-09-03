@@ -31,7 +31,10 @@ public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator> {
   static final Set<String> enumValues = Arrays.stream(MagneticTrueIndicator.values()).filter(e -> !SPEC.equals(e)).map(Enum::name).collect(Collectors.toSet());
 
   @Override
-  public Optional<MagneticTrueIndicator> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(enumValues::contains).map(MagneticTrueIndicator::valueOf);
+  public Optional<MagneticTrueIndicator> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(enumValues::contains)
+        .map(MagneticTrueIndicator::valueOf);
   }
 }

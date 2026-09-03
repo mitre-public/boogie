@@ -1,32 +1,24 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.List;
-
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.CreationDate;
-import org.mitre.tdp.boogie.arinc.v18.field.CreationTime;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.DataSupplierIdent;
-import org.mitre.tdp.boogie.arinc.v18.field.DatabasePartNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.FileCrc;
-import org.mitre.tdp.boogie.arinc.v18.field.FileName;
-import org.mitre.tdp.boogie.arinc.v18.field.HeaderIdent;
-import org.mitre.tdp.boogie.arinc.v18.field.HeaderNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.ProductionTestFlag;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordCount;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordLength;
-import org.mitre.tdp.boogie.arinc.v18.field.TargetCustomerIdent;
-import org.mitre.tdp.boogie.arinc.v18.field.VersionNumber;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
+
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.prefix;
 
 /**
  * The header records contain information to uniquely identify each data file.
  */
-public final class Header01Spec implements RecordSpec {
+public final class Header01Spec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(prefix("HDR01"));
+
   private final List<RecordField<?>> recordFields;
 
   public Header01Spec() {
+    super(DISCRIMINATORS);
     this.recordFields = List.of(
         new RecordField<>(HeaderIdent.SPEC),
         new RecordField<>(new HeaderNumber()),
@@ -58,8 +50,4 @@ public final class Header01Spec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.startsWith("HDR01");
-  }
 }

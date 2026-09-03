@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * The “ARC Radius” field is used to define the radius of a precision turn. In Terminal Procedures, this is the “Constant Radius
@@ -11,7 +8,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * RNP Holding. The ARC Radius field is also used to specify the turn radius of RNP holding patterns included in SID, STAR, and
  * Approach Records as HA, HF, and HM legs.
  */
-public final class ArcRadius implements FieldSpec<Double> {
+public final class ArcRadius extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -24,8 +21,7 @@ public final class ArcRadius implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim)
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithThousandths);
+  protected int suppressedDecimalPlaces() {
+    return 3;
   }
 }

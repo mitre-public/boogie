@@ -25,12 +25,8 @@ public final class BlankSpec implements FieldSpec<Void> {
     throw new UnsupportedOperationException("Cannot get field code for empty field.");
   }
 
-  public static BlankSpec ofLength(int fieldLength) {
-    return new BlankSpec(fieldLength);
-  }
-
   @Override
-  public Optional<Void> apply(String s) {
+  public Optional<Void> parse(String source, int startOffset, int endOffset) {
     throw new UnsupportedOperationException("Cannot apply blank spec for field parsing.");
   }
 }

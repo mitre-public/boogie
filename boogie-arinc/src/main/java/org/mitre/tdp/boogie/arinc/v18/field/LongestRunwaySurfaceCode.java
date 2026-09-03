@@ -43,7 +43,10 @@ public enum LongestRunwaySurfaceCode implements FieldSpec<LongestRunwaySurfaceCo
   }
 
   @Override
-  public Optional<LongestRunwaySurfaceCode> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(VALID::contains).map(LongestRunwaySurfaceCode::valueOf);
+  public Optional<LongestRunwaySurfaceCode> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(VALID::contains)
+        .map(LongestRunwaySurfaceCode::valueOf);
   }
 }

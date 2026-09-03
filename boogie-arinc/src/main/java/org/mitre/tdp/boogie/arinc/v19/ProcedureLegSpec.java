@@ -1,57 +1,32 @@
 package org.mitre.tdp.boogie.arinc.v19;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.ArcRadius;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.CenterFix;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.FixIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.MinimumAltitude;
-import org.mitre.tdp.boogie.arinc.v18.field.OutboundMagneticCourse;
-import org.mitre.tdp.boogie.arinc.v18.field.PathTerm;
-import org.mitre.tdp.boogie.arinc.v18.field.RecommendedNavaid;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.Rho;
-import org.mitre.tdp.boogie.arinc.v18.field.Rnp;
-import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
-import org.mitre.tdp.boogie.arinc.v18.field.RouteType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.SidStarIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
-import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimitDescription;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Theta;
-import org.mitre.tdp.boogie.arinc.v18.field.TransitionAltitude;
-import org.mitre.tdp.boogie.arinc.v18.field.TransitionIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.TurnDirection;
-import org.mitre.tdp.boogie.arinc.v18.field.TurnDirectionValid;
-import org.mitre.tdp.boogie.arinc.v18.field.VerticalAngle;
-import org.mitre.tdp.boogie.arinc.v18.field.WaypointDescription;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v19.field.AltitudeDescription;
 import org.mitre.tdp.boogie.arinc.v19.field.RouteTypeQualifier;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
-public final class ProcedureLegSpec implements RecordSpec {
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
 
-  private static final Predicate<String> airportRecords = arincRecord -> (Stream.of("PD", "PE", "PF").anyMatch(ss -> arincRecord.regionMatches(4, ss, 0, 1) && arincRecord.regionMatches(12, ss, 1, 1)));
-  private static final Predicate<String> heliportRecords = arincRecord -> (Stream.of("HD", "HE", "HF").anyMatch(ss -> arincRecord.regionMatches(4, ss, 0, 1) && arincRecord.regionMatches(12, ss, 1, 1)));
+public final class ProcedureLegSpec extends RecordSpec {
+
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
+      primaryColumn13('P', 'D', 38),
+      primaryColumn13('P', 'E', 38),
+      primaryColumn13('P', 'F', 38),
+      primaryColumn13('H', 'D', 38),
+      primaryColumn13('H', 'E', 38),
+      primaryColumn13('H', 'F', 38)
+  );
 
   private final List<RecordField<?>> recordFields;
 
   public ProcedureLegSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -117,8 +92,4 @@ public final class ProcedureLegSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return airportRecords.or(heliportRecords).test(arincRecord) && PrimaryRecord.INSTANCE.test(arincRecord.substring(38, 39));
-  }
 }

@@ -1,75 +1,37 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static java.util.Objects.requireNonNull;
-import static org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory.consumerForVersion;
+import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.arinc.assemble.*;
+import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airspace;
-import org.mitre.tdp.boogie.AirspaceSequence;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Helipad;
-import org.mitre.tdp.boogie.Heliport;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.Runway;
-import org.mitre.tdp.boogie.Transition;
-import org.mitre.tdp.boogie.arinc.assemble.AirportAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.AirportAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.AirwayAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.AirwayAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.ControlledAirspaceAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.ControlledAirspaceAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.RestrictiveAirspaceAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.RestrictiveAirspaceAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.FirUirAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.FirUirAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.FixAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.FixAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.HeliportAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.HeliportAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssembler;
-import org.mitre.tdp.boogie.arinc.assemble.ProcedureAssemblyStrategy;
-import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
-import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
-import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
-import org.mitre.tdp.boogie.arinc.model.ArincAirport;
-import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincHeaderOne;
-import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
-import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
-import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.Header01Spec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Objects.requireNonNull;
+import static org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory.consumerForVersion;
 
 /**
  * Oneshot implementation of a parser going from an {@link InputStream} (typically sourced from a file) to a collection of client
  * defined records of the given types.
  *
- * <p>I heard you like generics. All jokes aside - don't assign this class to a variable in your application unless you linewidth
+ * <p>I heard you like generics. All jokes aside - don't assign this class to a variable in your application unless your line-width
  * limit is {@code >300} characters. Please use this in an inline call if you value your eyesight.
  */
 public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> {
 
   private static final Logger LOG = LoggerFactory.getLogger(OneshotRecordParser.class);
+
+  private static final int READER_BUFFER_SIZE = 64 * 1024;
 
   private final ArincVersion version;
 
@@ -89,13 +51,13 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
   private final RestrictiveAirspaceAssemblyStrategy<AIR, ASEQ> restrictiveAirspaceStrategy;
 
-  private final HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy;
+  private final HeliportAssemblyStrategy<HPT, RWY, HLPD> heliportStrategy;
 
   private OneshotRecordParser(Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> builder) {
     this.version = requireNonNull(builder.version);
     this.keepRecord = requireNonNull(builder.keepRecord);
     this.airportStrategy = requireNonNull(builder.airportStrategy);
-    this.fixStrategy = FixAssemblyStrategy.caching(builder.fixStrategy);
+    this.fixStrategy = requireNonNull(builder.fixStrategy);
     this.airwayStrategy = requireNonNull(builder.airwayStrategy);
     this.procedureStrategy = requireNonNull(builder.procedureStrategy);
     this.firUirStrategy = requireNonNull(builder.firUirStrategy);
@@ -139,16 +101,9 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     requireNonNull(inputStream);
 
     ClientRecords.Builder<APT, FIX, AWY, PRC, AIR, HPT> records = new ClientRecords.Builder<>();
-
-    ArincRecordParser parser = ArincRecordParser.standard(version.specs());
-    ConvertingArincRecordConsumer consumer = consumerForVersion(version);
-
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-      reader.lines()
-          .map(parser::parse)
-          .flatMap(Optional::stream)
-          .filter(keepRecord)
-          .forEach(consumer);
+    ConvertedArincRecords convertedRecords;
+    try {
+      convertedRecords = convertRecords(inputStream);
     } catch (IOException e) {
       LOG.error("Could not parse the arinc text into memory", e);
       return records.build();
@@ -156,65 +111,82 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     LOG.debug("Finished parsing and converting supported record types.");
 
-    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newFixDatabase(
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
-        consumer.arincWaypoints(),
-        consumer.arincAirports(),
-        consumer.arincHoldingPatterns(),
-        consumer.arincHeliports()
+    ArincFixDatabase arincFixDatabase = ArincDatabaseFactory.newOneShotFixDatabase(
+        convertedRecords.arincNdbNavaids(),
+        convertedRecords.arincVhfNavaids(),
+        convertedRecords.arincWaypoints(),
+        convertedRecords.arincAirports(),
+        convertedRecords.arincHeliports()
     );
     LOG.debug("Finished instantiation of FixDatabase.");
 
-    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newTerminalAreaDatabase(
-        consumer.arincAirports(),
-        consumer.arincRunways(),
-        consumer.arincLocalizerGlideSlopes(),
-        consumer.arincNdbNavaids(),
-        consumer.arincVhfNavaids(),
-        consumer.arincWaypoints(),
-        consumer.arincProcedureLegs(),
-        consumer.arincGnssLandingSystems(),
-        consumer.arincHelipads(),
-        consumer.arincHeliports()
+    ArincTerminalAreaDatabase arincTerminalAreaDatabase = ArincDatabaseFactory.newOneShotTerminalAreaDatabase(
+        convertedRecords.arincAirports(),
+        convertedRecords.arincRunways(),
+        convertedRecords.arincLocalizerGlideSlopes(),
+        convertedRecords.arincWaypoints(),
+        convertedRecords.arincGnssLandingSystems(),
+        convertedRecords.arincHelipads(),
+        convertedRecords.arincHeliports()
     );
     LOG.debug("Finished instantiation of TerminalAreaDatabase.");
 
+    FixAssemblyStrategy<FIX> identityFixStrategy = FixAssemblyStrategy.identityCaching(fixStrategy);
+
     return records
-        .addAirports(assembleAirports(arincTerminalAreaDatabase, consumer.arincAirports()))
-        .addFixes(assembleFixes(consumer.arincWaypoints(), consumer.arincNdbNavaids(), consumer.arincVhfNavaids()))
-        .addAirways(assembleAirways(arincFixDatabase, consumer.arincAirwayLegs()))
-        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, consumer.arincProcedureLegs()))
-        .addFirUirs(assembleFirUirs(consumer.arincFirUirLegs()))
-        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, consumer.arincControlledAirspaceLegs()))
-        .addRestrictiveAirspaces(assembleRestrictiveAirspaces(consumer.arincRestrictiveAirspaceLegs()))
-        .headerOne(consumer.arincHeaderOne().orElse(null))
-        .addHeliport(assembleHeliports(arincTerminalAreaDatabase, consumer.arincHeliports()))
+        .addAirports(assembleAirports(arincTerminalAreaDatabase, convertedRecords.arincAirports()))
+        .addFixes(assembleFixes(identityFixStrategy, convertedRecords.arincWaypoints(), convertedRecords.arincNdbNavaids(), convertedRecords.arincVhfNavaids()))
+        .addAirways(assembleAirways(arincFixDatabase, identityFixStrategy, convertedRecords.arincAirwayLegs()))
+        .addProcedures(assembleProcedures(arincFixDatabase, arincTerminalAreaDatabase, identityFixStrategy, convertedRecords.arincProcedureLegs()))
+        .addFirUirs(assembleFirUirs(convertedRecords.arincFirUirLegs()))
+        .addControlledAirspaces(assembleControlledAirspaces(arincFixDatabase, identityFixStrategy, convertedRecords.arincControlledAirspaceLegs()))
+        .addRestrictiveAirspaces(assembleRestrictiveAirspaces(convertedRecords.arincRestrictiveAirspaceLegs()))
+        .headerOne(convertedRecords.arincHeaderOne().orElse(null))
+        .addHeliport(assembleHeliports(arincTerminalAreaDatabase, convertedRecords.arincHeliports()))
         .build();
   }
 
-  private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase,
-                                             Collection<ArincProcedureLeg> procedureLegs) {
+  private ConvertedArincRecords convertRecords(InputStream inputStream) throws IOException {
+    ArincRecordParser parser = ArincRecordParser.standard(version.specs());
+    ConvertingArincRecordConsumer consumer = consumerForVersion(version);
 
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII), READER_BUFFER_SIZE)) {
+      String rawRecord;
+      //switched to while for performance optimization
+      while ((rawRecord = reader.readLine()) != null) {
+        Optional<ArincRecord> parsedRecord = parser.parse(rawRecord);
+        ArincRecord record = parsedRecord.orElse(null);
+        if (record != null && keepRecord.test(record)) {
+          consumer.accept(record);
+        }
+      }
+    }
+
+    return consumer.snapshot();
+  }
+
+  private Collection<PRC> assembleProcedures(ArincFixDatabase arincFixDatabase, ArincTerminalAreaDatabase arincTerminalAreaDatabase, FixAssemblyStrategy<FIX> identityFixStrategy, Collection<ArincProcedureLeg> procedureLegs) {
     ProcedureAssembler<PRC> assembler = ProcedureAssembler.withStrategy(
         arincTerminalAreaDatabase,
         arincFixDatabase,
-        fixStrategy,
+        identityFixStrategy,
         procedureStrategy
     );
 
     return assembler.assemble(procedureLegs).toList();
   }
 
-  private Collection<AWY> assembleAirways(ArincFixDatabase arincFixDatabase, Collection<ArincAirwayLeg> airwayLeg) {
-    AirwayAssembler<AWY> assembler = AirwayAssembler.usingStrategy(arincFixDatabase, fixStrategy, airwayStrategy);
+  private Collection<AWY> assembleAirways(ArincFixDatabase arincFixDatabase, FixAssemblyStrategy<FIX> identityFixStrategy,
+                                          Collection<ArincAirwayLeg> airwayLeg) {
+    AirwayAssembler<AWY> assembler = AirwayAssembler.usingStrategy(arincFixDatabase, identityFixStrategy, airwayStrategy);
     return assembler.assemble(airwayLeg).toList();
   }
 
-  private Collection<FIX> assembleFixes(Collection<ArincWaypoint> waypoints, Collection<ArincNdbNavaid> ndbs,
+  private Collection<FIX> assembleFixes(FixAssemblyStrategy<FIX> identityFixStrategy, Collection<ArincWaypoint> waypoints,
+      Collection<ArincNdbNavaid> ndbs,
       Collection<ArincVhfNavaid> vhfs) {
 
-    FixAssembler<FIX> assembler = FixAssembler.withStrategy(fixStrategy);
+    FixAssembler<FIX> assembler = FixAssembler.withStrategy(identityFixStrategy);
 
     return Stream.of(waypoints.stream(), ndbs.stream(), vhfs.stream())
         .flatMap(stream -> stream)
@@ -232,8 +204,14 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
     return assembler.assemble(legs).toList();
   }
 
-  private Collection<AIR> assembleControlledAirspaces(ArincFixDatabase fixDatabase, Collection<ArincControlledAirspaceLeg> legs) {
-    ControlledAirspaceAssembler<AIR> assembler = ControlledAirspaceAssembler.usingStrategy(fixDatabase, fixStrategy, controlledAirspaceStrategy);
+  private Collection<AIR> assembleControlledAirspaces(ArincFixDatabase fixDatabase,
+                                                       FixAssemblyStrategy<FIX> identityFixStrategy,
+                                                       Collection<ArincControlledAirspaceLeg> legs) {
+    ControlledAirspaceAssembler<AIR> assembler = ControlledAirspaceAssembler.usingStrategy(
+        fixDatabase,
+        identityFixStrategy,
+        controlledAirspaceStrategy
+    );
     return assembler.assemble(legs).toList();
   }
 
@@ -251,7 +229,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final ArincVersion version;
 
-    private Predicate<ArincRecord> keepRecord = new IsThisAHeader().or(new IsThisAPrimaryRecord());
+    private Predicate<ArincRecord> keepRecord = new IsThisAPrimaryRecord().or(new IsThisAHeader());
 
     private AirportAssemblyStrategy<APT, RWY, HLPD> airportStrategy;
 
@@ -267,21 +245,21 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private RestrictiveAirspaceAssemblyStrategy<AIR, ASEQ> restrictiveAirspaceStrategy;
 
-    private HeliportAssemblyStrategy<HPT, HLPD> heliportStrategy;
+    private HeliportAssemblyStrategy<HPT, RWY, HLPD> heliportStrategy;
 
     private Builder(ArincVersion version) {
       this.version = requireNonNull(version);
     }
 
     /**
-     * Configure a filter which sits between the initial {@link ArincRecord} extraction and the converter implementation which
-     * maps those generic records to concrete Java models like {@link ArincProcedureLeg}.
-     *
-     * @param dropRecord indicates the given record should be dropped prior to conversion, typically used to drop continuation
-     *                   records which aren't otherwise being handled
+     * A predicate used to decide what records are kept for processing.
+     * <p>
+     * The default implementation will keep all primary records and headers.
+     * @param keepRecord the predicate
+     * @return this builder.
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> dropRecord(Predicate<ArincRecord> dropRecord) {
-      this.keepRecord = requireNonNull(dropRecord);
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> keepRecord(Predicate<ArincRecord> keepRecord) {
+      this.keepRecord = requireNonNull(keepRecord);
       return this;
     }
 
@@ -352,7 +330,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
      * @param heliportAssemblyStrategy the one to use in this parser
      * @return this builder
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> heliportAssemblyStrategy(HeliportAssemblyStrategy<HPT, HLPD> heliportAssemblyStrategy) {
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ, HLPD, HPT> heliportAssemblyStrategy(HeliportAssemblyStrategy<HPT, RWY, HLPD> heliportAssemblyStrategy) {
       this.heliportStrategy = requireNonNull(heliportAssemblyStrategy);
       return this;
     }
@@ -378,7 +356,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
 
     private final Collection<AIR> firUirs;
 
-    private final Collection<AIR> conrolledAirspaces;
+    private final Collection<AIR> controlledAirspaces;
 
     private final Collection<AIR> restrictiveAirspaces;
 
@@ -392,7 +370,7 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       this.airways = builder.airways;
       this.procedures = builder.procedures;
       this.firUirs = builder.firUirs;
-      this.conrolledAirspaces = builder.conrolledAirspaces;
+      this.controlledAirspaces = builder.conrolledAirspaces;
       this.restrictiveAirspaces = builder.restrictiveAirspaces;
       this.headerOne = builder.headerOne;
       this.heliports = builder.heliports;
@@ -418,8 +396,8 @@ public final class OneshotRecordParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, A
       return firUirs;
     }
 
-    public Collection<AIR> conrolledAirspaces() {
-      return conrolledAirspaces;
+    public Collection<AIR> controlledAirspaces() {
+      return controlledAirspaces;
     }
 
     public Collection<AIR> restrictiveAirspaces() {

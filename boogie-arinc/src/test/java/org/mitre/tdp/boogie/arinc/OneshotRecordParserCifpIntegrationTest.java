@@ -1,21 +1,15 @@
 package org.mitre.tdp.boogie.arinc;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.mitre.caasd.commons.util.DemotedException;
+import org.mitre.tdp.boogie.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.mitre.caasd.commons.util.DemotedException;
-import org.mitre.tdp.boogie.Airport;
-import org.mitre.tdp.boogie.Airspace;
-import org.mitre.tdp.boogie.Airway;
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Heliport;
-import org.mitre.tdp.boogie.Procedure;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("CIFP")
 @Tag("INTEGRATION")
@@ -38,9 +32,9 @@ class OneshotRecordParserCifpIntegrationTest {
         () -> assertEquals(1550, records.airways().size(), "Airways"),
         () -> assertEquals(14262, records.procedures().size(), "Procedures"),
         () -> assertEquals(0, records.firUirs().size(), "FIR-UIRs"),
-        () -> assertEquals(1258, records.conrolledAirspaces().size(), "Controlled Airspaces"),
+        () -> assertEquals(1258, records.controlledAirspaces().size(), "Controlled Airspaces"),
         () -> assertEquals(1518, records.restrictiveAirspaces().size(), "Restrictive Airspaces"),
-        () -> assertEquals("FAACIFP18", records.headerOne().get().fileName().get()),
+        () -> assertEquals("FAACIFP18", records.headerOne().orElseThrow().fileName().orElseThrow()),
         () -> assertEquals(6466, records.heliports().size(), "Heliports")
     );
   }

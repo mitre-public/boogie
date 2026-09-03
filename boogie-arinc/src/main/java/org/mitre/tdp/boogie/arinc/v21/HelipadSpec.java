@@ -1,38 +1,26 @@
 package org.mitre.tdp.boogie.arinc.v21;
 
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ComponentElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.LandingThresholdElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.LongestRunwaySurfaceCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v21.field.HelicopterPerformanceRequirement;
-import org.mitre.tdp.boogie.arinc.v21.field.MaximumAllowableHelicopterWeight;
-import org.mitre.tdp.boogie.arinc.v21.field.PadShape;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
+import org.mitre.tdp.boogie.arinc.v21.field.*;
 import org.mitre.tdp.boogie.arinc.v21.field.PadDimensions;
 import org.mitre.tdp.boogie.arinc.v21.field.PadIdentifier;
-import org.mitre.tdp.boogie.arinc.v21.field.SurfaceType;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
-public final class HelipadSpec implements RecordSpec {
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
+
+public final class HelipadSpec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
+      primaryColumn13('P', 'H', 21), primaryColumn13('H', 'H', 21));
+
   private final List<RecordField<?>> recordFields;
 
   public HelipadSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -71,11 +59,4 @@ public final class HelipadSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    String sectionSubsection = arincRecord.substring(4, 5).concat(arincRecord.substring(12, 13));
-    return sectionSubSections.contains(sectionSubsection);
-  }
-
-  private static final Set<String> sectionSubSections = Set.of("PH", "HH");
 }

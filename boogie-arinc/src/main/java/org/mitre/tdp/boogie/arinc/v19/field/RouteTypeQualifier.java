@@ -22,8 +22,10 @@ public final class RouteTypeQualifier implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).filter(allowedCodes::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(allowedCodes::contains);
   }
 
   /**

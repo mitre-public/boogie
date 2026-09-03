@@ -1,40 +1,27 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.DatumCode;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.FixIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.MagneticVariation;
-import org.mitre.tdp.boogie.arinc.v18.field.NameFormat;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.WaypointNameDescription;
-import org.mitre.tdp.boogie.arinc.v18.field.WaypointType;
-import org.mitre.tdp.boogie.arinc.v18.field.WaypointUsage;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn6;
 
 /**
  * Specification for Terminal/Enroute waypoint records in ARINC V18.
  */
-public final class WaypointSpec implements RecordSpec {
+public final class WaypointSpec extends RecordSpec {
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
+      primaryColumn6('E', 'A', 21), primaryColumn13('P', 'C', 21), primaryColumn13('H', 'C', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public WaypointSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -75,9 +62,4 @@ public final class WaypointSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return (arincRecord.regionMatches(4, "EA", 0, 2) || (arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'C') || (arincRecord.charAt(4) == 'H' && arincRecord.charAt(12) == 'C'))
-        && PrimaryRecord.INSTANCE.test(arincRecord.substring(21, 22));
-  }
 }

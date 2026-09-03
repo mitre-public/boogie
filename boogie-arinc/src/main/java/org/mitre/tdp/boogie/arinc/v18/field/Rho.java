@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * “RHO” is defined as the geodesic distance in nautical miles to the waypoint identified in the record’s “Fix Ident” field
@@ -15,7 +12,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * <br>
  * e.g. 0000, 0216, 0142, 1074
  */
-public final class Rho implements FieldSpec<Double> {
+public final class Rho extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -28,7 +25,7 @@ public final class Rho implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

@@ -1,44 +1,26 @@
 package org.mitre.tdp.boogie.arinc.v22;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsCategory;
-import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.LandingThresholdElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayDescription;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayGradient;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayLength;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayMagneticBearing;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayWidth;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Stopway;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.ThresholdDisplacementDistance;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v20.field.ThresholdCrossingHeight;
 import org.mitre.tdp.boogie.arinc.v22.field.LandingThresholdElevationAccuracyComplianceFlag;
 import org.mitre.tdp.boogie.arinc.v22.field.RunwayAccuracyComplianceFlag;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
-public final class RunwaySpec implements RecordSpec {
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
+
+public final class RunwaySpec extends RecordSpec {
+
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(primaryColumn13('P', 'G', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public RunwaySpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -88,8 +70,4 @@ public final class RunwaySpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return arincRecord.charAt(4) == 'P' && arincRecord.charAt(12) == 'G' && PrimaryRecord.INSTANCE.test(arincRecord.substring(22, 23));
-  }
 }

@@ -28,7 +28,8 @@ public final class PreferredMultipleApproachIndicator implements FieldSpec<Strin
   private static final Set<String> VALID = Set.of("P");
 
   @Override
-  public Optional<String> apply(String s) {
-    return Optional.ofNullable(s).filter(VALID::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(VALID::contains);
   }
 }

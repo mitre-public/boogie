@@ -1,14 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static org.mitre.tdp.boogie.util.CoordinateParser.sign;
-
-import java.util.HashSet;
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.EastWestVariation;
 
 /**
  * The “Magnetic Variation” field specifies the angular difference between True North and Magnetic North at the location defined in the record.
@@ -19,7 +11,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * <br>
  * As in {@link InboundMagneticCourse} this class filters out variations listed as true north. Use {@link org.mitre.tdp.boogie.Declinations} instead for your work.
  */
-public final class MagneticVariation implements FieldSpec<Double> {
+public final class MagneticVariation extends EastWestVariation {
 
   @Override
   public int fieldLength() {
@@ -31,16 +23,4 @@ public final class MagneticVariation implements FieldSpec<Double> {
     return "5.39";
   }
 
-  private static final HashSet<String> allowedDirections = newHashSet("E", "W");
-
-  @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        .filter(s -> !s.isEmpty())
-        .filter(s -> !s.startsWith("T"))
-        .filter(s -> isNumeric(s.substring(1)))
-        .filter(s -> allowedDirections.contains(s.substring(0, 1)))
-        .flatMap(s -> ArincDecimalParser.INSTANCE.parseDoubleWithTenths(s.substring(1)).map(value -> sign(s.substring(0, 1)) * value));
-  }
 }

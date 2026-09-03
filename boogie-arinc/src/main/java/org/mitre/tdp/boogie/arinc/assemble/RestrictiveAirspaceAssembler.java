@@ -1,12 +1,12 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
@@ -40,6 +40,10 @@ public interface RestrictiveAirspaceAssembler<AIRSPACE> {
 
   final class Standard<AIRSPACE, SEQUENCE> implements RestrictiveAirspaceAssembler<AIRSPACE> {
 
+    private static final Comparator<ArincRestrictiveAirspaceLeg> LEG_ORDER = Comparator
+        .comparingInt(ArincRestrictiveAirspaceLeg::sequenceNumber)
+        .thenComparing(leg -> leg.continuationRecordNumber().orElse("0"));
+
     private final RestrictiveAirspaceAssemblyStrategy<AIRSPACE, SEQUENCE> airspaceAssemblyStrategy;
 
     private Standard(RestrictiveAirspaceAssemblyStrategy<AIRSPACE, SEQUENCE> airspaceAssemblyStrategy) {
@@ -49,10 +53,18 @@ public interface RestrictiveAirspaceAssembler<AIRSPACE> {
     @Override
     public Stream<AIRSPACE> assemble(Collection<ArincRestrictiveAirspaceLeg> legs) {
       return legs.stream()
-          .collect(Collectors.groupingBy(RestrictiveAirspaceKey.INSTANCE))
+          .collect(Collectors.groupingBy(
+              RestrictiveAirspaceKey::from,
+              Collectors.toCollection(ArrayList::new)
+          ))
           .values().stream()
-          .map(list -> list.stream().sorted(Comparator.comparingInt(ArincRestrictiveAirspaceLeg::sequenceNumber).thenComparing(leg -> leg.continuationRecordNumber().orElse("0"))).toList())
+          .map(Standard::sortInPlace)
           .map(this::toAirspace);
+    }
+
+    private static List<ArincRestrictiveAirspaceLeg> sortInPlace(List<ArincRestrictiveAirspaceLeg> legs) {
+      legs.sort(LEG_ORDER);
+      return legs;
     }
 
     private AIRSPACE toAirspace(List<ArincRestrictiveAirspaceLeg> legs) {

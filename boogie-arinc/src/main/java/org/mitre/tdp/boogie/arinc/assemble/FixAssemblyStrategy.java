@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import static java.util.Objects.requireNonNull;
 
 import java.time.Instant;
+import java.util.IdentityHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.mitre.caasd.commons.LatLong;
@@ -48,6 +49,21 @@ public interface FixAssemblyStrategy<F> {
   static <F> FixAssemblyStrategy<F> caching(FixAssemblyStrategy<F> delegate) {
     requireNonNull(delegate, "Delegate strategy cannot be null.");
     return delegate instanceof Caching ? delegate : new Caching<>(delegate);
+  }
+
+  /**
+   * Returns a new implementation of a {@link FixAssemblyStrategy} which caches assembled fixes by input object identity.
+   * Unlike {@link #caching(FixAssemblyStrategy)}, structurally equal but distinct ARINC models are converted independently.
+   * This avoids invoking the models' potentially expensive {@link Object#hashCode()} and {@link Object#equals(Object)} methods.
+   *
+   * <p>The returned strategy is not thread-safe. Its cache lives as long as the returned wrapper, so callers should scope the
+   * wrapper to the assembly operation whose repeated conversions it is intended to eliminate.
+   *
+   * @param delegate the delegate strategy to use to build the cached fixes
+   */
+  static <F> FixAssemblyStrategy<F> identityCaching(FixAssemblyStrategy<F> delegate) {
+    requireNonNull(delegate, "Delegate strategy cannot be null.");
+    return delegate instanceof IdentityCaching ? delegate : new IdentityCaching<>(delegate);
   }
 
   /**
@@ -287,6 +303,63 @@ public interface FixAssemblyStrategy<F> {
     @Override
     public F convertHeliport(ArincHeliport heliport) {
       return cache.computeIfAbsent(heliport, a -> delegate.convertHeliport((ArincHeliport) a));
+    }
+
+    @Override
+    public F convertRunway(ArincRunway runway) {
+      return cache.computeIfAbsent(runway, r -> delegate.convertRunway((ArincRunway) r));
+    }
+
+    @Override
+    public F convertLocalizerGlideSlope(ArincLocalizerGlideSlope ilsGls) {
+      return cache.computeIfAbsent(ilsGls, i -> delegate.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) i));
+    }
+
+    @Override
+    public F convertGnssLandingSystem(ArincGnssLandingSystem gnss) {
+      return cache.computeIfAbsent(gnss, g -> delegate.convertGnssLandingSystem((ArincGnssLandingSystem) g));
+    }
+
+    @Override
+    public F convertHelipad(ArincHelipad helipad) {
+      return cache.computeIfAbsent(helipad, h -> delegate.convertHelipad((ArincHelipad) h));
+    }
+  }
+
+  final class IdentityCaching<F> implements FixAssemblyStrategy<F> {
+
+    private final FixAssemblyStrategy<F> delegate;
+
+    private final IdentityHashMap<ArincModel, F> cache;
+
+    private IdentityCaching(FixAssemblyStrategy<F> delegate) {
+      this.delegate = requireNonNull(delegate);
+      this.cache = new IdentityHashMap<>();
+    }
+
+    @Override
+    public F convertWaypoint(ArincWaypoint waypoint) {
+      return cache.computeIfAbsent(waypoint, w -> delegate.convertWaypoint((ArincWaypoint) w));
+    }
+
+    @Override
+    public F convertNdbNavaid(ArincNdbNavaid navaid) {
+      return cache.computeIfAbsent(navaid, n -> delegate.convertNdbNavaid((ArincNdbNavaid) n));
+    }
+
+    @Override
+    public F convertVhfNavaid(ArincVhfNavaid navaid) {
+      return cache.computeIfAbsent(navaid, n -> delegate.convertVhfNavaid((ArincVhfNavaid) n));
+    }
+
+    @Override
+    public F convertAirport(ArincAirport airport) {
+      return cache.computeIfAbsent(airport, a -> delegate.convertAirport((ArincAirport) a));
+    }
+
+    @Override
+    public F convertHeliport(ArincHeliport heliport) {
+      return cache.computeIfAbsent(heliport, h -> delegate.convertHeliport((ArincHeliport) h));
     }
 
     @Override

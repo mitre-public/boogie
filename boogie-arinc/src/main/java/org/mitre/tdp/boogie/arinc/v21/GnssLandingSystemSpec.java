@@ -1,45 +1,25 @@
 package org.mitre.tdp.boogie.arinc.v21;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import org.mitre.tdp.boogie.arinc.RecordDiscriminator;
 import org.mitre.tdp.boogie.arinc.RecordField;
 import org.mitre.tdp.boogie.arinc.RecordSpec;
-import org.mitre.tdp.boogie.arinc.utils.PrimaryRecord;
-import org.mitre.tdp.boogie.arinc.v18.field.AirportHeliportIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
-import org.mitre.tdp.boogie.arinc.v18.field.ComponentElevation;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.DatumCode;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.GlideSlopeAngle;
-import org.mitre.tdp.boogie.arinc.v18.field.GlsChannel;
-import org.mitre.tdp.boogie.arinc.v18.field.GlsStationIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsCategory;
-import org.mitre.tdp.boogie.arinc.v18.field.IlsMlsGlsIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.LocalizerBearing;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.MagneticVariation;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.RunwayIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.ServiceVolumeRadius;
-import org.mitre.tdp.boogie.arinc.v18.field.StationElevationWgs84;
-import org.mitre.tdp.boogie.arinc.v18.field.StationType;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.TdmaSlots;
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 import org.mitre.tdp.boogie.arinc.v20.field.ThresholdCrossingHeight;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
-public final class GnssLandingSystemSpec implements RecordSpec {
+import static org.mitre.tdp.boogie.arinc.RecordDiscriminator.primaryColumn13;
+
+public final class GnssLandingSystemSpec extends RecordSpec {
+
+  private static final List<RecordDiscriminator> DISCRIMINATORS = List.of(
+      primaryColumn13('P', 'T', 21), primaryColumn13('H', 'T', 21));
 
   private final List<RecordField<?>> recordFields;
 
   public GnssLandingSystemSpec() {
+    super(DISCRIMINATORS);
     this.recordFields = ImmutableList.of(
         new RecordField<>(RecordType.SPEC),
         new RecordField<>(CustomerAreaCode.SPEC),
@@ -87,10 +67,4 @@ public final class GnssLandingSystemSpec implements RecordSpec {
     return recordFields;
   }
 
-  @Override
-  public boolean matchesRecord(String arincRecord) {
-    return (arincRecord.charAt(4) == 'P' || arincRecord.charAt(4) == 'H')
-        && arincRecord.charAt(12) == 'T'
-        && PrimaryRecord.INSTANCE.test(arincRecord.substring(21,22));
-  }
 }

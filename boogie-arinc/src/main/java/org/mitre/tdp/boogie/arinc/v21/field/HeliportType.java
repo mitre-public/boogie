@@ -40,7 +40,9 @@ public enum HeliportType implements FieldSpec<HeliportType> {
       .collect(Collectors.toSet());
 
   @Override
-  public Optional<HeliportType> apply(String s) {
-    return Optional.ofNullable(s).filter(i -> VALID.contains(i)).map(HeliportType::valueOf);
+  public Optional<HeliportType> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(i -> VALID.contains(i))
+        .map(HeliportType::valueOf);
   }
 }

@@ -1,9 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * “Inbound Magnetic Course” is the published inbound magnetic course to the waypoint in the “Fix Ident” field of the records in
@@ -16,7 +13,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * For now this parser explicitly drops "True Courses" from the field spec - as they are relatively uncommon and dealing with the
  * true course component downstream is annoying.
  */
-public final class InboundMagneticCourse implements FieldSpec<Double> {
+public final class InboundMagneticCourse extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -29,11 +26,7 @@ public final class InboundMagneticCourse implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
-        .map(String::trim)
-        // explicit drop true course values... we could add handling for these later
-        .filter(s -> !s.endsWith("T"))
-        .flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithTenths);
+  protected int suppressedDecimalPlaces() {
+    return 1;
   }
 }

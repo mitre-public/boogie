@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
@@ -23,5 +24,15 @@ class TestRunwayGradient {
   @Test
   void testReturnsEmptyOnInvalidInput() {
     assertEquals(Optional.empty(), parser.apply("110AB"));
+  }
+
+  @Test
+  void appliesStrictGradientLimit() {
+    assertAll(
+        () -> assertEquals(Optional.of(8.999), parser.apply("+8999")),
+        () -> assertEquals(Optional.of(-8.999), parser.apply("-8999")),
+        () -> assertEquals(Optional.empty(), parser.apply("+9000")),
+        () -> assertEquals(Optional.empty(), parser.apply("-9000"))
+    );
   }
 }

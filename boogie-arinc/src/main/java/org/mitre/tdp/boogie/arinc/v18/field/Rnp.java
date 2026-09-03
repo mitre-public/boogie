@@ -35,13 +35,13 @@ public final class Rnp implements FieldSpec<Double> {
    * The required navigational precision in nm.
    */
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue)
+  public Optional<Double> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
         .filter(ValidArincNumeric.INSTANCE)
         .filter(s -> s.trim().length() > 2)
         .map(s -> {
-          int value = Integer.parseInt(fieldValue.substring(0, 2));
-          int exp = -Integer.parseInt(fieldValue.substring(2));
+          int value = Integer.parseInt(s.substring(0, 2));
+          int exp = -Integer.parseInt(s.substring(2));
           return value * Math.pow(10., exp);
         });
   }

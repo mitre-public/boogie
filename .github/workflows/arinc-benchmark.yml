@@ -1,0 +1,263 @@
+name: arinc-benchmark
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+      timezone: America/New_York
+
+permissions:
+  contents: read
+
+env:
+  JMH_TIME_REGRESSION_LIMIT: "0.10"
+  JMH_ALLOCATION_REGRESSION_LIMIT: "0.01"
+
+concurrency:
+  group: arinc-benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Check for weekly main changes
+    runs-on: ubuntu-24.04
+    outputs:
+      has_changes: ${{ steps.window.outputs.has_changes }}
+      baseline_sha: ${{ steps.window.outputs.baseline_sha }}
+      current_sha: ${{ steps.window.outputs.current_sha }}
+
+    steps:
+      - name: Checkout Main History
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Find Weekly Comparison Window
+        id: window
+        run: |
+          current_sha=$(git rev-parse HEAD)
+          baseline_sha=$(git rev-list --first-parent -1 --before='7 days ago' "${current_sha}")
+
+          if [[ -z "${baseline_sha}" ]]; then
+            echo "No main revision exists before the weekly window; skipping benchmarks."
+            echo "has_changes=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          commit_count=$(git rev-list --first-parent --count "${baseline_sha}..${current_sha}")
+          if [[ "${commit_count}" -gt 0 ]]; then
+            has_changes=true
+          else
+            has_changes=false
+          fi
+
+          {
+            echo "has_changes=${has_changes}"
+            echo "baseline_sha=${baseline_sha}"
+            echo "current_sha=${current_sha}"
+          } >> "${GITHUB_OUTPUT}"
+
+          {
+            echo "### Weekly ARINC benchmark window"
+            echo
+            echo "- Changes on main: ${commit_count}"
+            echo "- Baseline: ${baseline_sha}"
+            echo "- Current: ${current_sha}"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+  cifp:
+    name: CIFP JMH
+    needs: changes
+    if: needs.changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BOOGIE_CIFP_BENCHMARK_FILE: ${{ github.workspace }}/boogie-arinc/src/test/resources/cifp-2101.dat.gz
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.changes.outputs.current_sha }}
+          lfs: true
+          persist-credentials: false
+
+      - name: Checkout Base Revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.changes.outputs.baseline_sha }}
+          path: benchmark-base
+          persist-credentials: false
+
+      - name: Bootstrap Missing Benchmark Harness in Base Revision
+        run: bash .github/scripts/bootstrap-arinc-benchmark.sh benchmark-base
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          java-version: "17"
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+
+      - name: Verify CIFP Fixture
+        run: |
+          fixture=boogie-arinc/src/test/resources/cifp-2101.dat.gz
+          printf '%s  %s\n' \
+            97acdd1f623c487c9ad0b40b10b1356d3bac6c3e3e8af68d031346c810548e8a \
+            "${fixture}" | sha256sum --check -
+          gzip -t "${fixture}"
+
+      - name: Run CIFP Base Full Benchmark
+        working-directory: benchmark-base
+        run: ./gradlew :boogie-arinc:jmhCifp
+
+      - name: Run CIFP Current Full Benchmark
+        run: ./gradlew :boogie-arinc:jmhCifp
+
+      - name: Run CIFP Current Navigation Benchmark
+        run: ./gradlew :boogie-arinc:jmhCifpNav
+
+      - name: Run CIFP Base Navigation Benchmark
+        working-directory: benchmark-base
+        run: ./gradlew :boogie-arinc:jmhCifpNav
+
+      - name: Report CIFP Performance Comparison
+        run: |
+          bash .github/scripts/compare-jmh-results.sh \
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp.json \
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp-nav.json \
+            boogie-arinc/build/reports/jmh/cifp.json \
+            boogie-arinc/build/reports/jmh/cifp-nav.json
+
+      - name: Record Environment
+        if: always()
+        run: |
+          report_dir=boogie-arinc/build/reports/jmh
+          mkdir -p "${report_dir}"
+          {
+            echo "base_commit=${{ needs.changes.outputs.baseline_sha }}"
+            echo "current_commit=${{ needs.changes.outputs.current_sha }}"
+            echo "runner_image=${ImageOS:-unknown}-${ImageVersion:-unknown}"
+            java -version
+            uname -a
+            lscpu
+          } > "${report_dir}/cifp-environment.txt" 2>&1
+
+      - name: Upload CIFP Results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: arinc-jmh-cifp-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            boogie-arinc/build/reports/jmh/cifp.json
+            boogie-arinc/build/reports/jmh/cifp-nav.json
+            boogie-arinc/build/reports/jmh/cifp-environment.txt
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp.json
+            benchmark-base/boogie-arinc/build/reports/jmh/cifp-nav.json
+          if-no-files-found: error
+          retention-days: 90
+
+  lido:
+    name: LIDO JMH
+    needs: changes
+    if: needs.changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      BOOGIE_LIDO_BENCHMARK_FILE: ${{ github.workspace }}/benchmark-data/lido/A424-22std.dat.gz
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.changes.outputs.current_sha }}
+          persist-credentials: false
+
+      - name: Checkout Base Revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.changes.outputs.baseline_sha }}
+          path: benchmark-base
+          persist-credentials: false
+
+      - name: Bootstrap Missing Benchmark Harness in Base Revision
+        run: bash .github/scripts/bootstrap-arinc-benchmark.sh benchmark-base
+
+      - name: Checkout LIDO Fixture
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: mitre-tdp/boogie-test
+          ref: main
+          path: benchmark-data/lido
+          lfs: true
+          persist-credentials: false
+          ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          java-version: "17"
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+
+      - name: Verify LIDO Fixture
+        run: |
+          printf '%s  %s\n' \
+            43f864679cd7d5a4d72c24a8e21526be2cf52a9c2015fb344f63e1d8d2edeb4e \
+            "${BOOGIE_LIDO_BENCHMARK_FILE}" | sha256sum --check -
+          gzip -t "${BOOGIE_LIDO_BENCHMARK_FILE}"
+
+      - name: Run LIDO Base Full Benchmark
+        working-directory: benchmark-base
+        run: ./gradlew :boogie-arinc:jmhLido
+
+      - name: Run LIDO Current Full Benchmark
+        run: ./gradlew :boogie-arinc:jmhLido
+
+      - name: Run LIDO Current Navigation Benchmark
+        run: ./gradlew :boogie-arinc:jmhLidoNav
+
+      - name: Run LIDO Base Navigation Benchmark
+        working-directory: benchmark-base
+        run: ./gradlew :boogie-arinc:jmhLidoNav
+
+      - name: Report LIDO Performance Comparison
+        run: |
+          bash .github/scripts/compare-jmh-results.sh \
+            benchmark-base/boogie-arinc/build/reports/jmh/lido.json \
+            benchmark-base/boogie-arinc/build/reports/jmh/lido-nav.json \
+            boogie-arinc/build/reports/jmh/lido.json \
+            boogie-arinc/build/reports/jmh/lido-nav.json
+
+      - name: Record Environment
+        if: always()
+        run: |
+          report_dir=boogie-arinc/build/reports/jmh
+          mkdir -p "${report_dir}"
+          {
+            echo "base_commit=${{ needs.changes.outputs.baseline_sha }}"
+            echo "current_commit=${{ needs.changes.outputs.current_sha }}"
+            echo "runner_image=${ImageOS:-unknown}-${ImageVersion:-unknown}"
+            java -version
+            uname -a
+            lscpu
+          } > "${report_dir}/lido-environment.txt" 2>&1
+
+      - name: Upload LIDO Results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: arinc-jmh-lido-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            boogie-arinc/build/reports/jmh/lido.json
+            boogie-arinc/build/reports/jmh/lido-nav.json
+            boogie-arinc/build/reports/jmh/lido-environment.txt
+            benchmark-base/boogie-arinc/build/reports/jmh/lido.json
+            benchmark-base/boogie-arinc/build/reports/jmh/lido-nav.json
+          if-no-files-found: error
+          retention-days: 90

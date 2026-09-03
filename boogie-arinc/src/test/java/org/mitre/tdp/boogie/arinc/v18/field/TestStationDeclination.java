@@ -17,7 +17,7 @@ class TestStationDeclination {
 
   @Test
   void testWestValidVariationIsNegative() {
-    assertEquals(Optional.of(-14.), parser.apply("W0140"));
+    assertEquals(Optional.of(-14.), parser.parse("xxW0140yy", 2, 7));
   }
 
   @Test

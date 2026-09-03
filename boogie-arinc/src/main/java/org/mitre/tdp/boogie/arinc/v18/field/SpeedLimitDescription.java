@@ -29,8 +29,10 @@ public final class SpeedLimitDescription implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> apply(String fieldValue) {
-    return Optional.of(fieldValue).filter(allowedValues::contains).map(s -> s.replace(' ', '@'));
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .filter(allowedValues::contains)
+        .map(s -> s.replace(' ', '@'));
   }
 
   static final ImmutableSet<String> allowedValues = ImmutableSet.of(

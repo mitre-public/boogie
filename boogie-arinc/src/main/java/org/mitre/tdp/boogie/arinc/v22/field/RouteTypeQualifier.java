@@ -47,7 +47,9 @@ public final class RouteTypeQualifier implements FieldSpec<String> {
   private static final Set<String> VALID = Stream.of(QUAL1, QUAL2, QUAL3).flatMap(Collection::stream).collect(Collectors.toSet());
 
   @Override
-  public Optional<String> apply(String s) {
-    return Optional.of(s).map(String::trim).filter(VALID::contains);
+  public Optional<String> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
+        .map(String::trim)
+        .filter(VALID::contains);
   }
 }

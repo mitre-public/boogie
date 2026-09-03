@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,6 +32,17 @@ class TestIsThisAPrimaryRecord {
   @Test
   void testRecordNumberIsAlphaIsContinuation() {
     assertFalse(isPrimary.test("a"));
+  }
+
+  @Test
+  void testCharacterAndStringInputsAgree() {
+    assertAll(
+        () -> assertEquals(isPrimary.test("0"), isPrimary.test('0')),
+        () -> assertEquals(isPrimary.test("1"), isPrimary.test('1')),
+        () -> assertEquals(isPrimary.test("2"), isPrimary.test('2')),
+        () -> assertEquals(isPrimary.test("a"), isPrimary.test('a')),
+        () -> assertEquals(isPrimary.test(" "), isPrimary.test(' '))
+    );
   }
 
   @Test

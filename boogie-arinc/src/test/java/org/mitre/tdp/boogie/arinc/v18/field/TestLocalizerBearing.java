@@ -27,6 +27,11 @@ class TestLocalizerBearing {
   }
 
   @Test
+  void testParserFiltersTrueCourseInputs() {
+    assertEquals(Optional.empty(), parser.apply("123T"));
+  }
+
+  @Test
   void testParserReturnsValidDoublesIfPresent() {
     assertAll(
         () -> assertEquals(Optional.of(129.1), parser.apply("1291")),

@@ -2,10 +2,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 
-import java.util.Optional;
-
-import org.mitre.tdp.boogie.arinc.FieldSpec;
-import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
+import org.mitre.tdp.boogie.arinc.ArincDouble;
 
 /**
  * he Runway Gradient field indicates an overall gradient in percent, measured from the start of take-off roll end of the runway
@@ -20,7 +17,7 @@ import org.mitre.tdp.boogie.arinc.utils.ArincDecimalParser;
  * <br>
  * e.g. +0450, -0300
  */
-public final class RunwayGradient implements FieldSpec<Double> {
+public final class RunwayGradient extends ArincDouble {
 
   @Override
   public int fieldLength() {
@@ -33,7 +30,12 @@ public final class RunwayGradient implements FieldSpec<Double> {
   }
 
   @Override
-  public Optional<Double> apply(String fieldValue) {
-    return Optional.of(fieldValue).map(String::trim).flatMap(ArincDecimalParser.INSTANCE::parseDoubleWithThousandths).filter(d -> abs(d) < 9.);
+  protected int suppressedDecimalPlaces() {
+    return 3;
+  }
+
+  @Override
+  protected boolean isValidValue(double value) {
+    return abs(value) < 9.;
   }
 }

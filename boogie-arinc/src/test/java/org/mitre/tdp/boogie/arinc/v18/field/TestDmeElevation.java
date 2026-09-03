@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
 
@@ -31,7 +32,15 @@ class TestDmeElevation {
     assertAll(
         () -> assertEquals(Optional.of(-150.0), parser.apply("-150")),
         () -> assertEquals(Optional.of(150.0), parser.apply(" 150")),
-        () -> assertEquals(Optional.of(150.0), parser.apply("+150"))
+        () -> assertEquals(Optional.of(150.0), parser.apply("+150")),
+        () -> assertEquals(Optional.of(-150.0), parser.parse("xx -150 yy", 2, 7))
     );
+  }
+
+  @Test
+  void testRangeAndSignEdgeCases() {
+    assertEquals(Optional.of(-0.0), parser.apply("-0"));
+    assertEquals(Optional.empty(), parser.apply("+"));
+    assertThrows(IndexOutOfBoundsException.class, () -> parser.parse("123", 2, 1));
   }
 }

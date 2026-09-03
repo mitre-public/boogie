@@ -24,8 +24,8 @@ public final class AltitudeLimit implements FieldSpec<Pair<Double, Double>> {
   }
 
   @Override
-  public Optional<Pair<Double, Double>> apply(String fieldValue) {
-    return Optional.of(fieldValue)
+  public Optional<Pair<Double, Double>> parse(String source, int startOffset, int endOffset) {
+    return Optional.of(source.substring(startOffset, endOffset))
         .filter(ValidArincNumeric.INSTANCE)
         .map(String::trim)
         .filter(s -> s.length() == 6)

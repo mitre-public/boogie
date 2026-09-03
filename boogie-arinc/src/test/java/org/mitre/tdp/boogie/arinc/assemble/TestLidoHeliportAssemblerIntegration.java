@@ -59,6 +59,33 @@ public class TestLidoHeliportAssemblerIntegration {
   }
 
   @Test
+  void testRunwaysAreAssembledForHeliports() {
+    long runwayCount = heliports.values().stream()
+        .map(Heliport::runways)
+        .mapToLong(Collection::size)
+        .sum();
+    long portsWithRunways = heliports.values().stream()
+        .map(Heliport::runways)
+        .filter(runways -> !runways.isEmpty())
+        .count();
+    int knzxRunwayCount = heliports.get("KNZX").stream()
+        .map(Heliport::runways)
+        .mapToInt(Collection::size)
+        .sum();
+    int kedgRunwayCount = heliports.get("KEDG").stream()
+        .map(Heliport::runways)
+        .mapToInt(Collection::size)
+        .sum();
+
+    assertAll(
+        () -> assertEquals(32, runwayCount, "All heliport runways should be retained."),
+        () -> assertEquals(15, portsWithRunways, "Runways should be attached to their heliports."),
+        () -> assertEquals(4, knzxRunwayCount, "KNZX has two reciprocal runway pairs."),
+        () -> assertEquals(2, kedgRunwayCount, "KEDG has one reciprocal runway pair.")
+    );
+  }
+
+  @Test
   void testNotDroppingOrGrowingPorts() {
     long ports = EmbeddedLidoFile.instance().arincHeliports().size();
     long heliportsSize = heliports.size();

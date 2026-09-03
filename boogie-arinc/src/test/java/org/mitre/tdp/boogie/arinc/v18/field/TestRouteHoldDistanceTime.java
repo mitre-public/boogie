@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -13,7 +15,12 @@ class TestRouteHoldDistanceTime {
 
   @Test
   void testRouteHoldDistance() {
-    assertEquals(Optional.of(107.6), parser.asDistanceInNm("1076"));
+    assertAll(
+        () -> assertEquals(Optional.of(107.6), parser.asDistanceInNm("1076")),
+        () -> assertEquals(Optional.empty(), parser.asDistanceInNm("10A6")),
+        () -> assertEquals(Optional.empty(), parser.asDistanceInNm("-076")),
+        () -> assertThrows(NullPointerException.class, () -> parser.asDistanceInNm(null))
+    );
   }
 
   @Test
@@ -23,7 +30,13 @@ class TestRouteHoldDistanceTime {
 
   @Test
   void testRouteHoldTime() {
-    assertEquals(Optional.of(Duration.ofMinutes(10)), parser.asDuration("T100"));
+    assertAll(
+        () -> assertEquals(Optional.of(Duration.ofMinutes(10)), parser.asDuration("T100")),
+        () -> assertEquals(Optional.of(Duration.ofSeconds(618)), parser.asDuration("T103")),
+        () -> assertEquals(Optional.empty(), parser.asDuration("T10A")),
+        () -> assertEquals(Optional.empty(), parser.asDuration("T")),
+        () -> assertThrows(NullPointerException.class, () -> parser.asDuration(null))
+    );
   }
 
   @Test

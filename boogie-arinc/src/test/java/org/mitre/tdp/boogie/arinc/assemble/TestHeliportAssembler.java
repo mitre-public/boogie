@@ -1,27 +1,29 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.Heliport;
+import org.mitre.tdp.boogie.Runway;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
-import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.ArincVersion;
 import org.mitre.tdp.boogie.arinc.IsThisAPrimaryRecord;
+import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
-import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
-import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+import org.mitre.tdp.boogie.arinc.model.*;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
+import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This data is different enough between versions to warrant two test inputs.
@@ -31,8 +33,6 @@ public class TestHeliportAssembler {
   private static final File arincTestFile2 = new File(System.getProperty("user.dir").concat("/src/test/resources/kjra_9vak5-and-friends"));
   private static final TestArincFileParser fileParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V19_NAV.specs()));
   private static final TestArincFileParser v22Parser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V22_NAV.specs()));
-  private static final ConvertingArincRecordConsumer testV22Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22_NAV);
-  private static final ConvertingArincRecordConsumer testV18Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase19;
   private static ArincTerminalAreaDatabase arincTerminalAreaDatabase22;
   private static HeliportAssembler<Heliport> assembler19;
@@ -41,33 +41,37 @@ public class TestHeliportAssembler {
   @BeforeAll
   static void setup() {
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
-    fileParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(testV18Consumer);
-    v22Parser.parseAll(arincTestFile2).stream().filter(isThisAPrimaryRecord).forEach(testV22Consumer);
+    ConvertingArincRecordConsumer v18Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V19);
+    ConvertingArincRecordConsumer v22Consumer = ArincRecordConverterFactory.consumerForVersion(ArincVersion.V22_NAV);
+    fileParser.parseAll(arincTestFile).stream().filter(isThisAPrimaryRecord).forEach(v18Consumer);
+    v22Parser.parseAll(arincTestFile2).stream().filter(isThisAPrimaryRecord).forEach(v22Consumer);
+    ConvertedArincRecords testV18Records = v18Consumer.snapshot();
+    ConvertedArincRecords testV22Records = v22Consumer.snapshot();
 
     arincTerminalAreaDatabase19 = ArincDatabaseFactory.newTerminalAreaDatabase(
-        testV18Consumer.arincAirports(),
-        testV18Consumer.arincRunways(),
-        testV18Consumer.arincLocalizerGlideSlopes(),
-        testV18Consumer.arincNdbNavaids(),
-        testV18Consumer.arincVhfNavaids(),
-        testV18Consumer.arincWaypoints(),
-        testV18Consumer.arincProcedureLegs(),
-        testV18Consumer.arincGnssLandingSystems(),
-        testV18Consumer.arincHelipads(), //no pads
-        testV18Consumer.arincHeliports()
+        testV18Records.arincAirports(),
+        testV18Records.arincRunways(),
+        testV18Records.arincLocalizerGlideSlopes(),
+        testV18Records.arincNdbNavaids(),
+        testV18Records.arincVhfNavaids(),
+        testV18Records.arincWaypoints(),
+        testV18Records.arincProcedureLegs(),
+        testV18Records.arincGnssLandingSystems(),
+        testV18Records.arincHelipads(), //no pads
+        testV18Records.arincHeliports()
     );
 
     arincTerminalAreaDatabase22 = ArincDatabaseFactory.newTerminalAreaDatabase(
-        testV22Consumer.arincAirports(),
-        testV22Consumer.arincRunways(),
-        testV22Consumer.arincLocalizerGlideSlopes(),
-        testV22Consumer.arincNdbNavaids(),
-        testV22Consumer.arincVhfNavaids(),
-        testV22Consumer.arincWaypoints(),
-        testV22Consumer.arincProcedureLegs(),
-        testV22Consumer.arincGnssLandingSystems(),
-        testV22Consumer.arincHelipads(),
-        testV22Consumer.arincHeliports()
+        testV22Records.arincAirports(),
+        testV22Records.arincRunways(),
+        testV22Records.arincLocalizerGlideSlopes(),
+        testV22Records.arincNdbNavaids(),
+        testV22Records.arincVhfNavaids(),
+        testV22Records.arincWaypoints(),
+        testV22Records.arincProcedureLegs(),
+        testV22Records.arincGnssLandingSystems(),
+        testV22Records.arincHelipads(),
+        testV22Records.arincHeliports()
     );
     assembler19 = HeliportAssembler.standard(arincTerminalAreaDatabase19);
     assembler22 = HeliportAssembler.standard(arincTerminalAreaDatabase22);
@@ -143,5 +147,168 @@ public class TestHeliportAssembler {
         () -> assertEquals(-74.0070638888889, heliport.longitude())
     );
   }
+
+  @Test
+  void testRunwaysAssociatedWithAHeliport() {
+    ArincHeliport arincHeliport = ArincHeliport.builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.H)
+        .heliportIdentifier("HPT1")
+        .heliportIcaoRegion("K1")
+        .latitude(40.)
+        .longitude(-75.)
+        .magneticVariation(0.)
+        .build();
+    ArincRunway runway09 = runway("RW09", 90., 40.);
+    ArincRunway runway27 = runway("RW27", 270., 40.01);
+
+    ArincTerminalAreaDatabase database = ArincDatabaseFactory.newTerminalAreaDatabase(
+        List.of(),
+        List.of(runway09, runway27),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(arincHeliport)
+    );
+    Heliport heliport = HeliportAssembler.standard(database).assemble(arincHeliport);
+    Map<String, ? extends Runway> runways = heliport.runways().stream()
+        .collect(Collectors.toMap(Runway::runwayIdentifier, Function.identity()));
+
+    assertAll(
+        () -> assertEquals(2, database.heliportsRunwaysAt("HPT1", "K1").size()),
+        () -> assertEquals(runway09, database.heliportsRunwayAt("HPT1", "K1", "RW09").orElseThrow()),
+        () -> assertEquals(2, runways.size()),
+        () -> assertEquals("RW09", runways.get("RW09").runwayIdentifier()),
+        () -> assertEquals("RW27", runways.get("RW27").runwayIdentifier())
+    );
+  }
+
+  @Test
+  void testRunwayLocalizersAreProvidedToCustomStrategy() {
+    ArincHeliport arincHeliport = ArincHeliport.builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.H)
+        .heliportIdentifier("HPT1")
+        .heliportIcaoRegion("K1")
+        .latitude(40.)
+        .longitude(-75.)
+        .magneticVariation(0.)
+        .build();
+    ArincRunway runway = runway("RW09", 90., 40.).toBuilder()
+        .ilsMlsGlsIdentifier("IL09")
+        .secondaryIlsMlsGlsIdentifier("IS09")
+        .build();
+    ArincLocalizerGlideSlope primary = localizer("IL09", 1);
+    ArincLocalizerGlideSlope secondary = localizer("IS09", 2);
+
+    ArincTerminalAreaDatabase database = ArincDatabaseFactory.newTerminalAreaDatabase(
+        List.of(),
+        List.of(runway),
+        List.of(primary, secondary),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(arincHeliport)
+    );
+    HeliportAssemblyStrategy<List<CapturedRunway>, CapturedRunway, Void> strategy = new HeliportAssemblyStrategy<>() {
+      @Override
+      public List<CapturedRunway> convertHeliport(
+          ArincHeliport port,
+          List<CapturedRunway> convertedRunways,
+          List<Void> convertedHelipads
+      ) {
+        return convertedRunways;
+      }
+
+      @Override
+      public CapturedRunway convertRunway(
+          ArincHeliport heliport,
+          ArincRunway origin,
+          ArincRunway reciprocal,
+          ArincLocalizerGlideSlope primaryLocalizerGlideSlope,
+          ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
+      ) {
+        return new CapturedRunway(
+            heliport,
+            origin,
+            reciprocal,
+            primaryLocalizerGlideSlope,
+            secondaryLocalizerGlideSlope
+        );
+      }
+
+      @Override
+      public Void convertHelipad(ArincHelipad pad) {
+        throw new AssertionError("No helipads should be converted in this test.");
+      }
+
+      @Override
+      public Optional<Void> convertToHelipad(ArincHeliport port) {
+        return Optional.empty();
+      }
+    };
+
+    List<CapturedRunway> captured = HeliportAssembler.usingStrategy(database, strategy).assemble(arincHeliport);
+
+    assertAll(
+        () -> assertEquals(1, captured.size()),
+        () -> assertSame(arincHeliport, captured.get(0).heliport()),
+        () -> assertSame(runway, captured.get(0).origin()),
+        () -> assertNull(captured.get(0).reciprocal()),
+        () -> assertSame(primary, captured.get(0).primaryLocalizerGlideSlope()),
+        () -> assertSame(secondary, captured.get(0).secondaryLocalizerGlideSlope())
+    );
+  }
+
+  private ArincRunway runway(String identifier, double bearing, double latitude) {
+    return new ArincRunway.Builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.H)
+        .airportIdentifier("HPT1")
+        .airportIcaoRegion("K1")
+        .subSectionCode("G")
+        .runwayIdentifier(identifier)
+        .runwayMagneticBearing(bearing)
+        .runwayLength(5000)
+        .latitude(latitude)
+        .longitude(-75.0)
+        .fileRecordNumber(1)
+        .lastUpdateCycle("2501")
+        .build();
+  }
+
+  private ArincLocalizerGlideSlope localizer(String identifier, int fileRecordNumber) {
+    return new ArincLocalizerGlideSlope.Builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.H)
+        .airportIdentifier("HPT1")
+        .airportIcaoRegion("K1")
+        .subSectionCode("I")
+        .localizerIdentifier(identifier)
+        .continuationRecordNumber("0")
+        .runwayIdentifier("RW09")
+        .fileRecordNumber(fileRecordNumber)
+        .lastUpdateCycle("2501")
+        .build();
+  }
+
+  private record CapturedRunway(
+      ArincHeliport heliport,
+      ArincRunway origin,
+      ArincRunway reciprocal,
+      ArincLocalizerGlideSlope primaryLocalizerGlideSlope,
+      ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
+  ) {}
 
 }
