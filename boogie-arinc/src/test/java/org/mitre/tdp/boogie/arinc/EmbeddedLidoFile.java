@@ -31,7 +31,7 @@ public final class EmbeddedLidoFile {
     ArincRecordParser parser = ArincRecordParser.standard(ArincVersion.V22.specs());
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
     IsThisAHeader isThisAHeader = new IsThisAHeader();
-    LOG.info("Loading records from embedded LIDO file.");
+    LOG.info("Loading records from embedded LIDO file. {}", totalRecords());
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(getInputStream()))) {
       reader.lines().map(parser::parse).flatMap(Optional::stream).filter(isThisAHeader.negate()).filter(isThisAPrimaryRecord).forEach(consumer);
     } catch (IOException e) {

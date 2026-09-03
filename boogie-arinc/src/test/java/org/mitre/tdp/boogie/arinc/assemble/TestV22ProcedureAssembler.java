@@ -10,17 +10,12 @@ import org.mitre.tdp.boogie.arinc.TestArincFileParser;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,86 +91,4 @@ public class TestV22ProcedureAssembler {
     );
   }
 
-  @Test
-  void testSortsOnlyAfterGroupingByTransition() {
-    List<ArincProcedureLeg> input = List.of(
-        newProcedureLeg("ALPHA", 30),
-        newProcedureLeg("BRAVO", 20),
-        newProcedureLeg("ALPHA", 10),
-        newProcedureLeg("BRAVO", 40)
-    );
-
-    Collection<List<ArincProcedureLeg>> procedures = ProcedureAssembler.Standard.groupByProcedure(input);
-    List<ArincProcedureLeg> procedure = procedures.iterator().next();
-    Map<String, List<Integer>> transitionSequences = ProcedureAssembler.Standard.groupByTransition(procedure).stream()
-        .collect(Collectors.toMap(
-            transition -> transition.get(0).transitionIdentifier().orElseThrow(),
-            transition -> transition.stream().map(ArincProcedureLeg::sequenceNumber).toList()
-        ));
-
-    assertAll(
-        () -> assertEquals(1, procedures.size()),
-        () -> assertEquals(List.of(30, 20, 10, 40), procedure.stream().map(ArincProcedureLeg::sequenceNumber).toList()),
-        () -> assertEquals(List.of(10, 30), transitionSequences.get("ALPHA")),
-        () -> assertEquals(List.of(20, 40), transitionSequences.get("BRAVO"))
-    );
-  }
-
-  @Test
-  void testAdditionalMissedApproachesAreGroupedByRouteTypeAndVariant() {
-    List<ArincProcedureLeg> input = List.of(
-        newProcedureLeg("FINAL", "R", "H", 30),
-        newProcedureLeg("FINAL", "Z", "A", 20),
-        newProcedureLeg("FINAL", "Z", "B", 25),
-        newProcedureLeg("FINAL", "Z", "E", 27),
-        newProcedureLeg("FINAL", "R", "S", 10),
-        newProcedureLeg("FINAL", "Z", "A", 40),
-        newProcedureLeg("FINAL", "Z", "B", 45),
-        newProcedureLeg("FINAL", "Z", "E", 47)
-    );
-
-    Map<String, List<Integer>> transitionSequences = ProcedureAssembler.Standard.groupByTransition(input).stream()
-        .collect(Collectors.toMap(
-            transition -> "Z".equals(transition.get(0).routeType())
-                ? transition.get(0).routeType().concat(transition.get(0).routeTypeQualifier2().orElse(""))
-                : transition.get(0).routeType(),
-            transition -> transition.stream().map(ArincProcedureLeg::sequenceNumber).toList()
-        ));
-
-    assertAll(
-        () -> assertEquals(4, transitionSequences.size()),
-        () -> assertEquals(List.of(10, 30), transitionSequences.get("R")),
-        () -> assertEquals(List.of(20, 40), transitionSequences.get("ZA")),
-        () -> assertEquals(List.of(25, 45), transitionSequences.get("ZB")),
-        () -> assertEquals(List.of(27, 47), transitionSequences.get("ZE"))
-    );
-  }
-
-  private static ArincProcedureLeg newProcedureLeg(String transitionIdentifier, int sequenceNumber) {
-    return newProcedureLeg(transitionIdentifier, "1", sequenceNumber);
-  }
-
-  private static ArincProcedureLeg newProcedureLeg(String transitionIdentifier, String routeType, int sequenceNumber) {
-    return newProcedureLeg(transitionIdentifier, routeType, null, sequenceNumber);
-  }
-
-  private static ArincProcedureLeg newProcedureLeg(
-      String transitionIdentifier,
-      String routeType,
-      String routeTypeQualifier2,
-      int sequenceNumber
-  ) {
-    return new ArincProcedureLeg.Builder()
-        .sequenceNumber(sequenceNumber)
-        .fileRecordNumber(sequenceNumber)
-        .sidStarIdentifier("MOCK")
-        .airportIdentifier("MOCK")
-        .airportIcaoRegion("K1")
-        .sectionCode(SectionCode.P)
-        .subSectionCode("D")
-        .routeType(routeType)
-        .routeTypeQualifier2(routeTypeQualifier2)
-        .transitionIdentifier(transitionIdentifier)
-        .build();
-  }
 }

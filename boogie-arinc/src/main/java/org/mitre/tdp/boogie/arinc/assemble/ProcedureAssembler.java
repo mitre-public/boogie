@@ -1,9 +1,12 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static java.util.Comparator.comparing;
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.groupingBy;
-import static org.mitre.caasd.commons.util.Partitioners.splitOnPairwiseChange;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
+import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -14,18 +17,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.Fix;
-import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.Procedure;
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.TransitionType;
-import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
-import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
+import static org.mitre.caasd.commons.util.Partitioners.splitOnPairwiseChange;
 
 /**
  * Assembler class for converting collections of {@link ArincProcedureLeg} records into a client-defined output class of type
@@ -48,22 +42,19 @@ public interface ProcedureAssembler<P> {
 
   final class Standard<P, T, L, F> implements ProcedureAssembler<P> {
 
+
     private static final ArincTransitionTypeClassifier transitionTypeClassifier = new ArincTransitionTypeClassifier();
-
     private static final ArincRequiredEquipageClassifier requiredEquipageClassifier = new ArincRequiredEquipageClassifier();
-
-    private static final Comparator<ArincProcedureLeg> LEG_COMPARATOR = comparing(ArincProcedureLeg::sequenceNumber)
-        .thenComparing(i -> i.categoryOrType().orElse("UNK"));
-
+    private static final ArincProcedureGrouper procedureGrouper = ArincProcedureGrouper.INSTANCE;
+    private static final ArincTransitionGrouper transitionGrouper = ArincTransitionGrouper.INSTANCE;
+    private static final Comparator<ArincProcedureLeg> LEG_COMPARATOR = comparing(ArincProcedureLeg::sequenceNumber).thenComparing(i -> i.categoryOrType().orElse("UNK"));
     private final ArincProcedureLegConverter<P, T, L, F> inflator;
     /**
      * Predicate for determining whether there should be any special splitting logic applied to sequential legs within a procedure
      * transition (e.g. to split the missed approach off of the final approach see - {@link IsFirstLegOfMissedApproach}).
      */
     private final BiPredicate<ArincProcedureLeg, ArincProcedureLeg> shouldSplitTransition;
-
     private final ProcedureAssemblyStrategy<P, T, L, F> strategy;
-
     private Standard(
         ArincTerminalAreaDatabase arincTerminalAreaDatabase,
         ArincFixDatabase arincFixDatabase,
@@ -77,25 +68,10 @@ public interface ProcedureAssembler<P> {
 
     @Override
     public Stream<P> assemble(Collection<ArincProcedureLeg> arincProcedureLegs) {
-      return groupByProcedure(arincProcedureLegs).stream()
+      return procedureGrouper.apply(arincProcedureLegs).stream()
           .map(this::toProcedure);
     }
 
-    /**
-     * Groups legs into procedures without imposing an order across their transitions. Encounter order is retained inside each
-     * procedure and is used as the stable tie-breaker when the individual transitions are sorted later.
-     */
-    static Collection<List<ArincProcedureLeg>> groupByProcedure(Collection<ArincProcedureLeg> arincProcedureLegs) {
-      return arincProcedureLegs.stream()
-          .collect(groupingBy(Standard::procedureGroupKey))
-          .values();
-    }
-
-    public static final String DEFAULT_TRANSITION = "ALL";
-    public static final String DEFAULT_CAT_TYPE = "ANY";
-    private static final String DEFAULT_MISSED_APPROACH_VARIANT = "ANY";
-
-    private static final Function<ArincProcedureLeg, TransitionGroupKey> GROUPER = Standard::transitionGroupKey;
     /**
      * Converts the list of {@link ArincProcedureLeg}s known to be part of the same procedure into a composite {@link Procedure}
      * object. This method uses two helper classes to provided value-add features:
@@ -106,7 +82,7 @@ public interface ProcedureAssembler<P> {
      */
     private P toProcedure(List<ArincProcedureLeg> arincProcedureLegs) {
 
-      Collection<List<ArincProcedureLeg>> byTransition = groupByTransition(arincProcedureLegs);
+      Collection<List<ArincProcedureLeg>> byTransition = transitionGrouper.apply(arincProcedureLegs);
 
       Multimap<TransitionType, List<ArincProcedureLeg>> byType = LinkedHashMultimap.create();
 
@@ -131,73 +107,11 @@ public interface ProcedureAssembler<P> {
     }
 
     /**
-     * Establishes transition membership before applying sequence ordering. Sorting each transition independently avoids comparing
-     * unrelated legs and keeps encounter order as the stable tie-breaker for duplicate sequence numbers.
-     */
-    static Collection<List<ArincProcedureLeg>> groupByTransition(Collection<ArincProcedureLeg> procedureLegs) {
-      return procedureLegs.stream()
-          .collect(groupingBy(
-              GROUPER,
-              Collectors.collectingAndThen(Collectors.toList(), Standard::sortTransition)
-          ))
-          .values();
-    }
-
-    private static List<ArincProcedureLeg> sortTransition(List<ArincProcedureLeg> transition) {
-      transition.sort(LEG_COMPARATOR);
-      return transition;
-    }
-
-    /**
      * Re-partitions the name-grouped transition legs based on the configured {@link #shouldSplitTransition} predicate.
      */
     private List<List<ArincProcedureLeg>> repartition(List<ArincProcedureLeg> procedureLegs) {
       return splitOnPairwiseChange(procedureLegs, (ls, next) -> shouldSplitTransition.negate().test(ls.get(ls.size() - 1), next));
     }
-
-    private static ProcedureGroupKey procedureGroupKey(ArincProcedureLeg arincProcedureLeg) {
-      return new ProcedureGroupKey(
-          arincProcedureLeg.airportIdentifier(),
-          arincProcedureLeg.airportIcaoRegion(),
-          arincProcedureLeg.sidStarIdentifier(),
-          arincProcedureLeg.subSectionCode().orElseThrow(IllegalStateException::new)
-      );
-    }
-
-    /**
-     * Route type {@code Z} identifies an explicit missed-approach route and must not be combined with the ordinary approach route
-     * that {@link #repartition(List)} may split at an {@code M} waypoint marker. Qualifier 2 further distinguishes primary,
-     * secondary, and engine-out {@code Z} routes. Other route types deliberately ignore qualifier 2 because it can vary between
-     * legs in one valid transition.
-     */
-    private static TransitionGroupKey transitionGroupKey(ArincProcedureLeg arincProcedureLeg) {
-      String routeType = arincProcedureLeg.routeType();
-      String missedApproachVariant = Optional.of(arincProcedureLeg)
-          .filter(leg -> "Z".equals(leg.routeType()))
-          .flatMap(ArincProcedureLeg::routeTypeQualifier2)
-          .orElse(DEFAULT_MISSED_APPROACH_VARIANT);
-
-      return new TransitionGroupKey(
-          arincProcedureLeg.transitionIdentifier().orElse(DEFAULT_TRANSITION),
-          arincProcedureLeg.categoryOrType().orElse(DEFAULT_CAT_TYPE),
-          routeType,
-          missedApproachVariant
-      );
-    }
-
-    private record ProcedureGroupKey(
-        String airportIdentifier,
-        String airportIcaoRegion,
-        String sidStarIdentifier,
-        String subSectionCode
-    ) {}
-
-    private record TransitionGroupKey(
-        String transitionIdentifier,
-        String categoryOrType,
-        String routeType,
-        String missedApproachVariant
-    ) {}
 
     /**
      * An {@link ArincProcedureLegConverter} performs the (complex) functionality of converting a procedure leg as coded in the

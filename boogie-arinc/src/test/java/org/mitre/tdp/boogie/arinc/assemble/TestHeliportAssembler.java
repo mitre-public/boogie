@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -187,11 +188,92 @@ public class TestHeliportAssembler {
     );
   }
 
+  @Test
+  void testRunwayLocalizersAreProvidedToCustomStrategy() {
+    ArincHeliport arincHeliport = ArincHeliport.builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.H)
+        .heliportIdentifier("HPT1")
+        .heliportIcaoRegion("K1")
+        .latitude(40.)
+        .longitude(-75.)
+        .magneticVariation(0.)
+        .build();
+    ArincRunway runway = runway("RW09", 90., 40.).toBuilder()
+        .ilsMlsGlsIdentifier("IL09")
+        .secondaryIlsMlsGlsIdentifier("IS09")
+        .build();
+    ArincLocalizerGlideSlope primary = localizer("IL09", 1);
+    ArincLocalizerGlideSlope secondary = localizer("IS09", 2);
+
+    ArincTerminalAreaDatabase database = ArincDatabaseFactory.newTerminalAreaDatabase(
+        List.of(),
+        List.of(runway),
+        List.of(primary, secondary),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(arincHeliport)
+    );
+    HeliportAssemblyStrategy<List<CapturedRunway>, CapturedRunway, Void> strategy = new HeliportAssemblyStrategy<>() {
+      @Override
+      public List<CapturedRunway> convertHeliport(
+          ArincHeliport port,
+          List<CapturedRunway> convertedRunways,
+          List<Void> convertedHelipads
+      ) {
+        return convertedRunways;
+      }
+
+      @Override
+      public CapturedRunway convertRunway(
+          ArincHeliport heliport,
+          ArincRunway origin,
+          ArincRunway reciprocal,
+          ArincLocalizerGlideSlope primaryLocalizerGlideSlope,
+          ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
+      ) {
+        return new CapturedRunway(
+            heliport,
+            origin,
+            reciprocal,
+            primaryLocalizerGlideSlope,
+            secondaryLocalizerGlideSlope
+        );
+      }
+
+      @Override
+      public Void convertHelipad(ArincHelipad pad) {
+        throw new AssertionError("No helipads should be converted in this test.");
+      }
+
+      @Override
+      public Optional<Void> convertToHelipad(ArincHeliport port) {
+        return Optional.empty();
+      }
+    };
+
+    List<CapturedRunway> captured = HeliportAssembler.usingStrategy(database, strategy).assemble(arincHeliport);
+
+    assertAll(
+        () -> assertEquals(1, captured.size()),
+        () -> assertSame(arincHeliport, captured.get(0).heliport()),
+        () -> assertSame(runway, captured.get(0).origin()),
+        () -> assertNull(captured.get(0).reciprocal()),
+        () -> assertSame(primary, captured.get(0).primaryLocalizerGlideSlope()),
+        () -> assertSame(secondary, captured.get(0).secondaryLocalizerGlideSlope())
+    );
+  }
+
   private ArincRunway runway(String identifier, double bearing, double latitude) {
     return new ArincRunway.Builder()
         .recordType(RecordType.S)
         .customerAreaCode(CustomerAreaCode.USA)
-        .sectionCode(SectionCode.P)
+        .sectionCode(SectionCode.H)
         .airportIdentifier("HPT1")
         .airportIcaoRegion("K1")
         .subSectionCode("G")
@@ -204,5 +286,29 @@ public class TestHeliportAssembler {
         .lastUpdateCycle("2501")
         .build();
   }
+
+  private ArincLocalizerGlideSlope localizer(String identifier, int fileRecordNumber) {
+    return new ArincLocalizerGlideSlope.Builder()
+        .recordType(RecordType.S)
+        .customerAreaCode(CustomerAreaCode.USA)
+        .sectionCode(SectionCode.H)
+        .airportIdentifier("HPT1")
+        .airportIcaoRegion("K1")
+        .subSectionCode("I")
+        .localizerIdentifier(identifier)
+        .continuationRecordNumber("0")
+        .runwayIdentifier("RW09")
+        .fileRecordNumber(fileRecordNumber)
+        .lastUpdateCycle("2501")
+        .build();
+  }
+
+  private record CapturedRunway(
+      ArincHeliport heliport,
+      ArincRunway origin,
+      ArincRunway reciprocal,
+      ArincLocalizerGlideSlope primaryLocalizerGlideSlope,
+      ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
+  ) {}
 
 }

@@ -42,13 +42,22 @@ public interface HeliportAssemblyStrategy<H, R, P> {
 
   /**
    * Convert a runway end associated with a heliport.
+   *
+   * <p>The standard Boogie {@link Runway} does not model localizer/glide-slope data and therefore ignores those records. They are
+   * provided here so custom runway types can retain the complete associated ARINC data.
+   *
+   * @param heliport the 424 heliport associated with the runway
+   * @param origin the 424 runway end being converted
+   * @param reciprocal the reciprocal runway end, or {@code null} when none is defined
+   * @param primaryLocalizerGlideSlope the primary localizer/glide-slope record, or {@code null} when none is defined
+   * @param secondaryLocalizerGlideSlope the secondary localizer/glide-slope record, or {@code null} when none is defined
    */
   R convertRunway(
       ArincHeliport heliport,
       ArincRunway origin,
       ArincRunway reciprocal,
-      ArincLocalizerGlideSlope ilsGls1,
-      ArincLocalizerGlideSlope ilsGls2
+      ArincLocalizerGlideSlope primaryLocalizerGlideSlope,
+      ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
   );
 
   /**
@@ -86,7 +95,13 @@ public interface HeliportAssemblyStrategy<H, R, P> {
     }
 
     @Override
-    public Runway convertRunway(ArincHeliport heliport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2) {
+    public Runway convertRunway(
+        ArincHeliport heliport,
+        ArincRunway origin,
+        ArincRunway reciprocal,
+        ArincLocalizerGlideSlope primaryLocalizerGlideSlope,
+        ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
+    ) {
       return RunwayAssembly.standardRunway(origin, reciprocal, magneticVariation(heliport));
     }
 
