@@ -31,7 +31,7 @@ public final class EmbeddedCifpFile {
     ArincRecordParser parser = ArincRecordParser.standard(ArincVersion.V19.specs());
     IsThisAPrimaryRecord isThisAPrimaryRecord = new IsThisAPrimaryRecord();
     IsThisAHeader isThisAHeader = new IsThisAHeader();
-    LOG.info("Loading records from embedded CIFP file. {}", totalRecords());
+    LOG.info("Loading records from embedded CIFP file.");
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(getInputStream()))) {
       reader.lines().map(parser::parse).flatMap(Optional::stream).filter(isThisAHeader.negate()).filter(isThisAPrimaryRecord).forEach(consumer);
     } catch (IOException e) {
