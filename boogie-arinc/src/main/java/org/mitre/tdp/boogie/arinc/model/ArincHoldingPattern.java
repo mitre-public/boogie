@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.arinc.model;
 
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -30,10 +31,21 @@ import org.mitre.tdp.boogie.arinc.v19.field.RvsmMinimumLevel;
 import org.mitre.tdp.boogie.arinc.v19.field.VerticalScaleFactor;
 import org.mitre.tdp.boogie.arinc.v20.field.LegInboundOutboundIndicator;
 
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Ordering;
-
 public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern> {
+
+  private static final Comparator<ArincHoldingPattern> COMPARATOR = Comparator
+      .comparing((ArincHoldingPattern pattern) -> pattern.recordType)
+      .thenComparing(pattern -> pattern.customerAreaCode)
+      .thenComparing(pattern -> pattern.regionCode)
+      .thenComparing(pattern -> pattern.fixIdentifier)
+      .thenComparing(pattern -> pattern.fixIcaoRegion)
+      .thenComparing(pattern -> pattern.duplicateIdentifier)
+      .thenComparing(pattern -> pattern.fixSectionCode)
+      .thenComparing(
+          pattern -> pattern.fixSubsectionCode,
+          Comparator.nullsLast(Comparator.naturalOrder())
+      );
+
   /**
    * See {@link RecordType}.
    */
@@ -413,16 +425,7 @@ public final class ArincHoldingPattern implements Comparable<ArincHoldingPattern
    */
   @Override
   public int compareTo(ArincHoldingPattern o) {
-    return ComparisonChain.start()
-        .compare(recordType, o.recordType)
-        .compare(customerAreaCode, o.customerAreaCode)
-        .compare(regionCode, o.regionCode)
-        .compare(fixIdentifier, o.fixIdentifier)
-        .compare(fixIcaoRegion, o.fixIcaoRegion)
-        .compare(duplicateIdentifier, o.duplicateIdentifier)
-        .compare(fixSectionCode, o.fixSectionCode)
-        .compare(fixSubsectionCode, fixSubsectionCode, Ordering.natural().nullsLast())
-        .result();
+    return COMPARATOR.compare(this, o);
   }
 
   public static class Builder {

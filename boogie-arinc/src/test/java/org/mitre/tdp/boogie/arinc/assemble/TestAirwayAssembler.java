@@ -18,6 +18,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRecordConverterFactory;
 import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
 import org.mitre.tdp.boogie.arinc.model.ConvertingArincRecordConsumer;
+import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 
 import java.io.File;
 import java.util.Collection;
@@ -27,6 +28,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TestAirwayAssembler {
   private static final ShouldSplitAirway shouldSplit = ShouldSplitAirway.INSTANCE;
@@ -89,6 +93,18 @@ class TestAirwayAssembler {
   }
 
   @Test
+  void sortsPrimaryRecordBeforeContinuationRecord() {
+    ArincAirwayLeg continuation = airwayLeg("1");
+    ArincAirwayLeg primary = airwayLeg("0");
+
+    List<ArincAirwayLeg> sorted = List.of(continuation, primary).stream()
+        .sorted(new ArincAirwayLegComparator())
+        .toList();
+
+    assertSame(primary, sorted.get(0));
+  }
+
+  @Test
   void listSplitting() {
     List<List<ArincAirwayLeg>> legs = AirwayMocks.legs().stream().sorted(new ArincAirwayLegComparator()).collect(Partitioners.newListCollector((list, next) -> shouldSplit.negate().test(list.get(list.size() - 1), next)));
     assertAll(
@@ -103,6 +119,15 @@ class TestAirwayAssembler {
 
   private String recommendedNavaidSequence(List<? extends Leg> legs) {
     return legs.stream().map(Leg::recommendedNavaid).filter(Optional::isPresent).map(Optional::get).map(Fix::fixIdentifier).collect(Collectors.joining("|"));
+  }
+
+  private static ArincAirwayLeg airwayLeg(String continuationRecordNumber) {
+    ArincAirwayLeg leg = mock(ArincAirwayLeg.class);
+    when(leg.customerAreaCode()).thenReturn(CustomerAreaCode.USA);
+    when(leg.routeIdentifier()).thenReturn("J1");
+    when(leg.sequenceNumber()).thenReturn(10);
+    when(leg.continuationRecordNumber()).thenReturn(Optional.of(continuationRecordNumber));
+    return leg;
   }
 
   private static final TestArincFileParser recordParser = new TestArincFileParser(ArincRecordParser.standard(ArincVersion.V19.specs()));

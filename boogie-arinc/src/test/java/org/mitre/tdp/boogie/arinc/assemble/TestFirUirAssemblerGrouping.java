@@ -43,13 +43,13 @@ class TestFirUirAssemblerGrouping {
     )).toList();
 
     AssembledFirUir base = assembled.stream()
-        .filter(candidate -> candidate.representative() == first)
+        .filter(candidate -> candidate.representative() == second)
         .findFirst()
         .orElseThrow();
 
     assertAll(
         () -> assertEquals(5, assembled.size()),
-        () -> assertSame(first, base.representative()),
+        () -> assertSame(second, base.representative()),
         () -> assertEquals(List.of(10, 20), base.sequenceNumbers())
     );
   }
