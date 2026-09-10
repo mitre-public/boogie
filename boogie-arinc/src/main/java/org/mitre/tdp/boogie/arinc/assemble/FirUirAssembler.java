@@ -41,8 +41,8 @@ public interface FirUirAssembler<AIRSPACE> {
     }
 
     private Stream<AIRSPACE> toAirspace(List<ArincFirUirLeg> legs) {
-      ArincFirUirLeg representative = legs.get(0);
       legs.sort(LEG_ORDER);
+      ArincFirUirLeg representative = legs.get(0);
       List<SEQUENCE> sequences = legs.stream()
           .map(assemblyStrategy::convertFirUirLeg)
           .toList();

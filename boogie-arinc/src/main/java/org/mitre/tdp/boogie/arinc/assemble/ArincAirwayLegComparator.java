@@ -4,17 +4,16 @@ import java.util.Comparator;
 
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Ordering;
-
 public final class ArincAirwayLegComparator implements Comparator<ArincAirwayLeg> {
+
+  private static final Comparator<ArincAirwayLeg> COMPARATOR = Comparator
+      .comparing((ArincAirwayLeg leg) -> leg.customerAreaCode().toString())
+      .thenComparing(ArincAirwayLeg::routeIdentifier)
+      .thenComparingInt(ArincAirwayLeg::sequenceNumber)
+      .thenComparing(leg -> leg.continuationRecordNumber().orElse(null), Comparator.nullsFirst(Comparator.naturalOrder()));
+
   @Override
   public int compare(ArincAirwayLeg l, ArincAirwayLeg r) {
-    return ComparisonChain.start()
-        .compare(l.customerAreaCode().toString(), r.customerAreaCode().toString())
-        .compare(l.routeIdentifier(), r.routeIdentifier())
-        .compare(l.sequenceNumber(), r.sequenceNumber())
-        .compare(l.continuationRecordNumber().orElse(null), l.continuationRecordNumber().orElse(null), Ordering.natural().nullsFirst())
-        .result();
+    return COMPARATOR.compare(l, r);
   }
 }
