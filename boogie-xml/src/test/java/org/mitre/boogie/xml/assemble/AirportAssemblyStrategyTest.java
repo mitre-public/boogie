@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mitre.tdp.boogie.CourseReference;
+import java.util.Optional;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Helipad;
@@ -19,6 +23,19 @@ import org.mitre.boogie.xml.model.fields.ArincRecordInfo;
 import org.mitre.boogie.xml.model.fields.ArincRecordType;
 
 class AirportAssemblyStrategyTest {
+
+  @ParameterizedTest
+  @CsvSource({"TRUE,,95.0,TRUE", "MAGNETIC,,90.0,MAGNETIC", "BOTH,,90.0,", ",,90.0,", "TRUE,false,90.0,TRUE", "MAGNETIC,true,95.0,MAGNETIC"})
+  void inheritsAirportReferenceUnlessRunwayHasItsOwn(String indicator, Boolean isTrue, double expected, CourseReference airportReference) {
+    ArincAirport source = testAirport("CYYH", AIRPORT_POSITION);
+    ArincAirport airport = source.toBuilder().portInfo(source.portInfo().toBuilder().magneticTrueIndicator(indicator).build()).build();
+    ArincRunway runway = testRunway("RW15", RWY09L_POSITION, 95.0, isTrue, null, 10000L);
+    Runway assembled = STRATEGY.convertRunway(airport, runway, null, null, null);
+    assertAll(
+        () -> assertEquals(expected, assembled.course().orElseThrow().inDegrees(), 0.0001),
+        () -> assertEquals(Optional.ofNullable(airportReference), STRATEGY.convertAirport(airport, List.of(assembled), List.of()).courseReference())
+    );
+  }
 
   private static final AirportAssemblyStrategy<Airport, Runway, Helipad> STRATEGY = AirportAssemblyStrategy.standard();
 

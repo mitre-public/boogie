@@ -61,30 +61,30 @@ public interface ProcedureAssembler<P> {
       String airportIdentifier = portInfo.pointInfo().identifier();
 
       return portInfo.procedures().orElse(List.of()).stream()
-          .map(proc -> assembleOne(proc, airportIdentifier));
+          .map(proc -> assembleOne(proc, airportIdentifier, portInfo));
     }
 
-    private P assembleOne(ArincProcedure procedure, String airportIdentifier) {
+    private P assembleOne(ArincProcedure procedure, String airportIdentifier, ArincPortInfo portInfo) {
       List<T> transitions = procedure.transitions().stream()
-          .map(transition -> convertTransition(procedure, transition))
+          .map(transition -> convertTransition(procedure, transition, portInfo))
           .collect(Collectors.toList());
 
       return strategy.convertProcedure(procedure, airportIdentifier, transitions);
     }
 
-    private T convertTransition(ArincProcedure procedure, ArincTransition transition) {
+    private T convertTransition(ArincProcedure procedure, ArincTransition transition, ArincPortInfo portInfo) {
       List<L> legs = transition.legs().stream()
-          .map(this::convertLeg)
+          .map(leg -> convertLeg(leg, portInfo))
           .collect(Collectors.toList());
 
       return strategy.convertTransition(procedure, transition, legs);
     }
 
-    private L convertLeg(ArincProcedureLeg leg) {
+    private L convertLeg(ArincProcedureLeg leg, ArincPortInfo portInfo) {
       F associatedFix = leg.fixRef().flatMap(xmlFixDatabase::fix).orElse(null);
       F recommendedNavaid = leg.recNavaidRef().flatMap(xmlFixDatabase::fix).orElse(null);
       F centerFix = leg.centerFixRef().flatMap(xmlFixDatabase::fix).orElse(null);
-      return strategy.convertLeg(leg, associatedFix, recommendedNavaid, centerFix);
+      return strategy.convertLeg(leg, associatedFix, recommendedNavaid, centerFix, portInfo);
     }
   }
 }

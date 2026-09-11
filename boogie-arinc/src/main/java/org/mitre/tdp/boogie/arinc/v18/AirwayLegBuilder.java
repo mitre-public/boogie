@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.mitre.tdp.boogie.ReferencedCourse;
+import org.mitre.tdp.boogie.arinc.ArincCourses;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -33,11 +34,7 @@ public final class AirwayLegBuilder implements Function<ArincRecord, ArincAirway
     Optional<Double> rnp = arincRecord.optionalField("rnp");
     Optional<Double> theta = arincRecord.optionalField("theta");
     Optional<Double> rho = arincRecord.optionalField("rho");
-    Optional<Double> outboundMagneticCourse = arincRecord.optionalField("outboundMagneticCourse");
-    Optional<ReferencedCourse> outboundCourse = outboundMagneticCourse.map(course ->
-        arincRecord.rawField("outboundMagneticCourse").trim().endsWith("T")
-            ? ReferencedCourse.trueCourse(course)
-            : ReferencedCourse.magnetic(course));
+    Optional<ReferencedCourse> outboundCourse = ArincCourses.parse(arincRecord, "outboundMagneticCourse");
     Optional<String> routeHoldDistanceTime = arincRecord.optionalField("routeHoldDistanceTime");
     Optional<Double> inboundMagneticCourse = arincRecord.optionalField("inboundMagneticCourse");
     Optional<Double> minAltitude1 = arincRecord.optionalField("minAltitude1");

@@ -9,7 +9,7 @@ import org.mitre.tdp.boogie.arinc.EastWestVariation;
  * <br>
  * e.g. E0140, E0000, T0000
  * <br>
- * As in {@link InboundMagneticCourse} this class filters out variations listed as true north. Use {@link org.mitre.tdp.boogie.Declinations} instead for your work.
+ * T0000 represents a true-oriented reference and is retained as zero; nonzero T values are rejected.
  */
 public final class MagneticVariation extends EastWestVariation {
 

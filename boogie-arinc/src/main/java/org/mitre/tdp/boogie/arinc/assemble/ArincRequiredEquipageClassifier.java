@@ -44,27 +44,21 @@ import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PF_W;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PF_X;
 import static org.mitre.tdp.boogie.arinc.assemble.ArincRouteType.PF_Y;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Multimap;
-
-
 /**
- * This class takes a set of procedure legs that were mapped by their transition types.
- * Then seeks to apply the newer route qualifier 3 based logic to categorize the procedure
+ * Classifies the representative leg selected by the procedure assembler.
+ * First applies the newer route qualifier 3 based logic to categorize the procedure.
  * If the new logic does not work then the old route type logic is also attempted.
  * This allows the same classifier to work on current, legacy, and mixed arinc 424 version coding.
  */
-final class ArincRequiredEquipageClassifier implements Function<Multimap<TransitionType, List<ArincProcedureLeg>>, RequiredNavigationEquipage> {
+final class ArincRequiredEquipageClassifier implements Function<ArincProcedureLeg, RequiredNavigationEquipage> {
   private static final Logger log = LoggerFactory.getLogger(ArincRequiredEquipageClassifier.class);
 
   /**
@@ -84,24 +78,12 @@ final class ArincRequiredEquipageClassifier implements Function<Multimap<Transit
   private static final RouteTypeEquipageClassifier ROUTE_TYPE = RouteTypeEquipageClassifier.from(RNP_TYPES, RNAV_TYPES, CONV_TYPES);
 
   @Override
-  public RequiredNavigationEquipage apply(Multimap<TransitionType, List<ArincProcedureLeg>> transitionsByType) {
-    ArincProcedureLeg representative = representativeProcedureLeg(transitionsByType);
+  public RequiredNavigationEquipage apply(ArincProcedureLeg representative) {
     return NAV_SPEC.apply(representative)
         .or(() -> ROUTE_TYPE.apply(representative))
         .orElseGet(() -> {
           log.warn("Could not categorize procedure with old or new method {}", representative);
           return RequiredNavigationEquipage.UNKNOWN;
         });
-  }
-
-  /**
-   * The representative procedure leg (from an equipage perspective) should be one of the {@link TransitionType#COMMON} legs or
-   * if there is no such leg (procedure lacks a common portion) it shouldn't matter and the routeType/qualifiers from any of the
-   * legs should be usable for the qualification.
-   */
-  private static ArincProcedureLeg representativeProcedureLeg(Multimap<TransitionType, List<ArincProcedureLeg>> transitionsByType) {
-    return transitionsByType.get(TransitionType.COMMON).stream().flatMap(Collection::stream).findFirst()
-        .or(() -> transitionsByType.entries().stream().flatMap(e -> e.getValue().stream()).findFirst())
-        .orElseThrow(IllegalStateException::new);
   }
 }

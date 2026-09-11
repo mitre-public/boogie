@@ -1,10 +1,10 @@
 package org.mitre.boogie.xml.assemble;
 
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.CourseReference;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -53,23 +53,21 @@ public interface AirwayAssemblyStrategy<A, F, L> {
 
     @Override
     public Leg convertLeg(ArincAirwayLeg leg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid) {
+      CourseReference reference = leg.outboundCourseIsTrue()
+          .map(CourseReferences::fromTrueFlag)
+          .orElse(CourseReference.MAGNETIC);
+
       return Leg.builder(PathTerminator.TF, (int) leg.sequenceNumber())
           .associatedFix(associatedFix)
           .recommendedNavaid(recommendedNavaid)
           .outboundCourse(leg.outboundCourseValue()
-              .map(value -> referencedCourse(value, leg.outboundCourseIsTrue()))
+              .map(value -> ReferencedCourse.of(value, reference))
               .orElse(null))
           .theta(leg.theta().orElse(null))
           .rho(leg.rho().orElse(null))
           .rnp(leg.rnp().orElse(null))
           .routeDistance(leg.routeDistanceFrom().orElse(null))
           .build();
-    }
-
-    private static ReferencedCourse referencedCourse(double degrees, Optional<Boolean> isTrue) {
-      return isTrue.filter(Boolean::booleanValue)
-          .map(ignored -> ReferencedCourse.trueCourse(degrees))
-          .orElseGet(() -> ReferencedCourse.magnetic(degrees));
     }
   }
 }

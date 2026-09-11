@@ -102,7 +102,7 @@ public interface HeliportAssemblyStrategy<H, R, P> {
         ArincLocalizerGlideSlope primaryLocalizerGlideSlope,
         ArincLocalizerGlideSlope secondaryLocalizerGlideSlope
     ) {
-      return RunwayAssembly.standardRunway(origin, reciprocal, magneticVariation(heliport));
+      return RunwayAssembly.standardRunway(origin, reciprocal, () -> magneticVariation(heliport), heliport.magneticTrueIndicator().orElse(null));
     }
 
     @Override

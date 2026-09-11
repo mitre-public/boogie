@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.arinc.v18.field.AltitudeLimit;
 import org.mitre.tdp.boogie.arinc.v18.field.SpeedLimit;
+import org.mitre.tdp.boogie.arinc.v18.field.BlankSpec;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,26 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TestArincRecord {
+
+  @Test
+  void suffixCheckRespectsFieldBoundariesAndTrimPadding() {
+    ArincRecord record = record("T125T \t3500    T",
+        new RecordField<>("prefix", new BlankSpec(1)),
+        new RecordField<>("trueCourse", new BlankSpec(6)),
+        new RecordField<>("magneticCourse", new BlankSpec(4)),
+        new RecordField<>("blank", new BlankSpec(4)),
+        new RecordField<>("suffix", new BlankSpec(1)));
+
+    assertAll(
+        () -> assertTrue(record.rawFieldEndsWith("trueCourse", 'T')),
+        () -> assertFalse(record.rawFieldEndsWith("magneticCourse", 'T')),
+        () -> assertTrue(record.rawFieldEndsWith("magneticCourse", '0')),
+        () -> assertFalse(record.rawFieldEndsWith("blank", 'T')),
+        () -> assertFalse(record.rawFieldEndsWith("blank", ' ')),
+        () -> assertTrue(record.rawFieldEndsWith("suffix", 'T')),
+        () -> assertThrows(MissingRequiredFieldException.class, () -> record.rawFieldEndsWith("missing", 'T'))
+    );
+  }
 
   @Test
   void testSpecRetrievalForField() {

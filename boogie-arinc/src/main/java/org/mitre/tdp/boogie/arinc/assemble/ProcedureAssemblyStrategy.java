@@ -41,8 +41,8 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    * that information an up-leveled required equipage to the basic categories most clients expect. Deriving this from the
    * 424 specification for all the legs in a procedure is non-trivial and easy to get wrong.
    *
-   * @param representative             a 424 procedure leg elected the "representative" of the transition, provided at the top-level
-   *                                   to allow client code easy access to procedure/transition metadata
+   * @param representative             the first leg of a common transition, otherwise a runway transition, otherwise any available
+   *                                   transition, provided to allow client code access to procedure/transition metadata
    * @param requiredNavigationEquipage the inferred minimum required navigation equipage for the procedure, this is derived from
    *                                   the various fine-grained transition-level equipage codes provided in the 424
    * @param transitions                the sequence of converted transition that make up the procedure, converted with {@code .convertTransition(...)}

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.mitre.tdp.boogie.ReferencedCourse;
+import org.mitre.tdp.boogie.arinc.ArincCourses;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
@@ -20,11 +21,7 @@ public final class RunwayBuilder implements Function<ArincRecord, ArincRunway.Bu
     Optional<CustomerAreaCode> customerAreaCode = arincRecord.optionalField("customerAreaCode");
     Optional<String> continuationRecordNumber = arincRecord.optionalField("continuationRecordNumber");
     Optional<Integer> runwayLength = arincRecord.optionalField("runwayLength");
-    Optional<Double> runwayMagneticBearing = arincRecord.optionalField("runwayMagneticBearing");
-    Optional<ReferencedCourse> runwayBearing = runwayMagneticBearing.map(bearing ->
-        arincRecord.rawField("runwayMagneticBearing").trim().endsWith("T")
-            ? ReferencedCourse.trueCourse(bearing)
-            : ReferencedCourse.magnetic(bearing));
+    Optional<ReferencedCourse> runwayBearing = ArincCourses.parse(arincRecord, "runwayMagneticBearing");
     Optional<Double> runwayGradient = arincRecord.optionalField("runwayGradient");
     Optional<Integer> landingThresholdElevation = arincRecord.optionalField("landingThresholdElevation");
     Optional<Integer> thresholdDisplacementDistance = arincRecord.optionalField("thresholdDisplacementDistance");

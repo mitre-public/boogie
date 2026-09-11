@@ -1,14 +1,11 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
+import org.mitre.tdp.boogie.RequiredNavigationEquipage;
+import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-
-import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 
 /**
  * This approach to classifying a procedure works by checking to see if the route qualifier 3 is there, if so use it.

@@ -23,12 +23,19 @@ public final class ReferencedCourse implements Serializable {
     this.reference = requireNonNull(reference, "Course reference cannot be null.");
   }
 
+  /**
+   * Attaches a known north reference to published degrees without converting the value.
+   */
+  public static ReferencedCourse of(double degrees, CourseReference reference) {
+    return new ReferencedCourse(degrees, reference);
+  }
+
   public static ReferencedCourse magnetic(double degrees) {
-    return new ReferencedCourse(degrees, CourseReference.MAGNETIC);
+    return of(degrees, CourseReference.MAGNETIC);
   }
 
   public static ReferencedCourse trueCourse(double degrees) {
-    return new ReferencedCourse(degrees, CourseReference.TRUE);
+    return of(degrees, CourseReference.TRUE);
   }
 
   public double degrees() {

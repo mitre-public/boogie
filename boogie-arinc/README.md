@@ -314,3 +314,27 @@ Once you have the above specified you can simply add it to the required/appropri
 Ideally most record/field specifications should automatically reject data that aren't to spec. Most of the publicly available 424 data out there *isn't* exactly to spec and so it's important 
 parsers converting the raw records -> semi-structured data are robust to potentially bad/non-standard input. Note that we are fairly permissive about what is optional, but some items that the primary
 use case for is to navigate-to .... we require coordiantes in parsing. So runways without coordiantes get dropped in parsing.
+
+
+## True and magnetic references
+
+The standard assemblers retain an airport's magnetic/true indicator in `Airport.courseReference()`:
+`T` becomes `TRUE`, `M` becomes `MAGNETIC`, and a blank indicator remains empty (mixed or unspecified).
+This declaration is distinct from `T0000` in variation/declination fields, which denotes a true-oriented
+reference and is retained as zero rather than replaced by a modeled variation.
+
+Runway bearings and procedure outbound courses ending in `T` are parsed in whole true degrees
+(`151T` means 151 degrees true; `1510` means 151.0 degrees before applying the airport declaration).
+An airport or heliport marked `T` supplies the true reference for its unsuffixed runway/procedure courses.
+An explicit trailing `T` is preserved even when the parent is magnetic, mixed, or unavailable.
+Procedure assembly applies this context to copies of the input leg records, leaving the source data intact.
+
+Custom record builders can use `ArincCourses.parse(record, fieldName)` to read a supported course field
+as an `Optional<ReferencedCourse>`. During assembly, `ArincCourses.withDefaultReference(course, reference)`
+applies the parent reference to an unsuffixed course while preserving an explicit `T`. This assigns
+the published reference without changing the numeric degrees.
+
+Use `Leg.outboundCourse()` to retain the reference through route expansion and conformance.
+The assembled `Runway.course()` is always true: true bearings pass through, magnetic bearings use
+airport variation, and coordinate-derived bearings need no variation. Theta retains its magnetic,
+recommended-navaid-relative meaning independently of the outbound course.

@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.mitre.tdp.boogie.CourseReference;
+
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 
 /**
@@ -17,6 +19,14 @@ public enum MagneticTrueIndicator implements FieldSpec<MagneticTrueIndicator> {
   SPEC,
   M,
   T;
+
+  public Optional<CourseReference> courseReference() {
+    return switch (this) {
+      case T -> Optional.of(CourseReference.TRUE);
+      case M -> Optional.of(CourseReference.MAGNETIC);
+      case SPEC -> Optional.empty();
+    };
+  }
 
   @Override
   public int fieldLength() {

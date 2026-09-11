@@ -46,6 +46,14 @@ public interface Airport extends HasPosition {
    */
   Optional<MagneticVariation> magneticVariation();
 
+  /**
+   * Declared north reference for this airport's published details and procedures.
+   * Empty means mixed or unspecified; individual records retain their own reference.
+   */
+  default Optional<CourseReference> courseReference() {
+    return Optional.empty();
+  }
+
   Collection<? extends Runway> runways();
 
   Collection<? extends Helipad> helipads();
@@ -71,6 +79,8 @@ public interface Airport extends HasPosition {
 
     private final MagneticVariation magneticVariation;
 
+    private final CourseReference courseReference;
+
     private final Collection<Runway> runways;
 
     private final Collection<Helipad> helipads;
@@ -81,6 +91,7 @@ public interface Airport extends HasPosition {
       this.airportIdentifier = requireNonNull(builder.airportIdentifier);
       this.latLong = requireNonNull(builder.latLong);
       this.magneticVariation = builder.magneticVariation;
+      this.courseReference = builder.courseReference;
       this.runways = builder.runways;
       this.helipads = builder.helipads;
     }
@@ -93,6 +104,11 @@ public interface Airport extends HasPosition {
     @Override
     public Optional<MagneticVariation> magneticVariation() {
       return ofNullable(magneticVariation);
+    }
+
+    @Override
+    public Optional<CourseReference> courseReference() {
+      return ofNullable(courseReference);
     }
 
     @Override
@@ -115,6 +131,7 @@ public interface Airport extends HasPosition {
           .airportIdentifier(airportIdentifier)
           .latLong(latLong)
           .magneticVariation(magneticVariation)
+          .courseReference(courseReference)
           .runways(runways)
           .helipads(helipads);
     }
@@ -136,6 +153,7 @@ public interface Airport extends HasPosition {
       return Objects.equals(airportIdentifier, standard.airportIdentifier)
           && Objects.equals(latLong, standard.latLong)
           && Objects.equals(magneticVariation, standard.magneticVariation)
+          && courseReference == standard.courseReference
           && Objects.equals(runways, standard.runways)
           && Objects.equals(helipads, standard.helipads);
     }
@@ -150,7 +168,7 @@ public interface Airport extends HasPosition {
 
     // used by EqualsVerifier
     private int computeHashCode() {
-      return Objects.hash(airportIdentifier, latLong, magneticVariation, runways, helipads);
+      return Objects.hash(airportIdentifier, latLong, magneticVariation, courseReference, runways, helipads);
     }
 
     @Override
@@ -159,6 +177,7 @@ public interface Airport extends HasPosition {
           "airportIdentifier='" + airportIdentifier + '\'' +
           ", latLong=" + latLong +
           ", magneticVariation=" + magneticVariation +
+          ", courseReference=" + courseReference +
           ", runways=" + runways +
           ", helipads=" + helipads +
           '}';
@@ -171,6 +190,8 @@ public interface Airport extends HasPosition {
       private LatLong latLong;
 
       private MagneticVariation magneticVariation;
+
+      private CourseReference courseReference;
 
       private Collection<Runway> runways;
 
@@ -191,6 +212,11 @@ public interface Airport extends HasPosition {
 
       public Builder magneticVariation(MagneticVariation magneticVariation) {
         this.magneticVariation = magneticVariation;
+        return this;
+      }
+
+      public Builder courseReference(CourseReference courseReference) {
+        this.courseReference = courseReference;
         return this;
       }
 
@@ -261,6 +287,11 @@ public interface Airport extends HasPosition {
     @Override
     public Optional<MagneticVariation> magneticVariation() {
       return delegate.magneticVariation();
+    }
+
+    @Override
+    public Optional<CourseReference> courseReference() {
+      return delegate.courseReference();
     }
 
     @Override

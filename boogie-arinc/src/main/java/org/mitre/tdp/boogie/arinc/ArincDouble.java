@@ -8,6 +8,10 @@ public abstract class ArincDouble extends TrimmableField<Double> {
 
   @Override
   protected final Optional<Double> parseTrimmed(String source, int startOffset, int endOffset) {
+    if (supportsTrueCourse() && endOffset - startOffset == 4 && source.charAt(endOffset - 1) == 'T') {
+      double degrees = AsciiDigits.parseDoubleOrNaN(source, startOffset, endOffset - 1);
+      return !Double.isNaN(degrees) && isValidValue(degrees) ? Optional.of(degrees) : Optional.empty();
+    }
     int digitsStart = digitsStart(source, startOffset);
     if (digitsStart == endOffset) {
       return Optional.empty();
@@ -29,6 +33,11 @@ public abstract class ArincDouble extends TrimmableField<Double> {
    */
   protected int suppressedDecimalPlaces() {
     return 0;
+  }
+
+  /** Whether this field allows a trailing T in place of the tenths digit (whole true degrees). */
+  protected boolean supportsTrueCourse() {
+    return false;
   }
 
   /**

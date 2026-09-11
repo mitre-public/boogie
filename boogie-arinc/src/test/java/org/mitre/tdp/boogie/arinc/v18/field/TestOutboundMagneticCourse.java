@@ -30,7 +30,11 @@ public class TestOutboundMagneticCourse {
   void testParserReturnsTrueCourseInputsInWholeDegrees() {
     assertAll(
         () -> assertEquals(Optional.of(123.0), parser.apply("123T")),
-        () -> assertEquals(Optional.of(350.0), parser.apply("350T"))
+        () -> assertEquals(Optional.of(350.0), parser.apply("350T")),
+        () -> assertEquals(Optional.of(94.0), parser.parse("xx094Tyy", 2, 6)),
+        () -> assertEquals(Optional.empty(), parser.apply("35AT")),
+        () -> assertEquals(Optional.empty(), parser.apply("-01T")),
+        () -> assertEquals(Optional.empty(), new Theta().apply("350T"))
     );
   }
 

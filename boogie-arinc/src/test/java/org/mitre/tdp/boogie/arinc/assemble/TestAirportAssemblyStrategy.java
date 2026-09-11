@@ -4,6 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import java.util.List;
+import java.util.Optional;
+import org.mitre.tdp.boogie.CourseReference;
+import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
 import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
@@ -53,6 +59,14 @@ class TestAirportAssemblyStrategy {
   }
 
   @Test
+  void trueBearingNeedsNeitherVariationNorAValidModelDate() {
+    ArincAirport airport = new ArincAirport.Builder().airportIdentifier("TEST")
+        .latitude(69.55).longitude(-93.58).fileRecordNumber(1).lastUpdateCycle("UNKNOWN").build();
+    ArincRunway runway = runway("RW15", LatLong.of(69.5514, -93.5846), ReferencedCourse.trueCourse(151.0));
+    assertEquals(151.0, STRATEGY.convertRunway(airport, runway, null, null, null).course().orElseThrow().inDegrees(), 0.0001);
+  }
+
+  @Test
   void magneticBearingUsesAirportMagneticVariation() {
     ArincAirport airport = airport(12.0);
     ArincRunway runway = runway("RW15", LatLong.of(69.5514, -93.5846), ReferencedCourse.magnetic(151.0));
@@ -60,6 +74,21 @@ class TestAirportAssemblyStrategy {
     Runway result = STRATEGY.convertRunway(airport, runway, null, null, null);
 
     assertEquals(163.0, result.course().orElseThrow().inDegrees(), 0.0001);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"T,151.0,TRUE", "M,163.0,MAGNETIC", "MIXED,163.0,"})
+  void airportDeclarationSurvivesAssemblyAndControlsUnmarkedRunway(String indicator, double expectedBearing, CourseReference reference) {
+    ArincAirport airport = ArincRecordParser.standard(new AirportSpec()).parse(CYYH)
+        .flatMap(new AirportConverter()).orElseThrow().toBuilder().magneticVariation(12.0)
+        .magneticTrueIndicator(indicator.equals("MIXED") ? null : MagneticTrueIndicator.valueOf(indicator)).build();
+    ArincRunway runway = runway("RW15", LatLong.of(69.5514, -93.5846), ReferencedCourse.magnetic(151.0));
+    Runway result = STRATEGY.convertRunway(airport, runway, null, null, null);
+    Airport assembled = STRATEGY.convertAirport(airport, List.of(result), List.of());
+    assertAll(
+        () -> assertEquals(expectedBearing, result.course().orElseThrow().inDegrees(), 0.0001),
+        () -> assertEquals(Optional.ofNullable(reference), assembled.courseReference())
+    );
   }
 
   @Test

@@ -19,13 +19,18 @@ public abstract class EastWestVariation implements FieldSpec<Double> {
     }
 
     char direction = source.charAt(startOffset);
-    if (direction != 'E' && direction != 'W') {
+    if (direction != 'E' && direction != 'W' && direction != 'T') {
       return Optional.empty();
     }
 
     double variation = AsciiDigits.parseDoubleOrNaN(source, startOffset + 1, endOffset);
     if (Double.isNaN(variation)) {
       return Optional.empty();
+    }
+
+    // T0000 denotes a true-oriented reference, not a missing variation to be modeled.
+    if (direction == 'T') {
+      return variation == 0.0 ? Optional.of(0.0) : Optional.empty();
     }
 
     variation /= 10.0;

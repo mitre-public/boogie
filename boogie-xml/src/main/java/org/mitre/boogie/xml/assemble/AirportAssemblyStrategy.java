@@ -11,10 +11,12 @@ import org.mitre.boogie.xml.model.ArincLocalizerGlideSlope;
 import org.mitre.boogie.xml.model.ArincRunway;
 import org.mitre.boogie.xml.model.fields.ArincPointInfo;
 import org.mitre.boogie.xml.model.fields.ArincPortInfo;
+import org.mitre.boogie.xml.model.fields.MagneticTrueIndicator;
 import org.mitre.boogie.xml.util.MagneticVariationResolver;
 import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.CourseReference;
 import org.mitre.tdp.boogie.Helipad;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.ReferencedCourse;
@@ -68,6 +70,7 @@ public interface AirportAssemblyStrategy<A, R, H> {
           .airportIdentifier(point.identifier())
           .latLong(point.latLong())
           .magneticVariation(magneticVariation(portInfo))
+          .courseReference(portInfo.magneticTrueIndicator().flatMap(MagneticTrueIndicator::courseReference).orElse(null))
           .runways(convertedRunways)
           .helipads(convertedHelipads)
           .build();
@@ -75,7 +78,7 @@ public interface AirportAssemblyStrategy<A, R, H> {
 
     @Override
     public Runway convertRunway(ArincAirport airport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2) {
-      Optional<Course> trueCourse = referencedRunwayBearing(origin)
+      Optional<Course> trueCourse = referencedRunwayBearing(origin, airport.portInfo())
           .map(bearing -> bearing.trueDegrees(() -> magneticVariation(airport.portInfo())))
           .map(Course::ofDegrees)
           .or(() -> ofNullable(reciprocal).map(r -> courseBetween(origin, r)));
@@ -100,13 +103,14 @@ public interface AirportAssemblyStrategy<A, R, H> {
       return origin.pointInfo().latLong().courseTo(reciprocal.pointInfo().latLong());
     }
 
-    private Optional<ReferencedCourse> referencedRunwayBearing(ArincRunway runway) {
+    private Optional<ReferencedCourse> referencedRunwayBearing(ArincRunway runway, ArincPortInfo portInfo) {
+      CourseReference reference = runway.runwayBearingIsTrueBearing()
+          .map(CourseReferences::fromTrueFlag)
+          .orElseGet(() -> CourseReferences.forPort(portInfo));
+
       return runway.runwayTrueBearing()
           .map(ReferencedCourse::trueCourse)
-          .or(() -> runway.runwayBearing().map(bearing ->
-              runway.runwayBearingIsTrueBearing().orElse(false)
-                  ? ReferencedCourse.trueCourse(bearing)
-                  : ReferencedCourse.magnetic(bearing)));
+          .or(() -> runway.runwayBearing().map(bearing -> ReferencedCourse.of(bearing, reference)));
     }
 
     private MagneticVariation magneticVariation(ArincPortInfo portInfo) {

@@ -1,9 +1,9 @@
 package org.mitre.boogie.xml.assemble;
 
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.Nullable;
 
+import org.mitre.tdp.boogie.CourseReference;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -17,6 +17,7 @@ import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.boogie.xml.model.ArincProcedure;
 import org.mitre.boogie.xml.model.ArincProcedureLeg;
 import org.mitre.boogie.xml.model.ArincTransition;
+import org.mitre.boogie.xml.model.fields.ArincPortInfo;
 
 /**
  * Strategy class for converting XML model procedure records into client-defined procedure data models.
@@ -58,6 +59,11 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    */
   L convertLeg(ArincProcedureLeg leg, @Nullable F associatedFix, @Nullable F recommendedNavaid, @Nullable F centerFix);
 
+  /** Converts a leg with its parent port's reference available. Legacy strategies may continue using the four-argument method. */
+  default L convertLeg(ArincProcedureLeg leg, @Nullable F associatedFix, @Nullable F recommendedNavaid, @Nullable F centerFix, ArincPortInfo portInfo) {
+    return convertLeg(leg, associatedFix, recommendedNavaid, centerFix);
+  }
+
   final class Standard implements ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix> {
 
     private Standard() {
@@ -85,12 +91,25 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
     @Override
     public Leg convertLeg(ArincProcedureLeg leg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix) {
+      return convertLeg(leg, associatedFix, recommendedNavaid, centerFix, CourseReference.MAGNETIC);
+    }
+
+    @Override
+    public Leg convertLeg(ArincProcedureLeg leg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix, ArincPortInfo portInfo) {
+      return convertLeg(leg, associatedFix, recommendedNavaid, centerFix, CourseReferences.forPort(portInfo));
+    }
+
+    private Leg convertLeg(ArincProcedureLeg leg, Fix associatedFix, Fix recommendedNavaid, Fix centerFix, CourseReference defaultReference) {
+      CourseReference reference = leg.courseIsTrue()
+          .map(CourseReferences::fromTrueFlag)
+          .orElse(defaultReference);
+
       return Leg.builder(toPathTerminator(leg.pathAndTermination()), (int) leg.sequenceNumber())
           .associatedFix(associatedFix)
           .recommendedNavaid(recommendedNavaid)
           .centerFix(centerFix)
           .outboundCourse(leg.courseValue()
-              .map(value -> referencedCourse(value, leg.courseIsTrue()))
+              .map(value -> ReferencedCourse.of(value, reference))
               .orElse(null))
           .theta(leg.theta().orElse(null))
           .rho(leg.rho().orElse(null))
@@ -102,12 +121,6 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .isPublishedHoldingFix(leg.isHolding().orElse(false))
           .isIntermediateOrInitialApproachFix(leg.isInitialApproachFix().orElse(false) || leg.isIntermediateApproachFix().orElse(false))
           .build();
-    }
-
-    private static ReferencedCourse referencedCourse(double degrees, Optional<Boolean> isTrue) {
-      return isTrue.filter(Boolean::booleanValue)
-          .map(ignored -> ReferencedCourse.trueCourse(degrees))
-          .orElseGet(() -> ReferencedCourse.magnetic(degrees));
     }
 
     private static ProcedureType toProcedureType(String procedureType) {

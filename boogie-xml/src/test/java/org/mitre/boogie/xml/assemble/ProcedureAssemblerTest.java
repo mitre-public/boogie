@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mitre.tdp.boogie.CourseReference;
 import org.mitre.boogie.xml.database.XmlFixDatabase;
 import org.mitre.boogie.xml.database.FixDatabaseFactory;
 import org.mitre.tdp.boogie.Fix;
@@ -20,6 +23,23 @@ import org.mitre.boogie.xml.model.ArincRecords;
 import org.mitre.boogie.xml.model.ArincTransition;
 
 class ProcedureAssemblerTest {
+
+  @ParameterizedTest
+  @CsvSource({"TRUE,,TRUE", "MAGNETIC,,MAGNETIC", "BOTH,,MAGNETIC", ",,MAGNETIC", "TRUE,false,MAGNETIC", "MAGNETIC,true,TRUE", "BOTH,true,TRUE"})
+  void resolvesCourseReferenceFromRecordThenAirport(String indicator, Boolean isTrue, CourseReference expected) {
+    ArincProcedure procedure = ArincProcedure.builder().identifier("N15").procedureType("Approach")
+        .transitions(List.of(ArincTransition.builder().transitionType("ApproachTransition")
+            .legs(List.of(ArincProcedureLeg.builder().sequenceNumber(10).pathAndTermination("CF")
+                .courseValue(125.0).courseIsTrue(isTrue).build())).build())).build();
+    var airport = testAirport("CYYH", List.of(procedure));
+    airport = airport.toBuilder().portInfo(airport.portInfo().toBuilder().magneticTrueIndicator(indicator).build()).build();
+    var assembler = ProcedureAssembler.standard(FixDatabaseFactory.standard(ArincRecords.standard()));
+    var leg = assembler.assemble(List.of(airport)).findFirst().orElseThrow().transitions().iterator().next().legs().get(0);
+    assertAll(
+        () -> assertEquals(expected, leg.outboundCourse().orElseThrow().reference()),
+        () -> assertEquals(125.0, leg.outboundCourse().orElseThrow().degrees())
+    );
+  }
 
   @Test
   void assemblesAirportWithNoProceduresReturnsEmptyStream() {

@@ -4,13 +4,18 @@ import static java.util.Optional.ofNullable;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.Course;
 import org.mitre.caasd.commons.Distance;
 import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.CourseReference;
 import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.Runway;
+import org.mitre.tdp.boogie.arinc.ArincCourses;
+import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 
 /**
@@ -32,22 +37,21 @@ final class RunwayAssembly {
             : Stream.of(pair, new RunwayPair(pair.otherEnd(), pair.thisRunway())));
   }
 
-  static Runway.Standard standardRunway(
-      ArincRunway origin,
-      ArincRunway reciprocal,
-      MagneticVariation magneticVariation
-  ) {
-    Optional<Course> trueCourse = origin.runwayMagneticBearing()
-        .map(magneticVariation::magneticToTrue)
+  static Runway.Standard standardRunway(ArincRunway origin, ArincRunway reciprocal, Supplier<MagneticVariation> magneticVariation, @Nullable MagneticTrueIndicator airportReference) {
+    CourseReference defaultReference = ofNullable(airportReference)
+        .flatMap(MagneticTrueIndicator::courseReference)
+        .orElse(CourseReference.MAGNETIC);
+
+    Optional<Course> trueCourse = origin.runwayBearing()
+        .map(bearing -> ArincCourses.withDefaultReference(bearing, defaultReference))
+        .map(bearing -> bearing.trueDegrees(magneticVariation))
         .map(Course::ofDegrees)
         .or(() -> ofNullable(reciprocal).map(runway -> courseBetween(origin, runway)));
 
     Optional<Distance> length = origin.runwayLength()
         .map(value -> value - origin.thresholdDisplacementDistance().orElse(0))
         .map(Distance::ofFeet)
-        .or(() -> ofNullable(reciprocal).map(runway ->
-            LatLong.of(runway.latitude(), runway.longitude())
-                .distanceTo(LatLong.of(origin.latitude(), origin.longitude()))));
+        .or(() -> ofNullable(reciprocal).map(runway -> LatLong.of(runway.latitude(), runway.longitude()).distanceTo(LatLong.of(origin.latitude(), origin.longitude()))));
 
     return Runway.builder()
         .runwayIdentifier(origin.runwayIdentifier())

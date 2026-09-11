@@ -1,21 +1,16 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.RequiredNavigationEquipage;
-import org.mitre.tdp.boogie.TransitionType;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 
 class TestArincRequiredEquipageClassifier {
 
@@ -26,10 +21,12 @@ class TestArincRequiredEquipageClassifier {
     ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "D", "F", null, null);
     ArincProcedureLeg leg1 = mockProcedureLegQual3(SectionCode.P, "D", "1", "G", "E",  "E");
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
-    RequiredNavigationEquipage actual1 = classifier.apply(asMultimap(TransitionType.COMMON, leg1));
-    assertEquals(RequiredNavigationEquipage.RNP, actual);
-    assertEquals(RequiredNavigationEquipage.RNP, actual1, "new way for the same case");
+    RequiredNavigationEquipage actual = classifier.apply(leg);
+    RequiredNavigationEquipage actual1 = classifier.apply(leg1);
+    assertAll(
+        () -> assertEquals(RequiredNavigationEquipage.RNP, actual),
+        () -> assertEquals(RequiredNavigationEquipage.RNP, actual1, "new way for the same case")
+    );
   }
 
   @Test
@@ -37,10 +34,12 @@ class TestArincRequiredEquipageClassifier {
     ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "D", "4", null, null);
     ArincProcedureLeg leg1 = mockProcedureLegQual3(SectionCode.P, "D", "1", "G", "D",  "X");
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
-    RequiredNavigationEquipage actual1 = classifier.apply(asMultimap(TransitionType.COMMON, leg1));
-    assertEquals(RequiredNavigationEquipage.RNAV, actual);
-    assertEquals(RequiredNavigationEquipage.RNAV, actual1, "new way for the same case");
+    RequiredNavigationEquipage actual = classifier.apply(leg);
+    RequiredNavigationEquipage actual1 = classifier.apply(leg1);
+    assertAll(
+        () -> assertEquals(RequiredNavigationEquipage.RNAV, actual),
+        () -> assertEquals(RequiredNavigationEquipage.RNAV, actual1, "new way for the same case")
+    );
   }
 
 
@@ -49,10 +48,12 @@ class TestArincRequiredEquipageClassifier {
     ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "D", "1", null, null);
     ArincProcedureLeg leg1 = mockProcedureLegQual3(SectionCode.P, "D", "1", null, "G", null);
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
-    RequiredNavigationEquipage actual1 = classifier.apply(asMultimap(TransitionType.COMMON, leg1));
-    assertEquals(RequiredNavigationEquipage.CONV, actual);
-    assertEquals(RequiredNavigationEquipage.CONV, actual1, "new way for the same case");
+    RequiredNavigationEquipage actual = classifier.apply(leg);
+    RequiredNavigationEquipage actual1 = classifier.apply(leg1);
+    assertAll(
+        () -> assertEquals(RequiredNavigationEquipage.CONV, actual),
+        () -> assertEquals(RequiredNavigationEquipage.CONV, actual1, "new way for the same case")
+    );
   }
 
   @Test
@@ -61,11 +62,13 @@ class TestArincRequiredEquipageClassifier {
     //in this case i had to come up with codes to match the outcome, which is not thrilling
     ArincProcedureLeg leg2 = mockProcedureLegQual3(SectionCode.P, "F", "R", "R", "S", "E");
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
-    RequiredNavigationEquipage actual1 = classifier.apply(asMultimap(TransitionType.COMMON, leg2));
+    RequiredNavigationEquipage actual = classifier.apply(leg);
+    RequiredNavigationEquipage actual1 = classifier.apply(leg2);
 
-    assertEquals(RequiredNavigationEquipage.RNP, actual);
-    assertEquals(RequiredNavigationEquipage.RNP, actual1, "not a happy case, this really did not specify what nav spec before");
+    assertAll(
+        () -> assertEquals(RequiredNavigationEquipage.RNP, actual),
+        () -> assertEquals(RequiredNavigationEquipage.RNP, actual1, "not a happy case, this really did not specify what nav spec before")
+    );
   }
 
   @Test
@@ -73,18 +76,20 @@ class TestArincRequiredEquipageClassifier {
     ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "R", "A", "S");
     ArincProcedureLeg leg1 = mockProcedureLegQual3(SectionCode.P, "F", "R", "J", "S", "A");
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
-    RequiredNavigationEquipage actual1 = classifier.apply(asMultimap(TransitionType.COMMON, leg1));
+    RequiredNavigationEquipage actual = classifier.apply(leg);
+    RequiredNavigationEquipage actual1 = classifier.apply(leg1);
 
-    assertEquals(RequiredNavigationEquipage.RNP, actual);
-    assertEquals(RequiredNavigationEquipage.RNP, actual1, "new way for the same case");
+    assertAll(
+        () -> assertEquals(RequiredNavigationEquipage.RNP, actual),
+        () -> assertEquals(RequiredNavigationEquipage.RNP, actual1, "new way for the same case")
+    );
   }
 
   @Test
   void testTryAssignedRouteTypeRNPForApproachRFS() {
     ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "R", "F", "S");
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
+    RequiredNavigationEquipage actual = classifier.apply(leg);
     assertEquals(RequiredNavigationEquipage.RNP, actual);
   }
 
@@ -92,7 +97,7 @@ class TestArincRequiredEquipageClassifier {
   void testTryAssignedRouteTypeRNAVForApproachRPS() {
     ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "R", "P", "S");
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
+    RequiredNavigationEquipage actual = classifier.apply(leg);
     assertEquals(RequiredNavigationEquipage.RNAV, actual);
   }
 
@@ -100,7 +105,7 @@ class TestArincRequiredEquipageClassifier {
   void testTryAssignedRouteTypeRNPForApproachH() {
     ArincProcedureLeg leg = mockProcedureLeg(SectionCode.P, "F", "H", null, null);
 
-    RequiredNavigationEquipage actual = classifier.apply(asMultimap(TransitionType.COMMON, leg));
+    RequiredNavigationEquipage actual = classifier.apply(leg);
     assertEquals(RequiredNavigationEquipage.RNP, actual);
   }
 
@@ -137,11 +142,5 @@ class TestArincRequiredEquipageClassifier {
     when(leg.routeTypeQualifier2()).thenReturn(Optional.ofNullable(qualifier2));
     when(leg.routeTypeQualifier3()).thenReturn(Optional.ofNullable(qualifier3));
     return leg;
-  }
-
-  private Multimap<TransitionType, List<ArincProcedureLeg>> asMultimap(TransitionType transitionType, ArincProcedureLeg arincProcedureLeg) {
-    LinkedHashMultimap<TransitionType, List<ArincProcedureLeg>> multimap = LinkedHashMultimap.create();
-    multimap.put(transitionType, singletonList(arincProcedureLeg));
-    return multimap;
   }
 }

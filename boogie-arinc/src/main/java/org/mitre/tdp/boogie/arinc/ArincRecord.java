@@ -85,6 +85,22 @@ public final class ArincRecord {
   }
 
   /**
+   * Checks the last character of a field after trimming padding, without allocating a substring.
+   * Padding follows {@link String#trim()} semantics. Missing fields throw as in {@link #rawField(String)}.
+   */
+  public boolean rawFieldEndsWith(String fieldName, char suffix) {
+    FieldLocation field = fieldLayout.field(fieldName);
+    if (field == null) {
+      throw new MissingRequiredFieldException(fieldName);
+    }
+    int end = field.endOffset();
+    while (end > field.startOffset() && rawRecord.charAt(end - 1) <= ' ') {
+      end--;
+    }
+    return end > field.startOffset() && rawRecord.charAt(end - 1) == suffix;
+  }
+
+  /**
    * Parses the provided field directly from its range in the underlying ARINC record.
    * <br>
    * The {@link FieldSpec}s themselves should be responsible for rejecting bad input values which they don't know how to parse

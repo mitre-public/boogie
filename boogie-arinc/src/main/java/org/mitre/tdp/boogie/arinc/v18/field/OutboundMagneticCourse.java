@@ -17,6 +17,11 @@ import org.mitre.tdp.boogie.arinc.ArincDouble;
 public final class OutboundMagneticCourse extends ArincDouble {
 
   @Override
+  protected boolean supportsTrueCourse() {
+    return true;
+  }
+
+  @Override
   public int fieldLength() {
     return 4;
   }

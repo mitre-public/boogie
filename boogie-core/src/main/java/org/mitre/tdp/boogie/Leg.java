@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.google.common.collect.Range;
+import org.mitre.caasd.commons.Course;
 
 /**
  * A leg (as would or could be flown by an aircraft) from the perspective of Boogie. This class represents a superset of features

@@ -14,6 +14,27 @@ utility classes for commonly encountered situations when working with navigation
 
 ## Quick Start
 
+### North references
+
+`Airport.courseReference()` retains the airport's declared `TRUE` or `MAGNETIC` reference.
+An empty value means mixed or unspecified data, so use the individual course references.
+`Leg.outboundCourse()` returns a `ReferencedCourse` containing both degrees and reference;
+`Runway.course()` is already resolved to true degrees.
+
+```java
+ReferencedCourse published = ReferencedCourse.of(125.0, CourseReference.TRUE);
+Leg leg = Leg.builder(PathTerminator.CF, 10).outboundCourse(published).build();
+Optional<Double> trueCourse = leg.outboundCourse()
+    .map(course -> course.trueDegrees(() -> applicableMagneticVariation));
+```
+
+Use `ReferencedCourse.of(degrees, reference)` when the reference comes from data, or
+`magnetic(degrees)` and `trueCourse(degrees)` when it is known at the call site.
+Construction preserves the published degrees; it does not perform a conversion.
+The variation supplier is called only for a magnetic course. True courses pass through unchanged.
+The legacy `outboundMagneticCourse()` accessor excludes true courses; use `outboundCourse()`
+when processing either reference. Theta remains a magnetic radial relative to the recommended navaid.
+
 ### Navigation interfaces
 
 The core Boogie module defines the common set of interfaces used to describe common navigation data by the application. The general 

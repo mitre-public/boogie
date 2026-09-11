@@ -3,13 +3,16 @@ package org.mitre.tdp.boogie.arinc.assemble;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import org.mitre.tdp.boogie.*;
+import org.mitre.tdp.boogie.arinc.ArincCourses;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
 import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
+import org.mitre.tdp.boogie.arinc.model.ArincAirport;
+import org.mitre.tdp.boogie.arinc.model.ArincHeliport;
+import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -17,7 +20,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static org.mitre.caasd.commons.util.Partitioners.splitOnPairwiseChange;
 
@@ -47,7 +49,6 @@ public interface ProcedureAssembler<P> {
     private static final ArincRequiredEquipageClassifier requiredEquipageClassifier = new ArincRequiredEquipageClassifier();
     private static final ArincProcedureGrouper procedureGrouper = ArincProcedureGrouper.INSTANCE;
     private static final ArincTransitionGrouper transitionGrouper = ArincTransitionGrouper.INSTANCE;
-    private static final Comparator<ArincProcedureLeg> LEG_COMPARATOR = comparing(ArincProcedureLeg::sequenceNumber).thenComparing(i -> i.categoryOrType().orElse("UNK"));
     private final ArincProcedureLegConverter<P, T, L, F> inflator;
     /**
      * Predicate for determining whether there should be any special splitting logic applied to sequential legs within a procedure
@@ -86,22 +87,27 @@ public interface ProcedureAssembler<P> {
 
       Multimap<TransitionType, List<ArincProcedureLeg>> byType = LinkedHashMultimap.create();
 
-      byTransition.stream().map(this::repartition).flatMap(Collection::stream)
+      byTransition.stream()
+          .map(this::repartition)
+          .flatMap(Collection::stream)
           .forEach(transition -> byType.put(transitionTypeClassifier.applySorted(transition), transition));
 
-      RequiredNavigationEquipage equipage = requiredEquipageClassifier.apply(byType);
+      // Prefer a common transition, then a runway transition; each transition is already ordered by sequence number.
+      ArincProcedureLeg representative = byType.get(TransitionType.COMMON).stream().findFirst()
+          .or(() -> byType.get(TransitionType.RUNWAY).stream().findFirst())
+          .or(() -> byType.values().stream().findFirst())
+          .map(transition -> transition.get(0))
+          .orElseThrow(IllegalStateException::new);
+      RequiredNavigationEquipage equipage = requiredEquipageClassifier.apply(representative);
+      Function<ArincProcedureLeg, L> convertLeg = inflator.forProcedure(representative);
 
       List<T> transitions = byType.entries().stream()
           .map(entry -> strategy.convertTransition(
               entry.getValue().get(0),
               entry.getKey(),
-              entry.getValue().stream().map(inflator).collect(Collectors.toList())
+              entry.getValue().stream().map(convertLeg).collect(Collectors.toList())
           ))
           .collect(Collectors.toList());
-
-      ArincProcedureLeg representative = arincProcedureLegs.stream()
-          .min(LEG_COMPARATOR)
-          .orElseThrow(IllegalStateException::new);
 
       return strategy.convertProcedure(representative, equipage, transitions);
     }
@@ -121,10 +127,11 @@ public interface ProcedureAssembler<P> {
      * the more complex interface implementation. This class leverages the {@link ArincFixDatabase} & {@link ArincTerminalAreaDatabase} to
      * identify and dereference these.
      */
-    static final class ArincProcedureLegConverter<P, T, L, F> implements Function<ArincProcedureLeg, L> {
+    static final class ArincProcedureLegConverter<P, T, L, F> {
 
       private final ProcedureAssemblyStrategy<P, T, L, F> strategy;
       private final FixDereferencer<F> fixDereferencer;
+      private final ArincTerminalAreaDatabase terminalDatabase;
 
       ArincProcedureLegConverter(
           ArincTerminalAreaDatabase arincTerminalAreaDatabase,
@@ -132,16 +139,42 @@ public interface ProcedureAssembler<P> {
           ProcedureAssemblyStrategy<P, T, L, F> procedureStrategy,
           FixAssemblyStrategy<F> fixStrategy) {
         this.strategy = requireNonNull(procedureStrategy);
+        this.terminalDatabase = requireNonNull(arincTerminalAreaDatabase);
         this.fixDereferencer = new FixDereferencer<>(FixAssembler.withStrategy(fixStrategy), arincTerminalAreaDatabase, arincFixDatabase);
       }
 
-      @Override
-      public L apply(ArincProcedureLeg arincProcedureLeg) {
+      Function<ArincProcedureLeg, L> forProcedure(ArincProcedureLeg representative) {
+        // Procedure groups share an airport identifier and region. Preserve section-specific lookup for mixed P/H groups.
+        CourseReference defaultReference = defaultReference(representative);
+        return leg -> apply(leg, leg.sectionCode() == representative.sectionCode() ? defaultReference : defaultReference(leg));
+      }
+
+      private L apply(ArincProcedureLeg arincProcedureLeg, CourseReference defaultReference) {
         Optional<F> associatedFix = associatedFix(arincProcedureLeg);
         Optional<F> recommendedNavaid = recommendedNavaid(arincProcedureLeg);
         Optional<F> centerFix = centerFix(arincProcedureLeg);
 
-        return strategy.convertLeg(arincProcedureLeg, associatedFix.orElse(null), recommendedNavaid.orElse(null), centerFix.orElse(null));
+        return strategy.convertLeg(withAirportReference(arincProcedureLeg, defaultReference), associatedFix.orElse(null), recommendedNavaid.orElse(null), centerFix.orElse(null));
+      }
+
+      private CourseReference defaultReference(ArincProcedureLeg leg) {
+        Optional<MagneticTrueIndicator> reference = leg.sectionCode() == SectionCode.H
+            ? terminalDatabase.heliport(leg.airportIdentifier(), leg.airportIcaoRegion()).flatMap(ArincHeliport::magneticTrueIndicator)
+            : terminalDatabase.airport(leg.airportIdentifier(), leg.airportIcaoRegion()).flatMap(ArincAirport::magneticTrueIndicator);
+        return reference.flatMap(MagneticTrueIndicator::courseReference).orElse(CourseReference.MAGNETIC);
+      }
+
+      /** Apply the parent declaration to unmarked courses without changing the source records. */
+      private ArincProcedureLeg withAirportReference(ArincProcedureLeg leg, CourseReference defaultReference) {
+        if (defaultReference == CourseReference.MAGNETIC) {
+          return leg;
+        }
+        ReferencedCourse course = leg.outboundCourse().orElse(null);
+        if (course == null) {
+          return leg;
+        }
+        ReferencedCourse resolvedCourse = ArincCourses.withDefaultReference(course, defaultReference);
+        return resolvedCourse == course ? leg : leg.toBuilder().outboundCourse(resolvedCourse).build();
       }
 
       Optional<F> associatedFix(ArincProcedureLeg arincProcedureLeg) {

@@ -9,6 +9,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincAirport;
 import org.mitre.tdp.boogie.arinc.model.ArincHelipad;
 import org.mitre.tdp.boogie.arinc.model.ArincLocalizerGlideSlope;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
+import org.mitre.tdp.boogie.arinc.v18.field.MagneticTrueIndicator;
 
 /**
  * Strategy class for generating user-defined records from 424 airport information. Used with {@link AirportAssembler}.
@@ -57,6 +58,7 @@ public interface AirportAssemblyStrategy<A, R, P> {
           .airportIdentifier(airport.airportIdentifier())
           .latLong(LatLong.of(airport.latitude(), airport.longitude()))
           .magneticVariation(magneticVariation(airport))
+          .courseReference(airport.magneticTrueIndicator().flatMap(MagneticTrueIndicator::courseReference).orElse(null))
           .runways(convertedRunways)
           .helipads(convertedHelipads)
           .build();
@@ -64,7 +66,7 @@ public interface AirportAssemblyStrategy<A, R, P> {
 
     @Override
     public Runway.Standard convertRunway(ArincAirport airport, ArincRunway origin, ArincRunway reciprocal, ArincLocalizerGlideSlope ilsGls1, ArincLocalizerGlideSlope ilsGls2) {
-      return RunwayAssembly.standardRunway(origin, reciprocal, magneticVariation(airport));
+      return RunwayAssembly.standardRunway(origin, reciprocal, () -> magneticVariation(airport), airport.magneticTrueIndicator().orElse(null));
     }
 
     @Override
