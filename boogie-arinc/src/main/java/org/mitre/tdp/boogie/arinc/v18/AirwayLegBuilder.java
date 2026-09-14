@@ -1,11 +1,5 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.mitre.tdp.boogie.ReferencedCourse;
 import org.mitre.tdp.boogie.arinc.ArincCourses;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
@@ -13,6 +7,9 @@ import org.mitre.tdp.boogie.arinc.model.ArincAirwayLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
 import org.mitre.tdp.boogie.arinc.v18.field.RouteHoldDistanceTime;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 public final class AirwayLegBuilder implements Function<ArincRecord, ArincAirwayLeg.Builder> {
   public static final AirwayLegBuilder INSTANCE = new AirwayLegBuilder();
