@@ -28,7 +28,7 @@ class DafifTerminalSegmentConverterTest {
   void retainsBothSpeedLimitsAndTheSecondaryNavaidCountry() {
     var segment = convert(Map.of(
         "speedLimit1", "210", "speedLimitAircraftType1", "J", "speedLimitAltitude1", "FL100",
-        "speedLimit2", "180", "speedLimitAircraftType2", "T",
+        "speedLimit2", "180", "speedLimitAircraftType2", "T", "speedLimitAltitude2", "FL80",
         "navaid2Identifier", "ABC", "navaid2Type", "4", "navaid2CountryCode", "US", "navaid2KeyCode", "1"));
 
     assertAll(
@@ -37,7 +37,18 @@ class DafifTerminalSegmentConverterTest {
         () -> assertEquals("FL100", segment.speedLimitAltitude1().orElseThrow()),
         () -> assertEquals(180.0, segment.speedLimit2().orElseThrow()),
         () -> assertEquals("T", segment.speedLimitAircraftType2().orElseThrow()),
+        () -> assertEquals("FL80", segment.speedLimitAltitude2().orElseThrow()),
         () -> assertEquals("US", segment.navaid2CountryCode().orElseThrow())
+    );
+  }
+
+  @ParameterizedTest
+  @CsvSource({"210, '', 210.0,", "'', 180, , 180.0"})
+  void retainsEitherSpeedLimitIndependently(String speedLimit1, String speedLimit2, Double expected1, Double expected2) {
+    var segment = convert(Map.of("speedLimit1", speedLimit1, "speedLimit2", speedLimit2));
+    assertAll(
+        () -> assertEquals(expected1, segment.speedLimit1().orElse(null)),
+        () -> assertEquals(expected2, segment.speedLimit2().orElse(null))
     );
   }
 
