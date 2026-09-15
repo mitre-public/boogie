@@ -4,6 +4,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.InputStream;
 
+import com.google.common.annotations.Beta;
+import org.mitre.boogie.xml.exi.ExiOptions;
 import org.mitre.boogie.xml.model.ArincRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +30,20 @@ import org.slf4j.LoggerFactory;
  *
  * @see OneshotXmlParser for the assembling parser that produces client-defined domain types
  */
+@Beta
 public final class OneshotXmlModelParser {
 
   private static final Logger LOG = LoggerFactory.getLogger(OneshotXmlModelParser.class);
 
-  private final ArincXmlVersion version;
+  private final StreamingUnmarshaller unmarshaller;
 
-  private OneshotXmlModelParser(ArincXmlVersion version) {
-    this.version = requireNonNull(version);
+  private OneshotXmlModelParser(StreamingUnmarshaller unmarshaller) {
+    this.unmarshaller = unmarshaller;
+  }
+
+  /** Configure the ARINC model version and the XML or EXI reader. */
+  public static Builder builder() {
+    return new Builder(StreamingUnmarshaller.builder());
   }
 
   /**
@@ -44,23 +52,32 @@ public final class OneshotXmlModelParser {
    * @param version the {@link ArincXmlVersion} defining the XML schema version to parse
    */
   public static OneshotXmlModelParser standard(ArincXmlVersion version) {
-    return new OneshotXmlModelParser(version);
+    return builder().version(version).build();
   }
 
   /**
-   * Parse the given XML input stream into an {@link ArincRecords} containing the raw model objects.
+   * Create a model-only parser for EXI input with the given ARINC model version and EXI options.
+   * The options select schema-less or schema-informed decoding independently of the model version.
+   */
+  public static OneshotXmlModelParser standard(ArincXmlVersion version, ExiOptions exiOptions) {
+    return builder().version(version).exiOptions(exiOptions).build();
+  }
+
+  /**
+   * Parse the configured XML or EXI input into an {@link ArincRecords} containing the raw model objects.
    *
-   * <p>No assembly or fix resolution is performed &mdash; the returned records contain only the
-   * unmarshalled JAXB model objects as they appear in the XML.
+   * <p>No assembly or fix resolution is performed &mdash; the configured handlers convert the
+   * unmarshalled JAXB objects into the intermediate ARINC model records.
    *
-   * @param inputStream an input stream containing the bytes of an ARINC 424 XML file
+   * @param inputStream an input stream containing an ARINC 424 document in the configured encoding;
+   *                    the caller remains responsible for closing it
    */
   public ArincRecords parseFrom(InputStream inputStream) {
     requireNonNull(inputStream);
 
-    ArincRecords records = StreamingUnmarshaller.fromVersion(version)
+    ArincRecords records = unmarshaller
         .apply(inputStream)
-        .orElseThrow(() -> new RuntimeException("Failed to unmarshal XML input."));
+        .orElseThrow(() -> new RuntimeException("Failed to unmarshal XML or EXI input."));
 
     LOG.debug("Finished streaming XML — {} waypoints, {} NDB navaids, {} VHF navaids, {} airports, {} heliports, {} airways, {} holding patterns.",
         records.waypoints().size(),
@@ -72,5 +89,41 @@ public final class OneshotXmlModelParser {
         records.holdingPatterns().size());
 
     return records;
+  }
+
+  /** Builder for the model version and input reader. XML is the default encoding. */
+  public static final class Builder {
+
+    private final StreamingUnmarshaller.Builder unmarshallerBuilder;
+
+    private Builder(StreamingUnmarshaller.Builder unmarshallerBuilder) {
+      this.unmarshallerBuilder = unmarshallerBuilder;
+    }
+
+    public Builder version(ArincXmlVersion version) {
+      unmarshallerBuilder.version(version);
+      return this;
+    }
+
+    /** Select ordinary XML input, including when reusing a builder previously configured for EXI. */
+    public Builder xml() {
+      unmarshallerBuilder.xml();
+      return this;
+    }
+
+    public Builder exiOptions(ExiOptions exiOptions) {
+      unmarshallerBuilder.exiOptions(exiOptions);
+      return this;
+    }
+
+    /** Supply a reader directly, for example from a codec with several registered schemas. */
+    public Builder readerFactory(StreamingUnmarshaller.ReaderFactory readerFactory) {
+      unmarshallerBuilder.readerFactory(readerFactory);
+      return this;
+    }
+
+    public OneshotXmlModelParser build() {
+      return new OneshotXmlModelParser(unmarshallerBuilder.build());
+    }
   }
 }

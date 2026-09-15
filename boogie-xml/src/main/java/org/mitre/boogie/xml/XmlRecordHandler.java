@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import com.google.common.annotations.Beta;
 import org.mitre.boogie.xml.model.ArincRecords;
 
 /**
@@ -17,6 +18,7 @@ import org.mitre.boogie.xml.model.ArincRecords;
  *
  * @param <T> the JAXB-generated type for the XML element
  */
+@Beta
 public final class XmlRecordHandler<T> {
 
   private final String elementName;
