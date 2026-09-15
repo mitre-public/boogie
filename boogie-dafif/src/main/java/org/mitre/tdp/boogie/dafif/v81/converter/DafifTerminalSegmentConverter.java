@@ -38,7 +38,7 @@ public class DafifTerminalSegmentConverter implements Function<DafifRecord, Opti
         .fix1Distance(dafifRecord.<Double>optionalField("fix1Distance").orElse(null))
         .navaid2Identifier(dafifRecord.<String>optionalField("navaid2Identifier").orElse(null))
         .navaid2Type(dafifRecord.<String>optionalField("navaid2Type").orElse(null))
-        .navaid2CountryCode(dafifRecord.<String>optionalField("navai2CountryCode").orElse(null))
+        .navaid2CountryCode(dafifRecord.<String>optionalField("navaid2CountryCode").orElse(null))
         .navaid2KeyCode(dafifRecord.<Integer>optionalField("navaid2KeyCode").orElse(null))
         .fix2Bearing(dafifRecord.<Double>optionalField("fix2Bearing").orElse(null))
         .fix2Distance(dafifRecord.<Double>optionalField("fix2Distance").orElse(null))
@@ -72,10 +72,10 @@ public class DafifTerminalSegmentConverter implements Function<DafifRecord, Opti
         .navaid2DmeDegreesLatitude(dafifRecord.<Double>optionalField("navaid2DmeDegreesLatitude").orElse(null))
         .navaid2DmeGeodeticLongitude(dafifRecord.<String>optionalField("navaid2DmeGeodeticLongitude").orElse(null))
         .navaid2DmeDegreesLongitude(dafifRecord.<Double>optionalField("navaid2DmeDegreesLongitude").orElse(null))
-        .speedLimit1(dafifRecord.<Double>optionalField("speedLimit1 ").orElse(null))
+        .speedLimit1(dafifRecord.<Integer>optionalField("speedLimit1").map(Integer::doubleValue).orElse(null))
         .speedLimitAircraftType1(dafifRecord.<String>optionalField("speedLimitAircraftType1").orElse(null))
         .speedLimitAltitude1(dafifRecord.<String>optionalField("speedLimitAltitude1").orElse(null))
-        .speedLimit2(dafifRecord.<Double>optionalField("speedLimit2").orElse(null))
+        .speedLimit2(dafifRecord.<Integer>optionalField("speedLimit2").map(Integer::doubleValue).orElse(null))
         .speedLimitAircraftType2(dafifRecord.<String>optionalField("speedLimitAircraftType2").orElse(null))
         .speedLimitAltitude2(dafifRecord.<String>optionalField("speedLimitAltitude2").orElse(null))
         .verticalNavigationVnav(dafifRecord.<Double>optionalField("verticalNavigationVnav").orElse(null))
@@ -87,7 +87,8 @@ public class DafifTerminalSegmentConverter implements Function<DafifRecord, Opti
   }
 
   private Double generateRequiredNavPerformance(Integer dafifValue) {
+    int mantissa = dafifValue / 10;
     int decimals = dafifValue % 10;
-    return dafifValue / (10.0 + decimals);
+    return mantissa / Math.pow(10.0, decimals);
   }
 }

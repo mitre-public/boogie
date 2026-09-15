@@ -9,9 +9,10 @@ This module within the Boogie software project provides a set of configurable an
 
 For users who want to go straight from a DAFIF zip file to assembled Boogie objects in one call:
 ```java
-OneshotDafifParser<Airport, Runway, Fix, Leg, Transition, Airway, Procedure> parser = OneshotDafifParser.standard(DafifVersion.V81);
+OneshotDafifParser<Airport, Runway, Fix, Leg, Transition, Airway, Procedure, Airspace, AirspaceSequence> parser =
+    OneshotDafifParser.standard(DafifVersion.V81);
 
-OneshotDafifParser.ClientRecords<Airport, Fix, Airway, Procedure> records;
+OneshotDafifParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace> records;
 try (InputStream is = new FileInputStream("DAFIF8_1.zip")) {
   records = parser.assembleFrom(is);
 }
@@ -20,6 +21,9 @@ Collection<Airport> airports = records.airports();
 Collection<Fix> fixes = records.fixes();
 Collection<Airway> airways = records.airways();
 Collection<Procedure> procedures = records.procedures();
+Collection<Airspace> boundaries = records.boundaries();
+Collection<Airspace> specialUseAirspaces = records.specialUseAirspaces();
+Collection<Airspace> allAirspaces = records.airspaces();
 ```
 
 ### Parsing a DAFIF zip file (step by step)
@@ -51,7 +55,34 @@ Collection<DafifTerminalSegment> terminalSegments = consumer.dafifTerminalSegmen
 Collection<DafifAirTrafficSegment> atsSegments = consumer.dafifAts();
 Collection<DafifIls> ils = consumer.dafifIls();
 Collection<DafifAddRunway> addRunways = consumer.dafifAddRunways();
+Collection<DafifBoundaryParent> boundaryParents = consumer.dafifBoundaryParents();
+Collection<DafifBoundarySegment> boundarySegments = consumer.dafifBoundarySegments();
+Collection<DafifSuasParent> suasParents = consumer.dafifSuasParents();
+Collection<DafifSuasSegment> suasSegments = consumer.dafifSuasSegments();
 ```
+
+### Coded airspace fields
+
+Airspace models expose `BoundaryType`, `SpecialUseAirspaceType`, `Shape`, and `Derivation` from
+`org.mitre.tdp.boogie.dafif.model.enums`. Each enum retains its explicit DAFIF `code()`; separate functions in
+`org.mitre.tdp.boogie.dafif.v81.converter` handle code lookup.
+Boundary type codes are integers (`8` represents `08` in the file); the other enum codes are strings.
+
+```java
+BoundaryType boundaryType = boundaryParents.iterator().next().boundaryType();
+SpecialUseAirspaceType suasType = suasParents.iterator().next().specialUseAirspaceType();
+Shape shape = suasSegments.iterator().next().shape();
+Optional<Derivation> derivation = suasSegments.iterator().next().derivation();
+
+boolean restricted = suasType == SpecialUseAirspaceType.RESTRICTED;
+String sourceCode = suasType.code(); // "R" for RESTRICTED
+SpecialUseAirspaceType converted = SpecialUseAirspaceTypeConverter.INSTANCE.apply("R");
+```
+
+Field parsers retain their numeric/string representation in `DafifRecord`. Record converters translate those values into
+enums using `BoundaryTypeConverter`, `SpecialUseAirspaceTypeConverter`, `ShapeConverter`, and `DerivationConverter`.
+Blank derivation fields remain absent. Unsupported codes raise an explicit conversion error; `BoundaryType.OTHER` is
+reserved for the defined code `14`.
 
 ### Indexing in provided database implementations
 
@@ -121,6 +152,32 @@ List<Fix> fixes = Stream.concat(consumer.dafifWaypoints().stream(), consumer.daf
     .toList();
 ```
 
+### Assembling boundaries and special use airspaces
+
+```java
+List<Airspace> boundaries = BoundaryAssembler.standard()
+    .assemble(consumer.dafifBoundaryParents(), consumer.dafifBoundarySegments()).toList();
+List<Airspace> specialUseAirspaces = SuasAssembler.standard()
+    .assemble(consumer.dafifSuasParents(), consumer.dafifSuasSegments()).toList();
+```
+
+The assemblers join parent metadata to ordered geometry segments. Boundaries use `BDRY_IDENT`; special use airspaces use
+`SUAS_IDENT` and `SECTOR`. Boundary types 08 and 12 produce `FIR` and `UIR`; other boundary types produce `CONTROLLED`.
+Special use airspaces produce `RESTRICTIVE`. Identifiers retain the DAFIF identity and sector to keep sectors distinct.
+
+The standard strategies support great circles, rhumb lines, directed arcs, and circles. Generalized boundaries use their
+published points as great-circle segments. Source coordinate gaps up to 0.1 NM use explicit great-circle connections that
+retain both endpoints. Point definitions, circles with an inner radius, and open or disconnected boundaries cannot be
+represented by the core `Airspace` model; standard assembly skips these airspaces with a diagnostic. Their complete source records remain
+available from the consumer. `BoundaryAssembler.usingStrategy(...)` and `SuasAssembler.usingStrategy(...)` accept custom
+strategies when a client model needs additional geometry or metadata.
+
+Altitude limits expressed as flight levels or AMSL convert to feet MSL. AGL, surface, unknown, unlimited, and by-NOTAM limits
+leave the corresponding side of the range unbounded: converting terrain-relative limits to MSL requires terrain data.
+The standard oneshot factory returns Boogie `Airspace` objects through `boundaries()`, `specialUseAirspaces()`, and `airspaces()`.
+The builder accepts boundary and special use airspace strategies sharing the client-defined `AIR` and `ASEQ` types.
+These types do not need to implement Boogie's `Airspace` or `AirspaceSequence` interfaces; all three accessors return `Collection<AIR>`.
+
 ### Assembling DAFIF into your own models
 
 All of the `*Assembler` classes support custom assembly strategies. This allows clients to inject their own construction logic
@@ -141,12 +198,17 @@ AirwayAssembler<MyAirway> customAirwayAssembler = AirwayAssembler.withStrategy(
     xmlFixDatabase, customFixStrategy, customAirwayStrategy);
 
 // or via the oneshot parser builder
-OneshotDafifParser<MyAirport, MyRunway, MyFix, MyLeg, MyTransition, MyAirway, MyProcedure> parser =
-    OneshotDafifParser.<MyAirport, MyRunway, MyFix, MyLeg, MyTransition, MyAirway, MyProcedure>builder(DafifVersion.V81)
+BoundaryAssemblyStrategy<MyAirspace, MyAirspaceSequence> myBoundaryStrategy = ...;
+SuasAssemblyStrategy<MyAirspace, MyAirspaceSequence> mySuasStrategy = ...;
+
+OneshotDafifParser<MyAirport, MyRunway, MyFix, MyLeg, MyTransition, MyAirway, MyProcedure, MyAirspace, MyAirspaceSequence> parser =
+    OneshotDafifParser.<MyAirport, MyRunway, MyFix, MyLeg, MyTransition, MyAirway, MyProcedure, MyAirspace, MyAirspaceSequence>builder(DafifVersion.V81)
         .airportStrategy(myAirportStrategy)
         .fixStrategy(myFixStrategy)
         .airwayStrategy(myAirwayStrategy)
         .procedureStrategy(myProcedureStrategy)
+        .boundaryStrategy(myBoundaryStrategy)
+        .suasStrategy(mySuasStrategy)
         .build();
 ```
 
@@ -169,6 +231,8 @@ The DAFIF zip is organized into subdirectories by data type:
 | `DAFIFT/TRM`  | `TRM_PAR.TXT`      | Terminal procedure parents (SID/STAR/Approach metadata)         |
 | `DAFIFT/TRM`  | `TRM_SEG.TXT`      | Terminal procedure segments (individual legs)                   |
 | `DAFIFT/ATS`  | `ATS.TXT`          | Air Traffic Service routes (airways)                            |
+| `DAFIFT/BDRY` | `BDRY_PAR.TXT`, `BDRY.TXT` | Boundary metadata and geometry segments |
+| `DAFIFT/SUAS` | `SUAS_PAR.TXT`, `SUAS.TXT` | Special use airspace metadata and geometry segments |
 
 Each `.TXT` file has a header row with tab-separated column names followed by data rows. Records are parsed according to the
 column definitions in the `DafifRecordSpec` implementations for the appropriate version.
@@ -193,7 +257,8 @@ column definitions in the `DafifRecordSpec` implementations for the appropriate 
 |:-------:|:-------:|:------:|:----------:|:----:|:------:|:--------:|:---------------:|:----------------:|:-------------:|
 | 8.1     | y       | y      | y          | y    | y      | y        | y               | y                | y             |
 
-All 9 DAFIF record types are supported for parsing, validation, and conversion to typed Java model classes. The assembly layer
-produces standard Boogie `Airport`, `Fix`, `Airway`, and `Procedure` objects from the parsed data.
+The nine record types above and the four boundary/SUAS parent and segment types support parsing, validation, and conversion
+to typed Java model classes. The assembly layer produces standard Boogie `Airport`, `Fix`, `Airway`, `Procedure`, and
+`Airspace` objects from the parsed data. Auxiliary boundary/SUAS country and note tables are not parsed.
 
 Heliport-specific data (`TRMH/`, `SUPPH/` directories) is excluded from parsing.
