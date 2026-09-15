@@ -6,6 +6,10 @@ import java.util.Optional;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifAddRuwaySpec;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifAirportSpec;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifAtsSpec;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifBoundarySpec;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifBoundaryParentSpec;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifSuasSpec;
+import org.mitre.tdp.boogie.dafif.v81.spec.DafifSuasParentSpec;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifIlsSpec;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifNavaidSpec;
 import org.mitre.tdp.boogie.dafif.v81.spec.DafifRunwaySpec;
@@ -25,7 +29,11 @@ public enum DafifVersion {
       new DafifTerminalSegmentSpec(),
       new DafifWaypointSpec(),
       new DafifAtsSpec(),
-      new DafifAddRuwaySpec()
+      new DafifAddRuwaySpec(),
+      new DafifBoundarySpec(),
+      new DafifBoundaryParentSpec(),
+      new DafifSuasSpec(),
+      new DafifSuasParentSpec()
   );
 
   private static final ImmutableMap<String, DafifVersion> LOOKUP = ImmutableMap.of(

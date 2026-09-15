@@ -14,6 +14,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airspace;
+import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -24,16 +26,24 @@ import org.mitre.tdp.boogie.dafif.assemble.AirportAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.AirportAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.assemble.AirwayAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.AirwayAssemblyStrategy;
+import org.mitre.tdp.boogie.dafif.assemble.BoundaryAssembler;
+import org.mitre.tdp.boogie.dafif.assemble.BoundaryAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.assemble.FixAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.FixAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.assemble.ProcedureAssembler;
 import org.mitre.tdp.boogie.dafif.assemble.ProcedureAssemblyStrategy;
+import org.mitre.tdp.boogie.dafif.assemble.SuasAssembler;
+import org.mitre.tdp.boogie.dafif.assemble.SuasAssemblyStrategy;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
 import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
 import org.mitre.tdp.boogie.dafif.model.ConvertingDafifRecordConsumer;
 import org.mitre.tdp.boogie.dafif.model.DafifAirport;
+import org.mitre.tdp.boogie.dafif.model.DafifBoundaryParent;
+import org.mitre.tdp.boogie.dafif.model.DafifBoundarySegment;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
+import org.mitre.tdp.boogie.dafif.model.DafifSuasParent;
+import org.mitre.tdp.boogie.dafif.model.DafifSuasSegment;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * client-defined assembled records.
  *
  * <p>This class mirrors the ARINC {@code OneshotRecordParser} pattern. It reads a DAFIF zip, parses all supported record
- * types, builds the necessary lookup databases, and assembles airports, fixes, airways, and procedures in one pass.
+ * types, builds the necessary lookup databases, and assembles airports, fixes, airways, procedures, and airspaces in one pass.
  *
  * <p>Use the {@link #standard(DafifVersion)} factory for default Boogie implementations, or the {@link Builder} for custom
  * assembly strategies.
@@ -55,13 +65,16 @@ import org.slf4j.LoggerFactory;
  * @param <TRS> the transition type
  * @param <AWY> the airway type
  * @param <PRC> the procedure type
+ * @param <AIR> the airspace type
+ * @param <ASEQ> the airspace sequence type
  */
-public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
+public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> {
 
   private static final Logger LOG = LoggerFactory.getLogger(OneshotDafifParser.class);
 
   private static final Set<String> PARSEABLE_FILES = Set.of(
-      "ARPT.TXT", "RWY.TXT", "ADD_RWY.TXT", "ILS.TXT", "NAV.TXT", "WPT.TXT", "TRM_PAR.TXT", "TRM_SEG.TXT", "ATS.TXT"
+      "ARPT.TXT", "RWY.TXT", "ADD_RWY.TXT", "ILS.TXT", "NAV.TXT", "WPT.TXT", "TRM_PAR.TXT", "TRM_SEG.TXT", "ATS.TXT",
+      "BDRY.TXT", "BDRY_PAR.TXT", "SUAS.TXT", "SUAS_PAR.TXT"
   );
 
   private final DafifVersion version;
@@ -70,31 +83,39 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
   private final AirwayAssemblyStrategy<AWY, FIX, LEG> airwayStrategy;
   private final ProcedureAssemblyStrategy<PRC, TRS, LEG, FIX> procedureStrategy;
 
-  private OneshotDafifParser(Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> builder) {
+  private final BoundaryAssemblyStrategy<AIR, ASEQ> boundaryStrategy;
+
+  private final SuasAssemblyStrategy<AIR, ASEQ> suasStrategy;
+
+  private OneshotDafifParser(Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> builder) {
     this.version = requireNonNull(builder.version);
     this.airportStrategy = requireNonNull(builder.airportStrategy);
     this.fixStrategy = requireNonNull(builder.fixStrategy);
     this.airwayStrategy = requireNonNull(builder.airwayStrategy);
     this.procedureStrategy = requireNonNull(builder.procedureStrategy);
+    this.boundaryStrategy = requireNonNull(builder.boundaryStrategy);
+    this.suasStrategy = requireNonNull(builder.suasStrategy);
   }
 
   /**
    * Instantiate a new buildable version of the oneshot parser which can be used to construct user-defined data models given
    * the configured strategy classes.
    */
-  public static <APT, RWY, FIX, LEG, TRS, AWY, PRC> Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> builder(DafifVersion version) {
+  public static <APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> builder(DafifVersion version) {
     return new Builder<>(version);
   }
 
   /**
    * Instantiate a standard oneshot parser targeting the default implementations of the Boogie interfaces.
    */
-  public static OneshotDafifParser<Airport, Runway, Fix, Leg, Transition, Airway, Procedure> standard(DafifVersion version) {
-    return OneshotDafifParser.<Airport, Runway, Fix, Leg, Transition, Airway, Procedure>builder(version)
+  public static OneshotDafifParser<Airport, Runway, Fix, Leg, Transition, Airway, Procedure, Airspace, AirspaceSequence> standard(DafifVersion version) {
+    return OneshotDafifParser.<Airport, Runway, Fix, Leg, Transition, Airway, Procedure, Airspace, AirspaceSequence>builder(version)
         .airportStrategy(AirportAssemblyStrategy.standard())
         .airwayStrategy(AirwayAssemblyStrategy.standard())
         .procedureStrategy(ProcedureAssemblyStrategy.standard())
         .fixStrategy(FixAssemblyStrategy.standard())
+        .boundaryStrategy(BoundaryAssemblyStrategy.standard())
+        .suasStrategy(SuasAssemblyStrategy.standard())
         .build();
   }
 
@@ -103,7 +124,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
    *
    * @param inputStream an input stream containing the bytes of a DAFIF zip file
    */
-  public ClientRecords<APT, FIX, AWY, PRC> assembleFrom(InputStream inputStream) {
+  public ClientRecords<APT, FIX, AWY, PRC, AIR> assembleFrom(InputStream inputStream) {
     requireNonNull(inputStream);
 
     ConvertingDafifRecordConsumer consumer = parse(inputStream);
@@ -115,11 +136,13 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     DafifTerminalAreaDatabase terminalAreaDatabase = DafifDatabaseFactory.newTerminalAreaDatabase(consumer);
     LOG.debug("Finished instantiation of TerminalAreaDatabase.");
 
-    return new ClientRecords.Builder<APT, FIX, AWY, PRC>()
+    return new ClientRecords.Builder<APT, FIX, AWY, PRC, AIR>()
         .addAirports(assembleAirports(terminalAreaDatabase, consumer.dafifAirports()))
         .addFixes(assembleFixes(terminalAreaDatabase, fixDatabase, consumer.dafifWaypoints(), consumer.dafifNavaids()))
         .addAirways(assembleAirways(fixDatabase, consumer.dafifAts()))
         .addProcedures(assembleProcedures(fixDatabase, terminalAreaDatabase, consumer.dafifTerminalParents()))
+        .addBoundaries(assembleBoundaries(consumer.dafifBoundaryParents(), consumer.dafifBoundarySegments()))
+        .addSpecialUseAirspaces(assembleSpecialUseAirspaces(consumer.dafifSuasParents(), consumer.dafifSuasSegments()))
         .build();
   }
 
@@ -169,6 +192,16 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     return assembler.assemble(parents).toList();
   }
 
+  private Collection<AIR> assembleBoundaries(Collection<DafifBoundaryParent> parents, Collection<DafifBoundarySegment> segments) {
+    BoundaryAssembler<AIR> assembler = BoundaryAssembler.usingStrategy(boundaryStrategy);
+    return assembler.assemble(parents, segments).toList();
+  }
+
+  private Collection<AIR> assembleSpecialUseAirspaces(Collection<DafifSuasParent> parents, Collection<DafifSuasSegment> segments) {
+    SuasAssembler<AIR> assembler = SuasAssembler.usingStrategy(suasStrategy);
+    return assembler.assemble(parents, segments).toList();
+  }
+
   private static String filename(String entryName) {
     return entryName.contains("/") ? entryName.substring(entryName.lastIndexOf('/') + 1) : entryName;
   }
@@ -188,13 +221,17 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     }
   }
 
-  public static final class Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
+  public static final class Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> {
 
     private final DafifVersion version;
     private AirportAssemblyStrategy<APT, RWY> airportStrategy;
     private FixAssemblyStrategy<FIX> fixStrategy;
     private AirwayAssemblyStrategy<AWY, FIX, LEG> airwayStrategy;
     private ProcedureAssemblyStrategy<PRC, TRS, LEG, FIX> procedureStrategy;
+
+    private BoundaryAssemblyStrategy<AIR, ASEQ> boundaryStrategy;
+
+    private SuasAssemblyStrategy<AIR, ASEQ> suasStrategy;
 
     private Builder(DafifVersion version) {
       this.version = requireNonNull(version);
@@ -203,7 +240,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     /**
      * See the documentation on {@link AirportAssemblyStrategy}.
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> airportStrategy(AirportAssemblyStrategy<APT, RWY> airportStrategy) {
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> airportStrategy(AirportAssemblyStrategy<APT, RWY> airportStrategy) {
       this.airportStrategy = requireNonNull(airportStrategy);
       return this;
     }
@@ -211,7 +248,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     /**
      * See the documentation on {@link FixAssemblyStrategy}.
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> fixStrategy(FixAssemblyStrategy<FIX> fixStrategy) {
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> fixStrategy(FixAssemblyStrategy<FIX> fixStrategy) {
       this.fixStrategy = requireNonNull(fixStrategy);
       return this;
     }
@@ -219,7 +256,7 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     /**
      * See the documentation on {@link AirwayAssemblyStrategy}.
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> airwayStrategy(AirwayAssemblyStrategy<AWY, FIX, LEG> airwayStrategy) {
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> airwayStrategy(AirwayAssemblyStrategy<AWY, FIX, LEG> airwayStrategy) {
       this.airwayStrategy = requireNonNull(airwayStrategy);
       return this;
     }
@@ -227,12 +264,28 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
     /**
      * See the documentation on {@link ProcedureAssemblyStrategy}.
      */
-    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC> procedureStrategy(ProcedureAssemblyStrategy<PRC, TRS, LEG, FIX> procedureStrategy) {
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> procedureStrategy(ProcedureAssemblyStrategy<PRC, TRS, LEG, FIX> procedureStrategy) {
       this.procedureStrategy = requireNonNull(procedureStrategy);
       return this;
     }
 
-    public OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> build() {
+    /**
+     * See the documentation on {@link BoundaryAssemblyStrategy}.
+     */
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> boundaryStrategy(BoundaryAssemblyStrategy<AIR, ASEQ> boundaryStrategy) {
+      this.boundaryStrategy = requireNonNull(boundaryStrategy);
+      return this;
+    }
+
+    /**
+     * See the documentation on {@link SuasAssemblyStrategy}.
+     */
+    public Builder<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> suasStrategy(SuasAssemblyStrategy<AIR, ASEQ> suasStrategy) {
+      this.suasStrategy = requireNonNull(suasStrategy);
+      return this;
+    }
+
+    public OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC, AIR, ASEQ> build() {
       return new OneshotDafifParser<>(this);
     }
   }
@@ -240,18 +293,22 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
   /**
    * Wrapper class containing assembled client records of the templated types assembled by the oneshot parser.
    */
-  public static final class ClientRecords<APT, FIX, AWY, PRC> {
+  public static final class ClientRecords<APT, FIX, AWY, PRC, AIR> {
 
     private final Collection<APT> airports;
     private final Collection<FIX> fixes;
     private final Collection<AWY> airways;
     private final Collection<PRC> procedures;
+    private final Collection<AIR> boundaries;
+    private final Collection<AIR> specialUseAirspaces;
 
-    private ClientRecords(Builder<APT, FIX, AWY, PRC> builder) {
+    private ClientRecords(Builder<APT, FIX, AWY, PRC, AIR> builder) {
       this.airports = builder.airports;
       this.fixes = builder.fixes;
       this.airways = builder.airways;
       this.procedures = builder.procedures;
+      this.boundaries = builder.boundaries;
+      this.specialUseAirspaces = builder.specialUseAirspaces;
     }
 
     public Collection<APT> airports() {
@@ -270,37 +327,67 @@ public final class OneshotDafifParser<APT, RWY, FIX, LEG, TRS, AWY, PRC> {
       return procedures;
     }
 
-    public static final class Builder<APT, FIX, AWY, PRC> {
+    /**
+     * Boundaries assembled using the configured boundary strategy.
+     */
+    public Collection<AIR> boundaries() {
+      return boundaries;
+    }
+
+    /**
+     * Special use airspaces assembled using the configured special use airspace strategy.
+     */
+    public Collection<AIR> specialUseAirspaces() {
+      return specialUseAirspaces;
+    }
+
+    public Collection<AIR> airspaces() {
+      return Stream.concat(boundaries.stream(), specialUseAirspaces.stream()).toList();
+    }
+
+    public static final class Builder<APT, FIX, AWY, PRC, AIR> {
 
       private final Collection<APT> airports = new ArrayList<>();
       private final Collection<FIX> fixes = new ArrayList<>();
       private final Collection<AWY> airways = new ArrayList<>();
       private final Collection<PRC> procedures = new ArrayList<>();
+      private final Collection<AIR> boundaries = new ArrayList<>();
+      private final Collection<AIR> specialUseAirspaces = new ArrayList<>();
 
       private Builder() {
       }
 
-      public Builder<APT, FIX, AWY, PRC> addAirports(Collection<APT> airports) {
+      public Builder<APT, FIX, AWY, PRC, AIR> addAirports(Collection<APT> airports) {
         this.airports.addAll(airports);
         return this;
       }
 
-      public Builder<APT, FIX, AWY, PRC> addFixes(Collection<FIX> fixes) {
+      public Builder<APT, FIX, AWY, PRC, AIR> addFixes(Collection<FIX> fixes) {
         this.fixes.addAll(fixes);
         return this;
       }
 
-      public Builder<APT, FIX, AWY, PRC> addAirways(Collection<AWY> airways) {
+      public Builder<APT, FIX, AWY, PRC, AIR> addAirways(Collection<AWY> airways) {
         this.airways.addAll(airways);
         return this;
       }
 
-      public Builder<APT, FIX, AWY, PRC> addProcedures(Collection<PRC> procedures) {
+      public Builder<APT, FIX, AWY, PRC, AIR> addProcedures(Collection<PRC> procedures) {
         this.procedures.addAll(procedures);
         return this;
       }
 
-      public ClientRecords<APT, FIX, AWY, PRC> build() {
+      public Builder<APT, FIX, AWY, PRC, AIR> addBoundaries(Collection<AIR> boundaries) {
+        this.boundaries.addAll(boundaries);
+        return this;
+      }
+
+      public Builder<APT, FIX, AWY, PRC, AIR> addSpecialUseAirspaces(Collection<AIR> specialUseAirspaces) {
+        this.specialUseAirspaces.addAll(specialUseAirspaces);
+        return this;
+      }
+
+      public ClientRecords<APT, FIX, AWY, PRC, AIR> build() {
         return new ClientRecords<>(this);
       }
     }

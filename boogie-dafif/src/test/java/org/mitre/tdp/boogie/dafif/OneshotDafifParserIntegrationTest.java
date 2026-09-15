@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airport;
+import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Procedure;
@@ -21,11 +22,11 @@ import com.google.common.io.Resources;
 @Tag("INTEGRATION")
 class OneshotDafifParserIntegrationTest {
 
-  static OneshotDafifParser.ClientRecords<Airport, Fix, Airway, Procedure> records;
+  static OneshotDafifParser.ClientRecords<Airport, Fix, Airway, Procedure, Airspace> records;
 
   @BeforeAll
   static void setUp() throws IOException {
-    OneshotDafifParser<Airport, ?, Fix, ?, ?, Airway, Procedure> parser = OneshotDafifParser.standard(DafifVersion.V81);
+    OneshotDafifParser<Airport, ?, Fix, ?, ?, Airway, Procedure, Airspace, ?> parser = OneshotDafifParser.standard(DafifVersion.V81);
     try (InputStream is = Resources.getResource("DAFIF8_1_2601.zip").openStream()) {
       records = parser.assembleFrom(is);
     }
@@ -51,6 +52,15 @@ class OneshotDafifParserIntegrationTest {
   void testProcedureCount() {
     assertEquals(31932, records.procedures().size(),
         "Assembled procedures should match unique TRM_PAR row count");
+  }
+
+  @Test
+  void testAirspaceCounts() {
+    assertAll(
+        () -> assertEquals(17956, records.boundaries().size()),
+        () -> assertEquals(18111, records.specialUseAirspaces().size()),
+        () -> assertEquals(36067, records.airspaces().size())
+    );
   }
 
   @Test

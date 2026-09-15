@@ -28,6 +28,10 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
   private final DelegatableCollection<DafifWaypoint> dafifWaypoints;
   private final DelegatableCollection<DafifAirTrafficSegment> dafifAts;
   private final DelegatableCollection<DafifAddRunway> dafifAddRunway;
+  private final DelegatableCollection<DafifBoundarySegment> dafifBoundarySegments;
+  private final DelegatableCollection<DafifBoundaryParent> dafifBoundaryParents;
+  private final DelegatableCollection<DafifSuasSegment> dafifSuasSegments;
+  private final DelegatableCollection<DafifSuasParent> dafifSuasParents;
   private final MRUDequeConsumer<DafifRecord, DelegatableCollection<?>> consumer;
 
   private ConvertingDafifRecordConsumer(Builder builder) {
@@ -40,6 +44,10 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
     this.dafifWaypoints = new DelegatableCollection<>(builder.waypointDelegator, builder.waypointConverter);
     this.dafifAts = new DelegatableCollection<>(builder.atsDelegator, builder.atsConverter);
     this.dafifAddRunway = new DelegatableCollection<>(builder.addRunwayDelegator, builder.addRunwayConverter);
+    this.dafifBoundarySegments = new DelegatableCollection<>(builder.boundarySegmentDelegator, builder.boundarySegmentConverter);
+    this.dafifBoundaryParents = new DelegatableCollection<>(builder.boundaryParentDelegator, builder.boundaryParentConverter);
+    this.dafifSuasSegments = new DelegatableCollection<>(builder.suasSegmentDelegator, builder.suasSegmentConverter);
+    this.dafifSuasParents = new DelegatableCollection<>(builder.suasParentDelegator, builder.suasParentConverter);
     this.consumer = new MRUDequeConsumer<>(
         this.dafifAirports,
         this.dafifRunways,
@@ -49,7 +57,11 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
         this.dafifTerminalSegments,
         this.dafifWaypoints,
         this.dafifAts,
-        this.dafifAddRunway
+        this.dafifAddRunway,
+        this.dafifBoundarySegments,
+        this.dafifBoundaryParents,
+        this.dafifSuasSegments,
+        this.dafifSuasParents
     );
   }
 
@@ -83,6 +95,22 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
   }
   public Collection<DafifAddRunway> dafifAddRunways() {
     return dafifAddRunway.records();
+  }
+
+  public Collection<DafifBoundarySegment> dafifBoundarySegments() {
+    return dafifBoundarySegments.records();
+  }
+
+  public Collection<DafifBoundaryParent> dafifBoundaryParents() {
+    return dafifBoundaryParents.records();
+  }
+
+  public Collection<DafifSuasSegment> dafifSuasSegments() {
+    return dafifSuasSegments.records();
+  }
+
+  public Collection<DafifSuasParent> dafifSuasParents() {
+    return dafifSuasParents.records();
   }
 
   @Override
@@ -147,6 +175,14 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
   }
 
   public static class Builder {
+    private Predicate<DafifRecord> boundarySegmentDelegator = record -> false;
+    private Function<DafifRecord, Optional<DafifBoundarySegment>> boundarySegmentConverter = record -> Optional.empty();
+    private Predicate<DafifRecord> boundaryParentDelegator = record -> false;
+    private Function<DafifRecord, Optional<DafifBoundaryParent>> boundaryParentConverter = record -> Optional.empty();
+    private Predicate<DafifRecord> suasSegmentDelegator = record -> false;
+    private Function<DafifRecord, Optional<DafifSuasSegment>> suasSegmentConverter = record -> Optional.empty();
+    private Predicate<DafifRecord> suasParentDelegator = record -> false;
+    private Function<DafifRecord, Optional<DafifSuasParent>> suasParentConverter = record -> Optional.empty();
     private Predicate<DafifRecord> airportDelegator;
     private Function<DafifRecord, Optional<DafifAirport>> airportConverter;
     private Predicate<DafifRecord> runwayDelegator;
@@ -252,6 +288,46 @@ public class ConvertingDafifRecordConsumer implements Consumer<DafifRecord> {
 
     public Builder addRunwayConverter(Function<DafifRecord, Optional<DafifAddRunway>> addRunwayConverter) {
       this.addRunwayConverter = addRunwayConverter;
+      return this;
+    }
+
+    public Builder boundarySegmentDelegator(Predicate<DafifRecord> boundarySegmentDelegator) {
+      this.boundarySegmentDelegator = requireNonNull(boundarySegmentDelegator);
+      return this;
+    }
+
+    public Builder boundarySegmentConverter(Function<DafifRecord, Optional<DafifBoundarySegment>> boundarySegmentConverter) {
+      this.boundarySegmentConverter = requireNonNull(boundarySegmentConverter);
+      return this;
+    }
+
+    public Builder boundaryParentDelegator(Predicate<DafifRecord> boundaryParentDelegator) {
+      this.boundaryParentDelegator = requireNonNull(boundaryParentDelegator);
+      return this;
+    }
+
+    public Builder boundaryParentConverter(Function<DafifRecord, Optional<DafifBoundaryParent>> boundaryParentConverter) {
+      this.boundaryParentConverter = requireNonNull(boundaryParentConverter);
+      return this;
+    }
+
+    public Builder suasSegmentDelegator(Predicate<DafifRecord> suasSegmentDelegator) {
+      this.suasSegmentDelegator = requireNonNull(suasSegmentDelegator);
+      return this;
+    }
+
+    public Builder suasSegmentConverter(Function<DafifRecord, Optional<DafifSuasSegment>> suasSegmentConverter) {
+      this.suasSegmentConverter = requireNonNull(suasSegmentConverter);
+      return this;
+    }
+
+    public Builder suasParentDelegator(Predicate<DafifRecord> suasParentDelegator) {
+      this.suasParentDelegator = requireNonNull(suasParentDelegator);
+      return this;
+    }
+
+    public Builder suasParentConverter(Function<DafifRecord, Optional<DafifSuasParent>> suasParentConverter) {
+      this.suasParentConverter = requireNonNull(suasParentConverter);
       return this;
     }
 
