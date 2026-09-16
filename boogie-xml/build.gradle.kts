@@ -18,6 +18,13 @@ dependencies {
     testImplementation(project(":boogie-dafif"))
 }
 
+tasks.withType<Test>().configureEach {
+    // EXIficient 1.0.7 asserts !globalValues.contains(value) for every decoded string.
+    // That debug check is quadratic on full publications. Keep JUnit and other JVM
+    // assertions enabled while using this decoder class's normal runtime behavior.
+    jvmArgs("-da:com.siemens.ct.exi.core.datatype.strings.StringDecoderImpl")
+}
+
 mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
     signAllPublications()

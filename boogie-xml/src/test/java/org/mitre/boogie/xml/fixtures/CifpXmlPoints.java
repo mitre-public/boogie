@@ -1,6 +1,6 @@
-package org.mitre.boogie.xml;
+package org.mitre.boogie.xml.fixtures;
 
-import static org.mitre.boogie.xml.CifpXmlReferences.id;
+import static org.mitre.boogie.xml.fixtures.CifpXmlReferences.id;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;

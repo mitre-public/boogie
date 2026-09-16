@@ -1,4 +1,4 @@
-package org.mitre.boogie.xml;
+package org.mitre.boogie.xml.fixtures;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;

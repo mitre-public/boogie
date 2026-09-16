@@ -1,4 +1,4 @@
-package org.mitre.boogie.xml;
+package org.mitre.boogie.xml.fixtures;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;

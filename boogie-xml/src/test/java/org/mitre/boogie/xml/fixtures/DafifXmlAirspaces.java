@@ -1,4 +1,4 @@
-package org.mitre.boogie.xml;
+package org.mitre.boogie.xml.fixtures;
 
 import java.math.BigDecimal;
 import java.util.List;

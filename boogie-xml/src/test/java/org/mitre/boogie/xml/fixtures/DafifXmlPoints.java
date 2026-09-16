@@ -1,10 +1,10 @@
-package org.mitre.boogie.xml;
+package org.mitre.boogie.xml.fixtures;
 
-import static org.mitre.boogie.xml.CifpXmlPoints.bearing;
-import static org.mitre.boogie.xml.CifpXmlPoints.location;
-import static org.mitre.boogie.xml.CifpXmlPoints.magneticVariation;
-import static org.mitre.boogie.xml.CifpXmlPoints.runwayIdentifier;
-import static org.mitre.boogie.xml.DafifXmlReferences.id;
+import static org.mitre.boogie.xml.fixtures.CifpXmlPoints.bearing;
+import static org.mitre.boogie.xml.fixtures.CifpXmlPoints.location;
+import static org.mitre.boogie.xml.fixtures.CifpXmlPoints.magneticVariation;
+import static org.mitre.boogie.xml.fixtures.CifpXmlPoints.runwayIdentifier;
+import static org.mitre.boogie.xml.fixtures.DafifXmlReferences.id;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
