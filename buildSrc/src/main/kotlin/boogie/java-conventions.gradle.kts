@@ -101,6 +101,7 @@ tasks.register<Test>("unit") {
         excludeTags("DAFIF")
         excludeTags("CIFP")
         excludeTags("ASSIGNMENT")
+        excludeTags("XML")
     }
 
     maxHeapSize = "1G"
@@ -118,6 +119,7 @@ tasks.register<Test>("cifp-integration") {
         excludeTags("LIDO")
         excludeTags("DAFIF")
         excludeTags("ASSIGNMENT")
+        excludeTags("XML")
     }
 
     maxHeapSize = "2G"
@@ -135,6 +137,7 @@ tasks.register<Test>("assignment-integration") {
         excludeTags("DAFIF")
         excludeTags("CIFP")
         excludeTags("LIDO")
+        excludeTags("XML")
     }
 
     maxHeapSize = "3G"
@@ -152,6 +155,7 @@ tasks.register<Test>("lido-integration") {
         excludeTags("DAFIF")
         excludeTags("CIFP")
         excludeTags("ASSIGNMENT")
+        excludeTags("XML")
     }
 
     maxHeapSize = "3G"
@@ -169,11 +173,26 @@ tasks.register<Test>("dafif-integration") {
         excludeTags("LIDO")
         excludeTags("CIFP")
         excludeTags("ASSIGNMENT")
+        excludeTags("XML")
     }
 
     maxHeapSize = "3G"
 
     testLogging {
         events("passed", "skipped", "failed") // Log these events
+    }
+}
+
+tasks.register<Test>("xml-integration") {
+    description = "Validates XML fixtures and EXI exports using the XML integration test data."
+    group = "verification"
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    useJUnitPlatform {
+        includeTags("XML")
+    }
+    maxHeapSize = "3G"
+    testLogging {
+        events("passed", "skipped", "failed")
     }
 }

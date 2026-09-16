@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.google.common.annotations.Beta;
 import org.mitre.boogie.xml.model.ArincRecords;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirportConverter;
 import org.mitre.boogie.xml.v23_4.convert.ArincAirwayConverter;
@@ -37,6 +38,7 @@ import org.mitre.boogie.xml.v23_4.generated.Waypoint;
  * <p>This mirrors the {@code ArincVersion} enum from the ARINC fixed-width module and the {@code DafifVersion} enum
  * from the DAFIF module.
  */
+@Beta
 public enum ArincXmlVersion {
 
   /**
@@ -95,7 +97,8 @@ public enum ArincXmlVersion {
    * {@link ArincRecords}.
    */
   public Function<InputStream, ArincRecords> unmarshaller() {
-    return is -> new StreamingUnmarshaller(jaxbContextClasses, handlers).apply(is).orElseThrow(
+    StreamingUnmarshaller unmarshaller = StreamingUnmarshaller.fromVersion(this);
+    return is -> unmarshaller.apply(is).orElseThrow(
         () -> new RuntimeException("Failed to unmarshal XML input."));
   }
 }

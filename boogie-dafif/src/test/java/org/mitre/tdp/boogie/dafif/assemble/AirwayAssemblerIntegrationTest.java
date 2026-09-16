@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.tdp.boogie.Airway;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.dafif.EmbeddedDafifFile;
 import org.mitre.tdp.boogie.dafif.database.DafifDatabaseFactory;
 import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
@@ -27,13 +29,14 @@ class AirwayAssemblerIntegrationTest {
   static Collection<DafifAirTrafficSegment> atsSegments;
   static List<Airway> airways;
   static long uniqueAtsIdentifiers;
+  static AirwayAssembler<Airway> assembler;
 
   @BeforeAll
   static void setUp() {
     EmbeddedDafifFile dafif = EmbeddedDafifFile.instance();
 
     DafifFixDatabase fdb = DafifDatabaseFactory.newFixDatabase(dafif.dafifWaypoints(), dafif.dafifNavaids());
-    AirwayAssembler<Airway> assembler = AirwayAssembler.standard(fdb, FixAssemblyStrategy.standard());
+    assembler = AirwayAssembler.standard(fdb, FixAssemblyStrategy.standard());
 
     atsSegments = dafif.dafifAts();
     uniqueAtsIdentifiers = atsSegments.stream()
@@ -54,9 +57,30 @@ class AirwayAssemblerIntegrationTest {
   }
 
   @Test
-  void testAssembledAirwayCountMatchesUniqueIdentifierDirections() {
-    assertEquals(17269, airways.size(),
-        "Number of assembled airways should equal the 17269 unique ATS_IDENT+DIRECTION combos in the raw data");
+  void testContinuousSectionsPreserveEverySourceSegment() {
+    assertAll(
+        () -> assertTrue(airways.size() > uniqueAtsIdentifiers, "Disconnected direction groups produce multiple sections"),
+        () -> assertEquals(atsSegments.size(), airways.stream().mapToLong(airway -> airway.legs().size() - 1).sum(),
+            "Every source segment contributes one edge plus one starting fix per section"),
+        () -> assertTrue(airways.stream().allMatch(airway -> airway.legs().get(0).pathTerminator() == PathTerminator.IF))
+    );
+  }
+
+  @Test
+  void testA103SectionsRetainPublishedEndpointsAndDistances() {
+    var source = atsSegments.stream().filter(segment -> "A103".equals(segment.atsIdentifier())
+        && "E".equals(segment.atsRouteDirection())
+        && (segment.atsRouteSequenceNumber() == 60 || segment.atsRouteSequenceNumber() == 210)).toList();
+    var sections = assembler.assemble(source).toList();
+
+    assertAll(
+        () -> assertEquals(2, source.size()),
+        () -> assertEquals(List.of(List.of("OKTAB", "PINAX"), List.of("RORTA", "ASBUG")),
+            sections.stream().map(airway -> airway.legs().stream()
+                .map(leg -> leg.associatedFix().orElseThrow()).map(Fix::fixIdentifier).toList()).toList()),
+        () -> assertEquals(List.of(57.0, 5.9), sections.stream()
+            .map(airway -> airway.legs().get(1).routeDistance().orElseThrow()).toList())
+    );
   }
 
   @Test

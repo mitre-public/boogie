@@ -150,7 +150,7 @@ class ProcedureAssemblyStrategyTest {
         .rho(10.0)
         .rnp(2.0)
         .legDistance(25.0)
-        .verticalAngle(-3.0)
+        .verticalAngle(3.0)
         .turnDirection("LEFT")
         .isFlyOver(true)
         .isHolding(true)

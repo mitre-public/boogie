@@ -9,10 +9,12 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 import org.mitre.caasd.commons.util.Partitioners;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.Transition;
 import org.mitre.tdp.boogie.TransitionType;
@@ -21,6 +23,7 @@ import org.mitre.tdp.boogie.dafif.database.DafifFixDatabase;
 import org.mitre.tdp.boogie.dafif.database.DafifTerminalAreaDatabase;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
+import org.mitre.tdp.boogie.dafif.utils.DafifMagVars;
 
 /**
  * This class is used to assemble DAFIF records into boogie standard objects.
@@ -75,32 +78,21 @@ public interface ProcedureAssembler<P> {
           .findFirst()
           .orElseGet(() -> proceduresSegments.get(0));
 
-      Map<Optional<String>, List<DafifTerminalSegment>> segmentsByTransition = proceduresSegments.stream()
-          .collect(Collectors.groupingBy(DafifTerminalSegment::transitionIdentifier));
-
-      List<T> transitions = switch (representative.terminalProcedureType()) {
-        case 1,2 -> sidStarTransitions(segmentsByTransition);
-        case 3 -> approachTransitions(segmentsByTransition);
-        default -> throw new IllegalArgumentException("Unknown procedure type: " + representative.terminalProcedureType());
-      };
+      Map<TransitionKey, List<DafifTerminalSegment>> segmentsByTransition = proceduresSegments.stream()
+          .collect(Collectors.groupingBy(segment -> new TransitionKey(segment.terminalApproachType(), segment.transitionIdentifier().orElse(null))));
+      Map<DafifTerminalSegment, List<ProcedureSpeedLimits.Limit>> speeds = ProcedureSpeedLimits.resolve(proceduresSegments);
+      MagneticVariation variation = parent.procedureDesignMagvar().map(DafifMagVars::fromRecord)
+          .or(() -> tad.airport(parent.airportIdentification()).flatMap(airport -> airport.magVarOfRecord()
+              .map(DafifMagVars::fromRecord)
+              .or(() -> Optional.ofNullable(airport.magneticVariation()).map(DafifMagVars::fromDynamic))))
+          .orElse(null);
+      List<T> transitions = segmentsByTransition.values().stream()
+          .map(segments -> segments.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber)).toList())
+          .flatMap(segments -> representative.terminalProcedureType() == 3 ? repartition(segments).stream() : Stream.of(segments))
+          .map(segments -> oneTransition(segments, speeds, variation))
+          .toList();
 
       return procedureAssemblyStrategy.convertProcedure(parent, representative, transitions);
-    }
-
-    private List<T> sidStarTransitions(Map<Optional<String>, List<DafifTerminalSegment>> segmentsByTransition) {
-      return segmentsByTransition.values().stream()
-          .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber)).toList())
-          .map(this::oneTransition)
-          .toList();
-    }
-
-    private List<T> approachTransitions(Map<Optional<String>, List<DafifTerminalSegment>> segmentsByTransition) {
-      return segmentsByTransition.values().stream()
-          .map(l -> l.stream().sorted(Comparator.comparing(DafifTerminalSegment::terminalSequenceNumber)).toList())
-          .map(this::repartition)
-          .flatMap(Collection::stream)
-          .map(this::oneTransition)
-          .toList();
     }
 
     /**
@@ -112,17 +104,18 @@ public interface ProcedureAssembler<P> {
       return Partitioners.splitOnPairwiseChange(segments, (ls, next) -> !next.terminalWaypointDescriptionCode3().equals(Optional.of("M")));
     }
 
-    private T oneTransition(List<DafifTerminalSegment> segs) {
+    private T oneTransition(List<DafifTerminalSegment> segs, Map<DafifTerminalSegment, List<ProcedureSpeedLimits.Limit>> speeds,
+        @Nullable MagneticVariation variation) {
       List<L> legs = segs.stream()
-          .map(this::oneLeg)
+          .map(segment -> oneLeg(segment, speeds.get(segment), variation))
           .toList();
 
       return procedureAssemblyStrategy.convertTransition(segs.get(0), legs);
     }
 
-    private L oneLeg(DafifTerminalSegment seg) {
+    private L oneLeg(DafifTerminalSegment seg, List<ProcedureSpeedLimits.Limit> speeds, @Nullable MagneticVariation variation) {
       F associatedFix = seg.terminalWaypointDescriptionCode1()
-          .map(w -> dereferencer.fix(w, seg.airportIdentification(), seg.termSegWaypointIdentifier().orElse(""), seg.waypointCountryCode().orElse("")))
+          .map(w -> dereferencer.fix(w, seg.airportIdentification(), seg.termSegWaypointIdentifier().orElse(""), seg.waypointCountryCode().orElse(""), seg.terminalProcedureType()))
           .orElse(null);
       F nav1 = seg.navaid1Identifier()
           .map(w -> dereferencer.nav1(seg.airportIdentification(), w, seg.navaid1Type().orElse(""), seg.navaid1CountryCode().orElse(""), seg.navaid1KeyCode().orElse(9999)))
@@ -130,7 +123,7 @@ public interface ProcedureAssembler<P> {
       F arcCenter = seg.arcWaypointIdentifier()
           .map(w -> dereferencer.arcCenter(w, seg.arcWaypointCountryCode().orElse("")))
           .orElse(null);
-      return procedureAssemblyStrategy.convertLeg(seg, associatedFix, nav1, arcCenter);
+      return procedureAssemblyStrategy.convertLeg(seg, associatedFix, nav1, arcCenter, speeds, variation);
     }
 
     private String procedureIdentifier(DafifTerminalParent parent) {
@@ -139,6 +132,9 @@ public interface ProcedureAssembler<P> {
 
     private String procedureIdentifier(DafifTerminalSegment seg) {
       return seg.terminalProcedureType() + seg.terminalIdentifier();
+    }
+
+    private record TransitionKey(String type, @Nullable String identifier) {
     }
   }
 }

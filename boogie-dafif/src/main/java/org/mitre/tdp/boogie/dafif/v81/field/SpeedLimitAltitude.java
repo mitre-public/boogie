@@ -29,6 +29,6 @@ public final class SpeedLimitAltitude extends TrimmableString {
 
   @Override
   public String regex() {
-    return "(([0-9]{5}|(FL)[1-9][0-9]{1,2})?)";
+    return "(([0-9]{1,5}|(FL)[1-9][0-9]{1,2})?)";
   }
 }

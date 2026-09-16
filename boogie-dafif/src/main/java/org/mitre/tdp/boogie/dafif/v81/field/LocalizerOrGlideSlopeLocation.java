@@ -39,12 +39,12 @@ package org.mitre.tdp.boogie.dafif.v81.field;
 public class LocalizerOrGlideSlopeLocation extends TrimmableString {
   @Override
   public int maxFieldLength() {
-    return 167;
+    return 6;
   }
 
   @Override
   public int fieldCode() {
-    return 6;
+    return 167;
   }
 
   @Override
