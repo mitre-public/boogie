@@ -131,17 +131,34 @@ module's build directory is cleaned.
 The companion `writesGibberishSampleSchemaInformedExi` test writes `gibberish-sample-schema-informed.exi`.
 Its XSDs are generated from the checked-in JAXB classes under `build/exi/gibberish-sample-schemas/`,
 using schema ID `urn:boogie:test:arinc424:jaxb:23.4`. This keeps both schema modes covered by unit tests
-without external schema files. These generated test schemas are distinct from the official ARINC XSDs
-used by the integration exports below.
+without external schema files. These generated test schemas are distinct from the official ARINC XSDs.
 
-To generate larger files from the test resource `cifp-2101.dat.gz`, run:
+The full fixture and export tests use the `XML` tag and run in their own task, defined by the
+shared `java-conventions` build plugin:
 
 ```shell
-./gradlew :boogie-xml:cifp-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesCifpXmlAndExi' --rerun-tasks
+./gradlew :boogie-xml:xml-integration
 ```
 
-This writes `cifp-2101.xml`, `cifp-2101-no-schema.exi`, and `cifp-2101-schema-informed.exi` under
-`boogie-xml/build/exi/`. Both EXI files use compression; the schema-informed file uses the v23_4 XSDs.
+The XML CI job checks out `mitre-tdp/boogie-test` with Git LFS into `boogie-xml/src/test/resources`,
+using the same SSH key as the other integration jobs. That checkout supplies `DAFIF8_1_2601.zip`;
+the job also copies the tracked `cifp-2101.dat.gz` fixture from `boogie-arinc/src/test/resources`.
+Local runs need both archives in `boogie-xml/src/test/resources`. The `unit`, `cifp-integration`, `dafif-integration`,
+`lido-integration`, and `assignment-integration` tasks exclude the XML-tagged tests.
+
+To run only the CIFP export:
+
+```shell
+./gradlew :boogie-xml:xml-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesCifpXmlAndExi' --rerun-tasks
+```
+
+This writes `cifp-2101.xml` and `cifp-2101-no-schema.exi` under `boogie-xml/build/exi/`, plus a compressed
+schema-informed EXI file. When the official XSDs are available at
+`boogie-xml/src/test/resources/v23_4/schemas/Records/AeroPublication.xsd`, that file is named
+`cifp-2101-schema-informed.exi` and uses schema ID `urn:boogie:arinc424:23.4`.
+Otherwise, the test generates JAXB schemas under `build/exi/cifp-2101-schemas/` and writes
+`cifp-2101-jaxb-schema-informed.exi` with schema ID `urn:boogie:test:arinc424:jaxb:23.4`.
+Both variants are decoded completely and compared with the source XML's structure.
 
 The test helpers parse supported V19 primary records into the existing fixed-width ARINC models,
 then build a v23_4 JAXB `AeroPublication`. They include airports, heliports, runways, waypoints,
@@ -153,14 +170,15 @@ mapped XML field are retained in record notes.
 XML altitude values use feet, including flight levels: FL270 is `27000` with `isFlightLevel=true`.
 The flight-level flag identifies the pressure reference; readers keep the numeric value in feet.
 
-To generate the DAFIF fixture from `boogie-xml/src/test/resources/DAFIF8_1_2601.zip`, run:
+To run only the DAFIF export:
 
 ```shell
-./gradlew :boogie-xml:dafif-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesDafifXmlAndExi' --rerun-tasks
+./gradlew :boogie-xml:xml-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesDafifXmlAndExi' --rerun-tasks
 ```
 
-This writes `dafif-2601.xml`, `dafif-2601-no-schema.exi`, and `dafif-2601-schema-informed.exi` under
-`boogie-xml/build/exi/`. Both EXI files use compression; the schema-informed file uses the v23_4 XSDs.
+This writes `dafif-2601.xml`, `dafif-2601-no-schema.exi`, and either `dafif-2601-schema-informed.exi`
+or `dafif-2601-jaxb-schema-informed.exi` under `boogie-xml/build/exi/`, using the same schema selection
+as the CIFP export. Generated schemas are retained under `build/exi/dafif-2601-schemas/`.
 The fixture reads the archive directly and converts the thirteen supported DAFIF 8.1 tables: `ARPT`,
 `RWY`, `ADD_RWY`, `ILS`, `NAV`, `WPT`, `TRM_PAR`, `TRM_SEG`, `ATS`, `BDRY_PAR`, `BDRY`, `SUAS_PAR`, and `SUAS`.
 These populate airports, runway ends, landing aids, navaids, waypoints, terminal procedures, airways,

@@ -106,9 +106,12 @@ public final class ExiAssertions {
         }
         reader.next();
       } while (true);
-      assertTrue(endDocument, source + ": decoder must reach END_DOCUMENT");
-      assertTrue(elements.isEmpty(), source + ": all elements must close");
-      assertEquals(1, roots, source + ": exactly one document root");
+      boolean reachedEndDocument = endDocument;
+      int documentRoots = roots;
+      assertAll(source + ": complete document",
+          () -> assertTrue(reachedEndDocument, "Decoder must reach END_DOCUMENT"),
+          () -> assertTrue(elements.isEmpty(), "All elements must close"),
+          () -> assertEquals(1, documentRoots, "Exactly one document root"));
       return new Structure(root, elementCount, attributeCount, HexFormat.of().formatHex(digest.digest()));
     } finally {
       reader.close();

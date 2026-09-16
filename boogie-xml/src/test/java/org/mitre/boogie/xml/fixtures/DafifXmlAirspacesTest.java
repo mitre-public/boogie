@@ -1,5 +1,6 @@
 package org.mitre.boogie.xml.fixtures;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,31 +43,35 @@ class DafifXmlAirspacesTest {
 
     var result = boundaries(fir, uir);
 
-    assertTrue(result.getControlledAirspace().isEmpty());
-    assertEquals(2, result.getFirUir().size());
+    assertAll(
+        () -> assertTrue(result.getControlledAirspace().isEmpty()),
+        () -> assertEquals(2, result.getFirUir().size())
+    );
     var targetFir = result.getFirUir().get(0);
     var targetUir = result.getFirUir().get(1);
-    assertEquals("KAAA", targetFir.getFirUirIdentifier());
-    assertEquals("KAAA", targetUir.getFirUirIdentifier());
-    assertNotNull(targetFir.getReferenceId());
-    assertNotNull(targetUir.getReferenceId());
-    assertNotEquals(targetFir.getReferenceId(), targetUir.getReferenceId());
-    assertEquals("FIR-1", supplemental(targetFir).get("BDRY_IDENT"));
-    assertEquals("UIR-1", supplemental(targetUir).get("BDRY_IDENT"));
-    assertEquals(FirUirIndicator.FIR, targetFir.getFirUirIndicator());
-    assertEquals(FirUirIndicator.UIR, targetUir.getFirUirIndicator());
-    assertEquals("Test FIR", targetFir.getFirUirName());
-    assertEquals("Test UIR", targetUir.getFirUirName());
-    assertTrue(targetFir.getFirAltitudeLimits().getLowerLimit().isIsGround());
-    assertEquals(18000, targetFir.getFirAltitudeLimits().getUpperLimit().getAltitude());
-    assertEquals(18000, targetUir.getUirAltitudeLimits().getLowerLimit().getAltitude());
-    assertTrue(targetUir.getUirAltitudeLimits().getUpperLimit().isIsUnlimited());
-    assertNull(targetFir.getUirAltitudeLimits());
-    assertNull(targetUir.getFirAltitudeLimits());
-    assertEquals(Level.LOW_ALT, targetFir.getFirUirSegment().get(0).getLevel());
-    assertEquals(Level.HIGH_ALT, targetUir.getFirUirSegment().get(0).getLevel());
-    assertEquals(BoundaryVia.CIRCLE, targetFir.getFirUirSegment().get(0).getBoundaryVia());
-    assertEquals("2601", targetFir.getCycleDate());
+    assertAll(
+        () -> assertEquals("KAAA", targetFir.getFirUirIdentifier()),
+        () -> assertEquals("KAAA", targetUir.getFirUirIdentifier()),
+        () -> assertNotNull(targetFir.getReferenceId()),
+        () -> assertNotNull(targetUir.getReferenceId()),
+        () -> assertNotEquals(targetFir.getReferenceId(), targetUir.getReferenceId()),
+        () -> assertEquals("FIR-1", supplemental(targetFir).get("BDRY_IDENT")),
+        () -> assertEquals("UIR-1", supplemental(targetUir).get("BDRY_IDENT")),
+        () -> assertEquals(FirUirIndicator.FIR, targetFir.getFirUirIndicator()),
+        () -> assertEquals(FirUirIndicator.UIR, targetUir.getFirUirIndicator()),
+        () -> assertEquals("Test FIR", targetFir.getFirUirName()),
+        () -> assertEquals("Test UIR", targetUir.getFirUirName()),
+        () -> assertTrue(targetFir.getFirAltitudeLimits().getLowerLimit().isIsGround()),
+        () -> assertEquals(18000, targetFir.getFirAltitudeLimits().getUpperLimit().getAltitude()),
+        () -> assertEquals(18000, targetUir.getUirAltitudeLimits().getLowerLimit().getAltitude()),
+        () -> assertTrue(targetUir.getUirAltitudeLimits().getUpperLimit().isIsUnlimited()),
+        () -> assertNull(targetFir.getUirAltitudeLimits()),
+        () -> assertNull(targetUir.getFirAltitudeLimits()),
+        () -> assertEquals(Level.LOW_ALT, targetFir.getFirUirSegment().get(0).getLevel()),
+        () -> assertEquals(Level.HIGH_ALT, targetUir.getFirUirSegment().get(0).getLevel()),
+        () -> assertEquals(BoundaryVia.CIRCLE, targetFir.getFirUirSegment().get(0).getBoundaryVia()),
+        () -> assertEquals("2601", targetFir.getCycleDate())
+    );
   }
 
   @Test
@@ -78,15 +83,19 @@ class DafifXmlAirspacesTest {
         BoundaryType.RADAR_AREA, ControlledAirspaceType.RADAR);
     types.forEach((source, expected) -> {
       var target = controlled(boundary("TEST", source).airspaceClass("D").build());
-      assertEquals(expected, target.getControlledAirspaceType(), source.name());
-      assertEquals("D", target.getAirspaceClassification());
+      assertAll(
+          () -> assertEquals(expected, target.getControlledAirspaceType(), source.name()),
+          () -> assertEquals("D", target.getAirspaceClassification())
+      );
     });
     var terminalTypes = Map.of("B", ControlledAirspaceType.CLASS_B, "C", ControlledAirspaceType.CLASS_C,
         "D", ControlledAirspaceType.TERMINAL_CONTROL);
     terminalTypes.forEach((airspaceClass, expected) -> {
       var target = controlled(boundary("TEST", BoundaryType.TERMINAL_CONTROL_AREA).airspaceClass(airspaceClass).build());
-      assertEquals(expected, target.getControlledAirspaceType(), airspaceClass);
-      assertEquals(airspaceClass, target.getAirspaceClassification());
+      assertAll(
+          () -> assertEquals(expected, target.getControlledAirspaceType(), airspaceClass),
+          () -> assertEquals(airspaceClass, target.getAirspaceClassification())
+      );
     });
   }
 
@@ -97,12 +106,14 @@ class DafifXmlAirspacesTest {
       var target = controlled(boundary("TEST", BoundaryType.CONTROL_AREA).requiredNavPerformance(encoded)
           .name("Test control area").controllingAuthority("Test Center").build());
 
-      assertEquals(new BigDecimal(expected), target.getRnp());
-      assertEquals(String.format("%03d", encoded), supplemental(target).get("RNP"));
-      assertEquals("Test control area", target.getAirspaceName());
-      assertEquals("Test Center", target.getControllingAgency());
-      assertEquals(Level.ALL_ALT, target.getAirspaceSegment().get(0).getLevel());
-      assertEquals("2601", target.getCycleDate());
+      assertAll(
+          () -> assertEquals(new BigDecimal(expected), target.getRnp()),
+          () -> assertEquals(String.format("%03d", encoded), supplemental(target).get("RNP")),
+          () -> assertEquals("Test control area", target.getAirspaceName()),
+          () -> assertEquals("Test Center", target.getControllingAgency()),
+          () -> assertEquals(Level.ALL_ALT, target.getAirspaceSegment().get(0).getLevel()),
+          () -> assertEquals("2601", target.getCycleDate())
+      );
     });
   }
 
@@ -113,47 +124,57 @@ class DafifXmlAirspacesTest {
     var flightLevels = controlled(boundary("TEST", BoundaryType.CONTROL_AREA)
         .lowerAltitude("FL180").upperAltitude("FL450").build());
 
-    assertEquals(500, feet.getAirspaceAltLimits().getLowerLimit().getAltitude());
-    assertEquals(12000, feet.getAirspaceAltLimits().getUpperLimit().getAltitude());
-    assertEquals(UnitIndicator.AGL, feet.getUnitIndicatorLower());
-    assertEquals(UnitIndicator.MSL, feet.getUnitIndicatorUpper());
-    assertNull(feet.getAirspaceAltLimits().getLowerLimit().isIsFlightLevel());
-    assertNull(feet.getAirspaceAltLimits().getUpperLimit().isIsFlightLevel());
-    assertEquals(18000, flightLevels.getAirspaceAltLimits().getLowerLimit().getAltitude());
-    assertEquals(45000, flightLevels.getAirspaceAltLimits().getUpperLimit().getAltitude());
-    assertEquals(UnitIndicator.MSL, flightLevels.getUnitIndicatorLower());
-    assertEquals(UnitIndicator.MSL, flightLevels.getUnitIndicatorUpper());
-    assertTrue(flightLevels.getAirspaceAltLimits().getLowerLimit().isIsFlightLevel());
-    assertTrue(flightLevels.getAirspaceAltLimits().getUpperLimit().isIsFlightLevel());
+    assertAll(
+        () -> assertEquals(500, feet.getAirspaceAltLimits().getLowerLimit().getAltitude()),
+        () -> assertEquals(12000, feet.getAirspaceAltLimits().getUpperLimit().getAltitude()),
+        () -> assertEquals(UnitIndicator.AGL, feet.getUnitIndicatorLower()),
+        () -> assertEquals(UnitIndicator.MSL, feet.getUnitIndicatorUpper()),
+        () -> assertNull(feet.getAirspaceAltLimits().getLowerLimit().isIsFlightLevel()),
+        () -> assertNull(feet.getAirspaceAltLimits().getUpperLimit().isIsFlightLevel()),
+        () -> assertEquals(18000, flightLevels.getAirspaceAltLimits().getLowerLimit().getAltitude()),
+        () -> assertEquals(45000, flightLevels.getAirspaceAltLimits().getUpperLimit().getAltitude()),
+        () -> assertEquals(UnitIndicator.MSL, flightLevels.getUnitIndicatorLower()),
+        () -> assertEquals(UnitIndicator.MSL, flightLevels.getUnitIndicatorUpper()),
+        () -> assertTrue(flightLevels.getAirspaceAltLimits().getLowerLimit().isIsFlightLevel()),
+        () -> assertTrue(flightLevels.getAirspaceAltLimits().getUpperLimit().isIsFlightLevel())
+    );
   }
 
   @Test
   void preservesGroundUnlimitedUnknownAndNotamLimitsWithoutInventingAltitudes() {
     for (String ground : List.of("GND", "SURFACE")) {
       var target = controlled(boundary("TEST", BoundaryType.CONTROL_AREA).lowerAltitude(ground).build());
-      assertTrue(target.getAirspaceAltLimits().getLowerLimit().isIsGround());
-      assertTrue(target.getAirspaceAltLimits().getUpperLimit().isIsUnlimited());
-      assertNull(target.getAirspaceAltLimits().getLowerLimit().getAltitude());
-      assertNull(target.getAirspaceAltLimits().getUpperLimit().getAltitude());
-      assertEquals(UnitIndicator.AGL, target.getUnitIndicatorLower());
-      assertNull(target.getUnitIndicatorUpper());
+      assertAll(
+          () -> assertTrue(target.getAirspaceAltLimits().getLowerLimit().isIsGround()),
+          () -> assertTrue(target.getAirspaceAltLimits().getUpperLimit().isIsUnlimited()),
+          () -> assertNull(target.getAirspaceAltLimits().getLowerLimit().getAltitude()),
+          () -> assertNull(target.getAirspaceAltLimits().getUpperLimit().getAltitude()),
+          () -> assertEquals(UnitIndicator.AGL, target.getUnitIndicatorLower()),
+          () -> assertNull(target.getUnitIndicatorUpper())
+      );
     }
     for (String token : List.of("U", "BY NOTAM")) {
       var target = controlled(boundary("TEST", BoundaryType.CONTROL_AREA).lowerAltitude(token).upperAltitude(token).build());
       var limits = target.getAirspaceAltLimits();
       if ("U".equals(token)) {
-        assertTrue(limits.getLowerLimit().isIsUnknown());
-        assertTrue(limits.getUpperLimit().isIsUnknown());
+        assertAll(
+            () -> assertTrue(limits.getLowerLimit().isIsUnknown()),
+            () -> assertTrue(limits.getUpperLimit().isIsUnknown())
+        );
       } else {
-        assertTrue(limits.getLowerLimit().isIsNotam());
-        assertTrue(limits.getUpperLimit().isIsNotam());
+        assertAll(
+            () -> assertTrue(limits.getLowerLimit().isIsNotam()),
+            () -> assertTrue(limits.getUpperLimit().isIsNotam())
+        );
       }
-      assertNull(limits.getLowerLimit().getAltitude());
-      assertNull(limits.getUpperLimit().getAltitude());
-      assertNull(target.getUnitIndicatorLower());
-      assertNull(target.getUnitIndicatorUpper());
-      assertEquals(token, supplemental(target).get("LOWER_ALT"));
-      assertEquals(token, supplemental(target).get("UPPER_ALT"));
+      assertAll(
+          () -> assertNull(limits.getLowerLimit().getAltitude()),
+          () -> assertNull(limits.getUpperLimit().getAltitude()),
+          () -> assertNull(target.getUnitIndicatorLower()),
+          () -> assertNull(target.getUnitIndicatorUpper()),
+          () -> assertEquals(token, supplemental(target).get("LOWER_ALT")),
+          () -> assertEquals(token, supplemental(target).get("UPPER_ALT"))
+      );
     }
   }
 
@@ -162,10 +183,12 @@ class DafifXmlAirspacesTest {
     var target = boundaries(boundary("TEST", BoundaryType.FIR)
         .lowerAltitude("00500AGL").upperAltitude("012000AGL").build()).getFirUir().get(0);
 
-    assertNull(target.getFirAltitudeLimits().getLowerLimit());
-    assertNull(target.getFirAltitudeLimits().getUpperLimit());
-    assertEquals("00500AGL", supplemental(target).get("LOWER_ALT"));
-    assertEquals("012000AGL", supplemental(target).get("UPPER_ALT"));
+    assertAll(
+        () -> assertNull(target.getFirAltitudeLimits().getLowerLimit()),
+        () -> assertNull(target.getFirAltitudeLimits().getUpperLimit()),
+        () -> assertEquals("00500AGL", supplemental(target).get("LOWER_ALT")),
+        () -> assertEquals("012000AGL", supplemental(target).get("UPPER_ALT"))
+    );
   }
 
   @Test
@@ -179,17 +202,22 @@ class DafifXmlAirspacesTest {
     assertEquals(3, result.size());
     for (int index = 0; index < result.size(); index++) {
       var target = result.get(index);
-      assertEquals("R-TEST", target.getRestrictiveAirspaceDesignation());
-      assertEquals("KA", target.getIcaoCode());
-      assertEquals(RestrictiveAirspaceType.RESTRICTED, target.getRestrictiveAirspaceType());
-      assertEquals(1, target.getAirspaceSegment().size());
-      assertEquals(index + 1.0, target.getAirspaceSegment().get(0).getArcDistance().doubleValue());
+      double expectedRadius = index + 1.0;
+      assertAll(
+          () -> assertEquals("R-TEST", target.getRestrictiveAirspaceDesignation()),
+          () -> assertEquals("KA", target.getIcaoCode()),
+          () -> assertEquals(RestrictiveAirspaceType.RESTRICTED, target.getRestrictiveAirspaceType()),
+          () -> assertEquals(1, target.getAirspaceSegment().size()),
+          () -> assertEquals(expectedRadius, target.getAirspaceSegment().get(0).getArcDistance().doubleValue())
+      );
     }
-    assertNull(result.get(0).getMultipleCode());
-    assertEquals("A", result.get(1).getMultipleCode());
-    assertNull(result.get(2).getMultipleCode());
-    assertEquals("AB", supplemental(result.get(2)).get("SECTOR"));
-    assertEquals("KAAA", supplemental(result.get(2)).get("ICAO"));
+    assertAll(
+        () -> assertNull(result.get(0).getMultipleCode()),
+        () -> assertEquals("A", result.get(1).getMultipleCode()),
+        () -> assertNull(result.get(2).getMultipleCode()),
+        () -> assertEquals("AB", supplemental(result.get(2)).get("SECTOR")),
+        () -> assertEquals("KAAA", supplemental(result.get(2)).get("ICAO"))
+    );
   }
 
   @Test
@@ -202,19 +230,23 @@ class DafifXmlAirspacesTest {
         List.of(suasCircle("A", 1), suasCircle("B", 2)), publication);
 
     var target = publication.getAirspaces().getRestrictiveAirspace().get(0);
-    assertEquals(RestrictiveAirspaceType.UNSPECIFIED, target.getRestrictiveAirspaceType());
-    assertEquals("T", supplemental(target).get("TYPE"));
-    assertEquals("Test reserved area", target.getRestrictiveAirspaceName());
-    assertEquals("Test Center", target.getControllingAgency());
-    assertEquals("MON-FRI 0800-1700", target.getTimesOfOperation().getTimeNarrative());
-    assertEquals(TimeCode.COMPLEX, target.getTimesOfOperation().getTimeCode());
-    assertEquals("MON-FRI 0800-1700", supplemental(target).get("EFF_TIMES"));
+    assertAll(
+        () -> assertEquals(RestrictiveAirspaceType.UNSPECIFIED, target.getRestrictiveAirspaceType()),
+        () -> assertEquals("T", supplemental(target).get("TYPE")),
+        () -> assertEquals("Test reserved area", target.getRestrictiveAirspaceName()),
+        () -> assertEquals("Test Center", target.getControllingAgency()),
+        () -> assertEquals("MON-FRI 0800-1700", target.getTimesOfOperation().getTimeNarrative()),
+        () -> assertEquals(TimeCode.COMPLEX, target.getTimesOfOperation().getTimeCode()),
+        () -> assertEquals("MON-FRI 0800-1700", supplemental(target).get("EFF_TIMES"))
+    );
     var targetNotam = publication.getAirspaces().getRestrictiveAirspace().get(1);
     var times = targetNotam.getTimesOfOperation();
-    assertEquals(TimeCode.BY_NOTAM, times.getTimeCode());
-    assertNull(times.getTimeNarrative());
-    assertNull(times.isByNotam());
-    assertEquals("BY NOTAM", supplemental(targetNotam).get("EFF_TIMES"));
+    assertAll(
+        () -> assertEquals(TimeCode.BY_NOTAM, times.getTimeCode()),
+        () -> assertNull(times.getTimeNarrative()),
+        () -> assertNull(times.isByNotam()),
+        () -> assertEquals("BY NOTAM", supplemental(targetNotam).get("EFF_TIMES"))
+    );
   }
 
   @Test
@@ -223,8 +255,10 @@ class DafifXmlAirspacesTest {
         BoundaryType.AIR_ROUTE_TRAFFIC_CONTROL_CENTER, BoundaryType.AREA_CONTROL_CENTER,
         BoundaryType.BUFFER_ZONE, BoundaryType.MODE_C_DEFINED_AREA, BoundaryType.OTHER, BoundaryType.FUNCTIONAL_AIRSPACE_BLOCK)) {
       var target = controlled(boundary("TEST", type).build());
-      assertNull(target.getControlledAirspaceType(), type.name());
-      assertEquals(String.format("%02d", type.code()), supplemental(target).get("TYPE"));
+      assertAll(
+          () -> assertNull(target.getControlledAirspaceType(), type.name()),
+          () -> assertEquals(String.format("%02d", type.code()), supplemental(target).get("TYPE"))
+      );
     }
   }
 

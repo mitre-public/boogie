@@ -83,10 +83,12 @@ class StreamingExiUnmarshallerTest {
 
     Optional<ArincRecords> result = unmarshaller(format, values).apply(input, target);
 
-    assertTrue(result.isPresent());
-    assertEquals(target, result.orElseThrow());
-    assertEquals(3, values.size());
     assertAll(
+        () -> {
+          assertTrue(result.isPresent());
+          assertEquals(target, result.orElseThrow());
+        },
+        () -> assertEquals(3, values.size()),
         () -> assertEquals(List.of("first", "second", "third"), values.stream().map(value -> value.id).toList()),
         () -> assertEquals(List.of("second", "first", "outside-document"), values.stream().map(value -> value.reference).toList()),
         () -> assertEquals(List.of("  Montréal & 東京  ", "Second", "Third"), values.stream().map(value -> value.name).toList()),

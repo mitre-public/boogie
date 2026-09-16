@@ -1,5 +1,7 @@
 package org.mitre.boogie.xml.fixtures;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import org.junit.jupiter.api.Tag;
@@ -13,9 +15,11 @@ import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Tag("XML")
 public class ArincExiIntegration {
   @Test
   @Tag("CIFP")
@@ -49,12 +53,27 @@ public class ArincExiIntegration {
     // The large JAXB publication can be reclaimed before the compressed decoder runs.
     String fileName = xmlFile.getFileName().toString().replaceFirst("\\.xml$", "");
     ExiOptions schemaLess = ExiOptions.schemaLess().withCompression(true);
-    writeAndValidateExi(xmlFile, xmlFile.resolveSibling(fileName + "-no-schema.exi"), schemaLess);
+    assertAll("EXI variants for " + fileName,
+        () -> writeAndValidateExi(xmlFile, xmlFile.resolveSibling(fileName + "-no-schema.exi"), schemaLess),
+        () -> writeAndValidateSchemaInformedExi(xmlFile, fileName)
+    );
+  }
 
-    Path rootXsd = Path.of(ArincExiIntegration.class.getResource("/v23_4/schemas/Records/AeroPublication.xsd").toURI());
-    ExiSchema schema = ExiSchema.compile("urn:boogie:arinc424:23.4", rootXsd);
+  private static void writeAndValidateSchemaInformedExi(Path xmlFile, String fileName) throws Exception {
+    URL officialSchema = ArincExiIntegration.class.getResource("/v23_4/schemas/Records/AeroPublication.xsd");
+    ExiSchema schema;
+    String schemaSuffix;
+    if (officialSchema != null) {
+      schema = ExiSchema.compile("urn:boogie:arinc424:23.4", Path.of(officialSchema.toURI()));
+      schemaSuffix = "-schema-informed.exi";
+    } else {
+      // A clean checkout can still test schema-informed EXI using the checked-in JAXB classes.
+      // Keep its artifact name and schema ID distinct from the official ARINC schema output.
+      schema = ArincFixtureSchema.generated(xmlFile.resolveSibling(fileName + "-schemas"));
+      schemaSuffix = "-jaxb-schema-informed.exi";
+    }
     ExiOptions schemaInformed = ExiOptions.schemaInformed(schema).withCompression(true);
-    writeAndValidateExi(xmlFile, xmlFile.resolveSibling(fileName + "-schema-informed.exi"), schemaInformed);
+    writeAndValidateExi(xmlFile, xmlFile.resolveSibling(fileName + schemaSuffix), schemaInformed);
   }
 
   private static void writeAndValidateExi(Path xmlFile, Path exiFile, ExiOptions options) throws Exception {
@@ -62,10 +81,14 @@ public class ArincExiIntegration {
          OutputStream output = new BufferedOutputStream(Files.newOutputStream(exiFile))) {
       new ExiCodec(options).encode(input, output);
     }
-    ExiAssertions.assertCookie(exiFile);
-    ExiCodec decoder = new ExiCodec(ExiOptions.schemaLess(), options.schema().stream().toList());
-    try (InputStream source = Files.newInputStream(xmlFile)) {
-      ExiAssertions.assertSameStructure(source, exiFile, decoder);
-    }
+    assertAll(exiFile.toString(),
+        () -> ExiAssertions.assertCookie(exiFile),
+        () -> {
+          ExiCodec decoder = new ExiCodec(ExiOptions.schemaLess(), options.schema().stream().toList());
+          try (InputStream source = Files.newInputStream(xmlFile)) {
+            ExiAssertions.assertSameStructure(source, exiFile, decoder);
+          }
+        }
+    );
   }
 }

@@ -167,7 +167,9 @@ class CifpXmlPointsTest {
   @Test
   void preservesRunwayNumberAndSide() {
     var runway = CifpXmlPoints.runwayIdentifier("RW04L");
-    assertEquals(4, runway.getRunwayNumber());
-    assertEquals(RunwayLeftRightCenterType.LEFT, runway.getRunwayLeftRightCenterType());
+    assertAll(
+        () -> assertEquals(4, runway.getRunwayNumber()),
+        () -> assertEquals(RunwayLeftRightCenterType.LEFT, runway.getRunwayLeftRightCenterType())
+    );
   }
 }

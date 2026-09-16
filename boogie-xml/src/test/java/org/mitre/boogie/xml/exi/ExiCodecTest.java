@@ -1,5 +1,6 @@
 package org.mitre.boogie.xml.exi;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -74,8 +75,9 @@ class ExiCodecTest {
     byte[] encoded = encode(encoder, XML);
     String decoded = decode(decoder, encoded);
 
-    assertEquals(shape(parse(XML).getDocumentElement()), shape(parse(decoded).getDocumentElement()));
-    assertFalse(Arrays.equals(XML.getBytes(StandardCharsets.UTF_8), encoded));
+    assertAll(
+        () -> assertEquals(shape(parse(XML).getDocumentElement()), shape(parse(decoded).getDocumentElement())),
+        () -> assertFalse(Arrays.equals(XML.getBytes(StandardCharsets.UTF_8), encoded)));
   }
 
   @ParameterizedTest
@@ -87,11 +89,12 @@ class ExiCodecTest {
 
     Document decoded = parse(decode(codec, encode(codec, XML)));
 
-    assertEquals(BigInteger.valueOf(7), new BigInteger(value(decoded, "count")));
-    assertEquals(0, new BigDecimal("12.5").compareTo(new BigDecimal(value(decoded, "amount"))));
-    assertTrue(List.of("true", "1").contains(value(decoded, "active")));
-    assertEquals("café & 東京", value(decoded, "label"));
-    assertEquals("tested", decoded.getDocumentElement().getAttributeNS(TYPES_NS, "quality"));
+    assertAll(
+        () -> assertEquals(BigInteger.valueOf(7), new BigInteger(value(decoded, "count"))),
+        () -> assertEquals(0, new BigDecimal("12.5").compareTo(new BigDecimal(value(decoded, "amount")))),
+        () -> assertTrue(List.of("true", "1").contains(value(decoded, "active"))),
+        () -> assertEquals("café & 東京", value(decoded, "label")),
+        () -> assertEquals("tested", decoded.getDocumentElement().getAttributeNS(TYPES_NS, "quality")));
   }
 
   @Test
@@ -100,13 +103,15 @@ class ExiCodecTest {
     byte[] encoded = encode(new ExiCodec(ExiOptions.schemaInformed(schema)
         .withPreserveLexicalValues(true)), XML);
 
-    IOException error = assertThrows(IOException.class,
-        () -> decode(new ExiCodec(ExiOptions.schemaLess()), encoded));
-    assertTrue(causes(error).contains(SCHEMA_ID), causes(error));
-
     ExiCodec registered = new ExiCodec(ExiOptions.schemaLess(), List.of(schema));
-    assertEquals(shape(parse(XML).getDocumentElement()),
-        shape(parse(decode(registered, encoded)).getDocumentElement()));
+    assertAll(
+        () -> {
+          IOException error = assertThrows(IOException.class,
+              () -> decode(new ExiCodec(ExiOptions.schemaLess()), encoded));
+          assertTrue(causes(error).contains(SCHEMA_ID), causes(error));
+        },
+        () -> assertEquals(shape(parse(XML).getDocumentElement()),
+            shape(parse(decode(registered, encoded)).getDocumentElement())));
   }
 
   @Test
@@ -115,16 +120,14 @@ class ExiCodecTest {
     String valid = XML.replace("xsi:type=\"t:ExtendedRecordType\"", "")
         .replace("<t:note>Extended record</t:note>", "");
     ExiCodec strict = new ExiCodec(options.withStrict(true));
-    assertEquals(shape(parse(valid).getDocumentElement()),
-        shape(parse(decode(strict, encode(strict, valid))).getDocumentElement()));
-
     String unexpectedElement = valid.replace("</r:record>", "<t:unexpected>extra</t:unexpected></r:record>");
-
-    assertThrows(IOException.class, () -> encode(strict, unexpectedElement));
-
     ExiCodec relaxed = new ExiCodec(options.withStrict(false));
-    assertEquals(shape(parse(unexpectedElement).getDocumentElement()),
-        shape(parse(decode(relaxed, encode(relaxed, unexpectedElement))).getDocumentElement()));
+    assertAll(
+        () -> assertEquals(shape(parse(valid).getDocumentElement()),
+            shape(parse(decode(strict, encode(strict, valid))).getDocumentElement())),
+        () -> assertThrows(IOException.class, () -> encode(strict, unexpectedElement)),
+        () -> assertEquals(shape(parse(unexpectedElement).getDocumentElement()),
+            shape(parse(decode(relaxed, encode(relaxed, unexpectedElement))).getDocumentElement())));
   }
 
   @Test
@@ -144,11 +147,12 @@ class ExiCodecTest {
       reader.nextTag();
       assertEquals("root", reader.getLocalName());
       reader.nextTag();
-      assertEquals("child", reader.getLocalName());
-      assertEquals(RECORD_NS, reader.getNamespaceURI("r"));
-      assertEquals(TYPES_NS, reader.getNamespaceURI("t"));
-      assertEquals(XMLConstants.XML_NS_URI, reader.getNamespaceURI(XMLConstants.XML_NS_PREFIX));
-      assertEquals("t:Kind", reader.getAttributeValue(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type"));
+      assertAll(
+          () -> assertEquals("child", reader.getLocalName()),
+          () -> assertEquals(RECORD_NS, reader.getNamespaceURI("r")),
+          () -> assertEquals(TYPES_NS, reader.getNamespaceURI("t")),
+          () -> assertEquals(XMLConstants.XML_NS_URI, reader.getNamespaceURI(XMLConstants.XML_NS_PREFIX)),
+          () -> assertEquals("t:Kind", reader.getAttributeValue(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type")));
       assertEquals("+0007", reader.getElementText());
     } finally {
       reader.close();
@@ -161,9 +165,10 @@ class ExiCodecTest {
     ExiCodec codec = new ExiCodec(ExiOptions.schemaLess().withCompression(compressed));
     byte[] encoded = encode(codec, XML);
 
-    assertThrows(IOException.class, () -> decode(codec, new byte[0]));
-    assertThrows(IOException.class, () -> decode(codec, XML.getBytes(StandardCharsets.UTF_8)));
-    assertThrows(IOException.class, () -> decode(codec, Arrays.copyOf(encoded, encoded.length / 2)));
+    assertAll(
+        () -> assertThrows(IOException.class, () -> decode(codec, new byte[0])),
+        () -> assertThrows(IOException.class, () -> decode(codec, XML.getBytes(StandardCharsets.UTF_8))),
+        () -> assertThrows(IOException.class, () -> decode(codec, Arrays.copyOf(encoded, encoded.length / 2))));
   }
 
   @Test
@@ -177,16 +182,17 @@ class ExiCodecTest {
       TrackedInputStream input = new TrackedInputStream(xml.getBytes(StandardCharsets.UTF_8));
       TrackedOutputStream encoded = new TrackedOutputStream();
       codec.encode(input, encoded);
-      assertFalse(input.closed);
-      assertFalse(encoded.closed);
 
       TrackedInputStream binary = new TrackedInputStream(encoded.toByteArray());
       TrackedOutputStream decoded = new TrackedOutputStream();
       codec.decode(binary, decoded);
-      assertFalse(binary.closed);
-      assertFalse(decoded.closed);
-      assertEquals(shape(parse(xml).getDocumentElement()),
-          shape(parse(decoded.toString(StandardCharsets.UTF_8)).getDocumentElement()));
+      assertAll("Round trip " + i,
+          () -> assertFalse(input.closed, "XML input stays open"),
+          () -> assertFalse(encoded.closed, "EXI output stays open"),
+          () -> assertFalse(binary.closed, "EXI input stays open"),
+          () -> assertFalse(decoded.closed, "XML output stays open"),
+          () -> assertEquals(shape(parse(xml).getDocumentElement()),
+              shape(parse(decoded.toString(StandardCharsets.UTF_8)).getDocumentElement())));
     }
   }
 
@@ -213,8 +219,6 @@ class ExiCodecTest {
     } finally {
       writer.close();
     }
-    assertFalse(encoded.closed);
-
     TrackedInputStream input = new TrackedInputStream(encoded.toByteArray());
     XMLStreamReader reader = codec.createReader(input);
     TestRecord actual;
@@ -223,13 +227,15 @@ class ExiCodecTest {
     } finally {
       reader.close();
     }
-    assertFalse(input.closed);
-    assertEquals(expected.id, actual.id);
-    assertEquals(expected.quality, actual.quality);
-    assertEquals(expected.label, actual.label);
-    assertEquals(expected.count, actual.count);
-    assertEquals(0, expected.amount.compareTo(actual.amount));
-    assertEquals(expected.active, actual.active);
+    assertAll(
+        () -> assertFalse(encoded.closed, "EXI output stays open"),
+        () -> assertFalse(input.closed, "EXI input stays open"),
+        () -> assertEquals(expected.id, actual.id),
+        () -> assertEquals(expected.quality, actual.quality),
+        () -> assertEquals(expected.label, actual.label),
+        () -> assertEquals(expected.count, actual.count),
+        () -> assertEquals(0, expected.amount.compareTo(actual.amount)),
+        () -> assertEquals(expected.active, actual.active));
   }
 
   private ExiSchema compileSchema() throws IOException {

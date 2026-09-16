@@ -15,6 +15,41 @@ jobs:
       - name: unit
         run: ./gradlew unit
 
+  xml:
+    needs: unit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          lfs: true
+
+      - name: XML Test Data
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          lfs: true
+          repository: 'mitre-tdp/boogie-test'
+          ssh-key: ${{ secrets.BOOGIE_TESTS_PRIVATE_KEYS }}
+          ref: main
+          path: ./boogie-xml/src/test/resources
+
+      - name: CIFP Test Data
+        run: cp boogie-arinc/src/test/resources/cifp-2101.dat.gz boogie-xml/src/test/resources/
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+
+      - name: XML integration
+        run: ./gradlew :boogie-xml:xml-integration
+
   cifp:
     needs: unit
     runs-on: ubuntu-latest
@@ -91,7 +126,7 @@ jobs:
         run: ./gradlew assignment-integration
 
   release:
-    needs: [unit, cifp, lido, dafif, assignment]
+    needs: [unit, xml, cifp, lido, dafif, assignment]
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.nextStrict }}

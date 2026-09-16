@@ -19,6 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 @Tag("CIFP")
 @Tag("INTEGRATION")
+@Tag("XML")
 class CifpXmlFixtureTest {
 
   @Test
@@ -40,6 +41,7 @@ class CifpXmlFixtureTest {
         () -> assertEquals(37902, handler.count("airspaceSegment")),
         () -> assertEquals(6466 + fixture.source().arincHelipads().size(), handler.count("helipad")),
         () -> assertTrue(handler.references.size() > 10000, "Contains cross-record references"),
+        () -> assertTrue(handler.duplicateIds.isEmpty(), () -> "Duplicate XML IDs: " + handler.duplicateIds),
         () -> assertTrue(handler.ids.containsAll(handler.references), "Every emitted reference has a target"),
         () -> assertEquals(2101, fixture.publication().getCycleDate()),
         () -> assertEquals("2021-01-28T00:00:00Z", fixture.publication().getStartOfValidity().toXMLFormat())
@@ -53,6 +55,7 @@ class CifpXmlFixtureTest {
 
     private final Map<String, Integer> counts = new HashMap<>();
     private final Set<String> ids = new HashSet<>();
+    private final Set<String> duplicateIds = new HashSet<>();
     private final Set<String> references = new HashSet<>();
     private final StringBuilder reference = new StringBuilder();
     private boolean inReference;
@@ -61,8 +64,8 @@ class CifpXmlFixtureTest {
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
       counts.merge(localName, 1, Integer::sum);
       String id = attributes.getValue("referenceId");
-      if (id != null) {
-        assertTrue(ids.add(id), () -> "Duplicate XML ID: " + id);
+      if (id != null && !ids.add(id)) {
+        duplicateIds.add(id);
       }
       inReference = REFERENCE_ELEMENTS.contains(localName);
       reference.setLength(0);

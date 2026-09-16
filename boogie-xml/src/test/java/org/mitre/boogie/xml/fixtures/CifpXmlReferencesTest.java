@@ -1,5 +1,6 @@
 package org.mitre.boogie.xml.fixtures;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -17,8 +18,10 @@ class CifpXmlReferencesTest {
     refs.addPort("1AK5", "PA", airport);
     refs.addPort("1AK5", "PA", heliport);
 
-    assertSame(airport, refs.port("P", "1AK5", "PA"));
-    assertSame(heliport, refs.port("H", "1AK5", "PA"));
-    assertThrows(IllegalArgumentException.class, () -> refs.port("1AK5", "PA"));
+    assertAll(
+        () -> assertSame(airport, refs.port("P", "1AK5", "PA")),
+        () -> assertSame(heliport, refs.port("H", "1AK5", "PA")),
+        () -> assertThrows(IllegalArgumentException.class, () -> refs.port("1AK5", "PA"))
+    );
   }
 }

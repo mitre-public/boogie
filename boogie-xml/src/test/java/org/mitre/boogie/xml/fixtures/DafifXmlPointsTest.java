@@ -1,5 +1,6 @@
 package org.mitre.boogie.xml.fixtures;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -43,21 +44,25 @@ class DafifXmlPointsTest {
 
     assertEquals(1, publication.getAirports().getAirport().size());
     var airport = publication.getAirports().getAirport().get(0);
-    assertEquals("KAAA", airport.getIdentifier());
-    assertSame(airport, refs.airport("US00001"));
-    assertSame(airport, refs.airportByIdentifier("KAAA"));
-    assertEquals(2, airport.getRunway().size());
+    assertAll(
+        () -> assertEquals("KAAA", airport.getIdentifier()),
+        () -> assertSame(airport, refs.airport("US00001")),
+        () -> assertSame(airport, refs.airportByIdentifier("KAAA")),
+        () -> assertEquals(2, airport.getRunway().size())
+    );
     var low = refs.runway("US00001", "09");
     var high = refs.runway("US00001", "27");
-    assertNotEquals(low.getReferenceId(), high.getReferenceId());
-    assertLocation(low.getLocation(), 40.005, -70.005);
-    assertLocation(low.getRunwayEndLocation(), 40.0, -70.0);
-    assertLocation(high.getLocation(), 40.01, -70.01);
-    assertEquals(105, low.getLandingThresholdElevation());
-    assertEquals(100, low.getRunwayEndElevation());
-    assertEquals(400L, low.getDisplacedThresholdDistance());
-    assertEquals(5600L, low.getLandingDistanceAvailable());
-    assertEquals(6000L, high.getLandingDistanceAvailable());
+    assertAll(
+        () -> assertNotEquals(low.getReferenceId(), high.getReferenceId()),
+        () -> assertLocation(low.getLocation(), 40.005, -70.005),
+        () -> assertLocation(low.getRunwayEndLocation(), 40.0, -70.0),
+        () -> assertLocation(high.getLocation(), 40.01, -70.01),
+        () -> assertEquals(105, low.getLandingThresholdElevation()),
+        () -> assertEquals(100, low.getRunwayEndElevation()),
+        () -> assertEquals(400L, low.getDisplacedThresholdDistance()),
+        () -> assertEquals(5600L, low.getLandingDistanceAvailable()),
+        () -> assertEquals(6000L, high.getLandingDistanceAvailable())
+    );
   }
 
   @Test
@@ -72,18 +77,22 @@ class DafifXmlPointsTest {
 
     Vor vor = assertInstanceOf(Vor.class, refs.navaid("ABC", "US", 4, 1));
     Dme dme = assertInstanceOf(Dme.class, vor.getDmeTacanRef());
-    assertLocation(vor.getLocation(), 40.0, -70.0);
-    assertLocation(dme.getLocation(), 41.0, -71.0);
-    assertNotEquals(vor.getReferenceId(), dme.getReferenceId());
-    assertEquals(112.3, vor.getVorFrequency().getFrequencyValue().doubleValue(), 1e-9);
-    assertEquals(FreqUnitOfMeasure.MEGA_HERTZ, vor.getVorFrequency().getFreqUnitOfMeasure());
-    assertEquals(10.5, vor.getStationDeclination().getStationDeclinationValue().doubleValue(), 1e-9);
-    assertEquals(StationDeclinationEWT.WEST, vor.getStationDeclination().getStationDeclinationEWT());
+    assertAll(
+        () -> assertLocation(vor.getLocation(), 40.0, -70.0),
+        () -> assertLocation(dme.getLocation(), 41.0, -71.0),
+        () -> assertNotEquals(vor.getReferenceId(), dme.getReferenceId()),
+        () -> assertEquals(112.3, vor.getVorFrequency().getFrequencyValue().doubleValue(), 1e-9),
+        () -> assertEquals(FreqUnitOfMeasure.MEGA_HERTZ, vor.getVorFrequency().getFreqUnitOfMeasure()),
+        () -> assertEquals(10.5, vor.getStationDeclination().getStationDeclinationValue().doubleValue(), 1e-9),
+        () -> assertEquals(StationDeclinationEWT.WEST, vor.getStationDeclination().getStationDeclinationEWT())
+    );
     Ndb targetNdb = assertInstanceOf(Ndb.class, refs.navaid("NDB", "US", 5, 1));
-    assertEquals(346.0, targetNdb.getNdbFrequency().getFrequencyValue().doubleValue(), 1e-9);
-    assertEquals(FreqUnitOfMeasure.KILO_HERTZ, targetNdb.getNdbFrequency().getFreqUnitOfMeasure());
-    assertSame(vor, refs.waypointNavaid("ALIAS", "US"));
-    assertNotNull(refs.waypoint("ALIAS", "US"));
+    assertAll(
+        () -> assertEquals(346.0, targetNdb.getNdbFrequency().getFrequencyValue().doubleValue(), 1e-9),
+        () -> assertEquals(FreqUnitOfMeasure.KILO_HERTZ, targetNdb.getNdbFrequency().getFreqUnitOfMeasure()),
+        () -> assertSame(vor, refs.waypointNavaid("ALIAS", "US")),
+        () -> assertNotNull(refs.waypoint("ALIAS", "US"))
+    );
   }
 
   @Test
@@ -99,14 +108,16 @@ class DafifXmlPointsTest {
     var systems = publication.getAirports().getAirport().get(0).getLocalizerGlideslope();
     assertEquals(1, systems.size());
     var target = systems.get(0);
-    assertLocation(target.getLocation(), 40.02, -70.02);
-    assertLocation(target.getGlideslopeLocation(), 40.003, -70.003);
-    assertEquals(3.0, target.getApproachAngle().doubleValue(), 1e-9);
-    assertEquals(110.3, target.getLocalizerGlideslopeFrequency().getFrequencyValue().doubleValue(), 1e-9);
-    assertEquals(11.0, target.getStationDeclination().getStationDeclinationValue().doubleValue(), 1e-9);
-    assertEquals(StationDeclinationEWT.WEST, target.getStationDeclination().getStationDeclinationEWT());
-    assertSame(refs.runway("US00001", "09"), target.getRunwayRef());
-    assertSame(target, refs.localizer("US00001", "IABC"));
+    assertAll(
+        () -> assertLocation(target.getLocation(), 40.02, -70.02),
+        () -> assertLocation(target.getGlideslopeLocation(), 40.003, -70.003),
+        () -> assertEquals(3.0, target.getApproachAngle().doubleValue(), 1e-9),
+        () -> assertEquals(110.3, target.getLocalizerGlideslopeFrequency().getFrequencyValue().doubleValue(), 1e-9),
+        () -> assertEquals(11.0, target.getStationDeclination().getStationDeclinationValue().doubleValue(), 1e-9),
+        () -> assertEquals(StationDeclinationEWT.WEST, target.getStationDeclination().getStationDeclinationEWT()),
+        () -> assertSame(refs.runway("US00001", "09"), target.getRunwayRef()),
+        () -> assertSame(target, refs.localizer("US00001", "IABC"))
+    );
   }
 
   @Test
@@ -119,10 +130,12 @@ class DafifXmlPointsTest {
 
     var localizers = publication.getAirports().getAirport().get(0).getLocalizerGlideslope();
     assertEquals(2, localizers.size());
-    assertNotEquals(localizers.get(0).getReferenceId(), localizers.get(1).getReferenceId());
-    assertSame(refs.runway("US00001", "09"), localizers.get(0).getRunwayRef());
-    assertSame(refs.runway("US00001", "27"), localizers.get(1).getRunwayRef());
-    assertNull(refs.localizer("US00001", "IABC"));
+    assertAll(
+        () -> assertNotEquals(localizers.get(0).getReferenceId(), localizers.get(1).getReferenceId()),
+        () -> assertSame(refs.runway("US00001", "09"), localizers.get(0).getRunwayRef()),
+        () -> assertSame(refs.runway("US00001", "27"), localizers.get(1).getRunwayRef()),
+        () -> assertNull(refs.localizer("US00001", "IABC"))
+    );
   }
 
   @Test
@@ -135,11 +148,13 @@ class DafifXmlPointsTest {
 
     var terminalTarget = refs.waypoint("SAME", "US");
     var enrouteTarget = refs.waypoint("SAME", "CA");
-    assertInstanceOf(TerminalWaypoint.class, terminalTarget);
-    assertSame(terminalTarget, publication.getAirports().getAirport().get(0).getTerminalWaypoint().get(0));
-    assertSame(enrouteTarget, publication.getEnrouteWaypoints().getWaypoint().get(0));
-    assertNotEquals(terminalTarget.getReferenceId(), enrouteTarget.getReferenceId());
-    assertLocation(enrouteTarget.getLocation(), 50.0, -80.0);
+    assertAll(
+        () -> assertInstanceOf(TerminalWaypoint.class, terminalTarget),
+        () -> assertSame(terminalTarget, publication.getAirports().getAirport().get(0).getTerminalWaypoint().get(0)),
+        () -> assertSame(enrouteTarget, publication.getEnrouteWaypoints().getWaypoint().get(0)),
+        () -> assertNotEquals(terminalTarget.getReferenceId(), enrouteTarget.getReferenceId()),
+        () -> assertLocation(enrouteTarget.getLocation(), 50.0, -80.0)
+    );
   }
 
   private static AeroPublication convert(DafifXmlFixture.Records records, DafifXmlReferences refs) {
@@ -190,15 +205,13 @@ class DafifXmlPointsTest {
   private static void assertLocation(Location location, double latitude, double longitude) {
     var lat = location.getLatitude();
     double actualLatitude = lat.getDeg() + lat.getMin() / 60.0 + lat.getSec() / 3600.0 + lat.getHSec() / 360000.0;
-    if (lat.getNorthSouth() == NorthSouth.SOUTH) {
-      actualLatitude = -actualLatitude;
-    }
+    double signedLatitude = lat.getNorthSouth() == NorthSouth.SOUTH ? -actualLatitude : actualLatitude;
     var lon = location.getLongitude();
     double actualLongitude = lon.getDeg() + lon.getMin() / 60.0 + lon.getSec() / 3600.0 + lon.getHSec() / 360000.0;
-    if (lon.getEastWest() == EastWest.WEST) {
-      actualLongitude = -actualLongitude;
-    }
-    assertEquals(latitude, actualLatitude, 0.000002);
-    assertEquals(longitude, actualLongitude, 0.000002);
+    double signedLongitude = lon.getEastWest() == EastWest.WEST ? -actualLongitude : actualLongitude;
+    assertAll(
+        () -> assertEquals(latitude, signedLatitude, 0.000002),
+        () -> assertEquals(longitude, signedLongitude, 0.000002)
+    );
   }
 }

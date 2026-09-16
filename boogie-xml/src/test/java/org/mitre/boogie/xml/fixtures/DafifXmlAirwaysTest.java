@@ -1,5 +1,6 @@
 package org.mitre.boogie.xml.fixtures;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -43,26 +44,28 @@ class DafifXmlAirwaysTest {
 
     assertEquals(1, airways.size());
     var legs = airways.get(0).getAirwayLeg();
-    assertEquals(List.of("A", "B", "C"), legs.stream().map(AirwayLeg::getFixIdent).toList());
-    assertSame(refs.waypoint("B", "US"), legs.get(1).getFixRef());
-    assertEquals(new BigDecimal("12.3"), legs.get(0).getRouteDistanceFrom());
-    assertEquals(new BigDecimal("45.6"), legs.get(1).getRouteDistanceFrom());
-    assertNull(legs.get(2).getRouteDistanceFrom());
-    assertEquals(new BigDecimal("89"), legs.get(0).getOutboundCourse().getCourseValue());
-    assertTrue(legs.get(0).getOutboundCourse().isIsTrue());
-    assertEquals(new BigDecimal("90.1"), legs.get(1).getInboundCourse().getCourseValue());
-    assertFalse(legs.get(1).getInboundCourse().isIsTrue());
-    assertEquals(new BigDecimal("100.2"), legs.get(1).getOutboundCourse().getCourseValue());
-    assertTrue(legs.get(2).getInboundCourse().isIsTrue());
-    assertEquals(18000, legs.get(0).getMinimumAltitudes().get(0).getAltitude());
-    assertTrue(legs.get(0).getMinimumAltitudes().get(0).isIsFlightLevel());
-    assertEquals(1, legs.get(0).getMinimumAltitudes().size());
-    assertEquals(5000, legs.get(1).getMinimumAltitudes().get(0).getAltitude());
-    assertEquals(45000, legs.get(0).getMaximumAltitudes().get(0).getAltitude());
-    assertEquals(1, legs.get(0).getMaximumAltitudes().size());
-    assertTrue(legs.get(1).getMaximumAltitudes().get(0).isIsUnlimited());
-    assertEquals(BigDecimal.valueOf(5), legs.get(0).getRnp());
-    assertEquals("2601", legs.get(0).getCycleDate());
+    assertAll(
+        () -> assertEquals(List.of("A", "B", "C"), legs.stream().map(AirwayLeg::getFixIdent).toList()),
+        () -> assertSame(refs.waypoint("B", "US"), legs.get(1).getFixRef()),
+        () -> assertEquals(new BigDecimal("12.3"), legs.get(0).getRouteDistanceFrom()),
+        () -> assertEquals(new BigDecimal("45.6"), legs.get(1).getRouteDistanceFrom()),
+        () -> assertNull(legs.get(2).getRouteDistanceFrom()),
+        () -> assertEquals(new BigDecimal("89"), legs.get(0).getOutboundCourse().getCourseValue()),
+        () -> assertTrue(legs.get(0).getOutboundCourse().isIsTrue()),
+        () -> assertEquals(new BigDecimal("90.1"), legs.get(1).getInboundCourse().getCourseValue()),
+        () -> assertFalse(legs.get(1).getInboundCourse().isIsTrue()),
+        () -> assertEquals(new BigDecimal("100.2"), legs.get(1).getOutboundCourse().getCourseValue()),
+        () -> assertTrue(legs.get(2).getInboundCourse().isIsTrue()),
+        () -> assertEquals(18000, legs.get(0).getMinimumAltitudes().get(0).getAltitude()),
+        () -> assertTrue(legs.get(0).getMinimumAltitudes().get(0).isIsFlightLevel()),
+        () -> assertEquals(1, legs.get(0).getMinimumAltitudes().size()),
+        () -> assertEquals(5000, legs.get(1).getMinimumAltitudes().get(0).getAltitude()),
+        () -> assertEquals(45000, legs.get(0).getMaximumAltitudes().get(0).getAltitude()),
+        () -> assertEquals(1, legs.get(0).getMaximumAltitudes().size()),
+        () -> assertTrue(legs.get(1).getMaximumAltitudes().get(0).isIsUnlimited()),
+        () -> assertEquals(BigDecimal.valueOf(5), legs.get(0).getRnp()),
+        () -> assertEquals("2601", legs.get(0).getCycleDate())
+    );
   }
 
   @Test
@@ -73,11 +76,13 @@ class DafifXmlAirwaysTest {
         segment(30, "D", "E").build());
     var airways = convert(segments, references("A", "B", "C", "D", "E"));
 
-    assertEquals(List.of(List.of("A", "B", "C"), List.of("D", "E")),
-        airways.stream().map(airway -> airway.getAirwayLeg().stream().map(AirwayLeg::getFixIdent).toList()).toList());
-    assertEquals(3, airways.stream().mapToInt(airway -> airway.getAirwayLeg().size() - 1).sum());
-    assertEquals(2, airways.stream().map(Airway::getReferenceId).distinct().count());
-    assertTrue(airways.get(0).getAirwayLeg().get(1).getNotes().stream().anyMatch(note -> note.contains("description=EE")));
+    assertAll(
+        () -> assertEquals(List.of(List.of("A", "B", "C"), List.of("D", "E")),
+            airways.stream().map(airway -> airway.getAirwayLeg().stream().map(AirwayLeg::getFixIdent).toList()).toList()),
+        () -> assertEquals(3, airways.stream().mapToInt(airway -> airway.getAirwayLeg().size() - 1).sum()),
+        () -> assertEquals(2, airways.stream().map(Airway::getReferenceId).distinct().count()),
+        () -> assertTrue(airways.get(0).getAirwayLeg().get(1).getNotes().stream().anyMatch(note -> note.contains("description=EE")))
+    );
   }
 
   @Test
@@ -90,12 +95,14 @@ class DafifXmlAirwaysTest {
     assertEquals(1, airways.size());
     assertEquals(List.of("A", "B", "C"), fixes(airways.get(0)));
     var shared = airways.get(0).getAirwayLeg().get(1);
-    assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("description=E C")));
-    assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("description=R")));
-    assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("latitude=41.0")));
-    assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("latitude=40.0")));
-    assertNull(shared.getWaypointDescription().isIsEssential());
-    assertNull(shared.getWaypointDescription().isIsNonEssential());
+    assertAll(
+        () -> assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("description=E C"))),
+        () -> assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("description=R"))),
+        () -> assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("latitude=41.0"))),
+        () -> assertTrue(shared.getNotes().stream().anyMatch(note -> note.contains("latitude=40.0"))),
+        () -> assertNull(shared.getWaypointDescription().isIsEssential()),
+        () -> assertNull(shared.getWaypointDescription().isIsNonEssential())
+    );
   }
 
   @Test
@@ -109,9 +116,11 @@ class DafifXmlAirwaysTest {
     var airways = convert(List.of(east, west), refs);
 
     assertEquals(1, airways.size());
-    assertEquals(List.of("A", "B"), fixes(airways.get(0)));
-    assertSame(vor, airways.get(0).getAirwayLeg().get(0).getFixRef());
-    assertNull(airways.get(0).getAirwayLeg().get(0).getLegDirectionRestriction());
+    assertAll(
+        () -> assertEquals(List.of("A", "B"), fixes(airways.get(0))),
+        () -> assertSame(vor, airways.get(0).getAirwayLeg().get(0).getFixRef()),
+        () -> assertNull(airways.get(0).getAirwayLeg().get(0).getLegDirectionRestriction())
+    );
   }
 
   @Test
@@ -126,15 +135,19 @@ class DafifXmlAirwaysTest {
     var airway = airways.get(0);
     assertEquals(List.of("A", "B", "C"), fixes(airway));
     for (var leg : airway.getAirwayLeg().subList(0, 2)) {
-      assertNull(leg.getLegDirectionRestriction());
-      assertEquals(1, leg.getMinimumAltitudes().size());
-      assertEquals(1, leg.getMaximumAltitudes().size());
-      assertNull(leg.getMinimumAltitudes().get(0).getAltitudeDirectionRestriction());
-      assertNull(leg.getMaximumAltitudes().get(0).getAltitudeDirectionRestriction());
+      assertAll(
+          () -> assertNull(leg.getLegDirectionRestriction()),
+          () -> assertEquals(1, leg.getMinimumAltitudes().size()),
+          () -> assertEquals(1, leg.getMaximumAltitudes().size()),
+          () -> assertNull(leg.getMinimumAltitudes().get(0).getAltitudeDirectionRestriction()),
+          () -> assertNull(leg.getMaximumAltitudes().get(0).getAltitudeDirectionRestriction())
+      );
     }
-    assertEquals(18000, airway.getAirwayLeg().get(0).getMinimumAltitudes().get(0).getAltitude());
-    assertEquals(20000, airway.getAirwayLeg().get(1).getMinimumAltitudes().get(0).getAltitude());
-    assertTrue(airway.getAirwayLeg().get(1).getMaximumAltitudes().get(0).isIsUnlimited());
+    assertAll(
+        () -> assertEquals(18000, airway.getAirwayLeg().get(0).getMinimumAltitudes().get(0).getAltitude()),
+        () -> assertEquals(20000, airway.getAirwayLeg().get(1).getMinimumAltitudes().get(0).getAltitude()),
+        () -> assertTrue(airway.getAirwayLeg().get(1).getMaximumAltitudes().get(0).isIsUnlimited())
+    );
   }
 
   @Test
@@ -145,11 +158,13 @@ class DafifXmlAirwaysTest {
 
     assertEquals(List.of("A", "B"), fixes(airway));
     var leg = airway.getAirwayLeg().get(0);
-    assertNull(leg.getLegDirectionRestriction());
-    assertEquals(1, leg.getMinimumAltitudes().size());
-    assertEquals(1, leg.getMaximumAltitudes().size());
-    assertNull(leg.getMinimumAltitudes().get(0).getAltitudeDirectionRestriction());
-    assertNull(leg.getMaximumAltitudes().get(0).getAltitudeDirectionRestriction());
+    assertAll(
+        () -> assertNull(leg.getLegDirectionRestriction()),
+        () -> assertEquals(1, leg.getMinimumAltitudes().size()),
+        () -> assertEquals(1, leg.getMaximumAltitudes().size()),
+        () -> assertNull(leg.getMinimumAltitudes().get(0).getAltitudeDirectionRestriction()),
+        () -> assertNull(leg.getMaximumAltitudes().get(0).getAltitudeDirectionRestriction())
+    );
   }
 
   @Test
@@ -160,13 +175,15 @@ class DafifXmlAirwaysTest {
 
     assertEquals(1, airways.size());
     var leg = airways.get(0).getAirwayLeg().get(0);
-    assertNull(leg.getLegDirectionRestriction());
-    assertEquals(Map.of(EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD, 18000,
-            EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, 20000),
-        leg.getMinimumAltitudes().stream().collect(Collectors.toMap(value -> value.getAltitudeDirectionRestriction(), value -> value.getAltitude())));
-    assertEquals(Map.of(EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD, 45000,
-            EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, 40000),
-        leg.getMaximumAltitudes().stream().collect(Collectors.toMap(value -> value.getAltitudeDirectionRestriction(), value -> value.getAltitude())));
+    assertAll(
+        () -> assertNull(leg.getLegDirectionRestriction()),
+        () -> assertEquals(Map.of(EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD, 18000,
+                EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, 20000),
+            leg.getMinimumAltitudes().stream().collect(Collectors.toMap(value -> value.getAltitudeDirectionRestriction(), value -> value.getAltitude()))),
+        () -> assertEquals(Map.of(EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD, 45000,
+                EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, 40000),
+            leg.getMaximumAltitudes().stream().collect(Collectors.toMap(value -> value.getAltitudeDirectionRestriction(), value -> value.getAltitude())))
+    );
   }
 
   @Test
@@ -181,11 +198,13 @@ class DafifXmlAirwaysTest {
     assertEquals(1, airways.size());
     assertEquals(List.of("A", "B", "C", "D", "E"), fixes(airways.get(0)));
     var legs = airways.get(0).getAirwayLeg();
-    assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD, legs.get(0).getLegDirectionRestriction());
-    assertNull(legs.get(1).getLegDirectionRestriction());
-    assertNull(legs.get(2).getLegDirectionRestriction());
-    assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, legs.get(3).getLegDirectionRestriction());
-    assertNull(legs.get(4).getLegDirectionRestriction());
+    assertAll(
+        () -> assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD, legs.get(0).getLegDirectionRestriction()),
+        () -> assertNull(legs.get(1).getLegDirectionRestriction()),
+        () -> assertNull(legs.get(2).getLegDirectionRestriction()),
+        () -> assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, legs.get(3).getLegDirectionRestriction()),
+        () -> assertNull(legs.get(4).getLegDirectionRestriction())
+    );
   }
 
   @Test
@@ -198,19 +217,21 @@ class DafifXmlAirwaysTest {
     assertEquals(List.of("A", "B"), fixes(airway));
     var from = airway.getAirwayLeg().get(0);
     var to = airway.getAirwayLeg().get(1);
-    assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, from.getLegDirectionRestriction());
-    assertEquals(12.3, from.getRouteDistanceFrom().doubleValue(), 1e-9);
-    assertEquals(91.0, from.getOutboundCourse().getCourseValue().doubleValue(), 1e-9);
-    assertTrue(from.getOutboundCourse().isIsTrue());
-    assertEquals(90.2, to.getInboundCourse().getCourseValue().doubleValue(), 1e-9);
-    assertFalse(to.getInboundCourse().isIsTrue());
-    assertNull(from.getInboundCourse());
-    assertNull(to.getOutboundCourse());
-    assertNull(to.getRouteDistanceFrom());
-    assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD,
-        from.getMinimumAltitudes().get(0).getAltitudeDirectionRestriction());
-    assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD,
-        from.getMaximumAltitudes().get(0).getAltitudeDirectionRestriction());
+    assertAll(
+        () -> assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD, from.getLegDirectionRestriction()),
+        () -> assertEquals(12.3, from.getRouteDistanceFrom().doubleValue(), 1e-9),
+        () -> assertEquals(91.0, from.getOutboundCourse().getCourseValue().doubleValue(), 1e-9),
+        () -> assertTrue(from.getOutboundCourse().isIsTrue()),
+        () -> assertEquals(90.2, to.getInboundCourse().getCourseValue().doubleValue(), 1e-9),
+        () -> assertFalse(to.getInboundCourse().isIsTrue()),
+        () -> assertNull(from.getInboundCourse()),
+        () -> assertNull(to.getOutboundCourse()),
+        () -> assertNull(to.getRouteDistanceFrom()),
+        () -> assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD,
+            from.getMinimumAltitudes().get(0).getAltitudeDirectionRestriction()),
+        () -> assertEquals(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD,
+            from.getMaximumAltitudes().get(0).getAltitudeDirectionRestriction())
+    );
   }
 
   @Test
@@ -223,10 +244,12 @@ class DafifXmlAirwaysTest {
     var airways = convert(List.of(us, canada), refs);
 
     assertEquals(2, airways.size());
-    assertEquals(List.of(List.of("A", "B"), List.of("B", "C")), airways.stream().map(DafifXmlAirwaysTest::fixes).toList());
-    assertSame(refs.waypoint("B", "US"), airways.get(0).getAirwayLeg().get(1).getFixRef());
-    assertSame(canadianB, airways.get(1).getAirwayLeg().get(0).getFixRef());
-    assertNotEquals(airways.get(0).getReferenceId(), airways.get(1).getReferenceId());
+    assertAll(
+        () -> assertEquals(List.of(List.of("A", "B"), List.of("B", "C")), airways.stream().map(DafifXmlAirwaysTest::fixes).toList()),
+        () -> assertSame(refs.waypoint("B", "US"), airways.get(0).getAirwayLeg().get(1).getFixRef()),
+        () -> assertSame(canadianB, airways.get(1).getAirwayLeg().get(0).getFixRef()),
+        () -> assertNotEquals(airways.get(0).getReferenceId(), airways.get(1).getReferenceId())
+    );
   }
 
   @Test
@@ -235,11 +258,13 @@ class DafifXmlAirwaysTest {
     var airways = convert(segments, references("A", "B", "C", "D"));
 
     assertEquals(2, airways.size());
-    assertEquals(List.of("J1", "J1"), airways.stream().map(Airway::getIdentifier).toList());
-    assertEquals(List.of(List.of("A", "B"), List.of("C", "D")), airways.stream().map(DafifXmlAirwaysTest::fixes).toList());
-    assertNotEquals(airways.get(0).getReferenceId(), airways.get(1).getReferenceId());
-    assertEquals(Set.of("A-B", "C-D"), edges(airways));
-    assertEquals(2, edgeCount(airways));
+    assertAll(
+        () -> assertEquals(List.of("J1", "J1"), airways.stream().map(Airway::getIdentifier).toList()),
+        () -> assertEquals(List.of(List.of("A", "B"), List.of("C", "D")), airways.stream().map(DafifXmlAirwaysTest::fixes).toList()),
+        () -> assertNotEquals(airways.get(0).getReferenceId(), airways.get(1).getReferenceId()),
+        () -> assertEquals(Set.of("A-B", "C-D"), edges(airways)),
+        () -> assertEquals(2, edgeCount(airways))
+    );
   }
 
   @Test
@@ -249,12 +274,14 @@ class DafifXmlAirwaysTest {
     var airways = convert(segments, references("A", "B", "C", "D"));
 
     assertEquals(3, airways.size());
-    assertEquals(Set.of(List.of("A", "B"), List.of("B", "C"), List.of("B", "D")),
-        airways.stream().map(DafifXmlAirwaysTest::fixes).collect(Collectors.toSet()));
-    assertEquals(Set.of("A-B", "B-C", "B-D"), edges(airways));
-    assertEquals(3, edgeCount(airways));
-    assertEquals(3, airways.stream().map(Airway::getReferenceId).distinct().count());
-    assertTrue(airways.stream().allMatch(airway -> "J1".equals(airway.getIdentifier())));
+    assertAll(
+        () -> assertEquals(Set.of(List.of("A", "B"), List.of("B", "C"), List.of("B", "D")),
+            airways.stream().map(DafifXmlAirwaysTest::fixes).collect(Collectors.toSet())),
+        () -> assertEquals(Set.of("A-B", "B-C", "B-D"), edges(airways)),
+        () -> assertEquals(3, edgeCount(airways)),
+        () -> assertEquals(3, airways.stream().map(Airway::getReferenceId).distinct().count()),
+        () -> assertTrue(airways.stream().allMatch(airway -> "J1".equals(airway.getIdentifier())))
+    );
   }
 
   @Test
@@ -264,12 +291,16 @@ class DafifXmlAirwaysTest {
     var airways = convert(segments, references("A", "B", "C"));
 
     assertEquals(1, airways.size());
-    assertEquals(List.of("A", "B", "C", "A"), fixes(airways.get(0)));
-    assertEquals(Set.of("A-B", "B-C", "A-C"), edges(airways));
-    assertEquals(3, edgeCount(airways));
+    assertAll(
+        () -> assertEquals(List.of("A", "B", "C", "A"), fixes(airways.get(0))),
+        () -> assertEquals(Set.of("A-B", "B-C", "A-C"), edges(airways)),
+        () -> assertEquals(3, edgeCount(airways))
+    );
     var legs = airways.get(0).getAirwayLeg();
-    assertSame(legs.get(0).getFixRef(), legs.get(3).getFixRef());
-    assertNull(legs.get(3).getRouteDistanceFrom());
+    assertAll(
+        () -> assertSame(legs.get(0).getFixRef(), legs.get(3).getFixRef()),
+        () -> assertNull(legs.get(3).getRouteDistanceFrom())
+    );
   }
 
   @Test
@@ -281,9 +312,11 @@ class DafifXmlAirwaysTest {
     var airways = convert(List.of(backward, forward), references("A", "B"));
 
     assertEquals(2, airways.size());
-    assertTrue(airways.stream().allMatch(airway -> List.of("A", "B").equals(fixes(airway))));
-    assertTrue(airways.stream().allMatch(airway -> "J1".equals(airway.getIdentifier())));
-    assertNotEquals(airways.get(0).getReferenceId(), airways.get(1).getReferenceId());
+    assertAll(
+        () -> assertTrue(airways.stream().allMatch(airway -> List.of("A", "B").equals(fixes(airway)))),
+        () -> assertTrue(airways.stream().allMatch(airway -> "J1".equals(airway.getIdentifier()))),
+        () -> assertNotEquals(airways.get(0).getReferenceId(), airways.get(1).getReferenceId())
+    );
     var legs = airways.stream().map(airway -> airway.getAirwayLeg().get(0)).toList();
     assertEquals(Map.of(BigDecimal.ONE, EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD,
             BigDecimal.valueOf(5), EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD),
@@ -302,18 +335,22 @@ class DafifXmlAirwaysTest {
 
     assertEquals(1, airways.size());
     var leg = airways.get(0).getAirwayLeg().get(0);
-    assertNull(leg.getLegDirectionRestriction());
-    assertEquals(2, leg.getMinimumAltitudes().size());
+    assertAll(
+        () -> assertNull(leg.getLegDirectionRestriction()),
+        () -> assertEquals(2, leg.getMinimumAltitudes().size())
+    );
     var minima = leg.getMinimumAltitudes().stream()
         .collect(Collectors.toMap(value -> value.getAltitudeDirectionRestriction(), value -> value));
     var flightLevel = minima.get(EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD);
     var msl = minima.get(EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD);
-    assertEquals(18000, flightLevel.getAltitude());
-    assertEquals(18000, msl.getAltitude());
-    assertTrue(flightLevel.isIsFlightLevel());
-    assertTrue(msl.isIsMsl());
-    assertFalse(Boolean.TRUE.equals(flightLevel.isIsMsl()));
-    assertFalse(Boolean.TRUE.equals(msl.isIsFlightLevel()));
+    assertAll(
+        () -> assertEquals(18000, flightLevel.getAltitude()),
+        () -> assertEquals(18000, msl.getAltitude()),
+        () -> assertTrue(flightLevel.isIsFlightLevel()),
+        () -> assertTrue(msl.isIsMsl()),
+        () -> assertFalse(Boolean.TRUE.equals(flightLevel.isIsMsl())),
+        () -> assertFalse(Boolean.TRUE.equals(msl.isIsFlightLevel()))
+    );
   }
 
   @Test
@@ -337,12 +374,14 @@ class DafifXmlAirwaysTest {
         .atsRouteOutboundMagneticCourse("89.G").atsRouteInboundMagneticCourse("90.G").build();
     var airway = convert(List.of(source), references("A", "B")).get(0);
 
-    assertNull(airway.getAirwayRouteType());
-    assertNull(airway.getAirwayLeg().get(0).getOutboundCourse());
-    assertNull(airway.getAirwayLeg().get(1).getInboundCourse());
-    assertTrue(airway.getAirwayLeg().get(0).getNotes().stream().anyMatch(note -> note.contains(";type=A;")));
-    assertTrue(airway.getAirwayLeg().get(0).getNotes().stream().anyMatch(note -> note.contains("outboundCourse=89.G")));
-    assertTrue(airway.getAirwayLeg().get(1).getNotes().contains("DAFIF inbound grid course=90.G"));
+    assertAll(
+        () -> assertNull(airway.getAirwayRouteType()),
+        () -> assertNull(airway.getAirwayLeg().get(0).getOutboundCourse()),
+        () -> assertNull(airway.getAirwayLeg().get(1).getInboundCourse()),
+        () -> assertTrue(airway.getAirwayLeg().get(0).getNotes().stream().anyMatch(note -> note.contains(";type=A;"))),
+        () -> assertTrue(airway.getAirwayLeg().get(0).getNotes().stream().anyMatch(note -> note.contains("outboundCourse=89.G"))),
+        () -> assertTrue(airway.getAirwayLeg().get(1).getNotes().contains("DAFIF inbound grid course=90.G"))
+    );
 
     var rnav = convert(List.of(segment(10, "A", "B").atsRouteType("R").build()), references("A", "B")).get(0);
     assertEquals(EnrouteAirwayRouteType.RNAV_RNP, rnav.getAirwayRouteType());
@@ -354,9 +393,11 @@ class DafifXmlAirwaysTest {
     var duplicate = segment(20, "A", "B").minimumAltitude("5000").build();
     var airway = convert(List.of(first, duplicate), references("A", "B")).get(0);
 
-    assertEquals(List.of("A", "B"), fixes(airway));
-    assertEquals(5000, airway.getAirwayLeg().get(0).getMinimumAltitudes().get(0).getAltitude());
-    assertEquals(2, airway.getAirwayLeg().get(0).getNotes().stream().filter(note -> note.startsWith("DAFIF ATS:")).count());
+    assertAll(
+        () -> assertEquals(List.of("A", "B"), fixes(airway)),
+        () -> assertEquals(5000, airway.getAirwayLeg().get(0).getMinimumAltitudes().get(0).getAltitude()),
+        () -> assertEquals(2, airway.getAirwayLeg().get(0).getNotes().stream().filter(note -> note.startsWith("DAFIF ATS:")).count())
+    );
   }
 
   @Test
@@ -366,8 +407,10 @@ class DafifXmlAirwaysTest {
 
     var failure = assertThrows(IllegalArgumentException.class,
         () -> convert(List.of(first, conflict), references("A", "B")));
-    assertTrue(failure.getMessage().contains("Conflicting DAFIF airway J1"));
-    assertTrue(failure.getMessage().contains("altitude limits"));
+    assertAll(
+        () -> assertTrue(failure.getMessage().contains("Conflicting DAFIF airway J1")),
+        () -> assertTrue(failure.getMessage().contains("altitude limits"))
+    );
   }
 
   private static List<Airway> convert(List<DafifAirTrafficSegment> segments, DafifXmlReferences refs) {

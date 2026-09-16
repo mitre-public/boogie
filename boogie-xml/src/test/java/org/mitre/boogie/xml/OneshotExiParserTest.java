@@ -1,7 +1,5 @@
 package org.mitre.boogie.xml;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.SchemaOutputResolver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -9,8 +7,8 @@ import org.mitre.boogie.xml.exi.ExiAssertions;
 import org.mitre.boogie.xml.exi.ExiCodec;
 import org.mitre.boogie.xml.exi.ExiOptions;
 import org.mitre.boogie.xml.exi.ExiSchema;
+import org.mitre.boogie.xml.fixtures.ArincFixtureSchema;
 import org.mitre.boogie.xml.model.ArincRecords;
-import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -21,12 +19,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.stream.StreamResult;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OneshotExiParserTest {
 
@@ -100,7 +94,7 @@ class OneshotExiParserTest {
 
   private static void assertModelValues(Object expected, Object actual, String description) {
     // Avoid rendering the entire publication in an assertion failure (hundreds of MB of text).
-    assertTrue(modelValues(expected).equals(modelValues(actual)), description + " must retain all field values");
+    assertEquals(modelValues(expected), modelValues(actual), description + " must retain all field values");
   }
 
   private static InputStream fixture() {
@@ -108,29 +102,19 @@ class OneshotExiParserTest {
   }
 
   private static ExiSchema fixtureSchema() throws Exception {
-    // The official ARINC XSDs are external integration inputs, absent from a clean checkout.
-    // Generate a test schema from the checked-in JAXB classes and retain it with the EXI artifact.
-    Path directory = Files.createDirectories(Path.of("build", "exi", "gibberish-sample-schemas"));
-    Map<String, Path> schemas = new HashMap<>();
-    JAXBContext.newInstance(AeroPublication.class).generateSchema(new SchemaOutputResolver() {
-      @Override
-      public Result createOutput(String namespaceUri, String suggestedFileName) {
-        Path file = directory.resolve(suggestedFileName);
-        schemas.put(namespaceUri, file);
-        return new StreamResult(file.toFile());
-      }
-    });
-    Path rootXsd = Objects.requireNonNull(schemas.get(""), "Missing generated publication schema");
-    return ExiSchema.compile("urn:boogie:test:arinc424:jaxb:23.4", rootXsd);
+    return ArincFixtureSchema.generated(Path.of("build", "exi", "gibberish-sample-schemas"));
   }
 
   private static void assertWrittenExi(Path exiFile, ExiOptions options) throws Exception {
-    ExiAssertions.assertCookie(exiFile);
     // Use decoder defaults so the file's header must supply the encoding settings.
     ExiCodec decoder = new ExiCodec(ExiOptions.schemaLess(), options.schema().stream().toList());
-    try (InputStream source = fixture()) {
-      ExiAssertions.assertSameStructure(source, exiFile, decoder);
-    }
+    assertAll(exiFile + ": EXI artifact",
+        () -> ExiAssertions.assertCookie(exiFile),
+        () -> {
+          try (InputStream source = fixture()) {
+            ExiAssertions.assertSameStructure(source, exiFile, decoder);
+          }
+        });
   }
 
   // Model equals methods include JAXB supplemental data, whose generated classes use identity

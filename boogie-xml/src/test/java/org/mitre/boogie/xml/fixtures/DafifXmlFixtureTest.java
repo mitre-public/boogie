@@ -3,7 +3,6 @@ package org.mitre.boogie.xml.fixtures;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 @Tag("DAFIF")
 @Tag("INTEGRATION")
+@Tag("XML")
 class DafifXmlFixtureTest {
 
   @Test
@@ -69,15 +69,17 @@ class DafifXmlFixtureTest {
         () -> assertEquals(18111, handler.count("restrictiveAirspace"), "Excludes four annuli and three point airspaces"),
         () -> assertEquals(36067, handler.count("isEndOfDescription"), "One closing marker per emitted airspace"),
         () -> assertTrue(handler.references.size() > 10000, "Contains cross-record references"),
+        () -> assertTrue(handler.duplicateIds.isEmpty(), () -> "Duplicate XML IDs: " + handler.duplicateIds),
         () -> assertTrue(handler.ids.containsAll(handler.references), () -> "Missing reference targets: " + handler.missingReferences()),
         () -> assertEquals(2601, fixture.publication().getCycleDate()),
-        () -> assertEquals("2026-01-22T00:00:00Z", fixture.publication().getStartOfValidity().toXMLFormat())
+        () -> assertEquals("2026-01-22T00:00:00Z", fixture.publication().getStartOfValidity().toXMLFormat()),
+        () -> assertAirwayGraphMatchesSource(fixture)
     );
-    assertAirwayGraphMatchesSource(fixture);
   }
 
   private static void assertAirwayGraphMatchesSource(DafifXmlFixture.Loaded fixture) {
     Map<DirectedEdge, Limits> expected = new HashMap<>();
+    Set<DirectedEdge> duplicateSourceEdges = new HashSet<>();
     for (DafifAirTrafficSegment source : fixture.source().ats()) {
       Point from = new Point(source.waypoint1WaypointIdentifierWptIdent(), source.waypoint1CountryCode());
       Point to = new Point(source.waypoint2WaypointIdentifierWptIdent(), source.waypoint2CountryCode());
@@ -85,12 +87,17 @@ class DafifXmlFixtureTest {
       Limits limits = new Limits(
           source.minimumAltitude().or(source::lowerLimit).map(DafifXmlFixtureTest::sourceAltitude).orElse(null),
           source.maxAuthorizedAltitude().or(source::upperLimit).map(DafifXmlFixtureTest::sourceAltitude).orElse(null));
-      assertNull(expected.putIfAbsent(edge, limits), () -> "Duplicate source directed ATS edge: " + edge);
+      if (expected.putIfAbsent(edge, limits) != null) {
+        duplicateSourceEdges.add(edge);
+      }
     }
 
     Map<String, Point> points = sourcePointIds(fixture.source());
     Map<DirectedEdge, Limits> actual = new HashMap<>();
     Set<Geometry> geometries = new HashSet<>();
+    Set<Geometry> duplicateGeometries = new HashSet<>();
+    Set<DirectedEdge> duplicateXmlEdges = new HashSet<>();
+    Set<String> pathsWithoutEdges = new HashSet<>();
     Set<String> identifiers = new HashSet<>();
     int bidirectional = 0;
     int oneWay = 0;
@@ -99,24 +106,32 @@ class DafifXmlFixtureTest {
     for (var airway : fixture.publication().getAirways().getAirway()) {
       identifiers.add(airway.getIdentifier());
       List<AirwayLeg> legs = airway.getAirwayLeg();
-      assertTrue(legs.size() >= 2, () -> "Airway path has no edge: " + airway.getReferenceId());
+      if (legs.size() < 2) {
+        pathsWithoutEdges.add(airway.getReferenceId());
+      }
       for (int i = 0; i + 1 < legs.size(); i++) {
         AirwayLeg leg = legs.get(i);
         Point from = sourcePoint(leg, points);
         Point to = sourcePoint(legs.get(i + 1), points);
         Geometry geometry = geometry(airway.getIdentifier(), from, to);
-        assertTrue(geometries.add(geometry), () -> "Geometric edge emitted in more than one path: " + geometry);
+        if (!geometries.add(geometry)) {
+          duplicateGeometries.add(geometry);
+        }
         boolean forward = leg.getLegDirectionRestriction() != EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD;
         boolean backward = leg.getLegDirectionRestriction() != EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD;
         Limits forwardLimits = outputLimits(leg, EnrouteAirwayDirectionalRestriction.ONE_WAY_FORWARD);
         Limits backwardLimits = outputLimits(leg, EnrouteAirwayDirectionalRestriction.ONE_WAY_BACKWARD);
         if (forward) {
           DirectedEdge edge = new DirectedEdge(airway.getIdentifier(), from, to);
-          assertNull(actual.putIfAbsent(edge, forwardLimits), () -> "Duplicate XML directed edge: " + edge);
+          if (actual.putIfAbsent(edge, forwardLimits) != null) {
+            duplicateXmlEdges.add(edge);
+          }
         }
         if (backward) {
           DirectedEdge edge = new DirectedEdge(airway.getIdentifier(), to, from);
-          assertNull(actual.putIfAbsent(edge, backwardLimits), () -> "Duplicate XML directed edge: " + edge);
+          if (actual.putIfAbsent(edge, backwardLimits) != null) {
+            duplicateXmlEdges.add(edge);
+          }
         }
         if (forward && backward) {
           bidirectional++;
@@ -134,15 +149,26 @@ class DafifXmlFixtureTest {
         }
       }
     }
-    assertEquals(9845, identifiers.size(), "Published airway identifiers");
-    assertEquals(89671, geometries.size(), "Every undirected source edge is represented once");
-    assertEquals(66995, bidirectional, "Opposite source rows share one bidirectional XML edge");
-    assertEquals(22676, oneWay, "Unmatched directional source rows remain one-way");
-    assertEquals(9695, directionalMinimums, "Different forward/backward MEAs remain separate");
-    assertEquals(7, sameFeetDifferentReferences, "Equal numbers with FL versus MSL references are distinct limits");
-    assertEquals(156666, expected.size(), "Source directed edges");
-    assertTrue(expected.keySet().equals(actual.keySet()), () -> graphDifference(expected, actual));
-    expected.forEach((edge, limits) -> assertEquals(limits, actual.get(edge), () -> "Directional altitude limits for " + edge));
+    int bidirectionalCount = bidirectional;
+    int oneWayCount = oneWay;
+    int directionalMinimumCount = directionalMinimums;
+    int sameFeetDifferentReferenceCount = sameFeetDifferentReferences;
+    assertAll("Airway graph",
+        () -> assertTrue(duplicateSourceEdges.isEmpty(), () -> "Duplicate source directed ATS edges: " + duplicateSourceEdges),
+        () -> assertTrue(pathsWithoutEdges.isEmpty(), () -> "Airway paths with no edge: " + pathsWithoutEdges),
+        () -> assertTrue(duplicateGeometries.isEmpty(), () -> "Geometric edges emitted in more than one path: " + duplicateGeometries),
+        () -> assertTrue(duplicateXmlEdges.isEmpty(), () -> "Duplicate XML directed edges: " + duplicateXmlEdges),
+        () -> assertEquals(9845, identifiers.size(), "Published airway identifiers"),
+        () -> assertEquals(89671, geometries.size(), "Every undirected source edge is represented once"),
+        () -> assertEquals(66995, bidirectionalCount, "Opposite source rows share one bidirectional XML edge"),
+        () -> assertEquals(22676, oneWayCount, "Unmatched directional source rows remain one-way"),
+        () -> assertEquals(9695, directionalMinimumCount, "Different forward/backward MEAs remain separate"),
+        () -> assertEquals(7, sameFeetDifferentReferenceCount, "Equal numbers with FL versus MSL references are distinct limits"),
+        () -> assertEquals(156666, expected.size(), "Source directed edges"),
+        () -> assertEquals(expected.keySet(), actual.keySet(), () -> graphDifference(expected, actual)),
+        () -> assertAll("Directional altitude limits", expected.entrySet().stream().map(entry ->
+            () -> assertEquals(entry.getValue(), actual.get(entry.getKey()), () -> "Directional altitude limits for " + entry.getKey())))
+    );
   }
 
   private static Map<String, Point> sourcePointIds(DafifXmlFixture.Records source) {
@@ -195,8 +221,10 @@ class DafifXmlFixtureTest {
         .filter(value -> value.getAltitudeDirectionRestriction() == null || value.getAltitudeDirectionRestriction() == direction).toList();
     List<RouteMaximumAltitude> maximums = leg.getMaximumAltitudes().stream()
         .filter(value -> value.getAltitudeDirectionRestriction() == null || value.getAltitudeDirectionRestriction() == direction).toList();
-    assertTrue(minimums.size() <= 1, "Multiple minimum limits apply to the same edge direction");
-    assertTrue(maximums.size() <= 1, "Multiple maximum limits apply to the same edge direction");
+    assertAll("Directional altitude limit cardinality",
+        () -> assertTrue(minimums.size() <= 1, "Multiple minimum limits apply to the same edge direction"),
+        () -> assertTrue(maximums.size() <= 1, "Multiple maximum limits apply to the same edge direction")
+    );
     Altitude minimum = null;
     Altitude maximum = null;
     if (!minimums.isEmpty()) {
@@ -252,6 +280,7 @@ class DafifXmlFixtureTest {
 
     private final Map<String, Integer> counts = new HashMap<>();
     private final Set<String> ids = new HashSet<>();
+    private final Set<String> duplicateIds = new HashSet<>();
     private final Set<String> references = new HashSet<>();
     private final StringBuilder reference = new StringBuilder();
     private boolean inReference;
@@ -260,8 +289,8 @@ class DafifXmlFixtureTest {
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
       counts.merge(localName, 1, Integer::sum);
       String id = attributes.getValue("referenceId");
-      if (id != null) {
-        assertTrue(ids.add(id), () -> "Duplicate XML ID: " + id);
+      if (id != null && !ids.add(id)) {
+        duplicateIds.add(id);
       }
       inReference = REFERENCE_ELEMENTS.contains(localName);
       reference.setLength(0);
