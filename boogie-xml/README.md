@@ -150,14 +150,15 @@ The flight-level flag identifies the pressure reference; readers keep the numeri
 To generate the DAFIF fixture from `boogie-xml/src/test/resources/DAFIF8_1_2601.zip`, run:
 
 ```shell
-./gradlew :boogie-xml:test --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesDafifXmlAndExi' --rerun-tasks
+./gradlew :boogie-xml:dafif-integration --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesDafifXmlAndExi' --rerun-tasks
 ```
 
 This writes `dafif-2601.xml`, `dafif-2601-no-schema.exi`, and `dafif-2601-schema-informed.exi` under
 `boogie-xml/build/exi/`. Both EXI files use compression; the schema-informed file uses the v23_4 XSDs.
-The fixture reads the archive directly and converts the nine supported DAFIF 8.1 tables: `ARPT`,
-`RWY`, `ADD_RWY`, `ILS`, `NAV`, `WPT`, `TRM_PAR`, `TRM_SEG`, and `ATS`. These populate airports,
-runway ends, landing aids, navaids, waypoints, terminal procedures, and airways in a JAXB publication.
+The fixture reads the archive directly and converts the thirteen supported DAFIF 8.1 tables: `ARPT`,
+`RWY`, `ADD_RWY`, `ILS`, `NAV`, `WPT`, `TRM_PAR`, `TRM_SEG`, `ATS`, `BDRY_PAR`, `BDRY`, `SUAS_PAR`, and `SUAS`.
+These populate airports, runway ends, landing aids, navaids, waypoints, terminal procedures, airways,
+controlled airspaces, FIR/UIRs, and restrictive airspaces in a JAXB publication.
 Heliport tables (`TRMH`/`SUPPH`) and other unsupported tables are omitted. Source values without a
 mapped XML field are retained in notes where applicable. These converters are test helpers.
 
@@ -170,6 +171,18 @@ use separate `Airway` records with the same published identifier because v23_4 r
 path per record. Direction-specific RNP, level, route type, or distance differences also remain separate
 path variants. The fixture does not create connections between unrelated sections. Original DAFIF
 directions and end markers remain in notes.
+
+DAFIF airspaces retain source start/end coordinates, arc directions and starting bearings, circle centers
+and radii, and AGL/MSL/flight-level altitude references. Generalized boundaries use great-circle edges
+between the supplied approximation points. As in the standard DAFIF assembler, gaps up to 0.1 NM are
+bridged explicitly; point, annular, open, or disconnected airspaces are logged and omitted as a whole.
+Cycle 2601 emits 17,956 boundaries and 18,111 special-use airspaces, omitting 35 unsupported definitions.
+Special-use sectors remain separate. Source identifiers, sectors, original types and other unmatched
+metadata are retained in `supplementalData` in the `urn:boogie:dafif:8.1` namespace. Boundary types without
+an exact XML equivalent leave `controlledAirspaceType` unset; temporary reserved areas use
+`Unspecified`, since DAFIF type T does not mean training. FIR/UIR AGL limits remain in supplemental data
+because that XML record has no AGL unit field. This test fixture is not a fully schema-valid translation
+of every DAFIF concept.
 
 ### Use an XML schema
 

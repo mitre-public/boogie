@@ -151,7 +151,8 @@ class DafifXmlPointsTest {
   private static DafifXmlFixture.Records records(List<DafifAirport> airports, List<DafifRunway> runways,
                                                 List<DafifAddRunway> supplements, List<DafifIls> ils,
                                                 List<DafifNavaid> navaids, List<DafifWaypoint> waypoints) {
-    return new DafifXmlFixture.Records(airports, runways, supplements, ils, navaids, waypoints, List.of(), List.of(), List.of());
+    return new DafifXmlFixture.Records(airports, runways, supplements, ils, navaids, waypoints,
+        List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
   }
 
   private static DafifAirport airport() {

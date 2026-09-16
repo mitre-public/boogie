@@ -147,6 +147,26 @@ public class ProcedureAssemblerIntegrationTest {
   }
 
   @Test
+  void testCrossingAltitudeAndUnqualifiedSpeedCounts() {
+    List<? extends Leg> legs = allProcedures.stream()
+        .flatMap(procedure -> procedure.transitions().stream())
+        .flatMap(transition -> transition.legs().stream())
+        .toList();
+    assertAll(
+        () -> assertEquals(222774, legs.stream().filter(leg -> leg.altitudeConstraint().hasLowerBound()
+            || leg.altitudeConstraint().hasUpperBound()).count(), "Every source crossing altitude is retained"),
+        () -> assertEquals(29135, legs.stream().filter(leg -> leg.altitudeConstraint().hasLowerBound()
+            && leg.altitudeConstraint().hasUpperBound()
+            && leg.altitudeConstraint().lowerEndpoint().equals(leg.altitudeConstraint().upperEndpoint())).count(),
+            "28,894 blank descriptors plus 241 G/I descriptors encode AT altitudes"),
+        () -> assertEquals(176319, legs.stream().filter(leg -> leg.altitudeConstraint().hasLowerBound()
+            && !leg.altitudeConstraint().hasUpperBound()).count(), "Includes H/J at-or-above crossing altitudes"),
+        () -> assertEquals(31004, legs.stream().filter(leg -> leg.speedConstraint().hasUpperBound()).count(),
+            "The 33 aircraft-qualified limits must not become unconditional core limits")
+    );
+  }
+
+  @Test
   void testProceduresByAirport() {
     Map<String, List<Procedure>> byAirport = allProcedures.stream()
         .collect(Collectors.groupingBy(Procedure::airportIdentifier));

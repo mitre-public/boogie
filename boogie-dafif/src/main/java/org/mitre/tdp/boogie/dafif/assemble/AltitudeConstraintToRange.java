@@ -12,10 +12,12 @@ public final class AltitudeConstraintToRange implements TriFunction<String, Doub
   @Override
   public Range<Double> apply(String altDesc, Double alt1, Double alt2) {
     return switch (altDesc) {
-      case "+" -> Range.atLeast(alt1);
+      case "+", "H", "J" -> Range.atLeast(alt1);
       case "-" -> Range.atMost(alt1);
       case "B" -> Range.closed(alt2, alt1);
-      case "" -> Optional.ofNullable(alt1).map(Range::singleton).orElse(Range.all());
+      case "C" -> Range.atLeast(alt2);
+      // ALT_TWO is a glide-slope altitude for G/H/I/J, not a crossing bound.
+      case "", "G", "I" -> Optional.ofNullable(alt1).map(Range::singleton).orElse(Range.all());
       default -> Range.all();
     };
   }

@@ -152,6 +152,16 @@ List<Fix> fixes = Stream.concat(consumer.dafifWaypoints().stream(), consumer.daf
     .toList();
 ```
 
+Procedure crossing constraints use `ALT_ONE` for blank/`G`/`I` (at), `+`/`H`/`J` (at or above),
+and `-` (at or below). `B` uses `ALT_TWO` as the lower bound and `ALT_ONE` as the upper bound;
+`C` uses `ALT_TWO` as the lower bound. Glide-slope values in `ALT_TWO` for `G`/`H`/`I`/`J` remain
+in the parsed source model. Flight levels are converted to feet in the core altitude range.
+
+The standard procedure strategy uses speed limits that apply to all aircraft without an altitude
+condition. If both speed fields contain such limits, it uses the lower maximum. Aircraft-qualified
+or altitude-qualified limits remain in `DafifTerminalSegment` for custom strategies, since the core
+`Leg` speed range cannot express those conditions.
+
 ### Assembling boundaries and special use airspaces
 
 ```java

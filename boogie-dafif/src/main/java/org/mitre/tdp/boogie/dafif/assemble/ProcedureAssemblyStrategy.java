@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.dafif.assemble;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.CategoryOrType;
@@ -131,11 +132,16 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
       LOG.trace("Converting leg seq={} pt={} fix={} at {}", leg.terminalSequenceNumber(), pathTerminator, leg.termSegWaypointIdentifier().orElse("none"), leg.airportIdentification());
 
-      Range<Double> speedConstraint = leg.speedLimit1().map(SpeedLimitToRange.INSTANCE).orElse(Range.all());
+      Range<Double> speedConstraint = Stream.of(
+              unqualifiedSpeedLimit(leg.speedLimit1(), leg.speedLimitAircraftType1(), leg.speedLimitAltitude1()),
+              unqualifiedSpeedLimit(leg.speedLimit2(), leg.speedLimitAircraftType2(), leg.speedLimitAltitude2()))
+          .flatMap(Optional::stream)
+          .min(Double::compareTo)
+          .map(SpeedLimitToRange.INSTANCE)
+          .orElse(Range.all());
       Double alt1 = leg.altitude1().filter(i -> !i.isEmpty()).map(Standard::parseAltitude).orElse(null);
       Double alt2 = leg.altitude2().filter(i -> !i.isEmpty()).map(Standard::parseAltitude).orElse(null);
-      Range<Double> altitudeConstraint = leg.altitudeDescription().map(d -> AltitudeConstraintToRange.INSTANCE.apply(d, alt1, alt2))
-          .orElse(Range.all());
+      Range<Double> altitudeConstraint = AltitudeConstraintToRange.INSTANCE.apply(leg.altitudeDescription().orElse(""), alt1, alt2);
       TurnDirection turnDirection = leg.terminalSegmentTurnDirection().map(TurnDirector.INSTANCE).orElse(TurnDirection.either());
 
       Boolean isFlyOverFix = leg.terminalWaypointDescriptionCode2().map(FlyOverIndicator.INSTANCE).orElse(false);
@@ -159,6 +165,14 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .isIntermediateOrInitialApproachFix(leg.terminalWaypointDescriptionCode4().map(c -> c.equals("A") || c.equals("B") || c.equals("C") || c.equals("D")).orElse(false))
           .build();
     }
+    /** The core range cannot express conditional limits; retain those in the source model for custom strategies. */
+    private static Optional<Double> unqualifiedSpeedLimit(Optional<Double> speed, Optional<String> aircraft, Optional<String> altitude) {
+      if (altitude.isPresent() || aircraft.filter(type -> !"A".equals(type)).isPresent()) {
+        return Optional.empty();
+      }
+      return speed;
+    }
+
     private static Double parseCourse(String course) {
       String stripped = course.replaceAll("[^0-9.]", "");
       if (stripped.isEmpty()) {

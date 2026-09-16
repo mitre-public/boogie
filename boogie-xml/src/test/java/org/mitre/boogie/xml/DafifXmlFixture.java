@@ -18,19 +18,23 @@ import org.mitre.tdp.boogie.dafif.DafifVersion;
 import org.mitre.tdp.boogie.dafif.model.DafifAddRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 import org.mitre.tdp.boogie.dafif.model.DafifAirport;
+import org.mitre.tdp.boogie.dafif.model.DafifBoundaryParent;
+import org.mitre.tdp.boogie.dafif.model.DafifBoundarySegment;
 import org.mitre.tdp.boogie.dafif.model.DafifIls;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
 import org.mitre.tdp.boogie.dafif.model.DafifRecordConverterFactory;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
+import org.mitre.tdp.boogie.dafif.model.DafifSuasParent;
+import org.mitre.tdp.boogie.dafif.model.DafifSuasSegment;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 
-/** Converts the nine supported DAFIF 8.1 tables into a larger v23_4 JAXB test publication. */
+/** Converts the thirteen supported DAFIF 8.1 tables into a larger v23_4 JAXB test publication. */
 final class DafifXmlFixture {
   private static final Set<String> TABLES = Set.of(
       "ARPT.TXT", "RWY.TXT", "ADD_RWY.TXT", "ILS.TXT", "NAV.TXT", "WPT.TXT",
-      "TRM_PAR.TXT", "TRM_SEG.TXT", "ATS.TXT");
+      "TRM_PAR.TXT", "TRM_SEG.TXT", "ATS.TXT", "BDRY_PAR.TXT", "BDRY.TXT", "SUAS_PAR.TXT", "SUAS.TXT");
 
   private DafifXmlFixture() {}
 
@@ -53,6 +57,7 @@ final class DafifXmlFixture {
     DafifXmlPoints.populate(records, publication, refs);
     DafifXmlProcedures.populate(records, publication, refs);
     DafifXmlAirways.populate(records, publication, refs);
+    DafifXmlAirspaces.populate(records, publication);
     return new Loaded(records, publication);
   }
 
@@ -87,13 +92,17 @@ final class DafifXmlFixture {
         List.copyOf(consumer.dafifAddRunways()), List.copyOf(consumer.dafifIls()),
         List.copyOf(consumer.dafifNavaids()), List.copyOf(consumer.dafifWaypoints()),
         List.copyOf(consumer.dafifTerminalParents()), List.copyOf(consumer.dafifTerminalSegments()),
-        List.copyOf(consumer.dafifAts()));
+        List.copyOf(consumer.dafifAts()),
+        List.copyOf(consumer.dafifBoundaryParents()), List.copyOf(consumer.dafifBoundarySegments()),
+        List.copyOf(consumer.dafifSuasParents()), List.copyOf(consumer.dafifSuasSegments()));
   }
 
   record Records(List<DafifAirport> airports, List<DafifRunway> runways, List<DafifAddRunway> addRunways,
                  List<DafifIls> ils, List<DafifNavaid> navaids, List<DafifWaypoint> waypoints,
                  List<DafifTerminalParent> terminalParents, List<DafifTerminalSegment> terminalSegments,
-                 List<DafifAirTrafficSegment> ats) {}
+                 List<DafifAirTrafficSegment> ats,
+                 List<DafifBoundaryParent> boundaryParents, List<DafifBoundarySegment> boundarySegments,
+                 List<DafifSuasParent> suasParents, List<DafifSuasSegment> suasSegments) {}
 
   record Loaded(Records source, AeroPublication publication) {}
 }
