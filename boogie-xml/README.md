@@ -128,10 +128,16 @@ root:
 The test writes `boogie-xml/build/exi/gibberish-sample-no-schema.exi`. The file remains after the test until the
 module's build directory is cleaned.
 
+The companion `writesGibberishSampleSchemaInformedExi` test writes `gibberish-sample-schema-informed.exi`.
+Its XSDs are generated from the checked-in JAXB classes under `build/exi/gibberish-sample-schemas/`,
+using schema ID `urn:boogie:test:arinc424:jaxb:23.4`. This keeps both schema modes covered by unit tests
+without external schema files. These generated test schemas are distinct from the official ARINC XSDs
+used by the integration exports below.
+
 To generate larger files from the test resource `cifp-2101.dat.gz`, run:
 
 ```shell
-./gradlew :boogie-xml:test --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesCifpXmlAndExi' --rerun-tasks
+./gradlew :boogie-xml:cifp-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesCifpXmlAndExi' --rerun-tasks
 ```
 
 This writes `cifp-2101.xml`, `cifp-2101-no-schema.exi`, and `cifp-2101-schema-informed.exi` under
@@ -150,7 +156,7 @@ The flight-level flag identifies the pressure reference; readers keep the numeri
 To generate the DAFIF fixture from `boogie-xml/src/test/resources/DAFIF8_1_2601.zip`, run:
 
 ```shell
-./gradlew :boogie-xml:dafif-integration --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesDafifXmlAndExi' --rerun-tasks
+./gradlew :boogie-xml:dafif-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesDafifXmlAndExi' --rerun-tasks
 ```
 
 This writes `dafif-2601.xml`, `dafif-2601-no-schema.exi`, and `dafif-2601-schema-informed.exi` under

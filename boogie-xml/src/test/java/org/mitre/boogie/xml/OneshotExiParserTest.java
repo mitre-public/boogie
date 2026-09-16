@@ -1,5 +1,7 @@
 package org.mitre.boogie.xml;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.SchemaOutputResolver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -8,6 +10,7 @@ import org.mitre.boogie.xml.exi.ExiCodec;
 import org.mitre.boogie.xml.exi.ExiOptions;
 import org.mitre.boogie.xml.exi.ExiSchema;
 import org.mitre.boogie.xml.model.ArincRecords;
+import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -17,6 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +44,7 @@ class OneshotExiParserTest {
 
   @Test
   void writesGibberishSampleSchemaInformedExi() throws Exception {
-    ExiOptions options = ExiOptions.schemaInformed(arincSchema()).withCompression(true);
+    ExiOptions options = ExiOptions.schemaInformed(fixtureSchema()).withCompression(true);
     Path exiFile = Path.of("build", "exi", "gibberish-sample-schema-informed.exi");
     Files.createDirectories(exiFile.getParent());
     try (InputStream input = fixture();
@@ -51,7 +57,7 @@ class OneshotExiParserTest {
   @ParameterizedTest(name = "schema-informed = {0}")
   @ValueSource(booleans = {false, true})
   void parsesTheArincFixtureAsExiIntoModelsAndAssembledRecords(boolean schemaInformed) throws Exception {
-    ExiOptions options = (schemaInformed ? ExiOptions.schemaInformed(arincSchema()) : ExiOptions.schemaLess())
+    ExiOptions options = (schemaInformed ? ExiOptions.schemaInformed(fixtureSchema()) : ExiOptions.schemaLess())
         .withCompression(true);
     ByteArrayOutputStream encoded = new ByteArrayOutputStream();
     try (InputStream input = fixture()) {
@@ -101,10 +107,21 @@ class OneshotExiParserTest {
     return OneshotExiParserTest.class.getResourceAsStream("/v23_4/gibberish-sample.xml");
   }
 
-  private static ExiSchema arincSchema() throws Exception {
-    Path rootXsd = Path.of(OneshotExiParserTest.class
-        .getResource("/v23_4/schemas/Records/AeroPublication.xsd").toURI());
-    return ExiSchema.compile("urn:boogie:arinc424:23.4", rootXsd);
+  private static ExiSchema fixtureSchema() throws Exception {
+    // The official ARINC XSDs are external integration inputs, absent from a clean checkout.
+    // Generate a test schema from the checked-in JAXB classes and retain it with the EXI artifact.
+    Path directory = Files.createDirectories(Path.of("build", "exi", "gibberish-sample-schemas"));
+    Map<String, Path> schemas = new HashMap<>();
+    JAXBContext.newInstance(AeroPublication.class).generateSchema(new SchemaOutputResolver() {
+      @Override
+      public Result createOutput(String namespaceUri, String suggestedFileName) {
+        Path file = directory.resolve(suggestedFileName);
+        schemas.put(namespaceUri, file);
+        return new StreamResult(file.toFile());
+      }
+    });
+    Path rootXsd = Objects.requireNonNull(schemas.get(""), "Missing generated publication schema");
+    return ExiSchema.compile("urn:boogie:test:arinc424:jaxb:23.4", rootXsd);
   }
 
   private static void assertWrittenExi(Path exiFile, ExiOptions options) throws Exception {
