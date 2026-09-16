@@ -142,7 +142,10 @@ final class DafifXmlPoints {
     target.setRunwayIdentifier(runwayIdentifier(ident));
     target.setRunwayLength(source.length().longValue());
     target.setRunwayWidth(source.width().longValue());
-    (high ? source.highEndMagneticHeading() : source.lowEndMagneticHeading()).map(CifpXmlPoints::bearing).ifPresent(target::setRunwayBearing);
+    (high ? source.highEndMagneticHeading() : source.lowEndMagneticHeading()).map(CifpXmlPoints::bearing).ifPresent(value -> {
+      value.setIsTrueBearing(ident.endsWith("T"));
+      target.setRunwayBearing(value);
+    });
     Optional.ofNullable(high ? source.trueHeadingHighEnd() : source.trueHeadingLowEnd())
         .map(BigDecimal::valueOf).ifPresent(target::setRunwayTrueBearing);
     number(high ? source.highEndSlope() : source.lowEndSlope()).ifPresent(target::setRunwayGradient);

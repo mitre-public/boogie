@@ -1,6 +1,7 @@
 package org.mitre.tdp.boogie.dafif.assemble;
 
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Airway;
@@ -8,6 +9,8 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
+import org.mitre.tdp.boogie.dafif.utils.DafifCourses;
+import org.mitre.tdp.boogie.dafif.utils.DafifRnp;
 
 /**
  * Strategy class for generating user-defined records from DAFIF ATS information. Used with {@link AirwayAssembler}.
@@ -52,6 +55,11 @@ public interface AirwayAssemblyStrategy<A, F, L> {
    */
   L convertLeg(DafifAirTrafficSegment segment, @Nullable F associatedFix);
 
+  /** Supplies the departure fix whose magnetic variation applies to the segment's outbound course. */
+  default L convertLeg(DafifAirTrafficSegment segment, @Nullable F fromFix, @Nullable F associatedFix) {
+    return convertLeg(segment, associatedFix);
+  }
+
   final class Standard implements AirwayAssemblyStrategy<Airway, Fix, Leg> {
 
     private Standard() {
@@ -74,17 +82,20 @@ public interface AirwayAssemblyStrategy<A, F, L> {
 
     @Override
     public Leg convertLeg(DafifAirTrafficSegment segment, @Nullable Fix associatedFix) {
+      return convertLeg(segment, null, associatedFix);
+    }
+
+    @Override
+    public Leg convertLeg(DafifAirTrafficSegment segment, @Nullable Fix fromFix, @Nullable Fix associatedFix) {
       return Leg.builder(PathTerminator.TF, segment.atsRouteSequenceNumber())
           .associatedFix(associatedFix)
-          .outboundMagneticCourse(segment.atsRouteOutboundMagneticCourse().map(Standard::parseCourse).orElse(null))
+          .outboundMagneticCourse(segment.atsRouteOutboundMagneticCourse()
+              .flatMap(course -> DafifCourses.magnetic(course, Optional.ofNullable(fromFix).flatMap(Fix::magneticVariation).orElse(null)))
+              .orElse(null))
           .routeDistance(segment.atsRouteDistance().orElse(null))
-          .rnp(segment.requiredNavPerformance().map(Double::valueOf).orElse(null))
+          .rnp(segment.requiredNavPerformance().map(DafifRnp::nauticalMiles).map(Number::doubleValue).orElse(null))
           .build();
     }
 
-    private static Double parseCourse(String course) {
-      String stripped = course.endsWith("T") ? course.substring(0, course.length() - 1) : course;
-      return Double.valueOf(stripped);
-    }
   }
 }

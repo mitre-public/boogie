@@ -7,8 +7,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import org.mitre.boogie.xml.v23_4.generated.*;
+import org.mitre.tdp.boogie.dafif.assemble.ProcedureSpeedLimits;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 
@@ -49,6 +51,7 @@ final class DafifXmlProcedures {
 
       List<DafifTerminalSegment> procedureSegments = byProcedure.remove(key);
       if (procedureSegments != null) {
+        Map<DafifTerminalSegment, List<ProcedureSpeedLimits.Limit>> speeds = ProcedureSpeedLimits.resolve(procedureSegments);
         Map<TransitionKey, List<DafifTerminalSegment>> transitions = new LinkedHashMap<>();
         for (DafifTerminalSegment segment : procedureSegments) {
           TransitionKey transition = new TransitionKey(segment.terminalApproachType(), segment.transitionIdentifier().orElse(""));
@@ -56,7 +59,7 @@ final class DafifXmlProcedures {
         }
         for (List<DafifTerminalSegment> transition : transitions.values()) {
           transition.sort(Comparator.comparingInt(DafifTerminalSegment::terminalSequenceNumber));
-          addTransition(source, target, transition, refs);
+          addTransition(source, target, transition, refs, speeds);
         }
         firstLeg(target).ifPresent(leg -> metadata(source, leg.getNotes()));
       }
@@ -83,7 +86,8 @@ final class DafifXmlProcedures {
   }
 
   private static void addTransition(DafifTerminalParent parent, Procedure procedure,
-      List<DafifTerminalSegment> segments, DafifXmlReferences refs) {
+      List<DafifTerminalSegment> segments, DafifXmlReferences refs,
+      Map<DafifTerminalSegment, List<ProcedureSpeedLimits.Limit>> speeds) {
     String type = segments.get(0).terminalApproachType();
     if (procedure instanceof Sid sid) {
       ProcedureRoute route;
@@ -111,7 +115,7 @@ final class DafifXmlProcedures {
       if (List.of("4", "5", "6").contains(type)) {
         sid.setIsRnav(true);
       }
-      fillRoute(parent, route, segments, refs);
+      fillRoute(parent, route, segments, refs, speeds);
     } else if (procedure instanceof Star star) {
       ProcedureRoute route;
       switch (type) {
@@ -138,14 +142,15 @@ final class DafifXmlProcedures {
       if (List.of("4", "5", "6").contains(type)) {
         star.setIsRnav(true);
       }
-      fillRoute(parent, route, segments, refs);
+      fillRoute(parent, route, segments, refs, speeds);
     } else if (procedure instanceof Approach approach) {
-      addApproachRoute(parent, approach, segments, refs);
+      addApproachRoute(parent, approach, segments, refs, speeds);
     }
   }
 
   private static void addApproachRoute(DafifTerminalParent parent, Approach approach,
-      List<DafifTerminalSegment> segments, DafifXmlReferences refs) {
+      List<DafifTerminalSegment> segments, DafifXmlReferences refs,
+      Map<DafifTerminalSegment, List<ProcedureSpeedLimits.Limit>> speeds) {
     DafifTerminalSegment first = segments.get(0);
     int split = segments.size();
     for (int i = 0; i < segments.size(); i++) {
@@ -158,14 +163,14 @@ final class DafifXmlProcedures {
       List<DafifTerminalSegment> beforeMissed = segments.subList(0, split);
       if ("A".equals(first.terminalApproachType())) {
         ApproachTransition transition = new ApproachTransition();
-        fillRoute(parent, transition, beforeMissed, refs);
+        fillRoute(parent, transition, beforeMissed, refs, speeds);
         approach.getApproachTransition().add(transition);
       } else {
         if (approach.getFinalApproach() != null) {
           throw new IllegalArgumentException("Multiple DAFIF final approach routes: " + parent.terminalIdentifier());
         }
         FinalApproach route = new FinalApproach();
-        fillRoute(parent, route, beforeMissed, refs);
+        fillRoute(parent, route, beforeMissed, refs, speeds);
         for (DafifTerminalSegment segment : beforeMissed) {
           segment.thresholdCrossingHeight().map(Integer::longValue).ifPresent(route::setProcedureTch);
           if (segment.altitudeDescription().filter(value -> "I".equals(value) || "J".equals(value)).isPresent()
@@ -188,7 +193,7 @@ final class DafifXmlProcedures {
     }
     if (split < segments.size()) {
       MissedApproach missed = new MissedApproach();
-      fillRoute(parent, missed, segments.subList(split, segments.size()), refs);
+      fillRoute(parent, missed, segments.subList(split, segments.size()), refs, speeds);
       if (parent.approachRouteQualifier2().filter(List.of("A", "B", "E")::contains).isEmpty()) {
         missed.setQualifier2(ApproachQualifier2.PRIMARY_MISSED_APPROACH);
       }
@@ -197,7 +202,8 @@ final class DafifXmlProcedures {
   }
 
   private static void fillRoute(DafifTerminalParent parent, ProcedureRoute route,
-      List<DafifTerminalSegment> segments, DafifXmlReferences refs) {
+      List<DafifTerminalSegment> segments, DafifXmlReferences refs,
+      Map<DafifTerminalSegment, List<ProcedureSpeedLimits.Limit>> speeds) {
     DafifTerminalSegment first = segments.get(0);
     first.transitionIdentifier().ifPresent(route::setIdentifier);
     if (parent.terminalProcedureType() == 2) {
@@ -222,7 +228,7 @@ final class DafifXmlProcedures {
       });
     }
     for (DafifTerminalSegment segment : segments) {
-      route.getProcedureLeg().add(leg(segment, refs));
+      route.getProcedureLeg().add(leg(segment, refs, speeds.get(segment)));
     }
   }
 
@@ -235,13 +241,13 @@ final class DafifXmlProcedures {
     parent.alternateTakeoffMinimums().ifPresent(value -> notes.add("DAFIF alternate takeoff minimums: " + value));
     parent.procedureDesignMagvar().ifPresent(value -> notes.add("DAFIF design magnetic variation including epoch: " + value));
     if (parent.terminalProcedureType() == 3) {
-      sourceLevelOfService(notes, 1, parent.levelOfService1(), parent.levelOfServiceName1());
-      sourceLevelOfService(notes, 2, parent.levelOfService2(), parent.levelOfServiceName2());
-      sourceLevelOfService(notes, 3, parent.levelOfService3(), parent.levelOfServiceName3());
+      sourceLevelOfService(notes, 1, parent.levelOfService1(), parent.levelOfServiceName1().orElse(null));
+      sourceLevelOfService(notes, 2, parent.levelOfService2(), parent.levelOfServiceName2().orElse(null));
+      sourceLevelOfService(notes, 3, parent.levelOfService3(), parent.levelOfServiceName3().orElse(null));
     }
   }
 
-  private static ProcedureLeg leg(DafifTerminalSegment source, DafifXmlReferences refs) {
+  private static ProcedureLeg leg(DafifTerminalSegment source, DafifXmlReferences refs, List<ProcedureSpeedLimits.Limit> speeds) {
     ProcedureLeg target = switch (source.terminalProcedureType()) {
       case 1 -> new StarLeg();
       case 2 -> new SidLeg();
@@ -258,8 +264,8 @@ final class DafifXmlProcedures {
     });
     source.navaid1Identifier().ifPresent(ident -> {
       target.setRecNavaidIdent(ident);
-      target.setRecNavaidRef(navaid(source.airportIdentification(), ident, source.navaid1Type(),
-          source.navaid1CountryCode(), source.navaid1KeyCode(), refs));
+      target.setRecNavaidRef(navaid(source.airportIdentification(), ident, source.navaid1Type().orElse(null),
+          source.navaid1CountryCode().orElse(null), source.navaid1KeyCode().orElse(null), refs));
     });
     source.nav1Bearing().map(BigDecimal::valueOf).ifPresent(target::setTheta);
     source.nav1Distance().map(BigDecimal::valueOf).ifPresent(target::setRho);
@@ -278,7 +284,7 @@ final class DafifXmlProcedures {
     }).ifPresent(target::setTurnDirection);
     altitudeConstraint(source, target);
     waypointDescription(source, target);
-    speedLimit(source, target);
+    speedLimit(speeds, target);
     if (target instanceof ApproachLeg approach) {
       source.verticalNavigationVnav().map(BigDecimal::valueOf).ifPresent(approach::setVerticalAngle);
       if (source.altitudeDescription().filter(value -> "G".equals(value) || "H".equals(value)).isPresent()) {
@@ -313,16 +319,16 @@ final class DafifXmlProcedures {
     };
   }
 
-  private static Object navaid(String airportId, String ident, Optional<String> type,
-      Optional<String> country, Optional<Integer> key, DafifXmlReferences refs) {
-    if (type.isEmpty()) {
+  private static Object navaid(String airportId, String ident, @Nullable String type,
+      @Nullable String country, @Nullable Integer key, DafifXmlReferences refs) {
+    if (type == null) {
       return null;
     }
-    return switch (type.orElseThrow()) {
-      case "D", "P" -> refs.ilsDme(airportId, type.orElseThrow(), ident);
+    return switch (type) {
+      case "D", "P" -> refs.ilsDme(airportId, type, ident);
       case "Z" -> refs.localizer(airportId, ident);
-      case "1", "2", "3", "4", "5", "7", "9" -> key.map(value -> refs.navaid(ident, country.orElse(""),
-          Integer.parseInt(type.orElseThrow()), value)).orElse(null);
+      case "1", "2", "3", "4", "5", "7", "9" -> key == null ? null
+          : refs.navaid(ident, country == null ? "" : country, Integer.parseInt(type), key);
       default -> null;
     };
   }
@@ -347,22 +353,20 @@ final class DafifXmlProcedures {
     }
   }
 
-  private static void speedLimit(DafifTerminalSegment source, ProcedureLeg target) {
-    if (source.speedLimit1().isPresent()) {
-      if (source.speedLimitAltitude1().isEmpty() && source.speedLimitAircraftType1().filter(value -> !"A".equals(value)).isEmpty()) {
-        SpeedLimit speed = new SpeedLimit();
-        speed.setAtOrBelow(source.speedLimit1().orElseThrow().longValue());
-        target.setSpeedLimit(speed);
-      } else {
-        target.getNotes().add(speedNote(1, source.speedLimit1().orElseThrow(), source.speedLimitAircraftType1(), source.speedLimitAltitude1()));
-      }
-    }
-    source.speedLimit2().ifPresent(value -> target.getNotes().add(speedNote(2, value, source.speedLimitAircraftType2(), source.speedLimitAltitude2())));
+  private static void speedLimit(List<ProcedureSpeedLimits.Limit> limits, ProcedureLeg target) {
+    limits.stream().filter(ProcedureSpeedLimits.Limit::isUnqualified).mapToDouble(ProcedureSpeedLimits.Limit::knots).min()
+        .ifPresent(maximum -> {
+          SpeedLimit speed = new SpeedLimit();
+          speed.setAtOrBelow((long) maximum);
+          target.setSpeedLimit(speed);
+        });
+    limits.stream().filter(limit -> !limit.isUnqualified()).forEach(limit -> target.getNotes().add(
+        speedNote(limit.number(), limit.knots(), limit.aircraft(), limit.belowAltitude())));
   }
 
-  private static String speedNote(int number, Double speed, Optional<String> aircraft, Optional<String> altitude) {
-    return "DAFIF speed limit " + number + ": " + speed.intValue() + " knots; aircraft=" + aircraft.orElse("all")
-        + "; below altitude=" + altitude.orElse("unspecified");
+  private static String speedNote(int number, double speed, @Nullable String aircraft, @Nullable String altitude) {
+    return "DAFIF speed limit " + number + ": " + (int) speed + " knots; aircraft=" + (aircraft == null ? "all" : aircraft)
+        + "; below altitude=" + (altitude == null ? "unspecified" : altitude);
   }
 
   private static void waypointDescription(DafifTerminalSegment source, ProcedureLeg target) {
@@ -480,9 +484,9 @@ final class DafifXmlProcedures {
     };
   }
 
-  private static void sourceLevelOfService(List<String> notes, int number, String authorized, Optional<String> name) {
-    if (name.isPresent() || "A".equals(authorized)) {
-      notes.add("DAFIF level of service " + number + ": " + name.orElse("unnamed") + "; authorized=" + authorized);
+  private static void sourceLevelOfService(List<String> notes, int number, String authorized, @Nullable String name) {
+    if (name != null || "A".equals(authorized)) {
+      notes.add("DAFIF level of service " + number + ": " + (name == null ? "unnamed" : name) + "; authorized=" + authorized);
     }
   }
 

@@ -160,7 +160,15 @@ in the parsed source model. Flight levels are converted to feet in the core alti
 The standard procedure strategy uses speed limits that apply to all aircraft without an altitude
 condition. If both speed fields contain such limits, it uses the lower maximum. Aircraft-qualified
 or altitude-qualified limits remain in `DafifTerminalSegment` for custom strategies, since the core
-`Leg` speed range cannot express those conditions.
+`Leg` speed range cannot express those conditions. The procedure assembler propagates restrictions backward
+on SIDs and forward on STARs and approaches, keeping holding-pattern restrictions local to the hold.
+Connected transitions inherit restrictions common to all contributing branches; conflicting branch-specific
+restrictions remain in the source records because one shared leg cannot express different path conditions.
+Custom strategies can receive the resolved qualified limits through the contextual `convertLeg` overload.
+
+Core legs retain RF arc radii and published holding-fix flags. DAFIF's positive descent-angle magnitude
+becomes a negative core vertical angle. Runway fixes use physical thresholds for SIDs and displaced
+landing thresholds for approaches.
 
 ### Assembling boundaries and special use airspaces
 
@@ -252,14 +260,20 @@ column definitions in the `DafifRecordSpec` implementations for the appropriate 
 1. **Format**: Tab-delimited text vs. fixed-width records.
 2. **Distribution**: Zip archive with multiple `.TXT` files vs. a single flat file.
 3. **Airway representation**: DAFIF represents airways as segments with start/end waypoints per direction. Each unique
-   `ATS_IDENT + DIRECTION` combination produces a separate `Airway` object.
+   `ATS_IDENT + DIRECTION` group is split into continuous sections at endpoint gaps or published end markers.
+   Each section produces a separate `Airway` object with its own starting fix.
 4. **Procedure representation**: DAFIF splits procedures into parent records (`TRM_PAR.TXT`) and segment records (`TRM_SEG.TXT`),
    rather than encoding everything in a single leg record.
 5. **Fix references**: ATS segments with waypoint description codes `N` (NDB) or `V` (VOR) resolve their navaids through
    the waypoint table — the waypoint acts as a pointer to the navaid via `navaidIdentifier`, `navaidType`, `navaidCountryCode`,
    and `navaidKeyCode` fields.
 6. **Course values**: Some ATS outbound magnetic course values carry a `T` suffix indicating True course (e.g. `215.T`). The
-   assembler handles this automatically.
+   assembler converts these using the departure fix's magnetic variation. Terminal true courses use the
+   available navaid, waypoint, or procedure variation. If the needed variation is missing, the core magnetic
+   course remains absent. Grid courses (`G`) also remain absent because the source does not identify a grid
+   reference; the original course strings remain available in the DAFIF models.
+7. **RNP encoding**: DAFIF encodes a mantissa and exponent (`100` = 10 NM; `031` = 0.3 NM).
+   Assembled legs use nautical miles.
 
 ## Current capabilities
 

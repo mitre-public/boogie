@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.Procedure;
@@ -25,11 +27,36 @@ import org.mitre.tdp.boogie.dafif.model.DafifAirport;
 import org.mitre.tdp.boogie.dafif.model.DafifNavaid;
 import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
+import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 
 public class ProcedureAssemblerTest {
 
   static ProcedureAssembler<Procedure> assembler;
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2})
+  void assembledLegsUseProcedureSpeedRulesAndDesignVariation(int procedureType) {
+    var parent = DafifTerminalParent.builder().airportIdentification("US00001").terminalProcedureType(procedureType)
+        .terminalIdentifier("TEST1").icaoCode("KAAA").cycleDate(202601).procedureDesignMagvar("E010020")
+        .levelOfService1("N").levelOfService2("N").levelOfService3("N").build();
+    var first = DafifTerminalSegment.builder().airportIdentification("US00001").terminalProcedureType(procedureType)
+        .terminalIdentifier("TEST1").terminalApproachType("5").terminalSequenceNumber(10).icaoCode("KAAA")
+        .trackDescriptionCode("VA").terminalMagneticCourse("341.T").speedLimit1(procedureType == 1 ? 210.0 : null)
+        .cycleDate(202601).build();
+    var second = DafifTerminalSegment.builder().airportIdentification("US00001").terminalProcedureType(procedureType)
+        .terminalIdentifier("TEST1").terminalApproachType("5").terminalSequenceNumber(20).icaoCode("KAAA")
+        .trackDescriptionCode("TF").speedLimit1(procedureType == 2 ? 210.0 : null).cycleDate(202601).build();
+    var database = DafifDatabaseFactory.newTerminalAreaDatabase(List.of(), List.of(), List.of(), List.of(), List.of(first, second));
+    var procedure = ProcedureAssembler.standard(database, DafifDatabaseFactory.newFixDatabase(List.of(), List.of()),
+        ProcedureAssemblyStrategy.standard(), FixAssemblyStrategy.standard()).assemble(List.of(parent)).findFirst().orElseThrow();
+    var legs = procedure.transitions().iterator().next().legs();
+    assertAll(
+        () -> assertEquals(331.0, legs.get(0).outboundMagneticCourse().orElseThrow(), 1e-9),
+        () -> assertEquals(210.0, legs.get(0).speedConstraint().upperEndpoint()),
+        () -> assertEquals(210.0, legs.get(1).speedConstraint().upperEndpoint())
+    );
+  }
 
   @BeforeAll
   static void setUp() {

@@ -2,10 +2,12 @@ package org.mitre.tdp.boogie.dafif.assemble;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mitre.tdp.boogie.Airway;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
@@ -136,6 +140,86 @@ public class AirwayAssemblerTest {
         () -> assertEquals("TVOR", j300.legs().get(1).associatedFix().get().fixIdentifier(),
             "End fix should be navaid TVOR resolved via WPT->NAV (desc V)")
     );
+  }
+
+  @Test
+  void splitsDisconnectedSectionsWithoutDroppingTheirStartingFixes() {
+    List<Airway> airways = assembler.assemble(List.of(TestObjects.atsJ100Seg3, TestObjects.atsJ100Seg1)).toList();
+
+    assertAll(
+        () -> assertEquals(List.of("ADRIV|CA400", "MIDVU|ANDOP"), airways.stream().map(this::fixSequence).toList()),
+        () -> assertEquals(List.of(15.2, 120.5), airways.stream()
+            .map(airway -> airway.legs().get(1).routeDistance().orElseThrow()).toList()),
+        () -> assertTrue(airways.stream().allMatch(airway -> airway.legs().get(0).pathTerminator() == PathTerminator.IF))
+    );
+  }
+
+  @ParameterizedTest
+  @ValueSource(booleans = {false, true})
+  void splitsAtPublishedEndMarkersOnEitherSideOfASharedFix(boolean markerOnPreviousEnd) {
+    var first = segment(10, "ADRIV", "CA400")
+        .waypoint2AtsWaypointDescriptionCode2(markerOnPreviousEnd ? "E" : null).build();
+    var second = segment(20, "CA400", "MIDVU")
+        .waypoint1AtsWaypointDescriptionCode2(markerOnPreviousEnd ? null : "E").build();
+    List<Airway> airways = assembler.assemble(List.of(second, first)).toList();
+
+    assertAll(
+        () -> assertEquals(List.of("ADRIV|CA400", "CA400|MIDVU"), airways.stream().map(this::fixSequence).toList()),
+        () -> assertTrue(airways.stream().allMatch(airway -> airway.legs().get(0).sequenceNumber() == 0)),
+        () -> assertTrue(airways.stream().allMatch(airway -> airway.legs().get(0).pathTerminator() == PathTerminator.IF))
+    );
+  }
+
+  @Test
+  void doesNotJoinSameNamedFixesFromDifferentCountries() {
+    var otherCa400 = DafifWaypoint.builder().waypointIdentifier("CA400").countryCode("AS")
+        .waypointPointNavaidFlag(false).degreesLatitude(-30.0).degreesLongitude(130.0).cycleDate(202404).build();
+    var database = DafifDatabaseFactory.newFixDatabase(
+        List.of(TestObjects.wptAdrivAA, TestObjects.wptCa400AA, TestObjects.wptMidvuAA, otherCa400), List.of());
+    var localAssembler = AirwayAssembler.standard(database, FixAssemblyStrategy.standard());
+    var first = segment(10, "ADRIV", "CA400").build();
+    var second = segment(20, "CA400", "MIDVU").waypoint1CountryCode("AS").build();
+    List<Airway> airways = localAssembler.assemble(List.of(first, second)).toList();
+
+    assertAll(
+        () -> assertEquals(List.of("ADRIV|CA400", "CA400|MIDVU"), airways.stream().map(this::fixSequence).toList()),
+        () -> assertEquals(-30.0, airways.get(1).legs().get(0).associatedFix().orElseThrow().latitude())
+    );
+  }
+
+  @Test
+  void preservesDirectionGroupingWhenInputOrderChanges() {
+    var segments = new ArrayList<>(TestObjects.atsJ100AllSegments);
+    List<String> expected = assembler.assemble(segments).map(this::fixSequence).toList();
+    Collections.reverse(segments);
+    List<String> reversed = assembler.assemble(segments).map(this::fixSequence).toList();
+
+    assertAll(
+        () -> assertEquals(2, reversed.size(), "Opposite directions remain separate"),
+        () -> assertEquals(expected, reversed)
+    );
+  }
+
+  @Test
+  void convertsTrueOutboundCourseUsingTheDepartureFixVariation() {
+    var source = segment(10, "ADRIV", "CA400").atsRouteOutboundMagneticCourse("180.T").build();
+    var airway = assembler.assemble(List.of(source)).findFirst().orElseThrow();
+    var departure = airway.legs().get(0).associatedFix().orElseThrow();
+    var arrival = airway.legs().get(1).associatedFix().orElseThrow();
+    double departureVariation = departure.magneticVariation().orElseThrow().angle().inDegrees();
+    double arrivalVariation = arrival.magneticVariation().orElseThrow().angle().inDegrees();
+
+    assertAll(
+        () -> assertNotEquals(departureVariation, arrivalVariation, "The fixture distinguishes the course's reference point"),
+        () -> assertEquals(180.0 - departureVariation, airway.legs().get(1).outboundMagneticCourse().orElseThrow(), 1e-9)
+    );
+  }
+
+  private static DafifAirTrafficSegment.Builder segment(int sequence, String from, String to) {
+    return new DafifAirTrafficSegment.Builder()
+        .atsIdentifier("J100").atsRouteDirection("E").atsRouteSequenceNumber(sequence)
+        .waypoint1WaypointIdentifierWptIdent(from).waypoint1CountryCode("AA").waypoint1AtsWaypointDescriptionCode1("E")
+        .waypoint2WaypointIdentifierWptIdent(to).waypoint2CountryCode("AA").waypoint2AtsWaypointDescriptionCode1("E");
   }
 
   private String fixSequence(Airway airway) {

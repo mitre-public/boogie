@@ -3,12 +3,12 @@ package org.mitre.tdp.boogie.dafif.assemble;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.CategoryOrType;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.MagneticVariation;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -19,6 +19,7 @@ import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.dafif.FlyOverIndicator;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalParent;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
+import org.mitre.tdp.boogie.dafif.utils.DafifCourses;
 import org.mitre.tdp.boogie.util.StandardizedTransitionName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,12 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
    * @param centerFix         the converted center fix record referenced by the leg (there may not be one)
    */
   L convertLeg(DafifTerminalSegment leg, @Nullable F associatedFix, @Nullable F recommendedNavaid, @Nullable F centerFix);
+
+  /** Supplies resolved procedure-wide speed restrictions and variation for legs without a fix. */
+  default L convertLeg(DafifTerminalSegment leg, @Nullable F associatedFix, @Nullable F recommendedNavaid,
+      @Nullable F centerFix, List<ProcedureSpeedLimits.Limit> speedLimits, @Nullable MagneticVariation fallbackVariation) {
+    return convertLeg(leg, associatedFix, recommendedNavaid, centerFix);
+  }
 
   static ProcedureAssemblyStrategy<Procedure, Transition, Leg, Fix>  standard() {
     return new Standard();
@@ -123,6 +130,12 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
     @Override
     public Leg convertLeg(DafifTerminalSegment leg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid, @Nullable Fix centerFix) {
+      return convertLeg(leg, associatedFix, recommendedNavaid, centerFix, ProcedureSpeedLimits.published(leg), null);
+    }
+
+    @Override
+    public Leg convertLeg(DafifTerminalSegment leg, @Nullable Fix associatedFix, @Nullable Fix recommendedNavaid,
+        @Nullable Fix centerFix, List<ProcedureSpeedLimits.Limit> speedLimits, @Nullable MagneticVariation fallbackVariation) {
 
       PathTerminator pathTerminator = Optional.of(leg)
           .map(DafifTerminalSegment::trackDescriptionCode)
@@ -132,10 +145,9 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
 
       LOG.trace("Converting leg seq={} pt={} fix={} at {}", leg.terminalSequenceNumber(), pathTerminator, leg.termSegWaypointIdentifier().orElse("none"), leg.airportIdentification());
 
-      Range<Double> speedConstraint = Stream.of(
-              unqualifiedSpeedLimit(leg.speedLimit1(), leg.speedLimitAircraftType1(), leg.speedLimitAltitude1()),
-              unqualifiedSpeedLimit(leg.speedLimit2(), leg.speedLimitAircraftType2(), leg.speedLimitAltitude2()))
-          .flatMap(Optional::stream)
+      Range<Double> speedConstraint = speedLimits.stream()
+          .filter(ProcedureSpeedLimits.Limit::isUnqualified)
+          .map(ProcedureSpeedLimits.Limit::knots)
           .min(Double::compareTo)
           .map(SpeedLimitToRange.INSTANCE)
           .orElse(Range.all());
@@ -145,6 +157,12 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
       TurnDirection turnDirection = leg.terminalSegmentTurnDirection().map(TurnDirector.INSTANCE).orElse(TurnDirection.either());
 
       Boolean isFlyOverFix = leg.terminalWaypointDescriptionCode2().map(FlyOverIndicator.INSTANCE).orElse(false);
+      // Match the variation on the emitted fixes, which core consumers use to recover a true course.
+      MagneticVariation variation = Optional.ofNullable(recommendedNavaid).flatMap(Fix::magneticVariation)
+          .or(() -> Optional.ofNullable(associatedFix).flatMap(Fix::magneticVariation))
+          .or(() -> leg.navaid1MagneticVariation().map(MagneticVariation::ofDegrees))
+          .or(() -> leg.waypointMagneticVariation().map(MagneticVariation::ofDegrees))
+          .orElse(fallbackVariation);
 
       return Leg.builder(pathTerminator, leg.terminalSequenceNumber())
           .associatedFix(associatedFix)
@@ -152,41 +170,20 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .centerFix(centerFix)
           .speedConstraint(speedConstraint)
           .altitudeConstraint(altitudeConstraint)
-          .outboundMagneticCourse(leg.terminalMagneticCourse().map(Standard::parseCourse).orElse(null))
+          .outboundMagneticCourse(leg.terminalMagneticCourse().flatMap(course -> DafifCourses.magnetic(course, variation)).orElse(null))
           .theta(leg.nav1Bearing().orElse(null))
           .rho(leg.nav1Distance().orElse(null))
           .rnp(leg.requiredNavPerformance().orElse(null))
-          .verticalAngle(leg.verticalNavigationVnav().orElse(null))
+          .verticalAngle(leg.verticalNavigationVnav().map(angle -> -angle).orElse(null))
           .routeDistance(leg.distance().orElse(null))
+          .arcRadius(leg.arcRadius().orElse(null))
           .holdTime(null) //fixme not implemented yet.
           .turnDirection(turnDirection)
-          .isPublishedHoldingFix(false) //fixme idk if supported.
+          .isPublishedHoldingFix(leg.terminalWaypointDescriptionCode4().filter(code -> "C".equals(code) || "H".equals(code)).isPresent())
           .isFlyOverFix(isFlyOverFix)
           .isIntermediateOrInitialApproachFix(leg.terminalWaypointDescriptionCode4().map(c -> c.equals("A") || c.equals("B") || c.equals("C") || c.equals("D")).orElse(false))
           .build();
     }
-    /** The core range cannot express conditional limits; retain those in the source model for custom strategies. */
-    private static Optional<Double> unqualifiedSpeedLimit(Optional<Double> speed, Optional<String> aircraft, Optional<String> altitude) {
-      if (altitude.isPresent() || aircraft.filter(type -> !"A".equals(type)).isPresent()) {
-        return Optional.empty();
-      }
-      return speed;
-    }
-
-    private static Double parseCourse(String course) {
-      String stripped = course.replaceAll("[^0-9.]", "");
-      if (stripped.isEmpty()) {
-        LOG.warn("Unable to parse course value: '{}'", course);
-        return null;
-      }
-      try {
-        return Double.valueOf(stripped);
-      } catch (NumberFormatException e) {
-        LOG.warn("Unable to parse course value: '{}'", course);
-        return null;
-      }
-    }
-
     private static Double parseAltitude(String alt) {
       if (alt.startsWith("FL")) {
         return Double.valueOf(alt.substring(2)) * 100.0;

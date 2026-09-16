@@ -32,6 +32,7 @@ import org.mitre.boogie.xml.v23_4.generated.TimesOfOperation;
 import org.mitre.boogie.xml.v23_4.generated.UnitIndicator;
 import org.mitre.boogie.xml.v23_4.generated.UpperLimitConstraint;
 import org.mitre.tdp.boogie.dafif.model.DafifBoundaryParent;
+import org.mitre.tdp.boogie.dafif.utils.DafifRnp;
 import org.mitre.tdp.boogie.dafif.model.DafifBoundarySegment;
 import org.mitre.tdp.boogie.dafif.model.DafifSuasParent;
 import org.mitre.tdp.boogie.dafif.model.DafifSuasSegment;
@@ -81,7 +82,7 @@ final class DafifXmlAirspaces {
     source.airspaceClass().ifPresent(target::setAirspaceClassification);
     target.setControlledAirspaceType(controlledType(source));
     // The final DAFIF digit is a negative exponent: 050 = 5 NM, 031 = 0.3 NM, 152 = 0.15 NM.
-    source.requiredNavPerformance().map(value -> BigDecimal.valueOf(value / 10).movePointLeft(value % 10))
+    source.requiredNavPerformance().map(DafifRnp::nauticalMiles)
         .ifPresent(target::setRnp);
     metadata(target, source.cycleDate(), source.lowerAltitude(), source.upperAltitude(), geometry);
     return target;

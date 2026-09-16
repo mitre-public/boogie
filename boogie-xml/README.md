@@ -170,7 +170,7 @@ Together, the unit and integration suites check:
 
 - Fixture record counts, unique XML IDs, resolvable references, cycle dates, and validity dates.
   The DAFIF check also reconstructs the directed airway graph and compares every edge's altitude
-  limits with the source, including flight-level versus MSL references.
+  limits and decoded RNP with the source, including flight-level versus MSL references.
 - Each exported EXI file's `$EXI` cookie and complete decoding through `END_DOCUMENT`, with one
   root and balanced elements. Namespace-aware element and attribute names, counts, and document
   structure are compared with the source XML.
@@ -229,11 +229,14 @@ For terminal procedures, altitude-description codes determine the constraint: `B
 as the upper bound and altitude 2 as the lower bound; `C` uses altitude 2 as the lower bound.
 Flight levels are converted to feet and keep their flight-level flag.
 
-The first terminal speed limit becomes an XML at-or-below limit in knots only when it has no
-altitude qualifier and its aircraft type is absent or `A` (all aircraft). Qualified first limits
-and any second speed limit are retained in notes with their aircraft and altitude qualifiers.
-For cycle 2601, 31,037 first speed limits produce 31,004 XML speed limits; the remaining 33 are
-aircraft-qualified and stay in notes.
+Terminal speed limits become an XML at-or-below limit in knots only when they have no altitude
+qualifier and their aircraft type is absent or `A` (all aircraft). If both limits apply to all aircraft,
+the lower maximum is used. Qualified limits remain in notes with their aircraft and altitude qualifiers.
+Speed restrictions propagate backward on SIDs and forward on STARs and approaches according to
+the DAFIF rules; holding-pattern limits apply to the hold itself. Aircraft and altitude qualifiers
+remain attached to inherited restrictions. Connected transitions inherit limits common to all contributing
+branches; conflicting branch-specific limits remain in the source records and are not applied universally
+to a shared transition.
 
 DAFIF airway directions are merged using a graph keyed by airway identifier and waypoint identifier/country.
 Overlapping forward and reverse segments share one XML leg; one-way segments carry forward/backward
@@ -243,7 +246,9 @@ The output order is deterministic and preserves cycle-closing edges. Disconnecte
 use separate `Airway` records with the same published identifier because v23_4 represents one continuous
 path per record. Direction-specific RNP, level, route type, or distance differences also remain separate
 path variants. The fixture does not create connections between unrelated sections. Original DAFIF
-directions and end markers remain in notes.
+directions and end markers remain in notes. Encoded RNP values are converted to nautical miles
+(e.g., `100` becomes 10 NM and `031` becomes 0.3 NM). True courses and runway headings retain their
+true-bearing flags, including headings from runway identifiers ending in `T`.
 
 DAFIF airspaces retain source start/end coordinates, arc directions and starting bearings, circle centers
 and radii, and AGL/MSL/flight-level altitude references. Altitudes `GND`/`SURFACE`, `UNLTD`, `U`, and

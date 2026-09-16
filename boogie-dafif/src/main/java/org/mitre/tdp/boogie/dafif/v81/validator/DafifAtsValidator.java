@@ -40,10 +40,18 @@ public class DafifAtsValidator implements Predicate<DafifRecord> {
         && containsParsedField(dafifRecord, "waypoint1WaypointIdentifierWptIdent", missingFieldConsumer)
         && containsParsedField(dafifRecord, "waypoint1CountryCode", missingFieldConsumer)
         && containsParsedField(dafifRecord, "waypoint1AtsWaypointDescriptionCode1", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint1GeodeticLatitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint1DegreesLatitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint1GeodeticLongitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint1DegreesLongitude", missingFieldConsumer)
         && containsParsedField(dafifRecord, "waypoint2IcaoCode", missingFieldConsumer)
         && containsParsedField(dafifRecord, "waypoint2WaypointIdentifierWptIdent", missingFieldConsumer)
         && containsParsedField(dafifRecord, "waypoint2CountryCode", missingFieldConsumer)
         && containsParsedField(dafifRecord, "waypoint2AtsWaypointDescriptionCode1", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint2GeodeticLatitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint2DegreesLatitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint2GeodeticLongitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "waypoint2DegreesLongitude", missingFieldConsumer)
         && containsParsedField(dafifRecord, "cycleDate", missingFieldConsumer);
   }
 }

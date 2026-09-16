@@ -86,6 +86,15 @@ public final class DafifTerminalAreaDatabase {
         .findFirst();
   }
 
+  /** Resolves the requested component when a localizer and its DME share an identifier. */
+  public Optional<DafifIls> ilsByNavaidIdentifier(String airportIdentifier, String navaidIdentifier, String componentType) {
+    return runwaysAt(airportIdentifier).stream()
+        .flatMap(r -> ilsComponentsForRunway(r).stream())
+        .filter(i -> componentType.equals(i.componentType()))
+        .filter(i -> i.ilsNavaidIdentifier().map(navaidIdentifier::equals).orElse(false))
+        .findFirst();
+  }
+
   public Collection<DafifTerminalSegment> terminalSegmentsAt(String airportIdentifier) {
     return terminalSegments.get(new AirportKey(airportIdentifier));
   }

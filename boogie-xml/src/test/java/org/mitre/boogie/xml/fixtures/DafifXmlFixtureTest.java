@@ -60,7 +60,7 @@ class DafifXmlFixtureTest {
         () -> assertTrue(handler.count("waypoint") + handler.count("terminalWaypoint") >= source.waypoints().size()),
         () -> assertEquals(source.terminalParents().size(), handler.count("sid") + handler.count("star") + handler.count("approach")),
         () -> assertEquals(source.terminalSegments().size(), handler.count("procedureLeg"), "Includes missed approaches"),
-        () -> assertEquals(31004, handler.count("speedLimit"), "The other 33 speed limits are aircraft-qualified and remain in notes"),
+        () -> assertTrue(handler.count("speedLimit") > 31004, "Published speed limits must also cover the legs to which DAFIF carries them"),
         () -> assertEquals(14113, handler.count("airway"), "Merges opposite directions and separates continuous paths"),
         () -> assertEquals(103784, handler.count("airwayLeg"), "89671 geometric edges plus one endpoint per path"),
         () -> assertEquals(17956, handler.count("controlledAirspace") + handler.count("firUir"),
@@ -73,7 +73,27 @@ class DafifXmlFixtureTest {
         () -> assertTrue(handler.ids.containsAll(handler.references), () -> "Missing reference targets: " + handler.missingReferences()),
         () -> assertEquals(2601, fixture.publication().getCycleDate()),
         () -> assertEquals("2026-01-22T00:00:00Z", fixture.publication().getStartOfValidity().toXMLFormat()),
-        () -> assertAirwayGraphMatchesSource(fixture)
+        () -> assertAirwayGraphMatchesSource(fixture),
+        () -> assertStarSpeedContinuesAfterThePublishedRestriction(fixture)
+    );
+  }
+
+  private static void assertStarSpeedContinuesAfterThePublishedRestriction(DafifXmlFixture.Loaded fixture) {
+    var sourceLeg = fixture.source().terminalSegments().stream()
+        .filter(leg -> leg.airportIdentification().equals("AJ00013") && leg.terminalIdentifier().startsWith("DULA2E")
+            && leg.transitionIdentifier().filter("RW14L"::equals).isPresent() && leg.terminalSequenceNumber() == 70)
+        .findFirst().orElseThrow();
+    var outputLeg = fixture.publication().getAirports().getAirport().stream()
+        .filter(airport -> airport.getTerminalProcedures() != null)
+        .flatMap(airport -> airport.getTerminalProcedures().getStar().stream())
+        .filter(star -> star.getIdentifier().equals("DULA2E"))
+        .map(star -> star.getStarCommonRoute()).filter(route -> route != null && "RW14L".equals(route.getIdentifier()))
+        .flatMap(route -> route.getProcedureLeg().stream()).filter(leg -> leg.getSequenceNumber() == 70)
+        .findFirst().orElseThrow();
+    assertAll(
+        () -> assertTrue(sourceLeg.speedLimit1().isEmpty(), "BN123 inherits the preceding 210-knot restriction"),
+        () -> assertEquals("BN123", outputLeg.getFixIdent()),
+        () -> assertEquals(210L, outputLeg.getSpeedLimit().getAtOrBelow())
     );
   }
 
@@ -86,7 +106,8 @@ class DafifXmlFixtureTest {
       DirectedEdge edge = new DirectedEdge(source.atsIdentifier(), from, to);
       Limits limits = new Limits(
           source.minimumAltitude().or(source::lowerLimit).map(DafifXmlFixtureTest::sourceAltitude).orElse(null),
-          source.maxAuthorizedAltitude().or(source::upperLimit).map(DafifXmlFixtureTest::sourceAltitude).orElse(null));
+          source.maxAuthorizedAltitude().or(source::upperLimit).map(DafifXmlFixtureTest::sourceAltitude).orElse(null),
+          source.requiredNavPerformance().map(value -> (value / 10) / Math.pow(10.0, value % 10)).orElse(null));
       if (expected.putIfAbsent(edge, limits) != null) {
         duplicateSourceEdges.add(edge);
       }
@@ -166,8 +187,8 @@ class DafifXmlFixtureTest {
         () -> assertEquals(7, sameFeetDifferentReferenceCount, "Equal numbers with FL versus MSL references are distinct limits"),
         () -> assertEquals(156666, expected.size(), "Source directed edges"),
         () -> assertEquals(expected.keySet(), actual.keySet(), () -> graphDifference(expected, actual)),
-        () -> assertAll("Directional altitude limits", expected.entrySet().stream().map(entry ->
-            () -> assertEquals(entry.getValue(), actual.get(entry.getKey()), () -> "Directional altitude limits for " + entry.getKey())))
+        () -> assertAll("Directional altitude limits and RNP", expected.entrySet().stream().map(entry ->
+            () -> assertEquals(entry.getValue(), actual.get(entry.getKey()), () -> "Directional altitude limits and RNP for " + entry.getKey())))
     );
   }
 
@@ -233,7 +254,7 @@ class DafifXmlFixtureTest {
     if (!maximums.isEmpty()) {
       maximum = outputAltitude(maximums.get(0), Boolean.TRUE.equals(maximums.get(0).isIsUnlimited()));
     }
-    return new Limits(minimum, maximum);
+    return new Limits(minimum, maximum, leg.getRnp() == null ? null : leg.getRnp().doubleValue());
   }
 
   private static Altitude outputAltitude(AirspaceRouteHoldAltitude value, boolean unlimited) {
@@ -271,7 +292,7 @@ class DafifXmlFixtureTest {
   private record DirectedEdge(String airway, Point from, Point to) {}
   private record Geometry(String airway, Point first, Point second) {}
   private record Altitude(Integer feet, boolean flightLevel, boolean unlimited) {}
-  private record Limits(Altitude minimum, Altitude maximum) {}
+  private record Limits(Altitude minimum, Altitude maximum, Double rnp) {}
 
   private static final class PublicationCounts extends DefaultHandler {
     private static final Set<String> REFERENCE_ELEMENTS = Set.of(

@@ -92,7 +92,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .rho(leg.rho().orElse(null))
           .rnp(leg.rnp().orElse(null))
           .routeDistance(leg.legDistance().orElse(null))
-          .verticalAngle(leg.verticalAngle().orElse(null))
+          .verticalAngle(leg.verticalAngle().map(angle -> -Math.abs(angle)).orElse(null))
           .turnDirection(leg.turnDirection().map(Standard::toTurnDirection).orElseGet(TurnDirection::either))
           .isFlyOverFix(leg.isFlyOver().orElse(false))
           .isPublishedHoldingFix(leg.isHolding().orElse(false))

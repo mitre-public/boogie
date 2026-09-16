@@ -1,11 +1,9 @@
 package org.mitre.tdp.boogie.dafif.database;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.dafif.assemble.FixAssemblyStrategy;
-import org.mitre.tdp.boogie.dafif.model.DafifRunway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +25,11 @@ public final class ConvertingLegDereferencer<F> {
   }
 
   public F fix(String wptDesc, String airportIdentifier, String waypointIdent, String countryCode) {
+    return fix(wptDesc, airportIdentifier, waypointIdent, countryCode, 3);
+  }
+
+  /** SID runway fixes use the physical threshold; approach fixes use the displaced threshold when provided. */
+  public F fix(String wptDesc, String airportIdentifier, String waypointIdent, String countryCode, int procedureType) {
     return switch (wptDesc) {
       case "A" -> terminalAreaDatabase.airportAt(waypointIdent, countryCode)
           .map(i -> fixAssemblyStrategy.convertAirport(i).stream())
@@ -40,7 +43,7 @@ public final class ConvertingLegDereferencer<F> {
           .filter(r -> waypointIdent.contains(r.lowEndIdentifier()) || waypointIdent.contains(r.highEndIdentifier()))
           .findFirst()
           .map(r -> fixAssemblyStrategy.convertRunwayEnd(r, waypointIdent,
-              terminalAreaDatabase.addRunwayFor(r).orElse(null),
+              procedureType == 2 ? null : terminalAreaDatabase.addRunwayFor(r).orElse(null),
               terminalAreaDatabase.airport(r.airportIdentification()).orElse(null)).stream())
           .flatMap(Stream::findFirst)
           .orElse(null);
@@ -65,20 +68,7 @@ public final class ConvertingLegDereferencer<F> {
         LOG.warn("MLS What year is it nav1 type: '{}' for navaid {} at {}", nav1Type, nav1Ident, airportIdentifier);
         yield null;
       }
-      case "Z" -> terminalAreaDatabase.airport(airportIdentifier).stream() //yes this is how you must do it :(
-          .findFirst()
-          .map(a -> {
-            Collection<DafifRunway> runways = terminalAreaDatabase.runwaysAt(airportIdentifier);
-            return runways.stream()
-                .flatMap(r -> terminalAreaDatabase.ilsComponentsForRunway(r).stream())
-                .filter(i -> i.ilsNavaidIdentifier().equals(Optional.of(nav1Ident)))
-                .findFirst()
-                .orElse(null);
-          })
-          .map(i -> fixAssemblyStrategy.convertIls(i).stream())
-          .flatMap(Stream::findFirst)
-          .orElse(null);
-      case "D" -> terminalAreaDatabase.ilsByNavaidIdentifier(airportIdentifier, nav1Ident)
+      case "Z", "D" -> terminalAreaDatabase.ilsByNavaidIdentifier(airportIdentifier, nav1Ident, nav1Type)
           .map(i -> fixAssemblyStrategy.convertIls(i).stream())
           .flatMap(Stream::findFirst)
           .orElse(null);

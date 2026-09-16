@@ -33,6 +33,10 @@ public class DafifIlsValidator implements Predicate<DafifRecord> {
         && containsParsedField(dafifRecord, "componentType", missingFieldConsumer)
         && containsParsedField(dafifRecord, "ilsNavaidElevation", missingFieldConsumer)
         && containsParsedField(dafifRecord, "geodeticDatum", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "geodeticLatitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "degreesLatitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "geodeticLongitude", missingFieldConsumer)
+        && containsParsedField(dafifRecord, "degreesLongitude", missingFieldConsumer)
         && containsParsedField(dafifRecord, "magneticVariation", missingFieldConsumer)
         && containsParsedField(dafifRecord, "cycleDate", missingFieldConsumer);
   }

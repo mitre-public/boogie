@@ -1,6 +1,8 @@
 package org.mitre.tdp.boogie.dafif.assemble;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +10,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.MagneticVariation;
+import org.mitre.caasd.commons.LatLong;
+import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
 import org.mitre.tdp.boogie.dafif.v81.converter.DafifTerminalSegmentConverter;
@@ -20,6 +27,48 @@ import org.mitre.tdp.boogie.dafif.v81.spec.DafifTerminalSegmentSpec;
 import com.google.common.collect.Range;
 
 class ProcedureAssemblyStrategyTest {
+
+  @Test
+  void trueCourseUsesTheSameVariationAsTheEmittedFix() {
+    var source = parse(Map.of("terminalMagneticCourse", "341.T", "waypointMagneticVariation", "10.000000",
+        "navaid1MagneticVariation", "11.000000"));
+    var fix = Fix.builder().fixIdentifier("FIX").latLong(LatLong.of(40.0, -70.0))
+        .magneticVariation(MagneticVariation.ofDegrees(12.0)).build();
+    var nav = Fix.builder().fixIdentifier("NAV").latLong(LatLong.of(40.0, -70.0))
+        .magneticVariation(MagneticVariation.ofDegrees(13.0)).build();
+    var withFix = ProcedureAssemblyStrategy.standard().convertLeg(source, fix, null, null);
+    var withNav = ProcedureAssemblyStrategy.standard().convertLeg(source, fix, nav, null);
+    assertAll(
+        () -> assertEquals(341.0, fix.magneticVariation().orElseThrow().magneticToTrue(withFix.outboundMagneticCourse().orElseThrow()), 1e-9),
+        () -> assertEquals(341.0, nav.magneticVariation().orElseThrow().magneticToTrue(withNav.outboundMagneticCourse().orElseThrow()), 1e-9)
+    );
+  }
+
+  @Test
+  void preservesRfGeometryHoldingMarkersAndDescendingVerticalAngles() {
+    var leg = assemble(Map.of("trackDescriptionCode", "RF", "arcRadius", "3.28",
+        "terminalWaypointDescriptionCode4", "C", "verticalNavigationVnav", "3.00"));
+    assertAll(
+        () -> assertEquals(3.28, leg.arcRadius().orElseThrow()),
+        () -> assertTrue(leg.isPublishedHoldingFix()),
+        () -> assertTrue(leg.isIntermediateOrInitialApproachFix()),
+        () -> assertEquals(-3.0, leg.verticalAngle().orElseThrow())
+    );
+  }
+
+  @Test
+  void convertsTrueCoursesUsingSourceVariationWithoutRelabelingAnUnreferencedCourse() {
+    var trueCourse = assemble(Map.of("terminalMagneticCourse", "341.T", "waypointMagneticVariation", "10.000000"));
+    var magneticCourse = assemble(Map.of("terminalMagneticCourse", "341.0", "waypointMagneticVariation", "10.000000"));
+    var unknownVariation = assemble(Map.of("terminalMagneticCourse", "341.T"));
+    var navaidCourse = assemble(Map.of("terminalMagneticCourse", "341.T", "navaid1MagneticVariation", "-10.000000"));
+    assertAll(
+        () -> assertEquals(331.0, trueCourse.outboundMagneticCourse().orElseThrow(), 1e-9),
+        () -> assertEquals(341.0, magneticCourse.outboundMagneticCourse().orElseThrow(), 1e-9),
+        () -> assertTrue(unknownVariation.outboundMagneticCourse().isEmpty()),
+        () -> assertEquals(351.0, navaidCourse.outboundMagneticCourse().orElseThrow(), 1e-9)
+    );
+  }
 
   @ParameterizedTest(name = "ALT_DESC={0}, ALT_ONE={1}, ALT_TWO={2} => {3}")
   @MethodSource("altitudeRestrictions")
@@ -84,6 +133,10 @@ class ProcedureAssemblyStrategyTest {
   }
 
   private static Leg assemble(Map<String, String> restrictions) {
+    return ProcedureAssemblyStrategy.standard().convertLeg(parse(restrictions), null, null, null);
+  }
+
+  private static DafifTerminalSegment parse(Map<String, String> restrictions) {
     var fields = new HashMap<>(Map.of(
         "airportIdentification", "US00001", "terminalProcedureType", "3", "terminalIdentifier", "I01",
         "terminalSequenceNumber", "10", "terminalApproachType", "I", "icaoCode", "KAAA",
@@ -95,7 +148,6 @@ class ProcedureAssemblyStrategyTest {
         .map(field -> fields.getOrDefault(field.fieldName(), ""))
         .collect(Collectors.joining("\t"));
     var record = DafifRecordParser.standard(spec).parse(DafifRecordType.TRM_SEG, source).orElseThrow();
-    var segment = new DafifTerminalSegmentConverter().apply(record).orElseThrow();
-    return ProcedureAssemblyStrategy.standard().convertLeg(segment, null, null, null);
+    return new DafifTerminalSegmentConverter().apply(record).orElseThrow();
   }
 }

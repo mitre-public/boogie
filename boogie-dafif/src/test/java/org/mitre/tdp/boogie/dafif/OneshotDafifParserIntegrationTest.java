@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.dafif;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,9 +44,12 @@ class OneshotDafifParserIntegrationTest {
   }
 
   @Test
-  void testAirwayCount() {
-    assertEquals(17269, records.airways().size(),
-        "Assembled airways should match unique ATS_IDENT+DIRECTION combos in ATS.TXT");
+  void testAirwaySectionsPreserveAllSourceSegments() {
+    assertAll(
+        () -> assertTrue(records.airways().size() > 17269, "Disconnected direction groups produce multiple sections"),
+        () -> assertEquals(156666, records.airways().stream().mapToLong(airway -> airway.legs().size() - 1).sum(),
+            "Assembled airway edges should match the ATS.TXT source segments")
+    );
   }
 
   @Test

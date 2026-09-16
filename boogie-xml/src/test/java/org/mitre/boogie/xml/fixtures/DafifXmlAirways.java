@@ -22,6 +22,7 @@ import org.mitre.boogie.xml.v23_4.generated.RecordType;
 import org.mitre.boogie.xml.v23_4.generated.RouteMaximumAltitude;
 import org.mitre.boogie.xml.v23_4.generated.RouteMinimumAltitude;
 import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
+import org.mitre.tdp.boogie.dafif.utils.DafifRnp;
 
 /** Merges DAFIF direction records into the connected paths supported by the v23_4 airway schema. */
 final class DafifXmlAirways {
@@ -156,7 +157,7 @@ final class DafifXmlAirways {
     from.setAirwayRouteType(routeType(properties.routeType()));
     from.setLevel(level(properties.level()));
     properties.distance().map(BigDecimal::valueOf).ifPresent(from::setRouteDistanceFrom);
-    properties.rnp().map(BigDecimal::valueOf).ifPresent(from::setRnp);
+    properties.rnp().map(DafifRnp::nauticalMiles).ifPresent(from::setRnp);
 
     // Orient published bearings to the output path. A reverse inbound is the reciprocal forward outbound.
     f.flatMap(DafifAirTrafficSegment::atsRouteOutboundMagneticCourse).flatMap(DafifXmlAirways::course)

@@ -22,6 +22,49 @@ import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
 class DafifXmlProceduresTest {
 
   @Test
+  void expandsStarSpeedsAndKeepsHoldingAndConditionalRestrictionsLocal() {
+    var refs = new DafifXmlReferences();
+    var airport = new Airport();
+    refs.addAirport("US00001", airport);
+    var parent = parent(1, "TEST1  TEST ARRIVAL").build();
+    DafifXmlProcedures.populate(List.of(parent), List.of(
+        segment(1, parent.terminalIdentifier(), 10, "5").speedLimit1(210.0).build(),
+        segment(1, parent.terminalIdentifier(), 20, "5").build(),
+        segment(1, parent.terminalIdentifier(), 30, "5").trackDescriptionCode("HF").speedLimit1(160.0).build(),
+        segment(1, parent.terminalIdentifier(), 40, "5").build(),
+        segment(1, parent.terminalIdentifier(), 50, "5").speedLimit1(180.0).speedLimitAircraftType1("J")
+            .speedLimitAltitude1("FL100").build(),
+        segment(1, parent.terminalIdentifier(), 60, "5").build()), refs);
+    var legs = airport.getTerminalProcedures().getStar().get(0).getStarCommonRoute().getProcedureLeg();
+    assertAll(
+        () -> assertEquals(210L, legs.get(1).getSpeedLimit().getAtOrBelow()),
+        () -> assertEquals(160L, legs.get(2).getSpeedLimit().getAtOrBelow()),
+        () -> assertEquals(210L, legs.get(3).getSpeedLimit().getAtOrBelow()),
+        () -> assertNull(legs.get(5).getSpeedLimit()),
+        () -> assertTrue(legs.get(5).getNotes().contains("DAFIF speed limit 1: 180 knots; aircraft=J; below altitude=FL100"))
+    );
+  }
+
+  @Test
+  void expandsSidSpeedsBackwardAndUsesAnUnqualifiedSecondLimit() {
+    var refs = new DafifXmlReferences();
+    var airport = new Airport();
+    refs.addAirport("US00001", airport);
+    var parent = parent(2, "TEST1  TEST DEPARTURE").build();
+    DafifXmlProcedures.populate(List.of(parent), List.of(
+        segment(2, parent.terminalIdentifier(), 10, "5").build(),
+        segment(2, parent.terminalIdentifier(), 20, "5").speedLimit1(220.0).speedLimitAircraftType1("J")
+            .speedLimit2(200.0).speedLimitAircraftType2("A").build(),
+        segment(2, parent.terminalIdentifier(), 30, "5").build()), refs);
+    var legs = airport.getTerminalProcedures().getSid().get(0).getSidCommonRoute().getProcedureLeg();
+    assertAll(
+        () -> assertEquals(200L, legs.get(0).getSpeedLimit().getAtOrBelow()),
+        () -> assertTrue(legs.get(0).getNotes().contains("DAFIF speed limit 1: 220 knots; aircraft=J; below altitude=unspecified")),
+        () -> assertNull(legs.get(2).getSpeedLimit())
+    );
+  }
+
+  @Test
   void distinguishesDafifStarAndSidTransitionCodesAndPreservesNames() {
     var refs = new DafifXmlReferences();
     var airport = new Airport();

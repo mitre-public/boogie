@@ -31,6 +31,23 @@ import org.mitre.tdp.boogie.dafif.model.DafifWaypoint;
 class DafifXmlPointsTest {
 
   @Test
+  void marksBearingsForTrueRunwayIdentifiersAsTrue() {
+    var trueRunway = runway().lowEndIdentifier("13T").highEndIdentifier("31T")
+        .lowEndMagneticHeading(129.0).highEndMagneticHeading(309.0).build();
+    var refs = new DafifXmlReferences();
+    convert(records(List.of(airport()), List.of(trueRunway, runway().build()), List.of(), List.of(), List.of(), List.of()), refs);
+
+    assertAll(
+        () -> assertEquals(129.0, refs.runway("US00001", "13T").getRunwayBearing().getBearingValue().doubleValue()),
+        () -> assertEquals(309.0, refs.runway("US00001", "31T").getRunwayBearing().getBearingValue().doubleValue()),
+        () -> assertEquals(Boolean.TRUE, refs.runway("US00001", "13T").getRunwayBearing().isIsTrueBearing()),
+        () -> assertEquals(Boolean.TRUE, refs.runway("US00001", "31T").getRunwayBearing().isIsTrueBearing()),
+        () -> assertEquals(Boolean.FALSE, refs.runway("US00001", "09").getRunwayBearing().isIsTrueBearing()),
+        () -> assertEquals(Boolean.FALSE, refs.runway("US00001", "27").getRunwayBearing().isIsTrueBearing())
+    );
+  }
+
+  @Test
   void preservesBothRunwayEndsAndSeparatesLandingThresholdFromPhysicalEnd() {
     var runway = runway().lowEndDisplacedThreshold(400).lowEndDisplacedThresholdElevation("00105")
         .lowEndLandingDistance(5600).highEndLandingDistance(6000).build();

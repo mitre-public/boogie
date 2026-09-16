@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 import org.mitre.boogie.xml.v23_4.generated.Airway;
 import org.mitre.boogie.xml.v23_4.generated.AirwayLeg;
@@ -29,12 +31,24 @@ import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
 
 class DafifXmlAirwaysTest {
 
+  @ParameterizedTest
+  @CsvSource({"100,10", "050,5", "040,4", "020,2", "010,1", "031,0.3", "152,0.15"})
+  void decodesSourceRnpToNauticalMiles(String encoded, BigDecimal nauticalMiles) {
+    var airway = convert(List.of(segment(10, "A", "B").requiredNavPerformance(Integer.parseInt(encoded)).build()),
+        references("A", "B")).get(0);
+    assertAll(
+        () -> assertEquals(nauticalMiles, airway.getAirwayLeg().get(0).getRnp()),
+        () -> assertNull(airway.getAirwayLeg().get(1).getRnp())
+    );
+  }
+
+
   @Test
   void placesSegmentValuesAtTheCorrectEndpointAndStoresFlightLevelsInFeet() {
     var first = segment(10, "A", "B")
         .atsRouteDistance(12.3).atsRouteOutboundMagneticCourse("89.T").atsRouteInboundMagneticCourse("90.1")
         .minimumAltitude("FL180").lowerLimit("05000").maxAuthorizedAltitude("FL450").upperLimit("UNLTD")
-        .requiredNavPerformance(5).build();
+        .requiredNavPerformance(50).build();
     var second = segment(20, "B", "C")
         .atsRouteDistance(45.6).atsRouteOutboundMagneticCourse("100.2").atsRouteInboundMagneticCourse("101.T")
         .lowerLimit("05000").upperLimit("UNLTD")
@@ -305,9 +319,9 @@ class DafifXmlAirwaysTest {
 
   @Test
   void preservesIncompatibleDirectionalRnpProfilesAsSeparateOneWayVariants() {
-    var forward = segment(10, "A", "B").biDirectional("Y").requiredNavPerformance(1)
+    var forward = segment(10, "A", "B").biDirectional("Y").requiredNavPerformance(10)
         .minimumAltitude("FL180").build();
-    var backward = segment(10, "B", "A").atsRouteDirection("W").biDirectional("Y").requiredNavPerformance(5)
+    var backward = segment(10, "B", "A").atsRouteDirection("W").biDirectional("Y").requiredNavPerformance(50)
         .minimumAltitude("FL200").build();
     var airways = convert(List.of(backward, forward), references("A", "B"));
 
