@@ -118,11 +118,23 @@ try (InputStream exi = Files.newInputStream(Path.of("arinc424.exi"));
 Conversion streams XML events without building a complete document in memory. Callers own the input
 and output streams and must close them. A codec can be reused for multiple documents.
 
-To generate a compressed, schema-less EXI file from `gibberish-sample.xml`, run from the repository
-root:
+### Test fixtures and export validation
+
+Run the module's unit tests from the repository root:
 
 ```shell
-./gradlew :boogie-xml:test --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesGibberishSampleExi' --rerun-tasks
+./gradlew :boogie-xml:unit
+```
+
+These use checked-in or synthetic fixtures and generate their test schemas locally; the private
+integration archives and official ARINC XSDs are not required.
+
+#### Sample EXI artifacts
+
+To generate a compressed, schema-less EXI file from `gibberish-sample.xml`:
+
+```shell
+./gradlew :boogie-xml:unit --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesGibberishSampleExi' --rerun-tasks
 ```
 
 The test writes `boogie-xml/build/exi/gibberish-sample-no-schema.exi`. The file remains after the test until the
@@ -133,18 +145,43 @@ Its XSDs are generated from the checked-in JAXB classes under `build/exi/gibberi
 using schema ID `urn:boogie:test:arinc424:jaxb:23.4`. This keeps both schema modes covered by unit tests
 without external schema files. These generated test schemas are distinct from the official ARINC XSDs.
 
+#### Full CIFP and DAFIF integration tests
+
 The full fixture and export tests use the `XML` tag and run in their own task, defined by the
-shared `java-conventions` build plugin:
+shared [java-conventions build plugin](../buildSrc/src/main/kotlin/boogie/java-conventions.gradle.kts):
 
 ```shell
 ./gradlew :boogie-xml:xml-integration
 ```
 
-The XML CI job checks out `mitre-tdp/boogie-test` with Git LFS into `boogie-xml/src/test/resources`,
-using the same SSH key as the other integration jobs. That checkout supplies `DAFIF8_1_2601.zip`;
+The [XML CI job](../.github/workflows/xml-integration.yml) checks out `mitre-tdp/boogie-test` with Git LFS
+into `boogie-xml/src/test/resources`, using the same SSH key as the other integration jobs.
+That checkout supplies `DAFIF8_1_2601.zip`;
 the job also copies the tracked `cifp-2101.dat.gz` fixture from `boogie-arinc/src/test/resources`.
-Local runs need both archives in `boogie-xml/src/test/resources`. The `unit`, `cifp-integration`, `dafif-integration`,
-`lido-integration`, and `assignment-integration` tasks exclude the XML-tagged tests.
+Local runs need both archives in `boogie-xml/src/test/resources`. The `unit`, `cifp-integration`,
+`dafif-integration`, `lido-integration`, and `assignment-integration` tasks exclude the XML-tagged tests.
+The general `test` task still includes them and therefore also needs the integration archives.
+The [publish workflow](../.github/workflows/publish.yml) runs XML integration before releasing.
+
+The task runs four tests: CIFP and DAFIF fixture validation, plus one XML/EXI export test for each source.
+Its HTML report is `boogie-xml/build/reports/tests/xml-integration/index.html`.
+
+Together, the unit and integration suites check:
+
+- Fixture record counts, unique XML IDs, resolvable references, cycle dates, and validity dates.
+  The DAFIF check also reconstructs the directed airway graph and compares every edge's altitude
+  limits with the source, including flight-level versus MSL references.
+- Each exported EXI file's `$EXI` cookie and complete decoding through `END_DOCUMENT`, with one
+  root and balanced elements. Namespace-aware element and attribute names, counts, and document
+  structure are compared with the source XML.
+- Parsed model values and assembled record counts for the small sample in `OneshotExiParserTest`.
+  Full-publication structural comparisons omit text and attribute values because typed EXI values
+  can be normalized; those comparisons do not establish complete value preservation or XSD validity.
+
+Related checks use JUnit `assertAll` so independent failures are reported together. Checks needed
+before reading dependent values still run first.
+
+#### CIFP export
 
 To run only the CIFP export:
 
@@ -170,6 +207,8 @@ mapped XML field are retained in record notes.
 XML altitude values use feet, including flight levels: FL270 is `27000` with `isFlightLevel=true`.
 The flight-level flag identifies the pressure reference; readers keep the numeric value in feet.
 
+#### DAFIF export
+
 To run only the DAFIF export:
 
 ```shell
@@ -186,6 +225,16 @@ controlled airspaces, FIR/UIRs, and restrictive airspaces in a JAXB publication.
 Heliport tables (`TRMH`/`SUPPH`) and other unsupported tables are omitted. Source values without a
 mapped XML field are retained in notes where applicable. These converters are test helpers.
 
+For terminal procedures, altitude-description codes determine the constraint: `B` uses altitude 1
+as the upper bound and altitude 2 as the lower bound; `C` uses altitude 2 as the lower bound.
+Flight levels are converted to feet and keep their flight-level flag.
+
+The first terminal speed limit becomes an XML at-or-below limit in knots only when it has no
+altitude qualifier and its aircraft type is absent or `A` (all aircraft). Qualified first limits
+and any second speed limit are retained in notes with their aircraft and altitude qualifiers.
+For cycle 2601, 31,037 first speed limits produce 31,004 XML speed limits; the remaining 33 are
+aircraft-qualified and stay in notes.
+
 DAFIF airway directions are merged using a graph keyed by airway identifier and waypoint identifier/country.
 Overlapping forward and reverse segments share one XML leg; one-way segments carry forward/backward
 restrictions relative to the output sequence. Equal altitude limits are emitted once, while different
@@ -197,8 +246,10 @@ path variants. The fixture does not create connections between unrelated section
 directions and end markers remain in notes.
 
 DAFIF airspaces retain source start/end coordinates, arc directions and starting bearings, circle centers
-and radii, and AGL/MSL/flight-level altitude references. Generalized boundaries use great-circle edges
-between the supplied approximation points. As in the standard DAFIF assembler, gaps up to 0.1 NM are
+and radii, and AGL/MSL/flight-level altitude references. Altitudes `GND`/`SURFACE`, `UNLTD`, `U`, and
+`BY NOTAM` become ground, unlimited, unknown, and NOTAM flags, respectively, with no numeric altitude.
+Generalized boundaries use great-circle edges between the supplied approximation points.
+As in the standard DAFIF assembler, gaps up to 0.1 NM are
 bridged explicitly; point, annular, open, or disconnected airspaces are logged and omitted as a whole.
 Cycle 2601 emits 17,956 boundaries and 18,111 special-use airspaces, omitting 35 unsupported definitions.
 Special-use sectors remain separate. Source identifiers, sectors, original types and other unmatched
@@ -330,6 +381,7 @@ try (StreamingMarshaller marshaller = new StreamingMarshaller(output)) {
 ```
 
 The `StreamingMarshaller` enforces proper XML structure:
+
 - `writeHeader()` must be called first
 - Other sections cannot be written while the airports section is open
 - Auto-closes the footer when using try-with-resources
