@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.Airspace;
+import org.mitre.tdp.boogie.BoogieType;
+import org.mitre.tdp.boogie.CenterIdentification;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
@@ -121,7 +123,9 @@ class TestCifpProcedureAssemblerIntegration {
 
     assertAll(
         () -> assertEquals("KJSD-Z-K6-STRATFORD-A-D", stratford.identifier()),
-        () -> assertEquals("KJSD", stratford.centerIdent().orElseThrow()),
+        () -> assertEquals("KJSD", stratford.centerIdentification().orElseThrow().identifier()),
+        () -> assertEquals(CenterIdentification.builder("KJSD")
+            .area("USA").icaoRegion("K6").type(BoogieType.HELIPORT).build(), stratford.centerIdentification().orElseThrow()),
         () -> assertEquals(4, stratford.sequences().size()),
         () -> assertEquals("KJSD", center.fixIdentifier()),
         // Heliport coordinates N41151223 / W073052199, not a boundary arc's center.

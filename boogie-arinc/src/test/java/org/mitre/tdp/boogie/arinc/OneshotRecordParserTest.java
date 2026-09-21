@@ -2,6 +2,8 @@ package org.mitre.tdp.boogie.arinc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static java.util.stream.Collectors.toMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -9,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.util.DemotedException;
@@ -63,5 +66,44 @@ class OneshotRecordParserTest {
     var records = parser.assembleFrom(new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII)));
 
     assertEquals(List.of("UMGOS"), records.fixes().stream().map(Fix::fixIdentifier).toList());
+  }
+
+  @Test
+  void testControlledAirspaceCenterIdentificationWithoutResolvedFixes() {
+    // Standalone circle boundaries with UF, PA, HA, and unspecified supplier references.
+    // No referenced records are supplied: identification must survive independently of fix resolution.
+    String input = String.join("\n",
+        "SAFRUCDACDAAA UFD  B00010BU   CE                   N35381700W00034440002500360   00984AFL045MALGIERS CTA 2 NORTH WEST      906722605",
+        "SAFRUCDAZDAAD PAD  A00010LU   CE                   N35195785E00412211500800360   GND  A02952ABOU SAADA CTR                 923992605",
+        "SCANUCCYZCYBN HAE  A00010LU   CE                   N44162000W07954420000500360   GND  A03700MBORDEN CTR                    393492605",
+        "SAFRUCFVZFVTL   D  A00010BU   CE                   S19261200E02951390001800360   GND  A06500MGWERU/THORNHILL CTR           720322210"
+    );
+    var records = OneshotRecordParser.standard(ArincVersion.V19)
+        .assembleFrom(new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII)));
+
+    Map<String, CenterIdentification> identifications = records.controlledAirspaces().stream()
+        .map(airspace -> airspace.centerIdentification().orElseThrow())
+        .collect(toMap(CenterIdentification::identifier, identification -> identification));
+
+    assertAll(
+        () -> assertEquals(4, records.controlledAirspaces().size()),
+        () -> assertEquals(Map.of(
+            "DAAA", centerIdentification("DAAA", "AFR", "DA", BoogieType.AIRSPACE),
+            "DAAD", centerIdentification("DAAD", "AFR", "DA", BoogieType.AIRPORT),
+            "CYBN", centerIdentification("CYBN", "CAN", "CY", BoogieType.HELIPORT),
+            "FVTL", centerIdentification("FVTL", "AFR", "FV", null)
+        ), identifications),
+        () -> assertTrue(records.controlledAirspaces().stream().allMatch(airspace -> airspace.center().isEmpty())),
+        () -> assertTrue(records.controlledAirspaces().stream()
+            .allMatch(airspace -> airspace.sequences().size() == 1 && airspace.sequences().get(0).geometry() == Geometry.CIRCLE))
+    );
+  }
+
+  private CenterIdentification centerIdentification(String identifier, String area, String icaoRegion, BoogieType type) {
+    return CenterIdentification.builder(identifier)
+        .area(area)
+        .icaoRegion(icaoRegion)
+        .type(type)
+        .build();
   }
 }
