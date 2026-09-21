@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
-import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import org.mitre.caasd.commons.Pair;
 import org.mitre.tdp.boogie.*;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
@@ -9,15 +10,12 @@ import org.mitre.tdp.boogie.arinc.model.ArincProcedureLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static org.mitre.caasd.commons.util.Partitioners.splitOnPairwiseChange;
 
@@ -27,6 +25,9 @@ import static org.mitre.caasd.commons.util.Partitioners.splitOnPairwiseChange;
  *
  * <p>This class can be used with the {@link FixAssemblyStrategy#standard()} + {@link ProcedureAssemblyStrategy#standard()} to
  * generate lightweight Boogie-defined {@link Procedure} implementations that can be used with other Boogie algorithms.
+ *
+ * <p>The standard assembler groups and orders legs, then splits embedded missed approaches only from the COMMON/final route
+ * of approach procedures. It does not remove duplicate legs or transitions.
  */
 public interface ProcedureAssembler<P> {
 
@@ -47,13 +48,7 @@ public interface ProcedureAssembler<P> {
     private static final ArincRequiredEquipageClassifier requiredEquipageClassifier = new ArincRequiredEquipageClassifier();
     private static final ArincProcedureGrouper procedureGrouper = ArincProcedureGrouper.INSTANCE;
     private static final ArincTransitionGrouper transitionGrouper = ArincTransitionGrouper.INSTANCE;
-    private static final Comparator<ArincProcedureLeg> LEG_COMPARATOR = comparing(ArincProcedureLeg::sequenceNumber).thenComparing(i -> i.categoryOrType().orElse("UNK"));
     private final ArincProcedureLegConverter<P, T, L, F> inflator;
-    /**
-     * Predicate for determining whether there should be any special splitting logic applied to sequential legs within a procedure
-     * transition (e.g. to split the missed approach off of the final approach see - {@link IsFirstLegOfMissedApproach}).
-     */
-    private final BiPredicate<ArincProcedureLeg, ArincProcedureLeg> shouldSplitTransition;
     private final ProcedureAssemblyStrategy<P, T, L, F> strategy;
     private Standard(
         ArincTerminalAreaDatabase arincTerminalAreaDatabase,
@@ -62,7 +57,6 @@ public interface ProcedureAssembler<P> {
         ProcedureAssemblyStrategy<P, T, L, F> procedureStrategy
     ) {
       this.inflator = new ArincProcedureLegConverter<>(arincTerminalAreaDatabase, arincFixDatabase, procedureStrategy, fixStrategy);
-      this.shouldSplitTransition = (l1, l2) -> IsFirstLegOfMissedApproach.INSTANCE.test(l2);
       this.strategy = requireNonNull(procedureStrategy);
     }
 
@@ -82,12 +76,23 @@ public interface ProcedureAssembler<P> {
      */
     private P toProcedure(List<ArincProcedureLeg> arincProcedureLegs) {
 
+      // Procedure, airport, and subsection identifiers are shared by every leg in this group.
+      ArincProcedureLeg representative = arincProcedureLegs.get(0);
+      boolean isApproach = "F".equals(representative.subSectionCode().orElseThrow());
+
       Collection<List<ArincProcedureLeg>> byTransition = transitionGrouper.apply(arincProcedureLegs);
 
-      Multimap<TransitionType, List<ArincProcedureLeg>> byType = LinkedHashMultimap.create();
+      Multimap<TransitionType, List<ArincProcedureLeg>> byType = LinkedListMultimap.create();
 
-      byTransition.stream().map(this::repartition).flatMap(Collection::stream)
-          .forEach(transition -> byType.put(transitionTypeClassifier.applySorted(transition), transition));
+      byTransition.stream()
+          .map(t -> Pair.of(transitionTypeClassifier.applySorted(t), t))
+          .forEach(p -> {
+            if (isApproach && TransitionType.COMMON.equals(p.first())) {
+              splitFinalApproach(p.second()).forEach(split -> byType.put(transitionTypeClassifier.apply(split), split));
+            } else {
+              byType.put(p.first(), p.second());
+            }
+          });
 
       RequiredNavigationEquipage equipage = requiredEquipageClassifier.apply(byType);
 
@@ -99,18 +104,14 @@ public interface ProcedureAssembler<P> {
           ))
           .collect(Collectors.toList());
 
-      ArincProcedureLeg representative = arincProcedureLegs.stream()
-          .min(LEG_COMPARATOR)
-          .orElseThrow(IllegalStateException::new);
-
       return strategy.convertProcedure(representative, equipage, transitions);
     }
 
     /**
-     * Re-partitions the name-grouped transition legs based on the configured {@link #shouldSplitTransition} predicate.
+     * Splits a sorted approach COMMON/final route before each embedded missed-approach start marker.
      */
-    private List<List<ArincProcedureLeg>> repartition(List<ArincProcedureLeg> procedureLegs) {
-      return splitOnPairwiseChange(procedureLegs, (ls, next) -> shouldSplitTransition.negate().test(ls.get(ls.size() - 1), next));
+    private List<List<ArincProcedureLeg>> splitFinalApproach(List<ArincProcedureLeg> procedureLegs) {
+      return splitOnPairwiseChange(procedureLegs, (legs, next) -> !IsFirstLegOfMissedApproach.INSTANCE.test(next));
     }
 
     /**

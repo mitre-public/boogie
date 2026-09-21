@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.arinc.v18.field;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.SingleCharacterLookup;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -55,9 +56,7 @@ public final class AltitudeDescription implements FieldSpec<String> {
 
   @Override
   public Optional<String> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .filter(allowedValues::contains)
-        .map(s -> s.replace(' ', '@'));
+    return VALUES.parse(source, startOffset, endOffset);
   }
 
   /**
@@ -77,4 +76,6 @@ public final class AltitudeDescription implements FieldSpec<String> {
       "V",
       "X",
       "Y");
+
+  private static final SingleCharacterLookup<String> VALUES = SingleCharacterLookup.of(allowedValues, s -> s.replace(' ', '@'));
 }

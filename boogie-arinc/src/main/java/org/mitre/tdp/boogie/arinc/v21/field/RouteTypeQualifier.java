@@ -3,10 +3,12 @@ package org.mitre.tdp.boogie.arinc.v21.field;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.SingleCharacterLookup;
+import org.mitre.tdp.boogie.arinc.TrimmableField;
 import org.mitre.tdp.boogie.arinc.v21.field.qualifiers.ApproachQualifier1;
 import org.mitre.tdp.boogie.arinc.v21.field.qualifiers.ApproachQualifier2;
 import org.mitre.tdp.boogie.arinc.v21.field.qualifiers.ApproachQualifier3;
@@ -20,7 +22,7 @@ import org.mitre.tdp.boogie.arinc.v21.field.qualifiers.StarQualifier3;
 /**
  * Starting in supplement 22 the route qualifiers changed to capture the PBN nav spec concept.
  */
-public final class RouteTypeQualifier implements FieldSpec<String> {
+public final class RouteTypeQualifier extends TrimmableField<String> {
   @Override
   public int fieldLength() {
     return 1;
@@ -43,10 +45,10 @@ public final class RouteTypeQualifier implements FieldSpec<String> {
 
   private static final Set<String> VALID = Stream.of(QUAL1, QUAL2, QUAL3).flatMap(Collection::stream).collect(Collectors.toSet());
 
+  private static final SingleCharacterLookup<String> VALUES = SingleCharacterLookup.of(VALID, Function.identity());
+
   @Override
-  public Optional<String> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .map(String::trim)
-        .filter(VALID::contains);
+  protected Optional<String> parseTrimmed(String source, int startOffset, int endOffset) {
+    return VALUES.parse(source, startOffset, endOffset);
   }
 }

@@ -72,8 +72,8 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
   }
 
   /**
-   * Classifies legs already ordered by sequence number. Procedure assembly establishes transition membership first, then sorts
-   * each transition before missed-approach partitioning and classification.
+   * Classifies legs already ordered by sequence number. Accepts a complete transition group or a partition produced when
+   * splitting a final approach. Assembly uses the initial classification to restrict splitting to approach COMMON routes.
    */
   TransitionType applySorted(List<ArincProcedureLeg> sortedArincProcedureLegs) {
     if ("F".equals(sortedArincProcedureLegs.get(0).subSectionCode().orElseThrow(IllegalStateException::new))) {

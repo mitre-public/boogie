@@ -67,7 +67,7 @@ public interface AirwayAssembler<A> {
     public Stream<A> assemble(Collection<ArincAirwayLeg> arincAirwayLegs) {
       return arincAirwayLegs.stream()
           .sorted(LEG_COMPARATOR)
-          .collect(Partitioners.newListCollector((list, next) -> shouldSplitAirway.negate().test(list.get(list.size() - 1), next)))
+          .collect(Partitioners.newListCollector((list, next) -> !shouldSplitAirway.test(list.get(list.size() - 1), next)))
           .stream()
           .map(this::toAirway);
     }
