@@ -1,6 +1,7 @@
 package org.mitre.boogie.xml;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mitre.boogie.xml.exi.ExiAssertions;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OneshotExiParserTest {
 
   @Test
+  @EnabledIfSystemProperty(named = "boogie.xml.conversionFixtures", matches = "true", disabledReason = "Fixture generation is opt-in")
   void writesGibberishSampleExi() throws Exception {
     ExiOptions options = ExiOptions.schemaLess().withCompression(true);
     Path exiFile = Path.of("build", "exi", "gibberish-sample-no-schema.exi");
@@ -37,6 +39,7 @@ class OneshotExiParserTest {
   }
 
   @Test
+  @EnabledIfSystemProperty(named = "boogie.xml.conversionFixtures", matches = "true", disabledReason = "Fixture generation is opt-in")
   void writesGibberishSampleSchemaInformedExi() throws Exception {
     ExiOptions options = ExiOptions.schemaInformed(fixtureSchema()).withCompression(true);
     Path exiFile = Path.of("build", "exi", "gibberish-sample-schema-informed.exi");
@@ -54,13 +57,13 @@ class OneshotExiParserTest {
     ExiOptions options = (schemaInformed ? ExiOptions.schemaInformed(fixtureSchema()) : ExiOptions.schemaLess())
         .withCompression(true);
     ByteArrayOutputStream encoded = new ByteArrayOutputStream();
-    try (InputStream input = fixture()) {
+    try (InputStream input = parserFixture()) {
       new ExiCodec(options).encode(input, encoded);
     }
 
     byte[] exi = encoded.toByteArray();
     ArincRecords expected;
-    try (InputStream input = fixture()) {
+    try (InputStream input = parserFixture()) {
       expected = OneshotXmlModelParser.standard(ArincXmlVersion.V23_4).parseFrom(input);
     }
     var modelParser = OneshotXmlModelParser.builder()
@@ -83,22 +86,29 @@ class OneshotExiParserTest {
           () -> assertModelValues(expected.arincAirways(), actual.arincAirways(), "Airway models and references"),
           () -> assertModelValues(expected.holdingPatterns(), actual.holdingPatterns(), "Holding pattern models"),
           () -> assertModelValues(expected.heliports(), actual.heliports(), "Heliport models"),
-          () -> assertEquals(5, assembled.airports().size(), "Assembled airports"),
-          () -> assertEquals(13, assembled.fixes().size(), "Assembled fixes"),
-          () -> assertEquals(5, assembled.airways().size(), "Assembled airways"),
-          () -> assertEquals(75, assembled.procedures().size(), "Assembled procedures"),
-          () -> assertEquals(5, assembled.heliports().size(), "Assembled heliports")
+          () -> assertEquals(1, assembled.airports().size(), "Assembled airports"),
+          () -> assertEquals(4, assembled.fixes().size(), "Assembled fixes"),
+          () -> assertEquals(1, assembled.airways().size(), "Assembled airways"),
+          () -> assertEquals(1, assembled.procedures().size(), "Assembled procedures"),
+          () -> assertEquals(1, assembled.heliports().size(), "Assembled heliports"),
+          () -> assertEquals(List.of("ALPHA", "BRAVO"), assembled.airways().iterator().next().legs().stream()
+              .map(leg -> leg.associatedFix().orElseThrow().fixIdentifier()).toList()),
+          () -> assertEquals("TST", assembled.procedures().iterator().next().transitions().iterator().next()
+              .legs().get(1).recommendedNavaid().orElseThrow().fixIdentifier())
       );
     }
   }
 
   private static void assertModelValues(Object expected, Object actual, String description) {
-    // Avoid rendering the entire publication in an assertion failure (hundreds of MB of text).
     assertEquals(modelValues(expected), modelValues(actual), description + " must retain all field values");
   }
 
   private static InputStream fixture() {
     return OneshotExiParserTest.class.getResourceAsStream("/v23_4/gibberish-sample.xml");
+  }
+
+  private static InputStream parserFixture() {
+    return OneshotExiParserTest.class.getResourceAsStream("/v23_4/parser-sample.xml");
   }
 
   private static ExiSchema fixtureSchema() throws Exception {
