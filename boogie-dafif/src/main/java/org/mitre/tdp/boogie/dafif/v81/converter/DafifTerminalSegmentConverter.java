@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.dafif.v81.converter;
 
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.model.DafifTerminalSegment;
+import org.mitre.tdp.boogie.dafif.utils.DafifRnp;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -47,7 +48,8 @@ public class DafifTerminalSegmentConverter implements Function<DafifRecord, Opti
         .altitudeDescription(dafifRecord.<String>optionalField("altitudeDescription").orElse(null))
         .altitude1(dafifRecord.<String>optionalField("altitude1").orElse(null))
         .altitude2(dafifRecord.<String>optionalField("altitude2").orElse(null))
-        .requiredNavPerformance(dafifRecord.<Integer>optionalField("requiredNavPerformance").map(this::generateRequiredNavPerformance).orElse(null))
+        .requiredNavPerformance(dafifRecord.<Integer>optionalField("requiredNavPerformance")
+            .map(DafifRnp::nauticalMiles).map(Number::doubleValue).orElse(null))
         .cycleDate(dafifRecord.requiredField("cycleDate"))
         .waypointGeodeticLatitude(dafifRecord.<String>optionalField("waypointGeodeticLatitude").orElse(null))
         .waypointDegreesLatitude(dafifRecord.<Double>optionalField("waypointDegreesLatitude").orElse(null))
@@ -86,9 +88,4 @@ public class DafifTerminalSegmentConverter implements Function<DafifRecord, Opti
         .build());
   }
 
-  private Double generateRequiredNavPerformance(Integer dafifValue) {
-    int mantissa = dafifValue / 10;
-    int decimals = dafifValue % 10;
-    return mantissa / Math.pow(10.0, decimals);
-  }
 }

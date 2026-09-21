@@ -6,7 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
@@ -23,6 +28,27 @@ public class TestDafifAtsSpec {
   private static final DafifAtsConverter converter = new DafifAtsConverter();
 
   public static final String RAW_ATS = "1AW1\t10\tE\tD\tHSSS\tY\tA\tL\tO\tHLLL\t\tORNAT\tLY\tE\t\tC\t\tN20000000\t20.000000\tE025000000\t25.000000\tHSSS\t4\tDOG\tSU\tV\t\tC\t\tN19105726\t19.182572\tE030253822\t30.427283\t99.0\t311.0\t99.0\tFL55\tFL285\tFL55\t\t\t\t201805\t\n";
+
+  @ParameterizedTest
+  @CsvSource({
+      "17, waypoint1GeodeticLatitude", "18, waypoint1DegreesLatitude",
+      "19, waypoint1GeodeticLongitude", "20, waypoint1DegreesLongitude",
+      "29, waypoint2GeodeticLatitude", "30, waypoint2DegreesLatitude",
+      "31, waypoint2GeodeticLongitude", "32, waypoint2DegreesLongitude"
+  })
+  void rejectsMissingRequiredEndpointCoordinates(int column, String field) {
+    String[] columns = RAW_ATS.split("\t", -1);
+    columns[column] = "";
+    DafifRecord incomplete = parser.parse(DafifRecordType.ATS, String.join("\t", columns)).orElseThrow();
+    var missingFields = new ArrayList<String>();
+    var reportingValidator = new DafifAtsValidator((record, missing) -> missingFields.add(missing));
+    boolean valid = reportingValidator.test(incomplete);
+
+    assertAll(
+        () -> assertFalse(valid, "ATS endpoint coordinates are required by the table layout"),
+        () -> assertEquals(List.of(field), missingFields)
+    );
+  }
 
   @Test
   void testParseDafifAirport() {

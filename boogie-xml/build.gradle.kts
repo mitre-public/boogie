@@ -9,11 +9,20 @@ dependencies {
     implementation(project(":boogie-arinc"))
 
     implementation(rootProject.libs.bundles.jaxb)
+    implementation(libs.exificient)
     implementation(libs.bundles.commons)
 
     testImplementation(platform(rootProject.libs.junit.bom))
     testImplementation(rootProject.libs.bundles.test.tools)
     testImplementation(libs.bundles.jgrapht)
+    testImplementation(project(":boogie-dafif"))
+}
+
+tasks.withType<Test>().configureEach {
+    // EXIficient 1.0.7 asserts !globalValues.contains(value) for every decoded string.
+    // That debug check is quadratic on full publications. Keep JUnit and other JVM
+    // assertions enabled while using this decoder class's normal runtime behavior.
+    jvmArgs("-da:com.siemens.ct.exi.core.datatype.strings.StringDecoderImpl")
 }
 
 mavenPublishing {

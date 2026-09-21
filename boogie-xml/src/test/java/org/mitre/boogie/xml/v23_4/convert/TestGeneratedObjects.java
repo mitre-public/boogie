@@ -603,15 +603,15 @@ final class TestGeneratedObjects {
   static AltitudeConstraint newAltitudeConstraint() {
     AltitudeConstraint ac = new AltitudeConstraint();
     ac.setAt(newConstraint(5000, false));
-    ac.setAtOrAbove(newConstraint(40, true));
-    ac.setAtOrBelow(newConstraint(80, true));
+    ac.setAtOrAbove(newConstraint(4000, true));
+    ac.setAtOrBelow(newConstraint(8000, true));
     return ac;
   }
 
   static AltitudeTermination newAltitudeTermination() {
     AltitudeTermination at = new AltitudeTermination();
     at.setTerminationType(AltitudeTerminationType.LEG_TERMINATION);
-    at.setAltitude(newConstraint(60, true));
+    at.setAltitude(newConstraint(6000, true));
     return at;
   }
 

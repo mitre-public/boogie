@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,8 +22,9 @@ import org.mitre.tdp.boogie.dafif.model.DafifAirTrafficSegment;
  * type {@code A} representing an Airway.
  *
  * <p>DAFIF codes airways with separate records per direction (e.g., direction "E" and "W" for the same airway identifier).
- * Each direction is assembled into its own {@code A} instance. Segments within a direction are sorted by sequence number
- * and produce an N+1 leg chain: the first leg carries the starting fix, subsequent legs carry each segment's ending fix.
+ * Segments within a direction are sorted by sequence number and split at discontinuities or published end markers.
+ * Each continuous section produces its own {@code A} instance with N+1 legs: the first leg carries the starting fix,
+ * subsequent legs carry each segment's ending fix.
  *
  * @param <A> the airway type
  */
@@ -52,22 +55,42 @@ public interface AirwayAssembler<A> {
     @Override
     public Stream<A> assemble(Collection<DafifAirTrafficSegment> segments) {
       Map<String, List<DafifAirTrafficSegment>> byIdentifierAndDirection = segments.stream()
-          .collect(Collectors.groupingBy(seg -> seg.atsIdentifier() + "|" + seg.atsRouteDirection()));
+          .collect(Collectors.groupingBy(seg -> seg.atsIdentifier() + "|" + seg.atsRouteDirection(),
+              TreeMap::new, Collectors.toList()));
 
-      return byIdentifierAndDirection.values().stream().map(this::toAirway);
+      return byIdentifierAndDirection.values().stream().flatMap(this::toAirways);
     }
 
-    private A toAirway(List<DafifAirTrafficSegment> directionSegments) {
+    private Stream<A> toAirways(List<DafifAirTrafficSegment> directionSegments) {
       List<DafifAirTrafficSegment> sorted = directionSegments.stream()
           .sorted(Comparator.comparing(DafifAirTrafficSegment::atsRouteSequenceNumber))
-          .collect(Collectors.toList());
+          .toList();
 
-      List<L> legs = buildLegs(sorted);
-      return airwayStrategy.convertAirway(sorted.get(0), legs);
+      List<A> airways = new ArrayList<>();
+      int start = 0;
+      for (int index = 1; index < sorted.size(); index++) {
+        if (!continues(sorted.get(index - 1), sorted.get(index))) {
+          airways.add(toAirway(sorted.subList(start, index)));
+          start = index;
+        }
+      }
+      airways.add(toAirway(sorted.subList(start, sorted.size())));
+      return airways.stream();
+    }
+
+    private boolean continues(DafifAirTrafficSegment previous, DafifAirTrafficSegment next) {
+      return Objects.equals(previous.waypoint2WaypointIdentifierWptIdent(), next.waypoint1WaypointIdentifierWptIdent())
+          && Objects.equals(previous.waypoint2CountryCode(), next.waypoint1CountryCode())
+          && previous.waypoint2AtsWaypointDescriptionCode2().filter("E"::equals).isEmpty()
+          && next.waypoint1AtsWaypointDescriptionCode2().filter("E"::equals).isEmpty();
+    }
+
+    private A toAirway(List<DafifAirTrafficSegment> section) {
+      return airwayStrategy.convertAirway(section.get(0), buildLegs(section));
     }
 
     /**
-     * Builds the N+1 leg list from sorted segments within a single direction.
+     * Builds the N+1 leg list from sorted segments within a continuous section of a single direction.
      * The first leg carries the starting fix (wpt1 of first segment), subsequent legs carry each segment's ending fix (wpt2).
      */
     private List<L> buildLegs(List<DafifAirTrafficSegment> sorted) {
@@ -78,10 +101,12 @@ public interface AirwayAssembler<A> {
           first.waypoint1WaypointIdentifierWptIdent(), first.waypoint1CountryCode());
       legs.add(airwayStrategy.convertStartLeg(first, startFix));
 
+      F fromFix = startFix;
       for (DafifAirTrafficSegment seg : sorted) {
         F toFix = resolveFix(seg.waypoint2AtsWaypointDescriptionCode1(),
             seg.waypoint2WaypointIdentifierWptIdent(), seg.waypoint2CountryCode());
-        legs.add(airwayStrategy.convertLeg(seg, toFix));
+        legs.add(airwayStrategy.convertLeg(seg, fromFix, toFix));
+        fromFix = toFix;
       }
 
       return legs;

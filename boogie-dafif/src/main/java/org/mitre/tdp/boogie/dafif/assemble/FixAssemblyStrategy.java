@@ -160,7 +160,7 @@ public interface FixAssemblyStrategy<F> {
       Supplier<Instant> cycleDate = () -> AiracCycle.startDate(navaid.cycleDate().toString().substring(2));
       MagneticVariation magneticVariation = Optional.of(navaid)
           .flatMap(DafifNavaid::navaidSlavedVariation)
-          .map(DafifMagVars::fromDynamic)
+          .map(DafifMagVars::fromRecord)
           .orElseGet(() -> MagneticVariation.from(location.latitude(), location.longitude(), cycleDate.get()));
       return List.of(Fix.builder()
           .fixIdentifier(navaid.navaidIdentifier())

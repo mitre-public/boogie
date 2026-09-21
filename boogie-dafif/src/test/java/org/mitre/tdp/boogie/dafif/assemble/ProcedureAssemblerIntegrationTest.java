@@ -147,6 +147,47 @@ public class ProcedureAssemblerIntegrationTest {
   }
 
   @Test
+  void testCrossingAltitudeAndUnqualifiedSpeedCounts() {
+    List<? extends Leg> legs = allProcedures.stream()
+        .flatMap(procedure -> procedure.transitions().stream())
+        .flatMap(transition -> transition.legs().stream())
+        .toList();
+    assertAll(
+        () -> assertEquals(222774, legs.stream().filter(leg -> leg.altitudeConstraint().hasLowerBound()
+            || leg.altitudeConstraint().hasUpperBound()).count(), "Every source crossing altitude is retained"),
+        () -> assertEquals(29135, legs.stream().filter(leg -> leg.altitudeConstraint().hasLowerBound()
+            && leg.altitudeConstraint().hasUpperBound()
+            && leg.altitudeConstraint().lowerEndpoint().equals(leg.altitudeConstraint().upperEndpoint())).count(),
+            "28,894 blank descriptors plus 241 G/I descriptors encode AT altitudes"),
+        () -> assertEquals(176319, legs.stream().filter(leg -> leg.altitudeConstraint().hasLowerBound()
+            && !leg.altitudeConstraint().hasUpperBound()).count(), "Includes H/J at-or-above crossing altitudes"),
+        () -> assertTrue(legs.stream().filter(leg -> leg.speedConstraint().hasUpperBound()).count() > 31004,
+            "Restrictions also apply to legs which inherit a published speed limit"),
+        () -> assertEquals(1720, legs.stream().filter(leg -> leg.pathTerminator() == PathTerminator.RF && leg.arcRadius().isPresent()).count(),
+            "Every source RF radius is retained"),
+        () -> assertEquals(20185, legs.stream().filter(Leg::isPublishedHoldingFix).count(),
+            "Every source C/H holding-fix marker is retained"),
+        () -> assertEquals(24937, legs.stream().filter(leg -> leg.verticalAngle().filter(angle -> angle < 0.0).isPresent()).count(),
+            "Positive source VNAV magnitudes become descending core angles")
+    );
+  }
+
+  @Test
+  void testStarSpeedContinuesAfterThePublishedRestriction() {
+    var leg = allProcedures.stream()
+        .filter(procedure -> procedure.airportIdentifier().equals("AJ00013") && procedure.procedureIdentifier().equals("DULA2E"))
+        .flatMap(procedure -> procedure.transitions().stream())
+        .filter(transition -> transition.transitionIdentifier().filter("RW14L"::equals).isPresent())
+        .flatMap(transition -> transition.legs().stream())
+        .filter(value -> value.sequenceNumber() == 70).findFirst().orElseThrow();
+    assertAll(
+        () -> assertEquals("BN123", leg.associatedFix().orElseThrow().fixIdentifier()),
+        () -> assertFalse(leg.speedConstraint().hasLowerBound()),
+        () -> assertEquals(210.0, leg.speedConstraint().upperEndpoint())
+    );
+  }
+
+  @Test
   void testProceduresByAirport() {
     Map<String, List<Procedure>> byAirport = allProcedures.stream()
         .collect(Collectors.groupingBy(Procedure::airportIdentifier));

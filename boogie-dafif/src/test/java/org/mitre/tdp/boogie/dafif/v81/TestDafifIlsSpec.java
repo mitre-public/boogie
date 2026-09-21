@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mitre.tdp.boogie.dafif.DafifRecord;
 import org.mitre.tdp.boogie.dafif.DafifRecordParser;
 import org.mitre.tdp.boogie.dafif.DafifRecordType;
@@ -23,6 +25,21 @@ public class TestDafifIlsSpec {
   private static final DafifIlsConverter converter = new DafifIlsConverter();
 
   public static final String RAW_ILS = "AA30079\t11\tD\t\t\tU\t024X\t\t\t\t00011\tWGE\tWGE\t\tN12300951\t12.502642\tW070013023\t-70.025064\tIBE\t\t\t\tW011264 0124\t\t\t\t\t\t202402\t\t0\n";
+
+  @ParameterizedTest
+  @ValueSource(strings = {"N", "P"})
+  void preservesMlsDmePrecision(String precision) {
+    String[] fields = RAW_ILS.replace("\n", "").split("\t", -1);
+    fields[2] = "P";
+    fields[29] = precision;
+    var record = parser.parse(DafifRecordType.ILS, String.join("\t", fields)).orElseThrow();
+    var ils = converter.apply(record).orElseThrow();
+
+    assertAll(
+        () -> assertEquals("P", ils.componentType()),
+        () -> assertEquals(precision, ils.mlsDmePrecision().orElseThrow())
+    );
+  }
 
   @Test
   void testParseDafifIls() {

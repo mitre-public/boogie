@@ -19,9 +19,10 @@ class StreamingUnmarshallerTest {
 
   @Test
   void test() {
-    StreamingUnmarshaller unmarshaller = new StreamingUnmarshaller(
-        ArincXmlVersion.V23_4.jaxbContextClasses(),
-        ArincXmlVersion.V23_4.handlers());
+    StreamingUnmarshaller unmarshaller = StreamingUnmarshaller.builder()
+        .jaxbContextClasses(ArincXmlVersion.V23_4.jaxbContextClasses())
+        .handlers(ArincXmlVersion.V23_4.handlers())
+        .build();
 
     Optional<ArincRecords> result;
     try (FileInputStream fis = new FileInputStream(xmlTestFile)) {
@@ -46,9 +47,7 @@ class StreamingUnmarshallerTest {
 
   @Test
   void testWithExternalRecords() {
-    StreamingUnmarshaller unmarshaller = new StreamingUnmarshaller(
-        ArincXmlVersion.V23_4.jaxbContextClasses(),
-        ArincXmlVersion.V23_4.handlers());
+    StreamingUnmarshaller unmarshaller = StreamingUnmarshaller.fromVersion(ArincXmlVersion.V23_4);
 
     ArincRecords records = ArincRecords.standard();
     Optional<ArincRecords> result;

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
 import org.mitre.boogie.xml.assemble.AirportAssembler;
 import org.mitre.boogie.xml.assemble.AirportAssemblyStrategy;
 import org.mitre.boogie.xml.assemble.AirwayAssembler;
@@ -58,6 +59,7 @@ import org.mitre.boogie.xml.model.ArincWaypoint;
  * @param <HLPD> the client helipad type
  * @param <HPT>  the client heliport type
  */
+@Beta
 final class StreamAssemblyRecords<FIX, APT, RWY, AWY, PRC, HLPD, HPT> implements ArincRecords {
 
   private final FixAssembler<FIX> fixAssembler;

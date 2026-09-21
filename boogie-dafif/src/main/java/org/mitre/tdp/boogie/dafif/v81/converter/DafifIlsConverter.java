@@ -44,7 +44,7 @@ public class DafifIlsConverter implements Function<DafifRecord, Optional<DafifIl
         .thresholdCrossingHeight(dafifRecord.<Integer>optionalField("thresholdCrossingHeight").orElse(null))
         .ilsDmeBias(dafifRecord.<Double>optionalField("ilsDmeBias").orElse(null))
         .cycleDate(dafifRecord.requiredField("cycleDate"))
-        .mlsDmePrecisionNonPrecision(dafifRecord.<String>optionalField("mlsDmePrecisionNonPrecision").orElse(null))
+        .mlsDmePrecisionNonPrecision(dafifRecord.<String>optionalField("mlsDmePrecision").orElse(null))
         .coordinatePrecision(dafifRecord.<Integer>optionalField("coordinatePrecision").orElse(null))
         .build());
   }
