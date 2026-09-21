@@ -80,7 +80,6 @@ public interface ControlledAirspaceAssembler<AIRSPACE> {
       ArincControlledAirspaceLeg firstLeg = legs.get(0);
       FIX center = firstLeg.supplierSectionCode()
           .filter(s -> !SectionCode.U.equals(s))
-          .filter(s -> !SectionCode.H.equals(s)) //this is just for now
           .flatMap(f -> inflator.dereference(firstLeg.airspaceCenter(), "", firstLeg.icaoRegion(), firstLeg.supplierSectionCode().orElseThrow(), firstLeg.supplierSubSectionCode().orElse(null)))
           .orElse(null);
       return airspaceAssemblyStrategy.convertControlledAirspace(firstLeg, center, sequences);

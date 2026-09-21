@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mitre.caasd.commons.Pair;
+import org.mitre.tdp.boogie.Airspace;
+import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
 import org.mitre.tdp.boogie.Procedure;
@@ -25,6 +27,8 @@ import org.mitre.tdp.boogie.arinc.EmbeddedCifpFile;
 import org.mitre.tdp.boogie.arinc.database.ArincDatabaseFactory;
 import org.mitre.tdp.boogie.arinc.database.ArincFixDatabase;
 import org.mitre.tdp.boogie.arinc.database.ArincTerminalAreaDatabase;
+import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 import org.mitre.tdp.boogie.model.ProcedureFactory;
 import org.mitre.tdp.boogie.model.ProcedureGraph;
 import org.mitre.tdp.boogie.validate.PathTerminatorBasedLegValidator;
@@ -36,7 +40,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /**
- * Integration test for the {@link ProcedureAssembler} but based on the entirety of a CIFP cycle.
+ * Integration tests for the {@link ProcedureAssembler} and {@link ControlledAirspaceAssembler} based on a CIFP cycle.
  */
 @Tag("CIFP")
 @Tag("INTEGRATION")
@@ -45,6 +49,7 @@ class TestCifpProcedureAssemblerIntegration {
   private static final Logger LOG = LoggerFactory.getLogger(TestCifpProcedureAssemblerIntegration.class);
 
   private static Map<String, List<Procedure>> proceduresByAirport;
+  private static ControlledAirspaceAssembler<Airspace> controlledAirspaceAssembler;
 
   @BeforeAll
   static void setup() {
@@ -78,6 +83,7 @@ class TestCifpProcedureAssemblerIntegration {
     );
 
     proceduresByAirport = assembler.assemble(EmbeddedCifpFile.instance().arincProcedureLegs()).collect(Collectors.groupingBy(Procedure::airportIdentifier));
+    controlledAirspaceAssembler = ControlledAirspaceAssembler.standard(arincFixDatabase);
   }
 
   @Test
@@ -94,6 +100,33 @@ class TestCifpProcedureAssemblerIntegration {
         () -> assertEquals(29, proceduresByAirport.get("KEWR").size(), "KEWR counts"),
         () -> assertEquals(41, proceduresByAirport.get("KSFO").size(), "KSFO counts"),
         () -> assertEquals(1, proceduresByAirport.get("KJRA").size(), "KJRA (Heliport) counts")
+    );
+  }
+
+  @Test
+  void testStratfordControlledAirspaceResolvesHeliportCenter() {
+    // CIFP 2101: Stratford's Class D airspace references the KJSD/K6 heliport via H/A.
+    List<ArincControlledAirspaceLeg> legs = EmbeddedCifpFile.instance().controlledAirspaces().stream()
+        .filter(leg -> "KJSD".equals(leg.airspaceCenter()) && "K6".equals(leg.icaoRegion()))
+        .toList();
+
+    assertEquals(4, legs.size(), "Expected the four Stratford boundary records");
+    assertEquals(SectionCode.H, legs.get(0).supplierSectionCode().orElseThrow());
+    assertEquals("A", legs.get(0).supplierSubSectionCode().orElseThrow());
+
+    List<Airspace> airspaces = controlledAirspaceAssembler.assemble(legs).toList();
+    assertEquals(1, airspaces.size());
+    Airspace stratford = airspaces.get(0);
+    Fix center = stratford.center().orElseThrow(() -> new AssertionError("The H/A reference must resolve to the KJSD heliport"));
+
+    assertAll(
+        () -> assertEquals("KJSD-Z-K6-STRATFORD-A-D", stratford.identifier()),
+        () -> assertEquals("KJSD", stratford.centerIdent().orElseThrow()),
+        () -> assertEquals(4, stratford.sequences().size()),
+        () -> assertEquals("KJSD", center.fixIdentifier()),
+        // Heliport coordinates N41151223 / W073052199, not a boundary arc's center.
+        () -> assertEquals(41.2533972222, center.latitude(), 1e-9),
+        () -> assertEquals(-73.0894416667, center.longitude(), 1e-9)
     );
   }
 
