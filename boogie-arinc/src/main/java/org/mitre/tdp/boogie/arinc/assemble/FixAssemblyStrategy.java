@@ -176,10 +176,14 @@ public interface FixAssemblyStrategy<F> {
 
       Instant cycleDate = AiracCycle.startDate(navaid.lastUpdateCycle());
 
+      MagneticVariation magvar = navaid.stationDeclination()
+          .map(MagneticVariation::ofDegrees)
+          .orElseGet(() -> MagneticVariation.from(navaid.latitude(), navaid.longitude(), cycleDate));
+
       return Fix.builder()
           .fixIdentifier(navaid.vhfIdentifier())
           .latLong(LatLong.of(navaid.latitude(), navaid.longitude()))
-          .magneticVariation(MagneticVariation.from(navaid.latitude(), navaid.longitude(), cycleDate))
+          .magneticVariation(magvar)
           .build();
     }
 
@@ -235,10 +239,14 @@ public interface FixAssemblyStrategy<F> {
           ilsGls.localizerLongitude().or(ilsGls::glideSlopeLongitude).orElseThrow(() -> missingField("ILS/GLS Longitude"))
       );
 
+      MagneticVariation magvar = ilsGls.stationDeclination()
+          .map(MagneticVariation::ofDegrees)
+          .orElseGet(() -> MagneticVariation.from(location.latitude(), location.longitude(), cycleDate));
+
       return Fix.builder()
           .fixIdentifier(ilsGls.localizerIdentifier())
           .latLong(location)
-          .magneticVariation(MagneticVariation.from(location.latitude(), location.longitude(), cycleDate))
+          .magneticVariation(magvar)
           .build();
     }
 
