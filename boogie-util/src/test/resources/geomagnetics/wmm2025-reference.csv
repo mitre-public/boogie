@@ -1,0 +1,17 @@
+year,height_km,latitude_degrees,longitude_degrees,north_nt,east_nt,vertical_nt,horizontal_nt,total_nt,inclination_degrees,declination_degrees
+# Source: NOAA NCEI / British Geological Survey, Test Values for WMM2025, first table.
+# https://www.ncei.noaa.gov/sites/default/files/2025-02/WMM2025testvalues.pdf
+# Retrieved 2026-09-22. Heights are kilometers above the WGS84 ellipsoid; dates are decimal years.
+# Grid variation is omitted because Geomagnetics does not expose it. Values retain the published precision.
+2025.0,0,80,0,6521.6,145.9,54791.5,6523.2,55178.5,83.21,1.28
+2025.0,0,0,120,39677.8,-109.6,-10580.2,39677.9,41064.3,-14.93,-0.16
+2025.0,0,-80,240,6117.5,15751.9,-52022.5,16898.1,54698.2,-72.00,68.78
+2025.0,100,80,0,6216.0,92.4,52598.8,6216.7,52964.9,83.26,0.85
+2025.0,100,0,120,37688.6,-96.2,-10152.1,37688.7,39032.1,-15.08,-0.15
+2025.0,100,-80,240,5907.6,14780.3,-49540.7,15917.1,52035.0,-72.19,68.21
+2027.5,0,80,0,6500.8,294.5,54869.4,6507.5,55253.9,83.24,2.59
+2027.5,0,0,120,39701.6,-167.4,-10381.8,39702.0,41036.9,-14.65,-0.24
+2027.5,0,-80,240,6200.7,15730.3,-51783.7,16908.3,54474.2,-71.92,68.49
+2027.5,100,80,0,6196.7,233.8,52670.5,6201.1,53034.3,83.29,2.16
+2027.5,100,0,120,37711.5,-148.7,-9969.8,37711.8,39007.4,-14.81,-0.23
+2027.5,100,-80,240,5984.0,14760.1,-49317.7,15927.0,51825.7,-72.10,67.93
