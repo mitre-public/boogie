@@ -4,10 +4,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.mitre.caasd.commons.util.Partitioners.newListCollector;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -126,8 +129,11 @@ final class RouteSummarizer implements Function<List<ResolvedLeg>, Optional<Rout
     }
 
     private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
+      // Keep distinct filtered views, even when they represent the same procedure.
+      Set<Procedure> seen = Collections.newSetFromMap(new IdentityHashMap<>());
       return resolvedLegs.stream()
           .flatMap(l -> ResolvedTokenVisitor.star(l.resolvedToken()).stream())
+          .filter(seen::add)
           .flatMap(this::transitionEmbeddingFor)
           .collect(elidingCollector(Pair::first, Pair::second));
     }
@@ -168,8 +174,11 @@ final class RouteSummarizer implements Function<List<ResolvedLeg>, Optional<Rout
     }
 
     private Map<Leg, Transition> transitionEmbeddingFor(List<ResolvedLeg> resolvedLegs) {
+      // Keep distinct filtered views, even when they represent the same procedure.
+      Set<Procedure> seen = Collections.newSetFromMap(new IdentityHashMap<>());
       return resolvedLegs.stream()
           .flatMap(l -> ResolvedTokenVisitor.sid(l.resolvedToken()).stream())
+          .filter(seen::add)
           .flatMap(this::transitionEmbeddingFor)
           .collect(elidingCollector(Pair::first, Pair::second));
     }

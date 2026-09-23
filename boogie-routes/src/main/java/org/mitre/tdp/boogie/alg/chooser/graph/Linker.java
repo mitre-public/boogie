@@ -8,6 +8,7 @@ import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.highlander;
 import static org.mitre.tdp.boogie.alg.chooser.graph.LinkingSupport.lastLegWithLocation;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -71,6 +72,20 @@ public interface Linker {
   static Linker pointsWithinRange(Distance range, LinkableToken left, LinkableToken right) {
     checkArgument(range.isPositive(), "Range should be positive.");
     return new PointsWithinRange(range, left, right);
+  }
+
+  /**
+   * Returns all links within the given range, ordered by distance, or the closest link if none are within range.
+   * Each candidate distance is calculated once, including when falling back to the closest link.
+   *
+   * @param range the max {@link Distance} between legs to link from the two tokens
+   * @param left  the token to link from
+   * @param right the token to link to
+   */
+  static Linker pointsWithinRangeOrClosest(Distance range, LinkableToken left, LinkableToken right) {
+    checkArgument(range.isPositive(), "Range should be positive.");
+    PointsWithinRange points = new PointsWithinRange(range, left, right);
+    return points::linksOrClosest;
   }
 
   /**
@@ -312,6 +327,32 @@ public interface Linker {
           .sorted(Comparator.comparingDouble(LinkCandidate::distance))
           .map(LinkCandidate::toLinkedLegs)
           .toList();
+    }
+
+    private List<LinkedLegs> linksOrClosest() {
+      List<Leg> leftLegs = withLocation(left.graphRepresentation());
+      List<Leg> rightLegs = withLocation(right.graphRepresentation());
+      List<LinkCandidate> withinRange = new ArrayList<>();
+      LinkCandidate closest = null;
+      for (Leg leftLeg : leftLegs) {
+        for (Leg rightLeg : rightLegs) {
+          LinkCandidate candidate = createCandidate(leftLeg, rightLeg);
+          if (isWithinRange(candidate)) {
+            withinRange.add(candidate);
+          } else if (withinRange.isEmpty()
+              && candidate.linkWeight() < Double.MAX_VALUE
+              && (closest == null || Double.compare(candidate.distance(), closest.distance()) < 0)) {
+            // Match closestPointBetween's eligibility and retain the first candidate on distance ties.
+            closest = candidate;
+          }
+        }
+      }
+
+      if (!withinRange.isEmpty()) {
+        withinRange.sort(Comparator.comparingDouble(LinkCandidate::distance));
+        return withinRange.stream().map(LinkCandidate::toLinkedLegs).toList();
+      }
+      return closest == null ? List.of() : List.of(closest.toLinkedLegs());
     }
 
     private Optional<LinkedLegs> closestLink() {

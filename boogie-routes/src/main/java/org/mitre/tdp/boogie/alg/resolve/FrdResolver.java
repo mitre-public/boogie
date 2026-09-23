@@ -29,7 +29,7 @@ final class FrdResolver implements SingleTokenResolver {
   @Override
   public List<ResolvedToken> resolve(RouteToken token) {
     return Stream.of(token)
-        .filter(t -> t.infrastructureName().matches(TAILORED.pattern()))
+        .filter(t -> TAILORED.matcher(t.infrastructureName()).matches())
         .flatMap(t -> lookupService.apply(fixIdentifier(t.infrastructureName())).stream()
             .map(f -> makeResolved(t, f)))
         .collect(toList());

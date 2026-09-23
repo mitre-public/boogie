@@ -34,6 +34,53 @@ Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDep
 Optional<ExpandedRoute> expandedRoute = routeExpander.apply(myRouteString, myDepartureRunway, myArrivalRunway, RNP, RNAV, CONV);
 ```
 
+## Benchmarking
+
+The JMH benchmark reuses two navigation fixtures from `FluentRouteExpanderTest`:
+
+| Case | Filed route | Expanded legs |
+| --- | --- | --- |
+| `MULTI_AIRWAY` | `SAP.UG521.CZM.UB881.CUN.UM219.MYDIA` | 14 |
+| `STAR_APPROACH` | `RSW.COSTR3.KMCO`, arrival runway `RW17R`, equipage `CONV` | 18 |
+
+These cover three connected airways with ambiguous fix/procedure identifiers, and a STAR joining an approach.
+The expander, lookup indexes, and `RouteDetails` are constructed once per trial. Setup also checks the expected expanded route.
+Only expansion is timed, including tokenization, resolution, graph selection, summarization, and leg conversion.
+Logging is disabled, and no external navigation data files are required.
+
+Run from the repository root with JDK 17:
+
+```shell
+./gradlew :boogie-routes:jmh
+```
+
+On macOS, if the default Java version is newer than the Gradle wrapper supports:
+
+```shell
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ./gradlew :boogie-routes:jmh
+```
+
+The benchmark uses one thread, two fresh JVM forks per case with a fixed 512 MiB heap, five one-second warmup iterations,
+and five one-second measurement iterations. It reports average microseconds per expansion and GC allocation metrics, and writes JSON to
+`boogie-routes/build/reports/jmh/results.json`. Use `gc.alloc.rate.norm` to compare bytes allocated per expansion.
+Compare runs with the same JVM, fixture, and machine conditions; these small fixtures are a starting baseline rather than
+a representative workload across a full navigation database.
+
+For a quick setup check, run `./gradlew :boogie-routes:jmhSmoke`. Its short run writes `smoke.json` separately and is not a
+performance baseline.
+
+To measure the radius-search fallback directly, run `./gradlew :boogie-routes:jmhLinker`. This compares the original
+radius-then-nearest searches with the combined scan between the disjoint `UG521` and `UM219` airway fixtures. Setup verifies
+that there are no links within 0.25 NM and that both implementations choose the same nearest link. Results are written to
+`boogie-routes/build/reports/jmh/linker.json`, using the same warmup, measurement, and JVM settings as the route benchmark.
+
+To measure shortest-path selection, run `./gradlew :boogie-routes:jmhShortestPath`. This builds the chooser graph for
+`UG521.UB881.UM219` once, then compares the original search per entry/exit pair with the chooser's search reuse. It uses
+six entry candidates and one, two, or seven exit candidates; the single-exit case checks the unchanged early-stopping search.
+Setup checks that both implementations return identical candidate paths and weights. Only path selection is timed.
+Results are written to `boogie-routes/build/reports/jmh/shortest-path.json`, using the same JMH settings as above.
+The two full route benchmarks end at a single fix or airport, so they do not exercise multiple-exit search reuse.
+
 ## Design
 
 Boogie has a highly modular design, allowing clients to swap out significant portions of the logic backing the expansion process with their own should they need that level of 

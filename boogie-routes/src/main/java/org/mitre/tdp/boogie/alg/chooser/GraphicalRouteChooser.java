@@ -74,8 +74,7 @@ final class GraphicalRouteChooser implements RouteChooser {
     ifDebugEnabled(l -> l.debug("- Identifying shortest path: {}", resolvedEntryPoints.size() * resolvedExitPoints.size()));
     ifDebugEnabled(l -> l.debug(String.format("  %10s %10s %10s %30s", "Start", "End", "Length", "Weight")));
 
-    List<LinkableLeg> shortestPath = cartesianProduct(resolvedEntryPoints, resolvedExitPoints).stream()
-        .map(pair -> shortestPathAlgorithm.getPath(pair.first(), pair.second()))
+    List<LinkableLeg> shortestPath = candidatePaths(shortestPathAlgorithm, resolvedEntryPoints, resolvedExitPoints)
         .filter(Objects::nonNull)
         .peek(this::logPathCandidate)
         .min(Comparator.comparing(GraphPath::getWeight))
@@ -90,6 +89,28 @@ final class GraphicalRouteChooser implements RouteChooser {
         .map(l -> fixedUp.getOrDefault(l, l))
         .map(this::makeResolvedLeg)
         .toList();
+  }
+
+  /**
+   * Returns the shortest paths between every entry and exit point. In the case where there are more than one exit,
+   * the getPaths() option does less math. However, it is not better when there is just one set of entry/exit.
+   * @param algorithm shortest path alg
+   * @param entries the list of entry legs
+   * @param exits the list of exit legs
+   * @return the stream of paths.
+   */
+  static Stream<GraphPath<Leg, DefaultWeightedEdge>> candidatePaths(DijkstraShortestPath<Leg, DefaultWeightedEdge> algorithm, Set<Leg> entries, Set<Leg> exits) {
+    if (exits.size() > 1) {
+      return entries.stream()
+          .flatMap(entry -> {
+            var paths = algorithm.getPaths(entry);
+            return exits.stream().map(paths::getPath);
+          });
+    }
+
+    // Keep the early-stopping search for the usual single destination.
+    return cartesianProduct(entries, exits).stream()
+        .map(pair -> algorithm.getPath(pair.first(), pair.second()));
   }
 
   List<LinkableTokens> toLinkableTokens(List<ResolvedTokens> resolvedTokens) {
@@ -182,10 +203,12 @@ final class GraphicalRouteChooser implements RouteChooser {
     graph.addVertex(link.target());
 
     // :loops: - annoying to filter these out upstream and easy enough to skip here
-    // if the edge already exists return is null - and we don't want to override initial value of edge
-    if (!link.source().equals(link.target()) && !graph.containsEdge(link.source(), link.target())) {
+    if (!link.source().equals(link.target())) {
       DefaultWeightedEdge edge = graph.addEdge(link.source(), link.target());
-      graph.setEdgeWeight(edge, link.linkWeight());
+      // Duplicate edges return null; retain the weight of the first link.
+      if (edge != null) {
+        graph.setEdgeWeight(edge, link.linkWeight());
+      }
     }
   }
 
@@ -396,13 +419,14 @@ final class GraphicalRouteChooser implements RouteChooser {
      * @return the links between the tokens.
      */
     Stream<LinkedLegs> interLinks(LinkableTokens linkableTokens) {
-      return cartesianProduct(linkableTokens(), linkableTokens.linkableTokens()).stream()
-          .flatMap(pair -> pair.first().accept(pair.second()).links().stream()
-              .map(linkedLegs -> new LinkedLegs(
-                  linkableLeg(linkedLegs.source()),
-                  linkableTokens.linkableLeg(linkedLegs.target()),
-                  linkedLegs.linkWeight()
-              )));
+      return linkableTokens().stream()
+          .flatMap(source -> linkableTokens.linkableTokens().stream()
+              .flatMap(target -> source.accept(target).links().stream()
+                  .map(linkedLegs -> new LinkedLegs(
+                      linkableLeg(linkedLegs.source()),
+                      linkableTokens.linkableLeg(linkedLegs.target()),
+                      linkedLegs.linkWeight()
+                  ))));
     }
 
     private Collection<LinkableToken> linkableTokens() {
@@ -432,10 +456,13 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     private final Leg leg;
 
+    private final int hashCode;
+
     private LinkableLeg(Builder builder) {
       this.routeToken = builder.routeToken;
       this.resolvedToken = builder.resolvedToken;
       this.leg = requireNonNull(builder.leg);
+      this.hashCode = Objects.hash(routeToken, resolvedToken, leg);
     }
 
     public static Builder builder() {
@@ -572,7 +599,7 @@ final class GraphicalRouteChooser implements RouteChooser {
 
     @Override
     public int hashCode() {
-      return Objects.hash(routeToken, resolvedToken, leg);
+      return hashCode;
     }
 
     private static final class Builder {

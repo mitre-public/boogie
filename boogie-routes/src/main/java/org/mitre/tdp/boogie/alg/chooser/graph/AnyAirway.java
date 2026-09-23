@@ -73,8 +73,7 @@ final class AnyAirway implements LinkableToken {
 
   @Override
   public Linker visit(AnySid sid) {
-    return Linker.pointsWithinRange(ofNauticalMiles(.25), sid, this)
-        .orElseTry(Linker.closestPointBetween(sid, this))
+    return Linker.pointsWithinRangeOrClosest(ofNauticalMiles(.25), sid, this)
         .orElseTry(Linker.sidXm(sid, this));
 
   }
@@ -90,7 +89,6 @@ final class AnyAirway implements LinkableToken {
   }
 
   private Linker multiLinker(LinkableToken token) {
-    return Linker.pointsWithinRange(ofNauticalMiles(.25), token, this)
-        .orElseTry(Linker.closestPointBetween(token, this));
+    return Linker.pointsWithinRangeOrClosest(ofNauticalMiles(.25), token, this);
   }
 }
