@@ -68,14 +68,14 @@ final class ArincTransitionTypeClassifier implements Function<List<ArincProcedur
         .sorted(comparing(ArincProcedureLeg::sequenceNumber))
         .collect(Collectors.toList());
 
-    return applySorted(sorted);
+    return applyOnSortedList(sorted);
   }
 
   /**
    * Classifies legs already ordered by sequence number. Accepts a complete transition group or a partition produced when
    * splitting a final approach. Assembly uses the initial classification to restrict splitting to approach COMMON routes.
    */
-  TransitionType applySorted(List<ArincProcedureLeg> sortedArincProcedureLegs) {
+  TransitionType applyOnSortedList(List<ArincProcedureLeg> sortedArincProcedureLegs) {
     if ("F".equals(sortedArincProcedureLegs.get(0).subSectionCode().orElseThrow(IllegalStateException::new))) {
       return approachClassifier.apply(sortedArincProcedureLegs);
     } else {

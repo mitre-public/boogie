@@ -262,7 +262,7 @@ class TestProcedureTransitionCollection {
       List<List<ArincProcedureLeg>> partitions = splitOnPairwiseChange(
           grouped, (previous, next) -> !IsFirstLegOfMissedApproach.INSTANCE.test(next));
       for (List<ArincProcedureLeg> partition : partitions) {
-        result.put(classifier.applySorted(partition), partition);
+        result.put(classifier.applyOnSortedList(partition), partition);
       }
     }
     return result;

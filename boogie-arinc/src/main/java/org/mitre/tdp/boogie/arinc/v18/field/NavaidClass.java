@@ -1,8 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Objects.checkFromToIndex;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
@@ -67,28 +66,30 @@ public final class NavaidClass implements FieldSpec<String> {
 
   @Override
   public Optional<String> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .filter(s -> s.length() == 5)
-        .map(s -> ""
-            .concat(inSetOrBlank(s.substring(0, 1), allowedType1))
-            .concat(inSetOrBlank(s.substring(1, 2), allowedType2))
-            .concat(inSetOrBlank(s.substring(2, 3), allowedRangePower))
-            .concat(inSetOrBlank(s.substring(3, 4), allowedAdditionalInfo))
-            .concat(inSetOrBlank(s.substring(4, 5), allowedCollocation))
-        );
+    checkFromToIndex(startOffset, endOffset, source.length());
+    if (endOffset - startOffset != fieldLength()) {
+      return Optional.empty();
+    }
+    return Optional.of(new String(new char[] {
+        inSetOrBlank(source.charAt(startOffset), allowedType1),
+        inSetOrBlank(source.charAt(startOffset + 1), allowedType2),
+        inSetOrBlank(source.charAt(startOffset + 2), allowedRangePower),
+        inSetOrBlank(source.charAt(startOffset + 3), allowedAdditionalInfo),
+        inSetOrBlank(source.charAt(startOffset + 4), allowedCollocation)
+    }));
   }
 
-  private String inSetOrBlank(String s, HashSet<String> set) {
-    return set.contains(s) ? s : " ";
+  private static char inSetOrBlank(char value, String allowed) {
+    return allowed.indexOf(value) >= 0 ? value : ' ';
   }
 
-  private static final HashSet<String> allowedType1 = newHashSet("V", "H", "S", "M");
+  private static final String allowedType1 = "VHSM";
 
-  private static final HashSet<String> allowedType2 = newHashSet("D", "T", "I", "M", "O", "C", "N", "P");
+  private static final String allowedType2 = "DTIMOCNP";
 
-  private static final HashSet<String> allowedRangePower = newHashSet("T", "U", "H", "M", "L", "C", " ");
+  private static final String allowedRangePower = "TUHMLC ";
 
-  private static final HashSet<String> allowedAdditionalInfo = newHashSet("D", "A", "B", "W", " ");
+  private static final String allowedAdditionalInfo = "DABW ";
 
-  private static final HashSet<String> allowedCollocation = newHashSet("B", "A", "N", " ");
+  private static final String allowedCollocation = "BAN ";
 }

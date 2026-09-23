@@ -85,10 +85,10 @@ public interface ProcedureAssembler<P> {
       Multimap<TransitionType, List<ArincProcedureLeg>> byType = LinkedListMultimap.create();
 
       byTransition.stream()
-          .map(t -> Pair.of(transitionTypeClassifier.applySorted(t), t))
+          .map(t -> Pair.of(transitionTypeClassifier.applyOnSortedList(t), t))
           .forEach(p -> {
             if (isApproach && TransitionType.COMMON.equals(p.first())) {
-              splitFinalApproach(p.second()).forEach(split -> byType.put(transitionTypeClassifier.apply(split), split));
+              splitFinalApproach(p.second()).forEach(split -> byType.put(transitionTypeClassifier.applyOnSortedList(split), split));
             } else {
               byType.put(p.first(), p.second());
             }

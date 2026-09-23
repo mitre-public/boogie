@@ -1,8 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Objects.checkFromToIndex;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
@@ -24,22 +23,24 @@ public final class WaypointType implements FieldSpec<String> {
 
   @Override
   public Optional<String> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .filter(s -> s.length() == 3)
-        .map(s -> ""
-            .concat(inSetOrBlank(s.substring(0, 1), allowedColumn1))
-            .concat(inSetOrBlank(s.substring(1, 2), allowedColumn2))
-            .concat(inSetOrBlank(s.substring(2, 3), allowedColumn3))
-        );
+    checkFromToIndex(startOffset, endOffset, source.length());
+    if (endOffset - startOffset != fieldLength()) {
+      return Optional.empty();
+    }
+    return Optional.of(new String(new char[] {
+        inSetOrBlank(source.charAt(startOffset), allowedColumn1),
+        inSetOrBlank(source.charAt(startOffset + 1), allowedColumn2),
+        inSetOrBlank(source.charAt(startOffset + 2), allowedColumn3)
+    }));
   }
 
-  private String inSetOrBlank(String s, HashSet<String> set) {
-    return set.contains(s) ? s : " ";
+  private static char inSetOrBlank(char value, String allowed) {
+    return allowed.indexOf(value) >= 0 ? value : ' ';
   }
 
-  private static final HashSet<String> allowedColumn1 = newHashSet("C", "I", "N", "R", "U", "V", "W", "A", "M", "O");
+  private static final String allowedColumn1 = "CINRUVWAMO";
 
-  private static final HashSet<String> allowedColumn2 = newHashSet("A", "B", "C", "D", "E", "F", "I", "K", "L", "M", "N", "O", "P", "S", "U", "V", "W");
+  private static final String allowedColumn2 = "ABCDEFIKLMNOPSUVW";
 
-  private static final HashSet<String> allowedColumn3 = newHashSet("D", "E", "F", "Z");
+  private static final String allowedColumn3 = "DEFZ";
 }

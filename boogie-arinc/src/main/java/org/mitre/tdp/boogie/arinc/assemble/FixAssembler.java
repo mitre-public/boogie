@@ -13,6 +13,7 @@ import org.mitre.tdp.boogie.arinc.model.ArincNdbNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincRunway;
 import org.mitre.tdp.boogie.arinc.model.ArincVhfNavaid;
 import org.mitre.tdp.boogie.arinc.model.ArincWaypoint;
+import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
 
 /**
  * Assembler class for converting multiple flavors of fix-like 424 record types into client-defined fix data models.
@@ -49,33 +50,43 @@ public interface FixAssembler<F> {
 
     @Override
     public F assemble(ArincModel arincModel) {
-      String sectionSubSection = arincModel.sectionCode().name().concat(arincModel.subSectionCode().orElse(""));
+      SectionCode sectionCode = requireNonNull(arincModel.sectionCode());
+      String subsection = arincModel.subSectionCode().orElse("");
 
-      // TODO: replace with pattern matching expression to kill off type casts
-      return switch (sectionSubSection) {
-        // airports
-        case "PA" -> strategy.convertAirport((ArincAirport) arincModel);
-        case "HA" -> strategy.convertHeliport((ArincHeliport)  arincModel);
-        // Enroute NDB Navaids
-        case "DB" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
-        // Terminal NDB Navaids
-        case "PN" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
-        // VHF Navaids
-        case "D" -> strategy.convertVhfNavaid((ArincVhfNavaid) arincModel);
-        // Enroute waypoints
-        case "EA" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
-        // Terminal waypoints
-        case "PC", "HC" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
-        // runways - generally terminal fix of the final fix of the final approach portion of an approach procedure (or centerFix of an RF)
-        case "PG" -> strategy.convertRunway((ArincRunway) arincModel);
-        // localizerGlideSlopes - generally used as a recommended navaid on some approaches
-        case "PI", "HI" -> strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
-        //gnss landing systems - usually used on gls approach or as rec navs rarely
-        case "PT", "HT" -> strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
-        case "PH", "HH" -> strategy.convertHelipad((ArincHelipad) arincModel);
-        // anything else is not explicitly supported as a reference object in a leg
-        default -> throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
+      return switch (sectionCode) {
+        case D -> switch (subsection) {
+          case "" -> strategy.convertVhfNavaid((ArincVhfNavaid) arincModel);
+          case "B" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
+          default -> throw unknownSection(sectionCode, subsection);
+        };
+        case E -> switch (subsection) {
+          case "A" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
+          default -> throw unknownSection(sectionCode, subsection);
+        };
+        case P -> switch (subsection) {
+          case "A" -> strategy.convertAirport((ArincAirport) arincModel);
+          case "N" -> strategy.convertNdbNavaid((ArincNdbNavaid) arincModel);
+          case "C" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
+          case "G" -> strategy.convertRunway((ArincRunway) arincModel);
+          case "I" -> strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
+          case "T" -> strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
+          case "H" -> strategy.convertHelipad((ArincHelipad) arincModel);
+          default -> throw unknownSection(sectionCode, subsection);
+        };
+        case H -> switch (subsection) {
+          case "A" -> strategy.convertHeliport((ArincHeliport) arincModel);
+          case "C" -> strategy.convertWaypoint((ArincWaypoint) arincModel);
+          case "I" -> strategy.convertLocalizerGlideSlope((ArincLocalizerGlideSlope) arincModel);
+          case "T" -> strategy.convertGnssLandingSystem((ArincGnssLandingSystem) arincModel);
+          case "H" -> strategy.convertHelipad((ArincHelipad) arincModel);
+          default -> throw unknownSection(sectionCode, subsection);
+        };
+        default -> throw unknownSection(sectionCode, subsection);
       };
+    }
+
+    private static IllegalStateException unknownSection(SectionCode sectionCode, String subsection) {
+      return new IllegalStateException("Unknown referenced section/subsection for lookup of location: " + sectionCode.name() + subsection);
     }
   }
 }

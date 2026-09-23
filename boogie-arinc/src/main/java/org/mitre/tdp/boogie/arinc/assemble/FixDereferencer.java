@@ -45,26 +45,42 @@ public final class FixDereferencer<F> {
    * We allow the airport to be nullable so this signature can be used in conjunction with the {@link AirwayAssembler}.
    */
   Optional<F> dereference(String identifier, @Nullable String airport, String icaoRegion, SectionCode sectionCode, @Nullable String subSectionCode) {
-    String sectionSubSection = sectionCode.name().concat(Optional.ofNullable(subSectionCode).orElse(""));
-    return switch (sectionSubSection) {
-      case "PA" -> arincFixDatabase.airport(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "HA" -> arincFixDatabase.heliport(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "DB" -> arincFixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "PN" -> arincFixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "D" -> arincFixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "EA" -> arincFixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
-      case "PC" -> arincTerminalAreaDatabase.waypointAt(airport, icaoRegion, identifier).map(fixAssembler::assemble);
-      case "HC" -> arincTerminalAreaDatabase.heliportsWaypoint(airport, icaoRegion, identifier).map(fixAssembler::assemble);
-      case "PG" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.runwayAt(a, identifier)
-          .or(() -> arincTerminalAreaDatabase.heliportsRunwayAt(a, identifier))
-          .map(fixAssembler::assemble));
-      case "PI" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.localizerGlideSlopeAt(a, identifier).map(fixAssembler::assemble));
-      case "HI" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsGlideSlopeAt(a, identifier).map(fixAssembler::assemble));
-      case "PT" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.gnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));
-      case "HT" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsGnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));
-      case "PH" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.helipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
-      case "HH" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsHelipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
-      default -> throw new IllegalStateException("Unknown referenced section/subsection for lookup of location: ".concat(sectionSubSection));
+    String subsection = subSectionCode == null ? "" : subSectionCode;
+    return switch (sectionCode) {
+      case D -> switch (subsection) {
+        case "" -> arincFixDatabase.vhfNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
+        case "B" -> arincFixDatabase.enrouteNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
+        default -> throw unknownSection(sectionCode, subsection);
+      };
+      case E -> switch (subsection) {
+        case "A" -> arincFixDatabase.enrouteWaypoint(identifier, icaoRegion).map(fixAssembler::assemble);
+        default -> throw unknownSection(sectionCode, subsection);
+      };
+      case P -> switch (subsection) {
+        case "A" -> arincFixDatabase.airport(identifier, icaoRegion).map(fixAssembler::assemble);
+        case "N" -> arincFixDatabase.terminalNdbNavaid(identifier, icaoRegion).map(fixAssembler::assemble);
+        case "C" -> arincTerminalAreaDatabase.waypointAt(airport, icaoRegion, identifier).map(fixAssembler::assemble);
+        case "G" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.runwayAt(a, identifier)
+            .or(() -> arincTerminalAreaDatabase.heliportsRunwayAt(a, identifier))
+            .map(fixAssembler::assemble));
+        case "I" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.localizerGlideSlopeAt(a, identifier).map(fixAssembler::assemble));
+        case "T" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.gnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));
+        case "H" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.helipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
+        default -> throw unknownSection(sectionCode, subsection);
+      };
+      case H -> switch (subsection) {
+        case "A" -> arincFixDatabase.heliport(identifier, icaoRegion).map(fixAssembler::assemble);
+        case "C" -> arincTerminalAreaDatabase.heliportsWaypoint(airport, icaoRegion, identifier).map(fixAssembler::assemble);
+        case "I" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsGlideSlopeAt(a, identifier).map(fixAssembler::assemble));
+        case "T" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsGnssLandingSystemAt(a, identifier).map(fixAssembler::assemble));
+        case "H" -> Optional.ofNullable(airport).flatMap(a -> arincTerminalAreaDatabase.heliportsHelipadAt(airport, icaoRegion, identifier).map(fixAssembler::assemble));
+        default -> throw unknownSection(sectionCode, subsection);
+      };
+      default -> throw unknownSection(sectionCode, subsection);
     };
+  }
+
+  private static IllegalStateException unknownSection(SectionCode sectionCode, String subsection) {
+    return new IllegalStateException("Unknown referenced section/subsection for lookup of location: " + sectionCode.name() + subsection);
   }
 }
