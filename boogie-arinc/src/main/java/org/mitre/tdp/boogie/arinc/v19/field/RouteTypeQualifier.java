@@ -4,12 +4,14 @@ import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.SingleCharacterLookup;
+import org.mitre.tdp.boogie.arinc.TrimmableField;
 
 import com.google.common.collect.Sets;
 
-public final class RouteTypeQualifier implements FieldSpec<String> {
+public final class RouteTypeQualifier extends TrimmableField<String> {
 
   @Override
   public int fieldLength() {
@@ -22,10 +24,8 @@ public final class RouteTypeQualifier implements FieldSpec<String> {
   }
 
   @Override
-  public Optional<String> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .map(String::trim)
-        .filter(allowedCodes::contains);
+  protected Optional<String> parseTrimmed(String source, int startOffset, int endOffset) {
+    return VALUES.parse(source, startOffset, endOffset);
   }
 
   /**
@@ -37,4 +37,6 @@ public final class RouteTypeQualifier implements FieldSpec<String> {
       // V19a codes
       newHashSet("H", "F", "I")
   );
+
+  private static final SingleCharacterLookup<String> VALUES = SingleCharacterLookup.of(allowedCodes, Function.identity());
 }

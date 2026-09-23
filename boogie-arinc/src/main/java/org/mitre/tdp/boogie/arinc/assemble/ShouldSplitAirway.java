@@ -8,27 +8,30 @@ import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
 public final class ShouldSplitAirway implements BiPredicate<ArincAirwayLeg, ArincAirwayLeg> {
   public static final ShouldSplitAirway INSTANCE = new ShouldSplitAirway();
 
-  /**
-   * Splits subsequent singleton airway records when their initial sequence number jumps by at least 1.
-   * <br>
-   * i.e. most sequence number are 0010, 0020, 1020, 3050 - we want to split on 0010 -> 1020.
-   * <br>
-   * Context in {@link SequenceNumber}.
-   */
-  private static final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> SEQ_JUMP = (previous, next) -> !formattedSequenceNumber(previous).startsWith(formattedSequenceNumber(next).substring(0, 1));
-  private static final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> SEQ_RESET = (previous, next) -> next.sequenceNumber() <= previous.sequenceNumber();
-  private static final BiPredicate<ArincAirwayLeg, ArincAirwayLeg> DIFF_IDENT = (previous, next) -> !previous.routeIdentifier().equals(next.routeIdentifier());
-
-
   private ShouldSplitAirway() {
   }
 
+  /**
+   * Splits when the leading digit of the four-character {@link SequenceNumber} changes, the sequence resets, or the route
+   * identifier changes. For example, 0010 to 0020 stays together, while 0010 to 1020 starts another airway.
+   */
   @Override
   public boolean test(ArincAirwayLeg previous, ArincAirwayLeg next) {
-    return SEQ_JUMP.or(SEQ_RESET).or(DIFF_IDENT).test(previous, next);
+    int previousSequence = previous.sequenceNumber();
+    int nextSequence = next.sequenceNumber();
+    return sequencePrefix(previousSequence) != sequencePrefix(nextSequence)
+        || nextSequence <= previousSequence
+        || !previous.routeIdentifier().equals(next.routeIdentifier());
   }
 
-  private static String formattedSequenceNumber(ArincAirwayLeg arincAirwayLeg) {
-    return String.format("%04d", arincAirwayLeg.sequenceNumber());
+  private static int sequencePrefix(int sequenceNumber) {
+    // Match the leading sign/digit of %04d even for values outside the normal four-digit field range.
+    if (sequenceNumber < 0) {
+      return -1;
+    }
+    while (sequenceNumber >= 10_000) {
+      sequenceNumber /= 10;
+    }
+    return sequenceNumber / 1_000;
   }
 }

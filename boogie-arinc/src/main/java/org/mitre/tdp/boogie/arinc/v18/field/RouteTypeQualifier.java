@@ -4,8 +4,10 @@ import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.function.Function;
 
-import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.SingleCharacterLookup;
+import org.mitre.tdp.boogie.arinc.TrimmableField;
 
 /**
  * The “Route Type” field defines the type of Enroute Airway, Preferred Route, Airport and Heliport SID/STAR/Approach Routes of which
@@ -13,7 +15,7 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  * <br>
  * For Airport and Heliport Approach Routes, “Route Type” includes a “primary route type”, and up to two “route type qualifiers”.
  */
-public final class RouteTypeQualifier implements FieldSpec<String> {
+public final class RouteTypeQualifier extends TrimmableField<String> {
 
   @Override
   public int fieldLength() {
@@ -30,10 +32,10 @@ public final class RouteTypeQualifier implements FieldSpec<String> {
    */
   static final HashSet<String> allowedCodes = newHashSet("A", "B", "E", "C", "S", "D", "J", "L", "N", "P", "R", "T", "U", "V", "W");
 
+  private static final SingleCharacterLookup<String> VALUES = SingleCharacterLookup.of(allowedCodes, Function.identity());
+
   @Override
-  public Optional<String> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .map(String::trim)
-        .filter(allowedCodes::contains);
+  protected Optional<String> parseTrimmed(String source, int startOffset, int endOffset) {
+    return VALUES.parse(source, startOffset, endOffset);
   }
 }

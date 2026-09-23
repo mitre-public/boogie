@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static java.util.Objects.checkFromToIndex;
+
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
@@ -13,6 +15,9 @@ import org.mitre.tdp.boogie.arinc.FieldSpec;
  */
 public final class EuIndicator implements FieldSpec<Boolean> {
 
+  private static final Optional<Boolean> TRUE = Optional.of(true);
+  private static final Optional<Boolean> FALSE = Optional.of(false);
+
   @Override
   public int fieldLength() {
     return 1;
@@ -25,7 +30,7 @@ public final class EuIndicator implements FieldSpec<Boolean> {
 
   @Override
   public Optional<Boolean> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .map("Y"::equalsIgnoreCase);
+    checkFromToIndex(startOffset, endOffset, source.length());
+    return endOffset - startOffset == 1 && source.regionMatches(true, startOffset, "Y", 0, 1) ? TRUE : FALSE;
   }
 }

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.SingleCharacterLookup;
 
 public enum TurnDirection implements FieldSpec<TurnDirection> {
   SPEC,
@@ -27,6 +28,9 @@ public enum TurnDirection implements FieldSpec<TurnDirection> {
       .map(TurnDirection::name)
       .collect(Collectors.toSet());
 
+  private static final SingleCharacterLookup<TurnDirection> PARSED_VALUES =
+      SingleCharacterLookup.of(validNames, TurnDirection::valueOf);
+
   @Override
   public int fieldLength() {
     return 1;
@@ -39,8 +43,6 @@ public enum TurnDirection implements FieldSpec<TurnDirection> {
 
   @Override
   public Optional<TurnDirection> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .filter(validNames::contains)
-        .map(TurnDirection::valueOf);
+    return PARSED_VALUES.parse(source, startOffset, endOffset);
   }
 }

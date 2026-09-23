@@ -1,6 +1,9 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
 import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
@@ -21,6 +24,12 @@ import org.mitre.tdp.boogie.arinc.utils.ValidArincNumeric;
  */
 public final class Rnp implements FieldSpec<Double> {
 
+  // Common raw codes in CIFP/LIDO, in frequency order; uncommon values use the same parser on demand.
+  private static final List<Map.Entry<String, Optional<Double>>> COMMON_VALUES =
+      Stream.of("   ", "010", "050", "031", "020", "100", "051", "040")
+          .map(code -> Map.entry(code, parseUncached(code)))
+          .toList();
+
   @Override
   public int fieldLength() {
     return 3;
@@ -36,7 +45,19 @@ public final class Rnp implements FieldSpec<Double> {
    */
   @Override
   public Optional<Double> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
+    if (endOffset - startOffset == 3) {
+      for (int index = 0; index < COMMON_VALUES.size(); index++) {
+        Map.Entry<String, Optional<Double>> cached = COMMON_VALUES.get(index);
+        if (source.regionMatches(startOffset, cached.getKey(), 0, 3)) {
+          return cached.getValue();
+        }
+      }
+    }
+    return parseUncached(source.substring(startOffset, endOffset));
+  }
+
+  private static Optional<Double> parseUncached(String fieldValue) {
+    return Optional.of(fieldValue)
         .filter(ValidArincNumeric.INSTANCE)
         .filter(s -> s.trim().length() > 2)
         .map(s -> {

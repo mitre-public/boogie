@@ -1,11 +1,10 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import static com.google.common.collect.Sets.newHashSet;
-
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.SingleCharacterLookup;
 
 /**
  * The “Direction Restriction” field, when used on Enroute Airway records, will indicate the direction an Enroute Airway is to be flown.
@@ -30,11 +29,11 @@ public final class DirectionRestriction implements FieldSpec<String> {
     return "5.115";
   }
 
-  private static final HashSet<String> allowedValues = newHashSet(" ", "F", "B");
+  private static final SingleCharacterLookup<String> PARSED_VALUES =
+      SingleCharacterLookup.of(List.of(" ", "F", "B"), value -> value);
 
   @Override
   public Optional<String> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .filter(allowedValues::contains);
+    return PARSED_VALUES.parse(source, startOffset, endOffset);
   }
 }

@@ -65,7 +65,7 @@ class TestArincTransitionTypeClassifier {
     ArincProcedureLeg first = newProcedureLeg("F", "R", "ALL", "  M ", 10);
     ArincProcedureLeg second = newProcedureLeg("F", "R", "ALL", null, 20);
 
-    TransitionType sortedClassification = classifier.applySorted(List.of(first, second));
+    TransitionType sortedClassification = classifier.applyOnSortedList(List.of(first, second));
 
     assertAll(
         () -> assertEquals(TransitionType.MISSED, sortedClassification),

@@ -1,11 +1,14 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static java.util.Objects.checkFromToIndex;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
+import org.mitre.tdp.boogie.arinc.SingleCharacterLookup;
 
 /**
  * The Level field defines the airway structure of which the record is an element.
@@ -25,7 +28,9 @@ public enum Level implements FieldSpec<Level> {
    */
   L;
 
-  static final Set<String> enumValues = Arrays.stream(Level.values()).filter(e -> !SPEC.equals(e)).map(Enum::name).collect(Collectors.toSet());
+  static final Set<String> enumValues = Arrays.stream(Level.values()).filter(e -> !SPEC.equals(e)).map(Enum::name).collect(Collectors.toUnmodifiableSet());
+
+  private static final SingleCharacterLookup<Level> PARSED_VALUES = SingleCharacterLookup.of(enumValues, Level::valueOf);
 
   @Override
   public int fieldLength() {
@@ -39,9 +44,13 @@ public enum Level implements FieldSpec<Level> {
 
   @Override
   public Optional<Level> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .map(String::trim)
-        .filter(enumValues::contains)
-        .map(Level::valueOf);
+    checkFromToIndex(startOffset, endOffset, source.length());
+    while (startOffset < endOffset && source.charAt(startOffset) <= ' ') {
+      startOffset++;
+    }
+    while (startOffset < endOffset && source.charAt(endOffset - 1) <= ' ') {
+      endOffset--;
+    }
+    return PARSED_VALUES.parse(source, startOffset, endOffset);
   }
 }

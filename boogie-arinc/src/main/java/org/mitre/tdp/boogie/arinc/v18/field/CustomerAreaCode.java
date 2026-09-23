@@ -1,5 +1,8 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
+import static java.util.Objects.checkFromToIndex;
+
+import java.util.List;
 import java.util.Optional;
 
 import org.mitre.tdp.boogie.arinc.FieldSpec;
@@ -71,6 +74,11 @@ public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode> {
       .put("A", CustomerAreaCode.AFR.name())
       .build();
 
+  private static final List<Optional<CustomerAreaCode>> PARSED_VALUES = lookup.values().stream()
+      .map(CustomerAreaCode::valueOf)
+      .map(Optional::of)
+      .toList();
+
   public String boundaryCode() {
     return lookup.inverse().get(this.name());
   }
@@ -87,10 +95,23 @@ public enum CustomerAreaCode implements FieldSpec<CustomerAreaCode> {
 
   @Override
   public Optional<CustomerAreaCode> parse(String source, int startOffset, int endOffset) {
-    return Optional.of(source.substring(startOffset, endOffset))
-        .map(String::trim)
-        .filter(s -> !s.isEmpty())
-        .filter(lookup.inverse()::containsKey)
-        .map(CustomerAreaCode::valueOf);
+    checkFromToIndex(startOffset, endOffset, source.length());
+    while (startOffset < endOffset && source.charAt(startOffset) <= ' ') {
+      startOffset++;
+    }
+    while (startOffset < endOffset && source.charAt(endOffset - 1) <= ' ') {
+      endOffset--;
+    }
+    if (endOffset - startOffset != fieldLength()) {
+      return Optional.empty();
+    }
+
+    for (int index = 0; index < PARSED_VALUES.size(); index++) {
+      Optional<CustomerAreaCode> parsed = PARSED_VALUES.get(index);
+      if (source.regionMatches(startOffset, parsed.orElseThrow().name(), 0, fieldLength())) {
+        return parsed;
+      }
+    }
+    return Optional.empty();
   }
 }
