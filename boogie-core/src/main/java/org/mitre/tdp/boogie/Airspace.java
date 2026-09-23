@@ -58,11 +58,15 @@ public interface Airspace {
   Range<Double> altitudeLimit();
 
   /**
-   * This is a fix that the airspace is based on, which might actually be its center or not.
-   * They used to have navaids in the middle, but now could be whatever or not even actually a fix in the database.
-   * @return the name of the center.
+   * Source identification for the element on which this airspace is based. This is independent of {@link #center()}:
+   * a FIR/UIR reference, for example, has identification but no point location.
+   *
+   * <p>Defaults to empty for implementations that do not retain this metadata.
    */
-  Optional<String> centerIdent();
+  default Optional<CenterIdentification> centerIdentification() {
+    return Optional.empty();
+  }
+
   /**
    * This is a fix that the airspace is based on, which might actually be its center or not.
    * They used to have navaids in the middle, but now could be whatever fix, or not even actually a fix in the database.
@@ -84,7 +88,7 @@ public interface Airspace {
     private final String identifier;
     private final AirspaceType airspaceType;
     private final List<AirspaceSequence> sequences;
-    private final String centerIdent;
+    private final CenterIdentification centerIdentification;
     private final Fix center;
     private final Range<Double> altitudeLimit;
     private int hashCode;
@@ -94,7 +98,7 @@ public interface Airspace {
       this.identifier = builder.identifier;
       this.airspaceType = builder.airspaceType;
       this.sequences = builder.sequences;
-      this.centerIdent = builder.centerIdent;
+      this.centerIdentification = builder.centerIdentification;
       this.center = builder.center;
       this.altitudeLimit = builder.altitudeLimit;
     }
@@ -105,7 +109,7 @@ public interface Airspace {
           .identifier(this.identifier)
           .airspaceType(this.airspaceType)
           .sequences(this.sequences)
-          .centerIdent(this.centerIdent)
+          .centerIdentification(this.centerIdentification)
           .center(this.center)
           .altitudeLimit(this.altitudeLimit);
     }
@@ -131,8 +135,8 @@ public interface Airspace {
     }
 
     @Override
-    public Optional<String> centerIdent() {
-      return Optional.ofNullable(centerIdent);
+    public Optional<CenterIdentification> centerIdentification() {
+      return Optional.ofNullable(centerIdentification);
     }
 
     @Override
@@ -157,7 +161,7 @@ public interface Airspace {
       if (o == null || getClass() != o.getClass())
         return false;
       Standard standard = (Standard) o;
-      return Objects.equals(area, standard.area) && Objects.equals(identifier, standard.identifier) && airspaceType == standard.airspaceType && Objects.equals(sequences, standard.sequences) && Objects.equals(centerIdent, standard.centerIdent) && Objects.equals(center, standard.center) && Objects.equals(altitudeLimit, standard.altitudeLimit);
+      return Objects.equals(area, standard.area) && Objects.equals(identifier, standard.identifier) && airspaceType == standard.airspaceType && Objects.equals(sequences, standard.sequences) && Objects.equals(centerIdentification, standard.centerIdentification) && Objects.equals(center, standard.center) && Objects.equals(altitudeLimit, standard.altitudeLimit);
     }
 
     @Override
@@ -169,7 +173,7 @@ public interface Airspace {
     }
 
     private int computeHashCode() {
-      return Objects.hash(area, identifier, airspaceType, sequences, centerIdent, center, altitudeLimit);
+      return Objects.hash(area, identifier, airspaceType, sequences, centerIdentification, center, altitudeLimit);
     }
 
     @Override
@@ -179,7 +183,7 @@ public interface Airspace {
           "identifier='" + identifier + '\'' +
           ", airspaceType=" + airspaceType +
           ", sequences=" + sequences +
-          ", centerIdent='" + centerIdent + '\'' +
+          ", centerIdentification=" + centerIdentification +
           ", center=" + center +
           ", altitudeLimit=" + altitudeLimit +
           '}';
@@ -190,7 +194,7 @@ public interface Airspace {
       private String identifier;
       private AirspaceType airspaceType;
       private List<AirspaceSequence> sequences;
-      private String centerIdent;
+      private CenterIdentification centerIdentification;
       private Fix center;
       private Range<Double> altitudeLimit;
 
@@ -216,8 +220,8 @@ public interface Airspace {
         return this;
       }
 
-      public Builder centerIdent(String centerIdent) {
-        this.centerIdent = centerIdent;
+      public Builder centerIdentification(CenterIdentification centerIdentification) {
+        this.centerIdentification = centerIdentification;
         return this;
       }
 
@@ -274,8 +278,8 @@ public interface Airspace {
     }
 
     @Override
-    public Optional<String> centerIdent() {
-      return delegate.centerIdent();
+    public Optional<CenterIdentification> centerIdentification() {
+      return delegate.centerIdentification();
     }
 
     @Override

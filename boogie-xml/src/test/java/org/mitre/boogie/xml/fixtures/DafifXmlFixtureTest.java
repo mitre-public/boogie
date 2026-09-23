@@ -16,6 +16,7 @@ import jakarta.xml.bind.JAXBContext;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 import org.mitre.boogie.xml.v23_4.generated.A424Point;
 import org.mitre.boogie.xml.v23_4.generated.AirspaceRouteHoldAltitude;
@@ -30,6 +31,8 @@ import org.xml.sax.helpers.DefaultHandler;
 @Tag("DAFIF")
 @Tag("INTEGRATION")
 @Tag("XML")
+@EnabledIfSystemProperty(named = "boogie.xml.conversionFixtures", matches = "true",
+    disabledReason = "Full-dataset fixture conversion is opt-in")
 class DafifXmlFixtureTest {
 
   @Test

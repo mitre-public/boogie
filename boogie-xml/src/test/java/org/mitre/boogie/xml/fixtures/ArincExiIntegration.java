@@ -6,6 +6,7 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.mitre.boogie.xml.exi.ExiAssertions;
 import org.mitre.boogie.xml.exi.ExiCodec;
 import org.mitre.boogie.xml.exi.ExiOptions;
@@ -20,6 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Tag("XML")
+@EnabledIfSystemProperty(named = "boogie.xml.conversionFixtures", matches = "true",
+    disabledReason = "Full-dataset fixture conversion is opt-in")
 public class ArincExiIntegration {
   @Test
   @Tag("CIFP")

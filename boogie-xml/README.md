@@ -120,21 +120,51 @@ and output streams and must close them. A codec can be reused for multiple docum
 
 ### Test fixtures and export validation
 
-Run the module's unit tests from the repository root:
+Run the module's tests from the repository root:
 
 ```shell
-./gradlew :boogie-xml:unit
+./gradlew :boogie-xml:test
 ```
 
-These use checked-in or synthetic fixtures and generate their test schemas locally; the private
-integration archives and official ARINC XSDs are not required.
+The `unit` suite uses the compact, checked-in `v23_4/parser-sample.xml` and synthetic fixtures. It covers
+XML model loading, assembled records and reference resolution, plus schema-less and schema-informed
+EXI round trips. Test schemas are generated locally; private integration archives and official ARINC
+XSDs are not required. The general `test` task also runs the loading-only CIFP integration tests described
+below, using a pre-generated Git LFS fixture.
+
+Full CIFP/DAFIF conversions and exports of the 59 MB `gibberish-sample.xml` are **disabled by default**,
+including when running tests directly in an IDE. These are fixture-generation checks, not prerequisites
+for parser testing. Opt in with `-PxmlConversionFixtures=true` in Gradle, or the JVM option
+`-Dboogie.xml.conversionFixtures=true` for a direct JUnit run. The source datasets and conversion helpers
+remain available; normal runs do not regenerate their artifacts.
+
+#### Loading-only CIFP integration
+
+The default XML integration task loads the pre-generated CIFP 2101 publication and checks both parsed
+model counts and assembled record counts. It does not convert the source CIFP dataset or encode EXI:
+
+```shell
+git lfs pull --include="boogie-xml/src/test/resources/v23_4/cifp-2101-no-schema.exi"
+./gradlew :boogie-xml:xml-integration
+```
+
+The approximately 6.8 MiB schema-less EXI fixture is stored at
+`boogie-xml/src/test/resources/v23_4/cifp-2101-no-schema.exi` using Git LFS. No private dataset checkout,
+source archive, or official schema is needed. `OneshotCifpExiIntegrationTest` checks airports, heliports,
+fixes, airways, procedures, and selected nested record counts through the model and assembly parsers.
+See the [fixture notes](src/test/resources/v23_4/README.md) for provenance and known record-count limits.
+
+The [XML CI job](../.github/workflows/xml-integration.yml) runs this task on pull requests with an
+LFS-enabled checkout. The [publish workflow](../.github/workflows/publish.yml) runs the same loading-only
+integration before release; its separate `unit` job covers the compact parser tests. Neither default
+job regenerates XML/EXI publications.
 
 #### Sample EXI artifacts
 
-To generate a compressed, schema-less EXI file from `gibberish-sample.xml`:
+To explicitly generate a compressed, schema-less EXI file from `gibberish-sample.xml`:
 
 ```shell
-./gradlew :boogie-xml:unit --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesGibberishSampleExi' --rerun-tasks
+./gradlew :boogie-xml:unit -PxmlConversionFixtures=true --tests 'org.mitre.boogie.xml.OneshotExiParserTest.writesGibberishSampleExi' --rerun-tasks
 ```
 
 The test writes `boogie-xml/build/exi/gibberish-sample-no-schema.exi`. The file remains after the test until the
@@ -142,29 +172,36 @@ module's build directory is cleaned.
 
 The companion `writesGibberishSampleSchemaInformedExi` test writes `gibberish-sample-schema-informed.exi`.
 Its XSDs are generated from the checked-in JAXB classes under `build/exi/gibberish-sample-schemas/`,
-using schema ID `urn:boogie:test:arinc424:jaxb:23.4`. This keeps both schema modes covered by unit tests
-without external schema files. These generated test schemas are distinct from the official ARINC XSDs.
+using schema ID `urn:boogie:test:arinc424:jaxb:23.4`. Both artifact-writing tests require the opt-in flag.
+Both schema modes remain covered by the small default parser tests without external schema files.
+These generated test schemas are distinct from the official ARINC XSDs.
 
-#### Full CIFP and DAFIF integration tests
+#### Opt-in full CIFP and DAFIF conversions
 
-The full fixture and export tests use the `XML` tag and run in their own task, defined by the
-shared [java-conventions build plugin](../buildSrc/src/main/kotlin/boogie/java-conventions.gradle.kts):
+The full fixture and export tests share the `XML` tag and `xml-integration` task with the loading-only
+tests. The task is defined by the shared
+[java-conventions build plugin](../buildSrc/src/main/kotlin/boogie/java-conventions.gradle.kts).
+Enable the additional conversion tests explicitly:
 
 ```shell
-./gradlew :boogie-xml:xml-integration
+./gradlew :boogie-xml:xml-integration -PxmlConversionFixtures=true
 ```
 
-The [XML CI job](../.github/workflows/xml-integration.yml) checks out `mitre-tdp/boogie-test` with Git LFS
-into `boogie-xml/src/test/resources`, using the same SSH key as the other integration jobs.
-That checkout supplies `DAFIF8_1_2601.zip`;
-the job also copies the tracked `cifp-2101.dat.gz` fixture from `boogie-arinc/src/test/resources`.
-Local runs need both archives in `boogie-xml/src/test/resources`. The `unit`, `cifp-integration`,
-`dafif-integration`, `lido-integration`, and `assignment-integration` tasks exclude the XML-tagged tests.
-The general `test` task still includes them and therefore also needs the integration archives.
-The [publish workflow](../.github/workflows/publish.yml) runs XML integration before releasing.
+For full conversions in CI, start the XML workflow manually with `workflow_dispatch` and select the
+`conversion_fixtures` boolean input (default: false). Only that opt-in run checks out
+`mitre-tdp/boogie-test` with Git LFS, using the same SSH key as the other integration jobs. The separate
+checkout preserves the tracked loading fixtures; the job copies `DAFIF8_1_2601.zip` and any available
+official schemas into the module's test resources. It also copies the tracked `cifp-2101.dat.gz` fixture
+from `boogie-arinc/src/test/resources`.
 
-The task runs four tests: CIFP and DAFIF fixture validation, plus one XML/EXI export test for each source.
-Its HTML report is `boogie-xml/build/reports/tests/xml-integration/index.html`.
+Local conversion runs need both archives in `boogie-xml/src/test/resources`. The `unit`,
+`cifp-integration`, `dafif-integration`, `lido-integration`, and `assignment-integration` tasks exclude
+the XML-tagged tests. The general `test` task and `xml-integration` run the loading tests by default but
+skip conversion tests unless explicitly enabled.
+
+By default, `xml-integration` runs two CIFP loading/count tests. The opt-in flag adds four tests: CIFP
+and DAFIF fixture validation, plus one XML/EXI export test for each source. Its HTML report is
+`boogie-xml/build/reports/tests/xml-integration/index.html`.
 
 Together, the unit and integration suites check:
 
@@ -175,6 +212,7 @@ Together, the unit and integration suites check:
   root and balanced elements. Namespace-aware element and attribute names, counts, and document
   structure are compared with the source XML.
 - Parsed model values and assembled record counts for the small sample in `OneshotExiParserTest`.
+  The loading-only CIFP integration additionally checks full-publication model and assembled counts.
   Full-publication structural comparisons omit text and attribute values because typed EXI values
   can be normalized; those comparisons do not establish complete value preservation or XSD validity.
 
@@ -186,7 +224,7 @@ before reading dependent values still run first.
 To run only the CIFP export:
 
 ```shell
-./gradlew :boogie-xml:xml-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesCifpXmlAndExi' --rerun-tasks
+./gradlew :boogie-xml:xml-integration -PxmlConversionFixtures=true --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesCifpXmlAndExi' --rerun-tasks
 ```
 
 This writes `cifp-2101.xml` and `cifp-2101-no-schema.exi` under `boogie-xml/build/exi/`, plus a compressed
@@ -212,7 +250,7 @@ The flight-level flag identifies the pressure reference; readers keep the numeri
 To run only the DAFIF export:
 
 ```shell
-./gradlew :boogie-xml:xml-integration --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesDafifXmlAndExi' --rerun-tasks
+./gradlew :boogie-xml:xml-integration -PxmlConversionFixtures=true --tests 'org.mitre.boogie.xml.fixtures.ArincExiIntegration.writesDafifXmlAndExi' --rerun-tasks
 ```
 
 This writes `dafif-2601.xml`, `dafif-2601-no-schema.exi`, and either `dafif-2601-schema-informed.exi`

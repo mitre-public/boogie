@@ -8,6 +8,8 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.AirspaceType;
+import org.mitre.tdp.boogie.BoogieType;
+import org.mitre.tdp.boogie.CenterIdentification;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Geometry;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
@@ -45,9 +47,25 @@ public interface ControlledAirspaceAssemblyStrategy<A, F, AS> {
           .altitudeLimit(alts)
           .airspaceType(AirspaceType.CONTROLLED)
           .sequences(sequences)
-          .centerIdent(representative.airspaceCenter())
+          .centerIdentification(CenterIdentification.builder(representative.airspaceCenter())
+              .area(representative.customerAreaCode().name())
+              .icaoRegion(representative.icaoRegion())
+              .type(centerType(representative))
+              .build())
           .center(fix)
           .build();
+    }
+
+    private BoogieType centerType(ArincControlledAirspaceLeg representative) {
+      return representative.supplierSectionCode()
+          .map(section -> switch (section.name() + representative.supplierSubSectionCode().orElse("")) {
+            case "PA" -> BoogieType.AIRPORT;
+            case "HA" -> BoogieType.HELIPORT;
+            case "D", "DB", "PN", "EA" -> BoogieType.FIX;
+            case "UF" -> BoogieType.AIRSPACE;
+            default -> null;
+          })
+          .orElse(null);
     }
 
     @Override

@@ -241,7 +241,7 @@ public final class ArincTerminalAreaDatabase {
   }
 
   public Collection<ArincProcedureLeg> heliportsLegsForProcedure(String heliport, String icaoRegion, String procedure) {
-    return highlander(heliportLookup.get(Pair.of(heliport, null))).map(page -> page.procedureLegs(procedure)).orElse(Collections.emptySet());
+    return highlander(heliportLookup.get(Pair.of(heliport, icaoRegion))).map(page -> page.procedureLegs(procedure)).orElse(Collections.emptySet());
   }
 
   public Collection<ArincProcedureLeg> legsForProcedure(String airport, String icaoRegion, String procedure) {

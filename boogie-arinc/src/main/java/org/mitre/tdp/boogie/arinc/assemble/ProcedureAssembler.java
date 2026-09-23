@@ -146,9 +146,9 @@ public interface ProcedureAssembler<P> {
 
       Optional<F> associatedFix(ArincProcedureLeg arincProcedureLeg) {
         if (arincProcedureLeg.fixIdentifier().isPresent() && arincProcedureLeg.fixIcaoRegion().isPresent() && arincProcedureLeg.fixSectionCode().isPresent()) {
-          //if the waypoint is terminal (aka 'P') its more reliable to use the airports icao region
+          // For terminal references (P/H), prefer the owning airport/heliport's ICAO region.
           String icaoRegion = Optional.of(arincProcedureLeg.airportIcaoRegion())
-              .filter(i -> arincProcedureLeg.fixSectionCode().filter(s -> s.equals(SectionCode.P)).isPresent())
+              .filter(i -> arincProcedureLeg.fixSectionCode().filter(s -> s.equals(SectionCode.P) || s.equals(SectionCode.H)).isPresent())
               .or(arincProcedureLeg::fixIcaoRegion)
               .orElseThrow(IllegalStateException::new);
 
@@ -178,9 +178,9 @@ public interface ProcedureAssembler<P> {
 
       Optional<F> centerFix(ArincProcedureLeg arincProcedureLeg) {
         if (arincProcedureLeg.centerFixIdentifier().isPresent() && arincProcedureLeg.centerFixIcaoRegion().isPresent() && arincProcedureLeg.centerFixSectionCode().isPresent()) {
-          //if the waypoint is terminal (aka 'P') its more reliable to use the airports icao region
+          // For terminal references (P/H), prefer the owning airport/heliport's ICAO region.
           String icaoRegion = Optional.of(arincProcedureLeg.airportIcaoRegion())
-              .filter(i -> arincProcedureLeg.centerFixSectionCode().filter(s -> s.equals(SectionCode.P)).isPresent())
+              .filter(i -> arincProcedureLeg.centerFixSectionCode().filter(s -> s.equals(SectionCode.P) || s.equals(SectionCode.H)).isPresent())
               .or(arincProcedureLeg::centerFixIcaoRegion)
               .orElseThrow(IllegalStateException::new);
           return fixDereferencer.dereference(

@@ -15,7 +15,7 @@ import org.mitre.caasd.commons.util.DemotedException;
 
 class StreamingUnmarshallerTest {
 
-  private static final File xmlTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_4/gibberish-sample.xml"));
+  private static final File xmlTestFile = new File(System.getProperty("user.dir").concat("/src/test/resources/v23_4/parser-sample.xml"));
 
   @Test
   void test() {
@@ -35,13 +35,13 @@ class StreamingUnmarshallerTest {
     ArincRecords records = result.get();
 
     assertAll(
-        () -> assertEquals(5, records.waypoints().size(), "Waypoints"),
-        () -> assertEquals(5, records.airports().size(), "Airports"),
-        () -> assertEquals(5, records.ndbNavaids().size(), "NDB Navaids"),
-        () -> assertEquals(3, records.vhfNavaids().size(), "VHF Navaids"),
-        () -> assertEquals(5, records.arincAirways().size(), "Airways"),
-        () -> assertEquals(5, records.holdingPatterns().size(), "Holding Patterns"),
-        () -> assertEquals(5, records.heliports().size(), "Heliports")
+        () -> assertEquals(2, records.waypoints().size(), "Waypoints"),
+        () -> assertEquals(1, records.airports().size(), "Airports"),
+        () -> assertEquals(1, records.ndbNavaids().size(), "NDB Navaids"),
+        () -> assertEquals(1, records.vhfNavaids().size(), "VHF Navaids"),
+        () -> assertEquals(1, records.arincAirways().size(), "Airways"),
+        () -> assertEquals(1, records.holdingPatterns().size(), "Holding Patterns"),
+        () -> assertEquals(1, records.heliports().size(), "Heliports")
     );
   }
 
@@ -61,13 +61,13 @@ class StreamingUnmarshallerTest {
     assertEquals(records, result.get(), "Should return the same ArincRecords instance");
 
     assertAll(
-        () -> assertEquals(5, records.waypoints().size(), "Waypoints"),
-        () -> assertEquals(5, records.airports().size(), "Airports"),
-        () -> assertEquals(5, records.ndbNavaids().size(), "NDB Navaids"),
-        () -> assertEquals(3, records.vhfNavaids().size(), "VHF Navaids"),
-        () -> assertEquals(5, records.arincAirways().size(), "Airways"),
-        () -> assertEquals(5, records.holdingPatterns().size(), "Holding Patterns"),
-        () -> assertEquals(5, records.heliports().size(), "Heliports")
+        () -> assertEquals(2, records.waypoints().size(), "Waypoints"),
+        () -> assertEquals(1, records.airports().size(), "Airports"),
+        () -> assertEquals(1, records.ndbNavaids().size(), "NDB Navaids"),
+        () -> assertEquals(1, records.vhfNavaids().size(), "VHF Navaids"),
+        () -> assertEquals(1, records.arincAirways().size(), "Airways"),
+        () -> assertEquals(1, records.holdingPatterns().size(), "Holding Patterns"),
+        () -> assertEquals(1, records.heliports().size(), "Heliports")
     );
   }
 }

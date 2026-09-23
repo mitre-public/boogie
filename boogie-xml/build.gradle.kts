@@ -19,6 +19,9 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
+    // Full publication conversions and persistent sample exports are manual fixture generators.
+    systemProperty("boogie.xml.conversionFixtures", providers.gradleProperty("xmlConversionFixtures").getOrElse("false"))
+
     // EXIficient 1.0.7 asserts !globalValues.contains(value) for every decoded string.
     // That debug check is quadratic on full publications. Keep JUnit and other JVM
     // assertions enabled while using this decoder class's normal runtime behavior.
