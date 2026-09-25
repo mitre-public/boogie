@@ -34,6 +34,8 @@ fun registerJmhTask(
         smoke -> "Checks that the route expansion benchmarks run."
         name == "jmhLinker" -> "Compares separate and combined radius/nearest linking scans."
         name == "jmhShortestPath" -> "Compares repeated and reused Dijkstra searches across route endpoints."
+        name == "jmhCartesianProduct" -> "Compares the original and optimized Cartesian-product helpers."
+        name == "jmhCartesianProductStream" -> "Compares materialized and streamed Cartesian-product consumption."
         else -> "Benchmarks route expansion using existing test fixtures."
     }
     dependsOn(jmh.classesTaskName)
@@ -70,4 +72,10 @@ registerJmhTask("jmhLinker", false, "org.mitre.tdp.boogie.alg.chooser.graph.Rang
 }
 registerJmhTask("jmhShortestPath", false, "org.mitre.tdp.boogie.alg.chooser.ShortestPathBenchmark", "shortest-path.json").configure {
     mustRunAfter("jmh", "jmhSmoke", "jmhLinker")
+}
+registerJmhTask("jmhCartesianProduct", false, "org.mitre.tdp.boogie.util.CartesianProductBenchmark", "cartesian-product.json").configure {
+    mustRunAfter("jmh", "jmhSmoke", "jmhLinker", "jmhShortestPath")
+}
+registerJmhTask("jmhCartesianProductStream", false, "org.mitre.tdp.boogie.util.CartesianProductStreamBenchmark", "cartesian-product-stream.json").configure {
+    mustRunAfter("jmh", "jmhSmoke", "jmhLinker", "jmhShortestPath", "jmhCartesianProduct")
 }

@@ -81,6 +81,18 @@ Setup checks that both implementations return identical candidate paths and weig
 Results are written to `boogie-routes/build/reports/jmh/shortest-path.json`, using the same JMH settings as above.
 The two full route benchmarks end at a single fix or airport, so they do not exercise multiple-exit search reuse.
 
+To compare Cartesian-product implementations directly, run `./gradlew :boogie-routes:jmhCartesianProduct`.
+It compares the original Guava-based helper with the current collection overload for 1×1, 4×4, and 32×32 distinct products;
+the largest case supplies each input value twice to exercise duplicate removal. Both variants fully materialize their results,
+and setup verifies identical ordered pairs. Results are written to `boogie-routes/build/reports/jmh/cartesian-product.json`,
+using the same JMH settings as above.
+
+To compare consuming pairs from a materialized product with consuming them directly from a stream, run
+`./gradlew :boogie-routes:jmhCartesianProductStream`. Both variants compute the same checksum over ordered, distinct
+inputs of sizes 1×1, 4×4, and 32×32, matching the distinct token collections used for linking route sections.
+The streaming method preserves duplicates and reads the original collections; callers must keep those collections unchanged
+while consuming the stream. Results are written to `boogie-routes/build/reports/jmh/cartesian-product-stream.json`.
+
 ## Design
 
 Boogie has a highly modular design, allowing clients to swap out significant portions of the logic backing the expansion process with their own should they need that level of 

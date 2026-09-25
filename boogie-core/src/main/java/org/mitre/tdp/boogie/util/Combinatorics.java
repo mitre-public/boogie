@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.mitre.caasd.commons.Pair;
 
@@ -16,7 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Most of this class can be replace when we are able to bump guava deps in dependent libs from {@code 18->21} with powerset logic.
+ * Utilities for enumerating combinations and Cartesian products.
  */
 public final class Combinatorics {
 
@@ -40,16 +46,62 @@ public final class Combinatorics {
     return Iterators.transform(iter, input -> new Pair<>(collList.get(input[0]), collList.get(input[1])));
   }
 
+  /**
+   * Returns a mutable collection of pairs, iterating the second input for each value in the first.
+   * Inputs are snapshotted and duplicates are removed by equality, retaining their first occurrence.
+   */
   public static <U, V> Collection<Pair<U, V>> cartesianProduct(Collection<U> first, Collection<V> second) {
-    Iterator<Pair<U, V>> iterator = cartesianProduct(first::iterator, second::iterator);
-    List<Pair<U, V>> pairList = new ArrayList<>();
+    CartesianProductIterator<U, V> iterator = new CartesianProductIterator<>(first::iterator, second::iterator);
+    List<Pair<U, V>> pairList = new ArrayList<>(iterator.size);
     iterator.forEachRemaining(pairList::add);
     return pairList;
   }
 
+  /**
+   * Returns an iterator producing pairs in the same order as the collection overload.
+   * Inputs are snapshotted and deduplicated immediately; pairs are created as the iterator advances.
+   */
   public static <U, V> Iterator<Pair<U, V>> cartesianProduct(Iterable<U> first, Iterable<V> second) {
-    Set<List<Object>> sets = Sets.cartesianProduct(Sets.newLinkedHashSet(first), Sets.newLinkedHashSet(second));
-    return Iterators.transform(sets.iterator(), list -> Pair.of((U) list.get(0), (V) list.get(1)));
+    return new CartesianProductIterator<>(first, second);
+  }
+
+  /**
+   * Returns a sequential stream of pairs, iterating the second collection for each value in the first.
+   * Pairs are created on demand, preserving the inputs' encounter order and duplicate occurrences.
+   * <p>
+   * This method neither snapshots nor deduplicates the inputs and does not build an intermediate pair list.
+   * Neither input may be modified while the stream is in use. Use {@link #cartesianProduct(Collection, Collection)}
+   * when snapshotting and equality-based duplicate removal are required.
+   */
+  public static <U, V> Stream<Pair<U, V>> cartesianProductStream(Collection<U> first, Collection<V> second) {
+    requireNonNull(first);
+    requireNonNull(second);
+    if (first.isEmpty() || second.isEmpty()) {
+      return Stream.empty();
+    }
+
+    Iterator<Pair<U, V>> pairs = new Iterator<>() {
+      private final Iterator<U> firstIterator = first.iterator();
+      private Iterator<V> secondIterator = Collections.emptyIterator();
+      private U currentFirst;
+
+      @Override
+      public boolean hasNext() {
+        return secondIterator.hasNext() || firstIterator.hasNext();
+      }
+
+      @Override
+      public Pair<U, V> next() {
+        if (!secondIterator.hasNext()) {
+          currentFirst = firstIterator.next();
+          secondIterator = second.iterator();
+        }
+        return Pair.of(currentFirst, secondIterator.next());
+      }
+    };
+
+    long size = (long) first.size() * second.size();
+    return StreamSupport.stream(Spliterators.spliterator(pairs, size, Spliterator.ORDERED | Spliterator.NONNULL), false);
   }
 
   public static <T, C extends Iterable<T>> Iterator<Pair<T, T>> pairsCartesianProduct(Iterable<C> coll) {
@@ -62,6 +114,48 @@ public final class Combinatorics {
       iters.add(subIter);
     }
     return Iterators.concat(iters.iterator());
+  }
+
+  private static final class CartesianProductIterator<U, V> implements Iterator<Pair<U, V>> {
+
+    private final List<U> first;
+    private final List<V> second;
+    private final int size;
+
+    private int firstIndex;
+    private int secondIndex;
+
+    private CartesianProductIterator(Iterable<U> first, Iterable<V> second) {
+      Set<U> uniqueFirst = Sets.newLinkedHashSet(first);
+      Set<V> uniqueSecond = Sets.newLinkedHashSet(second);
+      this.first = List.copyOf(uniqueFirst);
+      // Preserve the existing behavior: an empty first input skips validation of second-input elements.
+      this.second = this.first.isEmpty() ? List.of() : List.copyOf(uniqueSecond);
+
+      long productSize = (long) this.first.size() * this.second.size();
+      if (productSize > Integer.MAX_VALUE) {
+        throw new IllegalArgumentException("Cartesian product too large; must have size at most Integer.MAX_VALUE");
+      }
+      this.size = (int) productSize;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return firstIndex < first.size() && !second.isEmpty();
+    }
+
+    @Override
+    public Pair<U, V> next() {
+      if (!hasNext()) {
+        throw new NoSuchElementException();
+      }
+      Pair<U, V> pair = Pair.of(first.get(firstIndex), second.get(secondIndex));
+      if (++secondIndex == second.size()) {
+        secondIndex = 0;
+        firstIndex++;
+      }
+      return pair;
+    }
   }
 
   private static class LexicographicIterator implements Iterator<int[]> {

@@ -3,6 +3,7 @@ package org.mitre.tdp.boogie.alg.chooser;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProduct;
+import static org.mitre.tdp.boogie.util.Combinatorics.cartesianProductStream;
 import static org.mitre.tdp.boogie.util.Iterators.openClose2;
 
 import java.time.Duration;
@@ -419,14 +420,13 @@ final class GraphicalRouteChooser implements RouteChooser {
      * @return the links between the tokens.
      */
     Stream<LinkedLegs> interLinks(LinkableTokens linkableTokens) {
-      return linkableTokens().stream()
-          .flatMap(source -> linkableTokens.linkableTokens().stream()
-              .flatMap(target -> source.accept(target).links().stream()
-                  .map(linkedLegs -> new LinkedLegs(
-                      linkableLeg(linkedLegs.source()),
-                      linkableTokens.linkableLeg(linkedLegs.target()),
-                      linkedLegs.linkWeight()
-                  ))));
+      return cartesianProductStream(linkableTokens(), linkableTokens.linkableTokens())
+          .flatMap(pair -> pair.first().accept(pair.second()).links().stream())
+          .map(linkedLegs -> new LinkedLegs(
+              linkableLeg(linkedLegs.source()),
+              linkableTokens.linkableLeg(linkedLegs.target()),
+              linkedLegs.linkWeight()
+          ));
     }
 
     private Collection<LinkableToken> linkableTokens() {
