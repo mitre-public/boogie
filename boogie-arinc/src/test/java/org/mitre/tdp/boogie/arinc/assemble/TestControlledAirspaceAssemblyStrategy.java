@@ -10,13 +10,38 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airspace;
+import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.BoogieType;
 import org.mitre.tdp.boogie.Fix;
+import org.mitre.tdp.boogie.Geometry;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.AirspaceType;
+import org.mitre.tdp.boogie.arinc.v18.field.BoundaryVia;
 import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
 
 class TestControlledAirspaceAssemblyStrategy {
+
+  @Test
+  void closingArcKeepsItsStartingFixAndStartingBearing() {
+    ArincControlledAirspaceLeg source = new ArincControlledAirspaceLeg.Builder()
+        .sequenceNumber(20)
+        .boundaryVia(BoundaryVia.RE)
+        .latitude(0.0).longitude(1.0)
+        .arcOriginLatitude(0.0).arcOriginLongitude(0.0)
+        .arcDistance(60.0).arcBearing(90.0)
+        .build();
+
+    AirspaceSequence sequence = ControlledAirspaceAssemblyStrategy.standard().convertControlledAirspaceSequence(source);
+
+    assertAll(
+        () -> assertEquals(Geometry.CLOCKWISE_ARC, sequence.geometry()),
+        () -> assertEquals(LatLong.of(0.0, 1.0), sequence.associatedFix().orElseThrow()),
+        () -> assertEquals(LatLong.of(0.0, 0.0), sequence.centerFix().orElseThrow()),
+        () -> assertEquals(60.0, sequence.arcRadius().orElseThrow()),
+        () -> assertEquals(90.0, sequence.arcBearing().orElseThrow()),
+        () -> assertEquals(20, sequence.sequenceNumber())
+    );
+  }
 
   @Test
   void referencesMapToCoreModelTypes() {

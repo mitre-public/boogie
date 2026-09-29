@@ -109,11 +109,11 @@ class DafifAirspaceIntegrationTest {
         () -> assertEquals(AirspaceType.FIR, fir.airspaceType()),
         () -> assertEquals("AGGG", fir.area()),
         () -> assertEquals(Range.closed(24500.0, 60000.0), fir.altitudeLimit()),
-        () -> assertEquals(14, fir.sequences().size(), "Starting anchor plus 13 source segments"),
+        () -> assertEquals(13, fir.sequences().size(), "One starting anchor per source segment"),
         () -> assertEquals(AirspaceType.UIR, uir.airspaceType()),
         () -> assertEquals("DIII", uir.area()),
         () -> assertEquals(Range.atLeast(24500.0), uir.altitudeLimit()),
-        () -> assertEquals(31, uir.sequences().size(), "Starting anchor plus 30 source segments")
+        () -> assertEquals(30, uir.sequences().size(), "One starting anchor per source segment")
     );
   }
 
@@ -139,8 +139,8 @@ class DafifAirspaceIntegrationTest {
     assertAll(
         () -> assertEquals(Range.atMost(1000.0), first.altitudeLimit()),
         () -> assertEquals(Range.closed(1001.0, 13500.0), second.altitudeLimit()),
-        () -> assertEquals(6, first.sequences().size(), "Starting anchor plus five source segments"),
-        () -> assertEquals(6, second.sequences().size(), "Starting anchor plus five source segments")
+        () -> assertEquals(5, first.sequences().size(), "One starting anchor per source segment"),
+        () -> assertEquals(5, second.sequences().size(), "One starting anchor per source segment")
     );
   }
 

@@ -1,7 +1,8 @@
 package org.mitre.tdp.boogie;
 
 /**
- * This class represents a generic geometry concept.
+ * Boundary geometry used by {@link AirspaceSequence}. Except for circles, the geometry applies from the sequence's
+ * associated fix to the next sequence's associated fix, with the final sequence returning to the first.
  */
 public enum Geometry {
   /**
@@ -9,19 +10,19 @@ public enum Geometry {
    */
   CIRCLE,
   /**
-   * The shortest distance between two points on a sphere
+   * The shortest path between two points on a sphere.
    */
   GREAT_CIRCLE,
   /**
-   * An arc crossing all meridians of longitude at the same angle
+   * A path crossing meridians of longitude at a constant angle.
    */
   RHUMB_LINE,
   /**
-   * An arc that starts/ends centered on a point in the counter-clockwise direction
+   * A constant-radius arc around the center fix, traversed counterclockwise from the start to the endpoint.
    */
   COUNTER_CLOCKWISE_ARC,
   /**
-   * An arc that starts/ends centered on a point in teh clockwise direction
+   * A constant-radius arc around the center fix, traversed clockwise from the start to the endpoint.
    */
   CLOCKWISE_ARC
 }

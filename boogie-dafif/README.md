@@ -190,6 +190,12 @@ represented by the core `Airspace` model; standard assembly skips these airspace
 available from the consumer. `BoundaryAssembler.usingStrategy(...)` and `SuasAssembler.usingStrategy(...)` accept custom
 strategies when a client model needs additional geometry or metadata.
 
+Each `AirspaceSequence` carries the geometry from its `associatedFix()` to the next sequence's fix; the last sequence
+returns to the first fix. Arc bearings identify the beginning of the arc. This matches the ARINC assembly convention.
+Earlier DAFIF assembly attached geometry to the ending fix and emitted an extra starting anchor. Consumers using that
+convention should switch to current-to-next edges; closed boundaries now have one sequence per source segment, plus any
+connections needed for source coordinate gaps.
+
 Altitude limits expressed as flight levels or AMSL convert to feet MSL. AGL, surface, unknown, unlimited, and by-NOTAM limits
 leave the corresponding side of the range unbounded: converting terrain-relative limits to MSL requires terrain data.
 The standard oneshot factory returns Boogie `Airspace` objects through `boundaries()`, `specialUseAirspaces()`, and `airspaces()`.

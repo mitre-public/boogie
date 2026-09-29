@@ -16,6 +16,7 @@ commons-lang = "org.apache.commons:commons-lang3:3.20.0"
 
 guava = "com.google.guava:guava:33.6.0-jre"
 jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
+s2 = "com.google.geometry:s2-geometry:2.0.0"
 
 equalsverifier = "nl.jqno.equalsverifier:equalsverifier:3.19.4"
 
