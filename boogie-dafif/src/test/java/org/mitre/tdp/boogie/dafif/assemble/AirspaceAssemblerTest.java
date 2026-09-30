@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.dafif.assemble;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,14 +49,16 @@ class AirspaceAssemblerTest {
 
     Airspace airspace = BoundaryAssembler.standard().assemble(List.of(parent("US00001", BoundaryType.FIR)), segments).findFirst().orElseThrow();
 
-    assertEquals(List.of(LatLong.of(0.0, 0.0), LatLong.of(0.0, 1.0), LatLong.of(1.0, 1.0), LatLong.of(0.0, 0.0)), points(airspace));
-    assertEquals(List.of(0, 1, 2, 3), airspace.sequences().stream().map(AirspaceSequence::sequenceNumber).toList());
-    assertEquals(List.of(Geometry.GREAT_CIRCLE, Geometry.GREAT_CIRCLE, Geometry.RHUMB_LINE, Geometry.GREAT_CIRCLE),
-        airspace.sequences().stream().map(AirspaceSequence::geometry).toList());
+    assertAll(
+        () -> assertEquals(List.of(LatLong.of(0.0, 0.0), LatLong.of(0.0, 1.0), LatLong.of(1.0, 1.0)), points(airspace)),
+        () -> assertEquals(List.of(0, 1, 2), airspace.sequences().stream().map(AirspaceSequence::sequenceNumber).toList()),
+        () -> assertEquals(List.of(Geometry.GREAT_CIRCLE, Geometry.RHUMB_LINE, Geometry.GREAT_CIRCLE),
+            airspace.sequences().stream().map(AirspaceSequence::geometry).toList())
+    );
   }
 
   @Test
-  void preservesArcDirectionCenterRadiusAndEndingBearing() {
+  void attachesArcDirectionCenterRadiusAndStartingBearingToItsStartingFix() {
     DafifBoundarySegment clockwise = edge(10, Shape.CLOCKWISE_ARC, 1, 0, 0, 1).toBuilder()
         .latitude0(0.0).longitude0(0.0).radius1(60.0).bearing1(360.0).bearing2(90.0).build();
     DafifBoundarySegment counterclockwise = edge(20, Shape.COUNTERCLOCKWISE_ARC, 0, 1, 1, 0).toBuilder()
@@ -63,15 +66,19 @@ class AirspaceAssemblerTest {
 
     Airspace airspace = BoundaryAssembler.standard().assemble(List.of(parent("US00001", BoundaryType.FIR)), List.of(counterclockwise, clockwise)).findFirst().orElseThrow();
 
-    AirspaceSequence right = airspace.sequences().get(1);
-    AirspaceSequence left = airspace.sequences().get(2);
-    assertEquals(Geometry.CLOCKWISE_ARC, right.geometry());
-    assertEquals(Geometry.COUNTER_CLOCKWISE_ARC, left.geometry());
-    assertEquals(LatLong.of(0.0, 0.0), right.centerFix().orElseThrow());
-    assertEquals(LatLong.of(0.0, 1.0), right.associatedFix().orElseThrow());
-    assertEquals(60.0, right.arcRadius().orElseThrow());
-    assertEquals(90.0, right.arcBearing().orElseThrow());
-    assertEquals(360.0, left.arcBearing().orElseThrow(), 1e-9);
+    assertEquals(2, airspace.sequences().size());
+    AirspaceSequence right = airspace.sequences().get(0);
+    AirspaceSequence left = airspace.sequences().get(1);
+    assertAll(
+        () -> assertEquals(Geometry.CLOCKWISE_ARC, right.geometry()),
+        () -> assertEquals(Geometry.COUNTER_CLOCKWISE_ARC, left.geometry()),
+        () -> assertEquals(LatLong.of(0.0, 0.0), right.centerFix().orElseThrow()),
+        () -> assertEquals(LatLong.of(1.0, 0.0), right.associatedFix().orElseThrow()),
+        () -> assertEquals(LatLong.of(0.0, 1.0), left.associatedFix().orElseThrow()),
+        () -> assertEquals(60.0, right.arcRadius().orElseThrow()),
+        () -> assertEquals(360.0, right.arcBearing().orElseThrow()),
+        () -> assertEquals(90.0, left.arcBearing().orElseThrow(), 1e-9)
+    );
   }
 
   @Test
@@ -85,8 +92,11 @@ class AirspaceAssemblerTest {
 
     Airspace airspace = BoundaryAssembler.standard().assemble(List.of(parent("US00001", BoundaryType.FIR)), List.of(arc, closing)).findFirst().orElseThrow();
 
-    assertEquals(List.of(start, end, start), points(airspace));
-    assertEquals(Geometry.CLOCKWISE_ARC, airspace.sequences().get(1).geometry());
+    assertEquals(2, airspace.sequences().size());
+    assertAll(
+        () -> assertEquals(List.of(start, end), points(airspace)),
+        () -> assertEquals(Geometry.CLOCKWISE_ARC, airspace.sequences().get(0).geometry())
+    );
   }
 
   @Test
@@ -97,7 +107,25 @@ class AirspaceAssemblerTest {
     Airspace airspace = BoundaryAssembler.standard().assemble(List.of(parent("US00001", BoundaryType.FIR)), segments).findFirst().orElseThrow();
 
     assertEquals(List.of(LatLong.of(0.0, 0.0), LatLong.of(0.0, 1.0), LatLong.of(0.0005, 1.0), LatLong.of(1.0, 1.0),
-        LatLong.of(0.0005, 0.0), LatLong.of(0.0, 0.0)), points(airspace));
+        LatLong.of(0.0005, 0.0)), points(airspace));
+  }
+
+  @Test
+  void bridgesArcEndpointsWithGreatCirclesIncludingTheClosingGap() {
+    DafifBoundarySegment clockwise = edge(10, Shape.CLOCKWISE_ARC, 1, 0, 0, 1).toBuilder()
+        .latitude0(0.0).longitude0(0.0).radius1(60.0).build();
+    DafifBoundarySegment counterclockwise = edge(20, Shape.COUNTERCLOCKWISE_ARC, 0.0005, 1, 1.0005, 0).toBuilder()
+        .latitude0(0.0).longitude0(0.0).radius1(60.0).build();
+
+    Airspace airspace = BoundaryAssembler.standard().assemble(List.of(parent("US00001", BoundaryType.FIR)),
+        List.of(clockwise, counterclockwise)).findFirst().orElseThrow();
+
+    assertAll(
+        () -> assertEquals(List.of(LatLong.of(1.0, 0.0), LatLong.of(0.0, 1.0), LatLong.of(0.0005, 1.0), LatLong.of(1.0005, 0.0)),
+            points(airspace)),
+        () -> assertEquals(List.of(Geometry.CLOCKWISE_ARC, Geometry.GREAT_CIRCLE, Geometry.COUNTER_CLOCKWISE_ARC, Geometry.GREAT_CIRCLE),
+            airspace.sequences().stream().map(AirspaceSequence::geometry).toList())
+    );
   }
 
   @Test

@@ -51,7 +51,12 @@ public interface Airspace {
   List<? extends AirspaceSequence> sequences();
 
   /**
-   * A segment of airspace only applies to a certain range of altitude in MSL
+   * Legacy simplified numeric altitude limits, conventionally expressed in feet.
+   *
+   * <p>A missing lower or upper bound leaves that side unlimited for altitude comparisons. Missing both bounds does not
+   * establish a useful vertical band and should be treated as unresolved unless the caller explicitly intends no vertical
+   * constraint. Source adapters may discard altitude references; callers must compare limits and observations in the same
+   * reference (for example, MSL).
    *
    * @return the range of doubles
    */

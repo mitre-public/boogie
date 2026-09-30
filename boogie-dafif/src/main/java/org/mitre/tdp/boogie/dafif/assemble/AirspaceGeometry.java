@@ -12,7 +12,8 @@ import org.mitre.tdp.boogie.dafif.model.DafifSuasSegment;
 import org.mitre.tdp.boogie.dafif.model.enums.Shape;
 
 /**
- * Shared conversion of DAFIF start/end segments into endpoint-oriented airspace sequences.
+ * Shared conversion of DAFIF start/end segments into airspace sequences whose geometry applies from the current
+ * associated fix to the next associated fix, including the final edge back to the first fix.
  */
 final class AirspaceGeometry {
 
@@ -40,7 +41,6 @@ final class AirspaceGeometry {
 
     List<AirspaceSequence> sequences = new ArrayList<>();
     LatLong first = segments.get(0).start();
-    appendPoint(sequences, first);
     LatLong previous = first;
     for (Segment segment : segments) {
       LatLong start = segment.start();
@@ -48,12 +48,12 @@ final class AirspaceGeometry {
       Geometry geometry = geometry(segment.shape());
       AirspaceSequence.Standard.Builder builder = AirspaceSequence.builder(geometry, sequences.size());
       LatLong end = segment.end();
-      builder.associatedFix(end);
+      builder.associatedFix(start);
       if (geometry == Geometry.CLOCKWISE_ARC || geometry == Geometry.COUNTER_CLOCKWISE_ARC) {
         LatLong center = segment.center().orElseThrow(() -> new UnsupportedGeometry("Arc has no center coordinates"));
         builder.centerFix(center)
             .arcRadius(segment.radius1().orElseGet(() -> center.distanceInNM(start)))
-            .arcBearing(segment.bearing2().orElseGet(() -> center.courseInDegrees(end)));
+            .arcBearing(segment.bearing1().orElseGet(() -> center.courseInDegrees(start)));
       }
       sequences.add(builder.build());
       previous = end;
@@ -87,7 +87,8 @@ final class AirspaceGeometry {
       if (previous.distanceInNM(next) > MAX_BRIDGE_NM) {
         throw new UnsupportedGeometry("Open or disconnected boundary exceeds the 0.1 NM source-coordinate tolerance");
       }
-      appendPoint(sequences, next);
+      // The previous source edge ends here; the next sequence starts at the far side of this gap.
+      appendPoint(sequences, previous);
     }
   }
 

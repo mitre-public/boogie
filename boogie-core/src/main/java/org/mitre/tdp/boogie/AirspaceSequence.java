@@ -14,8 +14,10 @@ import org.mitre.caasd.commons.LatLong;
  * An Airspace Sequence from the perspective of Boogie. This class represents a superset of features
  * relevant to all airspace types (enumerated in the {@link Geometry} class).
  *
- * <p>This class provides a collection of factory/builder methods for instantiating sequences of different  {@link Geometry} types
- * with only setters for fields that make sense on them as per the ARINC424 leg specification.
+ * <p>Within an airspace, sequences ordered by {@link #sequenceNumber()} describe a closed boundary. Each non-circle
+ * sequence describes the edge from its {@link #associatedFix()} to the next sequence's associated fix, using its own
+ * geometry and arc parameters. The final sequence returns to the first associated fix; a repeated closing fix is not
+ * required. A circle describes the complete boundary using its center and radius.
  */
 public interface AirspaceSequence {
 
@@ -34,7 +36,8 @@ public interface AirspaceSequence {
   }
 
   /**
-   * The associated fix for the sequence.
+   * The starting point of this sequence's boundary edge. The endpoint is the next sequence's associated fix,
+   * or the first sequence's associated fix for the closing edge. A circle does not require an associated fix.
    */
   Optional<LatLong> associatedFix();
 
@@ -46,19 +49,21 @@ public interface AirspaceSequence {
   Optional<LatLong> centerFix();
 
   /**
-   * The radius of the arc or circle in nm
-   * @return said radius in nm
+   * The radius of the arc or circle in nautical miles.
+   * @return the radius in nautical miles
    */
   Optional<Double> arcRadius();
 
   /**
-   * Tor ARC/Circle geometry types this is the bearing from the arc center where the leg ends.
-   * @return said bearing in degrees
+   * The true bearing from the arc center to the beginning of the arc (the associated fix), when supplied by the source.
+   * For a circle, this may identify a reference point on its circumference.
+   * @return the starting bearing in degrees clockwise from true north
    */
   Optional<Double> arcBearing();
 
   /**
-   * Airspace segments represent a path defined by generic geodesic concepts.
+   * The path from this sequence's associated fix to the next associated fix, or the full circle for
+   * {@link Geometry#CIRCLE}.
    *
    * @return the geometry of this sequence
    */

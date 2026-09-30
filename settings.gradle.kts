@@ -1,5 +1,6 @@
 rootProject.name = "boogie"
 
+include(":boogie-airspace")
 include(":boogie-arinc")
 include(":boogie-conformance")
 include(":boogie-core")

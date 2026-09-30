@@ -170,6 +170,7 @@ jobs:
         run: |
           ./gradlew :boogie-util:publishToMavenCentral
           ./gradlew :boogie-core:publishToMavenCentral
+          ./gradlew :boogie-airspace:publishToMavenCentral
           ./gradlew :boogie-arinc:publishToMavenCentral
           ./gradlew :boogie-conformance:publishToMavenCentral
           ./gradlew :boogie-routes:publishToMavenCentral
