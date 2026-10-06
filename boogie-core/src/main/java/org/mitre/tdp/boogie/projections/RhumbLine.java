@@ -39,7 +39,14 @@ public final class RhumbLine {
     double rhumbDistanceNM = Spherical.distanceInNM(rhumbDistance);
     checkArgument(rhumbDistanceNM / stepNm <= 1_000_000, "Projection exceeds the maximum number of points.");
 
-    double rhumbAzimuth = meridian ? 0.0 : Rhumb.rhumbAzimuth(start, end);
+    boolean parallel = start.latitude() == end.latitude();
+    double longitudeDelta = end.longitude() - start.longitude();
+    if (longitudeDelta > 180.0) {
+      longitudeDelta -= 360.0;
+    } else if (longitudeDelta < -180.0) {
+      longitudeDelta += 360.0;
+    }
+    double rhumbAzimuth = meridian || parallel ? 0.0 : Rhumb.rhumbAzimuth(start, end);
     double longitude = startAtPole ? end.longitude() : start.longitude();
 
     List<LatLong> result = new ArrayList<>();
@@ -61,9 +68,22 @@ public final class RhumbLine {
       }
       // Mercator-based rhumb formulas are singular at a pole. A meridian instead has
       // linear latitude and constant longitude, including when a pole has another label.
-      LatLong projection = meridian
-          ? LatLong.of(start.latitude() + (end.latitude() - start.latitude()) * (distanceNm / rhumbDistanceNM), longitude)
-          : Rhumb.rhumbEndPosition(start, rhumbAzimuth, Spherical.distanceInRadians(distanceNm));
+      LatLong projection;
+      if (meridian) {
+        projection = LatLong.of(start.latitude() + (end.latitude() - start.latitude()) * (distanceNm / rhumbDistanceNM), longitude);
+      } else if (parallel) {
+        // An east/west rhumb follows a parallel exactly. The general destination formula
+        // divides nearly zero latitude differences and can produce large longitude jumps.
+        double projectedLongitude = start.longitude() + longitudeDelta * (distanceNm / rhumbDistanceNM);
+        if (projectedLongitude > 180.0) {
+          projectedLongitude -= 360.0;
+        } else if (projectedLongitude < -180.0) {
+          projectedLongitude += 360.0;
+        }
+        projection = LatLong.of(start.latitude(), projectedLongitude);
+      } else {
+        projection = Rhumb.rhumbEndPosition(start, rhumbAzimuth, Spherical.distanceInRadians(distanceNm));
+      }
       result.add(projection);
     }
 
