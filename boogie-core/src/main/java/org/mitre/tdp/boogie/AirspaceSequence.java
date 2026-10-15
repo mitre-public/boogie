@@ -48,6 +48,16 @@ public interface AirspaceSequence {
    */
   Optional<LatLong> centerFix();
 
+  /** Returns a copy with a different center, preserving the remaining fields and any {@link Record} source data. */
+  default AirspaceSequence withCenterFix(LatLong centerFix) {
+    return builder(geometry(), sequenceNumber())
+        .associatedFix(associatedFix().orElse(null))
+        .centerFix(centerFix)
+        .arcRadius(arcRadius().orElse(null))
+        .arcBearing(arcBearing().orElse(null))
+        .build();
+  }
+
   /**
    * The radius of the arc or circle in nautical miles.
    * @return the radius in nautical miles
@@ -256,6 +266,11 @@ public interface AirspaceSequence {
     @Override
     public Optional<LatLong> centerFix() {
       return delegate.centerFix();
+    }
+
+    @Override
+    public Record<T> withCenterFix(LatLong centerFix) {
+      return new Record<>(datum, delegate.withCenterFix(centerFix));
     }
 
     @Override

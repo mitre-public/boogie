@@ -149,6 +149,9 @@ convert AGL, pressure altitude, or flight levels to MSL, and it does not resolve
   sequence numbers fail compilation with the caller key in the error.
 - Arc bearings come from the center and endpoint fixes, and intermediate samples use the radius from the
   center to the starting fix. The next sequence supplies the published endpoint even when its radius differs.
+- Source endpoint and center coordinates are validated before projection. Arc endpoints must be distinct
+  from and non-antipodal to their center so both bearings are defined. Rhumb lines support pole endpoints;
+  an opposite-pole edge requires a common longitude to specify its meridian.
 - Each trajectory leg follows the shortest great circle; antipodal endpoints are rejected. Fractions
   refer to progress along that original leg. Altitude and time are assumed linear in those fractions.
   Stationary positions still support vertical entries/exits.
@@ -160,6 +163,103 @@ convert AGL, pressure altitude, or flight levels to MSL, and it does not resolve
   airspaces retain their independent keys and spans.
 
 ## Application integration
+
+### Boundary issue identification and resolution
+
+Run repair policies explicitly on ordered source sequences before building an index. The factory and
+boundary compiler sort, project, and validate the supplied airspaces. They do not configure or apply
+repair policies.
+
+`IssueResolver<T, I>` in `boogie-airspace` holds an identifier (`Function<T, List<I>>`) and a repair
+function (`BiFunction<T, List<I>, T>`). `identify(value)` returns typed findings without changing the
+value; `resolve(value, issues)` applies the repair function. `apply(value)` identifies once, then
+resolves only when findings are present. Policies can be composed with `andThen`, so later detectors
+inspect earlier repairs. Both boundary resolvers supply their identifier and repair function to this
+shared implementation. Callers can build other policies with
+`IssueResolver.of(identifier, resolver)`.
+
+```java
+import java.util.Comparator;
+import java.util.List;
+import org.mitre.tdp.boogie.AirspaceSequence;
+import org.mitre.tdp.boogie.airspace.BoundaryRetraceResolver;
+
+// Remove exact out-and-back excursions up to 1 NM each way. The application chooses this limit.
+var retraces = new BoundaryRetraceResolver(1.0);
+
+// Given an Airspace.Standard source, preserve its metadata while replacing the boundary.
+List<AirspaceSequence> orderedSequences = List.copyOf(source.sequences().stream()
+    .sorted(Comparator.comparingInt(AirspaceSequence::sequenceNumber)).toList());
+var repaired = source.toBuilder().sequences(retraces.apply(orderedSequences)).build();
+var index = new AirspaceIndexFactory<String>()
+    .apply(List.of(new AirspaceDefinition<>("my-airspace", repaired)));
+
+// Inspect separately when a caller wants to review findings before applying repairs.
+var issues = retraces.identify(orderedSequences);
+```
+
+`BoundaryRetraceIdentifier` reports exact A → B → A retraces with their three source sequence numbers
+and one-way length. `BoundaryRetraceResolver` combines it with a length-limited removal policy.
+Both excursion edges must use the same line geometry (great circle or rhumb line),
+and the two A fixes must have exactly equal coordinates. It removes the first A and B records, retaining
+the returning A's outgoing geometry, arc parameters, and source metadata. `identify(...)` reports
+retraces of any length; `resolve(...)` repairs the first supplied finding within the configured limit
+in traversal order. Each call removes one retrace. `apply(...)` repeats inspection and repair until
+stable, so nested and overlapping retraces and retraces across the ring closure are handled. Every
+successful pass removes records.
+Arcs, mixed geometries, near returns, zero-length edges, and antipodal great-circle edges are left alone.
+Larger retraces remain in the boundary and fail normal validation if unresolved. This resolver is opt-in.
+
+`BoundaryArcRadiusIdentifier` compares the distance from an arc's center to its own fix with the
+distance to the next sequence's fix. It reports the two sequence numbers, both radii, and their
+absolute difference when that difference exceeds a caller-supplied tolerance in nautical miles.
+Both arc directions and the closing edge are supported, including two-sequence boundaries.
+Published radius and bearing fields are ignored, matching projection's coordinate-based calculation.
+
+```java
+import org.mitre.tdp.boogie.airspace.BoundaryArcRadiusIdentifier;
+
+// Example tolerance; choose it to account for the source's coordinate rounding.
+var arcRadii = new BoundaryArcRadiusIdentifier(0.05);
+var mismatches = arcRadii.apply(orderedSequences);
+```
+
+This identifier leaves the source unchanged. A mismatch does not establish a crossing or determine
+whether the center or an endpoint needs correction. Combine it with `IssueResolver.of(...)` when
+the application has chosen a reporting or repair policy. Lines and circles are ignored; missing
+coordinates remain subject to normal compilation validation.
+
+`BoundaryArcRadiusResolver` supplies a center-correction policy for those findings. It averages the
+two measured radii, intersects equal-radius spherical circles around the endpoint fixes, and chooses
+the candidate center nearest the original. Both fixes, arc direction, published arc parameters, and
+record source data are preserved. Selected arcs are repaired independently in one pass, including
+closing arcs. Coincident or nearly antipodal endpoints are left unchanged. The factory still
+validates the resulting polygon; equalizing radii does not guarantee that unrelated crossings disappear.
+
+```java
+import org.mitre.tdp.boogie.airspace.BoundaryArcRadiusResolver;
+
+var correctedArcs = new BoundaryArcRadiusResolver(0.05);
+var repairedSequences = retraces.andThen(correctedArcs).apply(orderedSequences);
+var repaired = source.toBuilder().sequences(repairedSequences).build();
+var index = new AirspaceIndexFactory<String>()
+    .apply(List.of(new AirspaceDefinition<>("my-airspace", repaired)));
+```
+
+Boundary resolvers expect sequences sorted by sequence number, with implicit closure from the last
+sequence to the first. They return replacement lists and preserve source objects. The caller rebuilds
+the airspace with those sequences and preserves its metadata and any explicit altitude override.
+`toBuilder()` is available on `Airspace.Standard`; other source representations require rebuilding
+the corresponding airspace while retaining their source records. Re-sort custom policy outputs before
+passing them to a resolver that requires traversal order.
+
+Applications can supply custom policies with `IssueResolver.of(identifier, resolver)` and choose
+repair limits and reporting. Arc inconsistency policies inspect centers and endpoints before projection.
+No geometric repair is enabled automatically. Repaired boundaries still pass sequence, coordinate, and polygon
+validation; unresolved crossings fail compilation with the caller's key. Calling a composed repair
+function applies each policy in order, so policies needing repeated local repairs manage their own convergence.
+
+### Building and querying an index
 
 Use `AirspaceIndexFactory.apply(...)` when loading an airspace dataset, then reuse the index across trajectories.
 Definitions hold source data; the factory validates inputs, resolves altitude bands, compiles boundaries, and

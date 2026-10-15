@@ -24,6 +24,7 @@ import com.google.common.geometry.S2ShapeIndex;
  * order by airspace, then travel order within each airspace. Use an ordered collection when this matters.
  *
  * <p>All mutable compilation state is local to {@link #apply(Collection)}, so a factory can be reused.
+ * Callers apply any boundary repair policies to source airspaces before building an index.
  *
  * @param <K> caller's airspace key type
  */

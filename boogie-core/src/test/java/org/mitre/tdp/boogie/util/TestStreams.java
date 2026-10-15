@@ -2,6 +2,7 @@ package org.mitre.tdp.boogie.util;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,22 @@ class TestStreams {
   void testTriples() {
     int actual = Streams.triples(ints, triSum).mapToInt(i -> i).sum();
     assertEquals(18, actual);
+  }
+
+  @Test
+  void testCircularTriplesRetainTraversalOrderAcrossTheClosure() {
+    assertEquals(List.of(List.of(1, 2, 3), List.of(2, 3, 4), List.of(3, 4, 1), List.of(4, 1, 2)),
+        Streams.triplesCircular(List.of(1, 2, 3, 4), List::of).toList());
+    assertEquals(List.of(List.of(1, 2, 3), List.of(2, 3, 1), List.of(3, 1, 2)),
+        Streams.triplesCircular(List.of(1, 2, 3), List::of).toList());
+  }
+
+  @Test
+  void testCircularTriplesWithoutThreeElementsNeverInvokeTheMapper() {
+    for (List<Integer> input : List.of(List.<Integer>of(), List.of(1), List.of(1, 2))) {
+      assertEquals(List.of(), Streams.triplesCircular(input,
+          (first, second, third) -> fail("A triple requires three source elements")).toList());
+    }
   }
 
   @Test
