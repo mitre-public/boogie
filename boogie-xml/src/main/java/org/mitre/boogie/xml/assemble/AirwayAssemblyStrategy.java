@@ -54,7 +54,7 @@ public interface AirwayAssemblyStrategy<A, F, L> {
       return Leg.builder(PathTerminator.TF, (int) leg.sequenceNumber())
           .associatedFix(associatedFix)
           .recommendedNavaid(recommendedNavaid)
-          .outboundMagneticCourse(leg.outboundCourseValue().orElse(null))
+          .outboundMagneticCourse(AssemblyCourses.magnetic(leg.outboundCourseValue(), leg.outboundCourseIsTrue().orElse(false), associatedFix, recommendedNavaid).orElse(null))
           .theta(leg.theta().orElse(null))
           .rho(leg.rho().orElse(null))
           .rnp(leg.rnp().orElse(null))

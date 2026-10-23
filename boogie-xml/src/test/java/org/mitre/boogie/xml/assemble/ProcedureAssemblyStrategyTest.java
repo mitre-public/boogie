@@ -3,7 +3,11 @@ package org.mitre.boogie.xml.assemble;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mitre.boogie.xml.assemble.ProcedureTestFixtures.*;
 
+import java.time.Duration;
 import java.util.List;
+
+import com.google.common.collect.Range;
+import org.mitre.tdp.boogie.MagneticVariation;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Fix;
@@ -149,7 +153,8 @@ class ProcedureAssemblyStrategyTest {
         .theta(45.0)
         .rho(10.0)
         .rnp(2.0)
-        .legDistance(25.0)
+        .distance(25.0)
+        .legDistance(40.0)
         .verticalAngle(3.0)
         .turnDirection("LEFT")
         .isFlyOver(true)
@@ -210,4 +215,59 @@ class ProcedureAssemblyStrategyTest {
 
     assertEquals(PathTerminator.TF, result.pathTerminator());
   }
+  @Test
+  void preservesRfRadiusAndTimedHold() {
+    Leg rf = STRATEGY.convertLeg(ArincProcedureLeg.builder().sequenceNumber(10)
+        .pathAndTermination("RF").arcRadius(2.75).build(), null, null, null);
+    Leg hold = STRATEGY.convertLeg(ArincProcedureLeg.builder().sequenceNumber(20)
+        .pathAndTermination("HM").holdTime("PT1M30S").build(), null, null, null);
+    assertEquals(2.75, rf.arcRadius().orElseThrow());
+    assertEquals(Duration.ofSeconds(90), hold.holdTime().orElseThrow());
+    assertTrue(hold.routeDistance().isEmpty());
+  }
+
+  @Test
+  void flightPlanningDistanceDoesNotBecomeTerminationDistance() {
+    Leg result = STRATEGY.convertLeg(ArincProcedureLeg.builder().sequenceNumber(10)
+        .pathAndTermination("CD").legDistance(12.0).build(), null, null, null);
+    assertTrue(result.routeDistance().isEmpty());
+  }
+
+  @Test
+  void preservesConstraintBounds() {
+    var cases = List.of(
+        Range.<Double>all(),
+        Range.singleton(200.0),
+        Range.atLeast(200.0),
+        Range.atMost(250.0),
+        Range.closed(200.0, 250.0));
+    for (var expected : cases) {
+      var builder = ArincProcedureLeg.builder().sequenceNumber(10).pathAndTermination("TF");
+      if (expected.hasLowerBound() && expected.hasUpperBound() && expected.lowerEndpoint().equals(expected.upperEndpoint())) {
+        builder.speedLimitAt(200L).altitudeConstraintAt(200);
+      } else {
+        if (expected.hasLowerBound()) {
+          builder.speedLimitAtOrAbove(200L).altitudeConstraintAtOrAbove(200);
+        }
+        if (expected.hasUpperBound()) {
+          builder.speedLimitAtOrBelow(250L).altitudeConstraintAtOrBelow(250);
+        }
+      }
+      Leg result = STRATEGY.convertLeg(builder.build(), null, null, null);
+      assertEquals(expected, result.speedConstraint());
+      assertEquals(expected, result.altitudeConstraint());
+    }
+  }
+
+  @Test
+  void trueCourseUsesNavaidVariationBeforeFixVariation() {
+    Fix fix = Fix.builder().fixIdentifier("FIX").latLong(testFix("FIX").latLong()).magneticVariation(MagneticVariation.ofDegrees(-5)).build();
+    Fix nav = Fix.builder().fixIdentifier("NAV").latLong(testFix("NAV").latLong()).magneticVariation(MagneticVariation.ofDegrees(10)).build();
+    var source = ArincProcedureLeg.builder().sequenceNumber(10).pathAndTermination("CF")
+        .courseValue(5.0).courseIsTrue(true).build();
+    assertEquals(355.0, STRATEGY.convertLeg(source, fix, nav, null).outboundMagneticCourse().orElseThrow());
+    assertEquals(10.0, STRATEGY.convertLeg(source, fix, null, null).outboundMagneticCourse().orElseThrow());
+    assertTrue(STRATEGY.convertLeg(source, null, null, null).outboundMagneticCourse().isEmpty());
+  }
+
 }

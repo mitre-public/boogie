@@ -104,6 +104,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .rnp(leg.rnp().orElse(null))
           .verticalAngle(leg.verticalAngle().orElse(null))
           .routeDistance(leg.routeDistance().orElse(null))
+          .arcRadius(leg.arcRadius().orElse(null))
           .holdTime(leg.holdTime().orElse(null))
           .turnDirection(leg.turnDirection().map(this::toTurnDirection).orElseGet(TurnDirection::either))
           .isPublishedHoldingFix(IsPublishedHoldingFix.INSTANCE.test(leg))
