@@ -90,4 +90,16 @@ class AirwayAssemblyStrategyTest {
         () -> assertTrue(result.recommendedNavaid().isEmpty())
     );
   }
+  @Test
+  void convertsTrueCourseAndPreservesMagneticCourse() {
+    Fix fix = Fix.builder().fixIdentifier("FIX").latLong(LatLong.of(42.0, -83.0))
+        .magneticVariation(MagneticVariation.ofDegrees(-5)).build();
+    for (boolean isTrue : new boolean[] {true, false}) {
+      ArincAirwayLeg source = ArincAirwayLeg.builder().sequenceNumber(10)
+          .outboundCourseValue(90.0).outboundCourseIsTrue(isTrue).build();
+      assertEquals(isTrue ? 95.0 : 90.0,
+          STRATEGY.convertLeg(source, fix, null).outboundMagneticCourse().orElseThrow());
+    }
+  }
+
 }

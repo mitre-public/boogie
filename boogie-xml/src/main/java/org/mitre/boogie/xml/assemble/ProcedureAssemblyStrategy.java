@@ -1,6 +1,9 @@
 package org.mitre.boogie.xml.assemble;
 
+import java.time.Duration;
 import java.util.List;
+
+import com.google.common.collect.Range;
 import javax.annotation.Nullable;
 
 import org.mitre.tdp.boogie.Fix;
@@ -87,17 +90,37 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .associatedFix(associatedFix)
           .recommendedNavaid(recommendedNavaid)
           .centerFix(centerFix)
-          .outboundMagneticCourse(leg.courseValue().orElse(null))
+          .outboundMagneticCourse(AssemblyCourses.magnetic(leg.courseValue(), leg.courseIsTrue().orElse(false), associatedFix, recommendedNavaid).orElse(null))
           .theta(leg.theta().orElse(null))
           .rho(leg.rho().orElse(null))
           .rnp(leg.rnp().orElse(null))
-          .routeDistance(leg.legDistance().orElse(null))
+          // Path-termination distance, not the separate flight-planning legDistance.
+          .routeDistance(leg.distance().orElse(null))
+          .arcRadius(leg.arcRadius().orElse(null))
+          .holdTime(leg.holdTime().map(Duration::parse).orElse(null))
+          .speedConstraint(constraint(leg.speedLimitAt().orElse(null),
+              leg.speedLimitAtOrAbove().orElse(null), leg.speedLimitAtOrBelow().orElse(null)))
+          .altitudeConstraint(constraint(leg.altitudeConstraintAt().orElse(null),
+              leg.altitudeConstraintAtOrAbove().orElse(null), leg.altitudeConstraintAtOrBelow().orElse(null)))
           .verticalAngle(leg.verticalAngle().map(angle -> -Math.abs(angle)).orElse(null))
           .turnDirection(leg.turnDirection().map(Standard::toTurnDirection).orElseGet(TurnDirection::either))
           .isFlyOverFix(leg.isFlyOver().orElse(false))
           .isPublishedHoldingFix(leg.isHolding().orElse(false))
           .isIntermediateOrInitialApproachFix(leg.isInitialApproachFix().orElse(false) || leg.isIntermediateApproachFix().orElse(false))
           .build();
+    }
+
+    private static Range<Double> constraint(Number at, Number above, Number below) {
+      if (at != null) {
+        return Range.singleton(at.doubleValue());
+      }
+      if (above != null && below != null) {
+        return Range.closed(above.doubleValue(), below.doubleValue());
+      }
+      if (above != null) {
+        return Range.atLeast(above.doubleValue());
+      }
+      return below == null ? Range.all() : Range.atMost(below.doubleValue());
     }
 
     private static ProcedureType toProcedureType(String procedureType) {
