@@ -88,7 +88,11 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
         .holdTime(preferred.holdTime().orElse(null))
         .isPublishedHoldingFix(preferred.isPublishedHoldingFix())
         .isFlyOverFix(preferred.isFlyOverFix());
-    return withArcOf(previous, builder).build();
+    PathTerminator type = previous.pathTerminator();
+    if (type == PathTerminator.RF || type == PathTerminator.AF) {
+      return withArcOf(previous, builder).build();
+    }
+    return builder.build();
   }
 
   /**
@@ -98,9 +102,6 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
    */
   private static Leg.Standard.Builder withArcOf(ExpandedRouteLeg previous, Leg.Standard.Builder builder) {
     PathTerminator type = previous.pathTerminator();
-    if (type != PathTerminator.RF && type != PathTerminator.AF) {
-      return builder;
-    }
     builder.turnDirection(previous.turnDirection().orElse(null));
     if (type == PathTerminator.RF) {
       return builder
