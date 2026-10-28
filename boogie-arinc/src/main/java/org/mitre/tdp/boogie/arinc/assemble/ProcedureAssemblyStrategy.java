@@ -106,6 +106,7 @@ public interface ProcedureAssemblyStrategy<P, T, L, F> {
           .routeDistance(leg.routeDistance().orElse(null))
           .holdTime(leg.holdTime().orElse(null))
           .turnDirection(leg.turnDirection().map(this::toTurnDirection).orElseGet(TurnDirection::either))
+          .arcRadius(leg.arcRadius().orElse(null))
           .isPublishedHoldingFix(IsPublishedHoldingFix.INSTANCE.test(leg))
           .isFlyOverFix(IsFlyOverFix.INSTANCE.test(leg))
           .isIntermediateOrInitialApproachFix(IsIntermediateOrInitialApproachFix.INSTANCE.test(leg))

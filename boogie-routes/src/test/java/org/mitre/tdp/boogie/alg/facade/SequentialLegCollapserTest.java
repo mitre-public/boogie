@@ -25,9 +25,11 @@ import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
 import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Range;
 
 class SequentialLegCollapserTest {
   private static final RedundantLegCombiner COLLAPSER = new RedundantLegCombiner();
@@ -89,6 +91,52 @@ class SequentialLegCollapserTest {
   @Test
   void testCFCollapse() {
     assertEquals(100.0, COLLAPSER.safelyMergeLegs(CF, legsByType.get(APPROACH)).outboundMagneticCourse().get());
+  }
+
+  /**
+   * An approach transition that ends in an RF leg into the fix where the final route begins (IF): the merged leg keeps the RF
+   * path terminator, so it must keep the arc that terminator flies - center fix, arc radius and turn direction - and take only
+   * the constraints from the IF.
+   */
+  @Test
+  void testRfIntoInitialFixKeepsTheArc() {
+    Fix yebun = Fix.builder().fixIdentifier("YEBUN").latLong(LatLong.of(34.2, -118.4)).build();
+    Fix center = Fix.builder().fixIdentifier("CFCGT").latLong(LatLong.of(34.2455, -118.5128)).build();
+    ExpandedRouteLeg rf = new ExpandedRouteLeg("APCH", APPROACH, "", Leg.builder(PathTerminator.RF, 40)
+        .associatedFix(yebun).centerFix(center).arcRadius(2.74).turnDirection(TurnDirection.left()).build());
+    ExpandedRouteLeg initial = new ExpandedRouteLeg("APCH", APPROACH, "", Leg.builder(PathTerminator.IF, 10)
+        .associatedFix(yebun).altitudeConstraint(Range.atLeast(3000.)).build());
+
+    ExpandedRouteLeg merged = COLLAPSER.safelyMergeLegs(rf, initial);
+
+    assertAll(
+        () -> assertEquals(PathTerminator.RF, merged.pathTerminator()),
+        () -> assertEquals(Optional.of("CFCGT"), merged.centerFix().map(Fix::fixIdentifier)),
+        () -> assertEquals(Optional.of(2.74), merged.arcRadius()),
+        () -> assertEquals(Optional.of(TurnDirection.left()), merged.turnDirection()),
+        () -> assertEquals(Range.atLeast(3000.), merged.altitudeConstraint(), "constraints still come from the IF")
+    );
+  }
+
+  /** The same for a DME arc: the recommended navaid, rho, theta and boundary course are the AF leg's own. */
+  @Test
+  void testAfIntoInitialFixKeepsTheArc() {
+    Fix end = Fix.builder().fixIdentifier("ARCND").latLong(LatLong.of(40.1, -100.0)).build();
+    Fix dme = Fix.builder().fixIdentifier("DME").latLong(LatLong.of(40.0, -100.0)).build();
+    ExpandedRouteLeg af = new ExpandedRouteLeg("APCH", APPROACH, "", Leg.afBuilder(end, dme, 30, 270.0)
+        .rho(10.0).theta(180.0).turnDirection(TurnDirection.right()).build());
+    ExpandedRouteLeg initial = new ExpandedRouteLeg("APCH", APPROACH, "", Leg.builder(PathTerminator.IF, 10).associatedFix(end).build());
+
+    ExpandedRouteLeg merged = COLLAPSER.safelyMergeLegs(af, initial);
+
+    assertAll(
+        () -> assertEquals(PathTerminator.AF, merged.pathTerminator()),
+        () -> assertEquals(Optional.of("DME"), merged.recommendedNavaid().map(Fix::fixIdentifier)),
+        () -> assertEquals(Optional.of(10.0), merged.rho()),
+        () -> assertEquals(Optional.of(180.0), merged.theta()),
+        () -> assertEquals(Optional.of(270.0), merged.outboundMagneticCourse()),
+        () -> assertEquals(Optional.of(TurnDirection.right()), merged.turnDirection())
+    );
   }
 
   @Test

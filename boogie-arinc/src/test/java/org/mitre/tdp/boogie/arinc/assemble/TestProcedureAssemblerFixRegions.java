@@ -54,6 +54,7 @@ class TestProcedureAssemblerFixRegions {
         .centerFixIcaoRegion("K2")
         .centerFixSectionCode(section)
         .centerFixSubSectionCode(subsection)
+        .arcRadius(2.74)
         .fileRecordNumber(1)
         .build();
 
@@ -63,7 +64,8 @@ class TestProcedureAssemblerFixRegions {
         () -> assertEquals("ASSOC", assembled.associatedFix().orElseThrow().fixIdentifier()),
         () -> assertEquals(40., assembled.associatedFix().orElseThrow().latitude()),
         () -> assertEquals("CNTER", assembled.centerFix().orElseThrow().fixIdentifier()),
-        () -> assertEquals(41., assembled.centerFix().orElseThrow().latitude())
+        () -> assertEquals(41., assembled.centerFix().orElseThrow().latitude()),
+        () -> assertEquals(2.74, assembled.arcRadius().orElseThrow(), 1e-6, "the published RF arc radius (5.204) is carried onto the leg")
     );
   }
 

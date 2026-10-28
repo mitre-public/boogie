@@ -60,16 +60,21 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
   /**
    * This combines two legs while keeping course information if the previous was a CF/CI leg.
    * We intentionally keep the previous legs path terminator.
+   * <br>
+   * Because the path terminator is the previous leg's, so is the path it defines: when the previous leg is an arc (RF or AF) its
+   * arc-defining fields are kept too (see {@link #withArcOf(ExpandedRouteLeg, Leg.Standard.Builder)}). Otherwise an RF leg that
+   * ends a transition where the common route begins (RF into the IF) comes out of the merge as an RF with no center fix, arc
+   * radius or turn direction, which nothing downstream can fly.
    * @param previous the previous leg that would typically end a transition.
    * @param preferred the leg we are keeping most constraints from
-   * @return a collapsed leg that keeps constraints from preferred leg and courses if needed.
+   * @return a collapsed leg that keeps constraints from preferred leg and courses (or arc geometry) if needed.
    */
   private Leg merge(ExpandedRouteLeg previous, ExpandedRouteLeg preferred) {
     Double course = Optional.of(previous)
         .filter(i -> i.pathTerminator() == PathTerminator.CI || i.pathTerminator() == PathTerminator.CF) //we need to keep the course from these if its these leg types
         .map(i -> i.outboundMagneticCourse().orElseThrow(IllegalStateException::new))
         .orElse(preferred.outboundMagneticCourse().orElse(null));
-    return Leg.builder(previous.pathTerminator(), preferred.sequenceNumber())
+    Leg.Standard.Builder builder = Leg.builder(previous.pathTerminator(), preferred.sequenceNumber())
         .associatedFix(preferred.associatedFix().orElse(null))
         .recommendedNavaid(preferred.recommendedNavaid().orElse(null))
         .sequenceNumber(preferred.sequenceNumber())
@@ -82,8 +87,31 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
         .routeDistance(preferred.routeDistance().orElse(null))
         .holdTime(preferred.holdTime().orElse(null))
         .isPublishedHoldingFix(preferred.isPublishedHoldingFix())
-        .isFlyOverFix(preferred.isFlyOverFix())
-        .build();
+        .isFlyOverFix(preferred.isFlyOverFix());
+    return withArcOf(previous, builder).build();
+  }
+
+  /**
+   * An RF leg is defined by its center fix, arc radius and turn direction; an AF leg by its recommended navaid (the DME the arc
+   * is flown about), rho, theta, boundary course and turn direction. When the merge keeps an arc's path terminator these come
+   * from the same leg, never from the (typically IF) leg it is merged with, which has none of them.
+   */
+  private static Leg.Standard.Builder withArcOf(ExpandedRouteLeg previous, Leg.Standard.Builder builder) {
+    PathTerminator type = previous.pathTerminator();
+    if (type != PathTerminator.RF && type != PathTerminator.AF) {
+      return builder;
+    }
+    builder.turnDirection(previous.turnDirection().orElse(null));
+    if (type == PathTerminator.RF) {
+      return builder
+          .centerFix(previous.centerFix().orElse(null))
+          .arcRadius(previous.arcRadius().orElse(null));
+    }
+    return builder
+        .recommendedNavaid(previous.recommendedNavaid().orElse(null))
+        .outboundMagneticCourse(previous.outboundMagneticCourse().orElse(null))
+        .rho(previous.rho().orElse(null))
+        .theta(previous.theta().orElse(null));
   }
 
   /**
