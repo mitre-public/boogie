@@ -45,6 +45,7 @@ class TestProcedureAssemblerFixRegions {
         .airportIdentifier("TEST")
         .airportIcaoRegion("K1")
         .pathTerm(PathTerminator.RF)
+        .arcRadius(2.75)
         .sequenceNumber(10)
         .fixIdentifier("ASSOC")
         .fixIcaoRegion("K2")
@@ -60,6 +61,7 @@ class TestProcedureAssemblerFixRegions {
     Leg assembled = converter.apply(source);
 
     assertAll(
+        () -> assertEquals(2.75, assembled.arcRadius().orElseThrow()),
         () -> assertEquals("ASSOC", assembled.associatedFix().orElseThrow().fixIdentifier()),
         () -> assertEquals(40., assembled.associatedFix().orElseThrow().latitude()),
         () -> assertEquals("CNTER", assembled.centerFix().orElseThrow().fixIdentifier()),
