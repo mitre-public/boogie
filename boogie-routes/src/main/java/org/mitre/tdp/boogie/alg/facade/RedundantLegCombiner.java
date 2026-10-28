@@ -91,7 +91,7 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
 
     return switch (previous.pathTerminator()) {
       case AF -> withAfArc(previous, builder).build();
-      case RF -> withRFArc(previous, builder).build();
+      case RF -> withRfArc(previous, builder).build();
       default -> builder.build();
     };
   }
@@ -110,7 +110,7 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
         .theta(previous.theta().orElse(null));
   }
 
-  private static Leg.Standard.Builder withRFArc(ExpandedRouteLeg previous, Leg.Standard.Builder builder) {
+  private static Leg.Standard.Builder withRfArc(ExpandedRouteLeg previous, Leg.Standard.Builder builder) {
     builder.turnDirection(previous.turnDirection().orElse(null));
     return builder
         .centerFix(previous.centerFix().orElse(null))
