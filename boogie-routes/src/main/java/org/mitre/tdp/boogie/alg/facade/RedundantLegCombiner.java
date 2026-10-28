@@ -88,11 +88,12 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
         .holdTime(preferred.holdTime().orElse(null))
         .isPublishedHoldingFix(preferred.isPublishedHoldingFix())
         .isFlyOverFix(preferred.isFlyOverFix());
-    PathTerminator type = previous.pathTerminator();
-    if (type == PathTerminator.RF || type == PathTerminator.AF) {
-      return withArcOf(previous, builder).build();
-    }
-    return builder.build();
+
+    return switch (previous.pathTerminator()) {
+      case AF -> withAfArc(previous, builder).build();
+      case RF -> withRFArc(previous, builder).build();
+      default -> builder.build();
+    };
   }
 
   /**
@@ -100,19 +101,20 @@ final class RedundantLegCombiner implements UnaryOperator<List<ExpandedRouteLeg>
    * is flown about), rho, theta, boundary course and turn direction. When the merge keeps an arc's path terminator these come
    * from the same leg, never from the (typically IF) leg it is merged with, which has none of them.
    */
-  private static Leg.Standard.Builder withArcOf(ExpandedRouteLeg previous, Leg.Standard.Builder builder) {
-    PathTerminator type = previous.pathTerminator();
+  private static Leg.Standard.Builder withAfArc(ExpandedRouteLeg previous, Leg.Standard.Builder builder) {
     builder.turnDirection(previous.turnDirection().orElse(null));
-    if (type == PathTerminator.RF) {
-      return builder
-          .centerFix(previous.centerFix().orElse(null))
-          .arcRadius(previous.arcRadius().orElse(null));
-    }
     return builder
         .recommendedNavaid(previous.recommendedNavaid().orElse(null))
         .outboundMagneticCourse(previous.outboundMagneticCourse().orElse(null))
         .rho(previous.rho().orElse(null))
         .theta(previous.theta().orElse(null));
+  }
+
+  private static Leg.Standard.Builder withRFArc(ExpandedRouteLeg previous, Leg.Standard.Builder builder) {
+    builder.turnDirection(previous.turnDirection().orElse(null));
+    return builder
+        .centerFix(previous.centerFix().orElse(null))
+        .arcRadius(previous.arcRadius().orElse(null));
   }
 
   /**
