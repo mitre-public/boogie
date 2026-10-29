@@ -15,7 +15,7 @@ final class FluentLegConverter implements Function<List<ResolvedLeg>, List<Expan
   private final ResolvedLegConverter resolvedLegConverter = new ResolvedLegConverter();
   private final XfIntoDifferentFixGluer xFIntoDifferentFixGluer = new XfIntoDifferentFixGluer();
   private final XmIntoApproachGluer xmIntoApproachGluer = new XmIntoApproachGluer();
-  private final RedundantLegCombiner redundantLegCombiner = new RedundantLegCombiner();
+  private final RedundantFixTerminatingLegCombiner redundantFixTerminatingLegCombiner = new RedundantFixTerminatingLegCombiner();
 
   private FluentLegConverter() {}
 
@@ -29,7 +29,7 @@ final class FluentLegConverter implements Function<List<ResolvedLeg>, List<Expan
         .andThen(resolvedLegConverter)
         .andThen(xFIntoDifferentFixGluer)
         .andThen(xmIntoApproachGluer)
-        .andThen(redundantLegCombiner)
+        .andThen(redundantFixTerminatingLegCombiner)
         .apply(resolvedLegs);
   }
 }
