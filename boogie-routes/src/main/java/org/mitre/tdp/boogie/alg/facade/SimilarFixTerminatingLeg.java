@@ -1,7 +1,6 @@
 package org.mitre.tdp.boogie.alg.facade;
 
 import org.mitre.tdp.boogie.Leg;
-import org.mitre.tdp.boogie.PathTerminator;
 
 import java.util.function.BiPredicate;
 
@@ -13,7 +12,7 @@ public final class SimilarFixTerminatingLeg implements BiPredicate<Leg, Leg> {
   public boolean test(Leg previous, Leg next) {
     return previous.pathTerminator().isFixTerminating()
         && next.pathTerminator().isFixTerminating()
-        && !next.pathTerminator().equals(PathTerminator.HF)
+        && !next.pathTerminator().isHolding()
         && MATCHING_FIX_IDENTS.test(previous, next);
   }
 }
