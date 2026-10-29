@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mitre.tdp.boogie.alg.resolve.ElementType.AIRWAY;
+import static org.mitre.tdp.boogie.alg.resolve.ElementType.APPROACH;
 import static org.mitre.tdp.boogie.alg.resolve.ElementType.FIX;
 import static org.mitre.tdp.boogie.alg.resolve.ElementType.SID;
 import static org.mitre.tdp.boogie.alg.resolve.ElementType.STAR;
@@ -20,6 +21,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Leg;
+import org.mitre.tdp.boogie.PathTerminator;
+import org.mitre.tdp.boogie.TurnDirection;
 import org.mitre.tdp.boogie.alg.resolve.ElementType;
 
 import com.google.common.collect.Range;
@@ -176,6 +179,33 @@ class RedundantFixTerminatingLegCombinerTest {
         () -> assertFalse(merge(flyOverLeg(AIRWAY, 10, true), flyOverLeg(STAR, 20, false)).isFlyOverFix()),
         () -> assertTrue(merge(flyOverLeg(SID, 10, true), flyOverLeg(AIRWAY, 20, false)).isFlyOverFix()),
         () -> assertFalse(merge(flyOverLeg(SID, 10, false), flyOverLeg(AIRWAY, 20, true)).isFlyOverFix())
+    );
+  }
+
+  @Test
+  void keepsThePreviousArcGeometry() {
+    Fix center = Fix.builder().fixIdentifier("CNTR").latLong(LatLong.of(1., 1.)).build();
+    ExpandedRouteLeg rf = new ExpandedRouteLeg(STAR.name(), STAR, "", Leg.builder(PathTerminator.RF, 10)
+        .associatedFix(JOIN)
+        .centerFix(center)
+        .turnDirection(TurnDirection.right())
+        .arcRadius(5.)
+        .verticalAngle(-3.)
+        .build());
+    ExpandedRouteLeg approach = new ExpandedRouteLeg(APPROACH.name(), APPROACH, "", Leg.builder(PathTerminator.IF, 20)
+        .associatedFix(JOIN)
+        .isIntermediateOrInitialApproachFix(true)
+        .build());
+
+    ExpandedRouteLeg result = merge(rf, approach);
+
+    assertAll(
+        () -> assertEquals(PathTerminator.RF, result.pathTerminator()),
+        () -> assertEquals(Optional.of("CNTR"), result.centerFix().map(Fix::fixIdentifier)),
+        () -> assertEquals(Optional.of(TurnDirection.right()), result.turnDirection()),
+        () -> assertEquals(Optional.of(5.), result.arcRadius()),
+        () -> assertEquals(Optional.of(-3.), result.verticalAngle()),
+        () -> assertTrue(result.isIntermediateOrInitialApproachFix())
     );
   }
 
