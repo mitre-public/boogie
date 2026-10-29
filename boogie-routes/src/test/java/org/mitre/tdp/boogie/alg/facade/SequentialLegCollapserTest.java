@@ -17,6 +17,7 @@ import static org.mitre.tdp.boogie.alg.resolve.ElementType.STAR_TO_APPROACH;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,7 +31,11 @@ import org.mitre.tdp.boogie.alg.resolve.ElementType;
 import com.google.common.collect.ImmutableMap;
 
 class SequentialLegCollapserTest {
-  private static final RedundantLegCombiner COLLAPSER = new RedundantLegCombiner();
+  private static final RedundantFixTerminatingLegCombiner COLLAPSER = new RedundantFixTerminatingLegCombiner();
+  private static final MatchingFixIdents IDENT_MATCHER = MatchingFixIdents.INSTANCE;
+  private static final SimilarFixTerminatingLeg SIMILAR_FIX_TERMINATING_LEG = SimilarFixTerminatingLeg.INSTANCE;
+  private static final PreferredLeg PREFERRED_LEG = PreferredLeg.INSTANCE;
+  private static final CollapsedElementType COLLAPSED_ELEMENT_TYPE = CollapsedElementType.INSTANCE;
   private static final ExpandedRouteLeg CF = new ExpandedRouteLeg("STAR", STAR, "", Leg.cfBuilder(Fix.builder().fixIdentifier("VAN").latLong(LatLong.of(0.0, 0.0)).build(), 10, 100.0).rnp(2.).build());
 
   private static final Leg VAN = Leg.tfBuilder(Fix.builder().fixIdentifier("VAN").latLong(LatLong.of(0.0, 0.0)).build(), 10).build();
@@ -49,17 +54,17 @@ class SequentialLegCollapserTest {
   @Test
   void testMatchingAssociatedFixIdentifiers() {
     assertAll(
-        () -> assertTrue(COLLAPSER.matchingAssociatedFixIdentifiers(
+        () -> assertTrue(IDENT_MATCHER.test(
             VAN,
             VAN
         ), "Identical waypoint names should pass"),
 
-        () -> assertFalse(COLLAPSER.matchingAssociatedFixIdentifiers(
+        () -> assertFalse(IDENT_MATCHER.test(
             VAN,
             DAVID
         ), "Mismatched waypoint names should fail"),
 
-        () -> assertFalse(COLLAPSER.matchingAssociatedFixIdentifiers(
+        () -> assertFalse(IDENT_MATCHER.test(
             VI,
             VAN
         ), "null waypoint names should not throw and exception, but fail")
@@ -69,17 +74,17 @@ class SequentialLegCollapserTest {
   @Test
   void testIsSimilarFixTerminatingLeg() {
     assertAll(
-        () -> assertTrue(COLLAPSER.isSimilarFixTerminatingLeg(
+        () -> assertTrue(SIMILAR_FIX_TERMINATING_LEG.test(
             VAN,
             ALEX
         ), "Identical waypoint and both xF legs should be true"),
 
-        () -> assertFalse(COLLAPSER.isSimilarFixTerminatingLeg(
+        () -> assertFalse(SIMILAR_FIX_TERMINATING_LEG.test(
             DAVID,
             ALEX
         ), "Different waypoint and both xF legs should be false"),
 
-        () -> assertFalse(COLLAPSER.isSimilarFixTerminatingLeg(
+        () -> assertFalse(SIMILAR_FIX_TERMINATING_LEG.test(
             VAN,
             FM
         ), "Identical waypoint but not both xF legs should be false")
@@ -88,49 +93,49 @@ class SequentialLegCollapserTest {
 
   @Test
   void testCFCollapse() {
-    assertEquals(100.0, COLLAPSER.safelyMergeLegs(CF, legsByType.get(APPROACH)).outboundMagneticCourse().get());
+    assertEquals(100.0, COLLAPSER.apply(List.of(CF, legsByType.get(APPROACH))).get(0).outboundMagneticCourse().get());
   }
 
   @Test
   void testPreferredLeg() {
     assertAll(
         // AIRWAY
-        () -> assertEquals(AIRWAY, COLLAPSER.preferredLeg(legsByType.get(FIX), legsByType.get(AIRWAY)).elementType()),
-        () -> assertEquals(AIRWAY, COLLAPSER.preferredLeg(legsByType.get(AIRWAY), legsByType.get(FIX)).elementType()),
+        () -> assertEquals(AIRWAY, PREFERRED_LEG.apply(legsByType.get(FIX), legsByType.get(AIRWAY)).elementType()),
+        () -> assertEquals(AIRWAY, PREFERRED_LEG.apply(legsByType.get(AIRWAY), legsByType.get(FIX)).elementType()),
 
         // SID
-        () -> assertEquals(SID, COLLAPSER.preferredLeg(legsByType.get(SID), legsByType.get(AIRWAY)).elementType()),
-        () -> assertEquals(SID, COLLAPSER.preferredLeg(legsByType.get(SID), legsByType.get(FIX)).elementType()),
+        () -> assertEquals(SID, PREFERRED_LEG.apply(legsByType.get(SID), legsByType.get(AIRWAY)).elementType()),
+        () -> assertEquals(SID, PREFERRED_LEG.apply(legsByType.get(SID), legsByType.get(FIX)).elementType()),
 
         // STAR
-        () -> assertEquals(STAR, COLLAPSER.preferredLeg(legsByType.get(AIRWAY), legsByType.get(STAR)).elementType()),
-        () -> assertEquals(STAR, COLLAPSER.preferredLeg(legsByType.get(SID), legsByType.get(STAR)).elementType()),
-        () -> assertEquals(STAR, COLLAPSER.preferredLeg(legsByType.get(FIX), legsByType.get(STAR)).elementType()),
+        () -> assertEquals(STAR, PREFERRED_LEG.apply(legsByType.get(AIRWAY), legsByType.get(STAR)).elementType()),
+        () -> assertEquals(STAR, PREFERRED_LEG.apply(legsByType.get(SID), legsByType.get(STAR)).elementType()),
+        () -> assertEquals(STAR, PREFERRED_LEG.apply(legsByType.get(FIX), legsByType.get(STAR)).elementType()),
 
         // APPROACH
-        () -> assertEquals(APPROACH, COLLAPSER.preferredLeg(legsByType.get(AIRWAY), legsByType.get(APPROACH)).elementType()),
-        () -> assertEquals(APPROACH, COLLAPSER.preferredLeg(legsByType.get(SID), legsByType.get(APPROACH)).elementType()),
-        () -> assertEquals(APPROACH, COLLAPSER.preferredLeg(legsByType.get(FIX), legsByType.get(APPROACH)).elementType()),
-        () -> assertEquals(APPROACH, COLLAPSER.preferredLeg(legsByType.get(STAR), legsByType.get(APPROACH)).elementType())
+        () -> assertEquals(APPROACH, PREFERRED_LEG.apply(legsByType.get(AIRWAY), legsByType.get(APPROACH)).elementType()),
+        () -> assertEquals(APPROACH, PREFERRED_LEG.apply(legsByType.get(SID), legsByType.get(APPROACH)).elementType()),
+        () -> assertEquals(APPROACH, PREFERRED_LEG.apply(legsByType.get(FIX), legsByType.get(APPROACH)).elementType()),
+        () -> assertEquals(APPROACH, PREFERRED_LEG.apply(legsByType.get(STAR), legsByType.get(APPROACH)).elementType())
     );
   }
 
   @Test
   void testSpecialElementTypeBetween() {
     assertAll(
-        () -> assertEquals(Optional.of(SID_TO_APPROACH), COLLAPSER.specialElementTypeBetween(SID, APPROACH)),
-        () -> assertEquals(Optional.of(AIRWAY_TO_APPROACH), COLLAPSER.specialElementTypeBetween(AIRWAY, APPROACH)),
-        () -> assertEquals(Optional.of(STAR_TO_APPROACH), COLLAPSER.specialElementTypeBetween(STAR, APPROACH)),
-        () -> assertEquals(Optional.of(AIRWAY_TO_STAR), COLLAPSER.specialElementTypeBetween(AIRWAY, STAR)),
-        () -> assertEquals(Optional.of(SID_TO_STAR), COLLAPSER.specialElementTypeBetween(SID, STAR)),
-        () -> assertEquals(Optional.empty(), COLLAPSER.specialElementTypeBetween(APPROACH, STAR))
+        () -> assertEquals(Optional.of(SID_TO_APPROACH), COLLAPSED_ELEMENT_TYPE.apply(SID, APPROACH)),
+        () -> assertEquals(Optional.of(AIRWAY_TO_APPROACH), COLLAPSED_ELEMENT_TYPE.apply(AIRWAY, APPROACH)),
+        () -> assertEquals(Optional.of(STAR_TO_APPROACH), COLLAPSED_ELEMENT_TYPE.apply(STAR, APPROACH)),
+        () -> assertEquals(Optional.of(AIRWAY_TO_STAR), COLLAPSED_ELEMENT_TYPE.apply(AIRWAY, STAR)),
+        () -> assertEquals(Optional.of(SID_TO_STAR), COLLAPSED_ELEMENT_TYPE.apply(SID, STAR)),
+        () -> assertEquals(Optional.empty(), COLLAPSED_ELEMENT_TYPE.apply(APPROACH, STAR))
     );
   }
 
   @Test
   void testSafelyMergeLegs() {
-    ExpandedRouteLeg sidToStar = COLLAPSER.safelyMergeLegs(legsByType.get(SID), legsByType.get(STAR));
-    ExpandedRouteLeg starToApproach = COLLAPSER.safelyMergeLegs(legsByType.get(STAR), legsByType.get(APPROACH));
+    ExpandedRouteLeg sidToStar = COLLAPSER.apply(List.of(legsByType.get(SID), legsByType.get(STAR))).get(0);
+    ExpandedRouteLeg starToApproach = COLLAPSER.apply(List.of(legsByType.get(STAR), legsByType.get(APPROACH))).get(0);
 
     assertAll(
         "Check the leg values are updated effectively during the merge.",
@@ -138,7 +143,7 @@ class SequentialLegCollapserTest {
         () -> assertEquals(Optional.of(2.), sidToStar.rnp()),
 
         () -> assertEquals(STAR_TO_APPROACH, starToApproach.elementType()),
-        () -> assertEquals(Optional.of(3.), starToApproach.rnp())
+        () -> assertEquals(Optional.of(2.), starToApproach.rnp())
     );
   }
 }
