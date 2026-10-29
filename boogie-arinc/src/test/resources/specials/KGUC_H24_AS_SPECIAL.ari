@@ -1,0 +1,53 @@
+HDR GUNNISON                 COUSKGUCRNAV  SIAPRNAV (RNP) Z RWY 24                               ORIG               20210107V18A    
+SUSAD        HBU   K2011490VDHW N38270762W107022297    N38270762W107022297E0140087402     WGEBLUE MESA                              
+SUSAEAENRT   AXOYA K20    W FR  N38261631W106495295                       E0088     WGE           CNF(AXOYA)                        
+SUSAEAENRT   BIYAJ K20    W FR  N38255245W106494255                       E0088     WGE           CNF(BIYAJ)                        
+SUSAEAENRT   CFBYY K20    W FR  N38192853W107105889                       E0090     WGE           CNF(CFBYY)                        
+SUSAEAENRT   CFDXL K20    W FR  N38254472W106465179                       E0088     WGE           CNF(CFDXL)                        
+SUSAEAENRT   CFHWR K20    W FR  N38310483W106521998                       E0088     WGE           CNF(CFHWR)                        
+SUSAEAENRT   COBIX K20    WIFRB N38323770W106154675                       E0086     WGE           COBIX                             
+SUSAEAENRT   CULKI K20    W FRB N38324854W106525886                       E0089     WGE           CULKI                             
+SUSAEAENRT   CUVAS K20    W FRB N38301016W106365739                       E0087     WGE           CUVAS                             
+SUSAEAENRT   DUFEL K20    W FRB N38255801W106393146                       E0087     WGE           DUFEL                             
+SUSAEAENRT   FEGUL K20    W FRB N38312398W106470203                       E0088     WGE           FEGUL                             
+SUSAEAENRT   GADVY K20    W FRB N38324565W106513027                       E0088     WGE           GADVY                             
+SUSAEAENRT   HELUP K20    W FRB N38252816W106410885                       E0087     WGE           HELUP                             
+SUSAEAENRT   JAMSS K20    WAFRB N38320522W106491739                       E0088     WGE           JAMSS                             
+SUSAEAENRT   KEEZR K20    W FRB N38275206W107141014                       E0090     WGE           KEEZR                             
+SUSAEAENRT   METVY K20    W FRB N38192841W106465986                       E0088     WGE           METVY                             
+SUSAEAENRT   NUWZO K20    W FRB N38220607W107002223                       E0089     WGE           NUWZO                             
+SUSAEAENRT   POWES K20    WIFRB N38132228W107100158                       E0089     WGE           POWES                             
+SUSAEAENRT   ROMLY K20    WCFRB N38292375W106433039                       E0088     WGE           ROMLY                             
+SUSAEAENRT   SKOTI K20    WIFRB N38251361W106254114                       E0086     WGE           SKOTI                             
+SUSAEAENRT   TESKY K20    W FRB N38312085W106265249                       E0086     WGE           TESKY                             
+SUSAEAENRT   WADDU K20    W FRB N38214858W106570062                       E0089     WGE           WADDU                             
+SUSAP KGUCK2AGUC     0     094YHN38320360W106555430E012007680         1800018000C    MWGE    GUNNISON-CRESTED BUTTE RGNL            
+SUSAP KGUCK2FH24   ACOBIX 010COBIXK2EA0E  A    IF                                             18000                 A FS            
+SUSAP KGUCK2FH24   ACOBIX 020TESKYK2EA0E    041TF                     24970088    + 14000                           A FS            
+SUSAP KGUCK2FH24   ACOBIX 030CUVASK2EA0E    041TF                     24960080    + 12000                           A FS            
+SUSAP KGUCK2FH24   ACOBIX 040ROMLYK2EA0EE B 041TF                     24950052    + 10600          250              A-FS            
+SUSAP KGUCK2FH24   AHBU   010HBU  K2D 0V  A    IF                                             18000250              A-FS            
+SUSAP KGUCK2FH24   AHBU   020WADDUK2EA0E    010TF                     12950068    + 13000                           A FS            
+SUSAP KGUCK2FH24   AHBU   030METVYK2EA0E   L051RF       0071601295    05950088    + 13000          240    AXOYA K2EAA-FS            
+SUSAP KGUCK2FH24   AHBU   040HELUPK2EA0E   L051RF       0067400595    35140080    + 11600          210    BIYAJ K2EAA-FS            
+SUSAP KGUCK2FH24   AHBU   050ROMLYK2EA0EE BL051RF       0045003514    29390045    + 10600                 CFDXL K2EAA FS            
+SUSAP KGUCK2FH24   APOWES 010POWESK2EA0E  A    IF                                             18000                 A FS            
+SUSAP KGUCK2FH24   APOWES 020METVYK2EA0E    051TF                     05930191    + 13600          240              A-FS            
+SUSAP KGUCK2FH24   APOWES 030HELUPK2EA0E   L051RF       0067400593    35140080    + 11600          210    BIYAJ K2EAA-FS            
+SUSAP KGUCK2FH24   APOWES 040ROMLYK2EA0EE BL051RF       0045003514    29390045    + 10600                 CFDXL K2EAA FS            
+SUSAP KGUCK2FH24   ASKOTI 010SKOTIK2EA0E  A    IF                                             18000                 A FS            
+SUSAP KGUCK2FH24   ASKOTI 020DUFELK2EA0E    081TF                     26200109    + 12000          230              A-FS            
+SUSAP KGUCK2FH24   ASKOTI 030ROMLYK2EA0EE B 081TF                     30560046    + 10600                           A FS            
+SUSAP KGUCK2FH24   H      010ROMLYK2EA0E  I    IF                                 + 10600     18000                 A FS            
+SUSAP KGUCK2FH24   H      011FEGULK2EA0E    011TF                     29390034    + 10100                           A FS            
+SUSAP KGUCK2FH24   H      020JAMSSK2EA1E  F 011TF                     27920019    + 09500                 RW24  K2PGA FS            
+SUSAP KGUCK2FH24   H      020JAMSSK2EA2W                                                A011                          FS            
+SUSAP KGUCK2FH24   H      021GADVYK2EA0E R  011TF                     27920019                        -360          A FS            
+SUSAP KGUCK2FH24   H      022CULKIK2EA0E R L011RF       0018002792    24160012                        -360CFHWR K2EAA FS            
+SUSAP KGUCK2FH24   H      030RW24 K2PG0GY M 011TF                     24160015      07745             -360          A FS            
+SUSAP KGUCK2FH24   H      040KEEZRK2EA0E M  010TF                     24160159                                      A FS            
+SUSAP KGUCK2FH24   H      050NUWZOK2EA0E   L010RF       0087502416    33050414                            CFBYY K2EAA FS            
+SUSAP KGUCK2FH24   H      060HBU  K2D 0VY   010TF                     33050053    + 14000                           A FS            
+SUSAP KGUCK2FH24   H      070HBU  K2D 0VE  L020HM                     17450080    + 14000                           A FS            
+SUSAP KGUCK2GRW24    0094002420 N38322307W106544889               07680000065150R                                                   
+SUSAP KGUCK2SRW24 K2PG                0   18018015525                                                                  M            
