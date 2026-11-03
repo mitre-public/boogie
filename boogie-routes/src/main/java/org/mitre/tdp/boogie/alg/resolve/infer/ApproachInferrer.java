@@ -53,11 +53,8 @@ final class ApproachInferrer implements SectionInferrer {
     this.keepTransition = keepTransition;
   }
 
-  /** Only the route's final occurrence can receive the flight's arrival approach. */
   @Override
   public Map<ResolvedTokens, List<ResolvedTokens>> inferAcross(HashedLinkedSequence<ResolvedTokens> sections) {
-    // Compare occurrences, not airport identifiers: a round trip may visit its destination
-    // airport earlier too. Airports before the final section are enroute points, not landings.
     return Streams.pairwise(sections)
         .reduce((earlier, later) -> later)
         .map(pair -> Map.of(pair.first(), inferBetween(pair.first(), pair.second())))

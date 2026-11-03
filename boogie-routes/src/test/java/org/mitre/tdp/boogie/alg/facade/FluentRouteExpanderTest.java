@@ -47,9 +47,11 @@ class FluentRouteExpanderTest {
         List.of(Airports.KATL(), Airports.KMCO()), List.of(KMCO_I17R.I17R));
     ExpandedRoute route = expander.apply("KATL..KMCO..KATL", null, "RW17R",
         RequiredNavigationEquipage.CONV).orElseThrow();
-    assertTrue(route.legs().stream().anyMatch(leg -> leg.associatedFix()
-        .map(fix -> fix.fixIdentifier().equals("KMCO")).orElse(false)));
-    assertTrue(route.legs().stream().noneMatch(leg -> leg.elementType() == ElementType.APPROACH));
+    assertAll(
+        () -> assertTrue(route.legs().stream().anyMatch(leg -> leg.associatedFix()
+            .map(fix -> fix.fixIdentifier().equals("KMCO")).orElse(false))),
+        () -> assertTrue(route.legs().stream().noneMatch(leg -> leg.elementType() == ElementType.APPROACH))
+    );
   }
 
   @Test
@@ -61,9 +63,11 @@ class FluentRouteExpanderTest {
     ExpandedRoute direct = expander.apply("KATL..KMCO", null, "RW17R",
         RequiredNavigationEquipage.CONV).orElseThrow();
     long expected = direct.legs().stream().filter(leg -> leg.elementType() == ElementType.APPROACH).count();
-    assertTrue(expected > 0, "destination approach must still be inferred");
-    assertEquals(expected, route.legs().stream()
-        .filter(leg -> leg.elementType() == ElementType.APPROACH).count());
+    assertAll(
+        () -> assertTrue(expected > 0, "destination approach must still be inferred"),
+        () -> assertEquals(expected, route.legs().stream()
+        .filter(leg -> leg.elementType() == ElementType.APPROACH).count())
+    );
   }
 
   //this makes sure that the route stays fluent with the VM skipped into a DF
