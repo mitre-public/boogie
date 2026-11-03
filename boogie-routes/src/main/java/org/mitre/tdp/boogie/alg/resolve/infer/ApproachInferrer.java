@@ -8,12 +8,15 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+import org.mitre.caasd.commons.collect.HashedLinkedSequence;
+import org.mitre.tdp.boogie.util.Streams;
 import org.mitre.tdp.boogie.Airport;
 import org.mitre.tdp.boogie.Procedure;
 import org.mitre.tdp.boogie.ProcedureType;
@@ -48,6 +51,14 @@ final class ApproachInferrer implements SectionInferrer {
         // mask the missed-approach portions of the approach procedure
         .transformed(procedure -> procedure.stream().map(p -> Procedure.maskTransitions(p, MISSED)).collect(toList()));
     this.keepTransition = keepTransition;
+  }
+
+  @Override
+  public Map<ResolvedTokens, List<ResolvedTokens>> inferAcross(HashedLinkedSequence<ResolvedTokens> sections) {
+    return Streams.pairwise(sections)
+        .reduce((earlier, later) -> later)
+        .map(pair -> Map.of(pair.first(), inferBetween(pair.first(), pair.second())))
+        .orElseGet(Map::of);
   }
 
   @Override
