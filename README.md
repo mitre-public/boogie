@@ -21,3 +21,4 @@ A general outline of what's provided within this repo is here:
 1. [boogie-util](https://github.com/mitre-public/boogie/tree/main/boogie-util) - tools for AIRAC and Magnetic Variation.
 1. [boogie-dafif](https://github.com/mitre-public/boogie/tree/main/boogie-dafif) - parser implementations for DAFIF 8.1 (Digital Aeronautical Flight Information File) with assembly support for airports, fixes, airways, procedures, boundaries, and special use airspaces.
 1. [boogie-xml](https://github.com/mitre-public/boogie/tree/main/boogie-xml) - WIP API for interacting with ARINC 424 XML
+1. [boogie-cli](boogie-cli/README.md) - Unix command for compact views of ARINC 424 records in XML or legacy fixed-width text.
