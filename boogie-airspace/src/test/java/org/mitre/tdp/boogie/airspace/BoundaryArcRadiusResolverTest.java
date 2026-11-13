@@ -227,6 +227,34 @@ class BoundaryArcRadiusResolverTest {
     assertTrue(new BoundaryArcRadiusResolver(0.0).identify(List.of()).isEmpty());
   }
 
+  @Test
+  void measuresArcsAgainstTheNextSequenceNumberRatherThanTheNextListElement() {
+    LatLong center = LatLong.of(0.0, 0.0);
+    AirspaceSequence arc = arc(10, Geometry.CLOCKWISE_ARC, center.projectOut(0.0, 10.0), center);
+    AirspaceSequence middle = line(20, center.projectOut(90.0, 12.0));
+    AirspaceSequence last = line(30, center.projectOut(180.0, 40.0));
+    List<AirspaceSequence> sorted = List.of(arc, middle, last);
+    List<AirspaceSequence> unsorted = List.of(arc, last, middle);
+
+    assertEquals(resolver.identify(sorted), resolver.identify(unsorted));
+    assertEquals(20, resolver.identify(unsorted).get(0).endingSequenceNumber());
+    List<AirspaceSequence> repaired = resolver.apply(unsorted);
+    assertEquals(List.of(10, 30, 20), repaired.stream().map(AirspaceSequence::sequenceNumber).toList());
+    assertEquals(resolver.apply(sorted).get(0).centerFix(), repaired.get(0).centerFix());
+  }
+
+  @Test
+  void rejectsDuplicateSequenceNumbersWithAnIllegalArgumentException() {
+    LatLong center = LatLong.of(0.0, 0.0);
+    List<AirspaceSequence> source = List.of(
+        arc(10, Geometry.CLOCKWISE_ARC, center.projectOut(0.0, 10.0), center),
+        line(20, center.projectOut(90.0, 12.0)),
+        line(20, center.projectOut(180.0, 12.0)));
+
+    assertThrows(IllegalArgumentException.class, () -> resolver.apply(source));
+    assertThrows(IllegalArgumentException.class, () -> resolver.resolve(source, List.of(new Mismatch(10, 20, 10.0, 12.0))));
+  }
+
   private static AirspaceSequence line(int number, LatLong fix) {
     return AirspaceSequence.builder(Geometry.GREAT_CIRCLE, number).associatedFix(fix).build();
   }

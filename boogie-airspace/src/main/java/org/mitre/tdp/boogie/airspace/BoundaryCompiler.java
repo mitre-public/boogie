@@ -36,14 +36,19 @@ final class BoundaryCompiler implements Function<Airspace, S2Polygon> {
 
   @Override
   public S2Polygon apply(Airspace airspace) {
-    return polygon(openRing(projectedVertices(orderedSequences(airspace.sequences()))));
+    List<? extends AirspaceSequence> sequences = traversalOrder(airspace.sequences());
+    checkArgument(!sequences.isEmpty(), "Airspace boundary is empty");
+    return polygon(openRing(projectedVertices(sequences)));
   }
 
-  private static List<? extends AirspaceSequence> orderedSequences(List<? extends AirspaceSequence> source) {
-    List<? extends AirspaceSequence> sequences = source.stream()
+  /**
+   * Sorts boundary sequences into traversal order without mutating the source list.
+   * @throws IllegalArgumentException when two sequences share a sequence number
+   */
+  static <S extends AirspaceSequence> List<S> traversalOrder(List<S> source) {
+    List<S> sequences = source.stream()
         .sorted(Comparator.comparingInt(AirspaceSequence::sequenceNumber))
         .toList();
-    checkArgument(!sequences.isEmpty(), "Airspace boundary is empty");
     Streams.pairwise(sequences).forEach(pair -> checkArgument(
         pair.first().sequenceNumber() != pair.second().sequenceNumber(),
         "Duplicate boundary sequence number: %s", pair.second().sequenceNumber()));
@@ -87,6 +92,7 @@ final class BoundaryCompiler implements Function<Airspace, S2Polygon> {
         validateArcEndpoint(center, fixPoint(current, "starting"), "starting");
         validateArcEndpoint(center, fixPoint(next, "ending"), "ending");
       }
+      default -> throw new IllegalArgumentException("Unsupported boundary geometry: " + current.geometry());
     }
   }
 

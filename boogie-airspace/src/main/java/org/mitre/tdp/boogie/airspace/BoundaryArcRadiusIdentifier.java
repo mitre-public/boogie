@@ -15,7 +15,8 @@ import org.mitre.tdp.boogie.util.Streams;
 
 /**
  * Identifies arcs whose endpoint distances from their center differ beyond a caller's tolerance.
- * Inputs must be in traversal order; each arc runs from its own associated fix to the next sequence's
+ * Sequences are analyzed in sequence-number order and duplicate sequence numbers are rejected with an
+ * {@link IllegalArgumentException}. Each arc runs from its own associated fix to the next sequence's
  * associated fix, including across the boundary closure. Two-sequence boundaries are supported.
  *
  * <p>The comparison uses the same coordinate-derived radii as boundary projection. Published arc
@@ -49,7 +50,8 @@ public final class BoundaryArcRadiusIdentifier implements Function<List<Airspace
   @Override
   public List<Mismatch> apply(List<AirspaceSequence> sequences) {
     requireNonNull(sequences, "sequences");
-    List<AirspaceSequence> closed = Stream.concat(sequences.stream(), sequences.stream().limit(1)).toList();
+    List<AirspaceSequence> ordered = BoundaryCompiler.traversalOrder(sequences);
+    List<AirspaceSequence> closed = Stream.concat(ordered.stream(), ordered.stream().limit(1)).toList();
     return Streams.pairwise(closed)
         .flatMap(pair -> radii(pair.first(), pair.second()).stream())
         .filter(mismatch -> mismatch.differenceNm() > toleranceNm)

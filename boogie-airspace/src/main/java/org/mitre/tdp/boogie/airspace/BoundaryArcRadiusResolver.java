@@ -22,7 +22,8 @@ import com.google.common.geometry.S2Point;
 /**
  * Repairs inconsistent arc radii by moving the center while preserving both endpoint fixes.
  * Apply this opt-in policy to ordered source sequences before building an index with {@link AirspaceIndexFactory}.
- * Inputs must be in traversal order with unique sequence numbers, including across boundary closure.
+ * Sequences are analyzed in sequence-number order, including across boundary closure, and duplicate
+ * sequence numbers are rejected with an {@link IllegalArgumentException}; the input list order is preserved.
  *
  * <p>For each selected mismatch, the mean of the two coordinate-derived radii becomes the shared
  * radius. Intersecting equal-radius spherical circles around the endpoints gives two candidate
@@ -49,9 +50,11 @@ public final class BoundaryArcRadiusResolver extends IssueResolver<List<Airspace
 
   private static List<AirspaceSequence> repair(List<AirspaceSequence> sequences, List<Mismatch> issues, BoundaryArcRadiusIdentifier identifier) {
     Set<Mismatch> selected = Set.copyOf(issues);
+    // Identify first so duplicate sequence numbers are rejected before keying records by number.
+    List<Mismatch> identified = identifier.apply(sequences);
     Map<Integer, AirspaceSequence> byNumber = sequences.stream()
         .collect(toUnmodifiableMap(AirspaceSequence::sequenceNumber, Function.identity()));
-    Map<Integer, LatLong> centers = identifier.apply(sequences).stream()
+    Map<Integer, LatLong> centers = identified.stream()
         .filter(selected::contains)
         .flatMap(issue -> correctedCenter(byNumber.get(issue.arcSequenceNumber()), byNumber.get(issue.endingSequenceNumber()), issue)
             .map(center -> Map.entry(issue.arcSequenceNumber(), center)).stream())

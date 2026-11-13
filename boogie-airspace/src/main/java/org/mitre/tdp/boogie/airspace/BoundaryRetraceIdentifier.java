@@ -15,7 +15,8 @@ import org.mitre.tdp.boogie.util.Streams;
 
 /**
  * Identifies exact A-B-A retraces in a boundary without modifying its source records.
- * Inputs must be in traversal order; triples include the closure from the last sequence to the first.
+ * Sequences are analyzed in sequence-number order; triples include the closure from the last sequence to the first.
+ * Duplicate sequence numbers are rejected with an {@link IllegalArgumentException}.
  *
  * <p>Both excursion edges must use the same line geometry, and the two A fixes must have exactly equal
  * coordinates. Findings include retraces of any length. Zero-length edges, ambiguous opposite-pole
@@ -29,7 +30,7 @@ public final class BoundaryRetraceIdentifier implements Function<List<AirspaceSe
   @Override
   public List<Retrace> apply(List<AirspaceSequence> sequences) {
     requireNonNull(sequences, "sequences");
-    return Streams.triplesCircular(sequences, BoundaryRetraceIdentifier::retrace)
+    return Streams.triplesCircular(BoundaryCompiler.traversalOrder(sequences), BoundaryRetraceIdentifier::retrace)
         .flatMap(Optional::stream)
         .toList();
   }
@@ -64,7 +65,8 @@ public final class BoundaryRetraceIdentifier implements Function<List<AirspaceSe
         .filter(position -> sameMeridian(position, turn) || isPole(position) || isPole(turn))
         .map(position -> Math.toRadians(Math.abs(position.latitude() - turn.latitude())))
         .orElseGet(() -> Rhumb.rhumbDistance(start, turn));
-    return Spherical.distanceInNM(radians);
+    // Match LatLong.distanceInNM; Spherical.distanceInNM(radians) assumes exactly 60 NM per degree.
+    return radians * Spherical.EARTH_RADIUS_NM;
   }
 
   private static boolean sameMeridian(LatLong start, LatLong turn) {

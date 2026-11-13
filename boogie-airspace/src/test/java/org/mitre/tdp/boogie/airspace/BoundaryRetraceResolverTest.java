@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mitre.caasd.commons.LatLong;
+import org.mitre.caasd.commons.Spherical;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.Geometry;
@@ -238,8 +239,8 @@ class BoundaryRetraceResolverTest {
         sequence(3, Geometry.GREAT_CIRCLE, 50.0, 179.99999),
         sequence(4, Geometry.GREAT_CIRCLE, 51.0, 179.0),
         sequence(5, Geometry.GREAT_CIRCLE, 49.0, 179.0));
-    // Rhumb projection measures one degree of angular distance as 60 nautical miles.
-    double expectedLengthNm = 60.0 * Math.cos(Math.toRadians(50.0)) * 0.00002;
+    // Retrace lengths use the same Earth radius as LatLong.distanceInNM.
+    double expectedLengthNm = Spherical.EARTH_RADIUS_NM * Math.cos(Math.toRadians(50.0)) * Math.toRadians(0.00002);
 
     assertEquals(1, resolver.identify(source).size());
     assertEquals(expectedLengthNm, resolver.identify(source).get(0).lengthNm(), 1e-9);
@@ -279,6 +280,38 @@ class BoundaryRetraceResolverTest {
   private static List<AirspaceSequence> boundary(double[][] points) {
     return IntStream.range(0, points.length)
         .mapToObj(i -> sequence(i + 1, Geometry.GREAT_CIRCLE, points[i][0], points[i][1])).toList();
+  }
+
+  @Test
+  void analyzesSequencesInSequenceNumberOrderAndPreservesInputOrder() {
+    List<AirspaceSequence> source = new ArrayList<>(boxWithSpur(Geometry.GREAT_CIRCLE));
+    Collections.reverse(source);
+
+    assertEquals(List.of(2), resolver.identify(source).stream().map(Retrace::outgoingSequenceNumber).toList());
+    assertEquals(List.of(6, 5, 4, 1), numbers(resolver.apply(source)));
+  }
+
+  @Test
+  void measuresGreatCircleAndRhumbMeridianRetracesWithTheSameEarthRadius() {
+    double greatCircle = resolver.identify(meridianSpur(Geometry.GREAT_CIRCLE)).get(0).lengthNm();
+    double rhumb = resolver.identify(meridianSpur(Geometry.RHUMB_LINE)).get(0).lengthNm();
+    assertEquals(greatCircle, rhumb, greatCircle * 1e-9);
+  }
+
+  private static List<AirspaceSequence> meridianSpur(Geometry geometry) {
+    return List.of(sequence(1, Geometry.GREAT_CIRCLE, -1, -1),
+        sequence(2, geometry, -1, 1), sequence(3, geometry, 0, 1),
+        sequence(4, Geometry.GREAT_CIRCLE, -1, 1), sequence(5, Geometry.GREAT_CIRCLE, 1, 1),
+        sequence(6, Geometry.GREAT_CIRCLE, 1, -1));
+  }
+
+  @Test
+  void rejectsDuplicateSequenceNumbersInsteadOfRemovingUnrelatedRecords() {
+    List<AirspaceSequence> source = new ArrayList<>(boxWithSpur(Geometry.GREAT_CIRCLE));
+    source.add(sequence(2, Geometry.GREAT_CIRCLE, -0.5, -1.0));
+
+    assertThrows(IllegalArgumentException.class, () -> resolver.apply(source));
+    assertThrows(IllegalArgumentException.class, () -> resolver.resolve(source, List.of(new Retrace(2, 3, 4, 1.0))));
   }
 
   private static List<AirspaceSequence> rotate(List<AirspaceSequence> sequences, int offset) {

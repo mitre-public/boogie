@@ -6,7 +6,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Stream;
 
 import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.airspace.BoundaryRetraceIdentifier.Retrace;
@@ -14,7 +13,8 @@ import org.mitre.tdp.boogie.airspace.BoundaryRetraceIdentifier.Retrace;
 /**
  * Identifies exact A-B-A boundary retraces and removes excursions within a caller's length limit.
  * Apply this resolver to ordered source sequences before building an index with {@link AirspaceIndexFactory}.
- * Inputs must be in traversal order with unique sequence numbers; the last sequence closes to the first.
+ * Sequences are analyzed in sequence-number order, and the last sequence closes to the first. Duplicate
+ * sequence numbers are rejected with an {@link IllegalArgumentException}; the input list order is preserved.
  *
  * <p>Both excursion edges must be great circles or both must be rhumb lines, and the two A fixes must
  * have exactly equal coordinates. Zero-length edges, ambiguous pole-to-pole rhumb lines, antipodal
@@ -59,19 +59,11 @@ public final class BoundaryRetraceResolver extends IssueResolver<List<AirspaceSe
   @Override
   public List<AirspaceSequence> apply(List<AirspaceSequence> sequences) {
     requireNonNull(sequences, "sequences");
-    return Stream.iterate(repairPass(sequences), pass -> repairPass(pass.after()))
-        .dropWhile(RepairPass::changed)
-        .findFirst().orElseThrow()
-        .after();
-  }
-
-  private RepairPass repairPass(List<AirspaceSequence> sequences) {
-    return new RepairPass(sequences, super.apply(sequences));
-  }
-
-  private record RepairPass(List<AirspaceSequence> before, List<AirspaceSequence> after) {
-    private boolean changed() {
-      return before != after;
+    List<AirspaceSequence> current = sequences;
+    // Each successful repair removes two records, so an unchanged size means no repair was possible.
+    for (List<AirspaceSequence> next = super.apply(current); next.size() < current.size(); next = super.apply(current)) {
+      current = next;
     }
+    return current;
   }
 }
