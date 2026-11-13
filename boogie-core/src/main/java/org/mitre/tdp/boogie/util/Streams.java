@@ -64,6 +64,17 @@ public final class Streams {
   }
 
   /**
+   * Combines consecutive triples in a circular list, wrapping the last two triples to its beginning.
+   * Each element starts one triple. Lists with fewer than three elements produce an empty stream.
+   */
+  public static <U, V> Stream<V> triplesCircular(List<U> list, TriFunction<U, U, U, V> fn) {
+    int size = list.size();
+    int tripleCount = size >= 3 ? size : 0;
+    return IntStream.range(0, tripleCount)
+        .mapToObj(i -> fn.apply(list.get(i), list.get((i + 1) % size), list.get((i + 2) % size)));
+  }
+
+  /**
    * Returns a stream based on the input list via combining triples of elements via the provided {@link TriFunction} using null
    * for elements outside the bound of the stream.
    */
