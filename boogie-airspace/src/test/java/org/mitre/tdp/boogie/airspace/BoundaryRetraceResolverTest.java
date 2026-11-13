@@ -270,6 +270,83 @@ class BoundaryRetraceResolverTest {
     }
   }
 
+  @Test
+  void repairsGreatCircleBacktracksThatOvershootOrStopShortOfTheStart() {
+    // East edge 3 -> 4 -> 5 -> 6 runs north, steps 0.0005 degrees north, then back south past 3 before heading north again.
+    List<AirspaceSequence> source = eastEdgeBacktrack(1.0);
+    List<AirspaceSequence> original = List.copyOf(source);
+    LatLong three = source.get(2).associatedFix().orElseThrow();
+    LatLong four = source.get(3).associatedFix().orElseThrow();
+    LatLong five = source.get(4).associatedFix().orElseThrow();
+
+    List<Retrace> issues = resolver.identify(source);
+    assertEquals(List.of(new Retrace(3, 4, 5, three.distanceInNM(four)), new Retrace(4, 5, 6, four.distanceInNM(five))), issues);
+    assertTrue(issues.stream().noneMatch(issue -> issue.exact(source)));
+    assertThrows(IllegalArgumentException.class, () -> new AirspaceIndexFactory<String>()
+        .apply(List.of(new AirspaceDefinition<>("spur", Airspace.builder().sequences(source).build()))));
+
+    // An overshoot removes only the turn; the start keeps its record and runs straight to the resumed fix.
+    assertEquals(List.of(1, 2, 3, 5, 6, 7), numbers(resolver.resolve(source, issues)));
+    // That exposes an undershoot (3 north, then 3 -> 5 back south onto edge 2 -> 3), whose turn goes next.
+    List<AirspaceSequence> repaired = resolver.apply(source);
+    assertEquals(List.of(1, 2, 5, 6, 7), numbers(repaired));
+    assertTrue(resolver.identify(repaired).isEmpty());
+    assertEquals(original, source);
+    assertBoxCoverage(new AirspaceIndexFactory<String>()
+        .apply(List.of(new AirspaceDefinition<>("spur", Airspace.builder().sequences(repaired).build()))));
+  }
+
+  @Test
+  void backtracksWithinTheCollinearToleranceAreRepairedAndAZeroToleranceRequiresExactCollinearity() {
+    // Fix 5 sits 1e-6 degrees (about 0.11 m) east of the edge, within the default tolerance of about 1.85 m.
+    List<AirspaceSequence> source = eastEdgeBacktrack(1.000001);
+
+    assertEquals(List.of(3, 4), resolver.identify(source).stream().map(Retrace::outgoingSequenceNumber).toList());
+    assertTrue(new BoundaryRetraceIdentifier(0.0).apply(source).isEmpty());
+    assertSame(source, new BoundaryRetraceResolver(1.0, 0.0).apply(source));
+    for (double tolerance : new double[] {-1.0, Double.NaN, Double.POSITIVE_INFINITY}) {
+      assertThrows(IllegalArgumentException.class, () -> new BoundaryRetraceIdentifier(tolerance));
+      assertThrows(IllegalArgumentException.class, () -> new BoundaryRetraceResolver(1.0, tolerance));
+    }
+  }
+
+  @Test
+  void backtracksAreRecognizedOnlyAlongGreatCircles() {
+    List<AirspaceSequence> source = eastEdgeBacktrack(1.0).stream()
+        .map(sequence -> (AirspaceSequence) AirspaceSequence.builder(Geometry.RHUMB_LINE, sequence.sequenceNumber())
+            .associatedFix(sequence.associatedFix().orElseThrow()).build())
+        .toList();
+
+    assertTrue(resolver.identify(source).isEmpty());
+    assertSame(source, resolver.apply(source));
+  }
+
+  @Test
+  void backtrackLengthIsTheDoubledBackLegAndTheLimitIsInclusive() {
+    List<AirspaceSequence> source = eastEdgeBacktrack(1.0);
+    LatLong two = source.get(1).associatedFix().orElseThrow();
+    LatLong three = source.get(2).associatedFix().orElseThrow();
+    LatLong five = source.get(4).associatedFix().orElseThrow();
+    List<AirspaceSequence> afterOvershoot = resolver.resolve(source, resolver.identify(source));
+
+    // Undershoot 2 -> 3 -> 5: the 60 NM outgoing leg is not part of the excursion; the 0.03 NM return is.
+    Retrace undershoot = resolver.identify(afterOvershoot).get(0);
+    assertEquals(new Retrace(2, 3, 5, three.distanceInNM(five)), undershoot);
+    assertTrue(undershoot.lengthNm() < two.distanceInNM(three));
+
+    double shortest = resolver.identify(source).stream().mapToDouble(Retrace::lengthNm).min().orElseThrow();
+    assertSame(source, new BoundaryRetraceResolver(Math.nextDown(shortest)).apply(source));
+    assertEquals(List.of(1, 2, 5, 6, 7), numbers(new BoundaryRetraceResolver(three.distanceInNM(five)).apply(source)));
+  }
+
+  /** A box whose east edge steps north from (0, 1) to (0.0005, 1), then back south to (-0.0005, returnLongitude). */
+  private static List<AirspaceSequence> eastEdgeBacktrack(double returnLongitude) {
+    return List.of(sequence(1, Geometry.GREAT_CIRCLE, -1, -1), sequence(2, Geometry.GREAT_CIRCLE, -1, 1),
+        sequence(3, Geometry.GREAT_CIRCLE, 0, 1), sequence(4, Geometry.GREAT_CIRCLE, 0.0005, 1),
+        sequence(5, Geometry.GREAT_CIRCLE, -0.0005, returnLongitude), sequence(6, Geometry.GREAT_CIRCLE, 1, 1),
+        sequence(7, Geometry.GREAT_CIRCLE, 1, -1));
+  }
+
   private static List<AirspaceSequence> boxWithSpur(Geometry geometry) {
     return List.of(sequence(1, Geometry.GREAT_CIRCLE, -1, -1),
         sequence(2, geometry, -1, 1), sequence(3, geometry, -0.99999, 1),
