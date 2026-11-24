@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -8,7 +9,10 @@ import org.mitre.tdp.boogie.AltitudeLimits;
 
 import org.mitre.tdp.boogie.arinc.v18.field.*;
 
-public final class ArincRestrictiveAirspaceLeg implements ArincModel {
+public final class ArincRestrictiveAirspaceLeg implements ArincAirspaceLeg {
+  @Serial
+  private static final long serialVersionUID = -5113169438103266296L;
+
   /**
    * * See {@link RecordType}.
    */

@@ -1,11 +1,7 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
 import java.util.List;
-import java.util.Optional;
 
-import javax.annotation.Nullable;
-
-import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.AirspaceType;
@@ -50,22 +46,9 @@ public interface RestrictiveAirspaceAssemblyStrategy<A, AS> {
     @Override
     public AirspaceSequence convertRestrictiveAirspaceSequence(ArincRestrictiveAirspaceLeg leg) {
       Geometry geometry = leg.boundaryVia()
-          .flatMap(ViaToBoundary.INSTANCE::apply)
+          .flatMap(ViaToBoundary.INSTANCE)
           .orElseThrow(() -> new IllegalArgumentException("No valid via coded for restrictive airspace leg"));
-      LatLong centerFix = leg.arcOriginLatitude()
-          .filter(lat -> leg.arcOriginLongitude().isPresent())
-          .map(lat -> LatLong.of(lat, leg.arcOriginLongitude().orElseThrow()))
-          .orElse(null);
-      LatLong associatedFix = leg.latitude()
-          .filter(lat -> leg.longitude().isPresent())
-          .map(lat -> LatLong.of(lat, leg.longitude().orElseThrow()))
-          .orElse(null);
-      return AirspaceSequence.builder(geometry, leg.sequenceNumber())
-          .centerFix(centerFix)
-          .associatedFix(associatedFix)
-          .arcRadius(leg.arcDistance().orElse(null))
-          .arcBearing(leg.arcBearing().orElse(null))
-          .build();
+      return AirspaceSequenceAssembly.INSTANCE.apply(leg, geometry);
     }
   }
 }

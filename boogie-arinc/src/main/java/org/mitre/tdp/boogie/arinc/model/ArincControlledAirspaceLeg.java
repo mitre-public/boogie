@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,7 +12,10 @@ import org.mitre.tdp.boogie.arinc.v18.field.*;
 /**
  * * Section/Subsection = UC
  */
-public final class ArincControlledAirspaceLeg implements ArincModel {
+public final class ArincControlledAirspaceLeg implements ArincAirspaceLeg {
+  @Serial
+  private static final long serialVersionUID = -5910832258418769197L;
+
   /**
    * * See {@link RecordType}.
    */

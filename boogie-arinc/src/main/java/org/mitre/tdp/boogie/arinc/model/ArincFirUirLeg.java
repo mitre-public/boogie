@@ -1,5 +1,6 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,7 +12,10 @@ import org.mitre.tdp.boogie.arinc.v18.field.*;
 /**
  * * Section/Subsection = UF
  */
-public final class ArincFirUirLeg implements ArincModel {
+public final class ArincFirUirLeg implements ArincAirspaceLeg {
+  @Serial
+  private static final long serialVersionUID = 757458602627648953L;
+
   /**
    * * See {@link RecordType}.
    */
@@ -260,6 +264,16 @@ public final class ArincFirUirLeg implements ArincModel {
 
   public Optional<Double> firUirLongitude() {
     return Optional.ofNullable(firUirLongitude);
+  }
+
+  @Override
+  public Optional<Double> latitude() {
+    return firUirLatitude();
+  }
+
+  @Override
+  public Optional<Double> longitude() {
+    return firUirLongitude();
   }
 
   public Optional<Double> arcOriginLatitude() {

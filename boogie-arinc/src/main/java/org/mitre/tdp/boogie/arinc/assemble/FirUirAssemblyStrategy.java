@@ -1,17 +1,13 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.AirspaceType;
 import org.mitre.tdp.boogie.Geometry;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirIndicator;
 
 
 /**
@@ -50,52 +46,31 @@ public interface FirUirAssemblyStrategy<A, S> {
 
     @Override
     public Stream<Airspace> convertFirUir(ArincFirUirLeg representative, List<AirspaceSequence> allLegs) {
-      Airspace fir = Optional.of(representative)
-          .filter(i -> i.firUirIndicator().equals(FirUirIndicator.F) || i.firUirIndicator().equals(FirUirIndicator.B))
-          .map(i -> {
-            return Airspace.builder()
-                .area(i.customerAreaCode().name())
-                .identifier(i.firUirAddress().map(a -> i.firUirIdentifier().concat("-").concat(a)).orElse(i.firUirIdentifier()))
-                .altitudeLimits(i.firAltitudeLimits())
-                .airspaceType(AirspaceType.FIR)
-                .sequences(allLegs)
-                .build();
-          })
-          .orElse(null);
+      return switch (representative.firUirIndicator()) {
+        case F -> Stream.of(buildAirspace(representative, allLegs, AirspaceType.FIR));
+        case U -> Stream.of(buildAirspace(representative, allLegs, AirspaceType.UIR));
+        case B -> Stream.of(
+            buildAirspace(representative, allLegs, AirspaceType.FIR),
+            buildAirspace(representative, allLegs, AirspaceType.UIR));
+        case SPEC -> Stream.empty();
+      };
+    }
 
-      Airspace uir = Optional.of(representative)
-          .filter(i -> i.firUirIndicator().equals(FirUirIndicator.U) || i.firUirIndicator().equals(FirUirIndicator.B))
-          .map(i -> {
-            return Airspace.builder()
-                .area(i.customerAreaCode().name())
-                .identifier(i.firUirAddress().map(a -> i.firUirIdentifier().concat("-").concat(a)).orElse(i.firUirIdentifier()))
-                .altitudeLimits(i.uirAltitudeLimits())
-                .airspaceType(AirspaceType.UIR)
-                .sequences(allLegs)
-                .build();
-          })
-          .orElse(null);
-
-      return Stream.of(fir, uir).filter(Objects::nonNull);
+    private Airspace buildAirspace(ArincFirUirLeg leg, List<AirspaceSequence> sequences, AirspaceType type) {
+      String identifier = leg.firUirIdentifier();
+      return Airspace.builder()
+          .area(leg.customerAreaCode().name())
+          .identifier(leg.firUirAddress().map(address -> identifier.concat("-").concat(address)).orElse(identifier))
+          .altitudeLimits(type == AirspaceType.FIR ? leg.firAltitudeLimits() : leg.uirAltitudeLimits())
+          .airspaceType(type)
+          .sequences(sequences)
+          .build();
     }
 
     @Override
     public AirspaceSequence convertFirUirLeg(ArincFirUirLeg leg) {
       Geometry geometry = ViaToBoundary.INSTANCE.apply(leg.boundaryVia()).orElseThrow(() -> new IllegalArgumentException("No valid via code"));
-      LatLong centerFix = leg.arcOriginLatitude()
-          .filter(lat -> leg.arcOriginLongitude().isPresent())
-          .map(lat -> LatLong.of(lat, leg.arcOriginLongitude().orElseThrow()))
-          .orElse(null);
-      LatLong associatedFix = leg.firUirLatitude()
-          .filter(lat -> leg.firUirLongitude().isPresent())
-          .map(lat -> LatLong.of(lat, leg.firUirLongitude().orElseThrow()))
-          .orElse(null);
-      return AirspaceSequence.builder(geometry, leg.sequenceNumber())
-          .centerFix(centerFix)
-          .associatedFix(associatedFix)
-          .arcRadius(leg.arcDistance().orElse(null))
-          .arcBearing(leg.arcBearing().orElse(null))
-          .build();
+      return AirspaceSequenceAssembly.INSTANCE.apply(leg, geometry);
     }
   }
 }
