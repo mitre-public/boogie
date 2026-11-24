@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
+import org.mitre.tdp.boogie.arinc.v18.field.AirspaceAltitudeLimits;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -31,9 +33,9 @@ public final class FirUirLegConverter implements Function<ArincRecord, Optional<
     Optional<Double> arcOriginLongitude = arincRecord.optionalField("arcOriginLongitude");
     Optional<Double> arcDistance = arincRecord.optionalField("arcDistance");
     Optional<Double> arcBearing = arincRecord.optionalField("arcBearing");
-    Optional<Double> firUpperLimit = arincRecord.optionalField("firUpperLimit");
-    Optional<Double> uirLowerLimit = arincRecord.optionalField("uirLowerLimit");
-    Optional<Double> uirUpperLimit = arincRecord.optionalField("uirUpperLimit");
+    AltitudeLimit firUpperLimit = AirspaceAltitudeLimits.firUirLimit(arincRecord, "firUpperLimit");
+    AltitudeLimit uirLowerLimit = AirspaceAltitudeLimits.firUirLimit(arincRecord, "uirLowerLimit");
+    AltitudeLimit uirUpperLimit = AirspaceAltitudeLimits.firUirLimit(arincRecord, "uirUpperLimit");
     Optional<String> cruiseTableIndicator = arincRecord.optionalField("cruiseTableIndicator");
     Optional<String> firUirName = arincRecord.optionalField("firUirName");
     Optional<Double> firUirLatitude = arincRecord.optionalField("firUirLatitude");
@@ -62,9 +64,9 @@ public final class FirUirLegConverter implements Function<ArincRecord, Optional<
         .arcOriginLongitude(arcOriginLongitude.orElse(null))
         .arcDistance(arcDistance.orElse(null))
         .arcBearing(arcBearing.orElse(null))
-        .firUpperLimit(firUpperLimit.orElse(null))
-        .uirLowerLimit(uirLowerLimit.orElse(null))
-        .uirUpperLimit(uirUpperLimit.orElse(null))
+        .firUpperLimit(firUpperLimit)
+        .uirLowerLimit(uirLowerLimit)
+        .uirUpperLimit(uirUpperLimit)
         .cruiseTableIndicator(cruiseTableIndicator.orElse(null))
         .firUirName(firUirName.orElse(null))
         .fileRecordNumber(arincRecord.requiredField("fileRecordNumber"))

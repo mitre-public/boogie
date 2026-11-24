@@ -12,10 +12,10 @@ import org.mitre.tdp.boogie.AirspaceType;
 import org.mitre.tdp.boogie.Geometry;
 import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
 
-import com.google.common.collect.Range;
 
 /**
- * Strategy class for generating user-defined records from 424 restrictive airspace information. Used with {@link RestrictiveAirspaceAssembler}.
+ * * Strategy class for generating user-defined records from 424 restrictive airspace information. Used with {@link
+ * RestrictiveAirspaceAssembler}.
  */
 public interface RestrictiveAirspaceAssemblyStrategy<A, AS> {
 
@@ -37,12 +37,11 @@ public interface RestrictiveAirspaceAssemblyStrategy<A, AS> {
 
     @Override
     public Airspace convertRestrictiveAirspace(ArincRestrictiveAirspaceLeg representative, List<AirspaceSequence> sequences) {
-      Range<Double> alts = AirwayAltitudeRange.INSTANCE.apply(representative.lowerLimit().orElse(null), null, representative.upperLimit().orElse(null));
       String ident = RestrictiveAirspaceName.INSTANCE.apply(representative);
       return Airspace.builder()
           .area(representative.customerAreaCode().name())
           .identifier(ident)
-          .altitudeLimit(alts)
+          .altitudeLimits(representative.altitudeLimits())
           .airspaceType(AirspaceType.RESTRICTIVE)
           .sequences(sequences)
           .build();

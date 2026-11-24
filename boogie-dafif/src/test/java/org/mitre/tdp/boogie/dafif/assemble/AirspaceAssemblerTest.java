@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airspace;
@@ -23,7 +25,6 @@ import org.mitre.tdp.boogie.dafif.model.enums.Derivation;
 import org.mitre.tdp.boogie.dafif.model.enums.Shape;
 import org.mitre.tdp.boogie.dafif.model.enums.SpecialUseAirspaceType;
 
-import com.google.common.collect.Range;
 
 class AirspaceAssemblerTest {
 
@@ -37,7 +38,7 @@ class AirspaceAssemblerTest {
     assertEquals(List.of("US00001", "US00002", "US00003"), airspaces.stream().map(Airspace::identifier).toList());
     assertEquals(List.of(AirspaceType.FIR, AirspaceType.UIR, AirspaceType.CONTROLLED), airspaces.stream().map(Airspace::airspaceType).toList());
     assertEquals("KZ", airspaces.get(0).area());
-    assertEquals(Range.closed(1000.0, 18000.0), airspaces.get(0).altitudeLimit());
+    assertEquals(AltitudeLimits.of(AltitudeLimit.msl(1000.0), AltitudeLimit.flightLevel(180)), airspaces.get(0).altitudeLimits());
     assertEquals(LatLong.of(35.0, -100.0), airspaces.get(0).sequences().get(0).centerFix().orElseThrow());
     assertEquals(12.5, airspaces.get(0).sequences().get(0).arcRadius().orElseThrow());
   }

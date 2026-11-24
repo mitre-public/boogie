@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
@@ -57,9 +58,9 @@ public class TestArincFirUirLeg {
         () -> assertTrue(record.optionalField("arcOriginLongitude").isEmpty()),
         () -> assertTrue(record.optionalField("arcDistance").isEmpty()),
         () -> assertTrue(record.optionalField("arcBearing").isEmpty()),
-        () -> assertEquals(Optional.of(24500.0), record.optionalField("firUpperLimit")),
-        () -> assertEquals(Optional.of(24500.0), record.optionalField("uirLowerLimit")),
-        () -> assertTrue(record.optionalField("uirUpperLimit").isEmpty()),
+        () -> assertEquals(Optional.of("FL245"), record.optionalField("firUpperLimit")),
+        () -> assertEquals(Optional.of("FL245"), record.optionalField("uirLowerLimit")),
+        () -> assertEquals(Optional.of("UNLTD"), record.optionalField("uirUpperLimit")),
         () -> assertEquals(Optional.of("RR"), record.optionalField("cruiseTableIndicator")),
         () -> assertEquals(Optional.of("NIAMEY FIR/UIR"), record.optionalField("firUirName")),
         () -> assertEquals(Integer.valueOf(92319), record.requiredField("fileRecordNumber")),
@@ -107,9 +108,9 @@ public class TestArincFirUirLeg {
         () -> assertTrue(firUirLeg.arcOriginLongitude().isEmpty()),
         () -> assertTrue(firUirLeg.arcDistance().isEmpty()),
         () -> assertTrue(firUirLeg.arcBearing().isEmpty()),
-        () -> assertEquals(Optional.of(24500.0), firUirLeg.firUpperLimit()),
-        () -> assertEquals(Optional.of(24500.0), firUirLeg.uirLowerLimit()),
-        () -> assertTrue(firUirLeg.uirUpperLimit().isEmpty()),  // Adjusted based on the absence of this field
+        () -> assertEquals(AltitudeLimit.flightLevel(245), firUirLeg.firUpperLimit()),
+        () -> assertEquals(AltitudeLimit.flightLevel(245), firUirLeg.uirLowerLimit()),
+        () -> assertEquals(AltitudeLimit.none(), firUirLeg.uirUpperLimit()),
         () -> assertEquals(Optional.of("RR"), firUirLeg.cruiseTableIndicator()),
         () -> assertEquals(Optional.of("NIAMEY FIR/UIR"), firUirLeg.firUirName()),
         () -> assertEquals(92319, firUirLeg.fileRecordNumber()),

@@ -23,7 +23,7 @@ public interface BoundaryAssemblyStrategy<A, S> {
   A convertBoundary(DafifBoundaryParent parent, List<S> sequences);
 
   /**
-   * Receives all source endpoints, including shapes unsupported by the standard Airspace model.
+   * * Receives all source endpoints, including shapes unsupported by the standard Airspace model.
    */
   List<S> convertBoundarySequences(List<DafifBoundarySegment> segments);
 
@@ -43,7 +43,7 @@ public interface BoundaryAssemblyStrategy<A, S> {
           .area(parent.icaoCode())
           .identifier(parent.boundaryIdentification())
           .airspaceType(type)
-          .altitudeLimit(AirspaceAltitudeRange.INSTANCE.apply(parent.lowerAltitude(), parent.upperAltitude()))
+          .altitudeLimits(DafifAltitudeLimits.INSTANCE.apply(parent.lowerAltitude(), parent.upperAltitude()))
           .sequences(sequences)
           .build();
     }

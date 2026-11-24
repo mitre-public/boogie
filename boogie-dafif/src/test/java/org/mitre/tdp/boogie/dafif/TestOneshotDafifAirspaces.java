@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airport;
@@ -37,7 +39,6 @@ import org.mitre.tdp.boogie.dafif.model.DafifSuasParent;
 import org.mitre.tdp.boogie.dafif.model.DafifSuasSegment;
 import org.mitre.tdp.boogie.dafif.model.enums.Shape;
 
-import com.google.common.collect.Range;
 
 class TestOneshotDafifAirspaces {
 
@@ -61,12 +62,12 @@ class TestOneshotDafifAirspaces {
         () -> assertEquals(3, records.airspaces().size()),
         () -> assertEquals("US00001", boundary.identifier()),
         () -> assertEquals(AirspaceType.FIR, boundary.airspaceType()),
-        () -> assertEquals(Range.closed(18000.0, 60000.0), boundary.altitudeLimit()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.flightLevel(180), AltitudeLimit.flightLevel(600)), boundary.altitudeLimits()),
         () -> assertEquals(Geometry.CIRCLE, boundary.sequences().get(0).geometry()),
         () -> assertEquals(LatLong.of(40.0, -75.0), boundary.sequences().get(0).centerFix().orElseThrow()),
         () -> assertEquals(2, suas.stream().map(Airspace::identifier).distinct().count()),
         () -> assertTrue(suas.stream().allMatch(a -> a.airspaceType() == AirspaceType.RESTRICTIVE)),
-        () -> assertEquals(List.of(10000.0, 20000.0), suas.stream().map(a -> a.altitudeLimit().upperEndpoint()).sorted().toList()),
+        () -> assertEquals(List.of(10000.0, 20000.0), suas.stream().map(a -> a.altitudeLimits().upper().height().orElseThrow().feet()).sorted().toList()),
         () -> assertTrue(records.airports().isEmpty()),
         () -> assertTrue(records.procedures().isEmpty())
     );

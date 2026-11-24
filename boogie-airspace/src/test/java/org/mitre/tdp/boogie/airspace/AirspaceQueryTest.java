@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.airspace;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,7 +20,6 @@ import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.Geometry;
 
-import com.google.common.collect.Range;
 
 class AirspaceQueryTest {
   @Test
@@ -176,10 +177,10 @@ class AirspaceQueryTest {
   @Test
   void defaultIndexUsesAvailableAltitudeBoundsAndFlagsBothMissingAsUnknown() {
     var index = new AirspaceIndexFactory<String>().apply(List.of(
-        new AirspaceDefinition<>("ceiling", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimit(Range.atMost(2000.0)).build()),
-        new AirspaceDefinition<>("floor", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimit(Range.atLeast(2000.0)).build()),
-        new AirspaceDefinition<>("both", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimit(Range.closed(1000.0, 3000.0)).build()),
-        new AirspaceDefinition<>("neither", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimit(Range.all()).build())));
+        new AirspaceDefinition<>("ceiling", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimits(AltitudeLimits.of(AltitudeLimit.none(), AltitudeLimit.msl(2000.0))).build()),
+        new AirspaceDefinition<>("floor", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimits(AltitudeLimits.of(AltitudeLimit.msl(2000.0), AltitudeLimit.none())).build()),
+        new AirspaceDefinition<>("both", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimits(AltitudeLimits.of(AltitudeLimit.msl(1000.0), AltitudeLimit.msl(3000.0))).build()),
+        new AirspaceDefinition<>("neither", Airspace.builder().sequences(new ArrayList<>(box().sequences())).altitudeLimits(AltitudeLimits.unknown()).build())));
     assertEquals(Set.of("neither"), index.unknownAltitudeKeys());
     List<AirspaceSpan<String>> spans = new ArrayList<>();
     var query = index.newQuery(spans::add);

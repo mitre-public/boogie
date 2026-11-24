@@ -40,7 +40,7 @@ public final class AirspaceVisitAccumulator<K, E> {
   /**
    * Stores the event adapter and completed-visit consumer.
    *
-   * @param pointMapping maps original events to time, position, and nullable altitude in the bands' reference
+   * @param pointMapping maps original events to time, position, and nullable altitude above mean sea level
    * @param output receives completed visits synchronously
    */
   public AirspaceVisitAccumulator(Function<? super E, AirspacePoint> pointMapping, Consumer<AirspaceVisit<K, E>> output) {

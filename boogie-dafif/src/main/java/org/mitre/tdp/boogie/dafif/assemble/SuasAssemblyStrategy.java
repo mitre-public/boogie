@@ -23,7 +23,7 @@ public interface SuasAssemblyStrategy<A, S> {
   A convertSuas(DafifSuasParent parent, List<S> sequences);
 
   /**
-   * Receives all source endpoints, including shapes unsupported by the standard Airspace model.
+   * * Receives all source endpoints, including shapes unsupported by the standard Airspace model.
    */
   List<S> convertSuasSequences(List<DafifSuasSegment> segments);
 
@@ -38,7 +38,7 @@ public interface SuasAssemblyStrategy<A, S> {
           .area(parent.icaoCode())
           .identifier(parent.suasIdentification() + parent.sector().filter(sector -> !sector.isEmpty()).map(sector -> "/" + sector).orElse(""))
           .airspaceType(AirspaceType.RESTRICTIVE)
-          .altitudeLimit(AirspaceAltitudeRange.INSTANCE.apply(parent.lowerAltitude(), parent.upperAltitude()))
+          .altitudeLimits(DafifAltitudeLimits.INSTANCE.apply(parent.lowerAltitude(), parent.upperAltitude()))
           .sequences(sequences)
           .build();
     }

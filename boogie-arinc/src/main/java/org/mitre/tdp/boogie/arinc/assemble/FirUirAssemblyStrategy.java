@@ -13,10 +13,9 @@ import org.mitre.tdp.boogie.Geometry;
 import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.FirUirIndicator;
 
-import com.google.common.collect.Range;
 
 /**
- * Strategy class for generating used-defined records from 424 information. Used with {@link FirUirAssembler}.
+ * * Strategy class for generating used-defined records from 424 information. Used with {@link FirUirAssembler}.
  */
 public interface FirUirAssemblyStrategy<A, S> {
 
@@ -44,7 +43,7 @@ public interface FirUirAssemblyStrategy<A, S> {
   S convertFirUirLeg(ArincFirUirLeg leg);
 
   /**
-   * This is the standard strategy that produces the simplified objects.
+   * * This is the standard strategy that produces the simplified objects.
    */
   final class Standard implements FirUirAssemblyStrategy<Airspace, AirspaceSequence> {
     private Standard() {}
@@ -54,11 +53,10 @@ public interface FirUirAssemblyStrategy<A, S> {
       Airspace fir = Optional.of(representative)
           .filter(i -> i.firUirIndicator().equals(FirUirIndicator.F) || i.firUirIndicator().equals(FirUirIndicator.B))
           .map(i -> {
-            Range<Double> firLimit = i.firUpperLimit().map(Range::atMost).orElseGet(Range::all);
             return Airspace.builder()
                 .area(i.customerAreaCode().name())
                 .identifier(i.firUirAddress().map(a -> i.firUirIdentifier().concat("-").concat(a)).orElse(i.firUirIdentifier()))
-                .altitudeLimit(firLimit)
+                .altitudeLimits(i.firAltitudeLimits())
                 .airspaceType(AirspaceType.FIR)
                 .sequences(allLegs)
                 .build();
@@ -68,11 +66,10 @@ public interface FirUirAssemblyStrategy<A, S> {
       Airspace uir = Optional.of(representative)
           .filter(i -> i.firUirIndicator().equals(FirUirIndicator.U) || i.firUirIndicator().equals(FirUirIndicator.B))
           .map(i -> {
-            Range<Double> uirLimit = LimitsToRange.INSTANCE.apply(i.uirLowerLimit().orElse(null), i.uirUpperLimit().orElse(null));
             return Airspace.builder()
                 .area(i.customerAreaCode().name())
                 .identifier(i.firUirAddress().map(a -> i.firUirIdentifier().concat("-").concat(a)).orElse(i.firUirIdentifier()))
-                .altitudeLimit(uirLimit)
+                .altitudeLimits(i.uirAltitudeLimits())
                 .airspaceType(AirspaceType.UIR)
                 .sequences(allLegs)
                 .build();

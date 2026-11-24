@@ -3,143 +3,128 @@ package org.mitre.tdp.boogie.arinc.model;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.v18.field.ArcBearing;
-import org.mitre.tdp.boogie.arinc.v18.field.ArcDistance;
-import org.mitre.tdp.boogie.arinc.v18.field.BoundaryVia;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CruiseTableIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirAddress;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirEntryReport;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirIdentifier;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirIndicator;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirName;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirReportingUnitsAltitude;
-import org.mitre.tdp.boogie.arinc.v18.field.FirUirReportingUnitsSpeed;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.Limit;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
+import org.mitre.tdp.boogie.AltitudeLimit;
+import org.mitre.tdp.boogie.AltitudeLimits;
+
+import org.mitre.tdp.boogie.arinc.v18.field.*;
 
 /**
- * Section/Subsection = UF
+ * * Section/Subsection = UF
  */
 public final class ArincFirUirLeg implements ArincModel {
   /**
-   * See {@link RecordType}.
+   * * See {@link RecordType}.
    */
   private final RecordType recordType;
   /**
-   * See {@link CustomerAreaCode}.
+   * * See {@link CustomerAreaCode}.
    */
   private final CustomerAreaCode customerAreaCode;
   /**
-   * See {@link SectionCode}.
+   * * See {@link SectionCode}.
    */
   private final SectionCode sectionCode;
   /**
-   * See {@link SubSectionCode}.
+   * * See {@link SubSectionCode}.
    */
   private final String subSectionCode;
   /**
-   * See {@link FirUirIdentifier}.
+   * * See {@link FirUirIdentifier}.
    */
   private final String firUirIdentifier;
   /**
-   * See {@link FirUirAddress}.
+   * * See {@link FirUirAddress}.
    */
   private final String firUirAddress;
   /**
-   * See {@link FirUirIndicator}.
+   * * See {@link FirUirIndicator}.
    */
   private final FirUirIndicator firUirIndicator;
   /**
-   * See {@link SequenceNumber}.
+   * * See {@link SequenceNumber}.
    */
   private final Integer sequenceNumber;
   /**
-   * See {@link ContinuationRecordNumber}.
+   * * See {@link ContinuationRecordNumber}.
    */
   private final String continuationRecordNumber;
   /**
-   * See {@link FirUirIdentifier}.
+   * * See {@link FirUirIdentifier}.
    */
   private final String adjacentFirIdentifier;
   /**
-   * See {@link FirUirIdentifier}.
+   * * See {@link FirUirIdentifier}.
    */
   private final String adjacentUirIdentifier;
   /**
-   * See {@link FirUirReportingUnitsSpeed}.
+   * * See {@link FirUirReportingUnitsSpeed}.
    */
   private final String reportingUnitsSpeed;
   /**
-   * See {@link FirUirReportingUnitsAltitude}.
+   * * See {@link FirUirReportingUnitsAltitude}.
    */
   private final String reportingUnitsAltitude;
   /**
-   * See {@link FirUirEntryReport}.
+   * * See {@link FirUirEntryReport}.
    */
   private final Boolean firUirEntryReport;
   /**
-   * See {@link BoundaryVia}.
+   * * See {@link BoundaryVia}.
    */
   private final BoundaryVia boundaryVia;
   /**
-   * See {@link Latitude}.
+   * * See {@link Latitude}.
    */
   private final Double firUirLatitude;
   /**
-   * See {@link Longitude}.
+   * * See {@link Longitude}.
    */
   private final Double firUirLongitude;
   /**
-   * See {@link Latitude}.
+   * * See {@link Latitude}.
    */
   private final Double arcOriginLatitude;
   /**
-   * See {@link Longitude}.
+   * * See {@link Longitude}.
    */
   private final Double arcOriginLongitude;
   /**
-   * See {@link ArcDistance}.
+   * * See {@link ArcDistance}.
    */
   private final Double arcDistance;
   /**
-   * See {@link ArcBearing}.
+   * * See {@link ArcBearing}.
    */
   private final Double arcBearing;
   /**
-   * See {@link Limit}.
+   * * The FIR upper limit (5.121), above mean sea level; see {@link
+   * AirspaceAltitudeLimits}.
    */
-  private final Double firUpperLimit;
+  private final AltitudeLimit firUpperLimit;
   /**
-   * See {@link Limit}.
+   * * The UIR lower limit (5.121), above mean sea level; see {@link
+   * AirspaceAltitudeLimits}.
    */
-  private final Double uirLowerLimit;
+  private final AltitudeLimit uirLowerLimit;
   /**
-   * See {@link Limit}.
+   * * The UIR upper limit (5.121), above mean sea level; see {@link
+   * AirspaceAltitudeLimits}.
    */
-  private final Double uirUpperLimit;
+  private final AltitudeLimit uirUpperLimit;
   /**
-   * See {@link CruiseTableIndicator}.
+   * * See {@link CruiseTableIndicator}.
    */
   private final String cruiseTableIndicator;
   /**
-   * See {@link FirUirName}.
+   * * See {@link FirUirName}.
    */
   private final String firUirName;
   /**
-   * See {@link FileRecordNumber}.
+   * * See {@link FileRecordNumber}.
    */
   private final Integer fileRecordNumber;
   /**
-   * See {@link Cycle}.
+   * * See {@link Cycle}.
    */
   private final String cycleDate;
 
@@ -212,9 +197,9 @@ public final class ArincFirUirLeg implements ArincModel {
         .arcOriginLongitude(arcOriginLongitude().orElse(null))
         .arcDistance(arcDistance().orElse(null))
         .arcBearing(arcBearing().orElse(null))
-        .firUpperLimit(firUpperLimit().orElse(null))
-        .uirLowerLimit(uirLowerLimit().orElse(null))
-        .uirUpperLimit(uirUpperLimit().orElse(null))
+        .firUpperLimit(firUpperLimit)
+        .uirLowerLimit(uirLowerLimit)
+        .uirUpperLimit(uirUpperLimit)
         .cruiseTableIndicator(cruiseTableIndicator().orElse(null))
         .firUirName(firUirName().orElse(null))
         .fileRecordNumber(fileRecordNumber())
@@ -293,17 +278,37 @@ public final class ArincFirUirLeg implements ArincModel {
     return Optional.ofNullable(arcBearing);
   }
 
-  public Optional<Double> firUpperLimit() {
-    return Optional.ofNullable(firUpperLimit);
+  public AltitudeLimit firUpperLimit() {
+    return firUpperLimit;
   }
 
-  public Optional<Double> uirLowerLimit() {
-    return Optional.ofNullable(uirLowerLimit);
+  public AltitudeLimit uirLowerLimit() {
+    return uirLowerLimit;
   }
 
-  public Optional<Double> uirUpperLimit() {
-    return Optional.ofNullable(uirUpperLimit);
+  public AltitudeLimit uirUpperLimit() {
+    return uirUpperLimit;
   }
+
+  /**
+   * Gets the FIR's vertical extent: from the surface (no lower limit) to the FIR upper limit.
+   *
+   * @return the limits
+   */
+  public AltitudeLimits firAltitudeLimits() {
+    return AltitudeLimits.published(AltitudeLimit.none(), firUpperLimit);
+  }
+
+  /**
+   * Gets the UIR's vertical extent. Limits that contradict each other are not specified.
+   *
+   * @return the limits
+   */
+  public AltitudeLimits uirAltitudeLimits() {
+    return AltitudeLimits.published(uirLowerLimit, uirUpperLimit);
+  }
+
+
 
   public Optional<String> cruiseTableIndicator() {
     return Optional.ofNullable(cruiseTableIndicator);
@@ -390,9 +395,9 @@ public final class ArincFirUirLeg implements ArincModel {
     private Double arcOriginLongitude;
     private Double arcDistance;
     private Double arcBearing;
-    private Double firUpperLimit;
-    private Double uirLowerLimit;
-    private Double uirUpperLimit;
+    private AltitudeLimit firUpperLimit = AltitudeLimit.notSpecified();
+    private AltitudeLimit uirLowerLimit = AltitudeLimit.notSpecified();
+    private AltitudeLimit uirUpperLimit = AltitudeLimit.notSpecified();
     private String cruiseTableIndicator;
     private String firUirName;
     private Integer fileRecordNumber;
@@ -503,20 +508,22 @@ public final class ArincFirUirLeg implements ArincModel {
       return this;
     }
 
-    public Builder firUpperLimit(Double firUpperLimit) {
-      this.firUpperLimit = firUpperLimit;
+    public Builder firUpperLimit(AltitudeLimit firUpperLimit) {
+      this.firUpperLimit = Objects.requireNonNull(firUpperLimit, "firUpperLimit");
       return this;
     }
 
-    public Builder uirLowerLimit(Double uirLowerLimit) {
-      this.uirLowerLimit = uirLowerLimit;
+    public Builder uirLowerLimit(AltitudeLimit uirLowerLimit) {
+      this.uirLowerLimit = Objects.requireNonNull(uirLowerLimit, "uirLowerLimit");
       return this;
     }
 
-    public Builder uirUpperLimit(Double uirUpperLimit) {
-      this.uirUpperLimit = uirUpperLimit;
+    public Builder uirUpperLimit(AltitudeLimit uirUpperLimit) {
+      this.uirUpperLimit = Objects.requireNonNull(uirUpperLimit, "uirUpperLimit");
       return this;
     }
+
+
 
     public Builder cruiseTableIndicator(String cruiseTableIndicator) {
       this.cruiseTableIndicator = cruiseTableIndicator;

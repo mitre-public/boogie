@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.assemble;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airspace;
@@ -43,8 +45,7 @@ public class TestV18RestrictiveAirspaceConsumer {
     assertAll(
         () -> assertEquals(1, airspaces.size(), "Should assemble to a single BOARDMAN MOA"),
         () -> assertEquals(75, airspaces.get(0).sequences().size(), "Sequences from all primary legs"),
-        () -> assertEquals(4000.0, airspaces.get(0).altitudeLimit().lowerEndpoint()),
-        () -> assertEquals(17999.0, airspaces.get(0).altitudeLimit().upperEndpoint()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.msl(4000.0), AltitudeLimit.msl(17999.0)), airspaces.get(0).altitudeLimits()),
         () -> assertEquals("BOARDMAN-M-K1-A", airspaces.get(0).identifier())
     );
   }

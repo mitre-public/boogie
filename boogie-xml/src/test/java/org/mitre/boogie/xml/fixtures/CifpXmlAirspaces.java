@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
+import org.mitre.tdp.boogie.AltitudeReference;
 import org.mitre.boogie.xml.v23_4.generated.AeroPublication;
 import org.mitre.boogie.xml.v23_4.generated.Airspace;
 import org.mitre.boogie.xml.v23_4.generated.AirspaceAltitudeConstraint;
@@ -39,7 +41,9 @@ import org.mitre.tdp.boogie.arinc.model.ArincFirUirLeg;
 import org.mitre.tdp.boogie.arinc.model.ArincRestrictiveAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.model.ConvertedArincRecords;
 
-/** Maps the CIFP primary airspace records into the generated XML fixture. */
+/**
+ * Maps the CIFP primary airspace records into the generated XML fixture.
+ */
 final class CifpXmlAirspaces {
 
   private CifpXmlAirspaces() {
@@ -90,7 +94,7 @@ final class CifpXmlAirspaces {
     first.supplierSectionCode().ifPresent(section -> target.setControlledAirspaceCenterRef(refs.fix(
         section.name(), first.supplierSubSectionCode().orElse(""), first.airspaceCenter(), first.icaoRegion(), "")));
     first.rnp().map(BigDecimal::valueOf).ifPresent(target::setRnp);
-    metadata(target, first.cycleDate(), first.timeCode(), first.notam(), first.lowerUnitIndicator(), first.upperUnitIndicator());
+    metadata(target, first.cycleDate(), first.timeCode(), first.notam(), unitCode(first.lowerLimit()), unitCode(first.upperLimit()));
     target.setAirspaceAltLimits(limits(first.lowerLimit(), first.upperLimit(),
         refs.rawAirspaceField("UC", first.fileRecordNumber(), 81, 86),
         refs.rawAirspaceField("UC", first.fileRecordNumber(), 87, 92)));
@@ -126,7 +130,7 @@ final class CifpXmlAirspaces {
       case "U" -> RestrictiveAirspaceType.UNSPECIFIED;
       default -> throw new IllegalArgumentException("Unsupported restrictive airspace type: " + first.restrictiveType());
     });
-    metadata(target, first.cycleDate(), first.timeCode(), first.notam(), first.lowerUnitIndicator(), first.upperUnitIndicator());
+    metadata(target, first.cycleDate(), first.timeCode(), first.notam(), unitCode(first.lowerLimit()), unitCode(first.upperLimit()));
     target.setAirspaceAltLimits(limits(first.lowerLimit(), first.upperLimit(),
         refs.rawAirspaceField("UR", first.fileRecordNumber(), 81, 86),
         refs.rawAirspaceField("UR", first.fileRecordNumber(), 87, 92)));
@@ -161,7 +165,7 @@ final class CifpXmlAirspaces {
       case B -> FirUirIndicator.COMBINED;
       default -> throw new IllegalArgumentException("Unsupported FIR/UIR indicator: " + first.firUirIndicator());
     });
-    target.setFirAltitudeLimits(limits(Optional.empty(), first.firUpperLimit(), null,
+    target.setFirAltitudeLimits(limits(AltitudeLimit.notSpecified(), first.firUpperLimit(), null,
         refs.rawAirspaceField("UF", first.fileRecordNumber(), 80, 85)));
     target.setUirAltitudeLimits(limits(first.uirLowerLimit(), first.uirUpperLimit(),
         refs.rawAirspaceField("UF", first.fileRecordNumber(), 85, 90),
@@ -177,6 +181,10 @@ final class CifpXmlAirspaces {
       target.getFirUirSegment().add(segment);
     }
     return target;
+  }
+
+  private static Optional<String> unitCode(AltitudeLimit limit) {
+    return limit.height().map(height -> height.reference() == AltitudeReference.AGL ? "A" : "M");
   }
 
   private static void metadata(Airspace target, String cycle, Optional<String> timeCode, Optional<String> notam,
@@ -221,10 +229,12 @@ final class CifpXmlAirspaces {
     bearing.map(BigDecimal::valueOf).ifPresent(target::setArcBearing);
   }
 
-  /** Raw tokens retain ground/unlimited/flight-level distinctions erased by the fixed-width numeric model. */
-  static AirspaceAltitudeConstraint limits(Optional<Double> lower, Optional<Double> upper, String rawLower, String rawUpper) {
+  /**
+   * Raw tokens retain ground/unlimited/flight-level distinctions erased by the fixed-width numeric model.
+   */
+  static AirspaceAltitudeConstraint limits(AltitudeLimit lower, AltitudeLimit upper, String rawLower, String rawUpper) {
     AirspaceAltitudeConstraint target = new AirspaceAltitudeConstraint();
-    if (lower.isPresent() || hasText(rawLower)) {
+    if (lower.height().isPresent() || hasText(rawLower)) {
       LowerLimitConstraint limit = new LowerLimitConstraint();
       if ("GND".equals(trim(rawLower))) {
         limit.setIsGround(true);
@@ -233,7 +243,7 @@ final class CifpXmlAirspaces {
       }
       target.setLowerLimit(limit);
     }
-    if (upper.isPresent() || hasText(rawUpper)) {
+    if (upper.height().isPresent() || hasText(rawUpper)) {
       UpperLimitConstraint limit = new UpperLimitConstraint();
       if ("UNLTD".equals(trim(rawUpper))) {
         limit.setIsUnlimited(true);
@@ -248,7 +258,7 @@ final class CifpXmlAirspaces {
     return target;
   }
 
-  private static void altitude(AirspaceRouteHoldAltitude target, Optional<Double> value, String raw) {
+  private static void altitude(AirspaceRouteHoldAltitude target, AltitudeLimit value, String raw) {
     String token = trim(raw);
     if (token.startsWith("FL")) {
       // Types/DataTypes.xsd defines AltitudeValue in feet: FL270 is encoded as 27000.
@@ -261,8 +271,8 @@ final class CifpXmlAirspaces {
       case "NOTAM" -> target.setIsNotam(true);
       case "NOTSP" -> target.setIsNotSpecified(true);
       case "UNK" -> target.setIsUnknown(true);
-      default -> target.setAltitude(BigDecimal.valueOf(value.orElseThrow(
-          () -> new IllegalArgumentException("Unsupported airspace altitude: " + raw))).intValueExact());
+      default -> target.setAltitude(BigDecimal.valueOf(value.height().orElseThrow(
+          () -> new IllegalArgumentException("Unsupported airspace altitude: " + raw)).feet()).intValueExact());
     }
   }
 

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.airspace.fixtures;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import java.util.List;
 
 import org.mitre.caasd.commons.LatLong;
@@ -12,7 +14,6 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Geometry;
 import org.mitre.tdp.boogie.MagneticVariation;
 
-import com.google.common.collect.Range;
 
 /**
  * Boise Class C's outer shelf, transcribed from {@code boogie-arinc/src/test/resources/controlled.txt}, AIRAC 2210.
@@ -40,7 +41,7 @@ public final class BoiseClassCAirspace {
         .area("USA")
         .identifier("KBOI-A-K1-ANM ID C BOISE AIR TERMINAL (B-B-C")
         .airspaceType(AirspaceType.CONTROLLED)
-        .altitudeLimit(Range.closed(4600.0, 6900.0))
+        .altitudeLimits(AltitudeLimits.of(AltitudeLimit.msl(4600.0), AltitudeLimit.msl(6900.0)))
         .centerIdentification(CenterIdentification.builder("KBOI")
             .area("USA").icaoRegion("K1").type(BoogieType.AIRPORT).build())
         .center(Fix.builder().fixIdentifier("KBOI")

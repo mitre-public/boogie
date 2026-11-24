@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
@@ -63,9 +64,9 @@ public class TestArincControlledAirspaceLeg {
         () -> assertFalse(record.optionalField("arcDistance").isPresent()),
         () -> assertFalse(record.optionalField("arcBearing").isPresent()),
         () -> assertFalse(record.optionalField("rnp").isPresent()),
-        () -> assertEquals(24500.0, record.requiredField("lowerLimit")),
+        () -> assertEquals("FL245", record.requiredField("lowerLimit")),
         () -> assertEquals("M", record.requiredField("lowerIndicator")),
-        () -> assertEquals(66000.0, record.requiredField("upperLimit")),
+        () -> assertEquals("FL660", record.requiredField("upperLimit")),
         () -> assertEquals("M", record.requiredField("upperIndicator")),
         () -> assertEquals("HONIARA CTA", record.requiredField("controlledAirspaceName")),
         () -> assertEquals(Integer.valueOf(79472), record.requiredField("fileRecordNumber")),
@@ -102,10 +103,8 @@ public class TestArincControlledAirspaceLeg {
         () -> assertTrue(controlledAirspace.arcDistance().isEmpty()),
         () -> assertTrue(controlledAirspace.arcBearing().isEmpty()),
         () -> assertTrue(controlledAirspace.rnp().isEmpty()),
-        () -> assertEquals(24500.0, controlledAirspace.lowerLimit().get()),
-        () -> assertEquals("M", controlledAirspace.lowerUnitIndicator().get()),
-        () -> assertEquals(66000.0, controlledAirspace.upperLimit().get()),
-        () -> assertEquals("M", controlledAirspace.upperUnitIndicator().get()),
+        () -> assertEquals(AltitudeLimit.flightLevel(245), controlledAirspace.lowerLimit()),
+        () -> assertEquals(AltitudeLimit.flightLevel(660), controlledAirspace.upperLimit()),
         () -> assertEquals("HONIARA CTA", controlledAirspace.controlledAirspaceName().get()),
         () -> assertEquals(79472, controlledAirspace.fileRecordNumber()),
         () -> assertEquals("2210", controlledAirspace.cycleDate()),

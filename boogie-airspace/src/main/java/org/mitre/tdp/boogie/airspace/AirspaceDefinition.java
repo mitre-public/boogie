@@ -10,7 +10,7 @@ import org.mitre.tdp.boogie.Airspace;
  * @param <K> caller's airspace key type
  * @param key stable caller identity, including source and layer when appropriate
  * @param airspace source boundary and altitude limits
- * @param altitudeBand explicit altitude override, or null to use {@link Airspace#altitudeLimit()}
+ * @param altitudeBand explicit altitude override, or null to use {@link Airspace#altitudeLimits()}
  */
 public record AirspaceDefinition<K>(K key, Airspace airspace, AltitudeBand altitudeBand) {
   /**

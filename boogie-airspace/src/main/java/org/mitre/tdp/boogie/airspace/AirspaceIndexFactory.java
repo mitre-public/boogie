@@ -11,9 +11,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+
 import org.mitre.tdp.boogie.Airspace;
 
-import com.google.common.collect.BoundType;
 import com.google.common.geometry.S2Polygon;
 import com.google.common.geometry.S2Shape;
 import com.google.common.geometry.S2ShapeIndex;
@@ -29,10 +30,18 @@ import com.google.common.geometry.S2ShapeIndex;
  * @param <K> caller's airspace key type
  */
 public final class AirspaceIndexFactory<K> implements Function<Collection<AirspaceDefinition<K>>, AirspaceIndex<K>> {
+  /**
+   * The spacing of samples along great-circle and rhumb-line edges, in nautical miles.
+   */
   private final double lineStepNm;
+  /**
+   * The bearing increment between samples along arcs and circles, in degrees.
+   */
   private final double arcStepDegrees;
 
-  /** Uses sampling steps of 10 nautical miles for lines and 10 degrees for arcs/circles. */
+  /**
+   * Uses sampling steps of 10 nautical miles for lines and 10 degrees for arcs/circles.
+   */
   public AirspaceIndexFactory() {
     this(10.0, 10.0);
   }
@@ -53,9 +62,8 @@ public final class AirspaceIndexFactory<K> implements Function<Collection<Airspa
    * Creates a snapshot with compiled boundaries, resolved altitude bands, and prepared spatial lookup.
    * Source collections and airspaces are not retained by the resulting index.
    *
-   * <p>An explicit altitude band overrides the source range. Otherwise, a missing lower or upper bound
-   * leaves that side unlimited; both missing bounds or a null range produce an unknown band. Numeric
-   * bounds must be inclusive and use the same altitude reference as subsequent queries.
+   * <p>An explicit altitude band overrides the source's limits. Otherwise, the band is built from the source's
+   * {@link Airspace#altitudeLimits()}, each limit in its own reference (see {@link AltitudeBand#of(AltitudeLimits)}).
    *
    * @param definitions source airspaces with unique caller keys and optional altitude overrides
    * @return an independent index ready for queries
@@ -84,7 +92,7 @@ public final class AirspaceIndexFactory<K> implements Function<Collection<Airspa
         throw new IllegalArgumentException("Duplicate airspace key: " + key);
       }
       AltitudeBand band = Optional.ofNullable(definition.altitudeBand())
-          .orElseGet(() -> altitudeBand(key, definition.airspace()));
+          .orElseGet(() -> altitudeBand(definition.airspace()));
       S2Polygon polygon;
       try {
         polygon = compiler.apply(definition.airspace());
@@ -102,17 +110,13 @@ public final class AirspaceIndexFactory<K> implements Function<Collection<Airspa
     return new AirspaceIndex<>(index, Collections.unmodifiableMap(entries), Set.copyOf(unknownAltitudeKeys));
   }
 
-  private AltitudeBand altitudeBand(K key, Airspace airspace) {
-    return Optional.ofNullable(airspace.altitudeLimit())
-        .map(limits -> {
-          if ((limits.hasLowerBound() && limits.lowerBoundType() != BoundType.CLOSED)
-              || (limits.hasUpperBound() && limits.upperBoundType() != BoundType.CLOSED)) {
-            throw new IllegalArgumentException("Airspace altitude limits must be inclusive: " + key);
-          }
-          return AltitudeBand.of(
-              limits.hasLowerBound() ? limits.lowerEndpoint() : null,
-              limits.hasUpperBound() ? limits.upperEndpoint() : null);
-        })
-        .orElseGet(AltitudeBand::unknown);
+  /**
+   * Builds the band for an airspace without an explicit override, from its published limits.
+   *
+   * @param airspace the airspace
+   * @return the band
+   */
+  private AltitudeBand altitudeBand(Airspace airspace) {
+    return AltitudeBand.of(airspace.altitudeLimits());
   }
 }

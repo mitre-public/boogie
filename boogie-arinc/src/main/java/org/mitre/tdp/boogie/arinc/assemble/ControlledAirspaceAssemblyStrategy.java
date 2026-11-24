@@ -14,10 +14,10 @@ import org.mitre.tdp.boogie.Fix;
 import org.mitre.tdp.boogie.Geometry;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 
-import com.google.common.collect.Range;
 
 /**
- * Strategy class for generating used-defined records from 424 information. Used with {@link ControlledAirspaceAssembler}.
+ * * Strategy class for generating used-defined records from 424 information. Used with {@link
+ * ControlledAirspaceAssembler}.
  */
 public interface ControlledAirspaceAssemblyStrategy<A, F, AS> {
 
@@ -39,12 +39,11 @@ public interface ControlledAirspaceAssemblyStrategy<A, F, AS> {
 
     @Override
     public Airspace convertControlledAirspace(ArincControlledAirspaceLeg representative, @Nullable Fix fix, List<AirspaceSequence> sequences) {
-      Range<Double> alts = AirwayAltitudeRange.INSTANCE.apply(representative.lowerLimit().orElse(null), null, representative.upperLimit().orElse(null));
       String identifier = ControlledAirspaceName.INSTANCE.apply(representative);
       return Airspace.builder()
           .area(representative.customerAreaCode().name())
           .identifier(identifier)
-          .altitudeLimit(alts)
+          .altitudeLimits(representative.altitudeLimits())
           .airspaceType(AirspaceType.CONTROLLED)
           .sequences(sequences)
           .centerIdentification(CenterIdentification.builder(representative.airspaceCenter())

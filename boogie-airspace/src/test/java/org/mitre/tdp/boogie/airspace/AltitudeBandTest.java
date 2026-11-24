@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 
 class AltitudeBandTest {
@@ -77,10 +78,10 @@ class AltitudeBandTest {
         () -> assertInterval(lowerBounded, 0.0, 4000.0, 0.25, 1.0),
         () -> assertInterval(upperBounded, 4000.0, 0.0, 0.75, 1.0),
         () -> assertEquals(AltitudeBand.Status.RESOLVED, lowerBounded.status()),
-        () -> assertEquals(1000.0, lowerBounded.lowerFeet().orElseThrow()),
-        () -> assertTrue(lowerBounded.upperFeet().isEmpty()),
-        () -> assertTrue(upperBounded.lowerFeet().isEmpty()),
-        () -> assertEquals(1000.0, upperBounded.upperFeet().orElseThrow()));
+        () -> assertEquals(AltitudeLimit.msl(1000.0), lowerBounded.limits().lower()),
+        () -> assertEquals(AltitudeLimit.none(), lowerBounded.limits().upper()),
+        () -> assertEquals(AltitudeLimit.none(), upperBounded.limits().lower()),
+        () -> assertEquals(AltitudeLimit.msl(1000.0), upperBounded.limits().upper()));
   }
 
   @Test
