@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.ArincRecordParser;
@@ -59,10 +60,8 @@ public class TestArincRestrictiveAirspaceLeg {
         () -> assertTrue(restrictiveAirspace.arcOriginLongitude().isEmpty()),
         () -> assertTrue(restrictiveAirspace.arcDistance().isEmpty()),
         () -> assertTrue(restrictiveAirspace.arcBearing().isEmpty()),
-        () -> assertEquals(4000.0, restrictiveAirspace.lowerLimit().get()),
-        () -> assertEquals("M", restrictiveAirspace.lowerUnitIndicator().get()),
-        () -> assertEquals(17999.0, restrictiveAirspace.upperLimit().get()),
-        () -> assertEquals("M", restrictiveAirspace.upperUnitIndicator().get()),
+        () -> assertEquals(AltitudeLimit.msl(4000.0), restrictiveAirspace.lowerLimit()),
+        () -> assertEquals(AltitudeLimit.msl(17999.0), restrictiveAirspace.upperLimit()),
         () -> assertEquals("BOARDMAN MOA", restrictiveAirspace.restrictiveAirspaceName().get()),
         () -> assertEquals(71417, restrictiveAirspace.fileRecordNumber()),
         () -> assertEquals("1703", restrictiveAirspace.cycleDate()),

@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 import org.mitre.tdp.boogie.Airspace;
 
-/** Regression coverage for the LIDO cycle 2609 polar and rhumb-line projection failures. */
+/**
+ * * Regression coverage for the LIDO cycle 2609 polar and rhumb-line projection failures.
+ */
 class PolarAndRhumbBoundaryTest {
   @Test
   void johannesburgOceanicRetainsCoverageWhenRhumbBoundaryLeavesSouthPole() {
@@ -61,8 +63,7 @@ class PolarAndRhumbBoundaryTest {
   }
 
   private static void assertOutside(AirspaceIndex<String> index, double latitude, double longitude) {
-    assertTrue(query(index, latitude, longitude).isEmpty(),
-        "Expected exterior point: " + latitude + ", " + longitude);
+    assertTrue(query(index, latitude, longitude).isEmpty(), "Expected exterior point: " + latitude + ", " + longitude);
   }
 
   private static List<AirspaceSpan<String>> query(AirspaceIndex<String> index, double latitude, double longitude) {

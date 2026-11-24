@@ -16,7 +16,6 @@ class TestAltitudeFlightLevelFields {
   private static final List<FieldSpec<Double>> PARSERS = List.of(
       new MinimumAltitude(),
       new MaxAltitude(),
-      new Limit(),
       new SpeedLimitAltitude()
   );
 

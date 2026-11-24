@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.airspace;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,9 +18,10 @@ import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.AirspaceType;
 import org.mitre.tdp.boogie.Geometry;
 
-import com.google.common.collect.Range;
 
-/** Regression boundaries from the LIDO cycle 2609 SCIZ/XX01 assignment failure. */
+/**
+ * * Regression boundaries from the SCIZ/XX01 assignment failure.
+ */
 class ScizAndNoFirBoundaryTest {
   @Test
   void islaDePascuaRetainsSharedRhumbBoundaryAndSouthPoleCoverage() {
@@ -73,7 +76,7 @@ class ScizAndNoFirBoundaryTest {
         .area("SAM")
         .identifier("SCIZ")
         .airspaceType(AirspaceType.FIR)
-        .altitudeLimit(Range.all())
+        .altitudeLimits(AltitudeLimits.unknown())
         .sequences(List.of(
             sequence(1, Geometry.RHUMB_LINE, -15.0, -120.0),
             sequence(2, Geometry.RHUMB_LINE, -15.0, -90.0),
@@ -94,7 +97,7 @@ class ScizAndNoFirBoundaryTest {
         .area("SPA")
         .identifier("XX01")
         .airspaceType(AirspaceType.FIR)
-        .altitudeLimit(Range.all())
+        .altitudeLimits(AltitudeLimits.unknown())
         .sequences(List.of(
             sequence(1, Geometry.GREAT_CIRCLE, 10.0, -104.5),
             sequence(2, Geometry.RHUMB_LINE, 5.0, -120.0),
@@ -128,7 +131,7 @@ class ScizAndNoFirBoundaryTest {
         .area(airspace.area())
         .identifier(airspace.identifier())
         .airspaceType(airspace.airspaceType())
-        .altitudeLimit(airspace.altitudeLimit())
+        .altitudeLimits(airspace.altitudeLimits())
         .sequences(reversed)
         .build();
   }

@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
+import org.mitre.tdp.boogie.arinc.v18.field.AirspaceAltitudeLimits;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -32,10 +34,8 @@ public final class RestrictiveAirspaceLegBuilder implements Function<ArincRecord
     Optional<Double> arcOriginLongitude = arincRecord.optionalField("arcOriginLongitude");
     Optional<Double> arcDistance = arincRecord.optionalField("arcDistance");
     Optional<Double> arcBearing = arincRecord.optionalField("arcBearing");
-    Optional<Double> lowerLimit = arincRecord.optionalField("lowerLimit");
-    Optional<String> lowerUnitIndicator = arincRecord.optionalField("lowerIndicator");
-    Optional<Double> upperLimit = arincRecord.optionalField("upperLimit");
-    Optional<String> upperUnitIndicator = arincRecord.optionalField("upperIndicator");
+    AltitudeLimit lowerLimit = AirspaceAltitudeLimits.limit(arincRecord, "lowerLimit", "lowerIndicator");
+    AltitudeLimit upperLimit = AirspaceAltitudeLimits.limit(arincRecord, "upperLimit", "upperIndicator");
     Optional<String> restrictiveAirspaceName = arincRecord.optionalField("restrictiveAirspaceName");
 
     return new ArincRestrictiveAirspaceLeg.Builder()
@@ -58,10 +58,8 @@ public final class RestrictiveAirspaceLegBuilder implements Function<ArincRecord
         .arcOriginLongitude(arcOriginLongitude.orElse(null))
         .arcDistance(arcDistance.orElse(null))
         .arcBearing(arcBearing.orElse(null))
-        .lowerLimit(lowerLimit.orElse(null))
-        .lowerUnitIndicator(lowerUnitIndicator.orElse(null))
-        .upperLimit(upperLimit.orElse(null))
-        .upperUnitIndicator(upperUnitIndicator.orElse(null))
+        .lowerLimit(lowerLimit)
+        .upperLimit(upperLimit)
         .restrictiveAirspaceName(restrictiveAirspaceName.orElse(null))
         .fileRecordNumber(arincRecord.requiredField("fileRecordNumber"))
         .cycleDate(arincRecord.requiredField("cycle"));

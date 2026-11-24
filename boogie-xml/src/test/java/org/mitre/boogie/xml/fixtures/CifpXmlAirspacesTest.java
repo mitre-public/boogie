@@ -1,9 +1,9 @@
 package org.mitre.boogie.xml.fixtures;
 
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mitre.boogie.xml.v23_4.generated.AirspaceAltitudeConstraint;
+import org.mitre.tdp.boogie.AltitudeLimit;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +14,7 @@ class CifpXmlAirspacesTest {
 
   @Test
   void preservesGroundAndUnlimitedLimitsLostByTheNumericModel() {
-    AirspaceAltitudeConstraint limits = CifpXmlAirspaces.limits(Optional.empty(), Optional.empty(), "GND  ", "UNLTD");
+    AirspaceAltitudeConstraint limits = CifpXmlAirspaces.limits(AltitudeLimit.ground(), AltitudeLimit.none(), "GND  ", "UNLTD");
 
     assertAll(
         () -> assertTrue(limits.getLowerLimit().isIsGround()),
@@ -26,7 +26,7 @@ class CifpXmlAirspacesTest {
 
   @Test
   void preservesFlightLevelReferenceWithTheSchemaAltitudeInFeet() {
-    AirspaceAltitudeConstraint limits = CifpXmlAirspaces.limits(Optional.of(18000.0), Optional.of(45000.0), "FL180", "FL450");
+    AirspaceAltitudeConstraint limits = CifpXmlAirspaces.limits(AltitudeLimit.msl(18000.0), AltitudeLimit.msl(45000.0), "FL180", "FL450");
 
     assertAll(
         () -> assertEquals(18000, limits.getLowerLimit().getAltitude()),
@@ -38,7 +38,7 @@ class CifpXmlAirspacesTest {
 
   @Test
   void leavesNumericAltitudesInFeet() {
-    AirspaceAltitudeConstraint limits = CifpXmlAirspaces.limits(Optional.of(500.0), Optional.of(17999.0), "00500", "17999");
+    AirspaceAltitudeConstraint limits = CifpXmlAirspaces.limits(AltitudeLimit.agl(500.0), AltitudeLimit.msl(17999.0), "00500", "17999");
 
     assertAll(
         () -> assertEquals(500, limits.getLowerLimit().getAltitude()),
@@ -50,6 +50,6 @@ class CifpXmlAirspacesTest {
 
   @Test
   void leavesAbsentLimitsUnspecified() {
-    assertNull(CifpXmlAirspaces.limits(Optional.empty(), Optional.empty(), "     ", "     "));
+    assertNull(CifpXmlAirspaces.limits(AltitudeLimit.notSpecified(), AltitudeLimit.notSpecified(), "     ", "     "));
   }
 }

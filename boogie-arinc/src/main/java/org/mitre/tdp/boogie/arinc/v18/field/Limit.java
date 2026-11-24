@@ -1,6 +1,6 @@
 package org.mitre.tdp.boogie.arinc.v18.field;
 
-import org.mitre.tdp.boogie.arinc.AltitudeField;
+import org.mitre.tdp.boogie.arinc.TrimmableString;
 
 /**
  * Special Use Airspace is described by both lateral and vertical boundaries. The Lower/Upper Limit fields
@@ -24,9 +24,12 @@ import org.mitre.tdp.boogie.arinc.AltitudeField;
  * GND (for Ground)
  * MSL (for Mean Sea Level)
  * NOTAM (for Restrictive Airspace only)
+ * <p>
+ * The field is kept as its text: a number is placed only by its unit indicator (5.133), so the limit is read with it by
+ * {@link AirspaceAltitudeLimits}.
  */
 
-public final class Limit extends AltitudeField {
+public final class Limit extends TrimmableString {
   @Override
   public int fieldLength() {
     return 5;

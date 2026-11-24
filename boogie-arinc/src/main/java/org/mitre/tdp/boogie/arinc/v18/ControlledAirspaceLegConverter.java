@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.arinc.v18;
 
+import org.mitre.tdp.boogie.AltitudeLimit;
+import org.mitre.tdp.boogie.arinc.v18.field.AirspaceAltitudeLimits;
 import org.mitre.tdp.boogie.arinc.ArincRecord;
 import org.mitre.tdp.boogie.arinc.model.ArincControlledAirspaceLeg;
 import org.mitre.tdp.boogie.arinc.v18.field.Level;
@@ -38,10 +40,8 @@ public final class ControlledAirspaceLegConverter implements Function<ArincRecor
     Optional<Double> arcDistance = arincRecord.optionalField("arcDistance");
     Optional<Double> arcBearing = arincRecord.optionalField("arcBearing");
     Optional<Double> rnp = arincRecord.optionalField("rnp");
-    Optional<Double> lowerLimit = arincRecord.optionalField("lowerLimit");
-    Optional<String> lowerUnitIndicator = arincRecord.optionalField("lowerIndicator");
-    Optional<Double> upperLimit = arincRecord.optionalField("upperLimit");
-    Optional<String> upperUnitIndicator = arincRecord.optionalField("upperIndicator");
+    AltitudeLimit lowerLimit = AirspaceAltitudeLimits.limit(arincRecord, "lowerLimit", "lowerIndicator");
+    AltitudeLimit upperLimit = AirspaceAltitudeLimits.limit(arincRecord, "upperLimit", "upperIndicator");
     Optional<String> controlledAirspaceName = arincRecord.optionalField("controlledAirspaceName");
     Optional<String> airspaceClassification = arincRecord.optionalField("airspaceClassification");
 
@@ -70,10 +70,8 @@ public final class ControlledAirspaceLegConverter implements Function<ArincRecor
         .arcDistance(arcDistance.orElse(null))
         .arcBearing(arcBearing.orElse(null))
         .rnp(rnp.orElse(null))
-        .lowerLimit(lowerLimit.orElse(null))
-        .lowerUnitIndicator(lowerUnitIndicator.orElse(null))
-        .upperLimit(upperLimit.orElse(null))
-        .upperUnitIndicator(upperUnitIndicator.orElse(null))
+        .lowerLimit(lowerLimit)
+        .upperLimit(upperLimit)
         .controlledAirspaceName(controlledAirspaceName.orElse(null))
         .fileRecordNumber(arincRecord.requiredField("fileRecordNumber"))
         .cycleDate(arincRecord.requiredField("cycle"))

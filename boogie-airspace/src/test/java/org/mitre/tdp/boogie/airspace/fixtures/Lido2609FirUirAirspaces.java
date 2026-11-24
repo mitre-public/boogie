@@ -1,5 +1,7 @@
 package org.mitre.tdp.boogie.airspace.fixtures;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import java.util.List;
 
 import org.mitre.caasd.commons.LatLong;
@@ -8,7 +10,6 @@ import org.mitre.tdp.boogie.AirspaceSequence;
 import org.mitre.tdp.boogie.AirspaceType;
 import org.mitre.tdp.boogie.Geometry;
 
-import com.google.common.collect.Range;
 
 /**
  * FIR/UIR boundaries from the LIDO AIRAC 2609 assignment error report (effective September 3, 2026).
@@ -24,7 +25,7 @@ public final class Lido2609FirUirAirspaces {
         .area("AFR")
         .identifier("FAJO")
         .airspaceType(AirspaceType.FIR)
-        .altitudeLimit(Range.atMost(65_000.0))
+        .altitudeLimits(AltitudeLimits.of(AltitudeLimit.none(), AltitudeLimit.msl(65_000.0)))
         .sequences(List.of(
             sequence(1, Geometry.GREAT_CIRCLE, -27.833333333333332, 35.0),
             sequence(2, Geometry.RHUMB_LINE, -30.0, 40.0),
@@ -57,7 +58,7 @@ public final class Lido2609FirUirAirspaces {
         .area("AFR")
         .identifier("GCCC")
         .airspaceType(AirspaceType.UIR)
-        .altitudeLimit(Range.atLeast(19_500.0))
+        .altitudeLimits(AltitudeLimits.of(AltitudeLimit.msl(19_500.0), AltitudeLimit.none()))
         .sequences(List.of(
             sequence(1, Geometry.RHUMB_LINE, 30.0, -25.0),
             sequence(2, Geometry.GREAT_CIRCLE, 30.0, -20.0),
@@ -86,7 +87,7 @@ public final class Lido2609FirUirAirspaces {
         .area("SPA")
         .identifier("NTTT")
         .airspaceType(AirspaceType.FIR)
-        .altitudeLimit(Range.all())
+        .altitudeLimits(AltitudeLimits.unknown())
         .sequences(List.of(
             sequence(1, Geometry.RHUMB_LINE, 3.5, -145.0),
             sequence(2, Geometry.RHUMB_LINE, 3.5, -120.0),

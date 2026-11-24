@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.List;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
@@ -43,10 +45,8 @@ class TestControlledAirspaceAssemblerGrouping {
         () -> assertEquals(2, airspaces.size()),
         () -> assertEquals(List.of(10, 20), sequenceNumbers(classA)),
         () -> assertEquals(List.of(10, 20), sequenceNumbers(classC)),
-        () -> assertEquals(1000.0, classA.altitudeLimit().lowerEndpoint()),
-        () -> assertEquals(2000.0, classA.altitudeLimit().upperEndpoint()),
-        () -> assertEquals(2000.0, classC.altitudeLimit().lowerEndpoint()),
-        () -> assertEquals(3000.0, classC.altitudeLimit().upperEndpoint()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.msl(1000.0), AltitudeLimit.msl(2000.0)), classA.altitudeLimits()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.msl(2000.0), AltitudeLimit.msl(3000.0)), classC.altitudeLimits()),
         () -> assertEquals(ControlledAirspaceKey.from(classAFirst), ControlledAirspaceKey.from(classASecond)),
         () -> assertNotEquals(ControlledAirspaceKey.from(classAFirst), ControlledAirspaceKey.from(classCFirst))
     );
@@ -83,8 +83,8 @@ class TestControlledAirspaceAssemblerGrouping {
         .sequenceNumber(sequenceNumber)
         .continuationRecordNumber("0")
         .boundaryVia(sequenceNumber == 20 ? BoundaryVia.GE : BoundaryVia.G)
-        .lowerLimit(lowerLimit)
-        .upperLimit(upperLimit)
+        .lowerLimit(lowerLimit == null ? AltitudeLimit.notSpecified() : AltitudeLimit.msl(lowerLimit))
+        .upperLimit(upperLimit == null ? AltitudeLimit.notSpecified() : AltitudeLimit.msl(upperLimit))
         .controlledAirspaceName(name)
         .fileRecordNumber(sequenceNumber)
         .cycleDate("2608")

@@ -1,138 +1,119 @@
 package org.mitre.tdp.boogie.arinc.model;
 
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.mitre.tdp.boogie.arinc.v18.field.ArcBearing;
-import org.mitre.tdp.boogie.arinc.v18.field.ArcDistance;
-import org.mitre.tdp.boogie.arinc.v18.field.BoundaryVia;
-import org.mitre.tdp.boogie.arinc.v18.field.ContinuationRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.CustomerAreaCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Cycle;
-import org.mitre.tdp.boogie.arinc.v18.field.FileRecordNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.IcaoRegion;
-import org.mitre.tdp.boogie.arinc.v18.field.Latitude;
-import org.mitre.tdp.boogie.arinc.v18.field.Level;
-import org.mitre.tdp.boogie.arinc.v18.field.Limit;
-import org.mitre.tdp.boogie.arinc.v18.field.Longitude;
-import org.mitre.tdp.boogie.arinc.v18.field.MultipleCode;
-import org.mitre.tdp.boogie.arinc.v18.field.Notam;
-import org.mitre.tdp.boogie.arinc.v18.field.RecordType;
-import org.mitre.tdp.boogie.arinc.v18.field.RestrictiveAirspaceDesignation;
-import org.mitre.tdp.boogie.arinc.v18.field.RestrictiveAirspaceName;
-import org.mitre.tdp.boogie.arinc.v18.field.SectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.SequenceNumber;
-import org.mitre.tdp.boogie.arinc.v18.field.SubSectionCode;
-import org.mitre.tdp.boogie.arinc.v18.field.TimeCode;
-import org.mitre.tdp.boogie.arinc.v18.field.UnitIndicator;
+import org.mitre.tdp.boogie.AltitudeLimit;
+import org.mitre.tdp.boogie.AltitudeLimits;
 
-public final class ArincRestrictiveAirspaceLeg implements ArincModel {
+import org.mitre.tdp.boogie.arinc.v18.field.*;
+
+public final class ArincRestrictiveAirspaceLeg implements ArincAirspaceLeg {
+  @Serial
+  private static final long serialVersionUID = -5113169438103266296L;
+
   /**
-   * See {@link RecordType}.
+   * * See {@link RecordType}.
    */
   private final RecordType recordType;
   /**
-   * See {@link CustomerAreaCode}.
+   * * See {@link CustomerAreaCode}.
    */
   private final CustomerAreaCode customerAreaCode;
   /**
-   * See {@link SectionCode}.
+   * * See {@link SectionCode}.
    */
   private final SectionCode sectionCode;
   /**
-   * See {@link SubSectionCode}.
+   * * See {@link SubSectionCode}.
    */
   private final String subSectionCode;
   /**
-   * See {@link IcaoRegion}
+   * * See {@link IcaoRegion}
    */
   private final String icaoRegion;
   /**
-   * See {@link org.mitre.tdp.boogie.arinc.v18.field.RestrictiveType} or {@link org.mitre.tdp.boogie.arinc.v19.field.RestrictiveType}
+   * * See {@link org.mitre.tdp.boogie.arinc.v18.field.RestrictiveType} or {@link
+   * org.mitre.tdp.boogie.arinc.v19.field.RestrictiveType}
    */
   private final String restrictiveType;
   /**
-   * See {@link RestrictiveAirspaceDesignation}
+   * * See {@link RestrictiveAirspaceDesignation}
    */
   private final String restrictiveAirspaceDesignation;
   /**
-   * See {@link MultipleCode}
+   * * See {@link MultipleCode}
    */
   private final String multipleCode;
   /**
-   * See {@link SequenceNumber}
+   * * See {@link SequenceNumber}
    */
   private final Integer sequenceNumber;
   /**
-   * See {@link ContinuationRecordNumber}
+   * * See {@link ContinuationRecordNumber}
    */
   private final String continuationRecordNumber;
   /**
-   * See {@link Level}
+   * * See {@link Level}
    */
   private final Level level;
   /**
-   * See {@link TimeCode}
+   * * See {@link TimeCode}
    */
   private final String timeCode;
   /**
-   * See {@link Notam}
+   * * See {@link Notam}
    */
   private final String notam;
   /**
-   * See {@link BoundaryVia}
+   * * See {@link BoundaryVia}
    */
   private final BoundaryVia boundaryVia;
   /**
-   * See {@link Latitude}
+   * * See {@link Latitude}
    */
   private final Double latitude;
   /**
-   * See {@link Longitude}
+   * * See {@link Longitude}
    */
   private final Double longitude;
   /**
-   * See {@link Latitude}
+   * * See {@link Latitude}
    */
   private final Double arcOriginLatitude;
   /**
-   * See {@link Longitude}
+   * * See {@link Longitude}
    */
   private final Double arcOriginLongitude;
   /**
-   * See {@link ArcDistance}
+   * * See {@link ArcDistance}
    */
   private final Double arcDistance;
   /**
-   * See {@link ArcBearing}
+   * * See {@link ArcBearing}
    */
   private final Double arcBearing;
   /**
-   * See {@link Limit}
+   * * The lower limit (5.121) with its unit indicator (5.133) applied; see {@link
+   * AirspaceAltitudeLimits}.
    */
-  private final Double lowerLimit;
+  private final AltitudeLimit lowerLimit;
   /**
-   * See {@link UnitIndicator}
+   * * The upper limit (5.121) with its unit indicator (5.133) applied; see {@link
+   * AirspaceAltitudeLimits}.
    */
-  private final String lowerUnitIndicator;
+  private final AltitudeLimit upperLimit;
   /**
-   * See {@link Limit}
-   */
-  private final Double upperLimit;
-  /**
-   * See {@link UnitIndicator}
-   */
-  private final String upperUnitIndicator;
-  /**
-   * See {@link RestrictiveAirspaceName}
+   * * See {@link RestrictiveAirspaceName}
    */
   private final String restrictiveAirspaceName;
   /**
-   * See {@link FileRecordNumber}
+   * * See {@link FileRecordNumber}
    */
   private final Integer fileRecordNumber;
   /**
-   * See {@link Cycle}
+   * * See {@link Cycle}
    */
   private final String cycleDate;
 
@@ -159,9 +140,7 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
         .arcDistance(arcDistance)
         .arcBearing(arcBearing)
         .lowerLimit(lowerLimit)
-        .lowerUnitIndicator(lowerUnitIndicator)
         .upperLimit(upperLimit)
-        .upperUnitIndicator(upperUnitIndicator)
         .restrictiveAirspaceName(restrictiveAirspaceName)
         .fileRecordNumber(fileRecordNumber)
         .cycleDate(cycleDate);
@@ -189,9 +168,7 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
     this.arcDistance = builder.arcDistance;
     this.arcBearing = builder.arcBearing;
     this.lowerLimit = builder.lowerLimit;
-    this.lowerUnitIndicator = builder.lowerUnitIndicator;
     this.upperLimit = builder.upperLimit;
-    this.upperUnitIndicator = builder.upperUnitIndicator;
     this.restrictiveAirspaceName = builder.restrictiveAirspaceName;
     this.fileRecordNumber = builder.fileRecordNumber;
     this.cycleDate = builder.cycleDate;
@@ -292,21 +269,25 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
     return Optional.ofNullable(arcBearing);
   }
 
-  public Optional<Double> lowerLimit() {
-    return Optional.ofNullable(lowerLimit);
+  public AltitudeLimit lowerLimit() {
+    return lowerLimit;
   }
 
-  public Optional<String> lowerUnitIndicator() {
-    return Optional.ofNullable(lowerUnitIndicator);
+
+  public AltitudeLimit upperLimit() {
+    return upperLimit;
   }
 
-  public Optional<Double> upperLimit() {
-    return Optional.ofNullable(upperLimit);
+  /**
+   * Gets the airspace's vertical extent from this leg's limits. Limits that contradict each other are not specified.
+   *
+   * @return the limits
+   */
+  public AltitudeLimits altitudeLimits() {
+    return AltitudeLimits.published(lowerLimit, upperLimit);
   }
 
-  public Optional<String> upperUnitIndicator() {
-    return Optional.ofNullable(upperUnitIndicator);
-  }
+
 
   public Optional<String> restrictiveAirspaceName() {
     return Optional.ofNullable(restrictiveAirspaceName);
@@ -317,12 +298,12 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
     if (o == null || getClass() != o.getClass())
       return false;
     ArincRestrictiveAirspaceLeg that = (ArincRestrictiveAirspaceLeg) o;
-    return recordType == that.recordType && customerAreaCode == that.customerAreaCode && sectionCode == that.sectionCode && Objects.equals(subSectionCode, that.subSectionCode) && Objects.equals(icaoRegion, that.icaoRegion) && Objects.equals(restrictiveType, that.restrictiveType) && Objects.equals(restrictiveAirspaceDesignation, that.restrictiveAirspaceDesignation) && Objects.equals(multipleCode, that.multipleCode) && Objects.equals(sequenceNumber, that.sequenceNumber) && Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && level == that.level && Objects.equals(timeCode, that.timeCode) && Objects.equals(notam, that.notam) && boundaryVia == that.boundaryVia && Objects.equals(latitude, that.latitude) && Objects.equals(longitude, that.longitude) && Objects.equals(arcOriginLatitude, that.arcOriginLatitude) && Objects.equals(arcOriginLongitude, that.arcOriginLongitude) && Objects.equals(arcDistance, that.arcDistance) && Objects.equals(arcBearing, that.arcBearing) && Objects.equals(lowerLimit, that.lowerLimit) && Objects.equals(lowerUnitIndicator, that.lowerUnitIndicator) && Objects.equals(upperLimit, that.upperLimit) && Objects.equals(upperUnitIndicator, that.upperUnitIndicator) && Objects.equals(restrictiveAirspaceName, that.restrictiveAirspaceName) && Objects.equals(fileRecordNumber, that.fileRecordNumber) && Objects.equals(cycleDate, that.cycleDate);
+    return recordType == that.recordType && customerAreaCode == that.customerAreaCode && sectionCode == that.sectionCode && Objects.equals(subSectionCode, that.subSectionCode) && Objects.equals(icaoRegion, that.icaoRegion) && Objects.equals(restrictiveType, that.restrictiveType) && Objects.equals(restrictiveAirspaceDesignation, that.restrictiveAirspaceDesignation) && Objects.equals(multipleCode, that.multipleCode) && Objects.equals(sequenceNumber, that.sequenceNumber) && Objects.equals(continuationRecordNumber, that.continuationRecordNumber) && level == that.level && Objects.equals(timeCode, that.timeCode) && Objects.equals(notam, that.notam) && boundaryVia == that.boundaryVia && Objects.equals(latitude, that.latitude) && Objects.equals(longitude, that.longitude) && Objects.equals(arcOriginLatitude, that.arcOriginLatitude) && Objects.equals(arcOriginLongitude, that.arcOriginLongitude) && Objects.equals(arcDistance, that.arcDistance) && Objects.equals(arcBearing, that.arcBearing) && Objects.equals(lowerLimit, that.lowerLimit) && Objects.equals(upperLimit, that.upperLimit) && Objects.equals(restrictiveAirspaceName, that.restrictiveAirspaceName) && Objects.equals(fileRecordNumber, that.fileRecordNumber) && Objects.equals(cycleDate, that.cycleDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, icaoRegion, restrictiveType, restrictiveAirspaceDesignation, multipleCode, sequenceNumber, continuationRecordNumber, level, timeCode, notam, boundaryVia, latitude, longitude, arcOriginLatitude, arcOriginLongitude, arcDistance, arcBearing, lowerLimit, lowerUnitIndicator, upperLimit, upperUnitIndicator, restrictiveAirspaceName, fileRecordNumber, cycleDate);
+    return Objects.hash(recordType, customerAreaCode, sectionCode, subSectionCode, icaoRegion, restrictiveType, restrictiveAirspaceDesignation, multipleCode, sequenceNumber, continuationRecordNumber, level, timeCode, notam, boundaryVia, latitude, longitude, arcOriginLatitude, arcOriginLongitude, arcDistance, arcBearing, lowerLimit, upperLimit, restrictiveAirspaceName, fileRecordNumber, cycleDate);
   }
 
   @Override
@@ -349,9 +330,7 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
         ", arcDistance=" + arcDistance +
         ", arcBearing=" + arcBearing +
         ", lowerLimit=" + lowerLimit +
-        ", lowerUnitIndicator='" + lowerUnitIndicator + '\'' +
         ", upperLimit=" + upperLimit +
-        ", upperUnitIndicator='" + upperUnitIndicator + '\'' +
         ", restrictiveAirspaceName='" + restrictiveAirspaceName + '\'' +
         ", fileRecordNumber=" + fileRecordNumber +
         ", cycleDate='" + cycleDate + '\'' +
@@ -379,10 +358,8 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
     private Double arcOriginLongitude;
     private Double arcDistance;
     private Double arcBearing;
-    private Double lowerLimit;
-    private String lowerUnitIndicator;
-    private Double upperLimit;
-    private String upperUnitIndicator;
+    private AltitudeLimit lowerLimit = AltitudeLimit.notSpecified();
+    private AltitudeLimit upperLimit = AltitudeLimit.notSpecified();
     private String restrictiveAirspaceName;
     private Integer fileRecordNumber;
     private String cycleDate;
@@ -490,25 +467,18 @@ public final class ArincRestrictiveAirspaceLeg implements ArincModel {
       return this;
     }
 
-    public Builder lowerLimit(Double lowerLimit) {
-      this.lowerLimit = lowerLimit;
+    public Builder lowerLimit(AltitudeLimit lowerLimit) {
+      this.lowerLimit = Objects.requireNonNull(lowerLimit, "lowerLimit");
       return this;
     }
 
-    public Builder lowerUnitIndicator(String lowerUnitIndicator) {
-      this.lowerUnitIndicator = lowerUnitIndicator;
+
+    public Builder upperLimit(AltitudeLimit upperLimit) {
+      this.upperLimit = Objects.requireNonNull(upperLimit, "upperLimit");
       return this;
     }
 
-    public Builder upperLimit(Double upperLimit) {
-      this.upperLimit = upperLimit;
-      return this;
-    }
 
-    public Builder upperUnitIndicator(String upperUnitIndicator) {
-      this.upperUnitIndicator = upperUnitIndicator;
-      return this;
-    }
 
     public Builder restrictiveAirspaceName(String restrictiveAirspaceName) {
       this.restrictiveAirspaceName = restrictiveAirspaceName;

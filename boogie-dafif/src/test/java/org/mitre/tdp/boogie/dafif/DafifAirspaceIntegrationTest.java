@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,6 @@ import org.mitre.tdp.boogie.dafif.assemble.SuasAssembler;
 import org.mitre.tdp.boogie.dafif.model.ConvertingDafifRecordConsumer;
 import org.mitre.tdp.boogie.dafif.model.DafifRecordConverterFactory;
 
-import com.google.common.collect.Range;
 import com.google.common.io.Resources;
 
 @Tag("DAFIF")
@@ -108,11 +109,11 @@ class DafifAirspaceIntegrationTest {
     assertAll(
         () -> assertEquals(AirspaceType.FIR, fir.airspaceType()),
         () -> assertEquals("AGGG", fir.area()),
-        () -> assertEquals(Range.closed(24500.0, 60000.0), fir.altitudeLimit()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.flightLevel(245), AltitudeLimit.flightLevel(600)), fir.altitudeLimits()),
         () -> assertEquals(13, fir.sequences().size(), "One starting anchor per source segment"),
         () -> assertEquals(AirspaceType.UIR, uir.airspaceType()),
         () -> assertEquals("DIII", uir.area()),
-        () -> assertEquals(Range.atLeast(24500.0), uir.altitudeLimit()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.flightLevel(245), AltitudeLimit.none()), uir.altitudeLimits()),
         () -> assertEquals(30, uir.sequences().size(), "One starting anchor per source segment")
     );
   }
@@ -125,7 +126,7 @@ class DafifAirspaceIntegrationTest {
     assertAll(
         () -> assertEquals(AirspaceType.RESTRICTIVE, airspace.airspaceType()),
         () -> assertEquals("KOZR", airspace.area()),
-        () -> assertEquals(Range.atMost(2800.0), airspace.altitudeLimit()),
+        () -> assertEquals(AltitudeLimit.msl(2800.0), airspace.altitudeLimits().upper()),
         () -> assertEquals(Geometry.CIRCLE, circle.geometry()),
         () -> assertEquals(LatLong.of(31.308333, -85.705556), circle.centerFix().orElseThrow()),
         () -> assertEquals(5.0, circle.arcRadius().orElseThrow())
@@ -137,8 +138,8 @@ class DafifAirspaceIntegrationTest {
     Airspace first = find(specialUseAirspaces, "CYR107/1");
     Airspace second = find(specialUseAirspaces, "CYR107/2");
     assertAll(
-        () -> assertEquals(Range.atMost(1000.0), first.altitudeLimit()),
-        () -> assertEquals(Range.closed(1001.0, 13500.0), second.altitudeLimit()),
+        () -> assertEquals(AltitudeLimit.msl(1000.0), first.altitudeLimits().upper()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.msl(1001.0), AltitudeLimit.msl(13500.0)), second.altitudeLimits()),
         () -> assertEquals(5, first.sequences().size(), "One starting anchor per source segment"),
         () -> assertEquals(5, second.sequences().size(), "One starting anchor per source segment")
     );

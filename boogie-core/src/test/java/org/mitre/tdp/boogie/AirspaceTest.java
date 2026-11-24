@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mitre.caasd.commons.LatLong;
 
-import com.google.common.collect.Range;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 class AirspaceTest {
@@ -17,7 +16,9 @@ class AirspaceTest {
   void verifyStandard() {
     EqualsVerifier.forClass(Airspace.Standard.class)
         .withCachedHashCode("hashCode", "computeHashCode", createStandard())
+        .withPrefabValues(AltitudeLimits.class, AltitudeLimits.of(AltitudeLimit.agl(700.0), AltitudeLimit.msl(12_000.0)), AltitudeLimits.unknown())
         .verify();
+    // AltitudeLimits rejects messed up limits, so EqualsVerifier cannot build its own examples.
   }
 
   @Test
@@ -47,8 +48,8 @@ class AirspaceTest {
     assertAll(
         () -> assertEquals("name", airspace.identifier()),
         () -> assertEquals(AirspaceType.CONTROLLED, airspace.airspaceType()),
-        () -> assertEquals("N", airspace.center().get().fixIdentifier()),
-        () -> assertEquals(Range.all(), airspace.altitudeLimit())
+        () -> assertEquals("N", airspace.center().orElseThrow().fixIdentifier()),
+        () -> assertEquals(AltitudeLimits.unknown(), airspace.altitudeLimits())
     );
   }
 
@@ -120,7 +121,7 @@ class AirspaceTest {
       @Override public String identifier() { return "name"; }
       @Override public AirspaceType airspaceType() { return AirspaceType.CONTROLLED; }
       @Override public List<? extends AirspaceSequence> sequences() { return List.of(); }
-      @Override public Range<Double> altitudeLimit() { return Range.all(); }
+      @Override public AltitudeLimits altitudeLimits() { return AltitudeLimits.unknown(); }
       @Override public Optional<? extends Fix> center() { return Optional.empty(); }
       @Override public void accept(Visitor visitor) { }
     };
@@ -145,7 +146,7 @@ class AirspaceTest {
         .center(Fix.builder().fixIdentifier("N").latLong(LatLong.of(0., 1.)).build())
         .airspaceType(AirspaceType.CONTROLLED)
         .sequences(List.of())
-        .altitudeLimit(Range.all())
+        .altitudeLimits(AltitudeLimits.unknown())
         .build();
   }
 

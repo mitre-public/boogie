@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import org.mitre.tdp.boogie.AltitudeLimits;
+import org.mitre.tdp.boogie.AltitudeLimit;
 import org.junit.jupiter.api.Test;
 import org.mitre.tdp.boogie.Airspace;
 import org.mitre.tdp.boogie.AirspaceSequence;
@@ -34,10 +36,8 @@ class TestRestrictiveAirspaceAssemblerGrouping {
         () -> assertEquals(2, airspaces.size()),
         () -> assertEquals(List.of(10, 30), sequenceNumbers(areaA)),
         () -> assertEquals(List.of(20, 40), sequenceNumbers(areaB)),
-        () -> assertEquals(4000.0, areaA.altitudeLimit().lowerEndpoint()),
-        () -> assertEquals(17999.0, areaA.altitudeLimit().upperEndpoint()),
-        () -> assertEquals(18000.0, areaB.altitudeLimit().lowerEndpoint()),
-        () -> assertEquals(23999.0, areaB.altitudeLimit().upperEndpoint())
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.msl(4000.0), AltitudeLimit.msl(17999.0)), areaA.altitudeLimits()),
+        () -> assertEquals(AltitudeLimits.of(AltitudeLimit.msl(18000.0), AltitudeLimit.msl(23999.0)), areaB.altitudeLimits())
     );
   }
 
@@ -70,8 +70,8 @@ class TestRestrictiveAirspaceAssemblerGrouping {
         .sequenceNumber(sequenceNumber)
         .continuationRecordNumber("0")
         .boundaryVia(sequenceNumber >= 30 ? BoundaryVia.GE : BoundaryVia.G)
-        .lowerLimit(lowerLimit)
-        .upperLimit(upperLimit)
+        .lowerLimit(lowerLimit == null ? AltitudeLimit.notSpecified() : AltitudeLimit.msl(lowerLimit))
+        .upperLimit(upperLimit == null ? AltitudeLimit.notSpecified() : AltitudeLimit.msl(upperLimit))
         .restrictiveAirspaceName("BOARDMAN MOA")
         .fileRecordNumber(sequenceNumber)
         .cycleDate("2608")

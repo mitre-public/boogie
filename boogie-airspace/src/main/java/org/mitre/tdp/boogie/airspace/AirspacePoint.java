@@ -11,7 +11,7 @@ import org.mitre.caasd.commons.LatLong;
  *
  * @param time observation time
  * @param position geographic position
- * @param altitudeFeet altitude in the airspace bands' reference, or null if missing
+ * @param altitudeFeet altitude in feet above mean sea level, or null if missing
  */
 public record AirspacePoint(Instant time, LatLong position, Double altitudeFeet) {
   /**
