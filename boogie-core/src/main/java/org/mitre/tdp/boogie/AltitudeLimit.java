@@ -77,13 +77,23 @@ public sealed interface AltitudeLimit permits AltitudeLimit.Height, AltitudeLimi
   }
 
   /**
+   * Creates a limit in pressure altitude: the altitude in the standard atmosphere.
+   *
+   * @param feet the pressure altitude in feet, such as 18,000 for FL180
+   * @return the limit
+   */
+  static AltitudeLimit pressure(double feet) {
+    return new Height(feet, AltitudeReference.PRESSURE);
+  }
+
+  /**
    * Creates a limit at a flight level: a pressure altitude in hundreds of feet.
    *
    * @param flightLevel the flight level, such as 180 for FL180
    * @return the limit, at {@code flightLevel * 100} feet of pressure altitude
    */
   static AltitudeLimit flightLevel(double flightLevel) {
-    return new Height(flightLevel * 100.0, AltitudeReference.PRESSURE);
+    return pressure(flightLevel * 100.0);
   }
 
   /**
