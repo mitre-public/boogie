@@ -42,6 +42,18 @@ public final class AltitudeBand {
   }
 
   /**
+   * The lowest terrain on Earth in feet above mean sea level: the shore of the Dead Sea, about 430 meters below sea
+   * level, rounded down. Bounds a floor above ground level where the terrain is missing.
+   */
+  public static final double LOWEST_TERRAIN_FEET = -1_420.0;
+
+  /**
+   * The highest terrain on Earth in feet above mean sea level: the summit of Everest. Bounds a ceiling above ground level
+   * where the terrain is missing.
+   */
+  public static final double HIGHEST_TERRAIN_FEET = 29_032.0;
+
+  /**
    * The band for limits not specified on either side.
    */
   private static final AltitudeBand UNKNOWN = new AltitudeBand(AltitudeLimits.unknown());
@@ -264,13 +276,19 @@ public final class AltitudeBand {
    * that is not known is never evaluated. This lets a limit that can be evaluated rule a segment out even when another
    * cannot: a segment above a ceiling measured from mean sea level misses the band whatever the terrain beneath it.
    *
+   * <p>A height above ground level without the terrain at both ends is still bounded by the altitude above mean sea
+   * level: the terrain lies between {@link #LOWEST_TERRAIN_FEET} and {@link #HIGHEST_TERRAIN_FEET}, so a segment more
+   * than that far above an above-ground ceiling, or below an above-ground floor, misses the band whatever the terrain
+   * beneath it.
+   *
    * <p>When {@link #clip(VerticalPosition, VerticalPosition)} can check the whole band, the two methods agree. Otherwise
-   * a present result is not a definite intersection, only the part of the segment no evaluable limit excludes.
+   * a present result is not a definite intersection, only the part of the segment no evaluable limit or terrain bound
+   * excludes.
    *
    * @param start the segment's starting position
    * @param end the segment's ending position
-   * @return the inclusive interval no evaluable limit excludes (the whole segment if none can be evaluated), or empty
-   *     for an {@link Status#UNKNOWN} band or when an evaluable limit excludes the whole segment
+   * @return the inclusive interval no evaluable limit or terrain bound excludes (the whole segment if none applies), or
+   *     empty for an {@link Status#UNKNOWN} band or when a limit or terrain bound excludes the whole segment
    */
   public Optional<Interval> clipEvaluable(VerticalPosition start, VerticalPosition end) {
     requireNonNull(start, "start");
@@ -278,25 +296,62 @@ public final class AltitudeBand {
     if (status == Status.UNKNOWN) {
       return Optional.empty();
     }
-    return evaluableHeight(limits.lower(), start, end)
-        .map(floor -> atOrAbove(floor.feet(), heightFeet(start, floor), heightFeet(end, floor)))
+    return limits.lower().height()
+        .map(floor -> aboveFloor(floor, start, end))
         .orElse(Optional.of(FULL_INTERVAL))
-        .flatMap(aboveFloor -> evaluableHeight(limits.upper(), start, end)
-            .map(ceiling -> atOrBelow(ceiling.feet(), heightFeet(start, ceiling), heightFeet(end, ceiling)))
+        .flatMap(aboveFloor -> limits.upper().height()
+            .map(ceiling -> belowCeiling(ceiling, start, end))
             .orElse(Optional.of(FULL_INTERVAL))
             .flatMap(belowCeiling -> intersection(aboveFloor, belowCeiling)));
   }
 
   /**
-   * Gets a limit's height when it can be evaluated at both ends of a segment.
+   * Finds where a segment is at or above a floor: exactly when the floor can be evaluated at both ends, against the
+   * lowest terrain when an above-ground floor lacks the terrain, and the whole segment otherwise.
    *
-   * @param limit the limit
+   * @param floor the floor
    * @param start the segment's starting position
    * @param end the segment's ending position
-   * @return the height, or empty if the limit has none or a position lacks a value it needs
+   * @return the fractions not below the floor, or empty if the whole segment is
    */
-  private static Optional<AltitudeLimit.Height> evaluableHeight(AltitudeLimit limit, VerticalPosition start, VerticalPosition end) {
-    return limit.height().filter(height -> evaluable(height, start) && evaluable(height, end));
+  private static Optional<Interval> aboveFloor(AltitudeLimit.Height floor, VerticalPosition start, VerticalPosition end) {
+    if (evaluable(floor, start) && evaluable(floor, end)) {
+      return atOrAbove(floor.feet(), heightFeet(start, floor), heightFeet(end, floor));
+    }
+    return terrainBounded(floor, start, end)
+        ? atOrAbove(floor.feet() + LOWEST_TERRAIN_FEET, start.altitudeFeet(), end.altitudeFeet())
+        : Optional.of(FULL_INTERVAL);
+  }
+
+  /**
+   * Finds where a segment is at or below a ceiling: exactly when the ceiling can be evaluated at both ends, against the
+   * highest terrain when an above-ground ceiling lacks the terrain, and the whole segment otherwise.
+   *
+   * @param ceiling the ceiling
+   * @param start the segment's starting position
+   * @param end the segment's ending position
+   * @return the fractions not above the ceiling, or empty if the whole segment is
+   */
+  private static Optional<Interval> belowCeiling(AltitudeLimit.Height ceiling, VerticalPosition start, VerticalPosition end) {
+    if (evaluable(ceiling, start) && evaluable(ceiling, end)) {
+      return atOrBelow(ceiling.feet(), heightFeet(start, ceiling), heightFeet(end, ceiling));
+    }
+    return terrainBounded(ceiling, start, end)
+        ? atOrBelow(ceiling.feet() + HIGHEST_TERRAIN_FEET, start.altitudeFeet(), end.altitudeFeet())
+        : Optional.of(FULL_INTERVAL);
+  }
+
+  /**
+   * Tells whether a height above ground level that cannot be evaluated can still be bounded by the range of terrain:
+   * both ends report an altitude above mean sea level.
+   *
+   * @param height the limit
+   * @param start the segment's starting position
+   * @param end the segment's ending position
+   * @return true for a height above ground level with an altitude above mean sea level at both ends
+   */
+  private static boolean terrainBounded(AltitudeLimit.Height height, VerticalPosition start, VerticalPosition end) {
+    return height.reference() == AltitudeReference.AGL && start.altitudeFeet() != null && end.altitudeFeet() != null;
   }
 
   /**

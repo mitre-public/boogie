@@ -143,6 +143,57 @@ class ReferencedAltitudeTest {
         () -> assertEquals(Optional.empty(), AltitudeBand.unknown().clipEvaluable(low, high)));
   }
 
+  /**
+   * A control zone: from the surface up to 2,500 feet above ground.
+   */
+  private static final AltitudeBand CONTROL_ZONE = AltitudeBand.of(AltitudeLimits.of(AltitudeLimit.none(), AltitudeLimit.agl(2_500)));
+
+  /**
+   * A layer from 10,000 feet above ground with no ceiling.
+   */
+  private static final AltitudeBand HIGH_ABOVE_GROUND = AltitudeBand.of(AltitudeLimits.of(AltitudeLimit.agl(10_000), AltitudeLimit.none()));
+
+  @Test
+  void aboveGroundLimitsWithoutTerrainAreBoundedByTheRangeOfTerrain() {
+    double highestCeiling = 2_500 + AltitudeBand.HIGHEST_TERRAIN_FEET;
+    double lowestFloor = 10_000 + AltitudeBand.LOWEST_TERRAIN_FEET;
+    AltitudeBand.Interval climbThroughBound = CONTROL_ZONE
+        .clipEvaluable(VerticalPosition.msl(highestCeiling - 1_000), VerticalPosition.msl(highestCeiling + 1_000)).orElseThrow();
+    assertAll(
+        () -> assertEquals(Optional.empty(), CONTROL_ZONE.clipEvaluable(VerticalPosition.msl(39_000.0), VerticalPosition.msl(41_000.0)),
+            "above the ceiling over any terrain"),
+        () -> assertEquals(Optional.of(new AltitudeBand.Interval(0.0, 1.0)),
+            CONTROL_ZONE.clipEvaluable(VerticalPosition.msl(24_000.0), VerticalPosition.msl(24_000.0)), "inside the ceiling over high terrain"),
+        () -> assertEquals(0.0, climbThroughBound.startFraction(), 1e-12),
+        () -> assertEquals(0.5, climbThroughBound.endFraction(), 1e-12, "the bound is passed halfway"),
+        () -> assertFalse(CONTROL_ZONE.checkable(VerticalPosition.msl(24_000.0)), "a bound is not a check"),
+        () -> assertEquals(Optional.empty(), HIGH_ABOVE_GROUND.clipEvaluable(VerticalPosition.msl(lowestFloor - 1.0), VerticalPosition.msl(lowestFloor - 1.0)),
+            "below the floor over any terrain"),
+        () -> assertEquals(Optional.of(new AltitudeBand.Interval(0.0, 1.0)),
+            HIGH_ABOVE_GROUND.clipEvaluable(VerticalPosition.msl(lowestFloor), VerticalPosition.msl(lowestFloor)), "the bound is inclusive"),
+        () -> assertEquals(Optional.of(new AltitudeBand.Interval(0.0, 1.0)),
+            CONTROL_ZONE.clipEvaluable(new VerticalPosition(null, 41_000.0, null), new VerticalPosition(null, 41_000.0, null)),
+            "a pressure altitude alone cannot bound a height above ground"),
+        () -> assertEquals(Optional.empty(),
+            CONTROL_ZONE.clipEvaluable(new VerticalPosition(41_000.0, null, 600.0), VerticalPosition.msl(41_000.0)),
+            "terrain at one end only is bounded too"));
+  }
+
+  @Test
+  void queryWithoutTerrainRulesOutAboveGroundAirspaceFarAboveIt() {
+    List<AirspaceSpan<String>> spans = new ArrayList<>();
+    var query = new AirspaceIndexFactory<String>().apply(List.of(new AirspaceDefinition<>("control zone", box(), CONTROL_ZONE)))
+        .newQuery(spans::add);
+    LatLong west = LatLong.of(0.0, -2.0);
+    LatLong east = LatLong.of(0.0, 2.0);
+
+    query.intersect(west, 41_000.0, east, 41_000.0);
+    assertEquals(List.of(), spans, "far above the ceiling over any terrain");
+
+    query.intersect(west, 3_000.0, east, 3_000.0);
+    assertEquals(List.of(new AirspaceSpan<>("control zone", 0.25, 0.75, false)), spans, "possibly inside: lateral, unchecked");
+  }
+
   @Test
   void onlyLimitsInTheSameReferenceAreOrdered() {
     assertAll(
